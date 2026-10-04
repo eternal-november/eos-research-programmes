@@ -4,7 +4,7 @@ Problem maturity: `design`. Handoff artifact: `draft`, ready to execute; author-
 
 ## Active
 
-- Execute [the research handoff](handoff/HANDOFF.md) as a sustained research session, developing a coherent Byzantine-control result and accounting for R1–R8. The handoff contains the definitions, model choices, primary-source entry points, verification requirements, and closure conditions needed to start.
+- Execute [the research handoff](handoff/HANDOFF.md) with its [delegation and Git protocol](handoff/EXECUTION.md): create or reuse a suitable clean research worktree at a recorded commit, delegate related-work checks, integrate the resulting prior-art assessment before substantial original work, and account for R1–R8. Subagents are explicitly authorized for this research task. Preserve the primary checkout's unrelated uncommitted work.
 - Reproduce the [foundation checks](handoff/VERIFICATION.md) before extending them. The 15 elementary declarations passed Lean 4.33.0; they establish only the stated logical, arithmetic, and finite-model results.
 
 ## Residuals
