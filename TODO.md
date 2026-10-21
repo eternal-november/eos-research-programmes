@@ -10,7 +10,7 @@ The full-program Goal is active. [Program completion contract](research/PROGRAM-
 
 ## Active integration
 
-The coordinator owns the shared Execution.lean, THEORY.md and core_model.py; eighteen core declarations pass Lean, with independent semantic review pending. The full-program Goal remains active. All writing workers start at 50fb410550cac5c95cb943338f2eddae13e161b2 and own disjoint artifacts under research/.
+The coordinator owns the shared Execution.lean, THEORY.md and core_model.py; nineteen core declarations pass Lean; independent review led to checked reachability and replay repairs, with concrete adapters pending. The full-program Goal remains active. All writing workers start at 50fb410550cac5c95cb943338f2eddae13e161b2 and own disjoint artifacts under research/.
 
 | Contribution | Retained worker worktree / branch | Incoming result and remaining check |
 |---|---|---|

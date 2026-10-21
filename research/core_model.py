@@ -33,7 +33,13 @@ class Arena:
         domains = []
         bad = self.faulty(prefix.state)
         for k, i in enumerate(self.actors):
-            domains.append(self.alphabets[k] if i in bad else (prescription[self.key(prefix, i)],))
+            if i in bad:
+                domains.append(self.alphabets[k])
+            else:
+                action = prescription[self.key(prefix, i)]
+                if action not in self.alphabets[k]:
+                    raise ValueError(("out-of-alphabet local action", i, action))
+                domains.append((action,))
         return product(*domains)
 
     def update(self, family, prescription):
@@ -80,14 +86,38 @@ def synthesize(arena, horizon, family=None):
     return None
 
 def replay(arena, plan):
-    family = arena.initial_prefixes()
+    # Separate replay kernel: do not reuse synthesis's update/actions methods.
+    family = frozenset(Prefix(s, tuple((arena.observe(s, i),) for i in arena.actors), 0)
+                       for s in arena.initials)
     assert family and all(arena.safe(p.state) for p in family)
     for prescription in plan:
-        expected = {arena.key(p, i) for p in family for i in arena.actors
-                    if i not in arena.faulty(p.state)}
-        assert expected <= prescription.keys()
-        family = arena.update(family, prescription)
-        assert family and all(arena.safe(p.state) for p in family)
+        next_family = set()
+        for prefix in family:
+            bad = arena.faulty(prefix.state)
+            domains = []
+            for k, i in enumerate(arena.actors):
+                if i in bad:
+                    domains.append(arena.alphabets[k])
+                else:
+                    key = (i, prefix.depth, prefix.views[k])
+                    if key not in prescription:
+                        raise ValueError(("missing local action", key))
+                    action = prescription[key]
+                    if action not in arena.alphabets[k]:
+                        raise ValueError(("out-of-alphabet local action", i, action))
+                    domains.append((action,))
+            for actions in product(*domains):
+                outcomes = tuple(arena.next_states(prefix.state, actions))
+                assert outcomes, ("deadlocking profile", prefix, actions)
+                for target in outcomes:
+                    assert arena.faulty(target) == bad
+                    assert arena.safe(target), ("unsafe replay successor", prefix, actions, target)
+                    local_histories = tuple(
+                        prefix.views[k] + ((actions[k], arena.observe(target, i)),)
+                        for k, i in enumerate(arena.actors))
+                    next_family.add(Prefix(target, local_histories, prefix.depth+1))
+        assert next_family
+        family = frozenset(next_family)
     return family
 
 def continuation_arena(revealed=False):
@@ -185,11 +215,19 @@ def run_checks():
     assert plan is not None
     assert all(set(row.values()) == {1} for row in plan)
     replay(nb, plan)
+    bad_table = {nb.key(next(iter(nb.initial_prefixes())), 0): 99}
+    try:
+        replay(nb, [bad_table])
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("replay accepted an out-of-alphabet policy")
     return {
         "continuation": {"hidden_first_step_wins": True, "hidden_two_steps_wins": False,
                          "state_revealed_four_steps_wins": True},
         "fault_uniformity": {"each_known_fault_wins": True, "unknown_fault_wins": False},
-        "nonblocking": {"empty_successor_action_rejected": True, "alternative_run_replayed": True},
+        "nonblocking": {"empty_successor_action_rejected": True, "alternative_run_replayed": True,
+                        "out_of_alphabet_policy_rejected": True},
         "monitor": monitor_checks(),
         "compactness": compactness_boundary(),
         "scope": "exact finite horizon with all successor prefixes, full local-history keys, fixed faults",

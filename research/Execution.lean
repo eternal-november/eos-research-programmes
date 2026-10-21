@@ -392,6 +392,31 @@ theorem local_policy_factorization (M : Model I X H A F) (D : Family F X)
     facts.1 hd facts.2.1 hc facts.2.2
 
 
+
+inductive Generated (M : Model I X H A F) (K : Family F X)
+    (p : Nat → Policy I H A) : Nat → F → X → Prop where
+  | initial {f x} : K f x → Generated M K p 0 f x
+  | extend {t f x y} : Generated M K p t f x → Step M f (p t) x y →
+      Generated M K p (t+1) f y
+
+theorem reach_iff_generated (M : Model I X H A F) (K : Family F X)
+    (p : Nat → Policy I H A) (t : Nat) (f : F) (x : X) :
+    Reach M K p t f x ↔ Generated M K p t f x := by
+  induction t generalizing x with
+  | zero =>
+    constructor
+    · intro h; exact .initial h
+    · intro h; cases h with | initial h => exact h
+  | succ t ih =>
+    constructor
+    · rintro ⟨y, hy, step⟩
+      exact .extend ((ih y).mp hy) step
+    · intro h
+      cases h with
+      | extend previous step => exact ⟨_, (ih _).mpr previous, step⟩
+
+
+#print axioms reach_iff_generated
 #print axioms local_policy_factorization
 #print axioms extends_mono
 #print axioms finite_persistent_choice
