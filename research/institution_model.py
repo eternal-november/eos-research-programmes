@@ -6,7 +6,7 @@ INSTITUTION.md for trust boundaries, global fault family, and core-adapter oblig
 from __future__ import annotations
 
 from dataclasses import dataclass, replace, asdict
-from itertools import product
+from itertools import product, permutations
 from typing import Iterable
 import json
 
@@ -194,8 +194,13 @@ def verify_current(view: GateView, auth: Authentication, u: int, artifact: tuple
 def assemble(view: GateView, auth: Authentication, messages: tuple[Signature, ...]) -> tuple[int, tuple[Signature, ...]] | None:
     for u in CONTROLS:
         payload = (view.config.digest, view.epoch, view.institution.digest, u)
-        shares = tuple(s for s in messages if s.payload == payload)
-        # Identity deduplication is explicit; repeated packets add no support.
+        # Authenticate and validate every share before its claimed identity can
+        # occupy a support slot. Otherwise an invalid/replayed packet could replace
+        # a genuine honest share or poison an otherwise valid candidate certificate.
+        shares = tuple(s for s in messages if auth.verify(s) and s.kind == "endorse"
+                       and s.era == view.config.era and s.signer in view.config.authorizers
+                       and s.payload == payload)
+        # Only valid shares reach deduplication; repeated packets add no support.
         shares = tuple({s.signer: s for s in shares}.values())
         if verify_current(view, auth, u, shares):
             return u, shares
@@ -510,6 +515,45 @@ def run_checks() -> dict:
     forged = Signature(3, 0, "endorse", (CONFIGS[0].digest, 0, state.institution.digest, 0))
     assert forged not in auth.events and not auth.verify(forged)
 
+    # Availability regression: an unauthenticated wrong-era packet claiming signer3
+    # used to overwrite that actor's genuine u=2 share during identity deduplication.
+    flood_state = State(2, frozenset({5}))
+    flood_auth = Authentication(flood_state.faults)
+    flood_view = gate_observation(flood_state)
+    flood_reports = report_round(flood_state, flood_auth, {0: 2, 1: 2, 2: 2}, {})
+    honest_shares = endorsement_round(flood_state, flood_auth, flood_reports, {})
+    assert {s.signer for s in honest_shares} == {3, 4}
+    payload2 = (CONFIGS[0].digest, 0, flood_state.institution.digest, 2)
+    poison3 = Signature(3, 1, "endorse", payload2)
+    assert not flood_auth.verify(poison3)
+    repaired = assemble(flood_view, flood_auth, honest_shares + (poison3,))
+    assert repaired is not None and repaired[0] == 2
+    assert verify_current(flood_view, flood_auth, *repaired)
+    assert {s.signer for s in repaired[1]} == {3, 4}
+    poison4 = Signature(4, 0, "unrelated", payload2)
+    valid_bad = flood_auth.adversary_emit(5, 0, "endorse", payload2)
+    wrong_era = flood_auth.adversary_emit(5, 1, "endorse", payload2)
+    wrong_kind = flood_auth.adversary_emit(5, 0, "report", payload2)
+    wrong_config = flood_auth.adversary_emit(5, 0, "endorse", (CONFIGS[1].digest, 0, flood_state.institution.digest, 2))
+    wrong_epoch = flood_auth.adversary_emit(5, 0, "endorse", (CONFIGS[0].digest, 1, flood_state.institution.digest, 2))
+    wrong_institution = flood_auth.adversary_emit(5, 0, "endorse", (CONFIGS[0].digest, 0, Institution(norm_cap=1).digest, 2))
+    unknown_signer = flood_auth.emit(99, 0, "endorse", payload2)  # authentic outsider, ineligible support
+    invalid_packets = (poison3, poison4, wrong_era, wrong_kind, wrong_config, wrong_epoch, wrong_institution, unknown_signer)
+    for invalid in invalid_packets:
+        assert not verify_current(flood_view, flood_auth, 2, honest_shares + (invalid,))
+        for packets in (honest_shares + (invalid,), (invalid,) + honest_shares,
+                        honest_shares + (invalid, valid_bad, valid_bad, invalid)):
+            result = assemble(flood_view, flood_auth, packets)
+            assert result is not None and result[0] == 2 and verify_current(flood_view, flood_auth, *result)
+            assert {3, 4} <= {s.signer for s in result[1]}
+    flood_orders = 0
+    for packets in set(permutations(honest_shares + (poison3, poison4, valid_bad, valid_bad, wrong_era))):
+        result = assemble(flood_view, flood_auth, packets)
+        assert result is not None and result[0] == 2 and verify_current(flood_view, flood_auth, *result)
+        assert {s.signer for s in result[1]} == {3, 4, 5}
+        flood_orders += 1
+    assert flood_orders == 2520
+
     # Old key retention is not clean current-key repair; no temporal claim from raw timestamps.
     leaked = Authentication(frozenset(), frozenset({(3, 0)}))
     old_forged = leaked.adversary_emit(3, 0, "endorse", (CONFIGS[0].digest, 0, state.institution.digest, 2))
@@ -558,6 +602,7 @@ def run_checks() -> dict:
     return {"capacity_grid_cases": capacity_checks, "local_support_profiles": local_checks,
             "global_fault_sets": len(finite_fault_family()), "recovery_traces": trace_count,
             "realized_service_epochs": epochs, "breach_histories": monitor_checks,
+            "invalid_share_orderings": flood_orders,
             "counterexamples": {"wrong_order_successors": unsafe_wrong_order,
                                 "mixed_scope_unsafe_successor": 10,
                                 "unauthorized_bypass_effect": (closed.x, affected.x),
