@@ -8,6 +8,18 @@ Program target: generalize Byzantine control over ledger state to distributed co
 
 The full-program Goal is active. [Program completion contract](research/PROGRAM-CONTRACT.md) records mandatory obligations, conditional branches, assembly requirements and current gaps. The previous increment remains checked evidence, not program closure. Initial read-only source and adequacy assessments are complete or in progress; the coordinator owns integration. The worktree is verified at 73795150ccedf2d8ecad3670040d4b963064f901.
 
+## Active integration
+
+The coordinator owns the shared Execution.lean, THEORY.md and core_model.py; eighteen core declarations pass Lean, with independent semantic review pending. The full-program Goal remains active. All writing workers start at 50fb410550cac5c95cb943338f2eddae13e161b2 and own disjoint artifacts under research/.
+
+| Contribution | Retained worker worktree / branch | Incoming result and remaining check |
+|---|---|---|
+| Witnessed evidence and timed control | C:\Users\Sean\.codex\worktrees\byzantine-program-evidence\eos-garden; codex/byzantine-program-evidence-20261021 | e37ec4f408ee83c19028ad95da9f95cb8d4e88fd; inspect, integrate, rerun and independently review. |
+| Institutional recovery | C:\Users\Sean\.codex\worktrees\byzantine-program-institutions\eos-garden; codex/byzantine-program-institutions-20261021 | 31700ff474db43d38c5fa1ed5271359fe7690402; inspect, integrate, rerun and independently review. |
+| Digital protocol and certificate knowledge | C:\Users\Sean\.codex\worktrees\byzantine-program-digital\eos-garden; codex/byzantine-program-digital-20261021 | Writing worker is finishing the checked protocol-generated model; incoming commit pending. |
+
+Each contribution still needs an explicit common-core adapter and cross-workstream compatibility review. No worker completion claim closes the program.
+
 ## Checked increment
 
 [Permissive authorization and bounded physical influence](research/README.md) is the maintained synthesis and claim ledger. It constructs a local noisy-sensing/Byzantine-authorization/hostile-flow controller with recurring service; proves that median-only singleton endorsements cannot always match; reconstructs Q2/Q3 access conditions and a signed digital baseline; and records epistemic, delayed, and continuous-transfer failures. [Completion audit](research/COMPLETION.md), [source assessment](research/SOURCES.md), [Lean proofs](research/Control.lean), and [executable checks](research/check_models.py) state verification and residuals. Run research/verify.ps1 to reproduce.
