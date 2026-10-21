@@ -4,6 +4,10 @@ Problem maturity: design for the general program; the selected discrete fragment
 
 Program target: generalize Byzantine control over ledger state to distributed control over generally specified state. The original [handoff](handoff/HANDOFF.md) remains the program specification and [EXECUTION.md](handoff/EXECUTION.md) governs continued delegation and isolation.
 
+## Program continuation
+
+The full-program Goal is active. [Program completion contract](research/PROGRAM-CONTRACT.md) records mandatory obligations, conditional branches, assembly requirements and current gaps. The previous increment remains checked evidence, not program closure. Initial read-only source and adequacy assessments are complete or in progress; the coordinator owns integration. The worktree is verified at 73795150ccedf2d8ecad3670040d4b963064f901.
+
 ## Checked increment
 
 [Permissive authorization and bounded physical influence](research/README.md) is the maintained synthesis and claim ledger. It constructs a local noisy-sensing/Byzantine-authorization/hostile-flow controller with recurring service; proves that median-only singleton endorsements cannot always match; reconstructs Q2/Q3 access conditions and a signed digital baseline; and records epistemic, delayed, and continuous-transfer failures. [Completion audit](research/COMPLETION.md), [source assessment](research/SOURCES.md), [Lean proofs](research/Control.lean), and [executable checks](research/check_models.py) state verification and residuals. Run research/verify.ps1 to reproduce.
