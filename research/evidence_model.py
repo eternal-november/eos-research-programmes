@@ -38,6 +38,9 @@ class Parameters:
     error: F = F(1, 4)
     period: F = F(1)
     delay_slots: int = 1
+    max_age: F = F(0)
+    quantization_step: F = F(1, 4)
+    other_error: F = F(1, 8)
 
     @property
     def delay(self) -> F:
@@ -45,14 +48,30 @@ class Parameters:
 
     @property
     def radius(self) -> F:
-        return self.error + self.hostile * self.delay
+        return self.error + self.hostile * (self.max_age + self.delay)
 
-    def validate(self) -> None:
+    def validate_ideal(self) -> None:
         assert self.period > 0 and self.delay_slots >= 1
-        assert self.hostile >= 0 and self.error >= 0
+        assert self.hostile >= 0 and self.error >= 0 and self.max_age >= 0
         assert self.demand >= self.hostile
         assert self.capacity >= self.demand + self.hostile
         assert self.safe.high - self.safe.low >= 4 * self.radius + 2 * self.hostile * self.period
+
+    def validate(self) -> None:
+        """Constructive finite-message subclass; ideal epsilon=0 is separate."""
+        assert type(self.delay_slots) is int
+        assert all(isinstance(v,F) for v in (self.safe.low,self.safe.high,self.demand,
+            self.hostile,self.capacity,self.error,self.period,self.max_age,
+            self.quantization_step,self.other_error))
+        self.validate_ideal()
+        assert self.quantization_step > 0 and self.other_error >= 0
+        assert self.quantization_step/2 + self.other_error <= self.error
+
+
+def quantize_rational(value: F, step: F) -> F:
+    """Executable restriction of Q_q(z)=q floor(z/q+1/2); ties go upward."""
+    assert step > 0
+    return step * ((value/step + F(1,2)) // 1)
 
 
 @dataclass(frozen=True)
@@ -65,6 +84,8 @@ class Segment:
 @dataclass(frozen=True)
 class Report:
     signer: int
+    epoch: int
+    round_at: F
     sampled_at: F
     value: F
 
@@ -92,6 +113,8 @@ class Endorsement:
     signer: int
     epoch: int
     target_slot: int
+    round_at: F
+    effect_at: F
     schedule: tuple[Segment, ...]
     allowed: Interval
 
@@ -115,22 +138,51 @@ class Decision:
     views: tuple[LocalView, ...]
 
 
-def nominal_integral(schedule: tuple[Segment, ...], start: F, end: F, demand: F) -> F:
-    """Require exact coverage: silently dropping a queued/past segment is illegal."""
+def canonical_schedule(schedule: tuple[Segment, ...], start: F, end: F) -> tuple[Segment, ...]:
+    """Unique merged representation of the input function on the fixed window.
+
+    Clip irrelevant history; merge equal adjacent/overlapping pieces; reject gaps
+    and conflicting overlaps. Segmentations of the same function bind identically.
+    """
     assert start <= end
-    cursor, total = start, F(0)
-    for segment in sorted(schedule, key=lambda s: s.start):
+    merged = []
+    cursor = start
+    for segment in sorted(schedule, key=lambda s: (s.start,s.end)):
+        assert segment.start <= segment.end
         left, right = max(start, segment.start), min(end, segment.end)
         if left < right:
-            assert left == cursor, "gap or overlap in authenticated effect schedule"
-            total += (right - left) * (segment.control - demand)
-            cursor = right
+            assert left <= cursor, "gap in authenticated effect schedule"
+            if merged and left < cursor:
+                assert segment.control == merged[-1].control, "conflicting effect schedule"
+            if merged and segment.control == merged[-1].control:
+                merged[-1] = Segment(merged[-1].start,max(cursor,right),segment.control)
+            else:
+                assert left == cursor
+                merged.append(Segment(left,right,segment.control))
+            cursor = max(cursor,right)
     assert cursor == end, "schedule does not cover prediction horizon"
-    return total
+    return tuple(merged)
+
+
+def snapshot_window(round_at: F, effect_at: F, p: Parameters) -> tuple[F,F]:
+    assert round_at >= 0 and effect_at >= round_at
+    return max(F(0),round_at-p.max_age),effect_at
+
+
+def nominal_integral(schedule: tuple[Segment, ...], start: F, end: F, demand: F) -> F:
+    return sum(((s.end-s.start)*(s.control-demand)
+                for s in canonical_schedule(schedule,start,end)), F(0))
+
+
+def current_report(report: Report, view: LocalView, p: Parameters) -> bool:
+    return (report.signer in ACTORS and report.epoch == view.epoch
+            and report.round_at == view.round_at
+            and isinstance(report.sampled_at,F) and isinstance(report.value,F)
+            and max(F(0),view.round_at-p.max_age) <= report.sampled_at <= view.round_at)
 
 
 def report_interval(report: Report, view: LocalView, p: Parameters) -> Interval:
-    assert report.sampled_at <= view.effect_at
+    assert current_report(report,view,p)
     shift = nominal_integral(view.schedule, report.sampled_at, view.effect_at, p.demand)
     radius = p.error + p.hostile * (view.effect_at - report.sampled_at)
     return Interval(report.value + shift - radius, report.value + shift + radius)
@@ -144,14 +196,11 @@ def infer_branches(view: LocalView, p: Parameters,
     constraints = {i: None for i in ACTORS}
     seen = set()
     for report in view.reports:
-        if report.signer not in ACTORS or report.signer in seen:
-            continue
-        seen.add(report.signer)
-        if (not isinstance(report.sampled_at,F) or not isinstance(report.value,F)
-                or report.sampled_at < 0 or report.sampled_at > view.round_at):
+        if not current_report(report,view,p) or report.signer in seen:
             continue
         try:
             constraints[report.signer] = report_interval(report, view, p)
+            seen.add(report.signer)  # Validation precedes dedup: stale replay cannot suppress a fresh report.
         except AssertionError:
             pass  # An unavailable/gapped past schedule licenses no prediction.
     branches = []
@@ -174,6 +223,10 @@ def certificate(envelope: Interval, p: Parameters) -> Interval | None:
 
 
 def local_policy(view: LocalView, p: Parameters, family=FAULT_FAMILY) -> Endorsement | None:
+    try:
+        schedule = canonical_schedule(view.schedule,*snapshot_window(view.round_at,view.effect_at,p))
+    except AssertionError:
+        return None
     branches = infer_branches(view, p, family)
     if not branches:
         return None  # Inconsistent evidence is not used as a vacuous certificate.
@@ -181,18 +234,22 @@ def local_policy(view: LocalView, p: Parameters, family=FAULT_FAMILY) -> Endorse
     allowed = certificate(hull, p)
     if allowed is None:
         return None
-    return Endorsement(view.observer, view.epoch, view.target_slot, view.schedule, allowed)
+    return Endorsement(view.observer, view.epoch, view.target_slot, view.round_at,
+                       view.effect_at,schedule,allowed)
 
 
 def gate_select(messages: tuple[Endorsement, ...], epoch: int, target_slot: int,
-                schedule: tuple[Segment, ...], p: Parameters) -> tuple[F, tuple[int, ...]]:
+                schedule: tuple[Segment, ...], p: Parameters, *,
+                round_at: F, effect_at: F) -> tuple[F, tuple[int, ...]]:
     """Authentication is an ideal input-channel condition, not implemented crypto.
     Repeated identities do not add shares. A differing epoch/slot/FIFO is rejected.
     """
+    schedule = canonical_schedule(schedule,*snapshot_window(round_at,effect_at,p))
     accepted = {}
     for message in messages:
         if (message.signer not in ACTORS or message.signer in accepted
                 or message.epoch != epoch or message.target_slot != target_slot
+                or message.round_at != round_at or message.effect_at != effect_at
                 or message.schedule != schedule):
             continue
         allowed = message.allowed.intersect(Interval(F(0), p.capacity))
@@ -210,8 +267,9 @@ def gate_select(messages: tuple[Endorsement, ...], epoch: int, target_slot: int,
 
 def schedule_of(state: TimedState, p: Parameters) -> tuple[Segment, ...]:
     assert len(state.pending) == p.delay_slots
-    return tuple(Segment(state.time + j*p.period, state.time + (j+1)*p.period, u)
-                 for j, u in enumerate(state.pending))
+    pending = tuple(Segment(state.time + j*p.period, state.time + (j+1)*p.period, u)
+                    for j, u in enumerate(state.pending))
+    return canonical_schedule(state.past+pending,*snapshot_window(state.time,state.time+p.delay,p))
 
 
 def observe(state: TimedState, observer: int, reported: tuple[F, ...],
@@ -219,7 +277,7 @@ def observe(state: TimedState, observer: int, reported: tuple[F, ...],
     """Observation map receives externally generated reports; hides inventory/B."""
     return LocalView(observer, state.epoch, state.slot + p.delay_slots,
                      state.time + p.delay, state.time,
-                     tuple(Report(s, state.time, reported[s]) for s in ACTORS),
+                     tuple(Report(s, state.epoch,state.time,state.time,reported[s]) for s in ACTORS),
                      schedule_of(state, p))
 
 
@@ -236,9 +294,10 @@ def decide(state: TimedState, reports: tuple[tuple[F, ...], ...],
             messages.append(message)
         elif byzantine_shares:
             messages.append(Endorsement(i, view.epoch, view.target_slot,
-                                        view.schedule, Interval(F(-100), F(100))))
+                                        view.round_at,view.effect_at,view.schedule,Interval(F(-100), F(100))))
     command, support = gate_select(tuple(messages), state.epoch,
-                                  state.slot + p.delay_slots, schedule_of(state, p), p)
+                                  state.slot + p.delay_slots, schedule_of(state, p), p,
+                                  round_at=state.time,effect_at=state.time+p.delay)
     return Decision(command, support, tuple(messages), views)
 
 
@@ -271,8 +330,11 @@ def tube_is_safe(tube: tuple[Interval, ...], p: Parameters) -> bool:
 
 
 def make_reports(x: F, faults: frozenset[int], noise: tuple[F, ...],
-                 faulty_values: tuple[F, ...]) -> tuple[tuple[F, ...], ...]:
-    return tuple(tuple(faulty_values[i] if s in faults else x+noise[s]
+                 faulty_values: tuple[F, ...], *,
+                 quantization_step: F | None = None) -> tuple[tuple[F, ...], ...]:
+    honest = tuple(x+v if quantization_step is None else quantize_rational(x+v,quantization_step)
+                   for v in noise)
+    return tuple(tuple(faulty_values[i] if s in faults else honest[s]
                        for s in ACTORS) for i in ACTORS)
 
 
@@ -315,17 +377,26 @@ def witness_checks() -> dict:
     assert len({x for x, _ in labelled}) == 1
     assert len({next(iter(b)) for _, b in labelled}) == 2
     # These actual reports operationally rule out no-fault, but support two fault identities.
-    p = Parameters()
+    p = Parameters(error=F(3,8),other_error=F(1,4))
+    p.validate()
     disagreement_view = LocalView(2, 0, 0, F(0), F(0),
-        (Report(0,F(0),F(0)), Report(1,F(0),F(1)), Report(2,F(0),F(1,2))), ())
+        (Report(0,0,F(0),F(0),F(0)), Report(1,0,F(0),F(0),F(1)),
+         Report(2,0,F(0),F(0),F(1,2))), ())
     disagreement = infer_branches(disagreement_view, p)
     assert {b.faults for b in disagreement} == {frozenset((0,)),frozenset((1,))}
-    assert {b.states for b in disagreement} == {Interval(F(1,4),F(1,4)),Interval(F(3,4),F(3,4))}
+    assert {b.states for b in disagreement} == {Interval(F(1,8),F(3,8)),Interval(F(5,8),F(7,8))}
+    # Both fault identities have actual quantizer-generated witnesses, not merely
+    # boundary points admitted by a conservative closed error interval.
+    world0 = make_reports(F(3,4),frozenset((0,)),(F(0),F(1,4),F(-1,4)),(F(0),)*3,
+                          quantization_step=p.quantization_step)
+    world1 = make_reports(F(1,4),frozenset((1,)),(F(-1,4),F(0),F(1,4)),(F(1),)*3,
+                          quantization_step=p.quantization_step)
+    assert world0 == world1 == ((F(0),F(1),F(1,2)),)*3
     assert not set.intersection(*(set(b.faults) for b in disagreement))
     chosen = F(5,4)
     assert all(certificate(b.states,p).contains(chosen) for b in disagreement)
     # Honest-looking reports admit both no-fault and silent-fault worlds.
-    plausible = replace(disagreement_view, reports=tuple(Report(i,F(0),F(1)) for i in ACTORS))
+    plausible = replace(disagreement_view, reports=tuple(Report(i,0,F(0),F(0),F(1)) for i in ACTORS))
     assert {b.faults for b in infer_branches(plausible,p)} == set(FAULT_FAMILY)
     # Reliable broadcast can prevent recipient-dependent packets while carrying a false value.
     broadcast_attack = make_reports(F(1),frozenset((0,)),(F(0),)*3,(F(8),)*3)
@@ -344,8 +415,12 @@ def run_trace(steps: int = 8, p: Parameters = Parameters()) -> list[dict]:
     faults = frozenset((0,))  # One actor controls both the corrupt sensor and authorizer.
     records = []
     for k in range(steps):
-        noise = (F(0), p.error if k%2 else -p.error, -p.error if k%2 else p.error)
-        reports = make_reports(state.inventory, faults, noise, (F(-8), F(8), F(-8)))
+        noise = (F(0), p.other_error if k%2 else -p.other_error,
+                 -p.other_error if k%2 else p.other_error)
+        reports = make_reports(state.inventory, faults, noise, (F(-8), F(8), F(-8)),
+                               quantization_step=p.quantization_step)
+        assert all(abs(row[s]-state.inventory) <= p.error and row[s] % p.quantization_step == 0
+                   for row in reports for s in ACTORS if s not in faults)
         decision = decide(state, reports, faults, bool(k%2), p)
         disturbance = p.hostile if k%3 else -p.hostile
         nxt = plant_step(state, decision.control, disturbance, p)
@@ -361,10 +436,74 @@ def run_trace(steps: int = 8, p: Parameters = Parameters()) -> list[dict]:
     return records
 
 
+def implementation_boundary_checks(p: Parameters) -> dict:
+    quantizer_cases = 0
+    tiny = F(1,10000)
+    for k, offset in product(range(-16,17),
+            (-p.quantization_step/2-tiny,-p.quantization_step/2,-p.quantization_step/2+tiny,
+              p.quantization_step/2-tiny,p.quantization_step/2,p.quantization_step/2+tiny)):
+        x = k*p.quantization_step+offset
+        for other in (-p.other_error,F(0),p.other_error):
+            y = quantize_rational(x+other,p.quantization_step)
+            assert y % p.quantization_step == 0
+            assert abs(y-(x+other)) <= p.quantization_step/2
+            assert abs(y-x) <= p.error
+            quantizer_cases += 1
+    ideal_exact = replace(p,error=F(0),hostile=F(0))
+    ideal_exact.validate_ideal()
+    try:
+        ideal_exact.validate()
+        raise RuntimeError("zero-error finite quantizer was incorrectly admitted")
+    except AssertionError:
+        pass
+    whole = (Segment(F(0),F(1),F(1)),)
+    split = (Segment(F(0),F(1,2),F(1)),Segment(F(1,2),F(1),F(1)))
+    assert canonical_schedule(whole,F(0),F(1)) == canonical_schedule(split,F(0),F(1))
+    other_timing = (Segment(F(0),F(1,2),F(0)),Segment(F(1,2),F(1),F(2)))
+    assert nominal_integral(whole,F(0),F(1),p.demand) == nominal_integral(other_timing,F(0),F(1),p.demand)
+    assert canonical_schedule(whole,F(0),F(1)) != canonical_schedule(other_timing,F(0),F(1))
+    state = TimedState(F(0),F(2),(F(1),))
+    view = observe(state,0,(F(2),)*3,p)
+    first = local_policy(view,p)
+    second = local_policy(replace(view,observer=1,schedule=split),p)
+    assert first is not None and second is not None and first.schedule == second.schedule
+    gate_select((first,second),0,1,split,p,round_at=F(0),effect_at=F(1))
+    # A fixed retained window prevents recipient-dependent history prefixes from changing the ID.
+    extra_past = (Segment(F(-1),F(0),F(99)),)+whole
+    assert local_policy(replace(view,schedule=extra_past),p) == first
+    age = replace(p,max_age=F(1))
+    age.validate()
+    later = TimedState(F(1),F(2),(F(1),),past=(Segment(F(0),F(1),F(2)),))
+    current = observe(later,0,(F(2),)*3,age)
+    # This old sample is still within max_age and was valid in round 0. Its old
+    # collection binding must nevertheless not reserve identity 0 in round 1.
+    old_collection = Report(0,0,F(0),F(0),F(1))
+    assert F(0) >= current.round_at-age.max_age
+    assert infer_branches(replace(current,reports=(old_collection,)+current.reports),age) == infer_branches(current,age)
+    new_era = replace(current,epoch=1,reports=tuple(replace(r,epoch=1) for r in current.reports))
+    assert infer_branches(replace(new_era,reports=(current.reports[0],)+new_era.reports),age) == infer_branches(new_era,age)
+    too_old = replace(current.reports[0],sampled_at=F(0))
+    fresh_params = replace(age,max_age=F(0))
+    current_fresh = replace(current,schedule=canonical_schedule(current.schedule,F(1),F(2)))
+    assert infer_branches(replace(current_fresh,reports=(too_old,)+current_fresh.reports),fresh_params) == infer_branches(current_fresh,fresh_params)
+    assert age.radius == F(3,4) and age.radius > p.radius
+    # Reject wrong round/effect before identity dedup at the authorization boundary too.
+    stale = replace(first,round_at=F(-1))
+    gate_select((stale,first,second),0,1,whole,p,round_at=F(0),effect_at=F(1))
+    assert not p.safe.contains(p.safe.high+F(1,4))  # Even a bounded reset can break safety immediately.
+    return {"quantizer_rational_boundary_cases":quantizer_cases,
+            "ideal_zero_error_separated_from_finite_messages":True,
+            "canonical_split_schedule_regression":True,
+            "equal_integrals_do_not_identify_schedule":True,
+            "collection_and_age_replay_cases":3,
+            "bounded_reset_counterexample":True}
+
+
 def run_checks() -> dict:
     p = Parameters()
     p.validate()
     witnesses = witness_checks()
+    implementation_boundaries = implementation_boundary_checks(p)
     states = decisions = effects = branch_checks = 0
     for x, q in product((F(k, 2) for k in range(9)), (F(k, 2) for k in range(5))):
         state = TimedState(F(0), x, (q,))
@@ -408,15 +547,15 @@ def run_checks() -> dict:
     good = local_policy(view, p)
     assert good is not None
     for corrupt_reports in (view.reports[1:],
-                            (Report(0,F(99),F(2)),)+view.reports[1:],
-                            (Report(0,F(-1),F(2)),)+view.reports[1:]):
+                            (Report(0,0,F(0),F(99),F(2)),)+view.reports[1:],
+                            (Report(0,0,F(0),F(-1),F(2)),)+view.reports[1:]):
         packets = tuple(local_policy(replace(view,observer=i,reports=corrupt_reports),p) for i in (1,2))
         assert all(packet is not None for packet in packets)
-        gate_select(packets,0,1,view.schedule,p)
+        gate_select(packets,0,1,view.schedule,p,round_at=F(0),effect_at=F(1))
     for invalid in (replace(good, signer=1, epoch=1), replace(good, signer=1, target_slot=9),
                     replace(good, signer=1, schedule=()), good):
         try:
-            gate_select((good, invalid), 0, 1, view.schedule, p)
+            gate_select((good, invalid), 0, 1, view.schedule, p,round_at=F(0),effect_at=F(1))
             raise AssertionError("invalid context or repeated identity produced support")
         except ValueError:
             pass
@@ -428,13 +567,15 @@ def run_checks() -> dict:
     fa = local_policy(observe(fast, 0, (F(1),)*3, exact), exact)
     assert sl is not None and fa is not None and sl.allowed != fa.allowed
     # A one-unit-old physical reading needs both past realized nominal input and FIFO.
-    aged = LocalView(1,0,2,F(2),F(1),tuple(Report(i,F(0),F(2)) for i in ACTORS),
+    age_params = replace(p,max_age=F(1))
+    age_params.validate()
+    aged = LocalView(1,0,2,F(2),F(1),tuple(Report(i,0,F(1),F(0),F(2)) for i in ACTORS),
                      (Segment(F(0),F(1),F(1)),Segment(F(1),F(2),F(0))))
-    old_report = report_interval(aged.reports[0],aged,p)
+    old_report = report_interval(aged.reports[0],aged,age_params)
     assert old_report == Interval(F(1,4),F(7,4))
     assert old_report.contains(F(1,2)) and old_report.contains(F(1))
-    assert local_policy(aged,p) is not None
-    assert local_policy(replace(aged,schedule=aged.schedule[1:]),p) is None
+    assert local_policy(aged,age_params) is not None
+    assert local_policy(replace(aged,schedule=aged.schedule[1:]),age_params) is None
     # Real-grid repair: old integer controls have empty overlap; a rational command succeeds.
     old = Parameters(safe=Interval(F(2),F(8)), hostile=F(1), error=F(0))
     left, right = certificate(Interval(F(5,2),F(9,2)), old), certificate(Interval(F(9,2),F(13,2)), old)
@@ -443,6 +584,7 @@ def run_checks() -> dict:
     assert common is not None and common.contains(F(3,2))
     assert not any(common.contains(F(k)) for k in (0,1,2))
     return {"lean_expected_declarations": 19, "witnesses": witnesses,
+            "implementation_boundaries":implementation_boundaries,
             "finite_scope": "T=1, delta=1, x/q half-grid, endpoint honest noise, 3 corrupt payloads per honest recipient, 1 joint fault, optional broad corrupt endorsement, 3 disturbances",
             "viable_fifo_states": states, "decisions": decisions, "realized_effects": effects,
             "fault_labelled_branch_checks": branch_checks, "freshness_cases": 4,
