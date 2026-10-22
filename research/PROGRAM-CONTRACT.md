@@ -1,6 +1,6 @@
 # Program-level completion contract
 
-Status: all mandatory obligations discharged at their stated scopes; independent full-program audit passed. Governing specification: [HANDOFF](../handoff/HANDOFF.md), interpreted by the continuation instruction requiring the full mandatory program, coherent assembly, and an independent program-level audit. The prior [increment audit](COMPLETION.md) remains evidence about its own scope only. The [program audit](PROGRAM-AUDIT.md) records full closure; no narrower milestone replaced the completion condition.
+Status: historical completion contract and ledger for the audited theory family. The current intended target is clarified in [MOTIVATING-PROBLEM](../MOTIVATING-PROBLEM.md); its independent-actuation and fallible-enforcement requirements are not discharged by the protected-gate constructions. The earlier scoped audit and its correction are retained in [PROGRAM-AUDIT](PROGRAM-AUDIT.md). The rows below remain useful obligations and evidence, not a current blanket completion verdict.
 
 ## Governing judgment
 
@@ -57,4 +57,4 @@ Coordinator owns this integration checkout and all Git mutations. Current verifi
 
 Initial delegated assessments were read-only. Subsequent complementary writing used separate worktrees with recorded bases and disjoint ownership; returned work was reviewed and rechecked before integration. The integration coordinator remains the sole owner of this checkout and index. Retained worktrees and current resumption obligations are recorded in the parent TODO.
 
-The persistent program Goal was retained across milestones. Full closure is supported by the independent assessment against P1–P16 and the original handoff in PROGRAM-AUDIT; the component milestone audits alone were insufficient. Repository acceptance remains a separate decision.
+The earlier Goal and its closure record concern the scope then audited. The current clarification exposes an unresolved architectural obligation rather than an optional deployment footnote; the historical ledger must not be used to declare that target complete. Repository acceptance remains a separate decision.

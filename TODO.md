@@ -1,35 +1,43 @@
 # Byzantine control research state
 
-Problem maturity: stabilize within the completed theory-family scope. Artifact condition: verified within the declared mathematical and executable scopes; independent program-level completion audit passed. Repository acceptance remains pending.
+Problem maturity: design for the clarified motivating target; the prior conditional constructions remain developed and checked at their recorded scopes. Artifact condition: motivating formulation is a draft with source and semantic checks; historical proof artifacts are preserved. Repository acceptance remains pending.
 
-The target is the full program in [HANDOFF](handoff/HANDOFF.md), governed by [EXECUTION](handoff/EXECUTION.md) and the continuation's [P1–P16 completion contract](research/PROGRAM-CONTRACT.md). The full mandatory program is discharged; the independent verdict and exact reproduction are recorded in [PROGRAM-AUDIT](research/PROGRAM-AUDIT.md). [PROGRAM](research/PROGRAM.md) is the integrated entry point; the earlier [increment](research/README.md) and [increment audit](research/COMPLETION.md) retain their narrower scope.
+## Current target
 
-## Completion and resumption
+[MOTIVATING-PROBLEM](MOTIVATING-PROBLEM.md) is the maintained formulation of the user's clarified intent: independently acting participants with different information and capabilities must protect a shared world against a joint adversary, including fallible counterintervention, without assuming a protected global gate mediates every consequential effect. The community flood scenario is an instance, not the definition. The document includes the mathematical judgment, normative and probabilistic qualifications, a model-relative fault taxonomy, further examples and checked prior-art boundaries.
 
-The coordinator owns integration on codex/byzantine-control-20261021 in C:\Users\Sean\.codex\worktrees\byzantine-control-research\eos-garden. The primary checkout is read-only; no merge or push is authorized by this workflow.
+The original [handoff packet](handoff/HANDOFF.md) remains unchanged as the input to the prior audited package; [EXECUTION](handoff/EXECUTION.md) continues to govern isolation, ownership, source assessment and checking. Read the current motivating formulation with it. The earlier [P1-P16 ledger](research/PROGRAM-CONTRACT.md) and [audit](research/PROGRAM-AUDIT.md) now explicitly distinguish the protected-interface family from the unresolved clarified target. Their completion record must not substitute for the defining independent-enforcement result.
 
-The audited candidate is 0f2410b63067ea0e603147d0362df0e4cb398cc0. Both coordinator and independent replay reproduced program_results.json exactly, including 26 source bindings; all 129 Lean declarations passed. No mandatory research obligation remains active under this contract. The final status-record commit changes no mathematical or executable content.
+## Current result and open design obligation
 
-For reproduction, run research/verify_program.ps1. For continuation, select a named conditional extension below, retain the existing proofs where their hypotheses survive, and establish its new completion contract. Do not reinterpret a reserved extension as an undisclosed gap in this completed program.
+This formulation turn preserves the user's five defining features and supplies a precise deadline indistinguishability obstruction. The almost-sure version requires a coupling of complete joint honest decision laws, not merely matching individual marginals or one selected random tape. Admissibility constrains prescribed compliant responses and global protected outcomes while unlawful Byzantine effects remain in the plant. Universal compliance by every participant is a distinct, possibly immediately unrealizable mission.
 
-All component and adapter writing has been integrated. The final physical repair adds typed initialization, explicit administrative/input-selection events, retained histories, a separate elapsed-time decoder, bounded zero-time retries and waiting-ready maintenance. The permanent regression matches the independent waiting-permission challenge.
+A future bounded benchmark needs an explicit primitive-interface inventory and joint fault scenario, an observation/capability/timing family, initial information scenarios, service, and stipulated intervention rules. It must preserve independent actuation and permit faults in enforcement components. The success condition is a locally realizable strategy with a checked preservation argument, a stated-class characterization, or a legal obstruction at that scope. Introducing a universally protected executor does not close this obligation.
 
-Retained worker branches/worktrees are codex/byzantine-program-evidence-20261021 in C:\Users\Sean\.codex\worktrees\byzantine-program-evidence\eos-garden, codex/byzantine-program-institutions-20261021 in the analogous byzantine-program-institutions directory, codex/byzantine-program-digital-20261021 in byzantine-program-digital, and codex/byzantine-program-timed-recovery-20261021 in byzantine-program-timed-recovery. They are retained for recovery; no worker owns the integration index.
+Potential sources to import/adapt are Usevitch-Panagou's adversarial sampled-control conditions, the model of robot containment in Ashkenazi et al., decentralized supervisory controllability/coobservability, and architecture-sensitive distributed synthesis. Their checked assumptions and versions are in MOTIVATING-PROBLEM. No novelty or complete literature coverage is claimed. The open work is to connect those results under the selected joint assumptions, not simply rename them.
 
-## Maintained results and review boundaries
+Specification enforcement under fixed rules remains distinct from governance of the rules and powers. A future change to this boundary must preserve the affected stakeholders, authority to revise rules and constraints on abusive enforcement.
 
-The live obligation ledger is in PROGRAM-CONTRACT.md; detailed claim identities reside in THEORY, EVIDENCE, DIGITAL, INSTITUTION, TIMED-RECOVERY and QUORUM-ALIGNMENT. The source routing index is PROGRAM-SOURCES.md. verify_program.ps1 reproduces the integrated package, including the retained prior increment.
+## Retained mathematical evidence
 
-Independent review has checked the generic core, digital protocol/adapter, witnessed/timed construction and institutional/recovery components at recorded scopes. It led to substantive repairs: out-of-alphabet replay, authentication before support deduplication, finite-message quantization, canonical schedule binding, age validation, digital per-profile totality, late signing, and total guarded epistemic semantics. The subsequent independent whole-program audit checked their assembly and supports completion.
+[PROGRAM](research/PROGRAM.md) is the synthesis of the existing conditional theory family; detailed definitions and results remain in THEORY, EVIDENCE, DIGITAL, INSTITUTION, TIMED-RECOVERY and QUORUM-ALIGNMENT. Their demonstrated local-information, capability, support and refinement results can be reused where the new hypotheses match.
 
-## Conditional extensions and realization premises
+The historical audited candidate is 0f2410b63067ea0e603147d0362df0e4cb398cc0, with status-record commit ea05711ce77b586e77c9806911efc4fa1f3fbf02. The recorded checks cover 114 research declarations plus 15 foundations and exact executable-manifest reproduction. This formulation turn changes none of the hashed proof/check inputs. Run research/verify_program.ps1 to reproduce the existing package; a passing result certifies that package's stated scopes, not the unsolved new benchmark.
 
-Full Basic/chained HotStuff, unrestricted distributed synthesis, arbitrary nonlinear dynamics, mobile corruption, arbitrary membership migration, cryptographic implementation, empirical isolation/calibration, privacy/incentives and jurisdictional recognition are not silently covered. Their reopening conditions and exact boundaries are in the component artifacts and source index. A bounded search is not a novelty claim.
+The previous reviews repaired replay, packet deduplication, quantization, schedule/age binding, digital request totality, late signing, initialization, administrative run composition and waiting-ready service. Their records are retained in the audit. A checked implementation under a zero-failure gate premise does not certify robustness to a faulty gate.
 
-The richer full-report-vector singleton-selector and inter-authorizer-communication comparison remains a reserve lead: C5 excludes only median-only locally certified selectors, and must not be reused as a broader impossibility. The old stale-evidence and continuous-grid failures are now consumed by the timed/continuous constructions; their witnesses remain in the earlier increment.
+## Boundaries and reserve leads
 
-The delivered constructions terminate assurance at named calibration, channel/deadline, authentication, gate/actuator/service-port and clean-installation premises. Failure witnesses identify their consumers. Finite tests do not establish those physical premises, and a monitor cannot replace prevention without a safe response argument.
+Full/chained HotStuff, arbitrary nonlinear control, mobile corruption, unrestricted synthesis, privacy/incentives and jurisdictional recognition remain unclaimed. Empirical calibration, authentication, timing, protected actuation and installation premises remain boundaries of the old theorems. Fallible enforcement and independent actuation are now defining current requirements, not optional extensions to be excluded by that list.
+
+The richer full-report-vector singleton-selector and inter-authorizer-communication comparison remains a reserve lead: C5 excludes median-only locally certified selectors. Stale-evidence and continuous-grid failures remain witnesses in the earlier increment, with their scoped repairs in the timed construction.
+
+## Repository boundary
+
+Integration remains on codex/byzantine-control-20261021 in C:\Users\Sean\.codex\worktrees\byzantine-control-research\eos-garden. The coordinator owns this checkout and index; the primary checkout remains read-only. No primary merge or remote push is part of this work.
+
+Earlier evidence, institution, digital and timed-recovery worker branches/worktrees under C:\Users\Sean\.codex\worktrees\byzantine-program-* are retained for recovery. They do not replace the maintained integration branch. Current delegates are read-only and have no index or file ownership.
 
 ## Needs adjudication
 
-Whether to accept the checked definitions and results as a maintained research basis. Mathematical support, program completion and repository acceptance are separate; no acceptance decision has been made on the user's behalf.
+Whether to accept any research definitions or conclusions as a maintained basis. The user's clarification governs the intended problem, but neither the formulation nor the old mathematical checks enact repository acceptance of a theory.

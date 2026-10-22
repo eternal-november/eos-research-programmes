@@ -1,8 +1,16 @@
 # Program completion audit
 
-Status: full mandatory-program completion supported by independent audit and exact reproduction. Repository acceptance remains undecided. This record distinguishes encoded proof checking, executable verification, semantic review, program coverage and repository acceptance. The governing law is the full [HANDOFF](../handoff/HANDOFF.md) plus the continuation's [P1–P16 contract](PROGRAM-CONTRACT.md), not the prior increment's stopping condition.
+Status: historical audit with a current scope correction. The proof and reproducibility results below concern the previously audited theory family. They do not establish completion of the clarified intended problem in [MOTIVATING-PROBLEM](../MOTIVATING-PROBLEM.md). Repository acceptance remains undecided.
 
-## Claim coverage and evidence grade
+## Scope correction following the motivating-problem clarification
+
+The user has made independent physical action, imperfect local information, counterintervention and fallible enforcement defining requirements. The earlier positive physical and recovery constructions exempt the gate, exclusive actuator/service interface, isolation mechanism, schedule publisher, key installer and office from the relevant Byzantine family. Their successful checks therefore cannot establish the defining case involving independently acting malicious enforcers without a protected global execution gate.
+
+The recorded completion judgment below assessed the declared P1-P16 family under a more permissive interpretation of the physical benchmark. Retaining that historical judgment does not make the narrower interpretation adequate to the clarified intent. The blanket current-program completion claim is withdrawn for this target. An appropriate bounded construction, characterization or scope-adequate obstruction for the clarified setting remains open; defining a generic carrier capable of representing it does not discharge that obligation.
+
+This correction changes the interpretation of completion, not the old theorem statements, checked results or source manifest. The original hashed handoff packet and proof/check sources are preserved for reproducibility. The [current TODO](../TODO.md) routes subsequent work through the motivating problem. This formulation correction is not an acceptance decision.
+
+## Historical claim coverage and evidence grade
 
 The table is an obligation ledger, not a score. Every mandatory row requires adequate scope and compatible assembly; a strong result in one row cannot compensate for a gap in another. “Proved” below refers to the exact encoded or written statement at its documented scope. Executable checks do not inherit the quantifiers of the analytic proof.
 
@@ -68,14 +76,14 @@ No novelty, strongest-possible mechanism or universal threshold claim is made. T
 
 The research checkout remains separate from the primary checkout. The primary HEAD, branch, empty index, tracked diff summary and original 48-entry short-status boundary have been rechecked unchanged. The handoff packet has no diff from the previous checked increment. These are repository boundary checks, not evidence for the mathematical claims. No remote push, primary merge or institutional acceptance has occurred.
 
-## Final program-level verdict
+## Recorded verdict for the audited snapshot
 
-Completed against the full mandatory contract. A fresh independent reviewer that did not author the constructions assessed the original HANDOFF, the continuation's completion interpretation, P1–P16, their assembly and the final snapshot **0f2410b63067ea0e603147d0362df0e4cb398cc0**. Its verdict supports every mandatory row above and found no remaining substantive mandatory gap. This is full-program closure at the declared theory-family scope, not another significant increment and not repository acceptance.
+The recorded verdict was completion against the then-applied contract, subject now to the scope correction above. A fresh independent reviewer that did not author the constructions assessed the original HANDOFF, the continuation's completion interpretation, P1–P16, their assembly and the final snapshot **0f2410b63067ea0e603147d0362df0e4cb398cc0**. Its verdict supports every mandatory row above and found no remaining substantive mandatory gap. That verdict concerns the declared theory-family scope. It is not completion evidence for the clarified independent-enforcement target and is not repository acceptance.
 
 The coordinator's verify_program.ps1 run and the reviewer's separate exact aggregate replay both passed. The reviewer independently recompiled all 129 declarations against the pinned toolchain; those proof sources are unchanged in the audited candidate. All executable outputs and all 26 source bindings reproduce program_results.json exactly. Its normalized SHA-256 is **3f28a9fe3fc2d87831a799b9455d4bdf1f21289463c3edae76de41e5152145b6**.
 
 The final audit confirmed the repaired initialization, complete administrative-run transport, protected-input admissibility and waiting-ready proof cases. It also independently confirmed optimized-run refusal and observed the source-stability guard discard a moving-snapshot run. Primary-source spot-checks confirmed the recorded signed-broadcast, Q3, bounded-synthesis, enriched epistemic-update, input-FIFO and tracking-correction boundaries; they do not establish literature completeness or novelty.
 
-The only changes after the audited candidate record this verdict and update completion status and resumption pointers. They change no proof, executable model, verifier, manifest or mathematical assumption. The retained branch is codex/byzantine-control-20261021 in C:\Users\Sean\.codex\worktrees\byzantine-control-research\eos-garden. The branch contains only authorized subproject changes; the primary checkout and handoff packet remain outside the research edits. No primary merge, remote push or acceptance decision is enacted.
+The original closure commit after the audited candidate recorded the verdict and updated status and resumption pointers. The current formulation correction additionally qualifies the completion claim. Neither change alters the old proofs, executable models, verifier, manifest or mathematical assumptions. The retained branch is codex/byzantine-control-20261021 in C:\Users\Sean\.codex\worktrees\byzantine-control-research\eos-garden. The branch contains only authorized subproject changes; the primary checkout and handoff packet remain outside the research edits. No primary merge, remote push or acceptance decision is enacted.
 
-The explicit realization premises and conditional extensions listed above remain boundaries of the completed theorems. None is used as a residual substitute for an unfulfilled mandatory obligation. Further work would select a new extension or implementation validation task under its own contract.
+The realization premises listed above remain boundaries of the checked theorems. The current clarification makes independently acting, fallible enforcement a defining unresolved obligation; it cannot be dismissed as an optional deployment extension. Current work must follow MOTIVATING-PROBLEM and the subproject TODO rather than infer completion from this historical audit.
