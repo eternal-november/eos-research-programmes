@@ -52,8 +52,8 @@ theorem entry_nonblocking
     (f : Fault) (m : Mode) (s : State) (h : Entry f m s) :
     ∃ e s', Step f program s e s' := available f m s h
 
-/- Two distinct signatures from three fixed authorities include an honest signer.
-The premise is operational honest issuance on the same scoped READY artifact. -/
+/- Two distinct signatures include a path outside the executor/key-fault union.
+The premise connects uncompromised paths to operational guarded issuance. -/
 theorem threshold_ready (a0 a1 a2 v0 v1 v2 ready : Int)
     (ha0 : Bit a0) (ha1 : Bit a1) (ha2 : Bit a2)
     (hv0 : Bit v0) (hv1 : Bit v1) (hv2 : Bit v2) (hr : Bit ready)
@@ -63,6 +63,54 @@ theorem threshold_ready (a0 a1 a2 v0 v1 v2 ready : Int)
     (sound2 : a2=0 → v2=1 → ready=1) : ready=1 := by
   unfold Bit at *
   omega
+
+/- Accepted artifacts and actual executor-issued signatures are separate.
+Compromising a key does not remove its executor from the compliant set. -/
+theorem threshold_intact_vote (a0 a1 a2 v0 v1 v2 : Int)
+    (ha0 : Bit a0) (ha1 : Bit a1) (ha2 : Bit a2)
+    (hv0 : Bit v0) (hv1 : Bit v1) (hv2 : Bit v2)
+    (budget : a0+a1+a2 ≤ 1) (quorum : 2 ≤ v0+v1+v2) :
+    (a0=0 ∧ v0=1) ∨ (a1=0 ∧ v1=1) ∨ (a2=0 ∧ v2=1) := by
+  unfold Bit at *
+  omega
+
+theorem threshold_guarded_issue
+    (exec0 exec1 exec2 key0 key1 key2 v0 v1 v2 issued0 issued1 issued2 ready : Int)
+    (he0 : Bit exec0) (he1 : Bit exec1) (he2 : Bit exec2)
+    (hk0 : Bit key0) (hk1 : Bit key1) (hk2 : Bit key2)
+    (hv0 : Bit v0) (hv1 : Bit v1) (hv2 : Bit v2)
+    (budget : max exec0 key0 + max exec1 key1 + max exec2 key2 ≤ 1)
+    (quorum : 2 ≤ v0+v1+v2)
+    (path0 : exec0=0 → key0=0 → v0=1 → issued0=1)
+    (path1 : exec1=0 → key1=0 → v1=1 → issued1=1)
+    (path2 : exec2=0 → key2=0 → v2=1 → issued2=1)
+    (guard0 : exec0=0 → issued0=1 → ready=1)
+    (guard1 : exec1=0 → issued1=1 → ready=1)
+    (guard2 : exec2=0 → issued2=1 → ready=1) :
+    (exec0=0 ∧ key0=0 ∧ issued0=1 ∧ ready=1) ∨
+    (exec1=0 ∧ key1=0 ∧ issued1=1 ∧ ready=1) ∨
+    (exec2=0 ∧ key2=0 ∧ issued2=1 ∧ ready=1) := by
+  have maxBit : ∀ e k : Int, Bit e → Bit k → Bit (max e k) := by
+    intro e k he hk
+    unfold Bit at *
+    omega
+  have zeros : ∀ e k : Int, Bit e → Bit k → max e k=0 → e=0 ∧ k=0 := by
+    intro e k he hk hz
+    unfold Bit at *
+    omega
+  have hit := threshold_intact_vote (max exec0 key0) (max exec1 key1) (max exec2 key2)
+    v0 v1 v2 (maxBit _ _ he0 hk0) (maxBit _ _ he1 hk1) (maxBit _ _ he2 hk2)
+    hv0 hv1 hv2 budget quorum
+  rcases hit with h0 | h1 | h2
+  · have z := zeros _ _ he0 hk0 h0.1
+    have actual := path0 z.1 z.2 h0.2
+    exact Or.inl ⟨z.1, z.2, actual, guard0 z.1 actual⟩
+  · have z := zeros _ _ he1 hk1 h1.1
+    have actual := path1 z.1 z.2 h1.2
+    exact Or.inr (Or.inl ⟨z.1, z.2, actual, guard1 z.1 actual⟩)
+  · have z := zeros _ _ he2 hk2 h2.1
+    have actual := path2 z.1 z.2 h2.2
+    exact Or.inr (Or.inr ⟨z.1, z.2, actual, guard2 z.1 actual⟩)
 
 /- READY need not prove that the spare is healthy. Its fault-indexed disjunction
 is enough: a false READY spends the very chain-fault allowance that would otherwise
@@ -239,6 +287,8 @@ theorem shared_heat_boundary : heat 8 4 10 = 8 := by decide
 #print axioms fault_indexed_handover
 #print axioms entry_nonblocking
 #print axioms threshold_ready
+#print axioms threshold_intact_vote
+#print axioms threshold_guarded_issue
 #print axioms surviving_pair
 #print axioms replacement_slot
 #print axioms sum_slot_coverage

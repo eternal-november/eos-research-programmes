@@ -36,7 +36,12 @@ class Fault:
     planner_bad: bool = False
     actuator_bad: bool = False
     installer_bad: bool = False
-    authority: int = -1
+    authority: int = -1  # executor failure only; determines C(f)
+    ready_key_bad: bool = False
+    authority_key: int = -1
+
+    def authority_path_bad(self, identity):
+        return identity in (self.authority, self.authority_key)
 
 @dataclass(frozen=True)
 class State:
@@ -45,10 +50,14 @@ class State:
     pending: tuple[int, int, int, int]
     last_sample: int
     spare_stage: int  # ordinary control path: 0 unavailable, 1 warming, 2 warm
-    ready: bool      # artifact issued by the spare's planner, not a clean bit
+    ready: bool      # accepted artifact; may come from a compromised key
     votes: int      # distinct scoped signatures received by old planner 2
     retired: bool  # old path's release latch; faulty effect can ignore it
     evidence_scope: tuple = SCOPE
+    ready_issued: bool = False
+    ready_key_seen: bool = False
+    issued_votes: int = 0
+    key_votes: int = 0
 
     @property
     def recognized(self):
@@ -59,7 +68,7 @@ class Signature:
     signer: int
     scope: tuple
     purpose: str
-    authentic: bool = True
+    authentic: bool = True  # cryptographic validity, not executor issuance
 
 
 def public_verify(signatures, scope=SCOPE):
@@ -79,7 +88,10 @@ def valid_ready(message):
             and message.scope == SCOPE and message.purpose == "ready")
 
 
-def next_metadata(fault, state, commands, vote, selected):
+def next_metadata(fault, state, commands, actual_vote, selected,
+                  ready_key_use=False, authority_key_use=False):
+    assert not ready_key_use or fault.ready_key_bad
+    assert not authority_key_use or (selected >= 0 and selected == fault.authority_key)
     if fault.installer_bad:
         stages = range(3)
     elif state.spare_stage == 0:
@@ -88,10 +100,16 @@ def next_metadata(fault, state, commands, vote, selected):
         stages = (2,)
     else:
         stages = (2,)
-    votes = state.votes | ((1 << selected) if selected >= 0 and vote else 0)
+    issued_votes = state.issued_votes | ((1 << selected) if selected >= 0 and actual_vote else 0)
+    key_votes = state.key_votes | ((1 << selected) if selected >= 0 and authority_key_use else 0)
+    ready_issued = state.ready_issued or bool(commands[3] & 4)
+    ready_key_seen = state.ready_key_seen or ready_key_use
     for stage in stages:
-        yield (stage, state.ready or bool(commands[3] & 4), votes,
-               state.retired or bool(commands[2] & 2))
+        yield dict(spare_stage=stage, ready=ready_issued or ready_key_seen,
+                   votes=issued_votes | key_votes,
+                   retired=state.retired or bool(commands[2] & 2),
+                   ready_issued=ready_issued, ready_key_seen=ready_key_seen,
+                   issued_votes=issued_votes, key_votes=key_votes)
 
 
 def physical_interface(fault, state):
@@ -101,20 +119,36 @@ def physical_interface(fault, state):
 
 
 def metadata_invariant(fault, state):
+    permitted_key_mask = 0 if fault.authority_key < 0 else 1 << fault.authority_key
     return (physical_interface(fault, state)
-            and all(not (state.votes & (1 << j)) or j == fault.authority or state.ready
+            and state.ready == (state.ready_issued or state.ready_key_seen)
+            and (not state.ready_key_seen or fault.ready_key_bad)
+            and state.votes == (state.issued_votes | state.key_votes)
+            and state.key_votes & ~permitted_key_mask == 0
+            and all(not (state.issued_votes & (1 << j)) or j == fault.authority or state.ready
+                    for j in range(3))
+            and all(not (state.votes & (1 << j)) or fault.authority_path_bad(j) or state.ready
                     for j in range(3)))
 
 
+def authority_faults():
+    yield -1, -1
+    for identity in range(3):
+        yield identity, -1
+        yield -1, identity
+        yield identity, identity
+
+
 def all_faults():
-    chains = [(-1, False, False, False)]
+    chains = [(-1, False, False, False, False)]
     for chain in range(4):
-        for role in range(1, 8 if chain == 3 else 4):
-            chains.append((chain, bool(role & 1), bool(role & 2), bool(role & 4)))
+        for role in range(1, 16 if chain == 3 else 4):
+            chains.append((chain, bool(role & 1), bool(role & 2), bool(role & 4), bool(role & 8)))
     for motor_bad in (False, True):
-        for chain, planner, actuator, installer in chains:
-            for authority in (-1, 0, 1, 2):
-                yield Fault(motor_bad, chain, planner, actuator, installer, authority)
+        for chain, planner, actuator, installer, ready_key in chains:
+            for authority, authority_key in authority_faults():
+                yield Fault(motor_bad, chain, planner, actuator, installer, authority,
+                            ready_key, authority_key)
 
 
 def policies(wrong_order=False):
@@ -233,18 +267,26 @@ class Enactment:
                     # The carrier permits unsafe values. No transition is clipped
                     # to the mission; an attack may reach x=11 or heat=9.
                     assert 0 <= nx <= 14 and 0 <= nh <= 12
-                    for vote in auth_options:
-                        for stage, ready, votes, retired in next_metadata(fault,state,commands,vote,selected):
-                            ns = State(nx, nh, q, state.x, stage, ready, votes, retired, state.evidence_scope)
-                            bad = tuple(conduct) + self.world_violations(fault, ns)
-                            # Faulty output may withhold everything; the minimal
-                            # delivered quantity suffices for every lower-bound query.
+                    ready_uses = (False, True) if fault.ready_key_bad else (False,)
+                    authority_uses = (False, True) if selected >= 0 and selected == fault.authority_key else (False,)
+                    for vote, ready_key_use, authority_key_use in itertools.product(auth_options, ready_uses, authority_uses):
+                        for updates in next_metadata(fault,state,commands,vote,selected,
+                                                     ready_key_use,authority_key_use):
+                            ns = replace(state, x=nx, heat=nh, pending=q, last_sample=state.x, **updates)
+                            authority_conduct = []
+                            if selected >= 0 and self.compliant(fault,selected+4) and vote and observation.local[selected+4] != "ready":
+                                authority_conduct.append("authority_issued_without_ready_artifact")
+                            bad = tuple(conduct) + tuple(authority_conduct) + self.world_violations(fault, ns)
+                            # Compromised-key tokens are accepted artifacts, not
+                            # commands issued by the still-correct office executor.
                             quantity = 0 if fault.motor_bad else nx
                             delivered = frozenset(("normal",)) if quantity > 0 else frozenset()
                             event = {"commands": commands, "engagements": es, "motor": u,
-                                     "selected_authority": selected, "vote": vote,
+                                     "selected_authority": selected, "vote": int(bool(vote or authority_key_use)),
+                                     "authority_issued": vote, "authority_key_use": authority_key_use,
+                                     "ready_issued_now": bool(commands[3] & 4), "ready_key_use": ready_key_use,
                                      "actual_delivered": quantity,
-                                     "recognized": ns.recognized, "spare_stage": stage,
+                                     "recognized": ns.recognized, "spare_stage": ns.spare_stage,
                                      "retired": ns.retired}
                             yield Outcome(ns, delivered, bad, event)
 
@@ -262,29 +304,39 @@ def react(kernel, fault, state, observation, local_policies):
 
 def check_public_evidence():
     count = 0
-    for bad in (-1, 0, 1, 2):
+    key_without_issuance = 0
+    for bad_exec,bad_key in authority_faults():
         for ready in (False, True):
-            for mask in range(8):
-                # Constructible issued signatures: an honest office must have
-                # received READY; a corrupt office can sign without that event.
-                if any(mask & (1 << j) and j != bad and not ready for j in range(3)):
+            for issued_mask in range(8):
+                if any(issued_mask & (1 << j) and j != bad_exec and not ready for j in range(3)):
                     continue
-                tokens = [Signature(j, SCOPE, "approve") for j in range(3) if mask & (1 << j)]
-                accepted = public_verify(tokens)
-                assert not accepted or ready
-                count += 1
-    a, b = Signature(0, SCOPE, "approve"), Signature(1, SCOPE, "approve")
-    assert public_verify([a, b])
-    assert not public_verify([a, a])
-    assert not public_verify([replace(a, authentic=False), b])
-    assert not public_verify([replace(a, scope=("old",)), b])
-    assert not public_verify([replace(a, purpose="ready"), b])
-    assert public_verify([replace(a, scope=("old",)), a, b])
-    assert valid_ready(Signature(3, SCOPE, "ready"))
-    assert not valid_ready(Signature(3, ("old",), "ready"))
-    return {"constructible_authority_profiles": count, "valid_available_artifact": serial([a,b]),
-            "rejections": ["duplicate", "forgery", "stale_scope", "wrong_purpose"],
-            "invalid_before_valid_same_identity": "accepted"}
+                key_masks = (0, 1 << bad_key) if bad_key >= 0 else (0,)
+                for key_mask in key_masks:
+                    mask = issued_mask | key_mask
+                    tokens = [Signature(j,SCOPE,"approve") for j in range(3) if mask & (1 << j)]
+                    accepted = public_verify(tokens)
+                    if accepted:
+                        guarded = [j for j in range(3) if mask & (1 << j)
+                                   and j != bad_exec and j != bad_key]
+                        assert guarded and ready
+                        assert all(issued_mask & (1 << j) for j in guarded)
+                    if key_mask & ~issued_mask:
+                        key_without_issuance += 1
+                    count += 1
+    a,b=Signature(0,SCOPE,"approve"),Signature(1,SCOPE,"approve")
+    assert public_verify([a,b])
+    assert not public_verify([a,a])
+    assert not public_verify([replace(a,authentic=False),b])
+    assert not public_verify([replace(a,scope=("old",)),b])
+    assert not public_verify([replace(a,purpose="ready"),b])
+    assert public_verify([replace(a,scope=("old",)),a,b])
+    assert valid_ready(Signature(3,SCOPE,"ready"))
+    assert not valid_ready(Signature(3,("old",),"ready"))
+    return {"constructible_authority_profiles":count,
+            "accepted_signature_without_executor_issuance_profiles":key_without_issuance,
+            "valid_available_artifact":serial([a,b]),
+            "rejections":["duplicate","forgery_without_key","stale_scope","wrong_purpose"],
+            "invalid_before_valid_same_identity":"accepted"}
 
 
 def check_sources():
@@ -379,6 +431,47 @@ def protocol_witnesses():
     return {"successful_substitution": records, "false_ready_safe_failed_install": false_ready}
 
 
+def independent_key_witness():
+    # Every executor remains in C(f). Only the spare READY signing path and
+    # authority 0's signing key are compromised, within their joint budgets.
+    f=Fault(False,3,False,False,False,-1,True,0)
+    k=Enactment([f])
+    ps=policies()
+    assert all(k.compliant(f,i) for i in range(7))
+    state=next(k.initials(f)).state
+    records=[]
+    for t,selected in enumerate((0,1,-1,-1)):
+        obs=next(o for o in k.observations(f,state)
+                 if next((j for j in range(3) if o.local[j+4] is not None),-1)==selected)
+        outcome=next(o for o in k.outcomes(f,state,obs,react(k,f,state,obs,ps))
+                     if o.state.spare_stage==0 and o.event["ready_key_use"]==(t==0)
+                     and o.event["authority_key_use"]==(t==0))
+        assert not outcome.violations and outcome.event["actual_delivered"]>=1
+        assert not outcome.event["ready_issued_now"] and not outcome.state.ready_issued
+        if t==0:
+            assert outcome.event["authority_issued"]==0 and outcome.event["vote"]==1
+            assert outcome.state.issued_votes==0 and outcome.state.key_votes==1
+        records.append({"before":serial(state),"event":serial(outcome.event),"after":serial(outcome.state)})
+        state=outcome.state
+    assert state.retired and state.recognized and state.spare_stage==0
+    assert state.issued_votes==2 and state.key_votes==1
+    return {"all_executors_compliant":True,"trace":records,
+            "certificate_fact":"office 1 actually approved the delivered READY artifact; office 0's accepted token came from its compromised key"}
+
+
+def authority_duty_regression():
+    f=Fault(False)
+    k=Enactment([f])
+    state=next(k.initials(f)).state
+    ps=list(policies())
+    ps[4]=Table(("missing","ready"),("boot",),(0,),((1,1),),((0,0),))
+    obs=next(o for o in k.observations(f,state) if o.local[4]=="missing")
+    outcome=next(k.outcomes(f,state,obs,react(k,f,state,obs,tuple(ps))))
+    assert "authority_issued_without_ready_artifact" in outcome.violations
+    return {"candidate_issues_without_delivered_ready":"rejected",
+            "compromised_key_artifact_without_issuance":"covered by independent_key_witness"}
+
+
 def holding_cycle():
     f=Fault(False,0,False,True,False,0)
     k=Enactment([f])
@@ -405,7 +498,7 @@ def wrong_order_witness():
     f = Fault(True,0,False,True,False,-1)
     k = Enactment([f],wrong_order=True)
     ps = policies(wrong_order=True)
-    s = State(1,8,(0,0,0,0),1,0,False,0,True)
+    s = State(1,8,(0,0,0,0),1,0,False,0,False)
     records=[]
     for _ in range(3):
         obs=next(k.observations(f,s))
@@ -420,31 +513,39 @@ def wrong_order_witness():
 
 
 def check_metadata():
-    states = edges = 0
-    # Motor faults do not enter these transitions or local administrative guards.
-    fs = [f for f in all_faults() if not f.motor_bad]
-    ps = policies()
+    states=edges=0
+    fs=[f for f in all_faults() if not f.motor_bad]
+    ps=policies()
     for f in fs:
         k=Enactment([f])
-        for stage,ready,votes,retired in itertools.product(range(3),(False,True),range(8),(False,True)):
-            state=State(2,0,(1,1,1,1),2,stage,ready,votes,retired)
+        key_masks=(0,1 << f.authority_key) if f.authority_key>=0 else (0,)
+        ready_keys=(False,True) if f.ready_key_bad else (False,)
+        for stage,ready_issued,ready_key_seen,issued_votes,key_votes,retired in itertools.product(
+                range(3),(False,True),ready_keys,range(8),key_masks,(False,True)):
+            state=State(2,0,(1,1,1,1),2,stage,ready_issued or ready_key_seen,
+                        issued_votes | key_votes,retired,SCOPE,ready_issued,ready_key_seen,
+                        issued_votes,key_votes)
             if not metadata_invariant(f,state):
                 continue
-            states += 1
+            states+=1
             for obs in k.observations(f,state):
                 issued=react(k,f,state,obs,ps)
                 selected=next((j for j in range(3) if obs.local[j+4] is not None),-1)
                 old_options=(0,2) if f.planner_bad and f.chain==2 else (issued[2] & 2,)
                 new_options=(0,2,4,6) if f.planner_bad and f.chain==3 else (issued[3] & 6,)
                 va=(0,1) if selected==f.authority and selected>=0 else (issued[selected+4],) if selected>=0 else (0,)
+                ru=(False,True) if f.ready_key_bad else (False,)
+                au=(False,True) if selected>=0 and selected==f.authority_key else (False,)
                 seen=False
-                for old,new,vote in itertools.product(old_options,new_options,va):
+                for old,new,vote,ready_key_use,authority_key_use in itertools.product(old_options,new_options,va,ru,au):
                     commands=(1,1,1+old,1+new)
-                    for ns_stage,ns_ready,ns_votes,ns_retired in next_metadata(f,state,commands,vote,selected):
-                        ns=replace(state,spare_stage=ns_stage,ready=ns_ready,votes=ns_votes,retired=ns_retired)
+                    for updates in next_metadata(f,state,commands,vote,selected,ready_key_use,authority_key_use):
+                        ns=replace(state,**updates)
                         assert metadata_invariant(f,ns)
-                        assert ns.evidence_scope == state.evidence_scope == SCOPE
-                        assert ns.votes | state.votes == ns.votes
+                        assert ns.evidence_scope==state.evidence_scope==SCOPE
+                        assert ns.votes | state.votes==ns.votes
+                        assert ns.issued_votes | state.issued_votes==ns.issued_votes
+                        assert ns.key_votes | state.key_votes==ns.key_votes
                         if f.chain!=3 and state.spare_stage==2:
                             assert ns.spare_stage==2
                         edges+=1
@@ -456,7 +557,7 @@ def check_metadata():
 
 def check_effect_adapter():
     count=0
-    fs=[f for f in all_faults() if not f.motor_bad and f.authority==-1]
+    fs=[f for f in all_faults() if not f.motor_bad and f.authority==-1 and f.authority_key==-1]
     for f in fs:
         for stage,ready,votes,retired in itertools.product(range(3),(False,True),range(8),(False,True)):
             state=State(2,0,(1,1,1,1),2,stage,ready,votes,retired)
@@ -540,7 +641,8 @@ def reproduce(full=False):
             "surviving_effect":check_survival_lemma(),"physics":check_physics(),
             "protocol_closure":check_metadata(),"pending_effect_adapter":check_effect_adapter(),
             "delayed_physical_closure":check_delayed_certificate(),
-            "witnesses":protocol_witnesses(),"holding_cycle":holding_cycle(),"wrong_order":wrong_order_witness()}
+            "witnesses":protocol_witnesses(),"independent_keys":independent_key_witness(),
+            "authority_duty":authority_duty_regression(),"holding_cycle":holding_cycle(),"wrong_order":wrong_order_witness()}
     result["finite_certificate"]={"method":"exact factorized inductive certificate, not reachable-graph sampling",
         "full_identity_fault_classes":len(tuple(all_faults())),
         "factor_assembly":"same joint fault; protocol closure -> surviving delayed effects -> physical safety and service; source frontend preserves correct-planner conduct"}
@@ -565,7 +667,8 @@ def main():
     if args.quick:
         value={"public":check_public_evidence(),"sources":check_sources(),
                "survival":check_survival_lemma(),"physics":check_physics(),
-               "witnesses":protocol_witnesses(),"holding_cycle":holding_cycle(),"wrong_order":wrong_order_witness()}
+               "witnesses":protocol_witnesses(),"independent_keys":independent_key_witness(),
+            "authority_duty":authority_duty_regression(),"holding_cycle":holding_cycle(),"wrong_order":wrong_order_witness()}
     else:
         value=reproduce(args.full_identities)
     encoded=json.dumps(value,indent=2,sort_keys=True)+"\n"
