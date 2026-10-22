@@ -756,10 +756,10 @@ def run_checks():
     p=tr.Parameters(delay_slots=2)
     s=tr.initial(F(2),(F(2),F(0)),frozenset((0,)),p);auth=inst.Authentication(s.faults)
     frame=start(s,p)
-    def checked_edge(f,*,offer=None,w=F(0)):
+    def checked_edge(f,*,offer=None,w=F(0),commands=None):
         nonlocal boundary_edges,recovery_edges
         if offer is not None:assert admitted_admin_input(auth,offer)
-        request=next(profiles(f,p))
+        request=next(profiles(f,p)) if commands is None else commands
         nxt=advance(f,request,p,disturbance=w,next_admin=offer)
         assert nxt is not None and follows(f,request,p)
         assert abstract_next_matches(projection(f,p),projection(nxt,p),communication_image(f,request,p),
@@ -796,6 +796,20 @@ def run_checks():
     frame=administrative_step(frame,"begin_repair")
     frame=round_step(frame);recovery_rounds+=1
     frame=administrative_step(frame,"finish_repair",clean=True)
+    # Waiting for wider permission is maintenance, not an invocation of TR3.
+    assert frame.state.institution.cap==p.demand < p.demand+p.hostile
+    waiting_x,waiting_service=frame.actual_x,frame.actual_service
+    frame=checked_edge(frame)  # Select the actual flow round, retaining histories.
+    for phase in range(4):
+        request=list(next(profiles(frame,p)))
+        if phase==1:
+            request[0]=("sign",F(-100),F(100))  # Sole faulty signer cannot supply support.
+        if phase==2:
+            assert request[GATE]==("append",p.demand)
+        frame=checked_edge(frame,commands=tuple(request))
+    recovery_rounds+=1
+    assert frame.state.mode=="ready" and frame.actual_x==waiting_x
+    assert frame.actual_service-waiting_service==p.period*p.demand
     frame=administrative_step(frame,"grant_recenter",consent=True)
     while frame.state.mode in ("ready","reserved"):
         frame=round_step(frame);recovery_rounds+=1
@@ -837,7 +851,7 @@ def run_checks():
     colocated=Roles((0,1,2),(0,1,2))
     assert roles_admitted(colocated,tr.FAULT_FAMILY)
     for B in tr.FAULT_FAMILY:role_round(ev.TimedState(F(0),F(2),(F(1),)),colocated,B,tr.FAULT_FAMILY,tr.Parameters())
-    return {"following_request_profiles":following,"micro_edges":edges,"macro_fifo_maps":macro_maps,
+    return {"waiting_ready_maintenance":True,"following_request_profiles":following,"micro_edges":edges,"macro_fifo_maps":macro_maps,
             "local_action_occurrences":local_actions,"local_policy_classes":len(locality),
             "recovery_macro_rounds":recovery_rounds,"recovery_and_rejection_edges":recovery_edges,
             "boundary_edges":boundary_edges,"invalid_initial_regressions":len(invalid_initials),

@@ -1,52 +1,34 @@
-# Byzantine Control Research State
+# Byzantine control research state
 
-Problem maturity: design for the general program; the selected discrete fragment is developed and checked. Artifact condition: research package verified within its declared mathematical and executable scopes; handoff remains a research specification. Audit: independent scoped semantic review completed for the new core. Repository acceptance remains pending.
+Problem maturity: develop, with program-level verification active. Artifact condition: component proofs and executable models checked within their declared scopes; final assembly and completion audit in progress. Repository acceptance remains pending.
 
-Program target: generalize Byzantine control over ledger state to distributed control over generally specified state. The original [handoff](handoff/HANDOFF.md) remains the program specification and [EXECUTION.md](handoff/EXECUTION.md) governs continued delegation and isolation.
+The target is the full program in [HANDOFF](handoff/HANDOFF.md), governed by [EXECUTION](handoff/EXECUTION.md) and the continuation's [P1–P16 completion contract](research/PROGRAM-CONTRACT.md). The persistent Goal remains active across milestones. [PROGRAM](research/PROGRAM.md) is the integrated entry point; the earlier [increment](research/README.md) and [increment audit](research/COMPLETION.md) retain their narrower scope.
 
-## Program continuation
+## Active
 
-The full-program Goal is active. [Program completion contract](research/PROGRAM-CONTRACT.md) records mandatory obligations, conditional branches, assembly requirements and current gaps. The previous increment remains checked evidence, not program closure. Initial read-only source and adequacy assessments are complete or in progress; the coordinator owns integration. The worktree is verified at 73795150ccedf2d8ecad3670040d4b963064f901.
+The coordinator owns integration on codex/byzantine-control-20261021 in C:\Users\Sean\.codex\worktrees\byzantine-control-research\eos-garden. The primary checkout is read-only; no merge or push is authorized by this workflow.
 
-## Active integration
+1. Reproduce the frozen final package with verify_program.ps1 and its 26 source bindings.
+2. Obtain the independent program-level completion verdict on the committed candidate and resolve any remaining material finding. The Goal remains active until that verdict supports all mandatory obligations.
 
-The coordinator owns the shared Execution.lean, THEORY.md and core_model.py; nineteen core declarations pass Lean; independent review led to checked reachability and replay repairs, with concrete adapters pending. The full-program Goal remains active. All writing workers start at 50fb410550cac5c95cb943338f2eddae13e161b2 and own disjoint artifacts under research/.
+All component and adapter writing has been integrated. The final physical repair adds typed initialization, explicit administrative/input-selection events, retained histories, a separate elapsed-time decoder, bounded zero-time retries and waiting-ready maintenance. The permanent regression matches the independent waiting-permission challenge.
 
-| Contribution | Retained worker worktree / branch | Incoming result and remaining check |
-|---|---|---|
-| Witnessed evidence and timed control | C:\Users\Sean\.codex\worktrees\byzantine-program-evidence\eos-garden; codex/byzantine-program-evidence-20261021 | e37ec4f408ee83c19028ad95da9f95cb8d4e88fd; inspect, integrate, rerun and independently review. |
-| Institutional recovery | C:\Users\Sean\.codex\worktrees\byzantine-program-institutions\eos-garden; codex/byzantine-program-institutions-20261021 | 31700ff474db43d38c5fa1ed5271359fe7690402; inspect, integrate, rerun and independently review. |
-| Digital protocol and certificate knowledge | C:\Users\Sean\.codex\worktrees\byzantine-program-digital\eos-garden; codex/byzantine-program-digital-20261021 | Writing worker is finishing the checked protocol-generated model; incoming commit pending. |
+Retained worker branches/worktrees are codex/byzantine-program-evidence-20261021 in C:\Users\Sean\.codex\worktrees\byzantine-program-evidence\eos-garden, codex/byzantine-program-institutions-20261021 in the analogous byzantine-program-institutions directory, codex/byzantine-program-digital-20261021 in byzantine-program-digital, and codex/byzantine-program-timed-recovery-20261021 in byzantine-program-timed-recovery. They are retained for recovery; no worker owns the integration index.
 
-Each contribution still needs an explicit common-core adapter and cross-workstream compatibility review. No worker completion claim closes the program.
+## Maintained results and review boundaries
 
-## Checked increment
+The live obligation ledger is in PROGRAM-CONTRACT.md; detailed claim identities reside in THEORY, EVIDENCE, DIGITAL, INSTITUTION, TIMED-RECOVERY and QUORUM-ALIGNMENT. The source routing index is PROGRAM-SOURCES.md. Reproducible component checks remain available while verify_program.ps1 is assembled.
 
-[Permissive authorization and bounded physical influence](research/README.md) is the maintained synthesis and claim ledger. It constructs a local noisy-sensing/Byzantine-authorization/hostile-flow controller with recurring service; proves that median-only singleton endorsements cannot always match; reconstructs Q2/Q3 access conditions and a signed digital baseline; and records epistemic, delayed, and continuous-transfer failures. [Completion audit](research/COMPLETION.md), [source assessment](research/SOURCES.md), [Lean proofs](research/Control.lean), and [executable checks](research/check_models.py) state verification and residuals. Run research/verify.ps1 to reproduce.
+Independent review has checked the generic core, digital protocol/adapter, witnessed/timed construction and institutional/recovery components at recorded scopes. It led to substantive repairs: out-of-alphabet replay, authentication before support deduplication, finite-message quantization, canonical schedule binding, age validation, digital per-profile totality, late signing, and total guarded epistemic semantics. These checks do not substitute for the pending whole-program audit.
 
-This closes the initial clean-worktree, delegated prior-art, foundation-reproduction, and integrated-result obligations for a significant increment. It does not close the general theory or authorize acceptance.
+## Conditional extensions and realization premises
 
-## Active choices
+Full Basic/chained HotStuff, unrestricted distributed synthesis, arbitrary nonlinear dynamics, mobile corruption, arbitrary membership migration, cryptographic implementation, empirical isolation/calibration, privacy/incentives and jurisdictional recognition are not silently covered. Their reopening conditions and exact boundaries are in the component artifacts and source index. A bounded search is not a novelty claim.
 
-1. Extend the physical fragment through time: use the exhibited stale-evidence trace to define report age and pending-command state, derive a covering prediction envelope, and construct or refute a policy retaining the same service floor. Completion requires a realized-effect update, local implementation, nonblocking/service proof, and comparison with the zero-delay result.
-2. Repair the demonstrated continuous-transfer failure: compare continuous controls with added integer-control margin using explicit real-valued sensing and dynamics. Completion requires a common-action proof plus a genuine physical abstraction/solution contract before exporting a continuous-time guarantee.
-3. Broaden the coordination comparison: investigate full report-vector selectors or added inter-authorizer communication. C5 only excludes locally certified median-only singletons; it must not be cited as an impossibility for those richer interfaces.
+The richer full-report-vector singleton-selector and inter-authorizer-communication comparison remains a reserve lead: C5 excludes only median-only locally certified selectors, and must not be reused as a broader impossibility. The old stale-evidence and continuous-grid failures are now consumed by the timed/continuous constructions; their witnesses remain in the earlier increment.
 
-These are alternatives for Orient, not jointly required next steps. The first two are informed by explicit failure witnesses; the third tests the exact boundary of the proved obstruction.
-
-## Live residuals
-
-- R1: encode Basic HotStuff's actual guards, historical locks and lock evolution before importing cross-view safety or progress. The current signed two-round baseline is a different, precisely scoped recovery. Chained HotStuff remains separate.
-- R2/R3: witnessed pose/calibration, active sensing, sensor/actuator identity correlations beyond the present role caps, and changing capabilities need explicit measurement and transition semantics. Generic distributed synthesis remains broader than the epoch compression.
-- R4: the gate's exactly-once action, reliable service port, current-epoch authentication, fresh sampling, and timely correct messages are realization premises. A monitor does not discharge them without a detection/response proof.
-- R5: Q2 authorization, Q3 conflict exclusion, evidence coverage, and causal capacity remain distinct. Preserve the same joint fault family and the assembly argument in any extension.
-- R6/R7: institutional recognition, attribution, repair, effective exclusion, membership changes, mobile corruption and key recovery are not certified by the discrete package.
-- R8: E1 is a delivery-fragment correspondence, not a full DEL/BFT model. Temporal, strategic, lock-update and controller-refinement imports require their own preservation laws.
-- Independent review of the entire original handoff and every foundation's broader interpretation remains open; completed reviews concern the selected new model and its used source boundaries.
-- Literature: reopen the bounded searches before novelty, completeness, or current-frontier claims. Unused handoff references remain unverified for this session.
+The delivered constructions terminate assurance at named calibration, channel/deadline, authentication, gate/actuator/service-port and clean-installation premises. Failure witnesses identify their consumers. Finite tests do not establish those physical premises, and a monitor cannot replace prevention without a safe response argument.
 
 ## Needs adjudication
 
-- Whether to accept the checked increment's definitions and conclusions as a maintained basis for the broader theory. Mathematical verification and source checking do not enact this decision.
-
-Continue in the retained research worktree on codex/byzantine-control-20261021, based on 79b40856f81cd729a3d178a0f20ac29efb650b52. Its location and reproduction instructions are in the completion audit. Preserve the primary checkout's unrelated uncommitted work.
+Whether to accept the checked definitions and results as a maintained research basis. Mathematical support, program completion and repository acceptance are separate; no acceptance decision has been made on the user's behalf.

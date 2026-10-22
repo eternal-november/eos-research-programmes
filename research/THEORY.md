@@ -1,6 +1,6 @@
 # Distributed execution, continuation, and refinement
 
-This is the semantic core for the full program contract, not a declaration of program completion. [Execution.lean](Execution.lean) checks nineteen general declarations. [core_model.py](core_model.py) implements the finite whole-prefix recurrence and independently replays extracted policies. The concrete digital, evidence/physical, and institutional instances must each discharge the adapters stated below; their successful local checks alone do not discharge that assembly.
+This is the semantic core for the full program contract, not a declaration of program completion. [Execution.lean](Execution.lean) checks nineteen general declarations. [core_model.py](core_model.py) implements the finite whole-prefix recurrence and independently replays extracted policies. The concrete digital, evidence/physical, and institutional maps are maintained in [ASSEMBLY](ASSEMBLY.md) and its linked implementation notes; successful local checks alone do not discharge those separate assembly laws.
 
 ## 1. Context and operational carrier
 
@@ -144,9 +144,9 @@ The theorem does not manufacture concrete runs: nonempty initialization and conc
 
 Feedback refinement provides established source-level machinery for input and successor preservation, but its centralized quantizer does not automatically implement separate local maps. The present adaptation exposes that additional obligation and checks its trace consequence. [Reissig–Weber–Rungger, Definitions V.2/VI.2 and Theorems V.4/VI.3](https://arxiv.org/html/1503.03715)
 
-## 5. Required instance adapters
+## 5. Instance adapter contracts
 
-The remaining program assembly uses the following explicit consumers. These are not marked discharged merely because this file names them.
+The program assembly uses the following explicit consumers. ASSEMBLY and its linked adapters exhibit their maps and witnesses; naming these consumers alone would not discharge them.
 
 | Instance | Source and abstraction | Required preservation and non-vacuity |
 |---|---|---|
@@ -162,4 +162,4 @@ The existing missed-report, duplicate-effect, stale-evidence, hidden-fault and c
 
 The nineteen Lean declarations compile with only the allowed logical foundations. The finite checker confirms the intended quantifier distinctions: one safe step can fail to extend under hidden information; per-fault policies can exist without one unknown-fault policy; a deadlocking command is rejected despite vacuous successor safety; service monitors retain a trace distinction; and finite-horizon success with infinite action choice does not imply an infinite policy.
 
-The finite recurrence and Lean proofs are coordinator-authored first-pass results until independent semantic review checks their interpretation and adapters. Program closure additionally requires the completed instance constructions and the P1–P16 audit. The active Goal is not complete.
+The finite recurrence and Lean proofs have received independent scoped semantic review; the repairs and review boundaries are recorded in PROGRAM-AUDIT.md. Concrete adapters receive their own review. Program-level completion is judged in PROGRAM-AUDIT against P1–P16; component checking alone does not close it.

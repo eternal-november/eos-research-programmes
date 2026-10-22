@@ -1,5 +1,7 @@
 # Byzantine control with permissive authorization and bounded physical influence
 
+This document remains the checked discrete increment. The full continuation, including general semantics, timed control, institutional recovery and program-level audit, is maintained in [PROGRAM.md](PROGRAM.md).
+
 ## Result and scope
 
 This research increment constructs a distributed controller that preserves an integer inventory invariant and delivers one unit of service at every modeled epoch despite noisy sensing, recipient-dependent Byzantine reports, Byzantine authorizers, and hostile physical flow. Its authorizers need neither the true inventory nor the faulty identities. They need not agree on a single proposed action. They endorse all actions safe for their own evidence; a trusted gate selects and realizes one sufficiently endorsed action.
@@ -204,4 +206,4 @@ The ledger records support, not institutional acceptance.
 | E1/E2 | Declared epistemic correspondence and failed truthful-announcement encoding. | derived isomorphism/induction; finite exhaustive checks. Certificate soundness is supplied, strategic/time transport excluded. |
 | X | Context changes defeat specified guarantees or this scheme. | proved Lean for capacity, excess removal, endpoint ambiguity; derived and exact checks for other witnesses. |
 
-The parent [TODO](../TODO.md) contains live obligations. [COMPLETION.md](COMPLETION.md) records the completion audit. This increment supplies an integrated positive construction, a same-objective coordination impossibility, digital recovery, structural access results, and transfer failures. Wider sensing, protocol, continuous-time, recovery, and institutional claims remain open rather than being silently counted as completed.
+The parent [TODO](../TODO.md) contains live obligations. [COMPLETION.md](COMPLETION.md) records the completion audit. This increment supplies an integrated positive construction, a same-objective coordination impossibility, digital recovery, structural access results, and transfer failures. Those wider scopes are not claimed by this increment; their developed extensions and remaining boundaries are maintained in PROGRAM.md.
