@@ -1,15 +1,16 @@
 # Byzantine control research state
 
-Problem maturity: develop, with program-level verification active. Artifact condition: component proofs and executable models checked within their declared scopes; final assembly and completion audit in progress. Repository acceptance remains pending.
+Problem maturity: stabilize within the completed theory-family scope. Artifact condition: verified within the declared mathematical and executable scopes; independent program-level completion audit passed. Repository acceptance remains pending.
 
-The target is the full program in [HANDOFF](handoff/HANDOFF.md), governed by [EXECUTION](handoff/EXECUTION.md) and the continuation's [P1–P16 completion contract](research/PROGRAM-CONTRACT.md). The persistent Goal remains active across milestones. [PROGRAM](research/PROGRAM.md) is the integrated entry point; the earlier [increment](research/README.md) and [increment audit](research/COMPLETION.md) retain their narrower scope.
+The target is the full program in [HANDOFF](handoff/HANDOFF.md), governed by [EXECUTION](handoff/EXECUTION.md) and the continuation's [P1–P16 completion contract](research/PROGRAM-CONTRACT.md). The full mandatory program is discharged; the independent verdict and exact reproduction are recorded in [PROGRAM-AUDIT](research/PROGRAM-AUDIT.md). [PROGRAM](research/PROGRAM.md) is the integrated entry point; the earlier [increment](research/README.md) and [increment audit](research/COMPLETION.md) retain their narrower scope.
 
-## Active
+## Completion and resumption
 
 The coordinator owns integration on codex/byzantine-control-20261021 in C:\Users\Sean\.codex\worktrees\byzantine-control-research\eos-garden. The primary checkout is read-only; no merge or push is authorized by this workflow.
 
-1. Reproduce the frozen final package with verify_program.ps1 and its 26 source bindings.
-2. Obtain the independent program-level completion verdict on the committed candidate and resolve any remaining material finding. The Goal remains active until that verdict supports all mandatory obligations.
+The audited candidate is 0f2410b63067ea0e603147d0362df0e4cb398cc0. Both coordinator and independent replay reproduced program_results.json exactly, including 26 source bindings; all 129 Lean declarations passed. No mandatory research obligation remains active under this contract. The final status-record commit changes no mathematical or executable content.
+
+For reproduction, run research/verify_program.ps1. For continuation, select a named conditional extension below, retain the existing proofs where their hypotheses survive, and establish its new completion contract. Do not reinterpret a reserved extension as an undisclosed gap in this completed program.
 
 All component and adapter writing has been integrated. The final physical repair adds typed initialization, explicit administrative/input-selection events, retained histories, a separate elapsed-time decoder, bounded zero-time retries and waiting-ready maintenance. The permanent regression matches the independent waiting-permission challenge.
 
@@ -17,9 +18,9 @@ Retained worker branches/worktrees are codex/byzantine-program-evidence-20261021
 
 ## Maintained results and review boundaries
 
-The live obligation ledger is in PROGRAM-CONTRACT.md; detailed claim identities reside in THEORY, EVIDENCE, DIGITAL, INSTITUTION, TIMED-RECOVERY and QUORUM-ALIGNMENT. The source routing index is PROGRAM-SOURCES.md. Reproducible component checks remain available while verify_program.ps1 is assembled.
+The live obligation ledger is in PROGRAM-CONTRACT.md; detailed claim identities reside in THEORY, EVIDENCE, DIGITAL, INSTITUTION, TIMED-RECOVERY and QUORUM-ALIGNMENT. The source routing index is PROGRAM-SOURCES.md. verify_program.ps1 reproduces the integrated package, including the retained prior increment.
 
-Independent review has checked the generic core, digital protocol/adapter, witnessed/timed construction and institutional/recovery components at recorded scopes. It led to substantive repairs: out-of-alphabet replay, authentication before support deduplication, finite-message quantization, canonical schedule binding, age validation, digital per-profile totality, late signing, and total guarded epistemic semantics. These checks do not substitute for the pending whole-program audit.
+Independent review has checked the generic core, digital protocol/adapter, witnessed/timed construction and institutional/recovery components at recorded scopes. It led to substantive repairs: out-of-alphabet replay, authentication before support deduplication, finite-message quantization, canonical schedule binding, age validation, digital per-profile totality, late signing, and total guarded epistemic semantics. The subsequent independent whole-program audit checked their assembly and supports completion.
 
 ## Conditional extensions and realization premises
 

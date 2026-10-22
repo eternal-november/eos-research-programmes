@@ -1,6 +1,6 @@
 # Byzantine control over generally specified state
 
-Status: integrated theory under program-level checking; mathematical support does not enact repository acceptance. The governing obligations are [P1–P16](PROGRAM-CONTRACT.md), derived from [HANDOFF](../handoff/HANDOFF.md). The earlier [discrete increment](README.md) and its [audit](COMPLETION.md) remain scoped results. This document is the program entry point; definitions and detailed proofs have one home in the linked modules.
+Status: full mandatory program completed with independent audit and exact reproducibility; mathematical support does not enact repository acceptance. The governing obligations are [P1–P16](PROGRAM-CONTRACT.md), derived from [HANDOFF](../handoff/HANDOFF.md). The earlier [discrete increment](README.md) and its [audit](COMPLETION.md) remain scoped results. This document is the program entry point; definitions and detailed proofs have one home in the linked modules.
 
 ## The result and its scope
 
@@ -85,7 +85,7 @@ A monitor is not used as a substitute for prevention without a safe pending-resp
 
 ## Evidence, audit and resumption
 
-[PROGRAM-SOURCES](PROGRAM-SOURCES.md) routes the prior-art comparisons and their exact inspection scopes. The new work reconstructs and applies established ideas; no bounded search is presented as a novelty or impossibility proof. [PROGRAM-AUDIT](PROGRAM-AUDIT.md) is the independent completion gate against the full original packet, including cross-component compatibility.
+[PROGRAM-SOURCES](PROGRAM-SOURCES.md) routes the prior-art comparisons and their exact inspection scopes. The new work reconstructs and applies established ideas; no bounded search is presented as a novelty or impossibility proof. [PROGRAM-AUDIT](PROGRAM-AUDIT.md) records the passed independent completion audit against the full original packet, including cross-component compatibility.
 
 Run ./verify_program.ps1 from this directory using the pinned Lean 4.33.0 toolchain and Python. The aggregate retains the old increment, checks every selected module and adapter, verifies reported axiom dependencies, and compares deterministic outputs and normalized source hashes with program_results.json. Prose mathematical arguments, Lean declarations, exhaustive finite models and sampled rational checks are distinct evidence grades. Physical calibration, channel deadlines, authentication, protected gates/ports and clean installation are explicit realization assumptions, with countermodels exposing their consumers.
 
