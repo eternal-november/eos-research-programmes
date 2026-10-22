@@ -87,7 +87,7 @@ class Prefix:
     def terminal_signed(self):
         if self.phase < 3:
             return 0
-        bad_mask = self.events[2].data[0]
+        bad_mask = self.events[-1].data[0] if self.phase >= 4 else self.events[2].data[0]
         out = 0
         for i in PARTICIPANTS:
             vals = bad_mask if i == self.faulty else bit(self.decisions[i])
@@ -134,12 +134,17 @@ def local_view(p, actor):
                 view.append(("decision", p.decisions[actor]))
         elif phase == 3:
             if actor in PARTICIPANTS:
-                own = tuple(v for i, v in tokens(p.terminal_signed) if i == actor)
+                own_mask = event.data[0] if actor == p.faulty else bit(p.decisions[actor])
+                own = tuple(v for v in BITS if own_mask & bit(v))
                 view.append(("signed-terminal", own))
             else:
                 view.append(("terminal-receipts", event.data[actor - 2]))
         elif actor in OBSERVERS:
-            view.append(("terminal-receipts", event.data[actor - 3]))
+            view.append(("terminal-receipts", event.data[-2:][actor - 3]))
+        elif actor == p.faulty:
+            old = p.events[2].data[0]
+            view.append(("signed-terminal-late", tuple(v for v in BITS
+                        if event.data[0] & ~old & bit(v))))
     return tuple(view)
 
 
@@ -185,14 +190,21 @@ def successors(p):
     elif p.phase == 3:
         honest = sum(token(i, p.decisions[i]) for i in PARTICIPANTS if i != p.faulty)
         old_a, old_b = p.receipts
-        available = p.terminal_signed
-        choices = []
-        for old in (old_a, old_b):
-            mandatory = honest | old
-            optional = available & ~mandatory
-            choices.append(tuple(mandatory | extra for extra in submasks(optional)))
-        for a, b in product(*choices):
-            yield Prefix(p.faulty, p.input, p.epoch, p.events + (Event("terminal-cutoff", (a, b)),))
+        old_bad = p.events[2].data[0]
+        # A faulty signer may create additional attestations after selective delivery.
+        final_masks = (0,) if p.faulty is None else sorted({old_bad | extra for extra in range(4)})
+        for final_bad in final_masks:
+            available = honest
+            if p.faulty is not None:
+                available |= sum(token(p.faulty,v) for v in BITS if final_bad & bit(v))
+            choices = []
+            for old in (old_a, old_b):
+                mandatory = honest | old
+                optional = available & ~mandatory
+                choices.append(tuple(mandatory | extra for extra in submasks(optional)))
+            for a, b in product(*choices):
+                yield Prefix(p.faulty, p.input, p.epoch,
+                             p.events + (Event("terminal-cutoff", (final_bad, a, b)),))
 
 
 def traces(phase=4, epoch=0):
@@ -272,7 +284,13 @@ def product_projection(p):
             for i, received in zip(OBSERVERS, receipts):
                 views[i].append(("terminal-receipts", received))
         else:
-            receipts = event.data
+            final_bad, a, b = event.data
+            if p.faulty is not None:
+                previous = tuple(v for i,v in tokens(signed_terminal) if i == p.faulty)
+                added = tuple(v for v in BITS if final_bad & bit(v) and v not in previous)
+                views[p.faulty].append(("signed-terminal-late",added))
+                signed_terminal |= sum(token(p.faulty,v) for v in BITS if final_bad & bit(v))
+            receipts = (a,b)
             for i, received in zip(OBSERVERS, receipts):
                 views[i].append(("terminal-receipts", received))
     return tuple(decided), signed_terminal, receipts, tuple(map(tuple, views))
@@ -290,6 +308,18 @@ def knowledge_tables(points, actors=ACTORS):
             values[i][view].add(value)
             faults[i][view].add(p.faulty)
     return values, faults
+
+
+
+def correct_assurance(prefix, actor, possible_values, value):
+    """Total E_i(Final(value)): correct here AND warranted in the i-correct subsystem.
+    False at i-faulty worlds means the qualified assurance fails, not that the
+    faulty actor has no subjective knowledge.
+    """
+    if actor not in PARTICIPANTS:
+        raise ValueError("participant assurance requires a participant identity")
+    return (actor != prefix.faulty
+            and possible_values[actor][local_view(prefix,actor)] == {value})
 
 
 def legal_round_tuple(fault, value, raw1, raw2, echo1, echo2):
@@ -362,6 +392,12 @@ def run_checks():
             if p.phase == 4:
                 assert all(certificate(bundle, final_value(p)) for bundle in p.receipts)
 
+    late_sign = next(p for p in levels[4] if p.faulty == 0
+                     and p.events[2].data[0] == 0 and p.events[3].data[0] == bit(1))
+    early_prefix = Prefix(late_sign.faulty,late_sign.input,late_sign.epoch,late_sign.events[:3])
+    assert not early_prefix.terminal_signed & token(0,1)
+    assert late_sign.terminal_signed & token(0,1)
+
     early_values, early_faults = knowledge_tables(levels[3])
     for p in levels[3]:
         for idx, i in enumerate(OBSERVERS):
@@ -377,6 +413,11 @@ def run_checks():
         for i in PARTICIPANTS:
             if i != p.faulty:
                 assert early_values[i][local_view(p, i)] == {final_value(p)}
+                assert correct_assurance(p,i,early_values,final_value(p))
+            else:
+                assert not correct_assurance(p,i,early_values,final_value(p))
+        assert sum(correct_assurance(p,i,early_values,final_value(p))
+                   for i in PARTICIPANTS) >= 2
     unidentified = next(p for p in levels[3] if certificate(p.receipts[0], 0)
                         and early_faults[3][local_view(p, 3)] >= {0, 1, 2})
     assert all(any(bad in pair for bad in early_faults[3][local_view(unidentified, 3)])
@@ -428,6 +469,13 @@ def run_checks():
     dropped_raw, dropped_echo = (0, bit(1)), (0, 0)
     assert tuple(choose(r | e) for r, e in zip(dropped_raw, dropped_echo)) == (0, 1)
 
+    # Relaxing honest echo delivery permits conflicting TERMINAL certificates.
+    relaxed = Prefix(0,0,0,(Event("raw-cutoff",(2,0,2)),Event("echo-cutoff",(0,0)),
+                           Event("terminal-send",(3,0,0))))
+    assert relaxed.decisions[1:] == (0,1)
+    assert certificate(relaxed.terminal_signed,0) and certificate(relaxed.terminal_signed,1)
+    assert not legal_round_tuple(relaxed.faulty,relaxed.input,*relaxed.raw,*relaxed.echoes)
+
     # Every pair of legal completed slots with the SAME faulty identity composes.
     pairs = 0
     for p, q in product(levels[2], repeat=2):
@@ -446,8 +494,10 @@ def run_checks():
         "correct_local_action_classes": len(action_classes), "compatible_two_slot_pairs": pairs,
         "decision_round": 2, "public_certificate_cutoff": 3,
         "operational_phases": "initial, raw cutoff, echo/decision cutoff, selective terminal delivery, terminal cutoff",
+        "participant_assurance_semantics": "Correct_i and universal truth over same-view i-correct worlds; false otherwise",
+        "late_byzantine_terminal_signing_admitted": True,
         "certificate_soundness_and_availability": True,
-        "receipt_universal_warrant": True, "negative_evidence_checked": True,
+        "receipt_universal_warrant": True, "dropped_echo_allows_conflicting_terminal_certificates": True, "negative_evidence_checked": True,
         "cutoff_common_knowledge_basis": "each observer accessibility class preserves final value; hence every finite observer chain does",
         "truthful_announcement_and_pure_valuation_counterexamples": True,
         "single_terminal_claim_witness": {"fault": single.faulty, "signed_claim": 1, "actual_final": 0},
