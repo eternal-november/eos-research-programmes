@@ -6,33 +6,88 @@ reproduces the compiler, hierarchy, transport, and physical-specialization evide
 from __future__ import annotations
 import argparse
 from collections import deque
-from dataclasses import dataclass
+from dataclasses import dataclass, fields, is_dataclass, make_dataclass
 from fractions import Fraction
 import hashlib
 import itertools
 import json
 from pathlib import Path
+import struct
 import sys
 
 if sys.flags.optimize:
     raise RuntimeError("Run without optimized Python; assertions are proof checks")
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "enforcement"))
-from finite_model import BrakeConfig, BrakeState, Initial, Observation, Outcome, PeerBrakes, ProductPeerBrakes, Table, serial, service_free_rank, threshold_policy, verify
+from finite_model import BrakeConfig, BrakeState, Initial, Observation, Outcome, PeerBrakes, ProductPeerBrakes, Table, service_free_rank, threshold_policy, verify
 
 
-def frozen(value):
-    """Canonical finite event labels; the caller declares which fields are consumed."""
-    if hasattr(value, "__dataclass_fields__"):
-        return frozen(serial(value))
-    if isinstance(value, dict):
-        return tuple((k, frozen(v)) for k, v in sorted(value.items()))
-    if isinstance(value, (tuple, list)):
-        return tuple(frozen(v) for v in value)
-    if isinstance(value, (set, frozenset)):
-        return tuple(sorted((frozen(v) for v in value), key=repr))
-    return value
+class EventCodec:
+    """Injective encoding of supported finite structured event values.
 
+    Tags separate Python kinds even when Python equality does not (True/1).
+    Dataclass names are checked against actual class identity across the whole
+    compilation; ambiguous identities, extra instance fields and cycles fail.
+    Object-reference identity is not a data field: these are structured values.
+    """
+    def __init__(self):
+        self.dataclass_types = {}
+
+    def __call__(self, value):
+        return self._encode(value, set())
+
+    def _encode(self, value, active):
+        kind = type(value)
+        if value is None:
+            return ("none",)
+        if kind is bool:
+            return ("bool", value)
+        if kind is int:
+            return ("int", value)
+        if kind is float:
+            return ("float64", struct.pack(">d", value).hex())
+        if kind is str:
+            return ("str", value)
+        if kind is bytes:
+            return ("bytes", value.hex())
+        dataclass_value = is_dataclass(value) and not isinstance(value, type)
+        if kind not in (tuple, list, dict, set, frozenset) and not dataclass_value:
+            raise TypeError("Unsupported event value type: " + kind.__module__ + "." + kind.__qualname__)
+        identity = id(value)
+        if identity in active:
+            raise ValueError("Cyclic event value is not finite structured data")
+        active.add(identity)
+        try:
+            if kind in (tuple, list):
+                return ("tuple" if kind is tuple else "list", tuple(self._encode(x, active) for x in value))
+            if kind is dict:
+                # Dict iteration order is observable, so preserve it as well as
+                # type-sensitive keys and values. Do not normalize it by sorting.
+                return ("dict", tuple((self._encode(k, active), self._encode(v, active)) for k, v in value.items()))
+            if kind in (set, frozenset):
+                return ("set" if kind is set else "frozenset",
+                        tuple(sorted((self._encode(x, active) for x in value), key=repr)))
+            name = (kind.__module__, kind.__qualname__)
+            if any(type(part) is not str for part in name):
+                raise TypeError("Dataclass identity must have a module and qualified name")
+            prior = self.dataclass_types.setdefault(name, kind)
+            if prior is not kind:
+                raise TypeError("Distinct dataclass types share one encoded identity: " + repr(name))
+            if not kind.__dataclass_params__.eq:
+                raise TypeError("Identity-valued dataclass needs an explicit finite identity field")
+            if any(base is not object and not is_dataclass(base) for base in kind.__mro__[1:]):
+                raise TypeError("Dataclass inherits a non-dataclass payload type")
+            declared = tuple(field.name for field in fields(value))
+            if hasattr(value, "__dict__") and set(vars(value)) - set(declared):
+                raise TypeError("Dataclass has undeclared instance event fields")
+            for base in kind.__mro__:
+                slots = base.__dict__.get("__slots__", ())
+                slots = (slots,) if type(slots) is str else slots
+                if set(slots) - set(declared) - {"__dict__", "__weakref__"}:
+                    raise TypeError("Dataclass has undeclared slotted event fields")
+            return ("dataclass", name, tuple((name, self._encode(getattr(value, name), active)) for name in declared))
+        finally:
+            active.remove(identity)
 
 @dataclass(frozen=True)
 class Base:
@@ -62,6 +117,7 @@ class Arena:
         self.root = 0
         self.counts = {}
         self.unbounded_recurrence = {}
+        self.event_codec = EventCodec()
 
     def add_base(self, base):
         if base not in self.base_ids:
@@ -77,7 +133,11 @@ class Arena:
         return self.position_ids[vertex]
 
     def failure(self, profile, reason, context):
-        return self.add_position(-2, profile, ("failure", tuple(reason), frozen(context)))
+        # Fault/world/input carriers already have the Kernel's hash/equality
+        # contract. Retain them, including an already encoded event record,
+        # instead of applying the event codec to unrelated carrier types.
+        hash(context)
+        return self.add_position(-2, profile, ("failure", tuple(reason), context))
 
     def beta(self, vertex, actor):
         p = self.positions[vertex]
@@ -115,7 +175,8 @@ def compile_kernel(kernel, commands, *, event_key=None, max_bases=250000):
         raise ValueError("Nonempty finite command domains required for every actor")
     profiles = tuple(itertools.product(*commands))
     arena = Arena(kernel.actors, profiles)
-    event_key = event_key or (lambda outcome: frozen(outcome.event))
+    if event_key is None:
+        event_key = lambda outcome: outcome.event
     faults = tuple(kernel.faults())
     if not faults:
         raise ValueError("Empty fault family is not a solved mission")
@@ -170,7 +231,7 @@ def compile_kernel(kernel, commands, *, event_key=None, max_bases=250000):
                 outcomes_checked += 1
                 ages = tuple(0 if name in out.delivered else age + 1 for age, (name, _) in zip(b.ages, contracts))
                 bad = tuple(out.violations) + tuple("service_deadline:" + name for age, (name, d) in zip(ages, contracts) if age >= d)
-                record = ("effect", tuple(sorted(out.delivered)), frozen(event_key(out)))
+                record = ("effect", tuple(sorted(out.delivered)), arena.event_codec(event_key(out)))
                 if bad:
                     targets.add(arena.failure(profile, bad, (b.fault, out.state, record)))
                     continue
@@ -504,6 +565,86 @@ def memory_rewrite_check():
     return {"streams_checked":checked,"claim":"policy-relative deterministic own-action reconstruction"}
 
 
+def event_codec_regressions():
+    """Distinct consumed events must survive the actual compiler target set."""
+    @dataclass(frozen=True)
+    class EventA:
+        value: object
+    @dataclass(frozen=True)
+    class EventB:
+        value: object
+    nan_a=struct.unpack(">d",bytes.fromhex("7ff8000000000001"))[0]
+    nan_b=struct.unpack(">d",bytes.fromhex("7ff8000000000002"))[0]
+    cases=(
+        ("bool_int",True,1), ("int_float",1,1.0),
+        ("list_tuple",[1],(1,)), ("set_frozenset",{1},frozenset((1,))),
+        ("dict_key_kind",{True:"value"},{1:"value"}),
+        ("dict_iteration_order",{"a":1,"b":2},{"b":2,"a":1}),
+        ("dataclass_identity",EventA(1),EventB(1)),
+        ("dataclass_mapping",EventA(1),{"value":1}),
+        ("dataclass_field_kind",EventA([1]),EventA((1,))),
+        ("nested_bool_int",{"nested":[True]},{"nested":[1]}),
+        ("bytes_str",b"value","value"),
+        ("signed_float_zero",0.0,-0.0), ("nan_payload",nan_a,nan_b))
+    class Events(Tiny):
+        def __init__(self,values,fail=False):super().__init__();self.values=values;self.fail=fail
+        def faults(self):return (0,)
+        def initials(self,f):return (Initial(0,(0,0)),)
+        def outcomes(self,f,x,o,a):
+            return tuple(Outcome(0,frozenset(("s",)),("recorded_failure",) if self.fail else (),{"payload":v}) for v in self.values)
+    retained=[]
+    for name,left,right in cases:
+        arena=compile_kernel(Events((left,right)),((0,),(0,)))
+        initial=next(iter(arena.root_targets))
+        targets=arena.targets(initial,(0,0))
+        assert len(targets)==2,(name,"consumed source outcomes were merged")
+        positions=[arena.positions[v] for v in targets]
+        assert positions[0].base==positions[1].base and positions[0].incoming==positions[1].incoming
+        assert all(arena.beta(v,0)==arena.beta(next(iter(targets)),0) for v in targets)
+        records={p.record[2] for p in positions}
+        assert records=={arena.event_codec({"payload":left}),arena.event_codec({"payload":right})}
+        assert all(record[0]=="dict" for record in records),"Default event was encoded twice"
+        # Every first-step target continues preserving both distinct event colours.
+        assert all(len(arena.targets(v,(0,0)))==2 for v in targets)
+        failed=compile_kernel(Events((left,right),fail=True),((0,),(0,)))
+        failed_targets=failed.targets(next(iter(failed.root_targets)),(0,0))
+        assert len(failed_targets)==2
+        failed_records=set()
+        for target in failed_targets:
+            position=failed.positions[target]
+            assert position.base==-2 and position.record[1]==("recorded_failure",)
+            _,_,effect_record=position.record[2]
+            failed_records.add(effect_record[2])
+        assert failed_records==records
+        retained.append(name)
+    collision_a=make_dataclass("Collision",[("value",int)],frozen=True,
+        namespace={"__module__":"hierarchy_codec_regression"})
+    collision_b=make_dataclass("Collision",[("value",int)],frozen=True,
+        namespace={"__module__":"hierarchy_codec_regression"})
+    cyclic=[];cyclic.append(cyclic)
+    @dataclass
+    class Extra:
+        value: int
+    extra=Extra(1);extra.unrecorded="event payload"
+    @dataclass(eq=False)
+    class IdentityValue:
+        value: int
+    rejected=[]
+    for name,values in (("unsupported_object",(object(),)),("cyclic_value",(cyclic,)),
+                        ("dataclass_name_collision",(collision_a(1),collision_b(1))),
+                        ("undeclared_dataclass_field",(extra,)),
+                        ("opaque_dataclass_identity",(IdentityValue(1),))):
+        try:
+            compile_kernel(Events(values),((0,),(0,)))
+        except (TypeError,ValueError):
+            rejected.append(name)
+        else:
+            raise AssertionError("Unrepresented event data was silently accepted: "+name)
+    return {"compiler_distinction_cases":retained,"distinct_targets_per_case":2,"distinct_failure_targets_per_case":2,
+            "same_physical_successor_and_observations":True,"default_encoded_once":True,
+            "rejected_source_event_classes":rejected}
+
+
 def reproduce():
     regressions=compiler_regressions()
     kernel=PublicBrakes()
@@ -524,6 +665,7 @@ def reproduce():
     return {"scope":"finite regular-invocation causal kernels; full unknown-fault arena; checked synthesis import",
             "imported_synthesis_algorithm_executed":False,
             "compiler_regressions":regressions,"frontend":frontend_check(),"own_action_rewrite":memory_rewrite_check(),
+            "event_codec":event_codec_regressions(),
             "fleet":fleet_check(),
             "public_brakes":{"compiler":arena.counts,"hierarchy":hierarchy,"source_policy_check":source,
                 "compiled_policy_check":compiled,"arena_edge_sha256":fingerprint.hexdigest(),
