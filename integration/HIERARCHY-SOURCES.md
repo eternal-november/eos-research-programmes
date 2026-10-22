@@ -1,0 +1,17 @@
+# Hierarchical-information import and source boundary
+
+Status: primary-source statements and the relevant construction inspected on 2026-10-22 before implementation. The local result is a compiler, preservation argument, hierarchy certificate and physical specialization, not a new distributed-synthesis theorem. Independent review and repository acceptance remain separate.
+
+The inspected source is the 35-page author-hosted manuscript by Dietmar Berwanger, Anup Basil Mathew and Marie van den Bogaard, [Hierarchical Information and the Synthesis of Distributed Strategies](https://lsv.ens-paris-saclay.fr/~dwb/hi.pdf). It has no visible version identifier in the inspected front matter; this record identifies the URL, length, theorem numbering and inspection date rather than calling it the final publisher version.
+
+| Consumer | Checked locator and conclusion | Local application obligation |
+|---|---|---|
+| Game interface | cited[✓], §§2.1–2.2, printed pp.3–5: finite actions and observations, synchronous perfect recall, a designated root, total joint-action successor relation, finite-state strategies and ω-regular objectives. | Preserve initialization, causal effect choices, local observations, joint action profiles, finite terminal verdicts and mission colours. These are constructed in HIERARCHY and hierarchy_model.py. |
+| Exact decidable subclass | cited[✓], Definition 7 p.9; Lemma 9 p.10; Theorem 10 p.11 and construction through p.15. Hierarchy holds at every history; its test is decidable; the resulting synthesis problem is finite-state solvable. | Test the complete combined arena with unknown static faults. The source's shadow-player construction is imported, not reimplemented or reported as executed. |
+| Weaker temporal hierarchy | cited[✓], Definition 13 p.15; Theorems 16–17 pp.17–19 and proof opening. Recurring hierarchy is decidable; the synthesis result additionally assumes an objective colouring observable to every player. | Not used by the positive construction. Hidden physical/service colours cannot be made public without a new preservation proof. |
+
+The inspection included the observation-history convention, which omits the initial root observation and does not include own action labels, and the proof's strategy redistribution. The compiler therefore supplies an inert bootstrap and a policy-relative own-action reconstruction, not an unsupported universal epistemic equivalence. Hidden incoming whole profiles make the interpretation of a joint-strategy outcome unambiguous. No theorem is imported about asynchronous missing invocations, mobile corruption, unbounded raw-report alphabets, or arbitrary information forks.
+
+The closest local substrate is [FINITE](../enforcement/FINITE.md) and the parameter theorem in [BRAKE-PROOFS](../enforcement/BRAKE-PROOFS.md). The import does not establish their physical assumptions. The new specialization changes the observation architecture to timely common report delivery, retains independently faulty physical effects, and explicitly uses a finite threshold frontend. Its margins and operational checks are reconstructed locally.
+
+This was a targeted theorem/import assessment, not a novelty survey. The selected source was already identified by the structural source assessment; its exact hypotheses, numbering and proof route were re-inspected for this adapter. Reopen the import assessment when changing regular invocation, perfect recall, event colouring, adversarial information, the initial-input interface, or finite representability.
