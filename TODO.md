@@ -8,6 +8,12 @@ Problem maturity: design for the clarified motivating target; the prior conditio
 
 The original [handoff packet](handoff/HANDOFF.md) remains unchanged as the input to the prior audited package; [EXECUTION](handoff/EXECUTION.md) continues to govern isolation, ownership, source assessment and checking. Read the current motivating formulation with it. The earlier [P1-P16 ledger](research/PROGRAM-CONTRACT.md) and [audit](research/PROGRAM-AUDIT.md) now explicitly distinguish the protected-interface family from the unresolved clarified target. Their completion record must not substitute for the defining independent-enforcement result.
 
+## Active Goal and completion contract
+
+The new persistent Goal is active under [ENFORCEMENT-CONTRACT](ENFORCEMENT-CONTRACT.md). Its independent specification review has identified and repaired completion loopholes involving disconnected finite examples, vacuous global rights and a merely renamed instance family. The contract requires a substantive positive enforcement family, information/capability/timing boundaries, linked finite analysis, preservation laws and independent final checking. Unbounded service and bounded effective synthesis are selected commitments, explicitly distinguished from universal demands of the motivation.
+
+Current work: integrate targeted primary-source assessments; develop and challenge an independently actuated physical family before accepting any construction. Candidate counterforce mechanisms remain unproved. The contract ledger is authoritative for E1-E8; none is closed by this setup.
+
 ## Current result and open design obligation
 
 This formulation turn preserves the user's five defining features and supplies a precise deadline indistinguishability obstruction. The almost-sure version requires a coupling of complete joint honest decision laws, not merely matching individual marginals or one selected random tape. Admissibility constrains prescribed compliant responses and global protected outcomes while unlawful Byzantine effects remain in the plant. Universal compliance by every participant is a distinct, possibly immediately unrealizable mission.
