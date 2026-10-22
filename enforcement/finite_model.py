@@ -56,6 +56,7 @@ class Initial:
 class Observation:
     local: tuple[str | None, ...]
     # Private to the plant/checker. Table.react receives only its local symbol.
+    # Scalar for a local device; component tuple for the product kernel.
     physical_sample: int | tuple[int, ...] | None = None
 
 @dataclass(frozen=True)
@@ -375,11 +376,12 @@ class PeerBrakes:
                     bad = list(self.initial_violations(fault, successor))
                     for i, command in enumerate(commands):
                         if i not in fault.planner and command == 1:
-                            if c.prohibit_on or observation.physical_sample < c.conduct_threshold:
+                            if c.prohibit_on or state.x < c.conduct_threshold:
                                 bad.append("honest_issued_response:" + str(i))
                     deliveries = (0, x_next) if fault.motor_bad and x_next else (x_next,)
                     for delivered in deliveries:
                         event = {"sample_x": observation.physical_sample,
+                                 "invocation_x": state.x,
                                  "labels": list(observation.local), "issued": list(commands),
                                  "pending_applied": list(pending_actual), "actual_engagement": list(actual),
                                  "motor_input": motor, "x_next": x_next, "heat_next": heat_next,
@@ -576,6 +578,58 @@ def generic_regressions():
     return {"missing_continuation_loses": True, "absent_invocation_does_not_tick_local_memory": True,
             "nonbottom_service_free_cycle_rejected": True, "service_free_rank_checked": True, "preexisting_service_age_preserved": True}
 
+
+def stale_information_witness():
+    """Replay matched histories; universality is supplied by FINITE.md's proof."""
+    kernel = PeerBrakes(replace(BrakeConfig(), sensor_delay=2))
+    fault = BrakeFault(True)
+    quiet = attack = BrakeState(0, 0, ((0, 0, 0),), (0, 0))
+    prefix = []
+
+    def transition(state, labels, commands, motor):
+        observation = Observation(labels, state.samples[0])
+        assert observation in tuple(kernel.observations(fault, state))
+        return next(result for result in kernel.outcomes(fault, state, observation, commands)
+                    if result.event["motor_input"] == motor and result.event["actual_delivery"] == 0)
+
+    for tick, motor in enumerate((4, 6, 6)):
+        assert quiet.x == 0
+        assert quiet.samples[0] == attack.samples[0] == 0
+        labels, commands = ("low",) * 3, (0,) * 3
+        q = transition(quiet, labels, commands, 0)
+        a = transition(attack, labels, commands, motor)
+        assert not q.violations and not a.violations
+        prefix.append({"tick": tick, "quiet_before": serial(quiet), "attack_before": serial(attack),
+                       "common_local_labels": list(labels), "forced_common_commands": list(commands),
+                       "quiet_event": q.event, "attack_event": a.event})
+        quiet, attack = q.state, a.state
+    assert attack.x == 10 and attack.samples[0] == 4 and attack.pending[0] == (0, 0, 0)
+    endings = []
+    for commands in itertools.product((0, 1), repeat=3):
+        result = transition(attack, ("high",) * 3, commands, 6)
+        assert result.state.x == 11 and result.violations == ("world_speed",)
+        endings.append(result.event)
+
+    # Reach an old-high/current-zero case under the threshold policy. Its next
+    # ON command is forbidden by the unchanged current-invocation conduct law.
+    state = BrakeState(4, 0, ((0, 0, 0),), (4, 4))
+    deceleration = []
+    for motor in (2, 0):
+        result = transition(state, ("high",) * 3, (1,) * 3, motor)
+        assert not result.violations
+        deceleration.append({"before": serial(state), "event": result.event})
+        state = result.state
+    assert state.x == 0 and state.samples[0] == 4
+    failure = transition(state, ("high",) * 3, (1,) * 3, 0)
+    assert failure.violations == tuple("honest_issued_response:" + str(i) for i in range(3))
+    deceleration.append({"before": serial(state), "event": failure.event,
+                         "violations": list(failure.violations)})
+    return {"fault": serial(fault), "matched_prefix": prefix,
+            "attack_endings_all_eight_current_commands": endings,
+            "argument": "Current-zero quiet world forces OFF under universal conduct; matching delayed observations transfer those commands through tick two. At tick three every command arrives after the unsafe effect.",
+            "stale_high_current_zero_conduct_regression": deceleration}
+
+
 def reproduce():
     base = BrakeConfig()
     policy = threshold_policy()
@@ -642,6 +696,7 @@ def reproduce():
     routine = verify(HealthyOnly(replace(base, brake_channel=False)), policy)
     assert routine["winning"]
     return {"format": 1, "model": "finite integer delayed peer brakes", "parameters": asdict(base),
+            "conduct_binding": "honest-issued ON requires current invocation speed >= conduct_threshold; observation age does not change this law",
             "physical_carrier": {"speed_cap": model.x_cap, "heat_cap": model.heat_cap,
                                  "caps_are_proved_carrier_bounds_not_safety_clipping": True},
             "sensor_quotient": check_sensor_quotient(), "generic_regressions": generic_regressions(),
@@ -649,7 +704,8 @@ def reproduce():
             "product_certificate": product_certificate(positive),
             "bounded_synthesis": synthesis, "blind_bounded_synthesis": blind_synthesis,
             "forbidden_bounded_synthesis": forbidden_synthesis,
-            "routine_healthy_service_without_brakes": routine, "comparisons": comparisons}
+            "routine_healthy_service_without_brakes": routine, "comparisons": comparisons,
+            "stale_information_causal_obstruction": stale_information_witness()}
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
