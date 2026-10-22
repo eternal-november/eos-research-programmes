@@ -1,6 +1,6 @@
 # Byzantine control research state
 
-Problem maturity: design for the clarified motivating target; the prior conditional constructions remain developed and checked at their recorded scopes. Artifact condition: motivating formulation is a draft with source and semantic checks; historical proof artifacts are preserved. Repository acceptance remains pending.
+Problem maturity: stabilize for the checked discrete enforcement family; broader application realization remains design work. Artifact condition: the new theory, proofs, executable models and completion audit are checked at their declared scopes; historical artifacts are preserved. Repository acceptance remains pending.
 
 ## Current target
 
@@ -8,19 +8,21 @@ Problem maturity: design for the clarified motivating target; the prior conditio
 
 The original [handoff packet](handoff/HANDOFF.md) remains unchanged as the input to the prior audited package; [EXECUTION](handoff/EXECUTION.md) continues to govern isolation, ownership, source assessment and checking. Read the current motivating formulation with it. The earlier [P1-P16 ledger](research/PROGRAM-CONTRACT.md) and [audit](research/PROGRAM-AUDIT.md) now explicitly distinguish the protected-interface family from the unresolved clarified target. Their completion record must not substitute for the defining independent-enforcement result.
 
-## Active Goal and completion contract
+## Completion contract and checked result
 
-The new persistent Goal is active under [ENFORCEMENT-CONTRACT](ENFORCEMENT-CONTRACT.md). Its independent specification review has identified and repaired completion loopholes involving disconnected finite examples, vacuous global rights and a merely renamed instance family. The contract requires a substantive positive enforcement family, information/capability/timing boundaries, linked finite analysis, preservation laws and independent final checking. Unbounded service and bounded effective synthesis are selected commitments, explicitly distinguished from universal demands of the motivation.
+The new persistent Goal is governed by [ENFORCEMENT-CONTRACT](ENFORCEMENT-CONTRACT.md). Its independent specification review has identified and repaired completion loopholes involving disconnected finite examples, vacuous global rights and a merely renamed instance family. The contract requires a substantive positive enforcement family, information/capability/timing boundaries, linked finite analysis, preservation laws and independent final checking. Unbounded service and bounded effective synthesis are selected commitments, explicitly distinguished from universal demands of the motivation.
 
-Current work: integrate targeted primary-source assessments; develop and challenge an independently actuated physical family before accepting any construction. Candidate counterforce mechanisms remain unproved. The contract ledger is authoritative for E1-E8; none is closed by this setup.
+Current result: [THEORY](enforcement/THEORY.md) assembles independently applied peer braking, local fault-bounded evidence, explicit delays, protected heat and actual-output service. [BRAKE-PROOFS](enforcement/BRAKE-PROOFS.md) supplies a parametric discrete/quantized proof and a Lean-checked integer instance; [BOUNDARIES](enforcement/BOUNDARIES.md) gives information, authority, timing and admissibility obstructions. Independent mathematical and semantic reviews support these stated scopes. [ENFORCEMENT-SOURCES](ENFORCEMENT-SOURCES.md) records the checked predecessors and adapter duties.
 
-## Current result and open design obligation
+The E1-E8 contract is discharged at the scopes recorded in the independent [completion audit](enforcement/AUDIT.md). [FINITE](enforcement/FINITE.md) supplies the linked bounded procedure, exact policy classification and multi-device actual-service certificate. Run python -B theories-and-designs/byzantine-control/enforcement/verify.py --check to reproduce all bound evidence. No mandatory obligation remains open for this declared Goal. Physical/hydraulic validation, unrestricted synthesis and repository acceptance are not claimed.
 
-This formulation turn preserves the user's five defining features and supplies a precise deadline indistinguishability obstruction. The almost-sure version requires a coupling of complete joint honest decision laws, not merely matching individual marginals or one selected random tape. Admissibility constrains prescribed compliant responses and global protected outcomes while unlawful Byzantine effects remain in the plant. Universal compliance by every participant is a distinct, possibly immediately unrealizable mission.
+## Current result and remaining scope
 
-A future bounded benchmark needs an explicit primitive-interface inventory and joint fault scenario, an observation/capability/timing family, initial information scenarios, service, and stipulated intervention rules. It must preserve independent actuation and permit faults in enforcement components. The success condition is a locally realizable strategy with a checked preservation argument, a stated-class characterization, or a legal obstruction at that scope. Introducing a universally protected executor does not close this obligation.
+The motivating formulation preserves the five defining features and supplies a precise deadline indistinguishability obstruction. The almost-sure version requires a coupling of complete joint honest decision laws, not merely matching individual marginals or one selected random tape. Admissibility constrains prescribed compliant responses and global protected outcomes while unlawful Byzantine effects remain in the plant. Universal compliance by every participant is a distinct, possibly immediately unrealizable mission.
 
-Potential sources to import/adapt are Usevitch-Panagou's adversarial sampled-control conditions, the model of robot containment in Ashkenazi et al., decentralized supervisory controllability/coobservability, and architecture-sensitive distributed synthesis. Their checked assumptions and versions are in MOTIVATING-PROBLEM. No novelty or complete literature coverage is claimed. The open work is to connect those results under the selected joint assumptions, not simply rename them.
+The current benchmark instantiates those obligations through independently driven devices and peer brakes. Its defining positive case includes faulty enforcement and source paths; it does not restore a universally protected executor. The linked finite analysis, explicit adapter and independent whole-contract audit supply the additional assembly and checking obligations; the physical proof alone was not counted as completion.
+
+The source assessment distinguishes counterforce control, distributed invariance, decentralized supervision and bounded Byzantine synthesis, together with the exact local adapter obligations. No novelty or exhaustive literature coverage is claimed. A future theorem or changed observation/capability context must reopen its closest-source assessment.
 
 Specification enforcement under fixed rules remains distinct from governance of the rules and powers. A future change to this boundary must preserve the affected stakeholders, authority to revise rules and constraints on abusive enforcement.
 
@@ -42,7 +44,7 @@ The richer full-report-vector singleton-selector and inter-authorizer-communicat
 
 Integration remains on codex/byzantine-control-20261021 in C:\Users\Sean\.codex\worktrees\byzantine-control-research\eos-garden. The coordinator owns this checkout and index; the primary checkout remains read-only. No primary merge or remote push is part of this work.
 
-Earlier evidence, institution, digital and timed-recovery worker branches/worktrees under C:\Users\Sean\.codex\worktrees\byzantine-program-* are retained for recovery. They do not replace the maintained integration branch. Current delegates are read-only and have no index or file ownership.
+Earlier evidence, institution, digital and timed-recovery worker branches/worktrees under C:\Users\Sean\.codex\worktrees\byzantine-program-* are retained for recovery. They do not replace the maintained integration branch. The new proof and finite worker worktrees, byzantine-enforcement-proof and byzantine-enforcement-finite, are also retained; their scoped commits are integrated. No active worker assignment remains. The coordinator retains integration ownership.
 
 ## Needs adjudication
 

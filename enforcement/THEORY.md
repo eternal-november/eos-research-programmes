@@ -1,6 +1,6 @@
 # Distributed enforcement by independent physical effects
 
-Status: derived candidate theory for the active [completion contract](../ENFORCEMENT-CONTRACT.md). Construction-specific proof and independent checking are in progress. Nothing here declares program completion or repository acceptance. [The source assessment](../ENFORCEMENT-SOURCES.md) identifies the established ingredients and the remaining adapter duties.
+Status: derived theory with independent mathematical and semantic checking at the scopes recorded in [AUDIT](AUDIT.md). The [completion contract](../ENFORCEMENT-CONTRACT.md) is discharged by the integrated package. Repository acceptance remains separate. [The source assessment](../ENFORCEMENT-SOURCES.md) identifies the established ingredients and the remaining adapter duties.
 
 ## Semantic center
 
@@ -18,11 +18,19 @@ A scenario specifies compromised policy executors, sensor/calibration/link paths
 
 Each compliant brake planner receives its own vector of \(2s_{ij}+1\) readings over distinct declared source paths at its invocation. At most \(s_{ij}\) positions are affected by compromised sensor, calibration, delivery, identity or alignment mechanisms under the actual same \(f\). Every other reading concerns that invocation's target speed within error \(\varepsilon_j\). Fixed positions identify physical/source paths, not merely repeated messages. Missing values can be replaced by arbitrary sentinels and counted against the affected-position bound. If one common defect affects several positions, all of them count; signatures or repeated reports do not manufacture independence.
 
+For a fixed threshold, the same command can be computed by thresholding each source value and taking a majority of the resulting bits; a median is at least the threshold exactly when more than half the readings are at least that threshold. This finite frontend belongs to the faultable planner, not to a protected physical filter. The explicit finite synthesis below chooses the LOW/HIGH frontend as part of its declared local interface; completeness at that interface is not completeness for arbitrary policies reading every raw report. Unbounded numeric-message parsing and physical computation latency are not established by an integer-valued mathematical input alone.
+
 The median of this local vector lies within \(\varepsilon_j\) of the actual sampled speed: more than half the positions lie in that interval, so a middle order statistic cannot lie outside it. This is an order argument, not a probabilistic independence assumption. Different planners can receive different vectors and medians, including conflicting threshold decisions near the boundary. No planner requires another device's speed, the actual fault identities or a pooled report vector.
 
 A correct planner with a faulty sensor remains in \(C(f)\). The local median bound protects its evidential premise. A correct planner with a faulty brake actuator still owes its issued-command duties, while the actuator's actual effects may deviate. These distinctions cannot be replaced by calling the entire actor Byzantine whenever any sensor fails.
 
 The surviving-source condition is a real observation-coverage premise. If every path to a correct planner can be forged, truthful justification cannot be inferred from those readings. Similarly, a controller cannot recover timely action merely by authenticating stale evidence.
+
+## Causal round and service epoch
+
+Fix the actual state and joint fault scenario. At each physical tick the environment chooses intact-source errors and corrupted reports, including recipient-specific lies, from their declared relations. Each compliant planner then issues its command from only its own current vector/history. The adversary may see the current global state, current reports and issued compliant commands before choosing faulty planner commands, faulty motor inputs and faulty actuator engagements; it cannot choose past reports retrospectively or access future private inputs. Intact FIFO paths apply their oldest queued command and append the new command; faulty effect paths retain their admitted independent choices. The actual motion/heat relations then update the world, and the output mechanisms emit the next epoch's actual delivery. This strong causal adversary covers reacting to newly issued commands; it does not grant any planner the verifier's information.
+
+At integer epoch t the intact output relation is d_j(t)=ell_j v_j(t). The transition event reports d_j(t+1), matching the finite checker. Initial membership includes normal v_j(0)>=L_j and the corresponding initial output, so the initial epoch is covered as well. These are discrete output quanta/rates specified by the delivery mechanism, not integrals of an unmodeled continuous flow.
 
 ## Actual effects and the stipulated mission
 
@@ -34,7 +42,7 @@ v_j^+=\max(0,a_jv_j+\tau_j-B_j).
 
 A normal motor/output chain supplies \(\tau_j=\tau_j^0\). A compromised chain may choose any \(\tau_j\in[0,T_j]\), including refusal, maximum drive and switching after defenders have queued a response. It can also withhold its delivered output. The unilateral zero-speed relation is a mechanical model premise, not a software rule that checks permission. Reverse drive, cutting brake mounts, force above the declared bound and concealed additional drive paths are outside this family.
 
-For this positive subclass, each intact brake effect path has a fixed integer delay d_ij between zero and D_j. Its FIFO shifts once per physical tick: actual engagement at t is the command issued at t-d_ij when t>=d_ij, and is OFF during startup. Delay zero applies the current issued command before the physical effect. Release follows the same rule. Pending commands are apparatus state; bounded arrival alone without this ordering/hold semantics is not the premise. A compromised path may choose any engagement in \([0,1]\), regardless of authorization or thermal consequences, within the stated physical bound. No supervisory evaluator clips its action to the safe set.
+For this positive subclass, each intact brake effect path has a fixed integer delay d_ij between one and D_j, with D_j>=1. Its FIFO shifts once per physical tick: actual engagement at t is the command issued at t-d_ij when t>=d_ij, and is OFF during startup. The zero-delay comparison in BOUNDARIES uses a separate direct case proof and applies the current issued command before the effect. Release follows the same rule. Pending commands are apparatus state; bounded arrival alone without this ordering/hold semantics is not the premise. A compromised path may choose any engagement in \([0,1]\), regardless of authorization or thermal consequences, within the stated physical bound. No supervisory evaluator clips its action to the safe set.
 
 At fixed speed and engagement, changing \(B_j\) changes the motor's attainable next-speed interval. It generally shifts that interval; it need not make it a subset of the previous interval, and does not shrink the motor's primitive torque alphabet. The guarantee consumes the resulting upper and lower motion bounds. This is physical counterintervention on realized effects, not permanent seizure or agreement about what the motor should do.
 
@@ -64,7 +72,7 @@ The proposed local policy issues ON exactly when its own median is at least \(q_
 
 ## Parametric positive regime and assembly
 
-The detailed derivation is maintained in [BRAKE-PROOFS](BRAKE-PROOFS.md). The parameter domains are m_j>=1 and 0<=f_j<m_j integers; s_ij,D_j nonnegative integers; 0<c_j<=1; b_j>0; 0<=tau_j^0<=T_j; epsilon_j>=0; 0<L_j<=q_j+epsilon_j; q_j-epsilon_j>=r_j>0; 0<=beta<1; H>0; k_j>=0; and ell_j>0. Initialize all speeds in [0,q_j+epsilon_j], every normal speed also at least L_j, h in [0,H], and intact queues OFF. Each admitted fault scenario has these nonempty initial scenarios. The bounds on normal torque and initialization are load-bearing, not implicit conventions. Its sufficient inequalities have distinct physical roles:
+The detailed derivation is maintained in [BRAKE-PROOFS](BRAKE-PROOFS.md). The parameter domains are m_j>=1 and 0<=f_j<m_j integers; s_ij nonnegative integers and D_j>=1 integers; 0<c_j<=1; b_j>0; 0<=tau_j^0<=T_j; epsilon_j>=0; 0<L_j<=q_j+epsilon_j; q_j-epsilon_j>=r_j>0; 0<=beta<1; H>0; k_j>=0; and ell_j>0. Initialize all speeds in [0,q_j+epsilon_j], every normal speed also at least L_j, h in [0,H], and intact queues OFF. Each admitted fault scenario has these nonempty initial scenarios. The bounds on normal torque and initialization are load-bearing, not implicit conventions. Its sufficient inequalities have distinct physical roles:
 
 \[
 \begin{aligned}

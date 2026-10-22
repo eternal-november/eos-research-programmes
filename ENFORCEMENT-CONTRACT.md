@@ -89,11 +89,11 @@ A read-only reviewer compared the draft with MOTIVATING-PROBLEM at base 03165615
 
 | Obligation | Current status | Dependencies and next evidence |
 |---|---|---|
-| E1 | Pending formal instantiation | Motivating kernel is the source specification; choose common actual-effect interface without central authorization semantics. |
-| E2 | Open | Candidate physical families require comparison after current prior-art reports; no positive result is claimed here. |
-| E3 | Partial source formulation | Deadline obstruction exists in the motivation; construction-specific information/capacity/latency boundaries remain open. |
-| E4 | Import candidate | Byzantine bounded synthesis and explicit fault-expanded finite games; world-level mission and independent-effect adapter still needed. |
-| E5 | Open | Existing local refinement ideas can be reused after hypotheses match; physical and resource compatibility are not yet established. |
-| E6 | Specification tests defined | Inventory and adverse executions depend on the actual selected construction. |
-| E7 | Open for this Goal | Historical package checks remain scoped historical evidence, not checks of the new result. |
-| E8 | In progress | Complementary source reports and independent contract review precede construction; final audit remains open. |
+| E1 | Discharged: derived, independently checked | [THEORY](enforcement/THEORY.md) and [FINITE](enforcement/FINITE.md): causal order, actual effects, local histories, joint faults, initialization, monitors and nonblocking. |
+| E2 | Discharged: proved/derived, independently checked | [BRAKE-PROOFS](enforcement/BRAKE-PROOFS.md) and [Brakes.lean](enforcement/Brakes.lean): parametric discrete/quantized family and unbounded integer instance, with actual positive output and explicit substrate premises. |
+| E3 | Discharged: derived, independently checked | [BOUNDARIES](enforcement/BOUNDARIES.md), FINITE and exact witnesses: information, capability, timing and admissibility. Identity-quantizer impossibilities and floor-specific boundaries remain distinct. |
+| E4 | Discharged: derived and exhaustively checked at declared bounds | FINITE: general finite causal procedure, exact 64-table classification, linked nondegenerate integer parameter family. Completeness is indexed to local information and memory. |
+| E5 | Discharged: derived and independently checked | Concrete source/fault/queue/parameter adapter; local action/time/output preservation; actual-service product certificate and separate shared-thermal theorem. |
+| E6 | Discharged within explicit primitive inventory | [AUDIT](enforcement/AUDIT.md) records admitted attacks, actor-independent outcome witnesses, and substrate/realization limits. |
+| E7 | Discharged at the recorded verification scopes | All 26 Lean dependency reports, exact arithmetic, exhaustive finite reproduction and independent implementations; [verification record](enforcement/verification.json). |
+| E8 | Discharged: independent program audit supports completion | [AUDIT](enforcement/AUDIT.md) records the full-contract verdict, primary-source comparisons, corrected findings, reproducible evidence and limits. Repository acceptance remains separate. |

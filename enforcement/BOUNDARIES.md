@@ -1,6 +1,6 @@
 # Feasibility boundaries under the same actual-effect semantics
 
-Status: derived arguments and exact witnesses, pending independent checking. These results complement the positive family in [THEORY](THEORY.md); they do not turn failure of a sufficient condition into a universal impossibility claim. All normative thresholds below are fixed independently of controller and observation parameters.
+Status: derived arguments and exact witnesses, independently checked at the scopes recorded in AUDIT.md. These results complement the positive family in [THEORY](THEORY.md); they do not turn failure of a sufficient condition into a universal impossibility claim. All normative thresholds below are fixed independently of controller and observation parameters. The real-valued authority, timing, heat/speed and persistent-heat arguments in this file use identity quantization and the displayed exact effect relations. They do not automatically transfer to arbitrary downward quantizers, which need not preserve lower bounds; the finite floor subclass has its separately checked boundaries in FINITE.
 
 ## Physical authority: a policy-independent cut
 

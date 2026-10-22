@@ -40,9 +40,14 @@ def checks():
         for errors in product((F(-1, 10), F(0), F(1, 10)), repeat=3):
             cmd = tuple(int(v + error >= F(41, 5)) for error in errors)
             require(all(c == 0 or v >= r for c in cmd), 'Factive conduct failed')
-            nxt = speed(v, T, b * sum(cmd))
-            require(nxt <= V, 'Timely informative first step failed')
-            outcomes.append(nxt)
+            for bad_brake in (None, 0, 1, 2):
+                for bad_engagement in (0, 1):
+                    actual = list(cmd)
+                    if bad_brake is not None:
+                        actual[bad_brake] = bad_engagement
+                    nxt = speed(v, T, b * sum(actual))
+                    require(nxt <= V, 'Timely informative first step failed')
+                    outcomes.append(nxt)
         informative[str(v)] = {'min_next': str(min(outcomes)), 'max_next': str(max(outcomes))}
     # Full-information physical-authority obstruction: even maximum surviving braking fails.
     trace = [F(1)]
