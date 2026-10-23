@@ -486,6 +486,15 @@ def checks():
         assert parse_packet(word,40,1,42) is None
         assert parse_packet(word,41,0,42) is None
         assert parse_packet(word | (1<<40),41,1,42) is None
+    # Saved valid reports defeat the bit scheme if a public injection path is
+    # incorrectly left outside the effective bad-row/capability family.
+    saved = [fixed_packet(i,0,1000) for i in range(3)]
+    replayed = [F(parse_packet(word,i,0,3),1000) for i,word in enumerate(saved)]
+    assert median_group(replayed)[0] == 1  # current truth may instead be0
+    tests['uncharged_public_replay_counterexample'] = {
+        'old_truth':'1','current_truth':'0','replayed_median':'1',
+        'epoch_bit_matches_after_wrap':True,
+        'conclusion':'origin authentication and bit/drain alone do not prevent public replay'}
     assert 42*64 <= 3*1024 and 13*64 <= 1024
     assert 8*1024+1000 < 10000
     assert F(210,9)+1 <=25 and 420<=500
