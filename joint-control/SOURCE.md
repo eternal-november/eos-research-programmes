@@ -68,6 +68,8 @@ Each nominal maintenance tool starts with the actual selected image bytes π(d),
 
 The restoration horizon includes waiting for the scheduled attempt, halt, all writes, boot, new acquisition and local inference, actual dispatch/effect delay and the lifetime of old world-queue effects. It ends at functional resumed influence, not at the last code write. Healthy scheduled maintenance is charged for this same extended interval. An effective-support window theorem must derive its horizon from these operations before invoking κ; a supplied already-useful effective bound would fail W1/W3.
 
+For a source that also admits permanently damaged actuator hardware, surviving unhalted writers or independent retained write/effect authority, define P_persistent as their actual target footprints together with ever-bad tool footprints. Its declared bound r_persistent is a joint source bound, not an inference from r_tool alone. Such targets remain arbitrary and are never declared repaired by the cell sequence. The nominally reconstructible target class excludes only those permanently damaged mechanisms from its restoration conclusion; their adverse effects remain in the positive physical support envelope when its capacity permits them. Initial contaminated stores and initial exposed credentials likewise have explicit support and need not count as post-start acquisition events. The initial/cumulative union used by evidence and the temporary/persistent union used by physical control must each include them.
+
 ## Fixed comparison obligations and answer modes
 
 The following source variations are fixed before selecting a winning controller. The mission is unchanged within each comparison. They do not promise exact solution for every parameter of the whole family.
