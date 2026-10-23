@@ -266,7 +266,7 @@ def within_interval_envelope(costs, rate=F(1153), burst=F(6500)):
 
 def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
              full_power=False, weighted=False, dependency_mode=False, x0=(500000, -500000),
-             a=F(11,200), c=F(9,200)):
+             a=F(11,200), c=F(9,200), initial_dirty=0):
     actors = [LocalMachine(i) for i in range(N)]
     providers = [Provider(row) for row in range(ROWS)]
     # Legitimate initial residual state is nonempty, but cannot be consumed as
@@ -280,25 +280,25 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
         put16(actor.mem[7],2,1000)
     for provider in providers:
         provider.cooldown[:] = bytes([9])*N
-    actors[0].poison(0)
+    actors[initial_dirty].poison(initial_dirty)
     actors[12].poison(12)
-    exposure, known_keys, persistent = {0, 12}, {0, 12}, {12}
-    hardware_exposed = {0}  # tool12 leaks a report key; it cannot drive raw sensors
+    exposure, known_keys, persistent = {initial_dirty, 12}, {initial_dirty, 12}, {12}
+    hardware_exposed = {initial_dirty}  # tool12 cannot drive raw sensors
     # Audit labels and causal events belong to the source, never to Local.step.
-    active, dirty_since = {}, {0:0, 12:0}
+    active, dirty_since = {}, {initial_dirty:0, 12:0}
     acquired_targets = []
     acquire_at = {100+490*k: ((13+k) if source_only else (k+1)) for k in range(8)}
     requests_due, samples_due, replies_due, effects_due = defaultdict(list), defaultdict(list), defaultdict(list), defaultdict(list)
     # Already accepted nominal jobs complete raw sampling at tick0. Duplicate
     # old requests also arrive, exercise live cooldown, and are rejected.
     samples_due[0] = [(origin,row,0) for origin in range(N) for row in range(ROWS)]
-    requests_due[0] = [(origin,row) for origin in range(N) for row in range(ROWS)]
+    requests_due[0] = [(origin,row,row) for origin in range(N) for row in range(ROWS)]
     output = [Command((0,0), None, False) for _ in range(N)]
-    output[0] = output[12] = Command((-2000,-2000), None, False)
+    output[initial_dirty] = output[12] = Command((-2000,-2000), None, False)
     # Initial world commands survive writes. All expire within L_init=4.
     for lag in range(4):
         for target in range(12):
-            baseline = (-2000,-2000) if target == 0 else (0,0)
+            baseline = (-2000,-2000) if target == initial_dirty else (0,0)
             effects_due[lag].append((target, Command(baseline, None, False, -1)))
     tool_clock = [0]*N
     maintenance_until = [0]*N
@@ -386,7 +386,7 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
         max_ingress = max(max_ingress, *(len(box)*64 for box in mail))
         for i, actor in enumerate(actors):
             req, cmd, ops, admitted, published = actor.step(mail[i])
-            if dependency_mode and i in dirty_since and i not in (0,12) and actor.mem[2][1] == 255:
+            if dependency_mode and i in dirty_since and i not in (initial_dirty,12) and actor.mem[2][1] == 255:
                 assert not req and cmd is None and published is None
                 counters['whole_bundle_dependency_suppressed_ticks'] += 1
             endpoint_cpu[i] += ops
@@ -400,8 +400,9 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
                     assert error < F(223,5000), (name,tick,i,'publish',error)
                 available = [v for v in last_view if v is not None]
                 inequality_views |= len(set(available)) > 1
-            for word in req:
-                requests_due[tick+1].append((i,word))
+            for physical_row,word in enumerate(req):
+                # Fixed physical per-row slot, independent of the payload claim.
+                requests_due[tick+1].append((i,physical_row,word))
             endpoint_bits[i] += 16*len(req)
             counters['request_words16'] += len(req)
             if cmd is not None:
@@ -409,10 +410,7 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
                 effects_due[tick+4].append((i,cmd))
                 counters['issued_commands'] += 1
         # Raw acquisition occurs only in response to an actual admitted request.
-        for origin, word in requests_due.pop(tick, []):
-            row = word & 63
-            if row >= ROWS:
-                continue
+        for origin, row, word in requests_due.pop(tick, []):
             provider = providers[row]
             row_cpu[row] += 12
             if not provider.admit(origin, word):
@@ -550,7 +548,7 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
         assert max_state <= RADIUS and min_service >= F(3,10) and min_energy >= 0
     else:
         assert violation is not None
-    return {'name':name,'ticks_executed':len(costs),'repair_enabled':repair,'weighted':weighted,
+    return {'name':name,'ticks_executed':len(costs),'repair_enabled':repair,'weighted':weighted,'initial_dirty_target':initial_dirty,
             'same_run_checks':'physical state, actual service, resource stock, raw inquiry, stored program, addressed repair, retained credentials and queued effects',
             'max_abs_state':str(max_state),'minimum_actual_coordinate_service':str(min_service),
             'minimum_resource_stock':str(min_energy),'max_effect_error_for_derived_good_paths':str(max_effect_error),
@@ -617,6 +615,7 @@ def local_checks():
     # Provider is total on malformed requests and has expiring bounded memory.
     provider = Provider(0)
     assert not provider.admit(0,1<<15) and not provider.admit(13,0)
+    assert not provider.admit(0,41)  # a payload cannot reroute physical row0
     assert provider.admit(0,0)
     assert not provider.admit(0,0)
     for _ in range(9): provider.tick()
@@ -662,10 +661,12 @@ def checks():
     local = local_checks()
     scenarios = [
         simulate('joint_evolving_targets',metadata=True,full_power=True),
+        simulate('initial_contamination_overlaps_acquisition_and_healthy_maintenance',initial_dirty=11,x0=(500000,500000),metadata=True),
         simulate('heterogeneous_weights_and_initial_corner',weighted=True,x0=(-500000,500000),a=F(9,200),c=F(11,200)),
         simulate('source_only_acquisitions_same_budget',source_only=True,metadata=True),
         simulate('common_dependency_loss_and_actual_reconstruction',dependency_mode=True,metadata=True),
         simulate('same_mission_no_repair_actual_code_counterexample',repair=False,x0=(500000,500000))]
+    assert scenarios[1]['maximum_derived_impaired_paths'] == 4
     root = Path(__file__).parent
     names = ('joint_model.py','REALIZATION.md','information_model.py')
     hashes = {name:hashlib.sha256((root/name).read_bytes().replace(b'\r\n',b'\n')).hexdigest() for name in names}
