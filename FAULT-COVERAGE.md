@@ -57,6 +57,8 @@ Conditional duties activate from the source claim, mechanism, or dependency, not
 
 Excluded tasks have a reason, retained boundary duty, and reopening trigger below. Exclusion neither makes the phenomenon impossible nor permits deleting its effects from a claimed guarantee. A numerical tolerance limit is a guarantee boundary, not an automatic research exclusion.
 
+Neither a scope classification nor the label primitive preapproves an assumption. The contract's assumption-admissibility test governs its role, knowledge provenance, persistence, source-relevant challenge, disposition and joint consequences; [ASSUMPTION-REVIEW](ASSUMPTION-REVIEW.md) applies that test to the current program. An excluded larger task cannot hide a successful internal tolerance service or a favorable restriction that leaves a mandatory parent unresolved.
+
 ## Mandatory mechanism families
 
 These rows instantiate the generator for material mechanisms. Examples are diagnostic, not exhaustive attack-name lists. All rows have primary disposition mandatory.
