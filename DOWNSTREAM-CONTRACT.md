@@ -1,6 +1,22 @@
-# Theory for decentralized civilizational computational infrastructure
+# Adversarial fault tolerance supporting decentralized infrastructure
 
-Status: proposed downstream requirements and completion contract, subject to the adversarial review in [CONTRACT-CHALLENGE](CONTRACT-CHALLENGE.md). This is a theory-design artifact, not a new Goal, an executed research program, a deployment claim, or repository acceptance. It does not inherit completion from earlier R1–R8 audits. Its purpose is to prevent a future program from completing a convenient formal fragment while leaving its intended design questions unresolved.
+Status: needs scope revision; not an endorsed contract and not ready to govern a new Goal as written. The prior proposal below expanded a theory intended to support a downstream use into a theory for designing that infrastructure generally. The user's clarification fixes the research subject as adversarial fault tolerance. [CONTRACT-CHALLENGE](CONTRACT-CHALLENGE.md) records this failure of scope despite the earlier bounded reviews.
+
+## Governing scope correction
+
+The required theory is a theory of adversarial fault tolerance, intended to support the design of decentralized civilizational computational infrastructure. The downstream use constrains which fault phenomena, guarantees, mechanisms, and realization conditions matter; it does not make every task involved in building that infrastructure a research obligation. Computational infrastructure is a consumer of the theory, not a demand for a general programming, service-design, or infrastructure-synthesis theory.
+
+The target questions concern what behavior can be preserved under which joint adversarial deviations; which information, influence, time, resource, and admissibility conditions permit that preservation; how effective tolerance mechanisms are constructed; and when their guarantees survive composition, realization, containment, and recovery. The motivating problem keeps independent world effects, imperfect local knowledge, adversarial sensing/inference, constrained counterintervention, and fallible enforcement central. Supporting these questions requires substantive reusable results, not merely vocabulary or a selected safe example.
+
+Nominal application semantics, physical relations, and stipulated institutional rules may be inputs or imports. The theory owes their fault-sensitive interpretation and the preservation laws consumed by its tolerance claims. It need not supply a general-purpose programming language, synthesize all application logic, design federation in general, or resolve normative legitimacy. Composition remains mandatory where joint faults or effects can invalidate component tolerance. Recovery and authority changes matter where they change the fault envelope or protected guarantee. They do not become comprehensive maintenance or governance programs solely because infrastructure will need them.
+
+The mandatory exact finite constructor/refuter in the prior proposal was an added method commitment, introduced to block cherry-picking rather than derived from the stated theory need. It is a possible research instrument, not an established completion requirement. Fault feasibility characterizations, constructive mechanisms, obstruction results, bounds, and reusable tolerance/refinement laws must be selected at the strength required by the adversarial-fault-tolerance questions. No particular universal bounded synthesis task follows from the downstream phrase alone.
+
+A corrected refinement obligation relates an adversarial-fault-tolerance judgment to the corresponding source-system guarantee under the same local information, joint deviations, actual effects, timing, and mission. It does not promise to derive the entire infrastructure from the theory. Assumptions still cannot supply a tolerance capability that the theory promises to explain; narrowing the subject does not rehabilitate a protected global gate or an unexplained timely secure estimator.
+
+The next formulation step is to derive the fault-tolerance questions and required result scopes from the downstream use, then reassess the retained obligations against them. The following proposal is retained temporarily as material to revise, not as the operative commitment set. Its prior state is recorded at 2b43bfc3c6d333a87a2dc2f51a961f772ca734e1. No new Goal, research program, or acceptance follows from this correction.
+
+## Prior overextended proposal
 
 ## Intended use and interpretation
 
