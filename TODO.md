@@ -1,5 +1,13 @@
 # Byzantine control research state
 
+## Current formulation proposal
+
+The downstream-development retrospective has produced [DOWNSTREAM-CONTRACT](DOWNSTREAM-CONTRACT.md), a proposed interpretation of decentralized civilizational computational infrastructure, derived theory obligations, and a completion contract. [CONTRACT-CHALLENGE](CONTRACT-CHALLENGE.md) records adversarial review, rejected drafts, repairs, and remaining judgment boundaries. Maturity: design; condition: stabilizing after independent semantic review and coordinator integration of its final clarifications; acceptance: pending. No new Goal or research execution is authorized by these documents themselves. The proposal fixes a finite effective support floor and separately requires constructive information, enforcement, federation, composition, lifecycle, and source-refinement support; finite enumeration alone cannot close it.
+
+This checkout is the retained enactment worker branch. The inherited status entries below predate the later integration result at bcf7c9837a2f4ac9b55f3e13a6e0a550e6d6cc41 on codex/byzantine-control-20261021; they are not a fresh status audit of that result. The new formulation does not reuse its completion verdict for a new downstream contract. Next action after contract review is to decide whether to adopt this proposed scope before deriving a new program or Goal; no blanket completion claim is made here.
+
+## Inherited research state
+
 Current full-program status: ACTIVE AND INCOMPLETE. The user has explicitly rejected closure by another narrow increment. [FULL-PROGRAM](FULL-PROGRAM.md) records the unchanged HANDOFF R1-R8 obligations, the clarified motivating target, and the actual integration gaps. Its persistent Goal remains active across component milestones. The E1-E8 completion below is historical evidence about the peer-brake subclass, not completion of the full research program.
 
 Problem maturity: stabilize for the checked discrete enforcement family; broader application realization remains design work. Artifact condition: the new theory, proofs, executable models and completion audit are checked at their declared scopes; historical artifacts are preserved. Repository acceptance remains pending.
