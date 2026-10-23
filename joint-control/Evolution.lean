@@ -50,6 +50,30 @@ theorem source_step_refines (M : DynamicModel I X H A F) (f : F)
     (effects : M.next f x emitted y) : DStep M f p x y :=
   ⟨emitted, interpret, effects⟩
 
+/- Dependency impairment is an effect overapproximation, not permission
+for a source adversary to choose an output it cannot actually realize. -/
+def EffectFits {I : Type} {A : I → Type} (physical nominal : (i : I) → A i → Prop)
+    (impaired : I → Prop) (actual : (i : I) → A i) : Prop :=
+  ∀ i, physical i (actual i) ∧ (¬ impaired i → nominal i (actual i))
+
+theorem enlarge_impaired {I : Type} {A : I → Type}
+    (physical nominal : (i : I) → A i → Prop) (J K : I → Prop)
+    (actual : (i : I) → A i) (inclusion : ∀ i, J i → K i)
+    (fit : EffectFits physical nominal J actual) : EffectFits physical nominal K actual := by
+  intro i
+  exact ⟨(fit i).1, fun hk => (fit i).2 (fun hj => hk (inclusion i hj))⟩
+
+def DependencyProjection {Capability I : Type} (held : Capability → Prop)
+    (footprint : Capability → I → Prop) (i : I) : Prop :=
+  ∃ c, held c ∧ footprint c i
+
+theorem dependency_projection_monotone {Capability I : Type}
+    (held more : Capability → Prop) (footprint : Capability → I → Prop)
+    (inclusion : ∀ c, held c → more c) (i : I)
+    (hit : DependencyProjection held footprint i) : DependencyProjection more footprint i := by
+  obtain ⟨c,hc,hi⟩ := hit
+  exact ⟨c,inclusion c hc,hi⟩
+
 structure StoreState where
   cells : Nat → Bool
   access : Bool
@@ -115,6 +139,8 @@ theorem window_monotone_horizon (active : Nat → Nat → Prop) (H K t i : Nat)
 #print axioms static_run_exact
 #print axioms dynamic_locality
 #print axioms source_step_refines
+#print axioms enlarge_impaired
+#print axioms dependency_projection_monotone
 #print axioms release_keeps_residuals
 #print axioms write_keeps_knowledge_queue
 #print axioms reacquisition_counts

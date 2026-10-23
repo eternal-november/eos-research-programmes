@@ -41,6 +41,7 @@ class Acquisition:
     target: int
     start: int
     end: int
+    mode: str = 'write'
     # Existing access writes arbitrarily on every tick of [start,end).
     def active(self,t): return self.start <= t < self.end
 
@@ -63,6 +64,8 @@ def run_trace(T, events, bad_tools=frozenset(), initial_dirty=frozenset(), steps
     rows = []
     for t in range(steps):
         active = {e.target for e in events if e.active(t)}
+        direct = {e.target for e in events if e.active(t) and e.mode=='write'}
+        dependency_only = active-direct
         acquired = {e.target for e in events if e.start == t}
         learned |= acquired
         active_history.append(active)
@@ -86,11 +89,16 @@ def run_trace(T, events, bad_tools=frozenset(), initial_dirty=frozenset(), steps
                     queue.append((t+T.lag,i,True))
             # Strongest finite representative writes after the repair operation.
             # It cannot be suppressed by administrative revocation or release.
-            if i in active or i in bad_tools:
+            if i in direct or i in bad_tools:
                 memory[i][:]=poison
                 resident[i]=True
                 warm[i]=None
                 queue.append((t+T.lag,i,False))
+                effect_good[i]=False
+            elif i in dependency_only:
+                # Ordinary timeout/held-output uncertainty: no hostile store write
+                # or direct hostile actuator command is invented by this branch.
+                warm[i]=None
                 effect_good[i]=False
             elif drop_halt and resident[i] and not halted[i]:
                 # Resident poisoned code can undo an already written address.
@@ -104,7 +112,7 @@ def run_trace(T, events, bad_tools=frozenset(), initial_dirty=frozenset(), steps
         recent=set().union(*active_history[max(0,t-T.horizon):t+1])
         startup=set(initial_dirty) if t<T.horizon else set()
         envelope=set(bad_tools)|recent|T.maintenance(t)|startup
-        rows.append(dict(t=t,active=sorted(active),actual=sorted(actual),
+        rows.append(dict(t=t,active=sorted(active),direct_authority=sorted(direct),actual=sorted(actual),
                          envelope=sorted(envelope),maintenance=sorted(T.maintenance(t)),
                          memory=[list(x) for x in memory],learned=sorted(learned),
                          queue=[list(x) for x in queue],effect_good=list(effect_good)))
@@ -202,7 +210,13 @@ def countermodels():
     assert len(simultaneous_halts)==3
     broad_tool_reach={0,1,2}
     assert len(broad_tool_reach)>1
-    return dict(instantaneous_count=dict(t=1,current=0,still_bad=released[1]['actual'],
+    dep=run_trace(T,[Acquisition(1,0,1,'request-path')],steps=T.horizon+1)
+    assert dep[0]['direct_authority']==[] and dep[0]['memory'][1]==[1,0]
+    assert 1 in dep[0]['actual'] and 1 not in dep[-1]['actual']
+    for row in dep: assert set(row['actual'])<=set(row['envelope'])
+    return dict(dependency_only_impairment=dict(target=1,direct_authority=dep[0]['direct_authority'],
+                    code_unchanged=dep[0]['memory'][1],restored_by=dep[-1]['t']),
+                instantaneous_count=dict(t=1,current=0,still_bad=released[1]['actual'],
                     retained_key=released[1]['learned'],pending_world_effects=released[1]['queue']),
                 missing_halt=dict(t=nohalt[-1]['t'],bad=nohalt[-1]['actual']),
                 omitted_address=dict(t=omitted[-1]['t'],bad=omitted[-1]['actual']),
