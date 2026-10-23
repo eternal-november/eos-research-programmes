@@ -224,14 +224,17 @@ def compile_kernel(kernel, commands, *, event_key=None, max_bases=250000):
             issued = tuple(profile[i] if kernel.compliant(b.fault, i) else None for i in range(kernel.actors))
             masks_checked += 1
             targets = set()
-            outcomes = tuple(kernel.outcomes(b.fault, b.world, b.observation, issued))
+            # Snapshot structured event data at each yield: a valid generator
+            # may reuse/mutate an event container before yielding its next result.
+            outcomes = tuple((out, arena.event_codec(event_key(out)))
+                for out in kernel.outcomes(b.fault, b.world, b.observation, issued))
             if not outcomes:
                 targets.add(arena.failure(profile, ("no_effect_continuation",), (b.fault, b.world, b.observation)))
-            for out in outcomes:
+            for out, encoded_event in outcomes:
                 outcomes_checked += 1
                 ages = tuple(0 if name in out.delivered else age + 1 for age, (name, _) in zip(b.ages, contracts))
                 bad = tuple(out.violations) + tuple("service_deadline:" + name for age, (name, d) in zip(ages, contracts) if age >= d)
-                record = ("effect", tuple(sorted(out.delivered)), arena.event_codec(event_key(out)))
+                record = ("effect", tuple(sorted(out.delivered)), encoded_event)
                 if bad:
                     targets.add(arena.failure(profile, bad, (b.fault, out.state, record)))
                     continue
@@ -617,6 +620,21 @@ def event_codec_regressions():
             failed_records.add(effect_record[2])
         assert failed_records==records
         retained.append(name)
+    class ReusedEvent(Events):
+        def outcomes(self,f,x,o,a):
+            payload={"value":True}
+            yield Outcome(0,frozenset(("s",)),("recorded_failure",) if self.fail else (),payload)
+            payload["value"]=1
+            yield Outcome(0,frozenset(("s",)),("recorded_failure",) if self.fail else (),payload)
+    snapshots=[]
+    for fail in (False,True):
+        arena=compile_kernel(ReusedEvent((),fail=fail),((0,),(0,)))
+        targets=arena.targets(next(iter(arena.root_targets)),(0,0))
+        assert len(targets)==2,"Generator event mutation erased an earlier yielded event"
+        records={arena.positions[v].record[2][2][2] if fail else arena.positions[v].record[2]
+                 for v in targets}
+        assert records=={arena.event_codec({"value":True}),arena.event_codec({"value":1})}
+        snapshots.append("failure" if fail else "productive")
     collision_a=make_dataclass("Collision",[("value",int)],frozen=True,
         namespace={"__module__":"hierarchy_codec_regression"})
     collision_b=make_dataclass("Collision",[("value",int)],frozen=True,
@@ -642,7 +660,7 @@ def event_codec_regressions():
             raise AssertionError("Unrepresented event data was silently accepted: "+name)
     return {"compiler_distinction_cases":retained,"distinct_targets_per_case":2,"distinct_failure_targets_per_case":2,
             "same_physical_successor_and_observations":True,"default_encoded_once":True,
-            "rejected_source_event_classes":rejected}
+            "rejected_source_event_classes":rejected,"mutable_event_yield_snapshot_cases":snapshots}
 
 
 def reproduce():
