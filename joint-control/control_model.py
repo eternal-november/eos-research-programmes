@@ -64,7 +64,7 @@ def no_repair_witness():
     bound=(F(2)/min_growth).numerator//(F(2)/min_growth).denominator+1
     linear_escape=F(-1)+bound*min_growth
     assert linear_escape>1
-    return dict(persistent_poisoned_targets=bad,current_access_needed=1,acquisition_spacing=490,events=8,minimum_growth_while_safe=textq(min_growth),uniform_escape_bound_ticks=bound,certified_mean_lower_bound_at_escape=textq(linear_escape),scope='No-repair comparison; constant poisoned output, no secret fault labels, retained contamination after release.')
+    return dict(persistent_poisoned_targets=bad,current_access_needed=1,acquisition_spacing=490,events=8,minimum_growth_while_safe=textq(min_growth),uniform_escape_bound_ticks=bound,certified_mean_lower_bound_at_escape=textq(linear_escape),scope='Architecture ablation disables all halt/write/boot or substitute restorative effects on poisoned paths; unrestricted remaining policies cannot overcome their persistent output.')
 
 
 def energy_checks():
@@ -86,14 +86,48 @@ def energy_checks():
         aligned=min(cap,aligned+supply-cost)
         assert aligned>=0
         aligned_min=min(aligned_min,aligned)
-    # A static no-maintenance source schedule refutes separate-budget
-    # composition: query-only and actuator-only modules each fit supply300,
-    # but their actual combined constant/batched demand has rate338.
-    e=burst; t=0
-    while e>=0:
-        e=min(cap,e+300-(65+(2730 if t%10==0 else 0)))
+    # Actual 16-bit requests and64-bit replies, with thirteen requester
+    # phases covering all ten ticks. Each provider takes ONE shared sample
+    # per tick, not one sample per recipient. Replies occupy three lanes.
+    phases=list(range(10))+[0,1,2]
+    def starts(t):
+        return 0 if t<0 else sum(t%10==p for p in phases)
+    def physical_query_cost(t):
+        requests=42*starts(t)
+        samples=42 if starts(t-1)>0 else 0
+        replies=14*sum(starts(t-j) for j in (3,4,5))
+        return F(requests*16,64)+2*samples+replies
+    def query_cpu_upper(t):
+        # Eight bounded ops per formatted/parsed bit,924 sorting ops per
+        # publication, and<=30000 aggregate housekeeping ops per tick.
+        request_ops=42*(starts(t)+starts(t-1))*16*8
+        replies=14*sum(starts(t-j) for j in (3,4,5))
+        reply_ops=2*replies*64*8
+        sort_ops=924*starts(t-8)
+        return F(request_ops+reply_ops+sort_ops+30000,10000)
+    physical_period=sum(physical_query_cost(t) for t in range(30,40))
+    cpu_period=sum(query_cpu_upper(t) for t in range(30,40))
+    assert physical_period==F(3045,2)  #1522.5 per10, not2478/2730
+    assert physical_period+52*10>200*10
+    assert physical_period+cpu_period<200*10
+    # Every interval has at most two partial10-tick periods.
+    query_burst=2*(physical_period+cpu_period)
+    assert query_burst<burst
+    assert 42*16<=1024 and 14*64<=1024 and 2*64<=1024
+    assert max(42*16*8,14*64*8,924)+500<10000
+    assert 2*16*8+2*64*8+500<10000
+    query_only=F(burst); min_query=query_only
+    upper_stock=F(burst); t=0
+    while upper_stock>=0:
+        # Ignoring ALL actual CPU energy is favorable to the combined
+        # system. Its upper stock still becomes negative, so actual payment
+        # must fail no later than this certified deadline.
+        upper_stock=min(F(cap),upper_stock+200-(physical_query_cost(t)+52))
+        query_only=min(F(cap),query_only+200-(physical_query_cost(t)+query_cpu_upper(t)))
+        assert query_only>=0
+        min_query=min(min_query,query_only)
         t+=1
-    return dict(background_rate=baseline,inquiry_interval_rate=325,inquiry_interval_burst=burst,combined_interval_rate=rate,supply=supply,capacity=cap,initial_interval=[burst,cap],maximal_envelope_ticks=ticks,maximal_envelope_min_stock=minimum,periodic_aligned_min_stock=aligned_min,shared_failure_supply=300,shared_failure_tick=t,shared_failure_stock=e,operation_count_bound=810,operation_effect_bound=textq(F(810,100000)),scope='Interval proof is universal; source schedules/overapproximation regressions are distinguished in CONTROL.md.')
+    return dict(background_rate=baseline,inquiry_interval_rate=325,inquiry_interval_burst=burst,combined_interval_rate=rate,supply=supply,capacity=cap,initial_interval=[burst,cap],maximal_envelope_ticks=ticks,maximal_envelope_min_stock=minimum,periodic_aligned_min_stock=aligned_min,shared_failure_supply=200,shared_failure_by_tick=t,combined_stock_upper_bound_at_deadline=textq(upper_stock),actual_query_physical_cost_per10=textq(physical_period),query_cpu_upper_per10=textq(cpu_period),query_only_rate_upper=textq((physical_period+cpu_period)/10),query_only_burst_upper=textq(query_burst),query_only_min_stock=textq(min_query),requester_phases=phases,request_bits=16,reply_lane_rows=14,operation_count_bound=810,operation_effect_bound=textq(F(810,100000)),scope='Positive proof uses upper envelopes. Negative composition witness bills actual shared samples/transmitted bits; CPU omitted from failure lower charge and bounded for separate feasibility.')
 
 
 def phase_check():
@@ -132,7 +166,11 @@ def weighted_check():
                 assert max(map(abs,nxt))<=R
                 assert min(2+effect[j] for j in range(2))>=SERVICE
                 count+=1
-    return dict(weights=list(map(textq,weights)),fault_subsets_checked=len(masses),worst_four_path_mass=textq(beta),lambda_bound=textq(lam),additive_bound=textq(additive),radius_margin=textq(lam*R-additive),actual_service_floor=textq(service),multi_affine_corners=count)
+    heavy_weights=[F(2,3)]+[F(1,36)]*12
+    assert sum(heavy_weights)==1
+    heavy_growth=DELTA*(F(2,3)-F(1,10))
+    assert heavy_growth>0 and -1+3530*heavy_growth>1
+    return dict(single_current_hostile_weight='2/3',single_hostile_minimum_mean_growth=textq(heavy_growth),single_hostile_escape_bound=3530,weights=list(map(textq,weights)),fault_subsets_checked=len(masses),worst_four_path_mass=textq(beta),lambda_bound=textq(lam),additive_bound=textq(additive),radius_margin=textq(lam*R-additive),actual_service_floor=textq(service),multi_affine_corners=count)
 
 
 def overintervention_witness():
