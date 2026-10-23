@@ -2,7 +2,7 @@
 
 The full remaining-program Goal is active and incomplete. Its controlling obligations are [DOWNSTREAM-CONTRACT](DOWNSTREAM-CONTRACT.md), [FAULT-COVERAGE](FAULT-COVERAGE.md), the binding assumption-admissibility test and [ASSUMPTION-REVIEW](ASSUMPTION-REVIEW.md), executed through [REMAINING-PROGRAM](REMAINING-PROGRAM.md) W0–W6. Milestones and historical completion audits cannot close this Goal. Repository acceptance remains separate.
 
-Maturity: design for W0's joint source family; solve/develop for reusable results. Current move: assemble the latest science with current requirements, then select and independently challenge a primitive family before substantial proof development. Read-only assignments investigate finite-deadline complementary inference, evolving-compromise/restoration imports, and source-family adequacy.
+Maturity: solve/develop for the admitted [joint source family](joint-control/SOURCE.md), with candidate mechanisms not yet proved. [W0 admission](joint-control/ADMISSION.md) records three complementary reviews and their repairs. [Joint ledger](joint-control/LEDGER.md) assigns every mandatory mode and the next scientific obligations; [instantiated assumptions](joint-control/ASSUMPTIONS.md) retain internal proof duties and source boundaries. The next work is actual evolution, inference, reconstruction and joint-control construction, with [targeted sources](joint-control/SOURCES.md) already assessed.
 
 ## Execution and ownership
 

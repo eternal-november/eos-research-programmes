@@ -1,0 +1,28 @@
+# W0 admission and adversarial findings
+
+Verdict: the primitive family is admitted as a research vehicle, not certified as a feasible controller or completed obligation. Independent source-family, information and evolution reviewers checked the motivating problem, revised contract and the candidate SOURCE/ASSUMPTIONS/LEDGER. Their material objections were incorporated before substantial proof development. No new subject or exclusion was introduced. The task remains the full remaining Byzantine-control program.
+
+The family fixes actual throughput, both protected process coordinates, shared stocks, commissioning uncertainty and local information before selecting feedback. Its states retain code, data, recognition, leaked secrets and old effects. The positive branch must jointly tolerate consequential evidence and enforcement faults and restore a consumed capacity. A generic correct estimator or safe action is not supplied. Unknown model/domain information remains uniform d-indexed input. The declared finite target-acquisition-event scope preserves indefinite service against persistent admitted tactics; C10 resource/attempt recurrence remains active.
+
+## Concrete attempted false passes and repairs
+
+| Attempted false pass | Why it failed; incorporated repair |
+|---|---|
+| Correct per-cell writes imply installed code while contaminated code still executes. | Resident code can rewrite a previously fixed cell. SOURCE now requires actual faultable local halt, complete writes, boot and fresh inquiry. Halt suppresses internal writes, with its actual lost effect/service counted. It is not a global safety gate. |
+| A bounded acquisition count bounds all contamination. | An already compromised installer can poison targets repeatedly without acquiring a new domain. SOURCE restricts the selected tools' physical footprints, retains repeated writes, counts ever-bad footprints and charges them persistently. Broader reach is a material boundary. |
+| Restored code implies restored physical control. | Direct hostile effect access or old queued effects may persist. SOURCE requires actual access release for the opportunity and includes queue/dispatch/fresh-inference time in functional restoration. No cure detector or READY inference is granted. |
+| Reset removes leaked authority. | Old credentials can forge fresh evidence at other recipients. L persists; the first mechanism restores physical execution while retaining exposed evidence support. No unproved rekeying result is claimed. |
+| A finite number of historically damaged targets means finitely many attacks. | The same targets can be reacquired forever. SOURCE distinguishes total target-acquisition events, instantaneous access, interval acquisition envelope and ever-bad tool footprints. |
+| Packet quotas alone bound computation. | Arbitrary raw ingress can consume work before the quota. SOURCE now requires bounded physical ingress or bounded-prefix rejection, retaining overload/drop and processing costs. |
+| Arbitrary continuous model alternatives form an exact finite rational decoder. | Such a claim can introduce bilinear or non-finite representations. SOURCE selects nominal rational rows plus uniformly proved uncertainty widening for the finite implementation. |
+| Per-map robust rank suffices with unknown ownership. | Different candidate explanations can use different maps; their union can delete more rows. The required condition ranges over pairs in the combined Γ-induced row-fault family. |
+| Rank-one private observations prove inquiry is necessary. | Distributed partial observations can sometimes control without reconstruction. SOURCE pins a passive-sum ablation whose hidden expanding difference mode must receive an actual whole-history proof. |
+| Restoration need only reduce a bookkeeping count. | A controller tolerating all historical losses forever would make restoration incidental. SOURCE/LEDGER require a same-mission restored capacity or bound and a no-repair failure/loss of that guarantee. |
+
+The reviewers accepted the local halt/write/boot boundary in principle: all tools may fail within the joint footprint bound, none is a permanently protected global controller, and no primitive decides global admissibility. Their acceptance depends on carrying its consequences into the actual construction. Tool initialization, timing, reach and images are scoped source premises; no universal recursive repair of all foundations is required. Newly introduced write or credential bypasses must update effective support rather than be dismissed.
+
+## What this admission does not establish
+
+The quantitative joint regime, actual information solver, runtime budget, repair protocol, effective-support reduction and phase/resource invariant remain open. The eight-row decoding witness proposed by the information researcher is only a candidate component; its domain budget is not automatically compatible with the selected actuator/repair population. No source theorem gains status from this admission. Exact rank reconstruction conditions must not be reported as control impossibility without the source response conflict. A later implementation that makes inquiry, coupling, repair or constraints incidental still fails the contract.
+
+This is a bounded survival record: three complementary read-only reviews identified and repaired the listed false passes and found no remaining reason to replace the family direction. It is not proof of absolute source coverage, eventual theorem existence, novelty or repository acceptance. The next work is E/I/R/C construction, not another round of cosmetic contract expansion.
