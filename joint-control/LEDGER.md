@@ -1,80 +1,32 @@
 # Joint-control obligation and evidence ledger
 
-The full-program Goal remains active. This ledger instantiates W0's result map; entries are targets until supported by actual artifacts. The controlling standards are [DOWNSTREAM-CONTRACT](../DOWNSTREAM-CONTRACT.md), [FAULT-COVERAGE](../FAULT-COVERAGE.md), [ASSUMPTION-REVIEW](../ASSUMPTION-REVIEW.md) and [REMAINING-PROGRAM](../REMAINING-PROGRAM.md). [SOURCE](SOURCE.md) is the selected candidate family; [ASSUMPTIONS](ASSUMPTIONS.md) records its premise responsibilities. Repository acceptance is not asserted.
+This is the live W0–W6 ledger under [DOWNSTREAM-CONTRACT](../DOWNSTREAM-CONTRACT.md), [FAULT-COVERAGE](../FAULT-COVERAGE.md), [ASSUMPTION-REVIEW](../ASSUMPTION-REVIEW.md) and [REMAINING-PROGRAM](../REMAINING-PROGRAM.md). The integrated result is [PROGRAM](PROGRAM.md); actual source operations and finite checks are in [REALIZATION](REALIZATION.md). The final independent verdict and its aggregate-verification condition are recorded in [AUDIT](AUDIT.md). Repository acceptance is not asserted.
 
-## Shared result targets and current verification
+## Results and evidence
 
-| ID | Result and required scope | Dependencies / reuse | Evidence status and precise residual |
-|---|---|---|---|
-| W0 | Primitive source/query, d/Θ/Γ, all premise/trigger dispositions and result map independently admitted before extensive proof development. | Motivation, revised contract; targeted [SOURCES](SOURCES.md). | Admitted for investigation after three complementary reviews and concrete repairs recorded in [ADMISSION](ADMISSION.md). No constructive BC obligation closes from W0. |
-| E | Evolution semantics retaining actual code/data, access, contamination, credentials and queues; static-core specialization; sound effective-support abstraction and source-triggered propagation reduction. | Existing integration CORE and source maps; explicit new local-store semantics. | Open. Must prove bound applicability across operations, not merely define effective badness. |
-| I | Locally realized complementary row acquisition/decoding, truth inclusion, useful finite precision, uniform model/domain alternatives, bounded workload/age and active-probe effects. | Fawzi row-correction baseline; E; existing fault-labelled evidence lemmas where hypotheses fit. | Open. No useful estimator given. Must account for differing receivers, compromised executors and actual unknown inputs. |
-| R | Actual scheduled cell-writing reconstruction and fresh inquiry restore mission-consumed physical capacity despite faulty repair paths; old keys and effects remain. | E/I; existing ENACTMENT overlap/queue ideas, not its static warm-path persistence. | Open. Opportunity→operation sequence→functional result and waiting protection must be proved. |
-| C | Recurrent coupled safety, actual throughput, prescribed-response admissibility and shared resource invariant, including startup and repair phases. | E/I/R, direct joint induction; retained braking/heat proof patterns. | Open. Must derive useful operating/phase regions, not supply a winning invariant. |
-| B | Same-mission information, influence, latency, resource, permission and mobile-support boundaries; necessary/sufficient/exact modes kept distinct. | I/C/R; source-admissible indistinguishable worlds and adversarial traces. | [BOUNDARIES](BOUNDARIES.md) derives full-policy passive-sum and late-information obstructions, an influence boundary and cumulative resource bound. Exact arithmetic checks and independent source/proof review support their stated slices after the coupling repair. Repair/intervention comparisons still require E/R/C. |
-| X | Constructive tolerance-preserving composition/refinement and useful-information assumption exchange; local disagreement permitted where sufficient. | E/I/R/C, retained STRUCTURE/Assembly/EXCHANGE at compatible scopes. | [COMPOSITION](COMPOSITION.md) supplies independently reviewed conditional local-error/actual-effect and causal induction laws, with explicit J_t preservation under replacement. Actual I/R/C instantiation and review of that application remain open. No full-product winning premise is accepted. |
-| V | Source validity, theorem/import checking, reproducible executable evidence, all fault modes/triggers and independent whole-contract audit. | All above plus retained BFT/quorum specialization. | Open. Old bcf7c98 audit and manifest are historical evidence, not this completion verdict. |
-
-W1=E; W2=I; W3=R; W4=C; W5=B/X; W6=V. These are overlapping proof responsibilities, not a claim of independent modules. In particular I/R/C require an initialized joint or phase induction; their circular premises cannot be assumed into existence.
-
-## Mandatory coverage map
-
-All modes below preserve the parent taxonomy. A reference to a target is an assignment, not discharge. For each P row the final ledger must name an admitted consequential fault/interaction and its mapping into the positive theorem; for T/J/B/A rows it must name the actual transition, composition, boundary or validity result.
-
-| Family | Required modes | Target and source witness to check |
+| Work / result | Actual discharge and evidence | Verification boundary |
 |---|---|---|
-| M01 Initialization | B,T | E/R/C/B: X_init, finite contaminated address sets, initial queues/stocks; actual restoration entry. |
-| M02 Source/refinement omissions | A | V/X: source effect/local-history simulation and hidden-bypass rejection. |
-| M03 Model error | B,A,J | E/I/C/B/V: uniform Θ/Γ, age bounds and common erroneous envelope boundary. |
-| M04 Specification defect | A,B | V/B: source throughput and both coordinates fixed; inconsistent source missions identified. |
-| M05 External assurance | A | V: independent proof/model/source review, pinned tools and source hashes. |
-| M06 Sensor error | P,B | I/C/B: noisy/drifting/mis-targeted raw rows; consequential precision loss. |
-| M07 Fabricated evidence | P | I/C: arbitrary received content and omission under actual domains. |
-| M08 Fallible inquiry | P,J,B | I/R/C/B: actual probe requests/samples/effects, corrupted inspector/target and shared cost. |
-| M09 Time/freshness | P,J,B | E/I/C/B: local clock faults, stale samples and derived source age. |
-| M10 Stored-state corruption | P,T | E/R/C: code/data/queue poisoning persists after release. |
-| M11 Inference corruption | P,J | E/I/C: compromised executing responder becomes an actual arbitrary actuator domain. |
-| M12 Meaning mismatch | P,J,B | E/I/X/B: row referent/unit/configuration errors and aliases mapped to uncertainty or effective bad support. |
-| M13 Decision corruption | P | C: arbitrary independent output despite receipts or prescribed policy. |
-| M14 Transport faults | P,J | E/I/C: bounded packet admission with drop/misroute/duplicate/order semantics and source effect reduction. |
-| M15 Equivocation | P,J | I/C/X: different correct recipients retain different sets and still compose. |
-| M16 Partition/delay | P,B | I/C/B: surviving timely row paths and loss-of-information boundary. |
-| M17 Scheduling/compute | P,J,B | I/R/C/B: work quota, actual tick deadline and stalled/expensive operation. |
-| M18 Concurrent/pending effects | P,J,T | E/R/C/X: delayed old command after fresh inspection/reconstruction; non-atomic write sequence. |
-| M19 Identity independence | B,J | E/I/B: Γ alternatives and common-owner/alias rank collapse. |
-| M20 Credentials | P,T,J | E/I/R/C: valid exposed signing material continues to create new false evidence after physical repair. |
-| M21 Authority abuse | P,J,B | E/C/B: actual effects survive authorization loss; prescribed access/response rules remain checked. |
-| M22 Tampered monitor/rules | P,A,T | E/R/C/V: mutable recorded rule/code versus immutable source mission; reconstruction of actual runtime fields. |
-| M23 Independent effect | P | C: no global command mediation; hostile effects enter dynamics while defenders act. |
-| M24 Failed realization | P,B | E/C/B: arbitrary refusal/inversion/stuck/capped output and actual throughput. |
-| M25 Dynamic instability | P,J,B | C/B/X: cross-coupled outward drift, stale feedback, queues and over-response. |
-| M26 Resources | P,J,B | I/R/C/B: common stock and repeated probe/repair/actuation cost. |
-| M27 Unsafe conformance | J,P | C/X: locally permitted simultaneous intervention can violate aggregate state/resource constraints; constructed choices prevent it. |
-| M28 Changed topology/access | T,J,P | E/I/R/C: acquired source/parser access, missing observation/effect path and actual restoration. |
-| M29 Environment | P,B,A | I/C/B/V: declared uncertain disturbance and source-envelope failure. |
-| M30 Harmful enforcement | P,J | I/C: induced/excessive control can underflow another protected coordinate or exhaust shared protection. |
-| M31 Faulty runtime assurance | P,J | E/I/R/C: decoders, installers, local monitors and time interfaces can be compromised. |
-| M32 Detection/attribution | P,B | I/R/B: no hidden cure flag; ambiguous blame versus warranted robust action. |
-| M33 Nonblocking | P,J,B | E/I/C/X/B: timeout is an actual outcome, bounded computation, explicit infinite execution witness. |
-| M34 Conservative denial | P,J | I/R/C: fixed bounded attempts plus actual throughput under persistent adversarial tactics. |
-| M35 Development/maintenance | P,J,A | E/R/C/V: poisoned image/configuration and shared dependency; nominal supplied image validity separately checked. |
-| M36 False repair | T,P,B | E/R/C/B: incomplete writes, false READY, poisoned reentry and remaining physical queues. |
-| M37 Handover/state transfer | T,J | E/R/X: stale image/state versus complete replacement sequence; retained old effects and recognition. |
-| M38 Ineffective isolation | T,P,B | E/I/R/C/B: administrative exclusion leaves actual power; deleting a path can remove needed sensing/capacity. |
-| M39 Correlated faults | J,P,B | E/I/C/B: common cause simultaneously impairs useful evidence and decision/effect roles. |
-| M40 Adaptive tactic | P,J | E/I/R/C: every admitted causal choice, including nominal behavior during inspection. |
-| M41 Changing compromise | T,B,J | E/R/C/B/X: bounded acquisitions, released contamination, learned keys, delayed effects and consequential repair. |
-| M42 Propagation/escalation | T,J,B | E/R/C/B/X: admitted parser/update trigger changes later access and memory; acquisition budget includes it. |
-| M43 Latent/intermittent | P,T,B | E/R/C/B: capability remains despite nominal-looking output; release differs from repair. |
-| M44 Leakage | J,B | E/I/R/B/X: L persists, unknown future information not granted, strong-attacker positive direction checked. |
-| M45 Runtime certificate binding | P,T,A | E/I/R/C/V: stale proof/READY/configuration does not establish present source facts; faulty checking has actual effects. |
+| W0 | [SOURCE](SOURCE.md) pins primitive dynamics, local information, mission, design data and joint domains before controller selection. [ASSUMPTIONS](ASSUMPTIONS.md) instantiates the six-part premise test and trigger decisions. [SOURCES](SOURCES.md) assesses the closest prior results; [ADMISSION](ADMISSION.md) records three complementary independent reviews and repairs. | Admission establishes faithful research scope, not the existence of later results. Final premise dispositions are judged against the constructed source. |
+| W1 / E | [EVOLUTION](EVOLUTION.md) retains actual code/data, current access, contamination, learned credentials and world queues. Its operational window theorem derives physical impairment from actual restoration. Static steps/runs specialize exactly to the retained core; triggered acquisitions preserve causal state changes. | Evolution.lean checks13 declarations; written source/event/window inductions and independent review carry the fuller semantic claims. Finite image/event checks are supplementary. |
+| W2 / I | [INFORMATION](INFORMATION.md) constructs joint domain-consistent information, precision and exact noiseless distinction at its declared scope, including unknown Γ. The realized coordinate-group subclass acquires complementary rows, bounds useful error and metered workload/age, and permits different local estimates. | Information.lean checks8 declarations; rational polygon, domain, parser, median and resource checks reproduce the selected constructions. General conditioning/complexity and source binding also have written proofs and independent review. No pre-solved estimator is input. |
+| W3 / R | [RESTORATION](RESTORATION.md) proves actual halt/addressed-write/boot, fresh inquiry and effect return, including waiting and healthy-maintenance liability. J implements the eight consumed blocks and preserves old keys/queues. | Restoration.lean checks15 declarations; written operational proof and exact finite source checks establish the stated addressed closure. Unwritable hardware or unremoved stronger access remains persistent. |
+| W4 / C | [CONTROL](CONTROL.md) C1–C5 prove joint coupled-state, actual-service, response and stock bounds with startup and heterogeneous influence. PROGRAM/J supply the I/E/R interfaces on one source and close the causal induction. | Control.lean checks16 arithmetic/induction declarations. The full analytic/source theorem is a written, independently reviewed proof, not completely mechanized Python correctness. Joint traces challenge interpretation, including a real no-repair violation. |
+| W5 / B | [BOUNDARIES](BOUNDARIES.md) and C6 supply same-mission information, latency, influence, resource, intervention, restoration and applicability challenges. B5–B7 cover slower replacement, destructive observation isolation and omitted physical effects. | Exact rational checks and independent proof/source review. Each result distinguishes source impossibility, a sufficient-certificate failure and failed source adequacy; none is an unrestricted conclusion from finite search. |
+| W5 / X | [COMPOSITION](COMPOSITION.md) supplies X1–X4 and their explicit actual application: common-scenario local disagreement, initialized recurrence, replacement preserving error/support/time/cost, and useful-information assumption exchange. | Independent component review and final assembled review. The interface retains consumed summaries instead of requiring complete implementations or a premise that the joint system wins. |
+| W6 / V | [COVERAGE](COVERAGE.md) maps all M01–M45 modes and twelve chains; ASSUMPTIONS gives final dispositions and conditional scopes. AUDIT judges BC1–BC7 directly. [verify.py](verify.py) binds the reviewed sources, strict proof dependencies and reproduced executable records. | Closure requires the final independent verdict plus a matching successful verification.json. Neither old completion labels nor a passing checker alone establishes this verdict. |
 
-## Required assembled challenge traces
+The new Lean total is52 declarations. This count describes the encoded proof surface, not the fraction of the theory proved or a measure of program completion. The generic I/E/R/C laws quantify their specified parameter and scenario families; actual source tests give witnesses and counterexamples at explicit finite scopes.
 
-The twelve taxonomy chains are assigned, not yet passed: sequential key harvesting (E/I/R/B); false independent corroboration (E/I/C); inspect–change–delayed effect (E/I/R/C); repeated warning expense (I/R/C/B); isolation removes distinguishing sensor (I/R/B); report causes parser acquisition (E/R/C); authentic poisoned replacement and false READY (E/R/C); incompatible compliant interventions (C/X); falsified population/service monitor (E/C/V); stale certificate after reconfiguration (E/R/X/V); nominal inspection followed by hostile action (I/C); omitted physical bypass (V/X). Final checks must preserve each entire chain in one source model rather than pass its separate rows independently.
+## Coverage and compatibility
 
-## Reuse, admission and completion boundary
+[COVERAGE](COVERAGE.md) is the authoritative actual mandatory-mode and twelve-chain map; the earlier W0 target assignment is preserved in Git rather than maintained as a second conflicting map. Conditional C01–C10 decisions and E01–E07 boundaries remain in ASSUMPTIONS and the parent taxonomy. Activated C10 is discharged by actual continuing work, resource, return and service arguments; finite fresh acquisitions do not require existing attackers to become benign.
 
-The old static core, robust evidence logic, peer-brake family, enactment overlap, relational composition, finite supplied-invariant synthesis and BFT/quorum specializations are reusable with their exact hypotheses. They do not supply the new effective-support, inference, reconstruction or joint phase proof. [REVISED-AUDIT](../REVISED-AUDIT.md) gives the detailed reuse assessment.
+All positive modules consume one joint scenario, including persistent P, nonpersistent initial P0, transient dependency reach outside P, cumulative reporting exposure, real queues, actual maintenance and one stock. I constructs error only from the preceding safe prefix; R/E reconstruct execution/support; C extends the source invariant; startup supplies the induction base. This is the compatibility argument that licenses assembly. Neither a fault-set change between modules nor a reset of leaked credentials is permitted.
 
-W0 admission must reject a source/result map that allows completion with already useful local sensing, a trusted fusion root, primitive successful repair, passive safety, irrelevant repaired capacity, hidden design knowledge or mutually incompatible favorable assumptions. Its reviewer sees SOURCE and the contract before a final controller. Admission licenses investigation, not a claim that the desired results exist. V's final independent review must inspect the parent contract directly and refuse closure if any required mode/assembly or internally supplied service remains open.
+The actual new source's ignored READY is not M45's consumed-certificate result. That result remains [ENACTMENT](../integration/ENACTMENT.md) at its original static scope, transported through E's exact static specialization. Similarly, old BFT, quorum, relational and continuous results retain their original hypotheses. Reuse is meaningful because their carrier/observation/step maps are explicit; it does not upgrade static warm paths to arbitrary mobile recovery.
+
+## Scientific scope and resumability
+
+The program result is a reusable gate-free theory with the declared constructive subclasses, source-valid boundaries and composition/realization laws. It is not universal enforceability, a complete characterization of every parameter outside the proved bounds, unlimited mobile renewal, public-network cryptographic security, empirical validation or deployment. These are limitations of the claimed result, not unresolved substitutes for mandatory internal services. Applications still supply a justified mission, primitive laws, domain/reach maps and environmental/timing/resource evidence, then discharge the corresponding source refinement.
+
+Any final meter, received-trigger, source binding, assumption or audit failure keeps its obligation and the Goal open until repaired. The final completion record must state exactly which snapshot was audited and checked. [TODO](../TODO.md) carries the current execution state and retained worktree locations; Git records the construction and rejected approaches.
