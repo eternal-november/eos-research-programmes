@@ -67,6 +67,29 @@ def check():
     e0, supply, service_cost, periods = F(10), F(1), F(2), 11
     assert periods*service_cost > e0 + periods*supply
 
+    # A precision-only replacement check misses the enlarged repair window.
+    gain, radius, drift, disturbance = F(8, 5), F(4, 5), F(11, 100), F(1, 50)
+    eta = F(1, 500) + F(27, 1000)*F(213, 100) + F(1, 1000)/gain
+    assert eta == F(12027, 200000)
+    def margin(bad):
+        return (gain*(1-F(bad, 13))-drift)*radius-(gain*eta+F(2*bad, 13)+disturbance)
+    assert margin(4) == F(108149, 1625000) > 0
+    assert margin(5) == -F(301851, 1625000) < 0
+    duration, spacing = 37, 38
+    horizon = 13*spacing+duration
+    assert horizon == 531
+    assert (horizon+490-1)//490 == 2
+    assert (horizon+532-1)//532 == 1
+    assert F(1, 2)+F(27, 1000)*F(213, 100) < radius
+
+    # The isolation common cut removes the whole distinguishing interface.
+    assert (F(1, 2)+F(-1, 2)) == (F(-1, 2)+F(1, 2))
+    assert (F(1, 2), F(-1, 2)) != (F(-1, 2), F(1, 2))
+    # Omitted physical impulse has no corresponding admitted abstract step.
+    modeled = F(1, 2)+F(1, 1000)*F(1, 10)*F(1, 2)
+    assert modeled == F(10001, 20000)
+    assert modeled+1 > 1 and 1 > F(1, 1000)*F(213, 100)
+
     sources = {name: sha256((HERE/name).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
                for name in ("BOUNDARIES.md", "boundary_model.py", "SOURCE.md")}
     return {
@@ -77,6 +100,14 @@ def check():
         "influence_normalization_cases": capacity_cases,
         "rank_one_blanket_claim_countercertificate": "closed-loop infinity norm 19/20",
         "resource_exhaustion_ticks": periods,
+        "replacement_window": {"old_information": 20, "new_information": 23,
+                               "new_horizon": horizon, "four_loss_margin": str(margin(4)),
+                               "five_loss_margin": str(margin(5)),
+                               "restoring_event_spacing": 532,
+                               "scope": "sufficient-certificate change, not impossibility"},
+        "isolation_cut": "all acquired raw directions removed; passive-sum pair retained",
+        "omitted_bypass": {"modeled_next": str(modeled), "real_next": str(modeled+1),
+                           "refinement_fails": True},
         "sources_sha256_lf": sources,
     }
 
