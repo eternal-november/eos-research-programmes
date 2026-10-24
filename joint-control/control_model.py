@@ -1,3 +1,7 @@
+import sys
+if sys.flags.optimize:
+    raise RuntimeError("Unoptimized Python is required")
+
 from fractions import Fraction as F
 from itertools import product, combinations
 import argparse, json

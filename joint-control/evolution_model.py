@@ -3,6 +3,10 @@ This checks finite trace families and exact operational sublemmas; it is not the
 coupled plant invariant proof. Run with --check to compare the checked record.
 """
 from __future__ import annotations
+import sys
+if sys.flags.optimize:
+    raise RuntimeError("Unoptimized Python is required")
+
 import argparse
 from dataclasses import dataclass
 import hashlib

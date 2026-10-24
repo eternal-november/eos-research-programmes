@@ -6,6 +6,10 @@ claim. --check compares independent geometric specifications and writes nothing.
 """
 from __future__ import annotations
 
+import sys
+if sys.flags.optimize:
+    raise RuntimeError("Unoptimized Python is required")
+
 import argparse
 from dataclasses import dataclass
 from fractions import Fraction as F

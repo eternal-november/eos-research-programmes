@@ -38,12 +38,19 @@ def inputs():
         paths += [p for p in (PROJECT/folder).iterdir() if p.is_file()
                   and p.suffix in (".md", ".py", ".lean", ".json", ".ps1")]
     paths.append(PROJECT/"handoff/lean-toolchain")
+    # Freeze every retained dependency that retained_binding() checks, including
+    # parent-level contracts outside the four historical artifact directories.
+    retained = json.loads((PROJECT/"integration/verification.json").read_text(encoding="utf-8"))
+    paths += [PROJECT/name for name in retained["sources_sha256_lf"]
+              if name != "TODO.md"]
     return {p.relative_to(PROJECT).as_posix(): digest(p) for p in sorted(set(paths))}
 
 
 def run(command):
+    environment = dict(os.environ)
+    environment.pop("PYTHONOPTIMIZE", None)
     process = subprocess.run(command, cwd=HERE, text=True, encoding="utf-8",
-                             capture_output=True)
+                             capture_output=True, env=environment)
     require(process.returncode == 0, repr(command)+"\n"+process.stdout+"\n"+process.stderr)
     require(not process.stderr.strip(), "Unexpected diagnostic: "+process.stderr)
     return process.stdout.replace("\r\n", "\n").strip()
@@ -89,7 +96,7 @@ def main():
     args = parser.parse_args()
     require(not sys.flags.optimize and sys.version_info[:2] == (3, 12),
             "Unoptimized Python3.12 is required")
-    required = ("PROGRAM.md", "SOURCE.md", "ASSUMPTIONS.md", "LEDGER.md", "ADMISSION.md",
+    required = ("PROGRAM.md", "SOURCE.md", "SOURCES.md", "ASSUMPTIONS.md", "LEDGER.md", "ADMISSION.md",
                 "INFORMATION.md", "EVOLUTION.md", "RESTORATION.md", "CONTROL.md",
                 "BOUNDARIES.md", "COMPOSITION.md", "REALIZATION.md", "COVERAGE.md", "AUDIT.md")
     for name in required:
@@ -119,6 +126,13 @@ def main():
         "boundary_model.py": [sys.executable, "-B", str(HERE/"boundary_model.py"), "--check"],
         "joint_model.py": [sys.executable, "-B", str(HERE/"joint_model.py"), "--check"],
     }
+    optimization_guards = {}
+    for name in commands:
+        probe = subprocess.run([sys.executable, "-O", "-B", str(HERE/name), "--check"],
+                               cwd=HERE, text=True, encoding="utf-8", capture_output=True)
+        require(probe.returncode != 0 and "Unoptimized Python is required" in probe.stderr,
+                "Component can run with assertions disabled: "+name)
+        optimization_guards[name] = True
     for name, command in commands.items():
         print("Reproducing "+name, flush=True)
         text = run(command)
@@ -136,6 +150,7 @@ def main():
         "joint_declaration_count": sum(len(v) for v in proofs.values()),
         "verifier_guard_checks": guards,
         "executable_checks": checks,
+        "component_optimization_guards": optimization_guards,
         "retained_evidence_binding": retained,
     }
     if args.write:

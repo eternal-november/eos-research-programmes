@@ -3,6 +3,10 @@
 This does not enumerate all policies or prove the prose source interpretation.
 The parametric derivations in BOUNDARIES.md are the primary proof objects.
 """
+import sys
+if sys.flags.optimize:
+    raise RuntimeError("Unoptimized Python is required")
+
 from fractions import Fraction as F
 from hashlib import sha256
 from itertools import product
