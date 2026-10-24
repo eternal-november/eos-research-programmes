@@ -13,6 +13,10 @@ from fractions import Fraction as F
 import hashlib
 import json
 from pathlib import Path
+import sys
+
+if sys.flags.optimize:
+    raise RuntimeError('Unoptimized Python is required')
 
 from information_model import fixed_packet, parse_packet, median_group
 
@@ -23,6 +27,11 @@ OP_ADMIT, OP_QUERY, OP_MEDIAN, OP_COMMAND, OP_CLOCK = 1, 2, 3, 4, 5
 OP_NEGATIVE, OP_ROGUE_REQUEST = 6, 7
 PROGRAM = bytes((OP_ADMIT, OP_QUERY, OP_MEDIAN, OP_COMMAND, OP_CLOCK, 0))
 BAD_PROGRAM = bytes((OP_NEGATIVE, OP_ROGUE_REQUEST, OP_CLOCK, 0))
+SETUP_WORK, DISPATCH_WORK, OPCODE_WORK, FINALIZE_RESERVE = 64, 8, 32, 200
+PROVIDER_BACKGROUND_WORK, PROVIDER_REQUEST_WORK, PROVIDER_REPLY_WORK = 128, 64, 32
+OPCODE_BOUNDS = {OP_ADMIT:6400, OP_QUERY:512, OP_MEDIAN:3456,
+                 OP_COMMAND:128, OP_CLOCK:256, OP_NEGATIVE:64,
+                 OP_ROGUE_REQUEST:512}
 
 
 def nearest(q):
@@ -109,10 +118,10 @@ class LocalMachine:
         if self.halted:
             return [], None, 0, 0, None
         m = self.mem
-        requests, outgoing, admissions, ops, published = [], None, 0, 0, None
+        requests, outgoing, admissions, ops, published = [], None, 0, SETUP_WORK, None
         config = tuple(m[2][:6])
         if not (config[0] < N and config[1:] == (42, 21, 8, 5, 10)):
-            return [], None, 6, 0, None
+            return [], None, SETUP_WORK, 0, None
         target = config[0]
         draining = m[4][0] > 0
         age, epoch = m[4][1] % 10, m[4][2] & 1
@@ -121,25 +130,25 @@ class LocalMachine:
         for pc in range(16):
             m[1][0] = pc
             opcode = m[0][pc]
-            ops += 1
+            ops += DISPATCH_WORK
             if opcode == 0:
                 break
             # Corrupt code may repeat expensive instructions. A local hardware
             # instruction budget gives a total timeout/hold outcome, never an
-            # assertion deleting the run. The48 reserve pays queue extraction.
-            bound = {OP_ADMIT:2368,OP_QUERY:126,OP_MEDIAN:1008,
-                     OP_COMMAND:24,OP_CLOCK:140,OP_NEGATIVE:2,
-                     OP_ROGUE_REQUEST:84}.get(opcode,1)
-            if ops+bound+48 > 10000:
+            # assertion deleting the run. Reserve extraction and the next
+            # dispatch before executing an instruction, including corrupt code.
+            bound = OPCODE_BOUNDS.get(opcode,64)
+            if ops+bound+FINALIZE_RESERVE+DISPATCH_WORK > 10000:
                 break
+            ops += OPCODE_WORK  # fixed field/control bookkeeping for this opcode
             if opcode == OP_ADMIT:
                 for origin, word in mailbox:
-                    # Explicit fixed-width scan:128 executed elementary steps.
+                    # Shift, mask, xor and two loop/control steps for each bit.
                     checksum = 0
                     for bit in range(64):
                         checksum ^= (word >> bit) & 1
-                        ops += 2
-                    ops += 16
+                        ops += 5
+                    ops += 32  # bounded packet/header decoding and loop fields
                     value = parse_packet(word, origin, epoch, ROWS)
                     if not draining and m[4][3] and 1 <= age <= 5 and value is not None:
                         off = origin*3
@@ -147,17 +156,17 @@ class LocalMachine:
                             m[3][off] = 1
                             put16(m[3], off+1, value)
                             admissions += 1
-                            ops += 4
+                            ops += 16  # index, presence test and bounded writes
             elif opcode == OP_QUERY:
                 if not draining and age == 0:
                     m[3][:ROWS*3] = bytes(ROWS*3)
+                    ops += ROWS*3  # same byte-clear charge as OP_CLOCK
                     m[4][3] = 1
                     for row in range(ROWS):
                         #16-bit request:6-bit row,1-bit epoch, upper bits zero.
                         word = row | (epoch << 6)
                         put16(m[5], row*2, word)
-                        requests.append(word)
-                        ops += 3
+                        ops += 8  # encoding, address, two-byte store and loop
                     m[5][84] = ROWS
             elif opcode == OP_MEDIAN:
                 if not draining and age == 8 and m[4][3]:
@@ -167,13 +176,14 @@ class LocalMachine:
                         for row in range(coordinate*GROUP, (coordinate+1)*GROUP):
                             off = row*3
                             values.append(signed16(m[3], off+1) if m[3][off] == 1 else None)
-                            ops += 2
+                            ops += 4
                         med, comparisons, shifts = median_group(values, sentinel=0)
-                        ops += comparisons + shifts + 2*GROUP
+                        ops += 4*comparisons + 3*shifts + 4*GROUP
                         # Packet parser bounds values; sentinel is also in range.
                         estimate.append(int(med))
                     for j, value in enumerate(estimate):
                         put16(m[7], j*2, value)
+                        ops += 4
                     m[4][4] = 1
                     published = tuple(estimate)
             elif opcode == OP_COMMAND:
@@ -184,19 +194,19 @@ class LocalMachine:
                     for j, v in enumerate(value):
                         put16(m[6], j*2, v)
                     m[6][4] = 1
-                    ops += 24
+                    ops += 64
             elif opcode == OP_NEGATIVE:
                 outgoing = Command((-2000, -2000), None, False)
                 put16(m[6],0,-2000)
                 put16(m[6],2,-2000)
                 m[6][4] = 1
-                ops += 2
+                ops += 8
             elif opcode == OP_ROGUE_REQUEST:
                 if not draining:
                     for row in range(ROWS):
                         put16(m[5],row*2,row | (epoch << 6))
                     m[5][84] = ROWS
-                    ops += 2*ROWS
+                    ops += 8*ROWS
             elif opcode == OP_CLOCK:
                 if draining:
                     m[4][0] = max(0, m[4][0]-1)
@@ -224,7 +234,7 @@ class LocalMachine:
             m[6][4] = 0
         else:
             outgoing = None
-        ops += len(requests)+6
+        ops += 4*len(requests)+32
         assert ops <= 10000  # concrete bounded word-operation machine capacity
         return requests, outgoing, ops, admissions, published
 
@@ -254,6 +264,110 @@ class Provider:
         return True
 
 
+def vulnerable_update_receive(machine, target, physical_origin, word, access, learned):
+    """Explicit source vulnerability, NOT an exploit of parse_packet.
+
+    Configuration byte6 is a consumed one-use update-port arm. A bounded word
+    from report origin0 mistakenly authorizes target control in this source
+    relation. Consuming the arm prevents an unrecorded surviving replay path;
+    if a source leaves/rearms it, that write reach must remain in A_dep/P.
+    """
+    trigger = (0xC0DE << 32) | target
+    if not (0 <= word < (1 << 64)) or physical_origin != 0:
+        return False
+    if machine.mem[2][6] != 1 or word != trigger:
+        return False
+    machine.mem[2][6] = 0
+    access.add(target)
+    learned.add(target)
+    machine.poison(target)
+    return True
+
+
+def propagation_check():
+    """Local receive/store/effect witness for E's event-preserving reduction.
+
+    The input values below check local inference and reconstruction, not another
+    closed-loop plant theorem. Full joint plant checks remain in simulate().
+    """
+    target, actor = 3, LocalMachine(3)
+    actor.mem[2][6] = 1  # source update interface is armed for one receive
+    access, learned = set(), {0}
+    word = (0xC0DE << 32) | target
+    before = actor.step([])[1]
+    assert before is None
+    assert parse_packet(word,0,0,ROWS) is None  # safe ordinary parser rejects it
+    assert not vulnerable_update_receive(actor,target,0,word^1,access,learned)
+    assert access == set() and actor.mem[0][:len(PROGRAM)] == PROGRAM
+    assert vulnerable_update_receive(actor,target,0,word,access,learned)
+    assert access == {target} and learned == {0,target}
+    assert actor.mem[0][:len(BAD_PROGRAM)] == BAD_PROGRAM
+    hostile = actor.step([])[1]
+    assert hostile.value == (-2000,-2000)
+    world_queue = [(5,hostile)]  # actual command issued at1, four-tick effect lag
+    saved_memory = [bytes(block) for block in actor.mem]
+    saved_queue = list(world_queue)
+    access.remove(target)       # release at2: only the direct capability changes
+    assert [bytes(block) for block in actor.mem] == saved_memory
+    assert learned == {0,target} and world_queue == saved_queue
+    assert actor.step([])[1].value == (-2000,-2000)
+    assert not vulnerable_update_receive(actor,target,0,word,access,learned)
+    assert not access          # spent update arm is not hidden retained authority
+    actor.halt()               # tick3
+    effect = (0,0)
+    applied_during_halt = False
+    for tick,address in enumerate(range(8),start=4):
+        actor.write(address,image(target)[address])
+        for due,command in world_queue:
+            if due == tick:
+                effect = command.value
+                applied_during_halt = actor.halted
+    assert applied_during_halt and effect == (-2000,-2000)
+    assert actor.boot(target)  # tick12; no estimate or readiness was supplied
+    assert learned == {0,target} and actor.mem[2][6] == 0
+    providers = [Provider(row) for row in range(ROWS)]
+    requests_due, samples_due, replies_due, effects_due = (defaultdict(list) for _ in range(4))
+    first_fresh_effect, first_publication, max_work = None,None,0
+    for tick in range(12,37):
+        for provider in providers:
+            provider.tick()
+        mailbox = replies_due.pop(tick,[])
+        requests,command,work,_,published = actor.step(mailbox)
+        max_work = max(max_work,work)
+        if published is not None and first_publication is None:
+            first_publication = tick
+        for row,request in enumerate(requests):
+            requests_due[tick+1].append((row,request))
+        for row,request in requests_due.pop(tick,[]):
+            assert providers[row].admit(target,request)
+            samples_due[tick+1].append((row,(request>>6)&1))
+        for row,epoch in samples_due.pop(tick,[]):
+            # Two retained reporting credentials remain adversarial after R.
+            raw = -4000 if row%GROUP == 0 else (4000 if row%GROUP == target else 0)
+            replies_due[tick+1+row//14].append((row,fixed_packet(row,epoch,raw)))
+        if command is not None:
+            effects_due[tick+4].append(command)
+        for pending in effects_due.pop(tick,[]):
+            effect = pending.value
+            if first_fresh_effect is None:
+                first_fresh_effect = tick
+    assert first_publication == 32 and first_fresh_effect == 36 and effect == (0,0)
+    assert learned == {0,target} and not access
+    return {'bounded_received_word':word,'ordinary_parser_rejects_word':True,
+            'receive_tick':1,'release_tick':2,'halt_tick':3,'boot_tick':12,
+            'new_target_acquisitions':1,'actual_direct_access_after_receive':[target],
+            'trigger_transport_bits':64,'trigger_decode_word_operations':16,
+            'acquisition_energy':2,'addressed_maintenance_operations':10,'maintenance_energy':20,
+            'next_command_milliunits':list(hostile.value),
+            'release_preserves_program_keys_and_world_queue':True,
+            'replay_after_consumed_update_arm_cannot_reacquire':True,
+            'old_hostile_effect_applied_while_halted':True,'image_blocks_actually_written':8,
+            'first_fresh_publication_tick':first_publication,'first_fresh_effect_tick':first_fresh_effect,
+            'restored_effect_milliunits':list(effect),'retained_reporting_credentials':[0,target],
+            'maximum_nominal_word_work':max_work,
+            'scope':'local source-event/store/effect witness; E supplies event-preserving reduction, not a production exploit claim'}
+
+
 def within_interval_envelope(costs, rate=F(1153), burst=F(6500)):
     # All intervals in O(T):prefix(t)-rate*t minus its running minimum.
     prefix, least, worst = F(0), F(0), F(0)
@@ -266,7 +380,7 @@ def within_interval_envelope(costs, rate=F(1153), burst=F(6500)):
 
 def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
              full_power=False, weighted=False, dependency_mode=False, x0=(500000, -500000),
-             a=F(11,200), c=F(9,200), initial_dirty=0):
+             a=F(11,200), c=F(9,200), initial_dirty=0, propagation_mode=False):
     actors = [LocalMachine(i) for i in range(N)]
     providers = [Provider(row) for row in range(ROWS)]
     # Legitimate initial residual state is nonempty, but cannot be consumed as
@@ -280,6 +394,10 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
         put16(actor.mem[7],2,1000)
     for provider in providers:
         provider.cooldown[:] = bytes([9])*N
+    if propagation_mode:
+        # Legitimate nominal one-shot update configuration, not prior corruption.
+        # Target3's first scheduled reconstruction at105 closes this arm.
+        actors[3].mem[2][6] = 1
     actors[initial_dirty].poison(initial_dirty)
     actors[12].poison(12)
     exposure, known_keys, persistent = {initial_dirty, 12}, {initial_dirty, 12}, {12}
@@ -288,7 +406,10 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
     active, dirty_since = {}, {initial_dirty:0, 12:0}
     acquired_targets = []
     acquire_at = {100+490*k: ((13+k) if source_only else (k+1)) for k in range(8)}
+    if propagation_mode:
+        del acquire_at[100]  # replaced by actual delivery, not an extra acquisition
     requests_due, samples_due, replies_due, effects_due = defaultdict(list), defaultdict(list), defaultdict(list), defaultdict(list)
+    update_due = defaultdict(list)
     # Already accepted nominal jobs complete raw sampling at tick0. Duplicate
     # old requests also arrive, exercise live cooldown, and are rejected.
     samples_due[0] = [(origin,row,0) for origin in range(N) for row in range(ROWS)]
@@ -343,8 +464,16 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
         assert len(active) <= 1 and len(exposure) <= 10
         for provider in providers:
             provider.tick()
-        row_sample, row_egress, row_cpu = [0]*ROWS, [0]*ROWS, [26]*ROWS
+        row_sample, row_egress, row_cpu = [0]*ROWS, [0]*ROWS, [PROVIDER_BACKGROUND_WORK]*ROWS
         endpoint_bits, endpoint_cpu = [0]*N, [0]*N
+        extra_rogue_cost = F(0)
+        if propagation_mode and tick == 99:
+            assert 0 in known_keys
+            update_due[tick+1].append((3,0,(0xC0DE << 32)|3))
+            row_egress[0] += 64
+            row_cpu[0] += 16
+            extra_rogue_cost = 1+F(16,10000)
+            counters['propagation_words_sent'] += 1
         operation_count, maintenance_cost = acquisition_ops, F(0)
         # Bad tool12 has target-only reach. It issues actual recurrent code writes.
         actors[12].mem[0][:] = bytes(BLOCK_BYTES)
@@ -383,9 +512,33 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
                 mail[recipient].append((row, word))
             else:
                 counters['physical_ingress_drops'] += 1
-        max_ingress = max(max_ingress, *(len(box)*64 for box in mail))
+        update_bits = [0]*N
+        for recipient,origin,word in update_due.pop(tick,[]):
+            assert len(mail[recipient]) < 16
+            update_bits[recipient] += 64
+            endpoint_cpu[recipient] += 16
+            counters['vulnerable_update_decode_operations'] += 16
+            capabilities = set(active)
+            accepted = vulnerable_update_receive(actors[recipient],recipient,origin,word,capabilities,known_keys)
+            assert accepted and recipient not in active
+            active[recipient] = tick+6
+            assert set(active) == capabilities
+            exposure.add(recipient)
+            dirty_since[recipient] = tick
+            acquired_targets.append(recipient)
+            acquisition_ops += 1
+            operation_count += 1
+            counters['acquisitions'] += 1
+            counters['received_word_acquisitions'] += 1
+        assert len(active) <= 1 and len(exposure) <= 10
+        ingress_bits = [len(box)*64+update_bits[i] for i,box in enumerate(mail)]
+        assert max(ingress_bits) <= 1024
+        max_ingress = max(max_ingress,*ingress_bits)
         for i, actor in enumerate(actors):
             req, cmd, ops, admitted, published = actor.step(mail[i])
+            if propagation_mode and tick == 100 and i == 3:
+                assert cmd is not None and cmd.value == (-2000,-2000)
+                counters['received_word_changed_next_dispatch'] += 1
             if dependency_mode and i in dirty_since and i not in (initial_dirty,12) and actor.mem[2][1] == 255:
                 assert not req and cmd is None and published is None
                 counters['whole_bundle_dependency_suppressed_ticks'] += 1
@@ -412,7 +565,7 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
         # Raw acquisition occurs only in response to an actual admitted request.
         for origin, row, word in requests_due.pop(tick, []):
             provider = providers[row]
-            row_cpu[row] += 12
+            row_cpu[row] += PROVIDER_REQUEST_WORK
             if not provider.admit(origin, word):
                 counters['quota_or_header_rejections'] += 1
                 continue
@@ -444,15 +597,16 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
             # Three fixed destination lanes:14 rows at offsets+3,+4,+5.
             replies_due[tick+1+row//14].append((origin,row,reply))
             row_egress[row] += 64
-            row_cpu[row] += 12
+            row_cpu[row] += PROVIDER_REPLY_WORK
             counters['reply_words64'] += 1
         assert max(row_sample) <= 1 and max(row_egress) <= 1024
+        assert max(row_cpu) <= 10000
         assert max(endpoint_bits) <= 1024
         # Actual nominal energy is counted once. Admission executes CPU work;
         # its <=1/job accounting allowance is not a second physical energy sink.
         info_cost = sum(F(2*s)+F(b,64)+F(o,10000) for s,b,o in zip(row_sample,row_egress,row_cpu))
         info_cost += sum(F(b,64)+F(o,10000) for b,o in zip(endpoint_bits,endpoint_cpu))
-        nominal_info_cost = info_cost
+        nominal_info_cost = info_cost-extra_rogue_cost
         if full_power:
             # Actual rogue hardware fills remaining individual capacities. No
             # intact software quota is assumed to restrict that hardware.
@@ -549,6 +703,7 @@ def simulate(name, ticks=5000, repair=True, source_only=False, metadata=False,
     else:
         assert violation is not None
     return {'name':name,'ticks_executed':len(costs),'repair_enabled':repair,'weighted':weighted,'initial_dirty_target':initial_dirty,
+            'nominal_initial_update_arm_target':3 if propagation_mode else None,
             'same_run_checks':'physical state, actual service, resource stock, raw inquiry, stored program, addressed repair, retained credentials and queued effects',
             'max_abs_state':str(max_state),'minimum_actual_coordinate_service':str(min_service),
             'minimum_resource_stock':str(min_energy),'max_effect_error_for_derived_good_paths':str(max_effect_error),
@@ -587,6 +742,25 @@ def local_checks():
             _,command,count,_,_ = machine.step([(r,fixed_packet(r,0,0)) for r in range(16)])
             maximum_corrupt_ops = max(maximum_corrupt_ops,count)
             assert count <= 10000 and (command is None or all(-2000 <= v <= 2000 for v in command.value))
+    repeated_query = LocalMachine(3)
+    repeated_query.mem[4][0] = 0
+    repeated_query.mem[0][:16] = bytes([OP_QUERY])*16
+    _,_,query_work,_,_ = repeated_query.step([])
+    expected_query_work = SETUP_WORK+16*(DISPATCH_WORK+OPCODE_WORK+126+42*8)+FINALIZE_RESERVE
+    assert query_work == expected_query_work == 8296
+    nominal_max, nominal_cases = 0,0
+    for drain in range(13):
+        for age in range(10):
+            machine = LocalMachine(3)
+            machine.mem[4][0], machine.mem[4][1] = drain,age
+            machine.mem[4][3] = machine.mem[4][4] = 1
+            for row in range(ROWS):
+                machine.mem[3][row*3] = 1
+                put16(machine.mem[3],row*3+1,4000-100*row)
+            _,_,work,_,_ = machine.step([(r,fixed_packet(r,0,1000)) for r in range(16)])
+            assert machine.mem[1][0] == 5  # STOP reached: no budget timeout
+            assert work <= 10000
+            nominal_max,nominal_cases = max(nominal_max,work),nominal_cases+1
     actor.halt()
     for block in range(1,8):
         actor.write(block,image(3)[block])
@@ -627,6 +801,12 @@ def local_checks():
         assert parse_packet(fixed_packet(row,0,4000)|(1<<63),row,0,ROWS) is None
     assert ROWS*16 == 672 <= 1024
     assert 14*64 == 896 <= 1024 and N*64 == 832 <= 1024
+    # Nominal target/background CPU fits I's 13-unit continuous allowance.
+    # All request processing, even rejected words, is additionally bounded by
+    # four resource units/tick; PROGRAM pays it from the unrounded margin.
+    assert N*(nominal_max+16*16)+ROWS*PROVIDER_BACKGROUND_WORK == 129500 <= 130000
+    assert N*ROWS*PROVIDER_REQUEST_WORK == 34944 <= 40000
+    assert PROVIDER_BACKGROUND_WORK+N*(PROVIDER_REQUEST_WORK+PROVIDER_REPLY_WORK)+16 < 10000
     # False READY is just unknown/malformed input, never a repair predicate.
     false_ready = (63, (1<<63)|123)
     clean = LocalMachine(4)
@@ -651,6 +831,8 @@ def local_checks():
             'false_ready_cannot_publish_or_boot':True,
             'corrupt_expensive_code_has_total_bounded_timeout':True,
             'repeated_corrupt_opcode_cases':1024,'maximum_corrupt_opcode_word_operations':maximum_corrupt_ops,
+            'repeated_QUERY_charged_work':query_work,'repeated_QUERY_byte_clears':16*126,
+            'saturated_nominal_phase_cases':nominal_cases,'maximum_saturated_nominal_word_work':nominal_max,
             'corrupt_consumed_validity_field_changes_actual_command':[1600,1600],
             'request_bits_per_round':672,'reply_lane_bits':896,'provider_reply_bits':832,
             'image_blocks':8,'bytes_per_block':BLOCK_BYTES,'write_bits_per_tick':8*BLOCK_BYTES,
@@ -659,19 +841,21 @@ def local_checks():
 
 def checks():
     local = local_checks()
+    propagation = propagation_check()
     scenarios = [
         simulate('joint_evolving_targets',metadata=True,full_power=True),
         simulate('initial_contamination_overlaps_acquisition_and_healthy_maintenance',initial_dirty=11,x0=(500000,500000),metadata=True),
         simulate('heterogeneous_weights_and_initial_corner',weighted=True,x0=(-500000,500000),a=F(9,200),c=F(11,200)),
         simulate('source_only_acquisitions_same_budget',source_only=True,metadata=True),
         simulate('common_dependency_loss_and_actual_reconstruction',dependency_mode=True,metadata=True),
+        simulate('received_word_propagation_on_same_joint_plant',propagation_mode=True,metadata=True),
         simulate('same_mission_no_repair_actual_code_counterexample',repair=False,x0=(500000,500000))]
     assert scenarios[1]['maximum_derived_impaired_paths'] == 4
     root = Path(__file__).parent
     names = ('joint_model.py','REALIZATION.md','information_model.py')
     hashes = {name:hashlib.sha256((root/name).read_bytes().replace(b'\r\n',b'\n')).hexdigest() for name in names}
     return {'status':'passed','scope':'finite same-run execution checks, not universal source-policy verification',
-            'sources_sha256_lf':hashes,'local_checks':local,'scenarios':scenarios}
+            'sources_sha256_lf':hashes,'local_checks':local,'received_propagation_witness':propagation,'scenarios':scenarios}
 
 
 def main():
