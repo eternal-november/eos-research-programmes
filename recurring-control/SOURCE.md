@@ -1,8 +1,8 @@
 # W0 candidate source: recurring protection with contested physical interfaces
 
-Status: design candidate for independent admission, not a proved controller or admitted positive source yet. The controlling requirements are [the revised contract](../DOWNSTREAM-CONTRACT.md), RN1–RN5/IA1–IA4, [the asymmetric assumption rule](../ASSUMPTION-REVIEW.md) and [remaining W0–W6 program](../REMAINING-PROGRAM.md). [SOURCES](SOURCES.md) records the prior-art assessment preceding this candidate. The full Goal is active; no source choice below narrows its completion requirement.
+Status: source-design rationale for the admitted INSTANCE and constructed Route P. The unchanged revised contract, RN/IA obligations and asymmetric assumption rule remain controlling. SOURCES records the preceding literature assessment. Broader routes below retain their actual boundaries and do not narrow the full completion requirement.
 
-[INSTANCE](INSTANCE.md) pins the first concrete source/mission/initial query, raw force/position/cell laws and runtime boundaries for renewed admission review. This document retains the wider route comparison and alternatives; its earlier open source choices are not a claim that INSTANCE's concrete values have already passed admission. [PROBES](PROBES.md) supplies limited discriminating calculations, not a substitute for the global renewal/control construction.
+[INSTANCE](INSTANCE.md) pins the admitted source/mission/initial query, raw force/position/cell laws and runtime boundaries. This document retains the wider route comparison and original admission questions; ADMISSION records their resolution and ASSUMPTIONS records the post-construction continuation dispositions. [PROBES](PROBES.md) supplies limited discriminating calculations, not a substitute for the global renewal/control construction.
 
 ## Source query and supplied data
 

@@ -193,6 +193,12 @@ def conditional_copy(m,attack,initial_q=0,raw_at=None,omit_address=None):
 
 
 def finite_physics():
+    # Unknown missing incoming maintenance edge: actual field margins survive.
+    weakened_donors=27
+    selected=4*weakened_donors-8*BAD-1
+    opening=selected-42
+    closing=-8*weakened_donors+8*BAD+1-42
+    require(selected>42 and opening*4>=96 and closing < -96,'Missing-edge transport')
     idle_cases=0
     for z in range(-41,42):
         require(clipq(z-42)==0,'Subthreshold contact opening')
@@ -219,6 +225,9 @@ def finite_physics():
         ticks+=1
     require(ticks==6,'Integrating-cell witness')
     return dict(idle_cell_cases=idle_cases,contact_initial_states=97,
+                one_missing_incoming_edge={'donors':weakened_donors,
+                    'selected_field':selected,'opening_increment':opening,
+                    'closing_increment':closing},
                 phase_bit_positions_checked=checked,creep_flip_after_ticks=ticks,
                 full_period=P,full_duration=D,full_horizon=H,
                 horizon_below_raw_separation=H<10_000_000)
@@ -226,6 +235,20 @@ def finite_physics():
 
 def projection_checks():
     """Check the raw-history certificate calculation, not a repair-success oracle."""
+    # A0 releases exactly at boundary zero and a different role is acquired
+    # there. Entry occupancy must survive the closed-window projection even
+    # though post-event active occupancy contains only the new role.
+    boundary_cases=[]
+    for t in (0, H-1, H, H+1):
+        left=max(0,t-H)
+        initial=(0,0,2)
+        acquired=(0,6,3)
+        W={i for a,b,i in (initial,acquired) if a<=t and b>=left}
+        E={0}|W|{4}|({1} if t<H else set())
+        expected_window={2,3} if left==0 else {3}
+        require(W==expected_window,'Entry A0 lost at release/acquisition boundary')
+        require(len(E)==(5 if t<H else 4 if t==H else 3),'Distinct initial supports')
+        boundary_cases.append(dict(t=t,left=left,window=sorted(W),cover=sorted(E)))
     count=0
     for horizon in range(1,8):
         gap=horizon+1
@@ -252,7 +275,8 @@ def projection_checks():
         W={i for a,b,i in events if a<=t and b>=left}
         max_window=max(max_window,len(W))
         require(len(W)<=2,'Numerical raw history')
-    return dict(exact_small_interval_cases=count,rotation_acquisitions=len(events),
+    return dict(distinct_initial_occupant_boundary_cases=boundary_cases,
+                exact_small_interval_cases=count,rotation_acquisitions=len(events),
                 distinct_acquired_roles=len({i for _,_,i in events}),
                 sampled_numerical_boundaries=len(sample_times),max_window=max_window,
                 scope='raw-history projection checks; not a full source simulation')

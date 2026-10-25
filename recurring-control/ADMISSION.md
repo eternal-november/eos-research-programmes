@@ -1,6 +1,6 @@
 # W0 source admission record
 
-Status: W0 source admitted for construction and adversarial investigation at the declared exact-discrete scope. The full RN/IA Goal remains active and incomplete. Admission establishes that source inputs and internal proof duties are separated; it is not a controller, a controllability verdict or scientific completion.
+Status: W0 source admitted at its declared exact-discrete scope. This file retains the admission/refusal/repair evidence; later scientific discharge and completion are assessed in ASSEMBLY and AUDIT. Admission alone supplies neither the controller nor the full-program verdict.
 
 Three read-only reviewers examined the generic Route P candidate after targeted prior-art assessment. All retained it as a legitimate route to investigate but withheld W0 admission. A raw force/threshold/contact law can be elementary if it depends only on physical inputs/state; it cannot select correct programs or declare restored channels. The first draft left source-defining choices open.
 
