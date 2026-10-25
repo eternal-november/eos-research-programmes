@@ -72,10 +72,22 @@ def policy_checks():
     assert abs(F(misleading,1000)-actual)==F(19,10000) < F(1,500)
     assert F(101,2)<1000*(actual+F(149,100000))<F(103,2)
     assert naive>0 and actual<RULE and correction(misleading)==0
+    # A better actual observation does not shrink a fixed algorithmic deadband.
+    perfect=F(54,1000)
+    perfect_error=abs(F(correction(54),1000)-GAIN*perfect)
+    invalid_reduced_bound=GAIN*RULE+ROUND
+    fixed_guard_bound=GAIN*(RULE+ETA)+ROUND
+    assert perfect_error==F(427,5000)>invalid_reduced_bound
+    assert perfect_error<=fixed_guard_bound
     return {'packet_values_checked':8001,'good_radius_endpoint_cases':domain_cases,
             'maximum_observed_rounding_error':qstr(maximum_round),
             'proved_conservative_command_error':qstr(COMMAND_ERROR),
             'maximum_observed_effect_error':qstr(maximum_effect_error),
+            'fixed_guard_counterexample':{'perfect_state_and_estimate':qstr(perfect),
+                'selected_guard':qstr(ETA),'actual_issue_and_effect_error':'0/1',
+                'command_milliunits':correction(54),'actual_bias':qstr(perfect_error),
+                'invalid_actual_error_substitution_bound':qstr(invalid_reduced_bound),
+                'correct_fixed_guard_bound':qstr(fixed_guard_bound)},
             'unguarded_permission_counterexample':{'true_state':qstr(actual),
                 'estimate_milliunits':misleading,'naive_positive_command_milliunits':naive,
                 'guarded_command_milliunits':correction(misleading)}}
@@ -193,7 +205,7 @@ def timing_checks():
             s=held_issue(issues,delays,t)
             assert s is not None and s>=16
             quiet_cases+=1
-    effect_error=F(1,500)+21*DELTA*DRIFT
+    effect_error=F(1,500)+22*DELTA*DRIFT
     assert effect_error<ETA
     return {'held_age_exhaustive_checks':count,'positive_envelope_lag':lag,
             'generic_held_age_bound_factor':2,
@@ -202,7 +214,7 @@ def timing_checks():
                  'checked_time':8,'still_held_issue':3},
             'quiet_drain_checks':quiet_cases,'quiet_drain_first_feedback':16,
             'quiet_drain_valid_hold_by':20,'conservative_generic_valid_hold_by':24,
-            'sample_to_effect_age_bound':21,'source_effect_error_bound':qstr(effect_error),
+            'sample_to_effect_age_bound':22,'source_effect_error_bound':qstr(effect_error),
             'design_error':qstr(ETA)}
 
 
@@ -210,10 +222,12 @@ def resource_checks():
     n,b,normal_senders=N,BAD,4
     costs={'transmission':F(normal_senders*n+b*64),
            'samples':F(2*(normal_senders+2*b)),
-           'cpu':F(n,5),'maintenance_fields':F(2*n),
+           'cpu':F(n,5),'independent_io':F(n*4096,1000000),'maintenance_fields':F(2*n),
            'deployment':F(n),'flow':F(8*n),'selector_drive_hold':F(n),
            'acquisition_onset':F(2)}
-    total=sum(costs.values(),F(0)); assert total==F(4504,5)<901<=1000
+    total=sum(costs.values(),F(0)); assert total==F(14077176,15625)<901<=1000
+    initial_sample_liability=F(2*2*n)
+    assert 1000-initial_sample_liability==864>0
     p_count=2*n+2*n+n+n+1; assert p_count==205
     assert F(p_count,100000)==PBAR
     # These exact stock updates cover both capacity saturation and low stock;
@@ -224,12 +238,21 @@ def resource_checks():
         nxt=min(F(2000),stock+supply-cost)
         assert nxt>=stock>=0 and nxt<=2000
         count+=1
+    initial_checks=0
+    for stock,supply,ordinary,extra in product((F(1000),F(1500)),
+            (total,F(901),F(1000)),(F(0),total),(F(0),initial_sample_liability)):
+        nxt=min(F(2000),stock+supply-ordinary-extra)
+        assert nxt>=864 and nxt<=2000
+        initial_checks+=1
     necessary_equal=F(3,5)/F(1,34)
     necessary_weighted=F(3,5)/F(3,85)
     assert necessary_equal==F(102,5) and necessary_weighted==17
     assert 89*necessary_weighted>1500
     return {'pointwise_cost_terms':{k:qstr(v) for k,v in costs.items()},
             'total_actual_cost_upper':qstr(total),'sufficient_supply':901,
+            'separate_io_word_bound_per_body':4096,
+            'initial_sample_liability':qstr(initial_sample_liability),
+            'initial_stock_floor':864,'initial_stock_checks':initial_checks,
             'side_effect_operation_cap':p_count,'pbar':qstr(PBAR),
             'stock_corner_checks':count,'necessary_service_only_rate_equal':qstr(necessary_equal),
             'necessary_service_only_rate_weighted':qstr(necessary_weighted),

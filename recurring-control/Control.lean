@@ -95,14 +95,21 @@ theorem recurrent_service_weighted : (3*85 : Int) < 56*10 := by decide
 theorem coefficient_nonnegative : (0 : Int) < 19999999689 := by decide
 
 theorem current_and_effect_error_fit :
-    (4001101261*1000 : Int) < 3*2000000000000 := by decide
+    (2000576851*1000 : Int) < 3*1000000000000 := by decide
 
 theorem source_operation_cap : (2*34+2*34+34+34+1 : Int) = 205 := by decide
 
 theorem pointwise_resource_cap :
-    (456000+28000+6800+68000+34000+34000+272000+2000 : Int) = 900800 := by decide
+    (456000000+28000000+6800000+139264+68000000+34000000+34000000+272000000+2000000 : Int) = 900939264 := by decide
 
-theorem source_supply_fits : (900800 : Int) ≤ 901000 ∧ (901000 : Int) ≤ 1000000 := by decide
+theorem source_supply_fits : (900939264 : Int) ≤ 901000000 ∧ (901000000 : Int) ≤ 1000000000 := by decide
+
+theorem initial_sample_reserve : (1000-2*2*34 : Int) = 864 ∧ (0 : Int) < 864 := by decide
+
+theorem stock_after_extra (stock lower supply ordinary extra capacity : Int)
+    (hstock : lower ≤ stock) (hcost : ordinary ≤ supply)
+    (hcap : lower ≤ capacity) (hextra : 0 ≤ extra) :
+    lower-extra ≤ min capacity (stock+supply-ordinary-extra) := by omega
 
 theorem startup_radius_fits : (125000157323*5 : Int) < 4*250000000000 := by decide
 
@@ -143,6 +150,8 @@ theorem envelope_step (next linear disturbance bound reserve : Int)
 #print axioms source_operation_cap
 #print axioms pointwise_resource_cap
 #print axioms source_supply_fits
+#print axioms initial_sample_reserve
+#print axioms stock_after_extra
 #print axioms startup_radius_fits
 #print axioms source_resource_exhaustion
 #print axioms paid_stock_nonnegative
