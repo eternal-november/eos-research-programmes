@@ -76,7 +76,8 @@ class Assembler:
         for index in self.code_size_fixups: self.code[index][4]=size*8
         return b"".join(struct.pack("<BBBBI",op,a,b,c,u32(imm)) for op,a,b,c,imm in self.code)
 
-def assemble_program():
+def assemble_program(send_offset=2):
+    assert send_offset in (1,2)
     a=Assembler()
     # r0=zero; r31=one. Constants, phase and identifier are actually loaded.
     a.li(0,0); a.li(31,1); a.li(10,N); a.li(11,S); a.li(12,P); a.li(13,M)
@@ -120,7 +121,9 @@ def assemble_program():
     a.li(3,10); a.emit(MOD,9,1,3); a.emit(MOD,14,2,3)
     a.jump(JNE,"after_sample",14,9); a.emit(SAMPLE)
     a.label("after_sample")
-    a.emit(ADD,9,9,31); a.emit(MOD,9,9,3)
+    a.emit(ADD,9,9,31)
+    if send_offset==2:a.emit(ADD,9,9,31)
+    a.emit(MOD,9,9,3)
     a.jump(JNE,"after_send",14,9)
     a.emit(LOAD,18,0,imm=ADC_VALID); a.jump(JEQ,"after_send",18,0)
     a.emit(LOAD,16,0,imm=ADC); a.li(3,65535); a.emit(AND,16,16,3); a.li(17,MAGIC)
@@ -334,7 +337,7 @@ def reference_step(mem):
                 value=image_bit_from_store(mem,target,boot,address)
                 out.fields=[Field(0,target,0,1),Field(1,target,address,2*value-1)]
         if phase%10==identity%10: out.samples=1
-        if phase%10==(identity+1)%10 and rd(mem,ADC_VALID):
+        if phase%10==(identity+2)%10 and rd(mem,ADC_VALID):
             word=packet(s32(rd(mem,ADC)))
             out.sends=[(i,word) for i in range(N)]
             wr(mem,ADC_VALID,0)
@@ -543,7 +546,7 @@ def information_after_reconnection_check():
         # Hardware sample completes one tick after its own staggered request.
         # Selected exact trajectory is constant x=(.5,-.3), a local evidence test.
         for source in range(N):
-            if tick%10==(source+1)%10:
+            if tick%10==(source+2)%10:
                 value=(500 if source<17 else -300)+(source%3)-1
                 for recipient in range(2):
                     badvalue=(-4000 if recipient==0 else 4000)
@@ -612,7 +615,7 @@ def hardware_sample(machine, coordinate_value, noise=0):
 def nearest(q):
     return (2*q.numerator+q.denominator)//(2*q.denominator) if q>=0 else -nearest(-q)
 
-def joint_prefix_check(unordered=False, initial_adc_jobs=False):
+def joint_prefix_check(unordered=False, initial_adc_jobs=False, initial_signal_residence=None, late_io=False):
     """Executed commissioning prefix of the full source with actual VM policies.
     Full-horizon support is the renewal theorem, not inferred from this prefix.
     """
@@ -629,13 +632,18 @@ def joint_prefix_check(unordered=False, initial_adc_jobs=False):
     q=[F(0)]*N;a=[F(1)]*N;a[13]=F(0)
     wire=[[0]*N for _ in range(N)]
     setting_due=defaultdict(list);u_due=defaultdict(list)
-    selector_due=defaultdict(list);sample_due=defaultdict(list);word_due=defaultdict(list)
+    selector_due=defaultdict(list);sample_due=defaultdict(list)
+    signal_banks=[FixedSignalBank() for _ in range(N)]
+    if initial_signal_residence is not None:
+        assert initial_signal_residence in (0,1,2)
+        for bank in signal_banks:
+            bank.records=[(i%N,packet(-4000),initial_signal_residence) for i in range(128)]
     if initial_adc_jobs:
         sample_due[0].extend(i for i in range(N) for _ in range(2))
     x=(F(1,2),-F(1,2));stock=F(1000)
     maximum=F(0);minimum_service=F(100);minimum_stock=stock
     samples=sends=word_work=completed_attempts=0;held_field_halt=False;postrelease_bad=False
-    different_views=False;fault_at=20
+    different_views=False;fault_at=20;rejected_signal_words=0
     for tick in range(64):
         for i,g,fs in setting_due.pop(tick,[]):
             if g is not None: held_g[i]=g
@@ -643,7 +651,11 @@ def joint_prefix_check(unordered=False, initial_adc_jobs=False):
                 if field is not None: fields[i][e]=field
         for i,u in u_due.pop(tick,[]):held_u[i]=u
         for i,s in selector_due.pop(tick,[]):sigma[i]=s
-        for recipient,source,word in word_due.pop(tick,[]):wire[recipient][source]=word
+        for source,bank in enumerate(signal_banks):
+            bank.advance_tick(advance=tick>0)
+            if not late_io:
+                due,_=bank.deliver_due()
+                for recipient,word in due:wire[recipient][source]=word
         acquisition=0
         if tick==fault_at:
             poison(machines[7]);known.add(7);dirty.add(7);active.add(7);acquisition=1
@@ -664,12 +676,12 @@ def joint_prefix_check(unordered=False, initial_adc_jobs=False):
         completions=sample_due.pop(tick,[])
         assert len(completions)<=2*N
         completed_attempts+=len(completions)
-        for i in completions:
+        for i in ([] if late_io else completions):
             if powered[i]:
                 machines[i].capture(adc=hardware_sample(machines[i],x[0 if i<17 else 1],(-1 if i%17<8 else 1)))
         actions=[];local_samples=local_bits=local_work=0
         for i,machine in enumerate(machines):
-            if powered[i]: machine.capture(wire[i])
+            if powered[i] and not late_io: machine.capture(wire[i])
             out=machine.step(powered[i]);actions.append(out)
             assert not out.timed_out
             local_work+=out.word_work
@@ -692,11 +704,20 @@ def joint_prefix_check(unordered=False, initial_adc_jobs=False):
             else:emitted=out.sends
             assert len(emitted)*64<=4096
             local_bits+=len(emitted)*64
-            for recipient,word in emitted:
-                word_due[tick+2].append((recipient,i,word))
+            immediate,rejected,_=signal_banks[i].end_tick([(recipient,word,2) for recipient,word in emitted])
+            rejected_signal_words+=rejected
+            for recipient,word in immediate:wire[recipient][i]=word
             selector_due[tick+1].append((i,getbit(machine.mem,SIGMA_BIT)))
             if i==7 and tick>fault_at+6 and out.u==(-2000,-2000):postrelease_bad=True
             if not powered[i] and any(f.amplitude for f in fields[i]):held_field_halt=True
+        if late_io:
+            # Capture before late delivery is the worst CPU-use ordering.
+            for i,machine in enumerate(machines):machine.capture(wire[i],powered=powered[i])
+            for source,bank in enumerate(signal_banks):
+                due,_=bank.deliver_due()
+                for recipient,word in due:wire[recipient][source]=word
+            for i in completions:
+                if powered[i]:machines[i].capture(adc=hardware_sample(machines[i],x[0 if i<17 else 1],(-1 if i%17<8 else 1)))
         flow=[tuple(old_a[i]*(2+F(held_u[i][k],1000)) for k in range(2)) for i in range(N)]
         service=tuple(sum(v[k] for v in flow)/N for k in range(2))
         force_units=sum(abs(f.amplitude) for fs in fields for f in fs)
@@ -729,11 +750,14 @@ def joint_prefix_check(unordered=False, initial_adc_jobs=False):
             different_views |= len(set(nominal))>1
         samples+=local_samples;sends+=local_bits//64;word_work+=local_work
     assert postrelease_bad and held_field_halt
-    return {"ticks":64,"out_of_order_u":unordered,"supply":901,"all_handles_known_initially":True,"max_abs_state":str(maximum),
+    return {"ticks":64,"out_of_order_u":unordered,"late_ADC_capture_delivery":late_io,"supply":901,"all_handles_known_initially":True,"max_abs_state":str(maximum),
             "minimum_service":str(minimum_service),"minimum_stock_lower_bound":str(minimum_stock),
             "io_upper_word_allowance_per_tick":N*IO_WORD_ALLOWANCE,
             "actual_sample_requests":samples,"completed_sample_attempts":completed_attempts,
             "prestart_sample_jobs":2*N if initial_adc_jobs else 0,
+            "initial_signal_residence":initial_signal_residence,
+            "initial_signal_records_per_body":128 if initial_signal_residence is not None else 0,
+            "rejected_signal_words":rejected_signal_words,
             "transmitted_words":sends,"word_operations":word_work,
             "old_field_acts_while_processor_halted":held_field_halt,
             "released_program_continues_bad_command":postrelease_bad,
@@ -792,7 +816,7 @@ def work_bound_check():
     sort_group=16*(6+10)+136*10+16*8+3
     bound=code_instructions+N*3+N*parse_block+2*sort_group
     word_bound=SETUP_WORK+INSTRUCTION_WORK*bound
-    assert (code_instructions,parse_block,sort_group,bound,word_bound)==(238,29,1747,4820,154496)
+    assert (code_instructions,parse_block,sort_group,bound,word_bound)==(239,29,1747,4821,154528)
     assert word_bound<WORD_LIMIT
     maximum=0
     for phase in (4,PHASE*8+4,ID*8+4,M+4,P-1):
@@ -814,18 +838,29 @@ class FixedSignalBank:
     def __init__(self):
         self.records=[None]*128
         self.free=[]
-    def begin_tick(self):
-        due=[];self.free=[]
+    def advance_tick(self,advance=True):
+        # Elapsed-time update and delivery are distinct finite subphases.
+        # A due record retains its actual occupied slot until delivery.
+        self.free=[]
         for index,record in enumerate(self.records):
-            if record is not None:
+            if record is None:self.free.append(index)
+            else:
                 destination,word,remaining=record
-                remaining=max(0,min(2,remaining)-1)
-                if remaining==0:
-                    if 0<=destination<N: due.append((destination,word&((1<<64)-1)))
-                    self.records[index]=None
-                else:self.records[index]=(destination,word&((1<<64)-1),remaining)
-            if self.records[index] is None:self.free.append(index)
-        return due,128*20
+                remaining=max(0,min(2,remaining)-(1 if advance else 0))
+                self.records[index]=(destination,word&((1<<64)-1),remaining)
+        return 128*6
+    def deliver_due(self):
+        due=[]
+        for index,record in enumerate(self.records):
+            if record is not None and record[2]==0:
+                destination,word,_=record
+                if 0<=destination<N:due.append((destination,word))
+                self.records[index]=None;self.free.append(index)
+        return due,128*14
+    def begin_tick(self,advance=True):
+        work=self.advance_tick(advance)
+        due,delivery_work=self.deliver_due()
+        return due,work+delivery_work
     def end_tick(self,new):
         immediate=[];rejected=0
         for destination,word,delay in new[:64]:
@@ -880,73 +915,103 @@ def finite_io_kernel_check():
 
 
 def queued_startup_and_return_check():
-    """Actual VM emissions through finite, initially occupied signal banks.
-    Physical source evolution fixes power/route here; this is a local queue
-    lemma, not an independent proof that collective renewal establishes them.
+    """Actual bytecode source/phase projection under every fixed subphase order.
+    Skipped parse/sort/control blocks do not write ADC/valid, code, ID or phase;
+    the actual finish block advances phase. Synthetic ADC stamps are ghost age
+    evidence, not a claimed fast-changing physical-plant trajectory.
     """
-    latest_initial=0;latest_return=0;rejections=0
-    for prestart in (False,True):
-        for role in range(N):
-            machine=Machine(role)
-            bank=FixedSignalBank()
-            bank.records=[(i%N,packet(-4000),2) for i in range(128)]
-            held=[packet(-4000)]*N
-            sample_due=prestart;first_all=None
-            for tick in range(14):
-                due,_=bank.begin_tick()
-                for destination,word in due: held[destination]=word
-                if sample_due: machine.capture(adc=500)
-                machine.capture([0]*N)
-                out=machine.step();sample_due=bool(out.samples)
-                now,rejected,_=bank.end_tick([(d,w,2) for d,w in out.sends])
-                rejections+=rejected
-                for destination,word in now: held[destination]=word
-                if first_all is None and all(decode(w)==500 for w in held): first_all=tick
-            assert first_all is not None and first_all<=12
-            latest_initial=max(latest_initial,first_all)
-    # Begin with arbitrary initial old records, then advance during a long
-    # powerless interval while external ingress remains active at its64 cap.
-    for boot_residue in range(10):
-        machine=Machine(7,boot_residue)
-        bank=FixedSignalBank()
-        bank.records=[(i%N,packet(-4000),2) for i in range(128)]
+    from itertools import permutations
+    orders=[p for p in permutations("ADCEQ") if p.index("E")<p.index("Q")]
+    def run(role,phase,remaining,prestart,order,restart):
+        actor=Machine(role,phase);bank=FixedSignalBank()
+        bank.records=[(i%N,packet(-4000),remaining) for i in range(128)]
         held=[packet(-4000)]*N
-        for tick in range(-4,0):
-            due,_=bank.begin_tick()
-            for destination,word in due: held[destination]=word
-            prior=bytes(machine.mem)
-            machine.capture([packet(4000)]*N,adc=4000,powered=False)
-            assert bytes(machine.mem)==prior and machine.step(False).word_work==0
-            bank.end_tick([(i%N,packet(-4000),2) for i in range(64)])
-        # Image reconstruction has already written local sigma0; physical
-        # drive takes effect atB+1. Remote words atB still actually launch.
-        sample_due=False;first_all=None;first_nominal_send=None
-        for tick in range(14):
-            due,_=bank.begin_tick()
-            for destination,word in due: held[destination]=word
-            if sample_due: machine.capture(adc=500)
-            machine.capture([0]*N)
-            out=machine.step();sample_due=bool(out.samples)
-            survivors=sum(record is not None for record in bank.records)
-            assert survivors<=64
-            emitted=[(i%N,packet(-4000),2) for i in range(64)] if tick==0 else [(d,w,2) for d,w in out.sends]
-            now,rejected,_=bank.end_tick(emitted)
-            assert rejected==0
-            if out.sends and tick>=1 and first_nominal_send is None: first_nominal_send=tick
-            for destination,word in now: held[destination]=word
-            if first_all is None and all(decode(w)==500 for w in held): first_all=tick
-        assert first_nominal_send is not None and first_nominal_send<=10
-        assert first_all is not None and first_all<=12
-        latest_return=max(latest_return,first_all)
-    assert rejections>0
-    return {"initial_cases":2*N,"boot_phase_residues":10,
-            "initial_rejected_prestart_words":rejections,
-            "latest_initial_all_destinations_fresh":latest_initial,
-            "latest_return_all_destinations_fresh":latest_return,
-            "conservative_capture_bound":13,"first_feedback_tick":16,
-            "off_power_capture_and_ADC_leave_RAM_unchanged":True,
-            "world_queue_advances_while_powered_off":True,
-            "scope":"finite occupied-queue local freshness projection using actual stored program; capacity argument supplies all delay choices"}
+        if restart:
+            for _ in range(4):
+                due,_=bank.begin_tick()
+                for d,w in due:held[d]=w
+                prior=bytes(actor.mem)
+                actor.capture(held,adc=4000,powered=False)
+                assert bytes(actor.mem)==prior and actor.step(False).word_work==0
+                bank.end_tick([(i%N,packet(-4000),2) for i in range(64)])
+        sample_due=prestart;first_use=None;maximum_age=0;events=[];rejected_total=0
+        for tick in range(31):
+            bank.advance_tick(advance=restart or tick>0)
+            out=None;next_sample=False;due_count=sent_count=rejected=0
+            for event in order:
+                if event=="A" and sample_due:actor.capture(adc=1000+tick)
+                elif event=="D":
+                    due,_=bank.deliver_due();due_count=len(due)
+                    for d,w in due:held[d]=w
+                elif event=="C":actor.capture(held)
+                elif event=="E":
+                    visible=[decode(int.from_bytes(actor.mem[RX+8*i:RX+8*i+8],"little")) for i in range(N)]
+                    if all(v>=1000 for v in visible):
+                        if first_use is None:first_use=tick
+                        if tick>=16:maximum_age=max(maximum_age,tick-min(v-1000 for v in visible))
+                    elif tick>=16:raise AssertionError((role,phase,remaining,prestart,order,restart,tick,"stale row at feedback"))
+                    out=actor._execute(0,LABELS["after_send"])
+                    finish=actor._execute(LABELS["finish"],None)
+                    assert not out.timed_out and not finish.timed_out
+                    next_sample=bool(out.samples)
+                elif event=="Q":
+                    assert out is not None
+                    new=[(i%N,packet(-4000),2) for i in range(64)] if restart and tick==0 else [(d,w,2) for d,w in out.sends]
+                    sent_count=len(new)
+                    immediate,rejected,_=bank.end_tick(new)
+                    for d,w in immediate:held[d]=w
+            if due_count or sent_count:events.append((tick,due_count,sent_count,rejected))
+            sample_due=next_sample;rejected_total+=rejected
+        assert first_use is not None and first_use<=(15 if restart else 16)
+        assert maximum_age<=14
+        return first_use,maximum_age,rejected_total,events
+    startup_cases=return_cases=rejections=latest_initial=latest_return=maximum_age=0
+    startup_tight=None;return_tight=None
+    for order in orders:
+      for residue in range(10):
+        for remaining in (0,1,2):
+          for prestart in (False,True):
+            first,age,rejected,events=run(10+residue,0,remaining,prestart,order,False)
+            startup_cases+=1;latest_initial=max(latest_initial,first);maximum_age=max(maximum_age,age);rejections+=rejected
+            if first==16:startup_tight={"role":10+residue,"remaining":remaining,"prestart_ADC":prestart,"order":"".join(order),"events":events}
+        first,age,rejected,events=run(10,residue,2,False,order,True)
+        return_cases+=1;latest_return=max(latest_return,first);maximum_age=max(maximum_age,age)
+        if first==15:return_tight={"boot_phase":residue,"order":"".join(order),"events":events}
+    assert (len(orders),startup_cases,return_cases)==(60,3600,600)
+    assert (latest_initial,latest_return,maximum_age)==(16,15,14)
+    return {"event_orders":len(orders),"event_key":{"A":"ADC completion","D":"queued delivery/expiry","C":"input capture","E":"CPU source projection/use","Q":"enqueue"},
+            "initial_cases":startup_cases,"return_cases":return_cases,"initial_remaining_residences":[0,1,2],
+            "rejected_initial_words":rejections,"latest_initial_CPU_use":latest_initial,"latest_return_CPU_use":latest_return,
+            "maximum_steady_sample_age":maximum_age,"first_feedback_tick":16,
+            "tight_startup_trace":startup_tight,"tight_return_trace":return_tight,
+            "off_power_RAM_unchanged_and_world_queue_advances":True,
+            "scope":"actual source/phase bytecode projection for all fixed event orders; per-event deadlines prove arbitrary changing orders and mixed initial residences"}
+
+
+def late_adc_old_schedule_counterexample():
+    from collections import defaultdict
+    old_code,_=assemble_program(send_offset=1)
+    actors=[Machine(i) for i in range(N)]
+    for actor in actors:actor.mem[:len(old_code)]=old_code
+    wire=[[packet(4000)]*N for _ in range(N)]
+    samples=defaultdict(list);words=defaultdict(list);witness=None
+    for tick in range(17):
+        for destination,source,word in words.pop(tick,[]):wire[destination][source]=word
+        for i,actor in enumerate(actors):
+            powered=i!=0 or tick==0
+            actor.capture(wire[i],powered=powered)
+            out=actor.step(powered)
+            samples[tick+1].extend([i]*out.samples)
+            for destination,word in out.sends:words[tick+2].append((destination,i,word))
+            if i==10 and tick==16:
+                witness={"issued_command":out.u,"fresh_rows":[sum(decode(wire[10][j])==(500 if j<17 else -500) for j in range(lo,lo+17)) for lo in (0,17)]}
+        for i in samples.pop(tick,[]):actors[i].capture(adc=500 if i<17 else -500,powered=(i!=0 or tick==0))
+    assert witness=={"issued_command":(1500,1500),"fresh_rows":[7,8]}
+    # The source-wide startup drift bound keeps an initial-.5 coordinate
+    # negative throughout this prefix; these quantized rows fit raw error.
+    assert -F(1,2)+16*F(1,10**8)*F(52441,20000)<0
+    return {**witness,"old_send_offset":1,"new_send_offset":2,"violation_tick":16,
+            "scope":"actual old-variant bytecode timing counterexample; source startup bound supplies negative true coordinate, not a full coupled trace"}
 
 
 
@@ -1017,10 +1082,13 @@ def all_checks():
             "contested_engagement":engagement_check(),"calibration_only":calibration_only_check(),
             "joint_source_prefix":joint_prefix_check(),"unordered_joint_prefix":joint_prefix_check(True),
             "prestart_adc_joint_prefix":joint_prefix_check(True,True),
+            "prestart_signal_joint_prefixes":{str(delay):joint_prefix_check(True,True,delay) for delay in (0,1,2)},
+            "late_io_joint_prefix":joint_prefix_check(True,True,2,True),
             "common_upstream_counterexample":common_input_rewriter_counterexample(),
             "closed_without_new_emission":closed_path_without_fresh_emission(),"nominal_work_bound":work_bound_check(),"io_liability":io_liability_check(),
             "omitted_selector_ablation":omitted_selector_counterexample(),"finite_io_kernel":finite_io_kernel_check(),
-            "queued_startup_and_return":queued_startup_and_return_check()}
+            "queued_startup_and_return":queued_startup_and_return_check(),
+            "late_ADC_old_schedule_counterexample":late_adc_old_schedule_counterexample()}
 
 def main():
     parser=argparse.ArgumentParser()

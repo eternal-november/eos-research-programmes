@@ -111,10 +111,10 @@ theorem fault_budget_under_permutation (a b : List Row) (h : a.Perm b) (q : Nat)
 
 theorem source_group_has_margin : (5 : Nat) ≤ 8 ∧ 17 = 2*8+1 := by decide
 
-theorem sample_age_bound (sample emitted now period latency : Nat)
+theorem sample_age_bound (sample emitted now period latency capture : Nat)
     (emit_delay : emitted ≤ sample+1)
-    (recent : now < emitted+period+latency+1) :
-    now-sample ≤ period+latency+1 := by omega
+    (recent : now < emitted+period+latency+capture) :
+    now-sample ≤ period+latency+capture := by omega
 
 theorem held_effect_age (issued arrived now delay : Nat)
     (recent_arrival : now ≤ arrived+delay)
@@ -125,10 +125,10 @@ theorem quiet_baseline_expires_before_feedback (boot fallback fresh : Nat)
     (old : fallback ≤ boot+4) (new : boot+16 ≤ fresh) :
     fallback < fresh := by omega
 
-theorem combined_information_effect_age : (13 : Nat)+2*4 = 21 := by decide
+theorem combined_information_effect_age : (14 : Nat)+2*4 = 22 := by decide
 
-/-- .002 + 21 * 10^-8 * 2.62205 < .003 after positive-denominator clearing. -/
-theorem source_error_margin : (20005506305 : Int) < 30000000000 := by decide
+/-- .002 + 22 * 10^-8 * 2.62205 < .003 after positive-denominator clearing. -/
+theorem source_error_margin : (20005768510 : Int) < 30000000000 := by decide
 
 theorem positive_milliunit_trigger (measured : Int) (h : 53 < measured) :
     50 ≤ measured-3 := by omega
