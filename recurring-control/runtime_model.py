@@ -27,6 +27,7 @@ SIGMA_BIT = 65535
 MAGIC = 0x42594331
 MASK = (1 << 32) - 1
 WORD_LIMIT, SETUP_WORK, INSTRUCTION_WORK = 200000, 256, 32
+IO_WORD_ALLOWANCE = 4096
 
 # Fixed-width instruction format: opcode,a,b,c,32-bit immediate.
 HALT, LI, MOV, ADD, SUB, MUL, DIV, MOD, AND, SHR = range(10)
@@ -248,7 +249,9 @@ def image_bit_from_store(mem,target,boot_phase,address):
 class Machine:
     def __init__(self,identifier,phase=0):
         self.mem=nominal_image(identifier,phase)
-    def capture(self,words=None,adc=None):
+    def capture(self,words=None,adc=None,powered=True):
+        # The physical power contact disables RAM capture, not world queues.
+        if not powered: return
         if words is not None:
             assert len(words)==N
             for i,word in enumerate(words):
@@ -609,7 +612,7 @@ def hardware_sample(machine, coordinate_value, noise=0):
 def nearest(q):
     return (2*q.numerator+q.denominator)//(2*q.denominator) if q>=0 else -nearest(-q)
 
-def joint_prefix_check(unordered=False):
+def joint_prefix_check(unordered=False, initial_adc_jobs=False):
     """Executed commissioning prefix of the full source with actual VM policies.
     Full-horizon support is the renewal theorem, not inferred from this prefix.
     """
@@ -627,9 +630,11 @@ def joint_prefix_check(unordered=False):
     wire=[[0]*N for _ in range(N)]
     setting_due=defaultdict(list);u_due=defaultdict(list)
     selector_due=defaultdict(list);sample_due=defaultdict(list);word_due=defaultdict(list)
+    if initial_adc_jobs:
+        sample_due[0].extend(i for i in range(N) for _ in range(2))
     x=(F(1,2),-F(1,2));stock=F(1000)
     maximum=F(0);minimum_service=F(100);minimum_stock=stock
-    samples=sends=word_work=0;held_field_halt=False;postrelease_bad=False
+    samples=sends=word_work=completed_attempts=0;held_field_halt=False;postrelease_bad=False
     different_views=False;fault_at=20
     for tick in range(64):
         for i,g,fs in setting_due.pop(tick,[]):
@@ -656,7 +661,10 @@ def joint_prefix_check(unordered=False):
             if q[i]>=20 and abs(physical)>F(21,2):
                 putbit(machines[i].mem,address,1 if physical>0 else 0)
         powered=[position<4 for position in q]
-        for i in sample_due.pop(tick,[]):
+        completions=sample_due.pop(tick,[])
+        assert len(completions)<=2*N
+        completed_attempts+=len(completions)
+        for i in completions:
             if powered[i]:
                 machines[i].capture(adc=hardware_sample(machines[i],x[0 if i<17 else 1],(-1 if i%17<8 else 1)))
         actions=[];local_samples=local_bits=local_work=0
@@ -695,11 +703,16 @@ def joint_prefix_check(unordered=False):
         deployment=sum(abs(g) for g in held_g)
         # Every selector's bounded drive/hold allowance is included.
         selector_work=N
-        opcount=local_samples+force_units+deployment+selector_work+acquisition
+        opcount=len(completions)+force_units+deployment+selector_work+acquisition
         assert opcount<=205
         operation=(F(opcount,100000),-F(opcount,100000))
         cost=F(local_work,10**6)+F(local_bits,64)+2*local_samples
         cost+=force_units+deployment+sum(sum(v) for v in flow)+selector_work+2*acquisition
+        # Separate source I/O/driver liability, including unpowered bodies.
+        # This produces a conservative lower-stock trace, not measured I/O work.
+        cost+=F(N*IO_WORD_ALLOWANCE,10**6)
+        if tick==0 and initial_adc_jobs:
+            cost+=2*len(completions)  # unpaid prestart attempts; ordinary ones paid at issue
         assert cost<=stock+901
         stock=min(F(2000),stock+901-cost)
         a=[min(F(1),max(F(0),old_a[i]+held_g[i]-F(3,4))) for i in range(N)]
@@ -717,12 +730,15 @@ def joint_prefix_check(unordered=False):
         samples+=local_samples;sends+=local_bits//64;word_work+=local_work
     assert postrelease_bad and held_field_halt
     return {"ticks":64,"out_of_order_u":unordered,"supply":901,"all_handles_known_initially":True,"max_abs_state":str(maximum),
-            "minimum_service":str(minimum_service),"minimum_stock":str(minimum_stock),
-            "actual_samples":samples,"transmitted_words":sends,"word_operations":word_work,
+            "minimum_service":str(minimum_service),"minimum_stock_lower_bound":str(minimum_stock),
+            "io_upper_word_allowance_per_tick":N*IO_WORD_ALLOWANCE,
+            "actual_sample_requests":samples,"completed_sample_attempts":completed_attempts,
+            "prestart_sample_jobs":2*N if initial_adc_jobs else 0,
+            "transmitted_words":sends,"word_operations":word_work,
             "old_field_acts_while_processor_halted":held_field_halt,
             "released_program_continues_bad_command":postrelease_bad,
             "different_correct_commands":different_views,
-            "scope":"full source commissioning prefix; not an infinite-run or completed full-cycle simulation"}
+            "scope":"exact machine/physical commissioning prefix with conservative lower-stock certificate; not an infinite-run or completed full-cycle simulation"}
 
 def calibration_only_check():
     actor=Machine(12);wr(actor.mem,DRAIN,0);wr(actor.mem,CAL,2000)
@@ -749,13 +765,13 @@ def calibration_only_check():
 
 def common_input_rewriter_counterexample():
     actor=Machine(10,50);wr(actor.mem,DRAIN,0)
-    actor.capture([packet(500)]*N)
+    actor.capture([packet(500)]*N,adc=500)
     result=actor.step()
     assert result.u==(715,715)
-    possible_worlds=((F(1,2),F(1,2)),(-F(1,2),-F(1,2)))
+    possible_worlds=((F(1,2),F(1,2)),(F(1,2),-F(1,2)))
     assert all(value>0 for value in result.u)
-    assert all(value<F(1,20) for value in possible_worlds[1])
-    return {"same_actual_frame_different_worlds":True,"intact_program_command":result.u,
+    assert possible_worlds[1][1]<F(1,20)
+    return {"same_actual_frame_different_worlds":True,"same_true_own_ADC":500,"intact_program_command":result.u,
             "negative_world_violates_factive_rule":True,
             "scope":"expanded common-upstream-forgery topology, not one bad row in INSTANCE"}
 
@@ -790,6 +806,193 @@ def work_bound_check():
             "negative_descending_measured_maximum":maximum,
             "scope":"structural loop bound plus executed adverse-input challenges"}
 
+class FixedSignalBank:
+    """Finite transition realization of the admitted primitive signal queue.
+    This models fixed queue/capture logic, not an additional stored program.
+    Raw state consists of128 bounded records; contents are not trusted.
+    """
+    def __init__(self):
+        self.records=[None]*128
+        self.free=[]
+    def begin_tick(self):
+        due=[];self.free=[]
+        for index,record in enumerate(self.records):
+            if record is not None:
+                destination,word,remaining=record
+                remaining=max(0,min(2,remaining)-1)
+                if remaining==0:
+                    if 0<=destination<N: due.append((destination,word&((1<<64)-1)))
+                    self.records[index]=None
+                else:self.records[index]=(destination,word&((1<<64)-1),remaining)
+            if self.records[index] is None:self.free.append(index)
+        return due,128*20
+    def end_tick(self,new):
+        immediate=[];rejected=0
+        for destination,word,delay in new[:64]:
+            delay=max(0,min(2,delay))
+            if not 0<=destination<N:
+                rejected+=1
+            elif delay==0:
+                immediate.append((destination,word&((1<<64)-1)))
+            elif self.free:
+                index=self.free.pop()
+                self.records[index]=(destination,word&((1<<64)-1),delay)
+            else: rejected+=1
+        rejected+=max(0,len(new)-64)
+        return immediate,rejected,min(64,len(new))*12
+
+def finite_io_kernel_check():
+    bank=FixedSignalBank()
+    # Arbitrary bounded old words fill the initial queue. No epoch clears them.
+    bank.records=[(i%N,packet(-4000),2) for i in range(128)]
+    due,work=bank.begin_tick()
+    assert not due
+    now,rejected,enqueue_work=bank.end_tick([(i%N,packet(500),2) for i in range(64)])
+    assert not now and rejected==64 and sum(x is not None for x in bank.records)==128
+    due,work=bank.begin_tick()
+    assert len(due)==128 and all(decode(word)==-4000 for _,word in due)
+    now,rejected,enqueue_work=bank.end_tick([(i%N,packet(500),2) for i in range(64)])
+    assert rejected==0
+    assert bank.begin_tick()[0]==[]
+    bank.end_tick([])
+    due,work=bank.begin_tick()
+    assert len(due)==64 and all(decode(word)==500 for _,word in due)
+    bank.end_tick([])
+    # Source timing permits reorder: a zero-delay newer value need not erase
+    # an older queued value that arrives on a later tick.
+    b=FixedSignalBank();b.begin_tick()
+    b.end_tick([(0,packet(100),2)])
+    assert not b.begin_tick()[0]
+    immediate,_,_=b.end_tick([(0,packet(200),0)])
+    assert decode(immediate[0][1])==200
+    later,_=b.begin_tick()
+    assert decode(later[0][1])==100
+    terms={"captured_input_words":34*8,"adc_completions":2*16,
+           "actuator_and_selector_records":(8+5)*20,
+           "signal_pipeline_records":128*20+64*12,"bank_control":128}
+    assert sum(terms.values())==4020<=IO_WORD_ALLOWANCE
+    return {"fixed_record_slots":128,"maximum_new_records":64,
+            "full_initial_queue_and_rejection_checked":True,
+            "old_records_survive_until_actual_advance":True,
+            "later_old_value_can_follow_newer_value":True,
+            "bounded_record_work":sum(terms.values()),"terms":terms,
+            "scope":"finite primitive queue transition realization; no trusted renewal or truth classification"}
+
+
+def queued_startup_and_return_check():
+    """Actual VM emissions through finite, initially occupied signal banks.
+    Physical source evolution fixes power/route here; this is a local queue
+    lemma, not an independent proof that collective renewal establishes them.
+    """
+    latest_initial=0;latest_return=0;rejections=0
+    for prestart in (False,True):
+        for role in range(N):
+            machine=Machine(role)
+            bank=FixedSignalBank()
+            bank.records=[(i%N,packet(-4000),2) for i in range(128)]
+            held=[packet(-4000)]*N
+            sample_due=prestart;first_all=None
+            for tick in range(14):
+                due,_=bank.begin_tick()
+                for destination,word in due: held[destination]=word
+                if sample_due: machine.capture(adc=500)
+                machine.capture([0]*N)
+                out=machine.step();sample_due=bool(out.samples)
+                now,rejected,_=bank.end_tick([(d,w,2) for d,w in out.sends])
+                rejections+=rejected
+                for destination,word in now: held[destination]=word
+                if first_all is None and all(decode(w)==500 for w in held): first_all=tick
+            assert first_all is not None and first_all<=12
+            latest_initial=max(latest_initial,first_all)
+    # Begin with arbitrary initial old records, then advance during a long
+    # powerless interval while external ingress remains active at its64 cap.
+    for boot_residue in range(10):
+        machine=Machine(7,boot_residue)
+        bank=FixedSignalBank()
+        bank.records=[(i%N,packet(-4000),2) for i in range(128)]
+        held=[packet(-4000)]*N
+        for tick in range(-4,0):
+            due,_=bank.begin_tick()
+            for destination,word in due: held[destination]=word
+            prior=bytes(machine.mem)
+            machine.capture([packet(4000)]*N,adc=4000,powered=False)
+            assert bytes(machine.mem)==prior and machine.step(False).word_work==0
+            bank.end_tick([(i%N,packet(-4000),2) for i in range(64)])
+        # Image reconstruction has already written local sigma0; physical
+        # drive takes effect atB+1. Remote words atB still actually launch.
+        sample_due=False;first_all=None;first_nominal_send=None
+        for tick in range(14):
+            due,_=bank.begin_tick()
+            for destination,word in due: held[destination]=word
+            if sample_due: machine.capture(adc=500)
+            machine.capture([0]*N)
+            out=machine.step();sample_due=bool(out.samples)
+            survivors=sum(record is not None for record in bank.records)
+            assert survivors<=64
+            emitted=[(i%N,packet(-4000),2) for i in range(64)] if tick==0 else [(d,w,2) for d,w in out.sends]
+            now,rejected,_=bank.end_tick(emitted)
+            assert rejected==0
+            if out.sends and tick>=1 and first_nominal_send is None: first_nominal_send=tick
+            for destination,word in now: held[destination]=word
+            if first_all is None and all(decode(w)==500 for w in held): first_all=tick
+        assert first_nominal_send is not None and first_nominal_send<=10
+        assert first_all is not None and first_all<=12
+        latest_return=max(latest_return,first_all)
+    assert rejections>0
+    return {"initial_cases":2*N,"boot_phase_residues":10,
+            "initial_rejected_prestart_words":rejections,
+            "latest_initial_all_destinations_fresh":latest_initial,
+            "latest_return_all_destinations_fresh":latest_return,
+            "conservative_capture_bound":13,"first_feedback_tick":16,
+            "off_power_capture_and_ADC_leave_RAM_unchanged":True,
+            "world_queue_advances_while_powered_off":True,
+            "scope":"finite occupied-queue local freshness projection using actual stored program; capacity argument supplies all delay choices"}
+
+
+
+def io_liability_check():
+    terms={"captured_input_words":34*8,"adc_completions":2*16,
+           "actuator_and_selector_records":(8+5)*20,
+           "signal_pipeline_records":128*20+64*12,"bank_control":128}
+    bound=sum(terms.values())
+    assert bound==4020<=IO_WORD_ALLOWANCE
+    extra=F(N*IO_WORD_ALLOWANCE,10**6)
+    assert F(4504,5)+extra<F(901)
+    return {"nominal_record_operation_bound":bound,"terms":terms,
+            "per_body_word_allowance":IO_WORD_ALLOWANCE,
+            "global_resource_allowance_per_tick":str(extra),
+            "pricing":"conservative source allowance, not measured negative-trace cost"}
+
+def omitted_selector_counterexample():
+    donor=Machine(7)
+    target=Machine(12);poison(target)
+    boot=(12*S+M+5)%P
+    for address in range(M):
+        if address==SIGMA_BIT: continue
+        value=image_bit_from_store(donor.mem,12,boot,address)
+        assert abs((1 if value else -1)*F(71,4))>F(21,2)
+        putbit(target.mem,address,value)
+    assert target.mem[:CODE_BYTES]==PROGRAM and getbit(target.mem,SIGMA_BIT)==1
+    assert rd(target.mem,CAL)==0 and rd(target.mem,PHASE)==boot
+    pending=[];fresh_local=False;false_selected=False
+    for tick in range(24):
+        if tick in pending:
+            target.capture(adc=hardware_sample(target,F(1,2)))
+        target.capture([packet(500 if i<17 else -300) for i in range(N)])
+        out=target.step()
+        if out.samples: pending.append(tick+1)
+        if out.sends:
+            assert all(decode(word)==500 for _,word in out.sends)
+            fresh_local=True
+            selected=packet(-4000) if getbit(target.mem,SIGMA_BIT) else out.sends[0][1]
+            false_selected |= decode(selected)==-4000
+    assert fresh_local and false_selected
+    return {"restored_code_calibration_phase":True,"unwritten_selector_remains_external":True,
+            "actual_fresh_local_emission":fresh_local,"consumer_path_still_false":false_selected,
+            "scope":"partial addressed reconstruction ablation; correct code alone does not renew reporting reach"}
+
+
+
 def lean_checks(lean):
     import importlib.util
     import subprocess
@@ -813,8 +1016,11 @@ def all_checks():
             "selector_and_delayed_effects":selector_and_delayed_effect_checks(),
             "contested_engagement":engagement_check(),"calibration_only":calibration_only_check(),
             "joint_source_prefix":joint_prefix_check(),"unordered_joint_prefix":joint_prefix_check(True),
+            "prestart_adc_joint_prefix":joint_prefix_check(True,True),
             "common_upstream_counterexample":common_input_rewriter_counterexample(),
-            "closed_without_new_emission":closed_path_without_fresh_emission(),"nominal_work_bound":work_bound_check()}
+            "closed_without_new_emission":closed_path_without_fresh_emission(),"nominal_work_bound":work_bound_check(),"io_liability":io_liability_check(),
+            "omitted_selector_ablation":omitted_selector_counterexample(),"finite_io_kernel":finite_io_kernel_check(),
+            "queued_startup_and_return":queued_startup_and_return_check()}
 
 def main():
     parser=argparse.ArgumentParser()
@@ -839,4 +1045,3 @@ def main():
                       "runtime":checks["runtime_equivalence"]},indent=2))
 
 if __name__=="__main__": main()
-

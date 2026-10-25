@@ -156,4 +156,3 @@ theorem future_phase_numerator (base k m : Nat) :
 #print axioms negative_milliunit_trigger
 #print axioms future_phase_numerator
 end RecurringInformation
-
