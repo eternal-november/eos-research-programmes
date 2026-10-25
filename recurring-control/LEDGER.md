@@ -4,7 +4,7 @@ The persistent Goal is active and incomplete. This ledger records the full revis
 
 | Work | Intended result and exact completion consumer | Current evidence / residual |
 |---|---|---|
-| W0 | Faithful source, mission/initial query, design-data/fault interface, all premise/trigger dispositions and independent admission under RN/IA. | Prior-art review and draft source completed; source-specific pins revised after three refusals of premature admission. INSTANCE/ASSUMPTIONS require new review. No W0 pass asserted. |
+| W0 | Faithful source, mission/initial query, design-data/fault interface, all premise/trigger dispositions and independent admission under RN/IA. | Admitted for construction after three complementary reviews and source repairs recorded in ADMISSION. Inputs and internal services are separated. This closes admission only, not the required positive constructions. |
 | W1 | Actual mutable execution, authority, reach and history semantics; static adapters and derived effective-support/propagation laws. | Retained E and its lessons reusable. New peer-to-peer propagation/contact/phase proof absent; conditional force probes do not supply its support bound. |
 | W2 | Maintained useful complementary information from actual operations despite recurring fresh effective exposure. | Retained I kernels reusable after new role/ingress/age support is established. Fresh physical route/sensor state and finite reuse protocol unconstructed. |
 | W3 | Actual no-write protection and obtained/recurrently restored access, with faulty renewal roles and consequential admissibility. | New q/a laws and fixed source duty are candidate inputs. Full peer program, coherent phase, reconstruction and real protective access mechanism not proved. |
