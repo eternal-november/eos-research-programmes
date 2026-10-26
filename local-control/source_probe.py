@@ -86,7 +86,10 @@ def run():
                                          (F(0), F(1, 5)), (F(9, 10), F(1))):
         old_load = (1 - mix) * force + parasitic
         require(old_load <= F(2, 5), 'Declared coupler cannot unload old side')
-        coupler += 1
+        abort_mix = 1 - mix
+        abort_load = abort_mix * force + parasitic
+        require(abort_load <= F(2, 5), 'Distinct B-side coupler law cannot unload abort side')
+        coupler += 2
     same_op = {'permitted_load': F(2, 5), 'prohibited_load': F(6, 5),
                'same_isolation': F(9, 10)}
     require(same_op['permitted_load'] <= 1 < same_op['prohibited_load'], 'Rule lost distinction')

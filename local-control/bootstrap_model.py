@@ -30,6 +30,8 @@ class Machine:
     regs: list
     incoming: list = field(default_factory=lambda: [99, 101])
     external: list = field(default_factory=lambda: ['old-held-force', 'old-inflight-packet'])
+    new_side_driver: list = field(default_factory=lambda: [2, -2, 1])
+    keeper_side_driver: list = field(default_factory=lambda: [2, 2, 2])
     pc: int = 0
     width: int = 16
     steps: int = 0
@@ -81,6 +83,9 @@ def checks():
             require(machine.steps == 3 * q + 4, 'Instruction bound failed')
             require(machine.code == prefix(q) and not machine.issued, 'Prefix changed code or emitted')
             require(machine.external == ['old-held-force', 'old-inflight-packet'], 'Prefix erased external effects')
+            require(machine.regs == [q, 0, q], 'Exit register postcondition changed')
+            require(machine.new_side_driver == [2, -2, 1] and machine.keeper_side_driver == [2, 2, 2],
+                    'Private stores silently cleared a physical driver')
             count += 1
     large = []
     for q in (32, 1024, 8192):
@@ -116,6 +121,8 @@ def checks():
             'interrupted_prefix': interrupted.work,
             'stale_input_after_main': delayed.incoming,
             'retained_external_effects': delayed.external,
+            'uncleared_new_side_driver': delayed.new_side_driver,
+            'preserved_keeper_side_driver': delayed.keeper_side_driver,
         },
         'inputs': {name: sha256((HERE / name).read_text(encoding='utf-8').replace('\r\n', '\n').encode()).hexdigest()
                    for name in ('BOOTSTRAP.md', 'bootstrap_model.py')},

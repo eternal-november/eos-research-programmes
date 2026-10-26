@@ -1,6 +1,8 @@
 # Full AC program obligation ledger
 
-The persistent Goal is active at requirements7343f54e2c839cc7898c6f0e6c86bea8f4b53f25, with no assigned time/token budget. It covers all retained BC/RN/IA and AC1–AC6 duties through full independently checked completion. This ledger records progress, not permission to close on a component or planning increment. Mathematical support and repository acceptance remain separate.
+The persistent Goal is paused at the user's explicit request on2026-10-26, and remains incomplete under requirements7343f54e2c839cc7898c6f0e6c86bea8f4b53f25. Its objective still covers all retained BC/RN/IA and AC1–AC6 duties through full independently checked completion, with no assigned time/token budget. This ledger records progress, not permission to close on a component. Mathematical support and repository acceptance remain separate.
+
+Pause checkpoint: all three active subagents were interrupted. STREAMING is integrated as8a85d85 and reproduced; independent review was in progress. The control worktree on codex/byzantine-local-cycle-20261026 retains an untracked cycle_model.py draft; it is not integrated or verified. The information worktree remains clean on codex/byzantine-local-streaming-20261026; the next acquisition construction was assigned but had not begun writing. The renewal worktree is clean and its read-only review had identified contact-specific loads, stale new-side driver latches and actual abort paths. Coordinator's ADMISSION record is a draft application of the assumption test, with verdict not admitted. Resume only on renewed user authorization; do not treat a paused Goal as completed or as an overall scientific blocker.
 
 | Work | Required consumer | Current evidence and residual |
 |---|---|---|
