@@ -81,7 +81,7 @@ def rr_visits(start,end,degree,pointer,durations):
 def polling_cases():
     checked=0
     for degree in range(1,7):
-        work=F(degree+1)
+        work=F(degree+1+2)  # Local response plus a powered application tail.
         span=3*work
         shift=span-work
         intervals=[(k*shift,k*shift+span) for k in range(8)]
@@ -92,8 +92,9 @@ def polling_cases():
                 t=F(step,2)
                 owner=contained(intervals,t,work)[0]
                 for job in range(degree):
-                    responses=[finish for j,begin,finish in visits[owner]
-                               if j==job and begin>=t and finish<=t+work]
+                    delivery=F((owner+job)%3)
+                    responses=[finish+delivery for j,begin,finish in visits[owner]
+                               if j==job and begin>=t and finish+delivery<=t+work]
                     assert responses
                     checked+=1
     return checked
@@ -161,6 +162,11 @@ def counterexamples():
     bank_limit=F(2)
     assert bank_limit<=3 and 2*bank_limit>3
     assert dry_speed(F(-3),F(2))<0
+    new_ready,emitted,old_off,applied=3,4,4,6
+    assert emitted<=old_off<applied
+    assert old_off-new_ready>=1 and old_off-new_ready<1+2
+    startup_force=34*(F(2)-F(11,5))-6*F(22,5)-1
+    assert startup_force==F(-171,5) and dry_speed(startup_force,F(28))<0
     return dict(power_continuous_no_uninterrupted_job=dict(intervals=short[:4],
                     requested=[2,7],work=5),
                 silent_donors=dict(ready_flags=ready_flags,donations=donations),
@@ -169,6 +175,12 @@ def counterexamples():
                 false_powered_readiness=dict(powered=powered,code_equal=code_equal,
                     pc_initialized=pc_initialized,buffers_fresh=buffers_fresh,ready=execution_ready),
                 doubled_force=dict(per_bank=bank_limit,actual_overlap=2*bank_limit,protected_limit=3),
+                retirement_before_application=dict(new_ready=new_ready,emitted=emitted,
+                    old_off=old_off,applied=applied,local_response_bound=1,delivery=2,
+                    maintenance_force_gap=[old_off,applied]),
+                uninitialized_bank_force=dict(ready_old_hosts=34,old_force=2,
+                    uninitialized_new_force="-11/5",bad_hosts=6,bad_host_force="-22/5",
+                    disturbance=-1,net_force=startup_force,stiction=28),
                 reverse_force_exceeds_stiction=dict(force=-3,stiction=2,speed=-1))
 
 
@@ -183,6 +195,7 @@ def main():
     result=dict(status="passed",scope="conditional ready-interval, local-response and held-force interfaces; not source admission",
                 sources_sha256_lf=hashes,geometry=geometry_trace(),
                 interval_cases=interval_cases(),polling_cases=polling_cases(),
+                applied_response_delay_bound=2,
                 held_outputs=held_output_cases(),guard_cases=guard_cases(),counterexamples=counterexamples(),
                 external_suppliers=["actual code/data installation, reset and startup-prefix proof",
                     "sound permission and physical-stage information despite primary-frame corruption",

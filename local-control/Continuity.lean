@@ -14,6 +14,12 @@ theorem ready_before_old_disconnect
     (bounded : applied ≤ ready+response)
     (overlap : ready+response ≤ oldOff) : applied ≤ oldOff := by omega
 
+theorem applied_response_before_retirement
+    (ready emitted applied retire localWork delivery : Int)
+    (emission : emitted ≤ ready+localWork)
+    (transport : applied ≤ emitted+delivery)
+    (overlap : ready+localWork+delivery ≤ retire) : applied ≤ retire := by omega
+
 theorem interval_cover_through
     (begins ends : Nat → Nat) (work t k : Nat)
     (initial : begins 0 = 0)
@@ -103,11 +109,15 @@ theorem doubled_force_can_cross_limit : (2 : Int) ≤ 3 ∧ 2+2 > 3 := by decide
 
 theorem reverse_force_counterexample : drySpeed (-3) 2 = -1 := by decide
 
+theorem uninitialized_bank_force_counterexample :
+    drySpeed (34*(20-22)-6*44-10) 280 = -62 := by decide
+
 -- A delayed physical effect can occur strictly after removing sender power.
 theorem old_command_after_power_off : (0 : Nat) < 1 ∧ 1 < 2 := by decide
 
 #print axioms geometry_ready_overlap
 #print axioms ready_before_old_disconnect
+#print axioms applied_response_before_retirement
 #print axioms interval_cover_through
 #print axioms ready_interval_cover
 #print axioms round_robin_response_bound
@@ -121,6 +131,7 @@ theorem old_command_after_power_off : (0 : Nat) < 1 ∧ 1 < 2 := by decide
 #print axioms two_bank_force_bound
 #print axioms doubled_force_can_cross_limit
 #print axioms reverse_force_counterexample
+#print axioms uninitialized_bank_force_counterexample
 #print axioms old_command_after_power_off
 
 end ByzantineLocalContinuity
