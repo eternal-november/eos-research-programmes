@@ -1,6 +1,6 @@
 # Assumption admissibility for recurring Byzantine control
 
-Status: applied requirement review,2026-10-24, under the strengthened [DOWNSTREAM-CONTRACT](DOWNSTREAM-CONTRACT.md), including RN1–RN5 and IA1–IA4. The [intent audit](INTENT-ASSUMPTION-AUDIT.md) explains why the prior finite-exposure/supplied-access dispositions were inadequate as program-level stopping boundaries. Existing scoped theorems remain evidence; this table neither validates future numerical premises nor establishes the new constructions. It creates no Goal or repository acceptance.
+Status: applied requirement review,2026-10-26, under [DOWNSTREAM-CONTRACT](DOWNSTREAM-CONTRACT.md), retaining RN/IA and adding AC1–AC6. [ASSUMPTION-CHALLENGE-AUDIT](ASSUMPTION-CHALLENGE-AUDIT.md) identifies the remaining consequential premises in the checked a943e3c package; the older intent audit retains its original finite-exposure/supplied-access findings. This table assigns responsibility and does not prevalidate a future source or construct the new services. No Goal or repository acceptance is created.
 
 ## Governing judgment and responsibility
 
@@ -35,11 +35,38 @@ Use five distinct dispositions: permitted terminal premise at a justified scope;
 
 ## Applying the test to the present package
 
-The current domain-aware information, actual reconstruction, physical control, resource and source-refinement results remain usable at their stated scopes. They do not constitute the new RN/IA construction. The exact eleven-domain controller witness shows why fresh exposure differs from a fixed cumulative support bound. The derived fixed-footprint recurrence corollary shows that finite event count was stronger than the physical restoration proof needed; it still cannot replenish an exhausted evidence-authority reserve.
+The a943e3c package constructs genuinely fresh recurring protection and actual contested engagement under its then-current contract. Those results survive. The new issue is which selected premises remain sufficient for the broadened positive consumers: independent reporting paths, inherited nominal timing, near-global physical rewriting, blanket permission for that rewriting, separated new intrusions and constant replenishment. Their explicit disclosure and informative old boundary results do not by themselves discharge AC's newly mandatory positive cases.
 
-The old halt/write proof derives restoration given access, actual operation semantics and suitable interference bounds. It does not construct contested physical access merely by expanding its write list. Existing external-braking and static substitution results are positive alternatives to reuse; they need a proved same-mission transport into the recurring information/control/resource context. Removing every substitute response proves a stronger losing case, not that internal write access is indispensable.
+The18 patterns above remain the general test. The following obligations refine their present application; they do not replace that test with a closed assumption checklist.
 
-These findings assign internal work rather than reject every strong premise. Physics, force caps, nominal sensing, fixed normative references and supplied raw resource/timing bounds remain possible terminal inputs. The critical distinction is between those operations/envelopes and the useful protection that their distributed use is meant to establish. A disclosed restricted theorem does not settle adequacy for a required recurring/access continuation.
+| Pattern | New consumed challenge and allowed stopping boundary |
+|---|---|
+| A01 | AC1–AC4 require one policy over genuinely unresolved dependency, timing and applicability alternatives. Do not compile with the true source map, actual clock offset or future permission. |
+| A02 | AC1 and AC3 challenge apparent independence and dense reach. Fixed cohorts may remain supplied; actual shared footprints, local paths and relays need source maps. C01 activates only if population accounting itself is claimed. |
+| A03 | Finite memories, counters and workload remain required under AC2/AC5/AC6. One finite policy per unbounded execution is distinct from a larger machine for each horizon. A new interpreter is not automatically required. |
+| A04 | Primitive model/force laws remain terminal candidates, but AC3 needs material positive transport and AC6 an actual health/endurance comparison. An adapter failure does not justify excluding its entire mandatory consumer. |
+| A05 | AC1 promotes shared/whole-primary-frame corruption with intact execution into the required positive class. Surviving evidence or common responses and later usefulness must be constructed; total indistinguishability can delimit a separate losing branch. |
+| A06 | AC5 promotes nonredundant concurrent intrusion and newly accumulated damage before prior return. Derive effective support/backlog with old powers and endogenous spread retained. No exact optimal incidence frontier is required. |
+| A07 | AC4 constrains invasive recovery itself under fixed independently stated justification/collateral rules. A guard on unrelated ordinary control or a calendar tailored to the chosen repairs is insufficient. |
+| A08 | AC2 requires a nontrivial unaligned initial temporal family and safe entry. Legitimate initial images, bounded damage and finite reserves remain possible; arbitrary-state stabilization is not newly mandatory. |
+| A09 | AC3's structural local-access family and material mechanism change must still preserve RN/IA. No requirement for every topology or a particular physical technology follows. |
+| A10 | Otherwise nominal temporal uncertainty is not charged as compromised-body support. Construct sufficient coordination or remove its need. Exact known offsets or synchronized restart cannot supply AC2 by convention. |
+| A11 | Shared input failures, timing variation and relays affect actual admission, storage and deadlines. Bound their work and pending outcomes without supplying successful communication or inference as an opcode. |
+| A12 | AC6 requires recurring supply-deficit tolerance and finite-health/endurance analysis. Positive material preparation is conditional on the indefinite result consuming wear/replacement; a finite reserve cannot support that indefinite branch. |
+| A13 | AC3/AC4 require locally realized, constrained access under real resistance and temporary reach changes. A favorable window may be primitive only when the mechanism must still perform the missing work within it. |
+| A14 | Useful return includes the changed information, timing, authority and physical interfaces; an old code-copy lemma cannot establish a new substrate's coherence or renewal. |
+| A15 | Reference rules/programs may remain fixed. Runtime recognition, factual applicability and actual constrained operation remain faultable services; the intact-executor boundary is causal and fixed before outcomes. |
+| A16 | Elementary physical/logical premises remain permissible. A second label for the same always-successful recovery supplier does not discharge AC3. Probability/crypto claims activate their actual additional duties when used. |
+| A17 | The new positive conjunction must be inhabited under one joint scenario, initialization and resource account. Separate AC successes with incompatible assumptions or a permanently clean critical service cannot close it. |
+| A18 | Local choices cannot read dependency-health, true permission, absolute phase or future supply oracles. Negative witnesses must respect their declared causal information; safe fallback must preserve actual service and later useful return. |
+
+AC6's wear branch is intentionally different from the other positive promotions. Its mandatory result may be a correct finite-endurance/replenishment boundary on a stipulated finite-health source; indefinite success on that wearing source additionally requires actual constructive preparation. This prevents both ignoring cumulative consumption and silently adding universal physical durability to the program. The central recurrent positive theorem retains AC1–AC5 and recurring supply interruptions.
+
+## Positive-duty preservation and joint restriction audit
+
+When a retained continuation has a mandatory positive consumer, a valid negative result about one proposed architecture cannot demote the whole consumer to a boundary entry. Pursue a justified alternative or retain the program obligation as unresolved. Conversely, a correctly scoped boundary suffices where the contract actually asks for a boundary, such as the permitted finite-endurance comparison. Result type is fixed by the consumer before solving, not by which proof is easiest to obtain.
+
+For every new restriction ask what excluded source behavior becomes possible when it is weakened, which actual judgment changes, and whether it silently performs another AC service. Check restrictions jointly: an external window assumed by timing cannot simultaneously be consumed by permission, sensing and repair without an actual schedule/resource argument. Retain a credible unknown as a live obligation with a reviser; neither inability to construct a case nor a failed counterexample search licenses its removal. Ending this audit requires the necessary source maps and results at the stated modes, not an infinite inventory of hypothetical worlds.
 
 ## Required live assumption and exclusion record
 
