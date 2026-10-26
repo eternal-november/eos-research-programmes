@@ -1,6 +1,6 @@
 # Byzantine control research state
 
-**Current requirements:2026-10-26 AC1–AC6 revision; the strengthened research program is open and has not been executed.** This turn revises and challenges requirements only. No new persistent Goal is created, and the completed previous Goal is not retroactively changed. Scientific support and repository acceptance remain separate.
+**Current program: full AC research Goal active and incomplete.** On2026-10-26 the user authorized completion of the entire revised program at7343f54e2c839cc7898c6f0e6c86bea8f4b53f25, with no narrower substitute or assigned time/token budget. W0 is underway in [local-control/LEDGER](local-control/LEDGER.md), [SOURCE](local-control/SOURCE.md), [SOURCES](local-control/SOURCES.md) and [PROBES](local-control/PROBES.md). Scientific support and repository acceptance remain separate.
 
 Start with [DOWNSTREAM-CONTRACT](DOWNSTREAM-CONTRACT.md), [ASSUMPTION-CHALLENGE-AUDIT](ASSUMPTION-CHALLENGE-AUDIT.md), [REMAINING-PROGRAM](REMAINING-PROGRAM.md), [ASSUMPTION-REVIEW](ASSUMPTION-REVIEW.md), [FAULT-COVERAGE](FAULT-COVERAGE.md) and [CONTRACT-CHALLENGE](CONTRACT-CHALLENGE.md). The subject remains adversarial fault tolerance for distributed shared-world control; broader infrastructure is an adequacy test, not an added design program.
 
@@ -12,7 +12,7 @@ AC1 promotes shared/whole-primary-frame corruption with intact execution into a 
 
 The mandatory positive parts must coexist with RN/IA, independent hostile effects, complementary information, actual service and constrained responses. All45 fault families and18 joint chains remain, with strengthened modes/contexts rather than a new attack-name count. A correct old boundary example cannot replace one of the newly mandatory positive results.
 
-On authorization of a new research execution, begin W0: admit source/mission/design data and assumption/result modes, check closest prior results, and establish joint nonemptiness before construction. Do not choose the completed apparatus first and reinterpret these duties around its favorable assumptions. W1–W6 in REMAINING-PROGRAM assign semantic, information/timing, intervention, joint-capacity, transport and final-audit work. Research effort is not estimated from the size of this requirements edit.
+W0 has integrated three complementary primary-source assessments. They supply action-sufficient information, timing/graph and service/resource components, while exposing protected-code, coherent-set, successful-service and clairvoyant-supply premises that cannot be inherited silently. A local timing-insensitive preparation/exchange route is being compared with a constructed bounded-skew route; neither source is admitted. Initial exact probes distinguish two resource charging orders and derive their different reserve requirements, plus a finite-health boundary. The main open obligation is an actual local permissible access/installation/return mechanism with the joint interfaces required by AC. W1–W6 remain fully mandatory; these initial components do not close the Goal.
 
 ## Retained checked foundation
 
@@ -30,7 +30,7 @@ This formulation revision has a bounded adversarial review, not a mathematical f
 
 ## Ownership and worktrees
 
-Coordinator: C:\Users\Sean\.codex\worktrees\byzantine-program-enactment\eos-garden, branch codex/byzantine-control-full-20261023. This checkout contains the complete prior packet and the new requirements; no newer history was reset. Current reviewers are read-only; no scientific writing worker is active.
+Coordinator: C:\Users\Sean\.codex\worktrees\byzantine-program-enactment\eos-garden, branch codex/byzantine-control-full-20261023. The new run started clean at7343f54 with the complete packet; no newer history was reset. Coordinator owns local-control and this TODO. Current helpers are read-only; any concurrent scientific writer needs a separately owned worktree and a stable committed definition base.
 
 Retained isolated contribution worktrees remain under C:\Users\Sean\.codex\worktrees\: byzantine-joint-information on codex/byzantine-recurring-runtime-20261025; byzantine-joint-evolution on codex/byzantine-recurring-renewal-20261025; byzantine-joint-control on codex/byzantine-recurring-control-20261025; and the older byzantine-joint-realization worktree. Earlier research remains in byzantine-control-research on codex/byzantine-control-20261021. Preserve recoverable work; do not assume old worker branches contain the final coordinator integration.
 
@@ -38,4 +38,4 @@ The primary checkout C:\Users\Sean\Desktop\eos-garden-workspace\eos-garden remai
 
 ## Needs adjudication
 
-Acceptance of definitions or conclusions as a maintained theoretical basis remains the user's decision. The revision records the requested stronger obligations and their evidence-backed scope; it does not accept the theory on the user's behalf or silently start a new Goal.
+Acceptance of definitions or conclusions as a maintained theoretical basis remains the user's decision. The current Goal explicitly authorizes scientific execution through full revised completion; it does not accept the theory on the user's behalf.
