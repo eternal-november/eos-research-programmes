@@ -56,6 +56,17 @@ def run():
     require(sum(left) == sum(right) and left[0] - left[1] != right[0] - right[1],
             'Complementarity witness fails')
     require(tuple(map(nominal, left)) != tuple(map(nominal, right)), 'Missing row has no response consumer')
+    fallback_lo = (1 - b) * F(3, 5) - b
+    fallback_hi = (1 - b) * F(3, 5) + b
+    full_diffusion = 3 * F(1, 50) * (upper - lower)
+    startup_upper_rate = F(3, 5) + disturbance + full_diffusion - fallback_lo
+    startup_lower_rate = fallback_hi - F(3, 5) + disturbance + full_diffusion
+    tau, entry_quanta = F(1, 250000), 32768 + 81 + 1000
+    require(nominal(F(3, 5) - error) >= F(3, 5), 'Mixed upper entry worsens fallback')
+    require(nominal(F(2, 5) + error) <= F(3, 5), 'Mixed lower entry worsens fallback')
+    require(startup_upper_rate * tau * entry_quanta < F(1, 20), 'Startup escapes upper face')
+    require(startup_lower_rate * tau * entry_quanta < F(1, 20), 'Startup escapes lower face')
+    require(F(16384) / F(101, 100) > 1000, 'Shortest startup wait fails trial freshness budget')
     # Endpoints suffice for multilinear dependence on output, mix and coefficients.
     mixtures = 0
     for bad, actual, ea, eb, mix in product((F(0), b), (lower, upper),
@@ -105,6 +116,12 @@ def run():
         'complementary_row_inversion_cases': inversions,
         'same_sum_different_feedback': {'states': [left, right],
                                         'commands': [tuple(map(nominal, left)), tuple(map(nominal, right))]},
+        'conditional_commissioning': {'upper_outward_rate': startup_upper_rate,
+                                       'lower_outward_rate': startup_lower_rate,
+                                       'maximum_entry_quanta': entry_quanta,
+                                       'maximum_upper_escape_band_travel': startup_upper_rate * tau * entry_quanta,
+                                       'maximum_lower_escape_band_travel': startup_lower_rate * tau * entry_quanta,
+                                       'initial_face_margin': F(1, 20)},
         'fixed_rule_distinction': same_op,
         'countercases': counter,
         'inputs': {name: sha256((HERE / name).read_text(encoding='utf-8').replace('\r\n', '\n').encode()).hexdigest()
