@@ -42,6 +42,14 @@ theorem union_footprint_budget (sizes : List Nat) (reach : Nat)
     simp only [List.sum_cons, List.length_cons, Nat.mul_add, Nat.mul_one]
     omega
 
+theorem vote_work_with_bounded_batch (paths arrivals groups arrivalBound : Nat)
+    (batch : arrivals ≤ arrivalBound) (groupBound : groups ≤ paths) :
+    2*paths+arrivals+groups ≤ 3*paths+arrivalBound := by omega
+
+theorem path_work_with_charged_admission (attempts polls frames arrivalBound : Nat)
+    (admission : attempts ≤ arrivalBound) (forwarding : frames ≤ polls) :
+    attempts+polls+frames ≤ arrivalBound+2*polls := by omega
+
 structure Cache where
   sampled : Nat
   expires : Nat

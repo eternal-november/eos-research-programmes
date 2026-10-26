@@ -131,19 +131,25 @@ class Votes:
         self.kinds, self.expected_key = kinds, expected_key
         self.cells = [None] * paths
         self.parsed = self.rejected = 0  # Checker work counters.
+        self.examined = self.slot_visits = self.group_visits = 0
+        self.work_units = self.max_tick_work = self.max_batch = 0
 
     def clear(self):
         self.cells = [None] * self.paths
 
     def tick(self, arrivals):
+        examined = 0
         for i, cell in enumerate(self.cells):
+            self.slot_visits += 1
             if cell:
                 cell.remaining = max(0, cell.remaining-1)
                 if not cell.remaining:
                     self.cells[i] = None
         seen = set()
         for actual_port, record in arrivals:
-            # At most one bounded record is processed per lane per invocation.
+            # Every offered record is examined and charged, including duplicates.
+            # Only one record per lane receives payload parsing/slot replacement.
+            examined += 1
             if actual_port in seen or not 0 <= actual_port < self.paths:
                 self.rejected += 1
                 continue
@@ -156,12 +162,29 @@ class Votes:
             self.cells[actual_port] = Vote(record, self.lifetime)
         groups = {}
         for i, cell in enumerate(self.cells):
+            self.slot_visits += 1
             if cell:
                 groups.setdefault(cell.record.wire(), []).append((i, cell.record))
-        for wire in sorted(groups):
-            if len(groups[wire]) >= self.threshold:
-                return groups[wire]
-        return None
+        group_visits, result = 0, None
+        for support in groups.values():
+            group_visits += 1
+            if len(support) >= self.threshold:
+                result = support
+                break
+        self.examined += examined
+        self.group_visits += group_visits
+        # Bounded-word loop/record work units, not Python instruction counts.
+        work = 2*self.paths + examined + group_visits
+        self.work_units += work
+        self.max_tick_work = max(self.max_tick_work,work)
+        self.max_batch = max(self.max_batch,examined)
+        return result
+
+    def work_record(self):
+        return {'arrivals_examined':self.examined,'payload_parse_attempts':self.parsed,
+                'rejections':self.rejected,'slot_visits':self.slot_visits,
+                'group_visits':self.group_visits,'charged_work_units':self.work_units,
+                'maximum_arrival_batch':self.max_batch,'maximum_tick_work_units':self.max_tick_work}
 
 
 class Receiver:
@@ -205,9 +228,12 @@ class Paths:
         self.count, self.hops, self.capacity, self.delay = count, hops, capacity, delay
         self.queues = [[deque() for _ in range(hops)] for _ in range(count)]
         self.forwarded = self.dropped = self.wrong_predecessor = 0  # Checker work counters.
-        self.max_work = 0
+        self.injection_attempts = self.hop_polls = self.frame_visits = 0
+        self.max_tick_work = self.max_delivered_batch = 0
 
     def inject(self, actual_lane, record, now, claimed_path=None):
+        # Admission/drop handling is work even if the queue is already full.
+        self.injection_attempts += 1
         if claimed_path is None:
             claimed_path = actual_lane
         queue = self.queues[actual_lane][0]
@@ -217,14 +243,15 @@ class Paths:
         queue.append(InFlight(record, claimed_path, self.delay, now))
 
     def tick(self, now):
-        arrivals, work = [], 0
+        arrivals, frame_visits = [], 0
         for lane in range(self.count):
             # Reverse order prevents a record traversing two hops in one tick.
             for hop in reversed(range(self.hops)):
+                self.hop_polls += 1
                 queue = self.queues[lane][hop]
                 if not queue:
                     continue
-                work += 1
+                frame_visits += 1
                 frame = queue[0]
                 frame.remaining -= 1
                 if frame.remaining > 0:
@@ -240,8 +267,18 @@ class Paths:
                     self.queues[lane][hop+1].append(replace(frame, remaining=self.delay))
                 else:
                     self.dropped += 1
-        self.max_work = max(self.max_work, work)
+        self.frame_visits += frame_visits
+        self.max_tick_work = max(self.max_tick_work,self.count*self.hops+frame_visits)
+        self.max_delivered_batch = max(self.max_delivered_batch,len(arrivals))
+        require(len(arrivals) <= self.count,'Forward-once lanes exceeded their output batch bound')
         return arrivals
+
+    def work_record(self):
+        return {'injection_attempts':self.injection_attempts,'dropped_records':self.dropped,
+                'hop_polls':self.hop_polls,'frame_visits':self.frame_visits,
+                'charged_work_units':self.injection_attempts+self.hop_polls+self.frame_visits,
+                'maximum_tick_work_units_excluding_admissions':self.max_tick_work,
+                'maximum_delivered_batch':self.max_delivered_batch}
 
 
 def median(values):
@@ -296,9 +333,20 @@ def observation_checks():
     require(permitted(600,900,30,20) and not permitted(1200,900,30,20), 'Nonempty permission region missing')
     # Two separate low-load certificates can omit a simultaneous transfer.
     require(permitted(970,900,30,20) and 970+60 > 1000, 'Missing-jump countercase failed')
+    # Each layout carries its own admissible effective sets. Do not merge
+    # mutually exclusive layouts into one imagined simultaneous footprint.
+    alternative_layouts = ({'d':frozenset((0,1))},{'d':frozenset((2,3))})
+    admissible = ((frozenset(),frozenset(('d',))),)*2
+    alternatives = [frozenset().union(*(gamma[d] for d in effective))
+                    for gamma,window_sets in zip(alternative_layouts,admissible)
+                    for effective in window_sets]
+    correct_max = max(map(len,alternatives))
+    incompatible_union = len(frozenset().union(*alternatives))
+    require(correct_max == 2 and incompatible_union == 4,'Layout-indexed maximum was conflated with union')
     return {'unknown_layouts':len(layouts),'distinct_window_supports':len(supports),
             'endpoint_attack_cases':count,'max_affected_slots':4,'max_with_primary':3,
             'without_primary_alternatives':[800,1200],'with_primary_alternatives':[800],
+            'layout_indexed_maximum':correct_max,'incompatible_layout_union':incompatible_union,
             'primary_same_auxiliary_decisions':[before,forged],
             'missing_jump_counterexample':{'load_before':970,'unaccounted_transfer':60,'load_after':1030}}
 
@@ -369,11 +417,15 @@ def transport_trace(indefinite=False, requester_egress_bad=False):
                                 'detach_guard':permitted(value,900,308,0)})
     require(records, 'Nominal/egress-replay trace delivered no useful response')
     require(max_residence <= 10, 'Nominal pipeline residence exceeded declared bound')
-    require(outward.max_work <= 10 and inward.max_work <= 10, 'Lane work cap exceeded')
+    require(outward.max_tick_work <= 20 and inward.max_tick_work <= 20, 'Lane polling/forward work cap exceeded')
+    require(control.max_batch <= 5 and receiver.votes.max_batch <= 5,'Coupled path batch bound missing')
+    require(control.max_tick_work <= 20 and receiver.votes.max_tick_work <= 20,'Bounded-batch vote work exceeded')
     return {'requester_egress_bad':requester_egress_bad,'source_indefinite_cache':indefinite,
             'decisions':records,'maximum_accepted_sample_age':max_age,
             'maximum_path_residence':max_residence,'source_samples':source.samples,
-            'source_emissions':source.emissions,'per_network_max_work':max(outward.max_work,inward.max_work)}
+            'source_emissions':source.emissions,'outward_work':outward.work_record(),
+            'inward_work':inward.work_record(),'control_vote_work':control.work_record(),
+            'reply_vote_work':receiver.votes.work_record()}
 
 
 def pause_and_refresh_countercases():
@@ -464,11 +516,14 @@ def unequal_clock_trace():
             receiver_next += (2,3,1)[receiver_calls % 3]
             receiver_calls += 1
     require(accepted > 0 and max_residence <= 19, 'Unequal-clock positive trace failed')
+    require(receiver.votes.max_batch <= 3 and receiver.votes.max_tick_work <= 12,
+            'Jittered finite input queues exceeded the vote-work bound')
     return {'source_initial_offset':0,'receiver_initial_offset':1,
             'source_gaps':[1,3,2],'receiver_gaps':[2,3,1],
             'emitted_batches':emitted,'accepting_invocations':accepted,
             'actual_age_bound':bound,'maximum_sample_age':max_age,
             'maximum_reply_residence':max_residence,'maximum_queued_records':max_queued,
+            'reply_vote_work':receiver.votes.work_record(),
             'scope':'One finite unequal-offset/jitter trace; not a clock/renewal supplier theorem'}
 
 
@@ -481,7 +536,20 @@ def path_and_vote_countercases():
     require(network.wrong_predecessor == 1, 'Wrong predecessor was not rejected')
     receiver = Receiver()
     require(receiver.tick([(0,packet)]*1000) is None, 'Duplicate flooding fabricated a quorum')
-    require(receiver.votes.parsed == 1, 'Flood parser exceeded one record per lane')
+    require(receiver.votes.parsed == 1 and receiver.votes.examined == 1000
+            and receiver.votes.rejected == 999 and receiver.votes.work_units == 1011,
+            'Duplicate examination/rejection work was hidden behind the parse count')
+    linear_work = []
+    for copies in (1,10,100,1000):
+        probe = Receiver()
+        probe.tick([(0,packet)]*copies)
+        require(probe.votes.work_units == copies+11,'Direct API work is not charged per offered record')
+        linear_work.append({'offered':copies,'work_units':probe.votes.work_units})
+    behind_flood = Receiver()
+    forged = Record('DATA',(0,0),0,0)
+    result = behind_flood.tick([(0,forged)]*1000+[(p,packet) for p in (2,3,4)])
+    require(result and result[0] == 600 and behind_flood.votes.examined == 1003,
+            'A bad-lane prefix starved genuine later lanes or escaped accounting')
     # An actually shared mux can reach all actual slots: no path-name proof helps.
     mux = Receiver()
     forged = Record('DATA',(0,0),0,600)
@@ -506,11 +574,15 @@ def path_and_vote_countercases():
             flood.inject(4,packet,t)
         delivered += flood.tick(t)
     require(any(p == 4 and r.witness for p,r,_ in delivered), 'One-lane flooding starved an independent lane')
-    require(flood.max_work <= 10 and flood.dropped > 0, 'Finite flood limits not exercised')
-    return {'forged_path_label_rejected':True,'duplicate_parse_count':receiver.votes.parsed,
+    require(flood.max_tick_work <= 20 and flood.dropped > 0, 'Finite flood limits not exercised')
+    require(flood.injection_attempts == 2001
+            and flood.work_record()['charged_work_units'] >= 2001,
+            'Rejected Paths.inject attempts were not charged')
+    return {'forged_path_label_rejected':True,'direct_duplicate_batch_work':receiver.votes.work_record(),
+            'direct_batch_linear_work':linear_work,'genuine_lanes_after_flood_work':behind_flood.votes.work_record(),
             'shared_mux_can_forge_all_slots':True,'retained_vote_quorum_countercase':True,
             'expiry_blocks_retained_vote_quorum':True,'flood_dropped_records':flood.dropped,
-            'independent_lane_delivered_during_flood':True,'max_lane_service_work':flood.max_work}
+            'independent_lane_delivered_during_flood':True,'flood_path_work':flood.work_record()}
 
 
 def readback_and_support_countercases():
