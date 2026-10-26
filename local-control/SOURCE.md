@@ -2,6 +2,8 @@
 
 Status: candidate source design and explicit open operational obligations. No source is admitted and no full positive theorem is claimed here. The fixed consumer is the complete7343f54 contract, not whichever route is easiest to prove. SOURCES records the first prior-art assessment before this selection work. PROBES supplies limited discriminating results; it does not install a successful recovery service into the source.
 
+The current concrete candidate is [INSTANCE](INSTANCE.md): local two-bank reconstruction with physical writer exclusion, continued old execution, constrained unloading/retirement and separate output handover. INFORMATION, OPERATIONS and CONTINUITY supply checked conditional interfaces. TIMING remains a conditional comparison; its conservative stabilization window cannot be assumed coherent across ordinary full-cohort reboot rotation. INSTANCE retains the unresolved source and compatibility obligations explicitly. It is not yet admitted.
+
 ## Intended source family and mission
 
 Consider a scaling family of finite spatially local apparatus, organized over a connected bounded-range graph. Separate physical observation, communication, maintenance and protective influence graphs. Local groups may be dense at fixed size, but no actor has maintenance reach to a fixed fraction of a growing cohort. Shared physical dynamics and cross-region service/maintenance dependencies must make this more than disjoint copies. Circulant/overlapping-neighborhood families are candidate graph structures; the published robustness result is not a maintenance theorem.
