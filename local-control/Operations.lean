@@ -78,6 +78,30 @@ theorem inspected_start {Image : Type} (readImage startImage intended : Image)
     (hread : readImage = intended) (hcontinuity : startImage = readImage) :
     startImage = intended := hcontinuity.trans hread
 
+theorem first_passing_unique (accepted : Nat → Prop) (selected first : Nat)
+    (hselected : accepted selected)
+    (hminimal : ∀ j, j < selected → ¬ accepted j)
+    (hfirst : accepted first)
+    (hearlier : ∀ j, j < first → ¬ accepted j) : selected = first := by
+  by_cases hs : selected < first
+  · exact False.elim (hearlier selected hs hselected)
+  · by_cases hf : first < selected
+    · exact False.elim (hminimal first hf hfirst)
+    · omega
+
+/-- Sound acceptance alone is insufficient. Availability of the same first
+eligible matching bay is the additional premise supplied by havailable. -/
+theorem common_first_image_selection (eligible matching accepted : Nat → Prop)
+    (selected first : Nat)
+    (hsound : ∀ j, accepted j → eligible j ∧ matching j)
+    (hearlier : ∀ j, j < first → ¬ (eligible j ∧ matching j))
+    (havailable : accepted first)
+    (hselected : accepted selected)
+    (hminimal : ∀ j, j < selected → ¬ accepted j) : selected = first := by
+  apply first_passing_unique accepted selected first hselected hminimal havailable
+  intro j hj haccepted
+  exact hearlier j hj (hsound j haccepted)
+
 theorem permutation_does_not_preserve_slot_binding :
     ∃ (before after : Bool → Bool), before false = false ∧ after false ≠ false := by
   exact ⟨id, not, rfl, by decide⟩
@@ -112,6 +136,8 @@ theorem image_equality_does_not_certify_cpu :
 #print axioms constant_storage
 #print axioms sequential_reads_one_image
 #print axioms inspected_start
+#print axioms first_passing_unique
+#print axioms common_first_image_selection
 #print axioms permutation_does_not_preserve_slot_binding
 #print axioms drain_before_unlock
 #print axioms scans_before_power

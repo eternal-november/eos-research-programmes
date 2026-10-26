@@ -307,15 +307,16 @@ class Host:
                 + (3*length + 2)*j + (2*length + 2)*d + j + 2*d + self.freeze_limit
                 + (bays*length + 2)*j + j + 2*d + self.activation_limit + 5 + 3)
 
-    def run(self, hook=None, limit=None):
+    def run(self, hook=None, limit=None, continue_after_first=False):
         for _ in range(self.bound() if limit is None else limit):
             self.step(hook)
-            if self.diagnostic_outputs:
+            if self.diagnostic_outputs and not continue_after_first:
                 break
         return self.summary()
 
     def summary(self):
         return {'ticks': self.tick, 'bound': self.bound(), 'starts': self.starts,
+                'completion_ticks': self.diagnostic_outputs[0]['tick'] + 1 if self.diagnostic_outputs else None,
                 'first_freeze': self.first_freeze, 'freeze_witness': self.freeze_witness,
                 'selected': {str(j): value[0] for j, value in self.selected_at.items()},
                 'diagnostic': self.diagnostic_outputs[-1] if self.diagnostic_outputs else None,
@@ -332,11 +333,11 @@ class Host:
 
 
 def positive_cases():
-    count = maximum_time = maximum_work = 0
+    count = maximum_time = maximum_observation_time = maximum_work = 0
     representative = None
     for image, bad, pattern, schedule in product(product((0, 1), repeat=3), range(5), product((0, 1), repeat=3), range(2)):
         host = Host(image, bad, pattern, schedule)
-        result = host.run()
+        result = host.run(continue_after_first=True)
         require(result['diagnostic'] is not None, 'Conditional attempt failed to finish')
         require(result['ticks'] <= result['bound'], 'Time bound exceeded')
         require(result['work_charged'] <= result['work_upper_bound'], 'Work bound exceeded')
@@ -349,11 +350,13 @@ def positive_cases():
         require(result['rejected_old_writer_requests'] > 0 and result['direct_events'] == 0,
                 'Ongoing old writer was not represented')
         require(all(body.host == 0 for body in host.bodies.values()), 'Host affinity violated')
-        maximum_time = max(maximum_time, result['ticks'])
+        maximum_time = max(maximum_time, result['completion_ticks'])
+        maximum_observation_time = max(maximum_observation_time, result['ticks'])
         maximum_work = max(maximum_work, result['work_charged'])
         representative = representative or result
         count += 1
-    return {'cases': count, 'maximum_ticks': maximum_time, 'maximum_work_charged': maximum_work,
+    return {'cases': count, 'maximum_ticks': maximum_time, 'maximum_observation_ticks': maximum_observation_time,
+            'maximum_work_charged': maximum_work,
             'representative': representative}
 
 
@@ -425,7 +428,53 @@ def countercases():
     result = host.run()
     require(host.cut == 0 and not result['starts'], 'High-load operation was not deferred')
     results['permission_unavailable'] = result
+    host = Host(pattern=(0, 0, 0))
+    ordinary_read, opposing_output = host.read, host.adversarial_output
+    def truthful_but_different_errors(actor, bay, address):
+        value = ordinary_read(actor, bay, address)
+        return None if host.freeze == host.freeze_limit and actor in (3, 4) and bay == 1 else value
+    def no_activation_interference(actor):
+        c = opposing_output(actor)
+        return Command(c.reset, c.insert, c.freeze, None, 0, c.write, c.cut)
+    host.read = truthful_but_different_errors
+    host.adversarial_output = no_activation_interference
+    result = host.run(continue_after_first=True)
+    require(result['selected'] == {'1': 1, '2': 1, '3': 2, '4': 2}, 'Truthful read errors did not split first-passing choice')
+    require([(s['bay'], s['tick']) for s in result['starts']] == [(1, 200), (2, 217)],
+            'Continuing execution did not expose both activations')
+    require(all(s['image'] == list(host.image) for s in result['starts']), 'Availability countercase changed image truth')
+    require(result['completion_ticks'] < result['starts'][1]['tick'], 'First-diagnostic stopping did not hide the later activation')
+    results['truthful_read_errors_split_selection'] = result
     return results
+
+
+def common_first_read_availability_cases():
+    """The first matching eligible bay is readable by all; other errors may differ."""
+    cases = 0
+    for mask in range(16):
+        host = Host(pattern=(0, 0, 0))
+        ordinary_read = host.read
+        first = [None]
+        def read(actor, bay, address):
+            value = ordinary_read(actor, bay, address)
+            if host.freeze != host.freeze_limit:
+                return value
+            if first[0] is None:
+                first[0] = next(j for j in range(host.bays)
+                                if host.insertions[j] == host.insertion_limits[j]
+                                and not host.powered(j)
+                                and tuple(host.bodies[host.body_at_bay[j]].memory) == host.image)
+            if bay != first[0] and ((mask >> (actor - 1)) & 1) == (bay % 2):
+                return None
+            return value
+        host.read = read
+        result = host.run(continue_after_first=True)
+        require(first[0] == 1 and set(result['selected'].values()) == {1}, 'Shared first-bay availability did not preserve choice')
+        require(len(result['starts']) == 1 and result['starts'][0]['image'] == list(host.image),
+                'Earlier/later truthful errors produced another activation')
+        require(result['completion_ticks'] <= result['bound'], 'Shared-first availability exceeded attempt bound')
+        cases += 1
+    return {'cases': cases, 'scope': 'Common successful reads only at the first eligible actual intended-image bay; truthful errors elsewhere vary by inspector.'}
 
 
 def size_variations():
@@ -433,12 +482,14 @@ def size_variations():
     for length in (1, 7, 64, 257):
         image = tuple((17 * k + 3) % 256 for k in range(length))
         host = Host(image=image, pattern=(1, 0, 1), schedule=1)
-        result = host.run()
+        result = host.run(continue_after_first=True)
         require(result['diagnostic'] is not None and result['ticks'] <= result['bound'], 'Image-size bound failed')
-        require(result['starts'][0]['image'] == list(image) and result['starts'][0]['all_nominal_scans_done'],
+        require(len(result['starts']) == 1 and result['starts'][0]['image'] == list(image)
+                and result['starts'][0]['all_nominal_scans_done'],
                 'Larger image was not coherently scanned and started')
         require(result['work_charged'] <= result['work_upper_bound'], 'Larger-image work bound failed')
-        cases.append({'cells': length, 'ticks': result['ticks'], 'bound': result['bound'],
+        cases.append({'cells': length, 'completion_ticks': result['completion_ticks'],
+                      'observation_ticks': result['ticks'], 'bound': result['bound'],
                       'work_charged': result['work_charged'], 'work_upper_bound': result['work_upper_bound']})
     return cases
 
@@ -506,7 +557,9 @@ def main():
               'scope': 'Conditional one-host image-start kernel; not global renewal service, mission return, source admission or acceptance.',
               'sources_sha256_lf': before, 'lean_version': version, 'lean_declarations': inventory,
               'arithmetic': arithmetic_checks(), 'positive_executions': positive_cases(),
-              'image_size_variations': size_variations(), 'countercases': countercases()}
+              'image_size_variations': size_variations(),
+              'common_first_read_availability': common_first_read_availability_cases(),
+              'countercases': countercases()}
     require(before == hashes(), 'Sources changed during verification')
     encoded = json.dumps(result, sort_keys=True, indent=2) + '\n'
     output = HERE/'operation_results.json'
