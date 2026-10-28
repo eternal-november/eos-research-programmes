@@ -86,6 +86,67 @@ theorem captured_key_mismatch (sampledKey emittedKey wantedKey : Nat)
     (captured : emittedKey = sampledKey) (changed : sampledKey ≠ wantedKey) :
     emittedKey ≠ wantedKey := by omega
 
+
+/- Expected-value-only writes model actual physical cell transitions, including
+failed writes and writes to another cell as unchanged. -/
+inductive CellStep (expected : Nat) : Nat → Nat → Prop where
+  | unchanged (value : Nat) : CellStep expected value value
+  | write (value : Nat) : CellStep expected value expected
+
+inductive CellRun (expected : Nat) : Nat → Nat → Prop where
+  | refl (value : Nat) : CellRun expected value value
+  | cons {before middle after : Nat} :
+      CellStep expected before middle → CellRun expected middle after →
+      CellRun expected before after
+
+theorem expected_step_preserves (expected before after : Nat)
+    (equal : before = expected) (step : CellStep expected before after) :
+    after = expected := by
+  cases step with
+  | unchanged => exact equal
+  | write => rfl
+
+theorem expected_run_preserves (expected before after : Nat)
+    (trace : CellRun expected before after) (equal : before = expected) :
+    after = expected := by
+  induction trace with
+  | refl => exact equal
+  | cons step tail ih =>
+    exact ih (expected_step_preserves _ _ _ equal step)
+
+theorem mutable_match_is_current (cell : Int → Nat)
+    (expected : Nat) (entry sample read now age : Int)
+    (preserved : ∀ s t, entry ≤ s → s ≤ t → cell s = expected → cell t = expected)
+    (sampledBefore : sample ≤ read) (decidedAfter : read ≤ now)
+    (ageBound : read-sample ≤ age) (gate : entry+age < read)
+    (nominalMatch : cell sample = expected) : cell now = expected := by
+  apply preserved sample now
+  · omega
+  · omega
+  · exact nominalMatch
+
+theorem copy_prefix_advance (image intended : Nat → Nat) (cursor : Nat)
+    (prior : ∀ j, j < cursor → image j = intended j)
+    (current : image cursor = intended cursor) :
+    ∀ j, j < cursor+1 → image j = intended j := by
+  intro j hj
+  by_cases old : j < cursor
+  · exact prior j old
+  · have atCursor : j = cursor := by omega
+    simpa [atCursor] using current
+
+theorem late_wrong_write_violates (wrong : CellStep 1 1 0) : False := by
+  cases wrong
+
+theorem mutable_response_bound
+    (start requested applied sampled emitted arrived reqDelay writeDelay period conversion cache wire : Int)
+    (request : requested ≤ start+reqDelay)
+    (write : applied ≤ start+writeDelay)
+    (sample : sampled ≤ max requested applied+period+conversion)
+    (publish : emitted ≤ sampled+cache)
+    (receive : arrived ≤ emitted+wire) :
+    arrived ≤ start+max reqDelay writeDelay+period+conversion+cache+wire := by omega
+
 #print axioms logical_vote_sound
 #print axioms logical_vote_available
 #print axioms duplicate_is_one_vote
@@ -102,5 +163,12 @@ theorem captured_key_mismatch (sampledKey emittedKey wantedKey : Nat)
 
 #print axioms demand_response_bound
 #print axioms captured_key_mismatch
+
+#print axioms expected_step_preserves
+#print axioms expected_run_preserves
+#print axioms mutable_match_is_current
+#print axioms copy_prefix_advance
+#print axioms late_wrong_write_violates
+#print axioms mutable_response_bound
 
 end LocalAcquisition

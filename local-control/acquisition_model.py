@@ -223,7 +223,7 @@ def record(value=None, lifetime=64, remaining=None):
 
 
 def parameter_checks():
-    kf, bf, bs, fanout = 643,16,1,40
+    kf, bf, bs, fanout = 643,16,1,80
     maximum, n = 2000,13
     passes = maximum.bit_length()
     row = 14+passes*(10*n+10)+3
@@ -449,7 +449,7 @@ def masked_first_sweep_cases():
 
 
 def passive_scan_cases():
-    clients, cells, bays, origins, q = 40,32,5,13,6
+    clients, cells, bays, origins, q = 80,32,5,13,6
     intended = [(a*17+3)%101 for a in range(cells)]
     physical = [intended[:] for _ in range(bays)]
     physical[0][19] = (physical[0][19]+1)%101
@@ -559,7 +559,7 @@ def countercases():
 
 
 def demand_parameters():
-    source_slots, per_frame, reply_lifetime = 1600,4,414
+    source_slots, per_frame, reply_lifetime = 3200,4,818
     period = ceil(F(source_slots,per_frame))
     response = 2+period+1+2+2
     age = 1+2+2+reply_lifetime
@@ -567,22 +567,27 @@ def demand_parameters():
     local_read_wait = ceil(F(101,100)*(response+1))
     local_freeze_wait = ceil(F(101,100)*(age+1))
     per_cell = local_read_wait+10+1
-    raw = 20480+3200
-    work = 16*182+4*26+3114+584+256+4*raw
+    raw = 20480+6400
+    work = 16*342+4*26+3114+584+256+4*raw
     elapsed = F(20,64)+F(work,262144)
     minimum = F(4*raw,1)/F(262144*101,100)
     require(elapsed < 1 and F(20)/minimum < 64,'Demand frame/egress capacity does not close')
     require(F(reply_lifetime)/F(101,100) > response+1,'First current reply may expire before read')
     require(F(local_freeze_wait)/F(101,100) > age,'Demand freeze wait does not clear old samples')
     require(F(local_read_wait)/F(101,100) >= response+1,'Demand response wait too short')
-    require(per_cell == 424 and corrupted_cap == 511,'Demand geometry interface changed')
+    require(per_cell == 828 and corrupted_cap == 1023,'Demand geometry interface changed')
     return dict(selected_code_supplier='fixed client-target on-demand passive read',
         source_slots=source_slots,source_visits_per_frame=per_frame,service_period=period,
         response_deadline=response,nominal_receipt_lifetime=reply_lifetime,actual_read_age=age,
         arbitrary_counter_cap=corrupted_cap,local_read_wait=local_read_wait,
         local_freeze_wait=local_freeze_wait,cell_attempt_bound=per_cell,
         target_scan_8192=per_cell*(80*8192+2),code_records_per_receiver=40*26,
-        fast_and_code_record_bound=160*643+40*26,
+        fast_and_code_records_per_receiver_bank=160*643+40*26,
+        fast_and_code_records_per_receiver_host=2*(160*643+40*26),
+        receiver_banks_per_target=80,client_banks_per_source=80,
+        instruction_symbol_bits=192,reply_bits=256,code_cell_64bit_limbs=3,reply_64bit_limbs=4,
+        maximum_encoded_8192_reply_bits=(160*8192*(1<<192)-1).bit_length(),
+        native_word_rate_is_a_new_capacity_obligation=True,
         raw_admission_allowance=raw,frame_word_work=work,frame_elapsed_upper=elapsed,
         per_branch_record_rate_upper=F(20)/minimum,
         full_source_image_size_proved=False,full_energy_supply_proved=False)
@@ -605,9 +610,9 @@ class HeldRequest:
 
 
 def demand_service_cases():
-    clients,targets,source_count,cells_per_bay = 40,40,13,16
-    slots, key_count, symbol_count = clients*targets,2*80*cells_per_bay,128
-    invalid = (1 << 32)-1
+    clients,targets,source_count,cells_per_bay = 80,40,13,16
+    slots, key_count, symbol_count = clients*targets,2*80*cells_per_bay,1 << 192
+    invalid = (1 << 256)-1
     # Actual passive cells: each body is a finite mutable array. No target read
     # server or expected-image opcode exists in the source's acquisition step.
     intended = [(17*a+3)%symbol_count for a in range(cells_per_bay)]
@@ -618,21 +623,21 @@ def demand_service_cases():
         client,target = divmod(slot,targets)
         changes = []
         for turn in range(3):
-            time = 500*turn+(client%7)
+            time = 900*turn+(client%7)
             key = cells_per_bay+(client+turn)%cells_per_bay
             changes.append((time,key))
-            deadlines.append((slot,time+424,key))
+            deadlines.append((slot,time+828,key))
         # Every source services every slot, including a client that keeps sending
         # malformed requests. These slots consume work but cannot add visits.
-        if client == 39:
-            changes = [(t,-1 if t%2 else key_count+7) for t in range(0,1510,3)]
+        if client == 79:
+            changes = [(t,-1 if t%2 else key_count+7) for t in range(0,2710,3)]
         requests.append(HeldRequest(changes))
     total_visits = total_admissions = good_checks = malformed = 0
     max_reply_delay = 0
     for origin in range(source_count):
         events = [[] for _ in range(slots)]
         cursor = (origin*137)%slots
-        for frame in range(0,1510):
+        for frame in range(0,2710):
             for _ in range(4):
                 slot = cursor
                 cursor = (cursor+1)%slots
@@ -656,9 +661,9 @@ def demand_service_cases():
                 total_admissions += 1
         for slot,deadline,key in deadlines:
             client,target = divmod(slot,targets)
-            if client == 39:
+            if client == 79:
                 continue
-            r = Receipt(414,maximum=invalid-1)
+            r = Receipt(818,maximum=invalid-1)
             # Incoming I may already contain exactly the misleading desired word.
             r.raw_corrupt(key*symbol_count+0,r.cap)
             last = 0
@@ -672,15 +677,15 @@ def demand_service_cases():
             expected = key*symbol_count+intended[key%cells_per_bay]
             require(r.read_compare('eq',expected),'A nominal honest client missed its current key by deadline')
             require(r.packet.physical_key == target*key_count+key,'Response key was not the actual passive head')
-            require(r.nominal_age(F(deadline)) <= 419,'Demand response age exceeds proved bound')
+            require(r.nominal_age(F(deadline)) <= 823,'Demand response age exceeds proved bound')
             good_checks += 1
-            start = deadline-424
+            start = deadline-828
             after = [received for received,packet in events[slot]
                      if start+2 <= packet.sampled and packet.value//symbol_count == key and received <= deadline]
             require(after,'No actually new stabilized-key acquisition before response deadline')
             max_reply_delay = max(max_reply_delay,min(after)-start)
-    require(max_reply_delay <= 407,'Fixed-cycle response proof failed')
-    require(good_checks == source_count*39*40*3,'All-client check coverage changed')
+    require(max_reply_delay <= 807,'Fixed-cycle response proof failed')
+    require(good_checks == source_count*79*40*3,'All-client check coverage changed')
     # A request may change during conversion. Re-reading its key on emission
     # would misbind the old value; this implementation returns the captured key.
     race = HeldRequest([(0,7),(1,8)],settling=0)
@@ -703,10 +708,197 @@ def demand_service_cases():
     return dict(source_banks_checked=source_count,fixed_slots_per_bank=slots,
         actual_passive_visits=total_visits,offered_reply_records=total_admissions,
         malformed_visits_charged=malformed,concurrent_honest_client_checks=good_checks,
-        clients_per_target=40,targets=40,held_key_changes_per_honest_client=3,
+        client_hosts_per_target=40,client_banks_per_target=80,targets=40,held_key_changes_per_honest_client=3,
         maximum_new_response_delay=max_reply_delay,request_change_during_conversion_keeps_captured_key=True,
         same_key_freeze_instances=same_key_checks,reverse_gap_sentinel_check=True,
         initial_reply_words_arbitrary=True,slot_count_independent_of_image_length=True)
+
+
+def producer_adapter_cases():
+    preservation_cases = prefix_checks = 0
+    for intended, initial, trace in product(product((0,1),repeat=3),
+                                          product((0,1),repeat=3),
+                                          product(range(7),repeat=3)):
+        body = list(initial)
+        cursor = 0
+        matched_cells = set()
+        for event in trace:
+            before = body[:]
+            if event < 3:
+                body[event] = intended[event]  # Actual expected-value write.
+            elif event < 6:
+                pass  # Attempt to address event-3 physically failed.
+            else:
+                pass  # No write this transition.
+            for address in range(3):
+                if before[address] == intended[address]:
+                    require(body[address] == intended[address], 'Expected-write law lost an established cell')
+            if cursor < 3 and body[cursor] == intended[cursor]:
+                matched_cells.add(cursor)
+                cursor += 1
+            require(all(body[j] == intended[j] for j in range(cursor)), 'Copy prefix failed under expected writes')
+            prefix_checks += 1
+        preservation_cases += 1
+    params = demand_parameters()
+    age, life = params['actual_read_age'],params['nominal_receipt_lifetime']
+    entry, desired, wrong = F(1),1,0
+    first_read = entry+params['response_deadline']
+    old = record(None,lifetime=life)
+    # This is a genuine pre-entry sample, not arbitrary initial I or a bad source.
+    old.receive(Packet(0,desired,65535,F(-1),0))
+    old.elapse(first_read)
+    fresh_wrong = record(None,lifetime=life)
+    fresh_wrong.receive(Packet(0,wrong,0,first_read,0))
+    require(first_read-F(-1) <= age and logical_compare(old,fresh_wrong,'eq',desired),
+            'Request deadline did not retain the real stale-sibling obstruction')
+    false_advance_without_entry_wait = logical_compare(old,fresh_wrong,'eq',desired)
+    gate_read = F(ceil(entry+F(params['local_freeze_wait'])/F(101,100)))
+    old.elapse(gate_read-first_read)
+    fresh_wrong.receive(Packet(0,wrong,0,gate_read,0))
+    require(not logical_compare(old,fresh_wrong,'eq',desired), 'Entry age wait failed to remove pre-entry match')
+    # Equality may be established before the latest attempt, which can fail.
+    held = record(None,lifetime=life)
+    held.receive(Packet(0,desired,0,F(100),0))
+    held.elapse(gate_read-F(100))
+    actual = wrong
+    actual = desired  # Earlier actual expected-value write, before the sample.
+    latest_attempt_succeeded = False
+    if latest_attempt_succeeded:
+        actual = desired
+    require(held.read_compare('eq',desired) and actual == desired and not latest_attempt_succeeded,
+            'Current equality was incorrectly identified with latest-write acknowledgment')
+    # Seven honest fresh wrong replies cannot be beaten by six false matches.
+    failed_inputs = [(record(desired,lifetime=life),record(desired,lifetime=life)) for _ in range(6)]
+    failed_inputs += [(record(wrong,lifetime=life),record(wrong,lifetime=life)) for _ in range(7)]
+    failed_actual,failed_cursor,failed_offers = wrong,0,0
+    for _ in range(8):
+        failed_offers += 1
+        physically_connected = False
+        if physically_connected:
+            failed_actual = desired
+        votes = sum(logical_compare(a,b,'eq',desired) for a,b in failed_inputs)
+        if votes >= 7:
+            failed_cursor += 1
+    require(votes == 6 and failed_cursor == 0 and failed_actual == wrong,
+            'Failed writes falsely advanced a genuinely wrong cell')
+    # Old wrong tail remains possible when the alleged entry cue precedes drain.
+    claimed_e, wrong_packet_issued, wrong_packet_applied = F(100),F(98),F(104)
+    sampled,received,read = F(103),F(107),F(9249,10)
+    late = record(None,lifetime=life)
+    late.receive(Packet(0,desired,0,sampled,0))
+    late.elapse(read-received)
+    require(read > claimed_e+F(params['local_freeze_wait'])/F(101,100), 'Late-tail gate fixture too early')
+    require(read-sampled <= age and late.read_compare('eq',desired), 'Late-tail real old witness expired')
+    require(wrong_packet_applied-wrong_packet_issued == 6 and sampled < wrong_packet_applied < read,
+            'Late wrong packet fixture violates its admitted six-quantum tail')
+    # The same past observation cannot survive a later wrong write, alias or swap.
+    obstruction_values = {}
+    for mechanism in ('late_wrong_writer','logical_address_alias','direct_corruption','body_substitution'):
+        body = {'identity':7,'cells':[1,0]}
+        actual_at_sample = body['cells'][0]
+        observation = record(None,lifetime=life)
+        observation.receive(Packet(0,actual_at_sample,0,F(850),0))
+        if mechanism == 'late_wrong_writer':
+            # A previously compromised writer retains an uncut ordinary lead.
+            retained_write = {'address':0,'value':0}
+            body['cells'][retained_write['address']] = retained_write['value']
+            event = 'retained wrong writer applies an ordinary value'
+        elif mechanism == 'logical_address_alias':
+            intended = [1,0]
+            logical_address = 1
+            physical_address = {0:0,1:0}[logical_address]
+            body['cells'][physical_address] = intended[logical_address]
+            event = 'expected write at logical1 aliases physical0'
+        elif mechanism == 'direct_corruption':
+            body['cells'][0] = 0  # An explicit exceptional digital overwrite.
+            event = 'one fresh direct target-cell overwrite'
+        else:
+            body = {'identity':8,'cells':[0,0]}
+            event = 'bay retains its label but powers substituted body8'
+        observation.elapse(F(50))
+        actual_now = body['cells'][0]
+        require(observation.read_compare('eq',1) and actual_now != 1, 'Missing preservation obstruction')
+        obstruction_values[mechanism] = dict(sampled_value=actual_at_sample,current_value=actual_now,
+            sampled_body=7,current_body=body['identity'],actual_event=event,
+            observation_age=50,ordinary_expected_write_law_holds=False,
+            fresh_acquisitions=1 if mechanism == 'direct_corruption' else 0)
+    # Whole packed equality rejects a reply for an earlier different cursor key.
+    alphabet = 1 << 192
+    previous_key,current_key = 7,8
+    previous = record(None,lifetime=life)
+    previous.maximum = (1 << 256)-2
+    previous.receive(Packet(0,previous_key*alphabet+3,0,F(0),previous_key))
+    require(not previous.read_compare('eq',current_key*alphabet+3), 'Changed key reused another address match')
+    # Parameterized copy bound; one gate per preserved entry, not one per write.
+    copy_bounds = []
+    for write_delay in (0,2,3,6,17):
+        t_mut = max(2,write_delay)+params['service_period']+1+2+2
+        local_wait = ceil(F(101,100)*(t_mut+1))
+        fused = local_wait+10+1
+        unfused = fused+10
+        gate_bound = params['local_freeze_wait']+10+1
+        require(F(local_wait)/F(101,100) >= t_mut+1, 'Mutable response wait too short')
+        copy_bounds.append(dict(write_delay=write_delay,response=t_mut,local_response_wait=local_wait,
+            issued_to_read=fused,unfused_cell=unfused,entry_gate=gate_bound,
+            unfused_copy_8192=gate_bound+8192*unfused))
+    require(copy_bounds[2]['unfused_cell'] == 839 and copy_bounds[3]['unfused_cell'] == 842,
+            'Current mutable copy timing changed')
+    return dict(expected_write_traces=preservation_cases,prefix_checks=prefix_checks,
+        failed_writes_leave_wrong_cursor_blocked=True,failed_write_offers_charged=failed_offers,
+        failed_latest_write_can_still_have_current_equality=True,
+        no_entry_wait=dict(entry=entry,response_read=first_read,actual_wrong_cell=wrong,
+            old_genuine_sample=-1,old_still_valid=True,new_bank_reports_current_wrong=True,
+            false_cursor_advance=false_advance_without_entry_wait,receiving_execution_intact=True),
+        entry_wait=dict(first_allowed_integer_read=gate_read,pre_entry_match_rejected=True),
+        late_pre_entry_tail=dict(claimed_entry=claimed_e,actual_drain=wrong_packet_applied,
+            issued=wrong_packet_issued,current_expected_write_applied=101,sampled=sampled,received=received,read=read,
+            prescribed_wait_elapsed=True,still_falsely_matches=True,fresh_acquisitions=0),
+        other_preservation_obstructions=obstruction_values,changing_key_rejected=True,copy_bounds=copy_bounds)
+
+
+def requester_bank_and_word_cases():
+    # Healthy A/B clients write distinct keys; a host-merged request slot cannot
+    # supply both held-key obligations. Neither consumer is execution-faulty.
+    a_key,b_key = 5,9
+    shared_trace = []
+    for cycle in range(6):
+        shared_slot = a_key
+        shared_slot = b_key
+        sampled_key = shared_slot
+        shared_trace.append(dict(cycle=cycle,a_matches=sampled_key == a_key,b_matches=sampled_key == b_key))
+    require(all(not row['a_matches'] and row['b_matches'] for row in shared_trace),
+            'Host-only requester alias counterexample vanished')
+    separate = {('host',0):a_key,('host',1):b_key}
+    require(separate[('host',0)] == a_key and separate[('host',1)] == b_key,
+            'Bank-private request slots do not preserve simultaneous intentions')
+    # Serial limb reads from changing complete replies can forge a match.
+    limb = 1 << 64
+    wanted = 4*limb**3+3*limb**2+2*limb+1
+    old = 9*limb**3+9*limb**2+2*limb+1
+    new = 4*limb**3+3*limb**2+8*limb+8
+    torn = old%(limb**2)+(new//(limb**2))*limb**2
+    require(old != wanted and new != wanted and torn == wanted, 'Torn nominal-word obstruction missing')
+    # An origin-separated staging buffer does not publish until the complete frame.
+    current = old
+    stage = [0]*4
+    intermediate_matches = []
+    for index in range(4):
+        stage[index] = (new//(limb**index))%limb
+        if index == 3:
+            current = sum(word*limb**i for i,word in enumerate(stage))
+        intermediate_matches.append(current == wanted)
+    require(not any(intermediate_matches),'Partial raw assembly leaked as a complete matching record')
+    maximum_symbol = (1 << 192)-1
+    maximum_key = 160*8192-1
+    encoded = maximum_key*(1 << 192)+maximum_symbol
+    require(encoded < (1 << 256)-1 and encoded.bit_length() == 213,'Concrete word ABI does not fit')
+    return dict(shared_host_request_slot=dict(trace=shared_trace,all_executions_intact=True),
+        corrected_requesters_per_target=80,source_client_target_slots=3200,
+        same_origin_bank_votes_still_one=True,
+        torn_reply=dict(old_equals_wanted=False,new_equals_wanted=False,torn_equals_wanted=True),
+        complete_record_publication=dict(staging_limbs=4,current_limbs=4,partial_matches=intermediate_matches),
+        instruction_symbol_bits=192,reply_word_bits=256,maximum_encoded_8192_bits=encoded.bit_length(),
+        old_capacity_point_not_inherited=True)
 
 
 def digest(path):
@@ -742,6 +934,7 @@ def main():
     actual = dict(schema='local-acquisition-v1',component_checks_passed=True,
         scope='Periodic physical-origin acquisition component; no source admission or global renewal theorem',
         sources_sha256_lf=before,python_major_minor=list(sys.version_info[:2]),parameters=parameter_checks(),demand_parameters=demand_parameters(),demand_service=demand_service_cases(),
+        producer_adapter=producer_adapter_cases(),requester_banks_and_words=requester_bank_and_word_cases(),
         age=cache_and_age_cases(),publication=cyclic_publication_cases(),overlap=overlap_cases(),
         logical_votes=logical_vote_cases(),old_tail_and_reuse=old_tail_and_reuse_cases(),
         masked_entry=masked_first_sweep_cases(),passive_scan=passive_scan_cases(),countercases=countercases(),lean=check_lean(args.lean))
