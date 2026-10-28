@@ -469,6 +469,246 @@ def tails_and_nonzeno_checks():
                 boundary='minimum instruction time/raw arrival envelope and one-shot contact consumption; bounded speed alone is insufficient')
 
 
+
+def linear_candidate(values,maximum,quorum=7):
+    lo=0;hi=maximum;comparisons=0
+    while lo<hi:
+        pivot=(lo+hi)//2
+        count=0
+        for value in values:
+            comparisons+=1
+            if value<=pivot:count+=1
+        if count>=quorum:hi=pivot
+        else:lo=pivot+1
+    return lo,comparisons
+
+
+def same_word_range(values,candidate,radius,quorum=7):
+    # Both bounds are evaluated on the same captured physical word.
+    return sum(candidate-radius<=value<=candidate+radius for value in values)>=quorum
+
+
+def circular_band_checks():
+    length=26*32000;band=32000;stop=16000
+    values=[1]*3+[length-1]*4+[length//2]*6
+    candidate,reads=linear_candidate(values,length-1)
+    assert candidate==length//2
+    assert not same_word_range(values,candidate,4000)
+    # The rejected midpoint stays rejected forever under bounded wrap noise.
+    stationary=[]
+    for _ in range(8):
+        c,_=linear_candidate(values,length-1)
+        stationary.append(c)
+        assert not same_word_range(values,c,4000)
+    # Actual normal forward field reaches a retained interior stop, not a new
+    # software phase. Fresh reports there inhabit one linear chart.
+    speed=F(1);settle=F(30);age=F(1850);job=F(1);poll=F(12)
+    reached=settle+F(stop)/speed;refreshed=reached+age+poll+job
+    good=[stop-1]*3+[stop+1]*4
+    healthy_views=[]
+    for bad in ([0]*6,[length-1]*6,[length//2]*6):
+        current=good+bad;c,work=linear_candidate(current,length-1)
+        valid=same_word_range(current,c,4000)
+        assert valid and 0<=c-6000 and c+6000<band
+        healthy_views.append(dict(candidate=c,valid=valid,comparisons=work))
+    beta=F(1850)+F(1,4)+job
+    assert 2*beta<=4000 and 4000+beta<=6000
+    assert F(band,4)>6000
+    # Exhaustive quotient soundness on a small circle, including out-of-range
+    # linear candidates reduced moduloL only after range validation.
+    checked=0
+    for L in (8,12):
+        d=lambda a,b:min((a-b)%L,(b-a)%L)
+        for c,y,x in product(range(2*L),range(L),range(L)):
+            assert d(c,x)<=abs(c-y)+d(y,x)
+            checked+=1
+    return dict(wrap_nominal_values=values[:7],bad_values=values[7:],linear_candidate=candidate,
+                false_midpoint_rejected=True,stationary_rejections=stationary,
+                no_forward_probe_stays_at_wrap=True,forward_field_speed=speed,force_settling=settle,
+                actual_stop=stop,stop_reached=reached,all_records_refreshed_by=refreshed,
+                interior_views=healthy_views,current_circle_beta=beta,
+                quotient_triangle_cases=checked,
+                scope='candidate+same-word range certificate and safe physical probe; no numerical median of wrapped angles is trusted')
+
+
+def decode_entering(raw):
+    if raw==2:return 1
+    if raw in (0,3):return 0
+    return None
+
+
+def abort_contact_checks():
+    # Split reads can synthesize a false entering state from3 then0.
+    active_from_old=(3//2)%2;full_from_new=0%2
+    split=2*active_from_old+full_from_new
+    assert split==2 and decode_entering(split)==1
+    assert decode_entering(3)==0 and decode_entering(0)==0
+    allowed_return=(3,1,0);wrong_return=(3,2,0)
+    assert not any(decode_entering(w)==1 for w in allowed_return)
+    assert any(decode_entering(w)==1 for w in wrong_return)
+    # Full/return retention makes a true ENTERING record too old to survive a
+    # completed return. The local ordinary equality quorum then cannot reach7.
+    A=F(1850);J=F(12);D=F(3);tail=F(6)
+    Fmin=F(100,101);Fmax=F(1048577,1048576)
+    post_min=1899*Fmin;post_max=1901*Fmax+J
+    join=A+post_max+2*J+2*D+tail
+    travel=F(8000)
+    assert travel>join and post_min>A+J+2*D+tail
+    last_enter=F(99);full=F(100);normal=full+travel
+    assert last_enter<normal-A
+    # A noisy scalar at true0 falsely enters; its robust positive lower bound
+    # does not. The actual program uses raw captured contact predicates instead.
+    actual=F(0);reported=F(1,100);error=F(1,100)
+    assert reported>0 and reported-error<=0
+    # EXITING dominates fluctuating old FULL/ready bits. A first normal witness
+    # starts a new age/drain hold; the latch does not clear on one old bit.
+    normal_seen=False;left=3;exiting=True;trace=[]
+    samples=[False,True,False,True,True,True,True,True]
+    for tick,normal_bit in enumerate(samples):
+        left=max(0,left-1)
+        force=-1 if exiting else 0
+        if exiting:
+            if normal_bit:
+                if not normal_seen:normal_seen=True;left=3
+                elif left==0:exiting=False;normal_seen=False
+            else:normal_seen=False;left=0
+        trace.append(dict(tick=tick,normal_bit=normal_bit,force=force,exiting=exiting))
+    assert all(x['force']==-1 for x in trace[:-1]) and not trace[-1]['exiting']
+    return dict(split_capture_false_entering=split,captured_word_decoder=[(x,decode_entering(x)) for x in range(4)],
+                allowed_return_words=allowed_return,forbidden_return_words=wrong_return,
+                contact_age=A,post_wait_min=post_min,post_wait_max=post_max,
+                full_return_join_bound=join,physical_entering_and_return_travel=travel,
+                old_entering_last_sample=last_enter,normal_time=normal,
+                noisy_positive_at_true_zero=dict(actual=actual,reported=reported,robust_lower=reported-error),
+                exiting_latch_trace=trace)
+
+
+def watchdog_checks():
+    # The same physical range is used for the old and improved controllers.
+    E=250000000;B=600000000;formation=50000;response=40
+    fastest=F(100,101);slowest=F(1048577,1048576);mu=F(1)
+    def budget(timer,h=None):
+        minimum=(timer-1)*fastest;maximum=(timer+1)*slowest
+        quantum=(mu*minimum//4) if h is None else h
+        assert quantum>0
+        legitimate=B+response+F(quantum+4*E+1,1)/mu
+        assert legitimate<minimum
+        window=formation+2*maximum+response
+        return dict(timer=timer,quantum=quantum,minimum=minimum,maximum=maximum,
+                    legitimate_refresh_by=legitimate,bank_window=window)
+    old=budget(2000000000,10);new=budget(2400000000)
+    assert new['quantum']>2*E
+    warm=int(new['bank_window']+600000000+1000000)+1
+    M=80*warm
+    def stall(b):
+        bins=(M+int(b['quantum'])-1)//int(b['quantum'])+1
+        return bins*b['bank_window']
+    old_bound=stall(old);new_bound=stall(new)
+    assert new_bound<old_bound and old_bound/new_bound>1000000
+    # A matched healthy trace can timeout if h is made large without checking
+    # its scan/noise allowance. Here the observations attain both error extremes.
+    small_timer=F(300);small_E=F(10);small_B=F(200)
+    small_h=(small_timer*fastest)//4
+    required=small_B+small_h+4*small_E+1
+    assert required>small_timer*fastest
+    # Positive progress in normalized coordinates is not one raw stroke unit.
+    normalized_mu=F(1000,12000);small_stage_time=F(12000)+formation+response
+    assert normalized_mu<1 and small_stage_time<new['minimum']
+    # Within a physical rank bin of widthh, the sound high-water test allows at
+    # most one late refresh (or one first grounding), even across noisy samples.
+    tiny=0
+    for E0,h0,R0 in product((1,3),(1,4),(10,20)):
+        U=R0-h0-1;refreshes=0
+        for noise in (-E0,E0,-E0,E0,E0):
+            estimate=R0+noise
+            if estimate-E0>U+h0:
+                U=estimate+E0;refreshes+=1
+        assert refreshes<=1;tiny+=1
+    return dict(old=old,improved=new,same_physical_rank_range=M,
+                old_stall_bound=old_bound,improved_stall_bound=new_bound,
+                improvement_factor=old_bound/new_bound,
+                oversized_step_failure=dict(timer=small_timer,step=small_h,healthy_refresh_required=required,fast_expiry=small_timer*fastest),
+                normalized_stage=dict(rank_rate=normalized_mu,whole_stage_bound=small_stage_time),
+                bounded_bin_checks=tiny,
+                scope='conditional long-stage rate1 plus separately bounded short stages; actual total-energy and stage lengths still supply those premises')
+
+
+PORT_NAMES=('SUPPLY_IN','SUPPLY_RETURN','MAINTENANCE_FEED','MAINTENANCE_RETURN',
+            'WORLD_1','WORLD_2','DATA_TX','DATA_RX','RUNTIME_WRITE','ACTIVE_SENSE','SERVICE')
+CUT_THRESHOLDS=(2,2,4,4,4,4,6,4,4,4,4)
+
+
+def port_and_energy_checks():
+    # (kind, source, destination, normal-cut index, additionally needs openclamp)
+    edges=[('energy','supply','bank',0,False),('energy','return','bank',1,False),
+           ('energy','maintenance-backfeed','bank',3,False),('energy','world1-backfeed','bank',4,False),
+           ('energy','world2-backfeed','bank',5,False),('energy','rx-backfeed','bank',7,False),
+           ('energy','service-backfeed','bank',10,False),('energy','bank','cpu',None,False),
+           ('authority','cpu','maintenance',2,False),('authority','cpu','world1',4,False),
+           ('authority','cpu','world2',5,False),('authority','cpu','tx-fanout',6,False),
+           ('authority','cpu','active-selector',9,False),
+           ('write','legacy','private-write-gate',8,False),('write','service-holder','private-write-gate',10,False),
+           ('write','private-write-gate','C/W',None,True),('input','primary','I0',7,False)]
+    aux_paths=[(f'aux{origin}_{bank}',f'I{origin}_{bank}') for origin in range(1,13) for bank in range(2)]
+    edges += [('input',source,dest,None,False) for source,dest in aux_paths]
+    def reachable(kind,starts,cut,clamp_open,extra=()):
+        seen=set(starts)
+        permitted=[e for e in edges+list(extra) if e[0]==kind and
+                   (e[3] is None or cut<CUT_THRESHOLDS[e[3]]) and (not e[4] or clamp_open)]
+        changed=True
+        while changed:
+            changed=False
+            for _,a,b,_,_ in permitted:
+                if a in seen and b not in seen:seen.add(b);changed=True
+        return seen
+    incoming=['supply','return','maintenance-backfeed','world1-backfeed','world2-backfeed','rx-backfeed','service-backfeed']
+    assert 'cpu' in reachable('energy',incoming,0,False)
+    assert 'cpu' not in reachable('energy',incoming,6,True)
+    assert not ({'maintenance','world1','world2','tx-fanout','active-selector'}&reachable('authority',['cpu'],6,True))
+    assert 'C/W' not in reachable('write',['legacy','service-holder'],0,False)
+    assert 'C/W' not in reachable('write',['legacy','service-holder'],6,True)
+    assert 'C/W' in reachable('write',['legacy','service-holder'],0,True)
+    assert all(dest in reachable('input',[source],6,True) for source,dest in aux_paths)
+    uncut=[('energy','uncut-power','cpu',None,False)]
+    assert 'cpu' in reachable('energy',['uncut-power'],6,True,uncut)
+    remap=[('input','primary','shared-remapper',None,False)]
+    remap += [('input','shared-remapper',dest,None,False) for _,dest in aux_paths]
+    assert all(dest in reachable('input',['primary'],6,True,remap) for _,dest in aux_paths)
+    # Free battery0 is not total energy0: a refunded tail can rearm a CPU.
+    free=F(0);escrow=F(100);before=free+escrow
+    free+=escrow;escrow=F(0)
+    assert free>=30 and free+escrow==before
+    # Bounded individual tails may perpetually rebook zero-loss escrow.
+    rebook=[]
+    for t in range(0,21,2):rebook.append(dict(time=t,free=0,escrow=100,total=100))
+    # Explicit total-compartment drain supplies a source trajectory and bound.
+    E=F(120);Eoff=F(20);Eon=F(30);rho=F(1);k=F(1,10);dt=F(1,10)
+    bound=(E-Eoff)/(k*Eoff-rho);time=F(0);off=None;max_after=F(0)
+    for _ in range(1000):
+        derivative=rho-k*E
+        next_E=E+dt*derivative
+        # On this descending linear segment the held discharge satisfies
+        # dE/dt <= rho-k*E(t), including all escrow/free bookkeeping transfers.
+        assert derivative<=rho-k*next_E
+        E=next_E;time+=dt
+        if E<=Eoff and off is None:off=time
+        if off is not None:max_after=max(max_after,E)
+    assert off is not None and off<=bound and max_after<Eon
+    rising=Eoff
+    for _ in range(300):
+        old=rising;rising=(rising+dt*F(4))/(1+dt*k)
+        assert (rising-old)/dt<=F(4)-k*rising
+    assert rising>Eon
+    return dict(catalogue=[dict(index=i,name=name,opens_at=CUT_THRESHOLDS[i]) for i,name in enumerate(PORT_NAMES)],
+                auxiliary_origins=12,aux_readonly_bank_paths_remaining=24,normal_cutset_checked=True,
+                old_privilege_requires_open_normal_ingress_and_open_clamp=True,
+                uncut_power_counterexample=True,shared_input_remapper_counterexample=True,
+                free_zero_refund_counterexample=dict(free_before=0,escrow_before=100,free_after=free),
+                repeated_bounded_escrow_counterexample=rebook,
+                total_energy_drain=dict(bound=bound,observed_off=off,maximum_after_off_upper=Eoff,Eon=Eon),
+                excessive_backfeed_final_lower=rising.numerator//rising.denominator,
+                scope='explicit proposed11-conduit graph; passive portals remain data and their total backfeed enters rho, not zero by omission')
+
 def source_hash(name):
     return sha256((HERE/name).read_text(encoding='utf-8-sig').replace('\r\n','\n').encode('utf-8')).hexdigest()
 
@@ -478,12 +718,19 @@ def generate():
     acquisition_path='theories-and-designs/byzantine-control/local-control/ACQUISITION.md'
     acquisition_bytes=subprocess.check_output(['git','show',acquisition_commit+':'+acquisition_path],cwd=HERE)
     acquisition_text=acquisition_bytes.decode('utf-8-sig').replace('\r\n','\n')
-    return encode(dict(acquisition_interface_snapshot=dict(commit=acquisition_commit,path=acquisition_path,
+    port_commit='79164496d0bbbbcdbebcd140eb714ef4176799a2'
+    coordinator_snapshots={}
+    for filename in ('PORTS.md','RETURN.md'):
+        path='theories-and-designs/byzantine-control/local-control/'+filename
+        data=subprocess.check_output(['git','show',port_commit+':'+path],cwd=HERE)
+        normalized=data.decode('utf-8-sig').replace('\r\n','\n').encode('utf-8')
+        coordinator_snapshots[filename]=dict(commit=port_commit,path=path,sha256=sha256(normalized).hexdigest())
+    return encode(dict(coordinator_snapshots=coordinator_snapshots,acquisition_interface_snapshot=dict(commit=acquisition_commit,path=acquisition_path,
                 sha256=sha256(acquisition_text.encode('utf-8')).hexdigest(),
-                status='conditional F=1 example; full runtime instruction and quantity schedule remains open'),status='derived conditional hybrid source with exact event/flow perturbations; first pass',
+                status='historical conditional F=1 scaling comparison; current PROGRAM schedule is a separate supplier'),status='derived conditional hybrid source with exact event/flow perturbations; first pass',
                 sources={n:source_hash(n) for n in ('HYBRID.md','Hybrid.lean','hybrid_model.py','CYCLE.md','CLAMP.md','CONTINUITY.md','BOOTSTRAP.md')},
                 clocks=clock_checks(),contacts=contact_checks(),normalization=normalization_checks(),
-                word_tails=word_tail_checks(),stages=stage_checks(),direct_revalidation=revalidation_checks(),endpoints=endpoint_checks(),tails_and_events=tails_and_nonzeno_checks()))
+                word_tails=word_tail_checks(),stages=stage_checks(),circular_cam=circular_band_checks(),abort_contacts=abort_contact_checks(),watchdog=watchdog_checks(),ports=port_and_energy_checks(),direct_revalidation=revalidation_checks(),endpoints=endpoint_checks(),tails_and_events=tails_and_nonzeno_checks()))
 
 
 def main():

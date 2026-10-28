@@ -103,6 +103,9 @@ class Helper:
     watch_context:tuple|None=None
     last_phase:int=-1
     last_upper:int=0
+    exiting:bool=False
+    normal_seen:bool=False
+    exit_remaining:int=0
 
     def clear(self,bays):
         self.cursor=self.scan_bay=self.scan_address=self.verify_address=0
@@ -118,10 +121,10 @@ class Cycle:
     """
     def __init__(self,bays=5,schedule=0,quiet_watch=False,cold_start=False,
                  bypass_disabled=False,driver_early=False,reconnect_unsafe=False,
-                 injected_inputs=None, reject_abort=True):
+                 injected_inputs=None, reject_abort=True, legacy_partial_abort=False):
         self.bays=bays;self.image,self.main=program()
         self.injected_inputs=injected_inputs or (lambda tick,side:(100,0))
-        self.reject_abort=reject_abort
+        self.reject_abort=reject_abort;self.legacy_partial_abort=legacy_partial_abort
         self.length=len(self.image);self.J=5;self.D=3;self.E=2;self.qwords=4
         self.theta=30;self.cap=10;self.noise=1;self.force=20;self.badcap=22
         self.lag=self.E+2*self.J+2*self.D
@@ -155,6 +158,8 @@ class Cycle:
         self.warm_at=self.driver_at+(self.local_work+2)*10
         self.abort_limit=(self.E+2*self.J+2*self.D+5)*10
         self.cam=0;self.mode=0;self.anchor=0;self.blend=0
+        self.abort_full=False;self.abort_milestones=[]
+        self.exit_wait=self.E+2*self.J+2*self.D+2
         self.cut=[0,self.cut_limit];self.clamp=[self.clamp_limit,self.clamp_limit]
         self.reset=[self.reset_limit,self.reset_limit];self.iso=[0,0];self.shunt=[0,self.iso_limit]
         self.activation=[[0]*bays for _ in range(2)]
@@ -238,6 +243,7 @@ class Cycle:
                   self.iso_limit-self.iso[cold] if phase==11 else
                   self.iso[cold]+self.shunt[cold]+self.cut[cold]+(self.reserve_cap-self.energy[cold] if self.cut[cold]==self.cut_limit else 0) if phase==0 else 0)
         return dict(half=half,phase=phase,offset=offset,cam=self.cam,anchor=self.anchor,mode=self.mode,
+                    mode_word=2*int(self.mode>0)+int(self.abort_full),abort_full=self.abort_full,normal_stop=self.mode==0,
                     blend=self.blend,cut=tuple(self.cut),clamp=tuple(self.clamp),reset=tuple(self.reset),
                     iso=tuple(self.iso),shunt=tuple(self.shunt),energy=tuple(self.energy),
                     activation=tuple(tuple(a) for a in self.activation),seats=tuple(tuple(a) for a in self.seats),
@@ -255,6 +261,20 @@ class Cycle:
     def command(self,actor,view):
         half,phase=view["half"],view["phase"];cold=1-half
         context=(half,phase)
+        if actor.exiting:
+            # Latched exit has priority over every old ready/entering observation.
+            result=dict(kind="abort",side=1-view["anchor"],mode=-20)
+            if view["normal_stop"]:
+                if not actor.normal_seen:
+                    actor.normal_seen=True;actor.exit_remaining=self.exit_wait*100
+                elif actor.exit_remaining==0:
+                    actor.exiting=False;actor.normal_seen=False;actor.abort=False
+                    actor.watch_context=None;actor.clear(self.bays)
+            else:
+                actor.normal_seen=False;actor.exit_remaining=self.exit_wait*100
+            return result
+        if view["mode_word"]==2 and not self.legacy_partial_abort:
+            return dict(kind="abort",side=1-view["anchor"],mode=20)
         if view["mode"]>0:
             cold=1-view["anchor"]
             ready=(view["blend"]==view["anchor"]*self.blend_limit and
@@ -263,6 +283,8 @@ class Cycle:
             entry=view["anchor"]*len(PHASES)*self.segment
             if ready and view["cam"]==entry:
                 actor.abort=False;actor.remaining=0;actor.watch_context=None;actor.clear(self.bays)
+                if not self.legacy_partial_abort:
+                    actor.exiting=True;actor.normal_seen=False;actor.exit_remaining=self.exit_wait*100
                 return dict(kind="abort",side=cold,mode=-20)
             result=dict(kind="abort",side=cold,mode=20)
             if view["blend"]!=view["anchor"]*self.blend_limit:
@@ -405,6 +427,7 @@ class Cycle:
         self.history=self.history[-(self.E+1):]
         for actor in self.helpers:
             actor.remaining=max(0,actor.remaining-(100+(self.tick+actor.index)%2))
+            actor.exit_remaining=max(0,actor.exit_remaining-(100+(self.tick+actor.index)%2))
         due=[p for p in self.packets if p[0]<=self.tick];self.packets=[p for p in self.packets if p[0]>self.tick]
         for _,actor,command in due:self.outputs[actor]=command;self.work_charged+=1
         for actor in self.helpers:
@@ -455,8 +478,17 @@ class Cycle:
                     and self.clamp[reset_side]==0 and self.reset[reset_side]==0
                     and self.cam==self.anchor*len(PHASES)*self.segment)
         old_mode=self.mode
-        if mode_force>=0 or safe_reset:self.mode=self.move(self.mode,mode_force,self.abort_limit)
-        if old_mode>0 and self.mode==0:self.abort_entries.append(dict(tick=self.tick,anchor=self.anchor))
+        if mode_force>=0 or (safe_reset and (self.abort_full or self.legacy_partial_abort)):
+            self.mode=self.move(self.mode,mode_force,self.abort_limit)
+        if old_mode==0 and self.mode>0:
+            self.abort_milestones.append(dict(tick=self.tick,event="normal-catch-released"))
+        if self.mode==self.abort_limit and not self.abort_full:
+            self.abort_full=True;self.abort_milestones.append(dict(tick=self.tick,event="full-catch-latched"))
+        if old_mode>0 and self.mode==0:
+            self.abort_entries.append(dict(tick=self.tick,anchor=self.anchor,full_seen=self.abort_full))
+            # Coherent11->00 is one allowed raw reset;11->01->00 is also allowed.
+            self.abort_milestones.append(dict(tick=self.tick,event="normal-catch-seated",full_seen=self.abort_full))
+            self.abort_full=False
 
         if self.mode==0:
             for c in active:
@@ -584,7 +616,7 @@ class Cycle:
         self.tick+=1
 
     def summary(self):
-        return dict(ticks=self.tick,commits=self.commits,abort_entries=self.abort_entries,
+        return dict(ticks=self.tick,commits=self.commits,abort_entries=self.abort_entries,abort_milestones=self.abort_milestones,
                     starts=self.starts,driver_entries=self.driver_entries,events=self.events,
                     power_gap_count=len(self.power_gaps),work_charged=self.work_charged,
                     energy_supplied=self.energy_supplied,energy_spent=self.energy_spent,energy_bleed=self.energy_bleed,initial_energy=self.initial_energy,
@@ -640,6 +672,7 @@ def run_case(name, *, schedule=0, event=None, cold_start=False, driver_early=Fal
     assert not c.violations,(name,'issue permission',c.violations[:2])
     assert not c.application_permission_violations,(name,'application permission',c.application_permission_violations[:2])
     assert c.retained_knowledge=={'old-code','old-credentials'}
+    assert all(e['full_seen'] for e in c.abort_entries)
     if legacy_reject:
         assert fired and not c.commits and not c.abort_entries and c.mode==0
         assert c.context()[1]==8 and not any(h.selected is not None for h in c.helpers if h.index not in c.bad)
@@ -715,7 +748,7 @@ def arithmetic():
     stroke=lambda distance:ceil(F(distance,c.cap))+settle
     abort_bound=(stroke(c.abort_limit)+stroke(c.blend_limit)+2*stroke(c.iso_limit)+
                  stroke(c.cut_limit)+c.reserve_cap+settle+c.bays*stroke(c.warm_at)+
-                 stroke(c.clamp_limit)+stroke(c.reset_limit)+c.total+settle+stroke(c.abort_limit))
+                 stroke(c.clamp_limit)+stroke(c.reset_limit)+c.total+settle+stroke(c.abort_limit)+c.exit_wait+settle)
     half_bound=(len(PHASES)*(c.guard+settle)+2*stroke(c.iso_limit)+stroke(c.cut_limit)+
                 c.reserve_cap+c.bays*stroke(c.warm_at)+stroke(c.clamp_limit)+
                 2*stroke(c.reset_limit)+stroke(c.seat_limit)+c.copy_bound+
@@ -783,6 +816,37 @@ def rotating_stage_check():
                 alternating_frozen_selections=selected,
                 omitted_supplier='actual construction of these ready intervals and complete helper program')
 
+
+def already_entry_abort_check():
+    records=[]
+    for legacy in (False,True):
+        c=Cycle(legacy_partial_abort=legacy)
+        c.activation[1]=[0]*c.bays;c.clamp[1]=0;c.reset[1]=0
+        for actor in c.helpers:
+            if actor.index not in c.bad:actor.abort=True
+        peak=0;first_return=None
+        for _ in range(2000):
+            c.step();peak=max(peak,c.mode)
+            if c.abort_entries and first_return is None:
+                first_return=dict(c.abort_entries[0])
+                first_return['uncleared_nominal_abort_flags']=[a.index for a in c.helpers if a.index not in c.bad and a.abort]
+                first_return['held_nominal_positive_mode']=[i for i,command in enumerate(c.outputs) if i not in c.bad and command.get('mode',0)>0]
+            if first_return and (legacy or all(not a.exiting and not a.abort for a in c.helpers if a.index not in c.bad)):
+                break
+        assert first_return is not None
+        if legacy:
+            assert not first_return['full_seen'] and peak<c.abort_limit
+            assert first_return['uncleared_nominal_abort_flags'] and first_return['held_nominal_positive_mode']
+        else:
+            assert first_return['full_seen'] and peak==c.abort_limit
+            assert len(c.abort_entries)==1
+            assert not first_return['uncleared_nominal_abort_flags'] and not first_return['held_nominal_positive_mode']
+            assert c.tick-first_return['tick']<=c.exit_wait+c.E+2*c.J+2*c.D+2
+        records.append(dict(legacy_partial_return=legacy,peak_mode=peak,full_stop=c.abort_limit,
+                            first_return=first_return,clearance_finished_at=c.tick,milestones=c.abort_milestones,
+                            all_nominal_exit_latches_cleared=all(not a.exiting for a in c.helpers if a.index not in c.bad)))
+    return records
+
 def source_hash(name):
     return sha256((HERE/name).read_text().replace('\r\n','\n').encode()).hexdigest()
 
@@ -803,7 +867,7 @@ def generate():
         print(name,result['ticks'],result['verdict'],flush=True)
     return dict(status='derived conditional cycle and checked finite source histories; first pass',
                 sources={name:source_hash(name) for name in ('CYCLE.md','cycle_model.py')},
-                arithmetic=arithmetic(),rotating_stage=rotating_stage_check(),cases=cases)
+                arithmetic=arithmetic(),rotating_stage=rotating_stage_check(),already_entry_abort=already_entry_abort_check(),cases=cases)
 
 
 def main():
