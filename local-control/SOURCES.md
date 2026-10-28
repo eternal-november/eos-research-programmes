@@ -46,4 +46,19 @@ Decision: graph redundancy and capacity calculus can supply structural component
 
 ## Search and reopening boundary
 
+### Reopened physical-port assessment,2026-10-28
+
+The all-port shunt proposal triggered a new targeted review. [✓] below records primary passages inspected by the independent reviewer and rechecked by the coordinator on this date; it does not validate the complete CYCLE or a commercial device realization.
+
+| Primary source and inspected scope | Supported use and boundary |
+|---|---|
+| [✓] [Gernandt et al., Port-Hamiltonian formulation of nonlinear electrical circuits](https://arxiv.org/pdf/2004.10821), §§2,3.2 | Power-preserving interconnections, dissipative resistance relations and explicit stored/source energy support a conservation-based circuit model. They do not supply Byzantine isolation, access, or a universal force-attenuation device. |
+| [✓] [TI SNVAA45](https://www.ti.com/document-viewer/lit/html/snvaa45), Introduction and Improved Inductive Discharge | Inductive energy needs a physical discharge path; thermal capacity, discharge time and simultaneous channels constrain it. The described circuit is a specific implementation, not a generic unloading guarantee. |
+| [✓] [Analog Devices, active output discharge](https://www.analog.com/en/resources/technical-articles/2017/09/14/04/06/linear-regulators-with-active-output-discharge-target-systems-needing-fast-power-down.html), LT3063 discussion | Input removal can leave a device powered by output capacitance; explicit discharge and functional voltage thresholds matter. No instantaneous clearing or literal finite-time zero-charge premise is imported. |
+| [✓] [TI LM5067 datasheet](https://www.ti.com/lit/ds/symlink/lm5067.pdf), §9.2.2.9.1 | An off switch can retain reverse current through a body diode. Every backfeed/return route must be represented; a named opened contact is not an all-path retirement proof. |
+
+The review's elementary candidate is a bounded current-source divider with R_out=R0/(1-b), R_dump=R0/b, endpoint branches interpreted as open circuits. Kirchhoff/Ohm laws yield I_out=(1-b)J, I_dump=bJ, V=R0J and total power R0J² split between the two branches. A parallel shunt across an ideal stiff voltage source does not imply that attenuation. Mechanical-force ports need their own transducer/reaction relation. The cut must be located on the actual attenuated branch, and finite reserve, discharge, peak load and thermal behavior still require explicit laws and bounds. This comparison supports a specified primitive family, not successful intervention or general hardware fabrication.
+
+Independent examination found a reachable unfunded final powered quantum and an implicit supply cutoff at the first nonzero shunt displacement in the preliminary cycle model. The author repaired both before commit70ce03f; root reproduction then passed. Complete host/tail energy conversion and thermal/source compatibility remain open. The search covered port-energy modeling, inductive discharge, active power-down and backfeed; it was not an exhaustive engineering search or a novelty assessment.
+
 Three complementary searches covered secure/distributed observation, causal sensor-deception supervision, knowledge of action preconditions, mobile/proactive timing and storage, local graph/containment, physical blocking, service calculus and energy scheduling. The inspection levels above distinguish statements from reproduced proofs. The Wakaiki author manuscript was available when its repository route was blocked; the2000 clock paper's full text remained inaccessible. Sparse synchronizers, reset compilers and physical copying are not exhaustively surveyed. Reopen the relevant assessment when the source/operation changes or a result could replace an expensive construction. No absence claim here establishes novelty or universal impossibility.
