@@ -190,8 +190,8 @@ def inference(records, maximum=2000, threshold=None):
     if threshold is not None:
         private['pivot'] = threshold
         for origin,(a,b) in enumerate(records):
-            private['count'] += a.read_compare('le',threshold) if origin == 0 else logical_compare(a,b,'le',threshold)
-            private['reads'] += 1 if origin == 0 else 2
+            private['count'] += logical_compare(a,b,'le',threshold)
+            private['reads'] += 2
             private['work'] += 10
         private['work'] += 3
         return private['count'] >= 7, private
@@ -201,8 +201,8 @@ def inference(records, maximum=2000, threshold=None):
         private['passes'] += 1
         private['work'] += 7
         for origin,(a,b) in enumerate(records):
-            private['count'] += a.read_compare('le',private['pivot']) if origin == 0 else logical_compare(a,b,'le',private['pivot'])
-            private['reads'] += 1 if origin == 0 else 2
+            private['count'] += logical_compare(a,b,'le',private['pivot'])
+            private['reads'] += 2
             private['work'] += 10
         if private['count'] >= 7:
             private['hi'] = private['pivot']
@@ -233,7 +233,7 @@ def parameter_checks():
     elapsed = F(bf+bs,64)+F(work,262144)
     minimum = F(4*raw,1)/F(262144*101,100)
     require(elapsed < 1 and F(17,1)/minimum < 64, 'Frame/egress rates do not close')
-    pf = ceil(F(kf,bf))
+    pf = ceil(F(kf,bf))+1
     require(F(64,1)/F(101,100) > pf+2, 'Fast receipt lifetime cannot bridge publications')
     age = 1+2+2+64+2+3
     error = F(5,1000)+F(3316,1000)*F(age,250000)
@@ -241,13 +241,14 @@ def parameter_checks():
     sizes = []
     for cells in (1,257,8192,65536):
         slow = 40*2*80*cells
-        lifetime = ceil(F(101,100)*(slow+3))
+        period = slow+1
+        lifetime = ceil(F(101,100)*(period+3))
         cap = (1 << lifetime.bit_length())-1
         a_slow = 5+lifetime
         wait = ceil(F(101,100)*(a_slow+1))
         require(F(wait,1)/F(101,100) > a_slow, 'Freeze wait not strictly long enough')
         require(F(lifetime,1)/F(101,100) > slow+2, 'Slow lifetime cannot bridge publications')
-        sizes.append(dict(image_cells=cells,slow_keys=slow,slow_period=slow,receipt_lifetime=lifetime,
+        sizes.append(dict(image_cells=cells,slow_keys=slow,slow_period=period,receipt_lifetime=lifetime,
             corrupted_counter_cap=cap,read_age=a_slow,freeze_local_wait=wait,
             initial_unknown_tail_after_last_receipt=cap,target_scan=10*(80*cells+2),
             conservative_records_per_receiver=160*(slow+kf),
@@ -255,7 +256,7 @@ def parameter_checks():
     return dict(fast_keys=kf,fast_period=pf,frame_word_work=work,frame_elapsed_upper=elapsed,
         deliberate_minimum_frame=minimum,nominal_source_record_rate_upper=F(17,1)/minimum,
         raw_admission_attempt_bound=raw,two_row_word_work=2*row,
-        two_row_raw_reads=2*(1+2*12)*passes,fast_read_age=69,fast_sample_to_effect_age=age,
+        two_row_raw_reads=4*13*passes,fast_read_age=69,fast_sample_to_effect_age=age,
         plant_error=error,fast_corrupted_counter_cap=127,image_sizes=sizes)
 
 
@@ -377,11 +378,15 @@ def logical_vote_cases():
                 'Logical-origin rotating case violates inference/work bound')
         rotated += 1
     low = [(record(970),record(None))]*6+[(record(990),record(None))]*6
-    permitted,_ = inference([(record(970),record(None))]+low,threshold=970)
-    deferred,_ = inference([(record(990),record(None))]+low,threshold=970)
+    permitted,_ = inference([(record(970),record(970))]+low,threshold=970)
+    deferred,_ = inference([(record(990),record(990))]+low,threshold=970)
     require(permitted and not deferred,'Primary observation is not action-relevant')
+    primary_b = [(record(None),record(985))]+[(record(985),record(None)) for _ in range(12)]
+    primary_value,_ = inference(primary_b)
+    require(primary_value == 985,'Retiring physical primaryA lost the logical origin despite readyB')
     return dict(logical_implication_cases=cases,all_six_origin_subsets=rotated,
-                primary_forgery_changes_permission=True,private_algorithm_reads_no_fault_map=True)
+                primary_forgery_changes_permission=True,primary_A_retired_B_supplies=True,
+                primary_two_records_remain_one_origin=True,private_algorithm_reads_no_fault_map=True)
 
 
 def old_tail_and_reuse_cases():
@@ -559,8 +564,8 @@ def countercases():
 
 
 def demand_parameters():
-    source_slots, per_frame, reply_lifetime = 3200,4,818
-    period = ceil(F(source_slots,per_frame))
+    source_slots, per_frame, reply_lifetime = 3200,4,819
+    period = ceil(F(source_slots,per_frame))+1
     response = 2+period+1+2+2
     age = 1+2+2+reply_lifetime
     corrupted_cap = (1 << reply_lifetime.bit_length())-1
@@ -575,7 +580,7 @@ def demand_parameters():
     require(F(reply_lifetime)/F(101,100) > response+1,'First current reply may expire before read')
     require(F(local_freeze_wait)/F(101,100) > age,'Demand freeze wait does not clear old samples')
     require(F(local_read_wait)/F(101,100) >= response+1,'Demand response wait too short')
-    require(per_cell == 828 and corrupted_cap == 1023,'Demand geometry interface changed')
+    require(per_cell == 829 and corrupted_cap == 1023,'Demand geometry interface changed')
     return dict(selected_code_supplier='fixed client-target on-demand passive read',
         source_slots=source_slots,source_visits_per_frame=per_frame,service_period=period,
         response_deadline=response,nominal_receipt_lifetime=reply_lifetime,actual_read_age=age,
@@ -626,7 +631,7 @@ def demand_service_cases():
             time = 900*turn+(client%7)
             key = cells_per_bay+(client+turn)%cells_per_bay
             changes.append((time,key))
-            deadlines.append((slot,time+828,key))
+            deadlines.append((slot,time+829,key))
         # Every source services every slot, including a client that keeps sending
         # malformed requests. These slots consume work but cannot add visits.
         if client == 79:
@@ -663,7 +668,7 @@ def demand_service_cases():
             client,target = divmod(slot,targets)
             if client == 79:
                 continue
-            r = Receipt(818,maximum=invalid-1)
+            r = Receipt(819,maximum=invalid-1)
             # Incoming I may already contain exactly the misleading desired word.
             r.raw_corrupt(key*symbol_count+0,r.cap)
             last = 0
@@ -677,14 +682,14 @@ def demand_service_cases():
             expected = key*symbol_count+intended[key%cells_per_bay]
             require(r.read_compare('eq',expected),'A nominal honest client missed its current key by deadline')
             require(r.packet.physical_key == target*key_count+key,'Response key was not the actual passive head')
-            require(r.nominal_age(F(deadline)) <= 823,'Demand response age exceeds proved bound')
+            require(r.nominal_age(F(deadline)) <= 824,'Demand response age exceeds proved bound')
             good_checks += 1
-            start = deadline-828
+            start = deadline-829
             after = [received for received,packet in events[slot]
                      if start+2 <= packet.sampled and packet.value//symbol_count == key and received <= deadline]
             require(after,'No actually new stabilized-key acquisition before response deadline')
             max_reply_delay = max(max_reply_delay,min(after)-start)
-    require(max_reply_delay <= 807,'Fixed-cycle response proof failed')
+    require(max_reply_delay <= 808,'Fixed-cycle response proof failed')
     require(good_checks == source_count*79*40*3,'All-client check coverage changed')
     # A request may change during conversion. Re-reading its key on emission
     # would misbind the old value; this implementation returns the captured key.
@@ -783,7 +788,7 @@ def producer_adapter_cases():
             'Failed writes falsely advanced a genuinely wrong cell')
     # Old wrong tail remains possible when the alleged entry cue precedes drain.
     claimed_e, wrong_packet_issued, wrong_packet_applied = F(100),F(98),F(104)
-    sampled,received,read = F(103),F(107),F(9249,10)
+    sampled,received,read = F(103),F(107),F(9259,10)
     late = record(None,lifetime=life)
     late.receive(Packet(0,desired,0,sampled,0))
     late.elapse(read-received)
@@ -841,7 +846,7 @@ def producer_adapter_cases():
         copy_bounds.append(dict(write_delay=write_delay,response=t_mut,local_response_wait=local_wait,
             issued_to_read=fused,unfused_cell=unfused,entry_gate=gate_bound,
             unfused_copy_8192=gate_bound+8192*unfused))
-    require(copy_bounds[2]['unfused_cell'] == 839 and copy_bounds[3]['unfused_cell'] == 842,
+    require(copy_bounds[2]['unfused_cell'] == 840 and copy_bounds[3]['unfused_cell'] == 843,
             'Current mutable copy timing changed')
     return dict(expected_write_traces=preservation_cases,prefix_checks=prefix_checks,
         failed_writes_leave_wrong_cursor_blocked=True,failed_write_offers_charged=failed_offers,
@@ -901,6 +906,512 @@ def requester_bank_and_word_cases():
         old_capacity_point_not_inherited=True)
 
 
+class FunctionalPublisher:
+    """One-head microvisits; current/query raw operands I0..5, max data I6.
+
+    W contains only cursor, failure and comparison flags. The ghost sample log
+    is checker-only and is never used to compute a publication or permission.
+    """
+    def __init__(self, degree, pose_words, connectors_a, connectors_b, batch=16, scale=1000):
+        require(min(degree,connectors_a,connectors_b,batch,scale) > 0,'Empty functional catalogue/design')
+        self.degree,self.pose_words,self.counts,self.batch,self.scale = degree,pose_words,(connectors_a,connectors_b),batch,scale
+        self.raw_per_target = pose_words+2*(connectors_a+connectors_b)
+        self.raw_steps = degree*self.raw_per_target
+        self.public_per_target = pose_words+4
+        self.I = [(1<<256)-1]*7
+        self.W = dict(cursor=0,failed=False,compare=False)
+        self.publications = []
+        self.samples = []
+        self.current_samples = []
+        self.operations = {}
+
+    def op(self,name,count=1):
+        self.operations[name] = self.operations.get(name,0)+count
+
+    def decode(self):
+        target,local = divmod(self.W['cursor'],self.raw_per_target)
+        self.op('decode')
+        if local < self.pose_words:
+            return target,None,local,None,None
+        local -= self.pose_words
+        for group in range(4):
+            count = self.counts[group%2]
+            if local < count:
+                return target,group,local,count,3+target*self.public_per_target+self.pose_words+group
+            local -= count
+        raise RuntimeError('Raw cursor escaped its finite catalogue')
+
+    def step(self,time,reader,interleave_query=True,alias_accumulator=False):
+        target,group,connector,count,pubkey = self.decode()
+        if group is None:
+            raw = reader(target,0,connector,'pose',time)
+            self.op('raw_conversion')
+            self.op('raw_range_check')
+            if raw is not None:
+                self.op('offer',2*self.degree)
+            self.W['cursor'] = (self.W['cursor']+1)%self.raw_steps
+            self.op('cursor_advance')
+            return
+        side,kind = group%2,group//2
+        if connector == 0:
+            self.I[6] = 0
+            self.W['failed'] = False
+            self.current_samples = []
+            self.op('aggregate_initialization',2)
+        raw = reader(target,side,connector,'load' if kind == 0 else 'isolation',time)
+        self.op('raw_conversion')
+        bias,error_words = 32,10
+        self.I[1] = (1<<256)-1 if raw is None else bias+raw
+        self.op('raw_range_check')
+        cap = 3000 if kind == 0 else self.scale
+        valid = raw is not None and bias-error_words <= self.I[1] <= bias+cap+error_words
+        if not valid:
+            self.W['failed'] = True
+            self.op('failed_flag_store')
+        else:
+            # Decode valid offset-binary data, then project onto the physical
+            # quantity range. Unavailable status was rejected before clipping.
+            if self.I[1] < bias:
+                self.I[1] = 0
+            else:
+                self.I[1] -= bias
+                if self.I[1] > cap:
+                    self.I[1] = cap
+            self.op('decode_and_clip',3)
+            if kind == 1:
+                self.I[1] = self.scale-self.I[1]
+                self.op('isolation_reverse')
+            # An ordinary comparison followed by a conditional raw I copy.
+            self.W['compare'] = self.I[6] < self.I[1]
+            self.op('raw_compare')
+            if self.W['compare']:
+                self.I[6] = self.I[1]
+                self.op('raw_copy')
+        self.current_samples.append((time,raw))  # Ghost only.
+        self.samples.append((target,side,connector,kind,time,raw))
+        if connector == count-1:
+            value = None if self.W['failed'] else self.I[6]
+            self.publications.append(dict(target=target,side=side,kind=kind,key=pubkey,value=value,
+                samples=self.current_samples[:],published=time))
+            self.op('offer',2*self.degree)
+        self.I[5] = (1<<256)-1
+        self.op('invalidate_current')
+        if interleave_query:
+            for location in range(6):
+                self.I[location] = 0  # An unrelated code-query conversion/copy.
+            self.op('interleaved_query_raw_writes',6)
+            if alias_accumulator:
+                self.I[6] = 0  # Countermodel: actual scratch locations alias.
+        self.W['cursor'] = (self.W['cursor']+1)%self.raw_steps
+        self.op('cursor_advance')
+
+
+def upper_permission(value,margin,limit):
+    # value=None is the unavailable record. A negative unsigned threshold is
+    # never formed: a margin exceeding the limit yields ordinary zero action.
+    return value is not None and 0 <= margin <= limit and value <= limit-margin
+
+
+def functional_inventory_cases():
+    examples = []
+    for p in (1,8,11,39,40,41,80,3360):
+        degree,pose,batch = 40,678,16
+        raw = degree*(pose+4*p)
+        public = 3+degree*(pose+4)
+        period = ceil(F(raw,batch))+1
+        fold = 1+ceil(F(p-1,batch))
+        lifetime = ceil(F(101,100)*(period+2+1))
+        age = fold+2+2+lifetime
+        horizon = age+2+25
+        load_available = F(1,5)+F(2,100)+F(horizon,10000) <= 1
+        isolation_available = F(2,100)+F(horizon,12000) <= F(1,5)
+        examples.append(dict(connectors_per_side=p,raw_maintenance_steps=raw,
+            public_keys=public,per_frame_plant_conversions=3,maintenance_batch=batch,
+            maintenance_publication_period=period,fold_span=fold,receipt_lifetime=lifetime,
+            functional_read_age=age,example_complete_future_horizon=horizon,
+            load_positive_margin=load_available,isolation_positive_margin=isolation_available,
+            point_is_conditional_on_actual_F1_and_physical_rates=True))
+    require(next(x for x in examples if x['connectors_per_side']==40)['isolation_positive_margin'] and not next(x for x in examples if x['connectors_per_side']==41)['isolation_positive_margin'],
+            'Functional inventory/latency sensitivity boundary changed')
+    require(3+16+4 == 23 and 80*(3+16)+4 == 1524,'Publication work count wrong')
+    return dict(examples=examples,public_functional_keys_per_target=4,
+        raw_functional_heads_per_target='2*(P_A+P_B)',maximum_conversions_per_frame=23,
+        maximum_actual_record_offers_per_frame=1524,per_branch_offers_per_frame=23,
+        needed_frame_minimum_for_64_rate=F(23,64),connector_catalogue_is_source_data=True,
+        example_connector_names=['SUPPLY_IN','SUPPLY_RETURN','MAINTENANCE_FEED','MAINTENANCE_RETURN','WORLD1','WORLD2','DATA_TX','DATA_RX','RUNTIME_WRITE','ACTIVE_SENSE','SERVICE'])
+
+
+def functional_fold_cases():
+    cases = groups = missing_cases = full_scale_visits = 0
+    for degree,pose,pa,pb,batch in product((1,2),(0,3),(1,3),(2,7),(1,3,16)):
+        machine = FunctionalPublisher(degree,pose,pa,pb,batch)
+        def read(target,side,connector,kind,time):
+            if kind == 'pose': return 100
+            return 200+17*connector+side if kind == 'load' else 1000-11*connector-side
+        for step in range(machine.raw_steps):
+            frame,position = divmod(step,batch)
+            machine.step(F(frame)+F(position+1,batch+1),read)
+        require(len(machine.publications) == 4*degree,'Missing completed functional group')
+        for item in machine.publications:
+            values = [raw if item['kind'] == 0 else 1000-raw for _,raw in item['samples']]
+            require(item['value'] == max(values),'Ordinary fold differs from independent maximum specification')
+            count = pa if item['side'] == 0 else pb
+            span = 1+ceil(F(count-1,batch))
+            require(item['published']-item['samples'][0][0] <= span,'Oldest-member span violated')
+            groups += 1
+        cases += 1
+    # Every missing head position, including the first and last, stays fatal to
+    # that group even when later readings are small and queries reuse I0..5.
+    for missing_at in range(17):
+        machine = FunctionalPublisher(1,0,17,17,16)
+        def read(target,side,connector,kind,time):
+            if side == 0 and kind == 'load' and connector == missing_at: return None
+            return 200 if kind == 'load' else 1000
+        for step in range(machine.raw_steps): machine.step(F(step,16),read)
+        load_a = next(p for p in machine.publications if p['key'] == 3)
+        require(load_a['value'] is None and not upper_permission(load_a['value'],20,1000),
+                'Missing required head was treated as harmless')
+        require(machine.operations['raw_conversion'] == 68,'Missing head caused unbounded retry or skipped work')
+        missing_cases += 1
+    # One full current-size pose inventory, with a nontrivial asymmetric physical
+    # connector catalogue; compile-time counts are tested separately above.
+    full = FunctionalPublisher(40,678,11,11,16)
+    def full_read(target,side,connector,kind,time):
+        if kind == 'pose': return (target+connector)%1000 if connector < 336 else connector%2
+        return 200+connector%31 if kind == 'load' else 1000-connector%17
+    for step in range(full.raw_steps): full.step(F(step,16),full_read)
+    require(len(full.publications) == 160,'Full layout did not emit every side/kind aggregate')
+    full_scale_visits = full.operations['raw_conversion']
+    return dict(small_decoding_cases=cases,groups_checked=groups,each_missing_head=missing_cases,
+        full_scale_raw_visits=full_scale_visits,full_scale_groups=len(full.publications),
+        full_scale_operation_vector=full.operations,separate_query_scratch_preserves_partial_max=True)
+
+
+def functional_future_cases():
+    checks = 0
+    for count,age,horizon in product((1,2,3,7),(0,1,4,9),(0,1,5)):
+        sample_times = [-F(age*i,max(1,count-1)) for i in range(count)]
+        for noise_sign in (-1,0,1):
+            rates = [F(1+i%3,100) for i in range(count)]
+            truths_at_zero = [F(1,5)+F(i%4,10) for i in range(count)]
+            samples = [truths_at_zero[i]+rates[i]*sample_times[i] for i in range(count)]
+            if min(samples) < 0: continue
+            # Rounding down is included in epsilon=11/1000, not erased.
+            words = [int((x+noise_sign*F(1,100))*1000) for x in samples]
+            words = [max(0,y) for y in words]
+            output = max(words)
+            epsilon = F(11,1000)
+            beta = epsilon+max(rates)*(age+horizon)
+            margin = ceil(1000*beta)
+            future = [truths_at_zero[i]+rates[i]*horizon for i in range(count)]
+            require(all(x <= F(output+margin,1000) for x in future), 'Staggered future envelope fails')
+            if upper_permission(output,margin,1000):
+                require(all(x <= 1 for x in future), 'Passing aggregate violates a connector load limit')
+            checks += 1
+    # Lower isolation is handled by the same upper theorem on1-z.
+    deficit_words = [0,30,50]
+    beta = F(1,100)+F(2,100)
+    require(upper_permission(max(deficit_words),ceil(1000*beta),200), 'Robust insulation fixture unavailable')
+    require(1-F(max(deficit_words),1000)-beta >= F(4,5), 'Reversed functional-isolation guard wrong')
+    return dict(heterogeneous_staggered_future_instances=checks,quantization_in_error=True,
+        functional_isolation_uses_deficit=True)
+
+
+def functional_countercases():
+    # Every pose is correct; the independently measured functionality differs.
+    cases = {}
+    for failure in ('failed_attenuation','failed_insulation'):
+        machine = FunctionalPublisher(1,0,2,2,16)
+        loads = [1200,200] if failure == 'failed_attenuation' else [200,200]
+        isolation = [600,1000] if failure == 'failed_insulation' else [1000,1000]
+        def read(target,side,connector,kind,time):
+            return loads[connector] if kind == 'load' else isolation[connector]
+        for step in range(machine.raw_steps): machine.step(F(step,16),read)
+        load = next(p['value'] for p in machine.publications if p['key'] == 3)
+        deficit = next(p['value'] for p in machine.publications if p['key'] == 5)
+        functional = upper_permission(load,20,1000) and upper_permission(deficit,20,200)
+        position_only = 0+50 <= 400 and 0+50 <= 200  # b=z_pose=1.
+        require(position_only and not functional,'Correct motion hid failed actual functionality')
+        cases[failure] = dict(correct_shunt_and_sleeve_pose=True,position_guard=position_only,
+            actual_loads=loads,actual_isolation=isolation,computed_load=load,computed_deficit=deficit,
+            functional_guard=functional)
+    named_failures = 0
+    for failed_connector in range(11):
+        for failed_kind in ('load','isolation'):
+            machine = FunctionalPublisher(1,0,11,11,16)
+            def named_read(target,side,connector,kind,time):
+                if side == 0 and connector == failed_connector and kind == failed_kind:
+                    return 1200 if kind == 'load' else 600
+                return 200 if kind == 'load' else 1000
+            for step in range(machine.raw_steps): machine.step(F(step,16),named_read)
+            a_load = next(p['value'] for p in machine.publications if p['key'] == 3)
+            a_deficit = next(p['value'] for p in machine.publications if p['key'] == 5)
+            b_load = next(p['value'] for p in machine.publications if p['key'] == 4)
+            b_deficit = next(p['value'] for p in machine.publications if p['key'] == 6)
+            require(not (upper_permission(a_load,20,1000) and upper_permission(a_deficit,20,200)),
+                    'A named actual cut connector was omitted from functional protection')
+            require(upper_permission(b_load,20,1000) and upper_permission(b_deficit,20,200),
+                    'Failure on sideA was silently relabeled as sideB evidence')
+            named_failures += 1
+    # Two connectors swap the high role with an overlap. True max stays1200 at
+    # every point, but p0 is read low at0 and p1 low at2.
+    samples = [200,200]
+    true_states = [[200,1200],[1200,1200],[1200,200]]
+    require(all(max(x) == 1200 for x in true_states),'Scalar-max-rate fixture not constant')
+    folded = max(samples)
+    naive = upper_permission(folded,0,1000)
+    correct = upper_permission(folded,2000,1000)  # per-connector rate1 over2q.
+    require(naive and not correct,'Last-sample/scalar-max-rate flaw missing')
+    # Missing catalogue member: every acquired value is truthful, but not every
+    # physically cut connector is covered.
+    actual = [200,1200]
+    incomplete = [0]
+    require(upper_permission(max(actual[p] for p in incomplete),0,1000) and max(actual)>1000,
+            'Catalogue coverage counterexample missing')
+    # Query-scratch alias destroys a partial max without a new observation.
+    good = FunctionalPublisher(1,0,2,2,16)
+    bad = FunctionalPublisher(1,0,2,2,16)
+    def read(target,side,connector,kind,time):
+        return (1200 if connector == 0 else 200) if kind == 'load' else 1000
+    for step in range(good.raw_steps):
+        good.step(F(step),read)
+        bad.step(F(step),read,alias_accumulator=True)
+    good_word = good.publications[0]['value']; bad_word = bad.publications[0]['value']
+    require(good_word == 1200 and bad_word == 200,'I accumulator/query alias did not change the answer')
+    # A nominal streaming head cannot update between compare and copy unless
+    # its raw word has first been captured. Otherwise even the old max can fall.
+    previous_max,compared_raw,copied_raw = 800,1200,100
+    copied_without_hold = copied_raw if previous_max < compared_raw else previous_max
+    require(copied_without_hold < previous_max,'Unlatched compare/copy counterexample missing')
+    # A raw I accumulator overwrite remains input-only; six false source records
+    # cannot meet the seven-vote threshold, and thirteen aliases can.
+    normal_word = 1200
+    words = [0]*6+[normal_word]*7
+    require(sum(upper_permission(y,0,1000) for y in words) == 6,'Bad-source budget was bypassed')
+    all_alias = [0]*13
+    require(sum(upper_permission(y,0,1000) for y in all_alias) == 13,'Shared target report obstruction missing')
+    # Whole-primary forgery remains action-relevant with twelve fixed auxiliaries.
+    auxiliary = [970]*6+[990]*6
+    require(sum(y<=970 for y in [970]+auxiliary)==7 and sum(y<=970 for y in [990]+auxiliary)==6,
+            'Functional aggregate made primary information decorative')
+    # Unsigned margin subtraction is not a safe saturating rule.
+    limit,margin = 200,201
+    wrapped = (limit-margin)%(1<<256)
+    require(100 <= wrapped and not upper_permission(100,margin,limit),'Margin-underflow obstruction missing')
+    # Each frame has duration1; positions inside frames can still differ.
+    frame_bound,old_sample,new_sample = F(1),F(1,10),F(19,10)
+    require(new_sample-old_sample > frame_bound and new_sample-old_sample <= 2*frame_bound,
+            'Partial-frame service distinction missing')
+    return dict(failed_components=cases,every_declared_connector_and_failure_kind=named_failures,
+        staggered_no_snapshot=dict(sampled_words=samples,actual_snapshot_maxima=[1200,1200,1200],
+            source_result=folded,naive_last_sample_or_scalar_rate_guard=naive,per_connector_age_guard=correct),
+        omitted_connector=dict(actual=actual,catalogue=incomplete,false_permission=True),
+        raw_scratch_alias=dict(correct=good_word,aliased=bad_word,receiving_execution_intact=True),
+        unlatched_compare_copy=dict(previous=previous_max,compared=compared_raw,copied=copied_raw,result=copied_without_hold),
+        raw_accumulator_input_fault=dict(false_origins=6,passing_votes=6,execution_intact=True),
+        shared_target_report=dict(apparent_origins=13,actual_common_dependency=1,affected_slots=13),
+        primary_forgery_changes_guard=True,unsigned_margin_wrap_rejected=True,
+        partial_frame_counterexample=dict(frame_bound=frame_bound,old_sample=old_sample,new_sample=new_sample,
+            actual_gap=new_sample-old_sample))
+
+
+def functional_clipping_cases():
+    cases = 0
+    for true,noise in product((0,1,200,600,990,999,1000),range(-10,11)):
+        raw = true+noise
+        machine = FunctionalPublisher(1,0,1,1)
+        def read(target,side,connector,kind,time): return 200 if kind == 'load' else raw
+        for step in range(machine.raw_steps): machine.step(F(step),read)
+        deficit = next(x['value'] for x in machine.publications if x['key'] == 5)
+        require(deficit is not None,'A valid nominal endpoint error was rejected')
+        clipped = 1000-deficit
+        require(abs(clipped-true) <= abs(noise),'Ordinary clipping enlarged raw error')
+        if true == 1000:
+            require(upper_permission(deficit,20,200),'Full isolation lost availability at an allowed noise sign')
+        if true == 600:
+            require(not upper_permission(deficit,20,200),'Clipping concealed failed insulation')
+        cases += 1
+    safest_cases = 0
+    for load_error,isolation_error in product(range(-10,11),repeat=2):
+        machine = FunctionalPublisher(1,0,11,11)
+        def safest_read(target,side,connector,kind,time):
+            return load_error if kind == 'load' else 1000+isolation_error
+        for step in range(machine.raw_steps): machine.step(F(step),safest_read)
+        load = next(x['value'] for x in machine.publications if x['key'] == 3)
+        deficit = next(x['value'] for x in machine.publications if x['key'] == 5)
+        require(upper_permission(load,20,1000) and upper_permission(deficit,20,200),
+                'Allowed signed noise made every healthy safest-state source abstain')
+        safest_cases += 1
+    for invalid in (None,-11,1011):
+        machine = FunctionalPublisher(1,0,1,1)
+        def read(target,side,connector,kind,time): return 200 if kind == 'load' else invalid
+        for step in range(machine.raw_steps): machine.step(F(step),read)
+        deficit = next(x['value'] for x in machine.publications if x['key'] == 5)
+        require(deficit is None and not upper_permission(deficit,20,200),
+                'Invalid status/data was clipped into permission')
+    return dict(valid_noise_endpoint_cases=cases,safest_load0_isolation1_error_pairs=safest_cases,
+        invalid_band_cases=3,bias=32,
+        numeric_error_words=10,valid_isolation_encoded_band=[22,1042],
+        unavailable_is_separate=True,failed_insulation_still_rejected=True)
+
+
+class LimbAssembler:
+    """Fixed bounded pre-parser circuit. No completion is needed to incur work."""
+    def __init__(self):
+        self.stage = [0]*4
+        self.expected = 0
+        self.partial_left = F(0)
+        self.record = Receipt(64,maximum=(1<<256)-2)
+        self.offers = self.commits = self.resets = self.drops = self.work = 0
+        self.now = F(0)
+
+    def elapse(self,now):
+        delta = now-self.now
+        require(delta >= 0,'Raw circuit time moved backward')
+        self.record.elapse(delta)
+        if self.expected:
+            self.partial_left = max(F(0),self.partial_left-delta)
+            self.work += 1
+            if self.partial_left == 0:
+                self.expected = 0
+                self.resets += 1
+                self.work += 1
+        self.now = now
+
+    def offer(self,kind,ordinal,payload):
+        self.offers += 1
+        self.work += 3  # admission, bounded tag/ordinal decode, payload range.
+        valid_word = 0 <= payload < 1<<64
+        if kind == 'start' and ordinal == 0 and valid_word:
+            if self.expected: self.resets += 1
+            self.stage[0] = payload
+            self.expected = 1
+            self.partial_left = F(2)
+            self.work += 3
+            return None
+        if kind in ('data','end') and valid_word and ordinal == self.expected and self.expected > 0:
+            if (ordinal == 3) != (kind == 'end'):
+                self.expected = 0;self.drops += 1;self.resets += 1;self.work += 2
+                return None
+            self.stage[ordinal] = payload
+            self.work += 2
+            if ordinal == 3:
+                word = sum(value << (64*i) for i,value in enumerate(self.stage))
+                # Complete coherent publication, not a partial-buffer commit.
+                self.record.receive(Packet(0,word,0,self.now,0))
+                self.commits += 1
+                self.expected = 0
+                self.work += 3
+                return word
+            self.expected += 1
+            return None
+        self.expected = 0
+        self.drops += 1
+        self.resets += 1
+        self.work += 2
+        return None
+
+
+def raw_ingress_cases():
+    malformed = LimbAssembler()
+    malformed.record.receive(Packet(0,400,0,F(0),0))
+    for index in range(10000):
+        malformed.elapse(F(index,128))
+        malformed.offer('start',0,index)
+    require(malformed.commits == 0 and malformed.offers == 10000 and malformed.resets >= 9999,
+            'Partial starts escaped raw admission/reset accounting')
+    require(not malformed.record.read_compare('le',1000),'Partial traffic refreshed an old observation')
+    require(malformed.work >= 10000,'Malformed input examination was free')
+    # Exhaust every four-symbol pattern over valid and malformed control events.
+    symbols = [('start',0,1),('data',1,2),('data',2,3),('end',3,4),('reset',0,0),('data',3,5)]
+    patterns = commits = 0
+    for trace in product(symbols,repeat=4):
+        machine = LimbAssembler()
+        actual = []
+        for index,symbol in enumerate(trace):
+            machine.elapse(F(index,1024))
+            result = machine.offer(*symbol)
+            if result is not None: actual.append(result)
+        expected = [1+(2<<64)+(3<<128)+(4<<192)] if tuple(trace) == tuple(symbols[:4]) else []
+        require(actual == expected,'Malformed or partial frame committed a word')
+        require(machine.work <= 12*4+2*4,'Pre-parser body exceeded constant per-symbol work')
+        patterns += 1; commits += len(actual)
+    # An independent bounded sampler does not examine every driver toggle.
+    sender_attempts = 10000
+    accepted_toggles = rejected = 0
+    next_allowed = F(0)
+    transitions = []
+    for index in range(sender_attempts):
+        time = F(index,5000)
+        if time >= next_allowed:
+            transitions.append((time,index))
+            accepted_toggles += 1
+            next_allowed = time+F(1,64)
+        else:
+            rejected += 1
+    receiver_samples = 0
+    observed = []
+    for time in (F(0),F(1),F(2)):
+        level = next((value for at,value in reversed(transitions) if at <= time),0)
+        observed.append(level)
+        receiver_samples += 1
+    require(sender_attempts > accepted_toggles > receiver_samples and rejected > 0,
+            'Sender attempts were confused with receiver sampling')
+    require(accepted_toggles <= 1+64*2,'Physical driver accepted unbounded toggles')
+    # Once a nominal write actually holds at3, a1q propagation plus arbitrary
+    # bounded-rate sampling phase reaches it by5 without a successful RPC flag.
+    stable_checks = 0
+    transitions.append((F(3),777))
+    for phase in (F(0),F(1,4),F(99,100)):
+        samples = []
+        for tick in range(7):
+            now = phase+tick
+            level = next((value for at,value in reversed(transitions) if at+1 <= now),0)
+            samples.append((now,level))
+        require(any(4 <= now <= 5 and value == 777 for now,value in samples),
+                'Held request stabilization exceeds propagation plus sampling bound')
+        stable_checks += 1
+    # Physical circuit point: every raw symbol, not just complete packets.
+    symbol_bound = 160*(4+1040)
+    raw_delay = F(129,256)+F(1,4)+F(513,2048)
+    require(raw_delay == F(2057,2048) and raw_delay < 2,'Raw queue/assembly delay does not close')
+    return dict(partial_offers=malformed.offers,partial_commits=malformed.commits,
+        partial_resets=malformed.resets,partial_work=malformed.work,old_receipt_expired=True,
+        exhaustive_four_symbol_patterns=patterns,committing_patterns=commits,
+        raw_symbol_width_max_bits=96,symbol_burst=4,symbol_rate=1040,
+        symbols_per_receiver_bank_unit_interval=symbol_bound,raw_delay=raw_delay,
+        separate_sender_attempts=sender_attempts,accepted_driver_toggles=accepted_toggles,
+        rejected_sender_attempts=rejected,receiver_samples=receiver_samples,
+        held_request_phase_checks=stable_checks,
+        line_and_timer_power_is_separate=True,helper_output_offers_not_in_publisher_total=True)
+
+
+def acquisition_storage_cases():
+    record_cases = []
+    for lifetime in (6,819,1828,(1<<64)-1):
+        width = lifetime.bit_length()
+        cap = (1<<width)-1
+        fields = dict(data_buffers=512,raw_operand_latch=256,receipt_counters=2*width,
+                      local_key_descriptor=64,selector_validity_commit_status=16)
+        bits = sum(fields.values())
+        require(width <= 64 and bits <= 1024 and lifetime <= cap,'Record allocation/width mismatch')
+        record_cases.append(dict(nominal_lifetime=lifetime,effective_counter_bits=width,
+            arbitrary_counter_cap=cap,fields=fields,field_total_bits=bits,allocation_bits=1024))
+    branch = dict(tx_fifo=128*384,rx_symbol_fifo=512*128,serializer=384,partial_assembly=512,control=128)
+    require(sum(branch.values()) == 115712,'Branch storage bill changed')
+    public_keys = 3+40*(678+4)
+    consumed = 26*(public_keys+40)
+    dense = 160*public_keys+26*40
+    require(public_keys == 27283 and consumed == 710398 and dense == 4366320,'Record inventory wrong')
+    return dict(record_layout_cases=record_cases,parent_record_bits_2048_is_conservative=True,
+        branch_fields=branch,branch_bits=sum(branch.values()),raw_wire_bits_per_symbol=96,
+        raw_wire_bits_per_four_limb_frame=384,held_request_receiver_bits=1024,
+        held_request_sender_bits=512,source_raw_scratch_bits=4096,
+        consumed_records_per_receiver_bank=consumed,dense_records_per_receiver_bank=dense,
+        shared_arrays_need_actual_mapping=True,command_word_bits_per_bank_target=64,
+        world_word_pair_bits=128,physical_timer_and_line_power_is_additional=True)
+
+
 def digest(path):
     return hashlib.sha256(path.read_bytes().replace(b'\r\n',b'\n')).hexdigest()
 
@@ -935,6 +1446,10 @@ def main():
         scope='Periodic physical-origin acquisition component; no source admission or global renewal theorem',
         sources_sha256_lf=before,python_major_minor=list(sys.version_info[:2]),parameters=parameter_checks(),demand_parameters=demand_parameters(),demand_service=demand_service_cases(),
         producer_adapter=producer_adapter_cases(),requester_banks_and_words=requester_bank_and_word_cases(),
+        functional_inventory=functional_inventory_cases(),functional_folds=functional_fold_cases(),
+        functional_future=functional_future_cases(),functional_countercases=functional_countercases(),
+        functional_clipping=functional_clipping_cases(),raw_ingress=raw_ingress_cases(),
+        storage=acquisition_storage_cases(),
         age=cache_and_age_cases(),publication=cyclic_publication_cases(),overlap=overlap_cases(),
         logical_votes=logical_vote_cases(),old_tail_and_reuse=old_tail_and_reuse_cases(),
         masked_entry=masked_first_sweep_cases(),passive_scan=passive_scan_cases(),countercases=countercases(),lean=check_lean(args.lean))

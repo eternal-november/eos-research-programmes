@@ -147,6 +147,84 @@ theorem mutable_response_bound
     (receive : arrived ≤ emitted+wire) :
     arrived ≤ start+max reqDelay writeDelay+period+conversion+cache+wire := by omega
 
+
+/- Whole-side functional upper certificates. The raw samples' physical error,
+variation, time and catalogue coverage instantiate the rowwise hypothesis. -/
+def sampleMaximum : List Nat → Nat
+  | [] => 0
+  | x :: xs => max x (sampleMaximum xs)
+
+theorem member_le_sampleMaximum (xs : List Nat) (x : Nat) (member : x ∈ xs) :
+    x ≤ sampleMaximum xs := by
+  induction xs with
+  | nil => simp at member
+  | cons a tail ih =>
+    simp only [List.mem_cons] at member
+    simp only [sampleMaximum]
+    rcases member with equal | rest
+    · subst x; exact Nat.le_max_left _ _
+    · exact Nat.le_trans (ih rest) (Nat.le_max_right _ _)
+
+theorem sampleMaximum_le (xs : List Nat) (bound : Nat)
+    (all : ∀ x ∈ xs, x ≤ bound) : sampleMaximum xs ≤ bound := by
+  induction xs with
+  | nil => simp [sampleMaximum]
+  | cons a tail ih =>
+    have ha := all a (by simp)
+    have ht := ih (fun x hx => all x (by simp [hx]))
+    simp only [sampleMaximum]
+    omega
+
+theorem conditional_copy_is_maximum (accumulator raw : Nat) :
+    (if accumulator < raw then raw else accumulator) = max accumulator raw := by
+  split <;> omega
+
+theorem maximum_guard_covers_every_connector (rows : List (Nat × Nat)) (margin limit : Nat)
+    (futureEnvelope : ∀ row ∈ rows, row.1 ≤ row.2+margin)
+    (guard : sampleMaximum (rows.map Prod.snd)+margin ≤ limit) :
+    ∀ row ∈ rows, row.1 ≤ limit := by
+  intro row member
+  have sampleMember : row.2 ∈ rows.map Prod.snd := List.mem_map.mpr ⟨row, member, rfl⟩
+  have below := member_le_sampleMaximum (rows.map Prod.snd) row.2 sampleMember
+  have envelope := futureEnvelope row member
+  omega
+
+theorem raw_read_age_from_fold (sample completed emitted received compared fold cache wire retention : Int)
+    (aggregation : completed-sample ≤ fold)
+    (published : emitted-completed ≤ cache)
+    (delivered : received-emitted ≤ wire)
+    (retained : compared-received ≤ retention) :
+    compared-sample ≤ fold+cache+wire+retention := by omega
+
+theorem margin_threshold_safe (reading margin limit : Nat)
+    (formed : margin ≤ limit) (passed : reading ≤ limit-margin) :
+    reading+margin ≤ limit := by omega
+
+theorem unavailable_does_not_pass (limit margin : Nat) :
+    ¬ (limit+1 ≤ limit-margin) := by omega
+
+theorem isolation_deficit_guard (isolation deficit limit scale : Nat)
+    (functional : scale ≤ isolation+deficit) (guard : deficit ≤ limit) :
+    scale-limit ≤ isolation := by omega
+
+
+def clipMeasurement (raw cap : Int) : Int :=
+  if raw < 0 then 0 else if cap < raw then cap else raw
+
+theorem clipping_preserves_error (truth raw cap error : Int)
+    (lower : 0 ≤ truth) (upper : truth ≤ cap) (positiveError : 0 ≤ error)
+    (rawLower : raw-error ≤ truth) (rawUpper : truth ≤ raw+error) :
+    clipMeasurement raw cap-error ≤ truth ∧ truth ≤ clipMeasurement raw cap+error := by
+  unfold clipMeasurement
+  split
+  · omega
+  · split <;> omega
+
+theorem offset_numeric_is_distinct (truth raw cap error bias : Int)
+    (lower : 0 ≤ truth) (upper : truth ≤ cap) (biasBound : error < bias)
+    (rawLower : raw-error ≤ truth) (rawUpper : truth ≤ raw+error) :
+    0 < bias+raw ∧ bias+raw ≤ bias+cap+error := by omega
+
 #print axioms logical_vote_sound
 #print axioms logical_vote_available
 #print axioms duplicate_is_one_vote
@@ -170,5 +248,17 @@ theorem mutable_response_bound
 #print axioms copy_prefix_advance
 #print axioms late_wrong_write_violates
 #print axioms mutable_response_bound
+
+#print axioms member_le_sampleMaximum
+#print axioms sampleMaximum_le
+#print axioms conditional_copy_is_maximum
+#print axioms maximum_guard_covers_every_connector
+#print axioms raw_read_age_from_fold
+#print axioms margin_threshold_safe
+#print axioms unavailable_does_not_pass
+#print axioms isolation_deficit_guard
+
+#print axioms clipping_preserves_error
+#print axioms offset_numeric_is_distinct
 
 end LocalAcquisition
