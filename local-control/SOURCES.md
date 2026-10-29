@@ -46,6 +46,22 @@ Decision: graph redundancy and capacity calculus can supply structural component
 
 ## Search and reopening boundary
 
+### Reopened physical-predicate and effect assessment,2026-10-29
+
+The shared-target switch and common routing counterexamples reopened the source assessment before constructing EFFECTS and FAULT-MAP. The following primary passages were inspected by the independent reviewer and rechecked by the coordinator. Verification concerns the named statements, not a full independent reconstruction of each published proof or a certification of this apparatus.
+
+| Primary source and inspected scope | Import and exact remaining duty |
+|---|---|
+| [✓] [Butler, NASA/TM-2008-215108](https://ntrs.nasa.gov/api/citations/20080009026/downloads/20080009026.pdf), section3.4 and section20.3 | Fault containment requires actual physical/electrical/power separation; redundant sensor processing concerns distinct sensing dependencies. This is architectural guidance, not proof that our regions or process connections are independent. |
+| [✓] [HSE, Control systems](https://www.hse.gov.uk/comah/sragtech/techmeascontsyst.htm), Independence and Sensing | A sensor's process connection and shared utilities belong in common-cause analysis. A faithfully reported shared switch cannot establish a different physical predicate. No local error bound is imported from this guidance. |
+| [✓] [Reissig–Weber–Rungger, Feedback Refinement Relations, v3](https://arxiv.org/pdf/1503.03715), sectionVI.B equations15–20 and TheoremVI.4 | The actual input ranges over a supplied perturbation set, and robust specification transport covers every resulting behavior. The controller/quantizer are unperturbed. Our stateful fault/route map, local inference and actual asynchronous field lifetime remain construction duties. |
+
+The independent reviewer additionally inspected OMRON's [contact explanation](https://www.ia.omron.com/data_pdf/guide/4/safetycompo_tg_e_1_1.pdf), pages2/19, and [manufacturer caution](https://www.ia.omron.com/product/cautions/189/precautions_for_correct_use.html): a welding indicator is not itself successful power interruption. The [DGUV tin-whisker report](https://www.dguv.de/medien/ifa/en/pra/zinnwhisker/ifa_info_zinnwhisker_en.pdf), sections2–3.2, distinguishes architecture-dependent within-channel shorts and cross-channel bridges. These are independently inspected engineering comparisons, not coordinator-verified hardware facts or transferable distance bounds; no numerical geometry in this construction is taken from them.
+
+The reopened Moses reading also narrows its reuse: Theorem3.1 concerns conscious actions whose occurrence is locally determined, and the printed-page243 footnote does not directly include asynchronous systems. It remains a local-decision necessity comparison. Actual pressure/completion uses the explicit effect-set and lifetime argument, not an unqualified import of that theorem.
+
+Disposition: preserve the existing component-indexed prescribed-response interpretation, keep universal issuer-origin/absolute-pressure specifications as distinct stronger branches, and construct actual source interfaces. The component logic does not require every faulty actuator to conform, but it cannot discard a faulty actuator's real68-unit effect by counting one2.2-unit issuer. Uniform failed-driver withdrawal is a possible stronger supplier, with its own storage/fault topology. Bounded searches covered containment, sensor connections, contact semantics, robust input refinement and passive physical release; they establish no novelty or exhaustive hardware adequacy claim.
+
 ### Reopened physical-port assessment,2026-10-28
 
 The all-port shunt proposal triggered a new targeted review. [✓] below records primary passages inspected by the independent reviewer and rechecked by the coordinator on this date; it does not validate the complete CYCLE or a commercial device realization.
