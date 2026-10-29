@@ -289,6 +289,251 @@ def finite_inventory(degree=40, bays=80, image_cells=8192, private_words=32768):
                 thermal_bound=theta_bound, plant_side_effect=plant_side_effect)
 
 
+
+def runtime_inventory():
+    """Bind actual runtime arrays and transfers, keeping raw ratings explicit.
+
+    Finite storage does not imply a power bound. Background-clock price/rate,
+    passive dissipation, generator storage and coupling below are declared
+    source ratings. Their all-history physical realization remains an input.
+    """
+    import port_model as ports
+    import program_model as program
+
+    bound = ports.bounds()
+    port_record = json.loads((HERE/'port_results.json').read_text(encoding='utf-8'))
+    program_record = json.loads((HERE/'program_results.json').read_text(encoding='utf-8'))
+    for record in (port_record, program_record):
+        for name, value in record['sources'].items():
+            require(ports.digest(HERE/name) == value, 'Stale upstream evidence: '+name)
+    require(ports.normalize(bound) == port_record['bounds'], 'Port inventory differs from frozen record')
+    d, b, cells = bound['design']['d'], bound['design']['B'], bound['design']['L']
+    n = 2*b
+    shape = program.Design(degree=d, bays=b, origins=13, image_cells=cells,
+                           fast_batch=16, query_batch=4, maintenance_batch=4,
+                           connectors_a=11, connectors_b=11)
+    compiled = program.Compiler(shape).compile()
+    private_words = compiled.next_register+compiled.constants['DATA_WORDS']+32
+    require(private_words == program_record['full_layout_bounds']['private_words_with_metadata'],
+            'Actual full-program private layout changed')
+    require(len(compiled.nodes) == program_record['full_layout_bounds']['code_cells'],
+            'Actual code layout changed')
+    padded_private_words = 32768
+    require(private_words <= padded_private_words, 'Private memory allocation is too small')
+    keys = compiled.constants['FAST_KEYS']
+    # INCIDENCE's selected sparse layout, not its dense alternative.
+    records_per_bank = 26*(keys+d)
+    require((keys, records_per_bank) == (27283, 710398), 'Selected input layout changed')
+    field_count = 64+8*b
+    generator_count = n*d*field_count  # Deliberate finite per-cartridge overcount.
+    memory = dict(code_and_private=n*(192*cells+256*padded_private_words),
+                  selected_input_records=2*records_per_bank*2048,
+                  source_scratch=n*4096,
+                  request_receivers=2*(2*d*d)*1024,
+                  port_descriptors=bound['descriptor_bits'],
+                  instruction_latches=n*2048,
+                  command_mailboxes=bound['command_mailbox_bits'],
+                  request_mailboxes=bound['request_mailbox_bits'],
+                  data_and_propagation=bound['data_storage_with_propagation_bits'],
+                  passive_target_endpoints=bound['passive_target_endpoint_bits'],
+                  held_fields=2*d*field_count*256,
+                  local_route_metadata=2*(records_per_bank+2*d*d+2*b*d)*128)
+    require(all(value % 2 == 0 for value in memory.values()), 'Installed symmetric bank count is not even')
+    memory_bits = sum(memory.values())
+    autonomous_bits = memory_bits-memory['code_and_private']
+    # A declared clocked-control circuit rating, not inferred from bit count.
+    # It includes reset, expiry, rejection, arbitration and inactive-CPU work.
+    background_rate = F(1 << 31)
+    background_price_per_bit = F(1)
+    raw_rates = [F(2048*101, 100), F(128*101, 100), F(64*101, 100),
+                 F(1040), F(1)/ports.DELTA, F(ports.MU_HARD)]
+    require(all(rate < background_rate for rate in raw_rates), 'Auxiliary rate exceeds chosen circuit rating')
+    background_power = autonomous_bits*background_price_per_bit*background_rate
+    leakage_power = F(memory_bits, 1024)
+    generator_power = generator_count*12
+    # These independent target/receiver circuits are available from U even
+    # while the ordinary bank supply is cut. Source capsules are not reused.
+    external_bank_rows = [
+        ('incoming raw symbols', 2*d, F(8), F(264), F(1040)),
+        ('local passive endpoint work', 2*b*d, F(4096), F(1), F(ports.MU_HARD)),
+    ]
+    external_burst_bank = sum(count*price*sigma for _,count,price,sigma,_ in external_bank_rows)
+    external_rate_bank = sum(count*price*rate for _,count,price,_,rate in external_bank_rows)
+    # Never infer a bank demand envelope by splitting a concentrated host
+    # offer count. Only physically duplicated arrays/chargers are halved.
+    require(external_bank_rows[1][1] == bound['target_slots_per_kind_per_bank'],
+            'One target bank lost neighboring processors')
+    recharge_peak = bound['maximum_local_recharge_power']
+    bank_recharge_peak = recharge_peak/2
+    capsule_bank = F(bound['capsule_energy_capacity'], 2)
+    bank_burst = capsule_bank
+    bank_rate = bank_recharge_peak+F(generator_power, 2)+leakage_power/2
+    # Charge every repeated dump/recharge at continuous installed peak. The
+    # operation-count lower bill does not pay an idle charged slot reset.
+    external_burst = 2*external_burst_bank
+    external_rate = 2*external_rate_bank+background_power+leakage_power
+    bank_charger_output = 2*bank_rate
+    bank_charger_efficiency = F(1,2)
+    total_charger_input = 2*bank_charger_output/bank_charger_efficiency
+    upstream_rate = total_charger_input+external_rate
+    upstream_burst = external_burst
+    latency = F(2)
+    margin = upstream_burst+upstream_rate
+    upstream_capacity = upstream_burst+latency*upstream_rate+margin
+    on = 4*(bank_burst+bank_rate+1)
+    off = 2*on/3
+    bank_capacity = on+4*bank_rate
+    startup = (on+bank_burst)/bank_rate
+    require(on-bank_burst > off, 'Operating threshold cannot pay the initial capsule burst')
+    require(bank_charger_output > bank_rate, 'No positive local charging headroom')
+    # Raw foreign power, in both selected target banks. Every actual portal
+    # has a minimum pulse duration and a finite count; it is not priced from
+    # the number of accepted records alone.
+    target_pulse_power = 2*3*(2*b*d)*bound['per_endpoint_pulse_power']
+    incoming_data_power = 2*(2*d)*(1 << 20)
+    incoming_command_power = 2*(d+1)*128*bound['per_endpoint_pulse_power']
+    incoming_request_power = 2*(2*d*d)*16*bound['per_endpoint_pulse_power']
+    portal_power = target_pulse_power+incoming_data_power+incoming_command_power+incoming_request_power
+    leakage_ratio = F(1)  # Admit the complete rated portal power as backfeed.
+    rho = leakage_ratio*F(portal_power, 2)
+    discharge_k = F(1,10)
+    require(rho <= discharge_k*off/4, 'Actual aggregate portal leakage prevents robust half-cutoff drainage')
+    halvings, threshold = 0, off
+    while threshold < bank_capacity:
+        halvings += 1
+        threshold *= 2
+    drain = 2*halvings/discharge_k
+    robust_drain = 2*(halvings+1)/discharge_k
+    energy_unit = F(1)
+    while bank_capacity/energy_unit > 1 << 20:
+        energy_unit *= 2
+    require(bank_capacity/energy_unit <= 1 << 20, 'Finite energy sensor overflows')
+    sensed_off_threshold = off//energy_unit-2
+    require(off/(2*energy_unit)+1 <= sensed_off_threshold, 'No nonempty robust energy-head interval')
+    require((sensed_off_threshold+1)*energy_unit < off, 'Energy-head rounding can certify above cutoff')
+    # All capsule, field, reservoir and provisionally rated mechanical stock.
+    transducer_store_rating = F(8)
+    transducer_capacity = generator_count*transducer_store_rating
+    total_stored = (upstream_capacity+2*bank_capacity+
+                    bound['isolated_energy_capacity']+transducer_capacity)
+    supply_upper = 2*upstream_rate
+    incoming_other = portal_power+generator_power
+    incoming_power = supply_upper+incoming_other
+    thermal_capacity, cooling_floor = total_stored, incoming_power
+    theta = max(F(1), incoming_power/cooling_floor)+total_stored/thermal_capacity
+    coupling, mechanical_effect = F(1,200), F(1,200)
+    require(theta == 2 and coupling*theta+mechanical_effect < F(1,50), 'Coupled thermal margin failed')
+    require(upstream_capacity-(upstream_burst+upstream_rate*latency) == margin,
+            'Upstream storage envelope changed')
+    command_rate = bound['autonomous_command_rate']
+    request_rate = bound['autonomous_request_rate']
+    autonomous_capsule_rate = ports.PORT_ENERGY*(command_rate+request_rate)
+    require(autonomous_capsule_rate < recharge_peak, 'Sampler funding escaped peak-transfer bill')
+    return dict(scope='runtime-bound conservative resource supplier; physical ratings and joint source remain conditional',
+        design=dict(degree=d,bays=b,image_cells=cells), code_cells=len(compiled.nodes),
+        actual_private_words=private_words, padded_private_words=padded_private_words,
+        fast_keys=keys, selected_records_per_bank=records_per_bank,
+        runtime_slots=bound['installed_slots'], runtime_port_capsules=bound['total_port_slots'],
+        capsule_capacity=bound['capsule_energy_capacity'], data_field_capacity=bound['data_field_energy_capacity'],
+        combined_capsule_field_capacity=bound['isolated_energy_capacity'], memory_categories=memory,
+        memory_bits=memory_bits, autonomous_bits=autonomous_bits,
+        background_clock_rate=background_rate, background_price_per_bit=background_price_per_bit,
+        required_auxiliary_rate_checks=raw_rates, background_power=background_power,
+        leakage_power=leakage_power, generator_count=generator_count,generator_power=generator_power,
+        per_bank_external_rows=[dict(name=name,count=count,price=price,burst=sigma,rate=rate)
+                                for name,count,price,sigma,rate in external_bank_rows],
+        all_capsule_recharge_peak=recharge_peak, per_bank_recharge_peak=bank_recharge_peak,
+        per_bank_burst=bank_burst,per_bank_rate=bank_rate,
+        autonomous_command_rate=command_rate,autonomous_request_rate=request_rate,
+        autonomous_capsule_rate=autonomous_capsule_rate,
+        external_burst=external_burst,external_rate=external_rate,
+        per_bank_charger_output=bank_charger_output,charger_efficiency_lower=bank_charger_efficiency,
+        total_upstream_charger_input=total_charger_input,
+        upstream_burst=upstream_burst,upstream_rate=upstream_rate,
+        outage_latency=latency,reserve_margin=margin,upstream_capacity=upstream_capacity,
+        per_bank_on=on,per_bank_off=off,per_bank_capacity=bank_capacity,
+        per_bank_startup_bound=startup,portal_power=portal_power,
+        target_pulse_power=target_pulse_power,incoming_data_power=incoming_data_power,
+        incoming_command_power=incoming_command_power,incoming_request_power=incoming_request_power,
+        backfeed_fraction=leakage_ratio,per_bank_residual_backfeed=rho,discharge_coefficient=discharge_k,
+        post_cut_halvings=halvings,post_cut_no_launch_bound=drain,
+        post_cut_half_off_bound=robust_drain,sensed_off_threshold=sensed_off_threshold,
+        raw_energy_head_error_units=F(1),
+        energy_head_unit=energy_unit,energy_head_range=bank_capacity/energy_unit,
+        transducer_store_rating=transducer_store_rating,transducer_capacity=transducer_capacity,
+        total_stored_capacity=total_stored,offered_supply_power_upper=supply_upper,
+        other_incoming_power_upper=incoming_other,incoming_power_upper=incoming_power,
+        initial_thermal_excess_upper=F(1),thermal_capacity=thermal_capacity,
+        passive_cooling_floor=cooling_floor,thermal_excess_bound=theta,
+        nonzero_thermal_coupling=coupling,mechanical_effect_upper=mechanical_effect,
+        plant_side_effect_upper=coupling*theta+mechanical_effect,
+        selected_standing_load=leakage_power,
+        actual_outage_drawdown_lower=latency*leakage_power,
+        mechanical_storage_rating_provisional=True,
+        whole_source_conduct_and_return_not_established=True)
+
+
+def reset_recharge_checks():
+    """An idle-reset witness defeats accepted-operation-only energy bills."""
+    from port_model import DELTA, PORT_ENERGY
+    common, slot, dissipated = F(10*PORT_ENERGY), F(0), F(0)
+    initial = common
+    launches = 0
+    for _ in range(10):
+        common -= PORT_ENERGY
+        slot += PORT_ENERGY
+        dissipated += slot
+        slot = F(0)
+        require(common+slot+dissipated == initial, 'Idle reset created energy')
+    require(launches == 0 and dissipated == initial, 'Repeated idle-charge witness lost')
+    elapsed = 10*(DELTA+F(1,128))
+    require(dissipated <= (PORT_ENERGY/DELTA)*elapsed, 'Physical precharge ceiling did not pay idle dumps')
+    return dict(idle_resets=10,accepted_operations=launches,actual_debit=dissipated,
+                elapsed=elapsed,precharge_power=PORT_ENERGY/DELTA,
+                accepted_operation_only_bill_fails=True)
+
+
+
+def runtime_supply_checks(bound):
+    """Actual chronological witness with the same selected D and capacity."""
+    rate, burst = bound['upstream_rate'], bound['upstream_burst']
+    capacity = bound['upstream_capacity']
+    supply = [F(0), F(0), 5*rate/3, 5*rate/3, 5*rate/3, 5*rate/3]*20
+    demand = [rate]*len(supply)
+    demand[0] += burst
+    ok, trace = chronological_stock(demand, supply, capacity, False)
+    require(ok and min(trace) >= bound['reserve_margin'], 'Runtime stock witness loses its reserve')
+    for start in range(6, len(supply), 6):
+        require(trace[start] == capacity and trace[start+2] == capacity-2*rate,
+                'Runtime supply witness has no recurring actual drawdown/recharge')
+    # Primary interval evidence at rational offsets; the written periodic
+    # deficit argument establishes the infinite continuous-time statement.
+    def delivered(t):
+        cycles = t//6
+        phase = t-6*cycles
+        return F(20,3)*cycles+F(5,3)*max(F(0),phase-2)
+    grid = [F(k,4) for k in range(73)]
+    checks = 0
+    for start in grid:
+        for end in grid:
+            if end < start:
+                continue
+            actual = delivered(end)-delivered(start)
+            require(actual >= max(F(0),end-start-2), 'Continuous phase violates latency-rate supply')
+            checks += 1
+    standing = bound['selected_standing_load']
+    poor_capacity = 2*standing-1
+    require(not chronological_stock([standing,standing],[0,0],poor_capacity,False)[0],
+            'Insufficient actual standing-load reserve survives outage')
+    return dict(cycles=20,first_cycle_stock=trace[:7],minimum_stock=min(trace),
+                recurrent_full_recharge=True,phase_interval_checks=checks,
+                supply_period=6,outage_length=2,on_rate=5*rate/3,
+                on_rate_below_upper=(5*rate/3 < bound['offered_supply_power_upper']),
+                lower_envelope_rate=rate,lower_envelope_latency=2,
+                selected_standing_load=standing,positive_outage_drawdown=2*standing,
+                insufficient_actual_capacity=poor_capacity,
+                witness_scope='raw source/stock witness; useful controller and common fault history remain to assemble')
+
 def heat_checks():
     # Discrete linear comparison with explicit impulses: y_next=r*y+heat/h.
     # For all interval heat <= burst + rate*L, convolution is bounded by
@@ -347,12 +592,14 @@ def main():
     parser.add_argument("--write", action="store_true")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    result = encode(dict(status="constructed resource adapter; source/PROGRAM binding and independent review pending",
+    runtime = runtime_inventory()
+    result = encode(dict(status="runtime inventory bound; independent source admission and physical realization remain open",
                          sources={name: sha256((HERE/name).read_bytes().replace(b'\r\n', b'\n')).hexdigest()
-                                  for name in ("RESOURCES.md", "resource_model.py")},
+                                  for name in ("RESOURCES.md", "resource_model.py", "PROGRAM.md", "program_source.py", "program_model.py", "program_results.json", "RUNTIME-PORTS.md", "port_model.py", "port_results.json", "INCIDENCE.md", "ACQUISITION.md")},
                          storage=storage_checks(), reservations=reservation_checks(),
                          recurring=recurrent_supply_checks(), branches=branch_checks(),
                          inventories=[finite_inventory(bays=b) for b in (14, 80)],
+                         runtime_inventory=runtime, runtime_supply=runtime_supply_checks(runtime), idle_recharge=reset_recharge_checks(),
                          heat=heat_checks(), finite_health=finite_health_check()))
     rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
     path = HERE / "resource_results.json"
