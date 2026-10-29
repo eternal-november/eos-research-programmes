@@ -130,6 +130,18 @@ theorem escrow_refund_preserves_total
     (reservedUpdate : afterReserved = beforeReserved-refund) :
     afterFree+afterReserved = beforeFree+beforeReserved := by omega
 
+
+theorem seven_distinct_producers_not_all_in_six
+    (covered producers : Int) (coverBound : covered ≤ 6)
+    (producerCount : producers = 7) (allCovered : producers ≤ covered) : False := by omega
+
+theorem donor_finishes_before_derived_deadline
+    (cue elapsed localWait copyBound completed firstClose : Int)
+    (fastClock : 100*localWait ≤ 101*elapsed)
+    (deadline : 101*copyBound < 100*localWait)
+    (rawCopy : completed ≤ cue+copyBound)
+    (closeTime : cue+elapsed ≤ firstClose) : completed < firstClose := by omega
+
 #print axioms persistent_permission
 #print axioms current_lower_bound
 #print axioms post_tail_sample
@@ -151,4 +163,6 @@ theorem escrow_refund_preserves_total
 #print axioms gain_beyond_four_errors_forces_refresh
 #print axioms small_rank_bin_prevents_second_refresh
 #print axioms escrow_refund_preserves_total
+#print axioms seven_distinct_producers_not_all_in_six
+#print axioms donor_finishes_before_derived_deadline
 end ByzantineHybrid

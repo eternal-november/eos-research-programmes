@@ -502,7 +502,7 @@ def circular_band_checks():
         assert not same_word_range(values,c,4000)
     # Actual normal forward field reaches a retained interior stop, not a new
     # software phase. Fresh reports there inhabit one linear chart.
-    speed=F(1);settle=F(30);age=F(1850);job=F(1);poll=F(12)
+    speed=F(1);settle=F(30);age=F(1953);job=F(1);poll=F(12)
     reached=settle+F(stop)/speed;refreshed=reached+age+poll+job
     good=[stop-1]*3+[stop+1]*4
     healthy_views=[]
@@ -511,7 +511,7 @@ def circular_band_checks():
         valid=same_word_range(current,c,4000)
         assert valid and 0<=c-6000 and c+6000<band
         healthy_views.append(dict(candidate=c,valid=valid,comparisons=work))
-    beta=F(1850)+F(1,4)+job
+    beta=age+F(1,4)+job+27
     assert 2*beta<=4000 and 4000+beta<=6000
     assert F(band,4)>6000
     # Exhaustive quotient soundness on a small circle, including out-of-range
@@ -548,9 +548,9 @@ def abort_contact_checks():
     assert any(decode_entering(w)==1 for w in wrong_return)
     # Full/return retention makes a true ENTERING record too old to survive a
     # completed return. The local ordinary equality quorum then cannot reach7.
-    A=F(1850);J=F(12);D=F(3);tail=F(6)
-    Fmin=F(100,101);Fmax=F(1048577,1048576)
-    post_min=1899*Fmin;post_max=1901*Fmax+J
+    A=F(1953);J=F(12);D=F(3);tail=F(6)
+    Fmin=F(100,101);Fmax=F(1114113,1048576)
+    post_min=2099*Fmin;post_max=2101*Fmax+J
     join=A+post_max+2*J+2*D+tail
     travel=F(8000)
     assert travel>join and post_min>A+J+2*D+tail
@@ -585,8 +585,8 @@ def abort_contact_checks():
 
 def watchdog_checks():
     # The same physical range is used for the old and improved controllers.
-    E=250000000;B=600000000;formation=50000;response=40
-    fastest=F(100,101);slowest=F(1048577,1048576);mu=F(1)
+    E=250000000;B=700000000;formation=50000;response=40
+    fastest=F(100,101);slowest=F(1114113,1048576);mu=F(1)
     def budget(timer,h=None):
         minimum=(timer-1)*fastest;maximum=(timer+1)*slowest
         quantum=(mu*minimum//4) if h is None else h
@@ -598,7 +598,7 @@ def watchdog_checks():
                     legitimate_refresh_by=legitimate,bank_window=window)
     old=budget(2000000000,10);new=budget(2400000000)
     assert new['quantum']>2*E
-    warm=int(new['bank_window']+600000000+1000000)+1
+    warm=int(new['bank_window']+B+1000000)+1
     M=80*warm
     def stall(b):
         bins=(M+int(b['quantum'])-1)//int(b['quantum'])+1
@@ -709,6 +709,204 @@ def port_and_energy_checks():
                 excessive_backfeed_final_lower=rising.numerator//rising.denominator,
                 scope='explicit proposed11-conduit graph; passive portals remain data and their total backfeed enters rho, not zero by omission')
 
+
+def sparse_copy_episode(pool=7,bad=None,deadline=28,true_entry=F(0),old_retire=F(30),all_paths_failed=False):
+    """Scaled finite-word first-motion fragment, not a full renewal execution.
+
+    The baseline write/read/ready-window interfaces are conditional inputs.
+    Every target word is installed by an individual launched write/commit.
+    """
+    bad=set(range(pool-1)) if bad is None else set(bad)
+    image=tuple(range(1,9));cells=[[0]*len(image) for _ in range(2*pool)]
+    actors=[];events=[];serial=0;time=F(0);position=F(0);limit=F(500);cutoff=F(400)
+    force=0;work=F(0);writes=failed=reads=0;first_motion=None;closed=None
+    def add(t,kind,data):
+        nonlocal serial
+        serial+=1;heappush(events,(t,serial,kind,data))
+    for host in range(40):
+        if host in bad:
+            if host<pool:
+                cells[2*host]=[9]*len(image);cells[2*host+1]=[9]*len(image)
+            continue
+        for bank in range(2):
+            end=old_retire if bank==0 else old_retire+4000
+            actor=dict(host=host,bank=bank,end=end,rate=F(100+host%2,100),cue=F(host%3,10),
+                       cursor=0,closing=False,field=0,template=list(image))
+            actors.append(actor);index=len(actors)-1
+            add(actor['cue']+F(2),'visit',index)
+            if deadline is not None:add(actor['cue']+F(deadline)/actor['rate'],'deadline',index)
+            add(end+F(1,2),'off',index)
+    horizon=F(600)
+    add(horizon,'end',None)
+    witnesses_after_retire=[]
+    while events:
+        t,_,kind,data=heappop(events)
+        if t>horizon:break
+        opposing=F(22*min(len(bad),6),5)+1
+        net=force-opposing-28
+        velocity=max(F(0),min(F(1),net)) if position<limit else F(0)
+        if t>time:
+            if velocity>0 and first_motion is None:
+                first_motion=dict(time=time,correct_bays=[j for j,body in enumerate(cells) if tuple(body)==image])
+            old_position=position;position=min(limit,position+velocity*(t-time))
+            if position==limit and closed is None:
+                closed=time+(limit-old_position)/velocity
+            work+=(force+opposing)*(t-time)
+            time=t
+        if kind in ('visit','deadline'):
+            a=actors[data]
+            if t>=a['end']:continue
+            if kind=='deadline':
+                a['closing']=True;add(t+F(1,4),'field',data)
+            else:
+                if position>=F(1,2):a['closing']=True
+                if a['closing'] or a['cursor']==len(image):
+                    a['closing']=True;add(t+F(1,4),'field',data)
+                elif a['host']<pool:
+                    j=2*a['host']+a['bank'];address=a['cursor'];reads+=1
+                    # A single actual cell is sampled; expected-only commits
+                    # preserve a matching value through the computation interval.
+                    match=cells[j][address]==a['template'][address]
+                    add(t+F(1,10),'compare',(data,j,address,match))
+                add(t+1/a['rate'],'visit',data)
+        elif kind=='compare':
+            index,j,address,match=data;a=actors[index]
+            if match:
+                a['cursor']+=1
+                if a['cursor']==len(image):
+                    a['closing']=True;add(t+F(1,4),'field',index)
+            else:
+                if t>=true_entry and position<cutoff and not all_paths_failed:
+                    add(t+F(1,2),'commit',(j,address,a['template'][address]))
+                else:failed+=1
+        elif kind=='commit':
+            j,address,value=data;cells[j][address]=value;writes+=1
+        elif kind=='field':
+            a=actors[data]
+            if t<=a['end']+F(1,2) and a['field']==0:
+                a['field']=2;force+=2
+        elif kind=='off':
+            a=actors[data];force-=a['field'];a['field']=0
+            if a['host']<pool:
+                j=2*a['host']+a['bank']
+                if tuple(cells[j])==image:witnesses_after_retire.append(dict(time=t,bay=j))
+        elif kind!='end':raise AssertionError(kind)
+    correct=[j for j,body in enumerate(cells) if tuple(body)==image]
+    return dict(pool_hosts=pool,bays=2*pool,bad_hosts=sorted(bad),deadline_local=deadline,
+                actual_entry=true_entry,all_constructor_paths_failed=all_paths_failed,old_bank_retire=old_retire,first_motion=first_motion,
+                clamp_closed_at=closed,final_clamp=position,correct_bays=correct,
+                correct_bodies_after_owner_retirement=witnesses_after_retire,
+                individual_writes=writes,rejected_writes=failed,actual_cell_reads=reads,charged_force_work=work,
+                ready_interval_contract=dict(copy_window=26,overlap=310,bank_period=4000,bank_interval=4310,
+                                             same_bank_offline_gap=3690),
+                scope='ordinary-copy/deadline/first-motion projection; full scan/startup/mission and actual external ready-interval production remain baseline suppliers')
+
+
+def sparse_producer_checks():
+    masks=0
+    for bits in range(1<<7):
+        bad={i for i in range(7) if bits&(1<<i)}
+        if len(bad)<=6:
+            assert any(i not in bad for i in range(7));masks+=1
+    rotations=[]
+    for good in range(7):
+        case=sparse_copy_episode(bad=set(range(7))-{good})
+        assert case['first_motion']['correct_bays'] and case['clamp_closed_at'] is not None
+        assert case['correct_bodies_after_owner_retirement']
+        assert case['individual_writes']>0
+        rotations.append(case)
+    interrupted=sparse_copy_episode(old_retire=F(5))
+    assert interrupted['first_motion']['correct_bays']
+    # The new bank completes its own private candidate after the old producer
+    # bank ceased execution. A held good-host label is not a fixed-bank witness.
+    assert all(j%2==1 for j in interrupted['first_motion']['correct_bays'])
+    no_deadline=sparse_copy_episode(deadline=None)
+    assert no_deadline['correct_bays'] and no_deadline['first_motion'] is None
+    early=sparse_copy_episode(deadline=8)
+    assert early['first_motion'] is not None and not early['first_motion']['correct_bays']
+    assert not early['correct_bays']
+    false_entry=sparse_copy_episode(true_entry=F(20))
+    assert false_entry['first_motion'] is not None and not false_entry['first_motion']['correct_bays']
+    shared_failure=sparse_copy_episode(bad=set(),all_paths_failed=True)
+    assert not shared_failure['correct_bays'] and not shared_failure['first_motion']['correct_bays']
+    six=sparse_copy_episode(pool=6,bad=set(range(6)))
+    assert six['first_motion'] is not None and not six['correct_bays']
+    offsets=(-18,-12,-6,1,7,13,19);placements=0
+    for N in (432,504,720):
+        producer_count=[0]*N
+        for target in range(N):
+            pool={(target+offset)%N for offset in offsets}
+            assert len(pool)==7
+            assert all(min((p-target)%N,(target-p)%N)<=20 for p in pool)
+            for p in pool:producer_count[p]+=1
+            placements+=1
+        assert set(producer_count)=={7}
+    cost=[]
+    for B in (80,14):
+        H=38+8*B;raw=40*(H+44);published=3+40*(H+4)
+        cost.append(dict(bays=B,state_heads=H,raw_heads=raw,published_keys=published,
+                         source_query_slots=3200,scan_words=B*8192,
+                         raw_head_cycle_frames=(raw+15)//16+1))
+    assert F(cost[1]['scan_words'],cost[0]['scan_words'])==F(7,40)
+    assert F(28)/F(101,100)>26
+    return dict(status='candidate conditional variant; baseline80-bay program unchanged',
+                coherent_cover_bound=6,producer_hosts=7,bays=14,producer_mask_cases=masks,
+                no_named_always_healthy_producer=True,rotating_one_good_host=rotations,
+                old_bank_interruption=interrupted,without_deadline=no_deadline,
+                early_deadline_failure=early,false_entry_cue_failure=false_entry,
+                insufficient_six_host_pool=six,shared_private_path_failure=shared_failure,ring_offsets=offsets,checked_target_placements=placements,
+                cost_comparison=cost,first_deadline_min=F(28)/F(101,100),
+                donor_completion_bound=26,
+                producer_path_obligation='outside one coherent cover implies usable host reference/execution AND its physically private writable/readable candidate path; a host label alone is insufficient')
+
+
+def data_driver_separation_checks():
+    # Normal c has returned to0 before selected power. The ordinary data route
+    # is therefore connected even during an arbitrarily long force-driver stall.
+    c=0;data_connected=c<CUT_THRESHOLDS[6];supply_connected=c<CUT_THRESHOLDS[0]
+    assert data_connected and supply_connected
+    power=F(0);boot=F(12);request=F(5000);driver=F(1000000)
+    reply=request+825;read=request+850
+    assert power+boot<request<reply<read<driver
+    connected_slot='actual-request-key' if data_connected else None
+    masked_slot=None if request<driver else 'actual-request-key'
+    assert connected_slot is not None and masked_slot is None
+    # Execute both finite scans against genuinely matching frozen bodies.
+    # A missing request is unavailable; it is not a negative code attestation.
+    image=tuple(address%17+1 for address in range(8192))
+    def scan(early_data):
+        offered=request;selected=None;missing=0
+        for bay in range(2):
+            matching=True
+            for address in range(len(image)):
+                slot=(bay,address) if early_data or offered>=driver else None
+                value=image[address] if slot is not None else None
+                if value is None:missing+=1
+                matching=matching and value==image[address]
+                offered+=850
+            if matching and selected is None:selected=bay
+        return selected,missing
+    selected_with_route,full_missing=scan(True)
+    selected_when_first_request_lost,lost_missing=scan(False)
+    assert selected_with_route==0 and selected_when_first_request_lost==1
+    assert full_missing==0 and lost_missing>0
+    information=F(10000);work=F(5000000000);speed=F(1)
+    final_distance=speed*(information+work)+1
+    ready_latest=driver+information;old_field_loss_earliest=driver+final_distance/speed
+    assert old_field_loss_earliest-ready_latest>work
+    parent_tail=F(1,1<<26)+F(1,64)
+    assert 6+parent_tail<7
+    assert 849*F(100,101)>824+7
+    assert 2099*F(100,101)>1953+18
+    assert 2+F(1,64)<3
+    return dict(current_timing=dict(command_stable_bound=2+F(1,64),Dcmd=3,child_write_tail=6,parent_suffix=parent_tail,total_old_write_upper=7,query_age=824,read_gate_min=849*F(100,101),pose_age=1953,stage_gate_min=2099*F(100,101)),data_connected_before_power=data_connected,request_time=request,
+                actual_reply=reply,nominal_read=read,force_driver_time=driver,
+                all_outbound_gated_request_lost=True,missed_word_requests=lost_missing,least_bay_with_actual_route=selected_with_route,
+                least_bay_after_lost_first_request=selected_when_first_request_lost,
+                post_driver_information=information,work_window=work,final_distance=final_distance,
+                guaranteed_ready_field_overlap=old_field_loss_earliest-ready_latest,
+                scope='actual early data/control branch plus later force/world gate; no assumed short activation settling')
+
 def source_hash(name):
     return sha256((HERE/name).read_text(encoding='utf-8-sig').replace('\r\n','\n').encode('utf-8')).hexdigest()
 
@@ -730,7 +928,7 @@ def generate():
                 status='historical conditional F=1 scaling comparison; current PROGRAM schedule is a separate supplier'),status='derived conditional hybrid source with exact event/flow perturbations; first pass',
                 sources={n:source_hash(n) for n in ('HYBRID.md','Hybrid.lean','hybrid_model.py','CYCLE.md','CLAMP.md','CONTINUITY.md','BOOTSTRAP.md')},
                 clocks=clock_checks(),contacts=contact_checks(),normalization=normalization_checks(),
-                word_tails=word_tail_checks(),stages=stage_checks(),circular_cam=circular_band_checks(),abort_contacts=abort_contact_checks(),watchdog=watchdog_checks(),ports=port_and_energy_checks(),direct_revalidation=revalidation_checks(),endpoints=endpoint_checks(),tails_and_events=tails_and_nonzeno_checks()))
+                word_tails=word_tail_checks(),stages=stage_checks(),circular_cam=circular_band_checks(),abort_contacts=abort_contact_checks(),watchdog=watchdog_checks(),ports=port_and_energy_checks(),sparse_producer_variant=sparse_producer_checks(),data_driver_separation=data_driver_separation_checks(),direct_revalidation=revalidation_checks(),endpoints=endpoint_checks(),tails_and_events=tails_and_nonzeno_checks()))
 
 
 def main():

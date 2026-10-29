@@ -121,10 +121,11 @@ class Cycle:
     """
     def __init__(self,bays=5,schedule=0,quiet_watch=False,cold_start=False,
                  bypass_disabled=False,driver_early=False,reconnect_unsafe=False,
-                 injected_inputs=None, reject_abort=True, legacy_partial_abort=False):
+                 injected_inputs=None, reject_abort=True, legacy_partial_abort=False, legacy_phase_gated_cam=False):
         self.bays=bays;self.image,self.main=program()
         self.injected_inputs=injected_inputs or (lambda tick,side:(100,0))
         self.reject_abort=reject_abort;self.legacy_partial_abort=legacy_partial_abort
+        self.legacy_phase_gated_cam=legacy_phase_gated_cam
         self.length=len(self.image);self.J=5;self.D=3;self.E=2;self.qwords=4
         self.theta=30;self.cap=10;self.noise=1;self.force=20;self.badcap=22
         self.lag=self.E+2*self.J+2*self.D
@@ -517,7 +518,8 @@ class Cycle:
                     self.activation[cold]=[self.move(a,self.field(active,"a_force",cold,j),self.warm_at) for j,a in enumerate(self.activation[cold])]
                 if phase==9:self.blend=self.move(self.blend,self.field(active,"blend"),self.blend_limit)
             if offset<self.guard or self.raw_done(half,phase):
-                advance=self.move(0,self.field(active,"cam"),10)
+                cam_force=self.field(active,"cam") if self.legacy_phase_gated_cam else sum(c.get("cam",0) for c in self.outputs)-self.badcap
+                advance=self.move(0,cam_force,10)
                 if advance==10:
                     old_half=half;self.cam=(self.cam+1)%self.total
                     if self.context()[0]!=old_half:self.commits.append(dict(tick=self.tick,anchor=self.anchor))
@@ -847,6 +849,26 @@ def already_entry_abort_check():
                             all_nominal_exit_latches_cleared=all(not a.exiting for a in c.helpers if a.index not in c.bad)))
     return records
 
+
+def unknown_cam_route_check():
+    records=[]
+    for legacy in (False,True):
+        c=Cycle(legacy_phase_gated_cam=legacy)
+        def uncertain_view(actor):
+            view=c.snapshot()
+            # An arbitrary rejected search candidate has a wrong normal route;
+            # the generic CAM field is still meaningful. No substantive action.
+            view.update(half=1,phase=12,offset=c.guard)
+            return view
+        c.view=uncertain_view
+        for _ in range(200):c.step()
+        if legacy:assert c.cam==0
+        else:assert c.context()==(0,1,c.guard)
+        assert not c.violations and not c.application_permission_violations
+        records.append(dict(legacy_phase_filter=legacy,actual_cam=c.cam,actual_context=c.context(),
+                            stopped_at_unfinished_activation=c.context()==(0,1,c.guard)))
+    return records
+
 def source_hash(name):
     return sha256((HERE/name).read_text().replace('\r\n','\n').encode()).hexdigest()
 
@@ -867,7 +889,7 @@ def generate():
         print(name,result['ticks'],result['verdict'],flush=True)
     return dict(status='derived conditional cycle and checked finite source histories; first pass',
                 sources={name:source_hash(name) for name in ('CYCLE.md','cycle_model.py')},
-                arithmetic=arithmetic(),rotating_stage=rotating_stage_check(),already_entry_abort=already_entry_abort_check(),cases=cases)
+                arithmetic=arithmetic(),rotating_stage=rotating_stage_check(),already_entry_abort=already_entry_abort_check(),unknown_cam_route=unknown_cam_route_check(),cases=cases)
 
 
 def main():
