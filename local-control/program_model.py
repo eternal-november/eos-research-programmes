@@ -916,6 +916,10 @@ def circular_checks():
 def processing_certificate(compiled,bounds):
     """Local arithmetic with explicit raw connector inventory; no global win."""
     c=compiled.constants;mu=1<<26;fast=F(101,100);minimum=F(c['FRAME_STEPS'],mu)/fast;own_read_delay=F(1,64);maximum=F(bounds['padded_frame_upper'],mu)+c['MAINT_BATCH']*own_read_delay
+    d_command=F(3);d_data=F(2);d_word=F(6);d_request=F(2);conversion=F(1,64);force_tail=F(6);retirement=F(3)
+    instruction_tail=F(1,mu)+own_read_delay
+    last_word_tail=instruction_tail+d_word
+    stage_causal_tail=retirement+d_word+d_command+force_tail
     require(bounds['active_frame_upper']<=c['FRAME_STEPS'],'Active program exceeds padded frame')
     require(bounds['padded_frame_upper']<1<<64,'Retirement-counter reuse ambiguous within a frame')
     require(F(12*(c['CONVERSION_POLLS']-2),mu*fast)>F(1,64),'Conversion polling can time out before nominal completion')
@@ -924,33 +928,36 @@ def processing_certificate(compiled,bounds):
     maintenance_period=(math.ceil(c['RAW_MAINT_HEADS']/c['FAST_BATCH'])+1)*maximum
     plant_period=2*maximum
     fold=(1+math.ceil((max(c['CONNECTORS_A'],c['CONNECTORS_B'])-1)/c['FAST_BATCH']))*maximum
-    query_lifetime=math.ceil(fast*(query_period+1+2+2))+4
-    maintenance_lifetime=math.ceil(fast*(maintenance_period+1+2+2))+4
+    query_lifetime=math.ceil(fast*(query_period+1+2+d_data))+4
+    maintenance_lifetime=math.ceil(fast*(maintenance_period+1+2+d_data))+4
     plant_lifetime=8
-    require(F(plant_lifetime)/fast>plant_period+2,"Plant receipts expire before the next nominal offer")
+    require(F(plant_lifetime)/fast>plant_period+d_data,"Plant receipts expire before the next nominal offer")
     cap=lambda value:(1<<value.bit_length())-1
     query_cap=cap(query_lifetime);maintenance_cap=cap(maintenance_lifetime);plant_cap=cap(plant_lifetime)
-    query_age=1+2+2+query_lifetime
-    pose_age=1+2+2+maintenance_lifetime
+    query_age=1+2+d_data+query_lifetime
+    pose_age=1+2+d_data+maintenance_lifetime
     functional_age=pose_age+fold
-    plant_age=1+2+2+plant_lifetime
-    require((c['READ_WAIT_FRAMES']-1)*minimum>query_age+6,'Cell wait omits a possible final word tail')
-    require(F(c['BOOT_DRAIN_STEPS'],mu*fast)>3,'Pre-publication drain omits old conversion/reply residence')
+    plant_age=1+2+d_data+plant_lifetime
+    require((c['READ_WAIT_FRAMES']-1)*minimum>query_age+last_word_tail,'Cell wait omits the latched-instruction plus word tail')
+    boot_drain_tail=instruction_tail+conversion+d_data
+    require(F(c['BOOT_DRAIN_STEPS'],mu*fast)>boot_drain_tail,'Pre-publication drain omits the actual causal instruction/conversion/reply suffix')
     boot_time=F(bounds['boot_padded_upper']+16,mu)
     require((c['ENTRY_FRAMES']-1)*minimum>boot_time+max(query_cap,maintenance_cap)+4,'Maintenance entry does not clear arbitrary I debt')
     require((c['PLANT_ENTRY_FRAMES']-1)*minimum>boot_time+plant_cap+4,'Plant entry does not clear its actual I debt')
     per_target=(math.ceil(targets/c['MAINT_BATCH'])+1)*maximum
     stage_wait_min=(c['POST_STAGE_FRAMES']-1)*minimum
-    require(stage_wait_min>pose_age+6,'Post-stage contact wait omits sample age/word tails')
+    require(stage_wait_min>pose_age+stage_causal_tail,'Post-stage contact wait omits sample age and causal retirement/word/command/force tails')
     stage_wait_max=(c['POST_STAGE_FRAMES']+1)*maximum+per_target
-    cell=(c['READ_WAIT_FRAMES']+2*math.ceil(targets/c['MAINT_BATCH'])+2)*maximum+4
+    cell=(c['READ_WAIT_FRAMES']+2*math.ceil(targets/c['MAINT_BATCH'])+2)*maximum+2*d_data
     scan=(c['BAYS']*c['IMAGE_CELLS']+2)*cell+stage_wait_max
     watch_min=(c['WATCH_FRAMES']-1)*minimum
     require(watch_min>scan+per_target,'Full scan can time out before finishing')
     work=max(scan+per_target+8,50000+2*(c['WATCH_FRAMES']+1)*maximum+per_target+40)
-    entry=boot_time+c['ENTRY_FRAMES']*maximum+per_target+8
+    application_tail=d_command+force_tail+retirement
+    require(application_tail<=40,'Nontransferable work allowance omits actual application tails')
+    entry=boot_time+c['ENTRY_FRAMES']*maximum+per_target+application_tail
     compare_to_emit=F(bounds['instruction_upper_bounds']['helper']+64,mu)+own_read_delay
-    withdrawal=per_target+2*3+6+3
+    withdrawal=per_target+2*d_command+force_tail+retirement
     horizon=functional_age+compare_to_emit+withdrawal
     # This is a source-law instantiation, not a guarantee inferred from shunt pose.
     error=F(1,100);load_rate=F(1,10000);isolation_rate=F(1,12000)
@@ -960,17 +967,17 @@ def processing_certificate(compiled,bounds):
     require(F(1,5)+error+F(c['LOAD_MARGIN'],1000)<1,'Working low-load guard lacks useful margin')
     require(error+F(c['ISOLATION_MARGIN'],1000)<F(1,5),'Working isolation guard lacks useful margin')
     require(F(23)/minimum<64,'Nominal branch publication rate exceeds its physical envelope')
-    cam_beta=F(1,4)+pose_age+compare_to_emit
+    cam_beta=F(1,4)+pose_age+compare_to_emit+withdrawal
     require(c['CAM_VERIFY_RADIUS']>=2*cam_beta,'Cam range cannot cover every nominal value at a stable stop')
     require(c['CAM_ERROR']>=c['CAM_VERIFY_RADIUS']+cam_beta,'Cam classification forgets its range certificate radius')
     require(F(c['SEGMENT'],4)>c['CAM_ERROR'],'Cam work stop has no recognizable interior')
-    pose_beta=F(1,4)+500*(pose_age+compare_to_emit)
+    pose_beta=F(1,4)+500*(pose_age+compare_to_emit+withdrawal)
     require(c['POSE_VERIFY_RADIUS']>=2*pose_beta,'Pose range is too narrow for the declared raw rate')
     required_rank_error=c['BAYS']*(c['POSE_VERIFY_RADIUS']+pose_beta)+c['RESERVE_CAP']+10*c['CAM_ERROR']
     require(c['PROGRESS_ERROR']>=required_rank_error,'Progress mark ignores validated pose intervals')
     require(watch_min>scan+per_target+c['HIGH_STEP']+4*c['PROGRESS_ERROR']+1,'A complete scan plus one unit-rate progress milestone can time out')
     native_step_bound=16384
-    return {'connector_counts':[c['CONNECTORS_A'],c['CONNECTORS_B']],'instruction_service_min_per_quantum':mu,'instruction_service_max_per_quantum':str(mu*fast),'frame_min':str(minimum),'frame_max':str(maximum),'own_read_nonretirement_delay':str(own_read_delay),'own_read_waits_per_frame':c['MAINT_BATCH'],'query_period':str(query_period),'maintenance_period':str(maintenance_period),'plant_period':str(plant_period),'functional_fold_span':str(fold),'query_receipt_lifetime':query_lifetime,'maintenance_receipt_lifetime':maintenance_lifetime,'plant_receipt_lifetime':plant_lifetime,'arbitrary_counter_caps':[query_cap,maintenance_cap,plant_cap],'query_age':query_age,'pose_age':pose_age,'functional_age':str(functional_age),'plant_age':plant_age,'comparison_to_emission':str(compare_to_emit),'cut_withdrawal':str(withdrawal),'functional_guard_horizon':str(horizon),'raw_cam_error_and_age_bound':str(cam_beta),'raw_pose_error_and_age_bound':str(pose_beta),'required_progress_error':str(required_rank_error),'cam_work_stop_half_band':c['SEGMENT']//2,'raw_uniform_failed_state_load_rate':str(load_rate),'raw_uniform_failed_state_isolation_rate':str(isolation_rate),'required_load_margin':str(load_needed),'required_isolation_margin':str(gap_needed),'post_stage_wait_min':str(stage_wait_min),'per_target_response':str(per_target),'conservative_cell_transaction':str(cell),'complete_scan':str(scan),'watch_min':str(watch_min),'high_water_step':c['HIGH_STEP'],'long_rank_min_rate':1,'extra_mark_window':str(scan+per_target+c['HIGH_STEP']+4*c['PROGRESS_ERROR']+1),'local_nontransferable_work':str(work),'new_bank_entry_before_driver_geometry':str(entry),'wide_instruction_upper_per_frame':bounds['padded_frame_upper'],'native64_step_upper':native_step_bound,'native64_work_upper_per_frame':native_step_bound*bounds['padded_frame_upper'],'code_cell_transfer_limbs64':3,'reply_transfer_limbs64':4,'private_memory_limbs64':4,'scope':'Conditional LOCAL processor/acquisition/conduct arithmetic for the provisional closed-enclosure11-conduit source and stated connector counts and raw failed-state envelopes. Full connector map, geometry, energy/thermal prices and same-history renewal remain parent obligations.'}
+    return {'raw_delay_bounds':{'command':str(d_command),'data':str(d_data),'word_after_launch':str(d_word),'request':str(d_request),'conversion':str(conversion),'force_tail':str(force_tail),'retirement':str(retirement)},'actual_pending_instruction_tail':str(instruction_tail),'last_possible_word_after_cutoff':str(last_word_tail),'post_stage_causal_tail':str(stage_causal_tail),'boot_causal_tail':str(boot_drain_tail),'helper_command_application':str(per_target+d_command),'world_observation_to_application':str(plant_age+3*maximum+d_command),'world_observation_to_last_effect':str(plant_age+3*maximum+application_tail),'connector_counts':[c['CONNECTORS_A'],c['CONNECTORS_B']],'instruction_service_min_per_quantum':mu,'instruction_service_max_per_quantum':str(mu*fast),'frame_min':str(minimum),'frame_max':str(maximum),'own_read_nonretirement_delay':str(own_read_delay),'own_read_waits_per_frame':c['MAINT_BATCH'],'query_period':str(query_period),'maintenance_period':str(maintenance_period),'plant_period':str(plant_period),'functional_fold_span':str(fold),'query_receipt_lifetime':query_lifetime,'maintenance_receipt_lifetime':maintenance_lifetime,'plant_receipt_lifetime':plant_lifetime,'arbitrary_counter_caps':[query_cap,maintenance_cap,plant_cap],'query_age':int(query_age),'pose_age':int(pose_age),'functional_age':str(functional_age),'plant_age':int(plant_age),'comparison_to_emission':str(compare_to_emit),'cut_withdrawal':str(withdrawal),'functional_guard_horizon':str(horizon),'raw_cam_error_and_age_bound':str(cam_beta),'raw_pose_error_and_age_bound':str(pose_beta),'required_progress_error':str(required_rank_error),'cam_work_stop_half_band':c['SEGMENT']//2,'raw_uniform_failed_state_load_rate':str(load_rate),'raw_uniform_failed_state_isolation_rate':str(isolation_rate),'required_load_margin':str(load_needed),'required_isolation_margin':str(gap_needed),'post_stage_wait_min':str(stage_wait_min),'per_target_response':str(per_target),'conservative_cell_transaction':str(cell),'complete_scan':str(scan),'watch_min':str(watch_min),'high_water_step':c['HIGH_STEP'],'long_rank_min_rate':1,'extra_mark_window':str(scan+per_target+c['HIGH_STEP']+4*c['PROGRESS_ERROR']+1),'local_nontransferable_work':str(work),'new_bank_entry_before_driver_geometry':str(entry),'wide_instruction_upper_per_frame':bounds['padded_frame_upper'],'native64_step_upper':native_step_bound,'native64_work_upper_per_frame':native_step_bound*bounds['padded_frame_upper'],'code_cell_transfer_limbs64':3,'reply_transfer_limbs64':4,'private_memory_limbs64':4,'scope':'Conditional LOCAL processor/acquisition/conduct arithmetic for the provisional closed-enclosure11-conduit source and stated connector counts and raw failed-state envelopes. Full connector map, geometry, energy/thermal prices and same-history renewal remain parent obligations.'}
 
 
 def counter_and_common_image_checks(compiled):
