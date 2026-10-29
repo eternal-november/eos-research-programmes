@@ -155,7 +155,7 @@ def branch_checks():
                 uncharged_connected_bleed_reverses_headroom=True)
 
 
-def finite_inventory(degree=40, bays=80, image_cells=8192):
+def finite_inventory(degree=40, bays=80, image_cells=8192, private_words=32768):
     """Conservative finite source-price witness; not a frozen PROGRAM bill.
 
     Unit energy is the declared price of one native operation. Other positive
@@ -174,7 +174,7 @@ def finite_inventory(degree=40, bays=80, image_cells=8192):
     # row = name, count, event price, event burst, event rate
     bank_rows = [
         ("processor and bounded I/O launch", bays, F(wide_price), F(1), mu_max),
-        ("every incoming data/control/reset symbol", bays * 2 * degree, F(8), F(256), F(256)),
+        ("every incoming data/control/reset symbol", bays * 2 * degree, F(8), F(264), F(1040)),
         ("receipt/timer transition", bays * records_per_processor, F(1), F(2), F(101, 100)),
         # Every neighbor's BOTH banks may direct all their processor attempts
         # at this one bank. Do not divide that host-origin envelope by two.
@@ -187,7 +187,18 @@ def finite_inventory(degree=40, bays=80, image_cells=8192):
     generator_power = processors * degree * field_count * 12
     # Finite conservative code/private/record inventory. This does not certify
     # a complete actual W layout; binding that layout is a separate check.
-    memory_bits = processors * (192 * image_cells + 256 * (image_cells + records_per_processor))
+    record_bits = 2048
+    data_branch_bits = 128 * 384 + 512 * 128 + 384 + 512 + 128
+    request_receiver_bits = 2 * degree * degree * 1024
+    request_sender_bits = 26 * degree * 512
+    source_scratch_bits = 4096
+    # Both directions, padded per-cartridge inventories, every held field and
+    # a separate metadata/source-I allowance. Counter semantic widths are not
+    # increased by this physical padding.
+    memory_bits = (processors * (192 * image_cells + 256 * (private_words + 64 + degree * field_count)
+                                + record_bits * records_per_processor + request_receiver_bits
+                                + request_sender_bits + source_scratch_bits)
+                   + 2 * lanes * data_branch_bits)
     passive_power = F(memory_bits, 1024)
     continuous = generator_power + passive_power
     functional_rate = event_rate + continuous
@@ -221,21 +232,35 @@ def finite_inventory(degree=40, bays=80, image_cells=8192):
     while local_capacity_each / energy_head_unit > (1 << 20):
         energy_head_unit *= 2
     require(local_capacity_each / energy_head_unit <= 1 << 20, "Energy word range overflow")
-    energy_cap = capacity + tail_capacity + local_bank_capacity
+    # Separate from operating/tail stores: every installed transducer may have
+    # passive kinetic, magnetic or electrical storage. Eight is an explicit
+    # illustrative rating, requiring source binding; positions alone do not
+    # prove this bound or discharge their retained effects.
+    transducer_count = processors * degree * field_count
+    stored_energy_per_transducer = F(8)
+    other_stored_capacity = transducer_count * stored_energy_per_transducer
+    energy_cap = capacity + tail_capacity + local_bank_capacity + other_stored_capacity
     # Include finite independent external/backfeed mechanical input as well as
     # upstream offered power. This is a declared source envelope, not zero heat.
-    incoming_power = 2 * rate + generator_power
+    offered_supply_power_cap = 2 * rate
+    other_input_power_cap = generator_power + 2 * backfeed
+    incoming_power = offered_supply_power_cap + other_input_power_cap
     thermal_capacity, cooling = energy_cap, incoming_power
-    theta_bound = F(2)  # incoming_power/cooling + energy_cap/thermal_capacity
+    initial_thermal_excess_upper = F(1)
+    theta_bound = max(initial_thermal_excess_upper, incoming_power/cooling) + energy_cap/thermal_capacity
     thermal_coupling, mechanical_side_effect = F(1, 200), F(1, 200)
     plant_side_effect = thermal_coupling * theta_bound + mechanical_side_effect
     require(plant_side_effect == F(3, 200) < F(1, 50), "Thermal/plant margin failed")
     require(capacity - (burst + 2 * rate) == margin > 0, "Stock margin inconsistent")
-    return dict(design=dict(degree=degree, bays=bays, image_cells=image_cells),
+    return dict(design=dict(degree=degree, bays=bays, image_cells=image_cells, private_words=private_words),
                 scope="finite conservative inventory witness, awaiting actual PROGRAM/port binding",
                 processors=processors, state_heads=state_heads, fast_keys=fast_keys,
                 raw_processor_launch_ceiling=mu_max,
                 records=records, raw_symbol_lanes=lanes, memory_bits=memory_bits,
+                physical_bits_per_record=record_bits, physical_bits_per_data_branch=data_branch_bits,
+                per_processor_padded_request_receiver_bits=request_receiver_bits,
+                per_processor_padded_request_sender_bits=request_sender_bits,
+                per_processor_source_scratch_bits=source_scratch_bits,
                 event_classes=[dict(name=name, count=n, price=c, burst=s, rate=r)
                                for name, n, c, s, r in rows],
                 per_bank_event_classes=[dict(name=name, count=n, price=c, burst=s, rate=r)
@@ -253,7 +278,13 @@ def finite_inventory(degree=40, bays=80, image_cells=8192):
                 energy_head_unit=energy_head_unit, energy_head_range=local_capacity_each/energy_head_unit,
                 outage_latency=2, reserve_margin=margin, capacity=capacity,
                 tail_capacity=tail_capacity, local_bank_capacity=local_bank_capacity,
+                transducer_count=transducer_count,
+                stored_energy_per_transducer=stored_energy_per_transducer,
+                other_stored_capacity=other_stored_capacity,
                 total_stored_capacity=energy_cap, incoming_power=incoming_power,
+                offered_supply_power_cap=offered_supply_power_cap,
+                other_input_power_cap=other_input_power_cap,
+                initial_thermal_excess_upper=initial_thermal_excess_upper,
                 thermal_capacity=thermal_capacity, cooling=cooling,
                 thermal_bound=theta_bound, plant_side_effect=plant_side_effect)
 
@@ -278,8 +309,17 @@ def heat_checks():
     pulse = [10] + [0]*19
     require(F(sum(pulse), len(pulse)) < 1, "Pulse average is not small")
     require(F(pulse[0], h) > 2, "Pulse does not exceed the temperature limit")
+    # With NO passive removal and an uncontrollable residual input, shutdown
+    # of the CPU does not bound the remaining affine temperature trajectory.
+    residual_power, thermal_storage, initial_y, limit = F(1), F(2), F(0), F(2)
+    crossing_time = (limit-initial_y)*thermal_storage/residual_power
+    require(initial_y + residual_power*(crossing_time+1)/thermal_storage > limit,
+            "Missing-sink boundary was hidden by an affected-host label")
     return dict(admitted_heat_histories=accepted, comparison_bound=bound,
                 average_only_temperature_counterexample=True,
+                absent_passive_sink=dict(residual_power=residual_power, thermal_capacity=thermal_storage,
+                                        cpu_power=0, limit=limit, equality_time=crossing_time,
+                                        excess_after_one_more_quantum=True),
                 continuous_statement="written integrating-factor/arrival-envelope proof in RESOURCES.md")
 
 
