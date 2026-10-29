@@ -860,13 +860,29 @@ def sparse_producer_checks():
                 producer_path_obligation='outside one coherent cover implies usable host reference/execution AND its physically private writable/readable candidate path; a host label alone is insufficient')
 
 
-def data_driver_separation_checks():
+def current_program_snapshot():
+    commit='e325a442e83eefbe360249efa0590960c9e8f095'
+    prefix='theories-and-designs/byzantine-control/local-control/'
+    snapshots={};texts={}
+    for name in ('PROGRAM.md','program_source.py','program_model.py','program_results.json','RUNTIME-PORTS.md','port_model.py','port_results.json'):
+        data=subprocess.check_output(['git','show',commit+':'+prefix+name],cwd=HERE)
+        text=data.decode('utf-8-sig').replace('\r\n','\n');texts[name]=text
+        snapshots[name]=dict(commit=commit,path=prefix+name,sha256=sha256(text.encode('utf-8')).hexdigest())
+    record=json.loads(texts['program_results.json'])
+    for checked in (record,json.loads(texts['port_results.json'])):
+        for name,digest in checked['sources'].items():
+            assert snapshots[name]['sha256']==digest
+    return snapshots,record['processing_certificate']
+
+
+def data_driver_separation_checks(certificate):
     # Normal c has returned to0 before selected power. The ordinary data route
     # is therefore connected even during an arbitrarily long force-driver stall.
     c=0;data_connected=c<CUT_THRESHOLDS[6];supply_connected=c<CUT_THRESHOLDS[0]
     assert data_connected and supply_connected
-    power=F(0);boot=F(12);request=F(5000);driver=F(1000000)
-    reply=request+825;read=request+850
+    power=F(0);boot=F(certificate['new_bank_entry_before_driver_geometry']);request=F(5000);driver=F(1000000)
+    query_age=F(certificate['query_age']);read_frames=950;frame_min=F(certificate['frame_min'])
+    reply=request+query_age;read=request+(read_frames-1)*frame_min
     assert power+boot<request<reply<read<driver
     connected_slot='actual-request-key' if data_connected else None
     masked_slot=None if request<driver else 'actual-request-key'
@@ -883,24 +899,25 @@ def data_driver_separation_checks():
                 value=image[address] if slot is not None else None
                 if value is None:missing+=1
                 matching=matching and value==image[address]
-                offered+=850
+                offered+=(read_frames-1)*frame_min
             if matching and selected is None:selected=bay
         return selected,missing
     selected_with_route,full_missing=scan(True)
     selected_when_first_request_lost,lost_missing=scan(False)
     assert selected_with_route==0 and selected_when_first_request_lost==1
     assert full_missing==0 and lost_missing>0
-    information=F(10000);work=F(5000000000);speed=F(1)
+    information=F(10000);work=F(certificate['local_nontransferable_work']);speed=F(1)
+    assert information>F(certificate['new_bank_entry_before_driver_geometry'])
     final_distance=speed*(information+work)+1
     ready_latest=driver+information;old_field_loss_earliest=driver+final_distance/speed
     assert old_field_loss_earliest-ready_latest>work
     parent_tail=F(1,1<<26)+F(1,64)
     assert 6+parent_tail<7
-    assert 849*F(100,101)>824+7
+    assert (read_frames-1)*frame_min>query_age+7
     assert 2099*F(100,101)>1953+18
     assert 2+F(1,64)<3
-    return dict(current_timing=dict(command_stable_bound=2+F(1,64),Dcmd=3,child_write_tail=6,parent_suffix=parent_tail,total_old_write_upper=7,query_age=824,read_gate_min=849*F(100,101),pose_age=1953,stage_gate_min=2099*F(100,101)),data_connected_before_power=data_connected,request_time=request,
-                actual_reply=reply,nominal_read=read,force_driver_time=driver,
+    return dict(current_timing=dict(command_stable_bound=2+F(1,64),Dcmd=3,child_write_tail=6,parent_suffix=parent_tail,total_old_write_upper=7,query_age=query_age,read_wait_frames=read_frames,read_gate_min=(read_frames-1)*frame_min,pose_age=1953,stage_gate_min=2099*F(100,101)),data_connected_before_power=data_connected,request_time=request,
+                local_entry_bound=boot,actual_reply=reply,nominal_read=read,force_driver_time=driver,
                 all_outbound_gated_request_lost=True,missed_word_requests=lost_missing,least_bay_with_actual_route=selected_with_route,
                 least_bay_after_lost_first_request=selected_when_first_request_lost,
                 post_driver_information=information,work_window=work,final_distance=final_distance,
@@ -912,6 +929,7 @@ def source_hash(name):
 
 
 def generate():
+    current_snapshots,current_certificate=current_program_snapshot()
     acquisition_commit='68b0e6bc2ee36c798b56366655711b160759a0df'
     acquisition_path='theories-and-designs/byzantine-control/local-control/ACQUISITION.md'
     acquisition_bytes=subprocess.check_output(['git','show',acquisition_commit+':'+acquisition_path],cwd=HERE)
@@ -923,12 +941,12 @@ def generate():
         data=subprocess.check_output(['git','show',port_commit+':'+path],cwd=HERE)
         normalized=data.decode('utf-8-sig').replace('\r\n','\n').encode('utf-8')
         coordinator_snapshots[filename]=dict(commit=port_commit,path=path,sha256=sha256(normalized).hexdigest())
-    return encode(dict(coordinator_snapshots=coordinator_snapshots,acquisition_interface_snapshot=dict(commit=acquisition_commit,path=acquisition_path,
+    return encode(dict(hash_encoding='UTF-8 with optional BOM removed and CRLF normalized to LF',current_program_runtime_snapshots=current_snapshots,coordinator_snapshots=coordinator_snapshots,acquisition_interface_snapshot=dict(commit=acquisition_commit,path=acquisition_path,
                 sha256=sha256(acquisition_text.encode('utf-8')).hexdigest(),
                 status='historical conditional F=1 scaling comparison; current PROGRAM schedule is a separate supplier'),status='derived conditional hybrid source with exact event/flow perturbations; first pass',
                 sources={n:source_hash(n) for n in ('HYBRID.md','Hybrid.lean','hybrid_model.py','CYCLE.md','CLAMP.md','CONTINUITY.md','BOOTSTRAP.md')},
                 clocks=clock_checks(),contacts=contact_checks(),normalization=normalization_checks(),
-                word_tails=word_tail_checks(),stages=stage_checks(),circular_cam=circular_band_checks(),abort_contacts=abort_contact_checks(),watchdog=watchdog_checks(),ports=port_and_energy_checks(),sparse_producer_variant=sparse_producer_checks(),data_driver_separation=data_driver_separation_checks(),direct_revalidation=revalidation_checks(),endpoints=endpoint_checks(),tails_and_events=tails_and_nonzeno_checks()))
+                word_tails=word_tail_checks(),stages=stage_checks(),circular_cam=circular_band_checks(),abort_contacts=abort_contact_checks(),watchdog=watchdog_checks(),ports=port_and_energy_checks(),sparse_producer_variant=sparse_producer_checks(),data_driver_separation=data_driver_separation_checks(current_certificate),direct_revalidation=revalidation_checks(),endpoints=endpoint_checks(),tails_and_events=tails_and_nonzeno_checks()))
 
 
 def main():

@@ -870,7 +870,7 @@ def unknown_cam_route_check():
     return records
 
 def source_hash(name):
-    return sha256((HERE/name).read_text().replace('\r\n','\n').encode()).hexdigest()
+    return sha256((HERE/name).read_text(encoding='utf-8-sig').replace('\r\n','\n').encode('utf-8')).hexdigest()
 
 
 def generate():
@@ -887,7 +887,7 @@ def generate():
     for name,args in requests:
         result=run_case(name,**args);cases.append(result)
         print(name,result['ticks'],result['verdict'],flush=True)
-    return dict(status='derived conditional cycle and checked finite source histories; first pass',
+    return dict(status='derived conditional cycle and checked finite source histories; first pass',hash_encoding='UTF-8 with optional BOM removed and CRLF normalized to LF',
                 sources={name:source_hash(name) for name in ('CYCLE.md','cycle_model.py')},
                 arithmetic=arithmetic(),rotating_stage=rotating_stage_check(),already_entry_abort=already_entry_abort_check(),unknown_cam_route=unknown_cam_route_check(),cases=cases)
 
