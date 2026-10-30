@@ -290,6 +290,77 @@ def finite_inventory(degree=40, bays=80, image_cells=8192, private_words=32768):
 
 
 
+
+def world_resource_checks():
+    """Resource-only rederivation of the supplied four-channel WORLD RC law.
+
+    The controller/source bridge is INITIAL-RETURN's separate proof. Optional
+    parent source hashes below make its later arrival a record change.
+    """
+    checks=0
+    c=F(100)
+    for r,command,state in product((F(1,2),F(1)),(-F(1),F(0),F(1)),(-F(1),F(0),F(1))):
+        current=(command-state)/r
+        source=command*current
+        heat=r*current*current
+        energy_rate=state*current
+        require(energy_rate==source-heat,'WORLD RC energy balance mismatch')
+        require(c*state*state/2<=50 and source<=4 and heat<=8,'WORLD RC resource envelope failed')
+        checks+=1
+    parent_files=tuple(name for name in ('INITIAL-RETURN.md','initial_return_model.py','initial_return_results.json') if (HERE/name).exists())
+    if (HERE/'initial_return_results.json').exists():
+        actual=json.loads((HERE/'initial_return_results.json').read_text(encoding='utf-8-sig'))['world']['rc']
+        require(actual['host_world_trackers']==4 and actual['capacitance']==100,
+                'Actual WORLD tracker count/capacitance changed')
+        require([F(v) for v in actual['resistance']]==[F(1,2),F(1)],
+                'Actual WORLD resistance interval changed')
+        require((actual['additional_host_storage'],actual['additional_source_power'],actual['instantaneous_resistor_heat_upper'])==(200,16,32),
+                'Actual WORLD physical budget changed')
+    return dict(scope='four fixed RC resource interfaces; controller/effect bridge checked separately',
+        source_interface_snapshot='6d23357',channels=4,capacitance=c,resistance_interval=[F(1,2),F(1)],
+        state_and_command_interval=[-F(1),F(1)],host_storage=F(200),
+        host_source_power=F(16),host_peak_heat=F(32),exact_power_cases=checks,
+        parent_source_files_bound=list(parent_files),
+        controller_world_bridge_not_proved_by_this_resource_check=True)
+
+
+def shared_foreign_heat_family(bound, hosts):
+    """Conserved-network thermal supplier with explicit hard-source inputs.
+
+    Choosing these ratings defines a mathematical source class. Their truth
+    for a physically damaged body is not inferred from nominal field records.
+    """
+    require(hosts>=1,'Empty physical source')
+    hard_stock=bound['total_stored_capacity']
+    hard_external=bound['incoming_power_upper']
+    total_stock=hosts*hard_stock
+    total_external=hosts*hard_external
+    h,k=total_stock,total_external
+    excess=max(F(1),total_external/k)+total_stock/h
+    require(excess==2,'Shared conservation/thermal comparison changed')
+    require(F(1,200)*excess+F(1,200)<F(1,50),'Shared thermal/plant allowance fails')
+    # A foreign source can add heat at a good node without causing another
+    # intrusion there. Only the common energy account licenses this budget.
+    stored=[F(10)]*hosts
+    total_before=sum(stored)
+    transfers=[]
+    if hosts>1:
+        delivered=min(F(5),stored[0])
+        stored[0]-=delivered
+        heat_at_one=delivered
+        require(sum(stored)+heat_at_one==total_before,'Foreign heat created energy')
+        transfers=[dict(source=0,receiver=1,heat=heat_at_one)]
+    return dict(hosts=hosts,scope='conditional whole-network heat rating; raw fault-body inputs require source admission',
+        hard_convertible_stock_cap_per_fixture=hard_stock,
+        hard_external_supply_and_environment_power_per_fixture=hard_external,
+        all_convertible_stock=total_stock,all_external_power=total_external,
+        thermal_capacity_per_fixture=h,passive_cooling_floor_per_fixture=k,
+        initial_thermal_excess_upper=F(1),thermal_excess_bound=excess,
+        plant_effect_upper=F(3,200),conserved_foreign_transfer=transfers,
+        no_new_fault_label_for_heat_receiver=True,
+        raw_hard_cap_is_independent_source_parameter=True,
+        nominal_field_price_does_not_prove_faulty_export_cap=True)
+
 def runtime_inventory():
     """Bind actual runtime arrays and transfers, keeping raw ratings explicit.
 
@@ -299,7 +370,14 @@ def runtime_inventory():
     """
     import port_model as ports
     import program_model as program
+    import boundary_model as boundary
 
+    field = boundary.parameter_checks()
+    field_record = json.loads((HERE/'boundary_results.json').read_text(encoding='utf-8'))
+    for name, value in field_record['sources'].items():
+        require(boundary.digest(name) == value, 'Stale field-boundary evidence: '+name)
+    require(boundary.normalize(field) == field_record['parameters'], 'Field-boundary point differs')
+    world = world_resource_checks()
     bound = ports.bounds()
     port_record = json.loads((HERE/'port_results.json').read_text(encoding='utf-8'))
     program_record = json.loads((HERE/'program_results.json').read_text(encoding='utf-8'))
@@ -325,7 +403,11 @@ def runtime_inventory():
     records_per_bank = 26*(keys+d)
     require((keys, records_per_bank) == (27283, 710398), 'Selected input layout changed')
     field_count = 64+8*b
-    generator_count = n*d*field_count  # Deliberate finite per-cartridge overcount.
+    generator_count = n*d*field_count  # Preserved allocation units, not actual generator count.
+    actual_pairs = field['installed_pairs']
+    require(actual_pairs == 2*d*(15+2*b), 'Physical endpoint-pair count changed')
+    actual_field_stock = actual_pairs*field['raw_field_storage_per_pair']+world['host_storage']
+    actual_field_power = actual_pairs*field['healthy_source_power_per_pair']+world['host_source_power']
     memory = dict(code_and_private=n*(192*cells+256*padded_private_words),
                   selected_input_records=2*records_per_bank*2048,
                   source_scratch=n*4096,
@@ -351,6 +433,7 @@ def runtime_inventory():
     background_power = autonomous_bits*background_price_per_bit*background_rate
     leakage_power = F(memory_bits, 1024)
     generator_power = generator_count*12
+    require(actual_field_power <= generator_power, 'Existing generator delivery budget is too small')
     # These independent target/receiver circuits are available from U even
     # while the ordinary bank supply is cut. Source capsules are not reused.
     external_bank_rows = [
@@ -393,7 +476,11 @@ def runtime_inventory():
     incoming_data_power = 2*(2*d)*(1 << 20)
     incoming_command_power = 2*(d+1)*128*bound['per_endpoint_pulse_power']
     incoming_request_power = 2*(2*d*d)*16*bound['per_endpoint_pulse_power']
-    portal_power = target_pulse_power+incoming_data_power+incoming_command_power+incoming_request_power
+    base_portal_power = target_pulse_power+incoming_data_power+incoming_command_power+incoming_request_power
+    # Conservatively retain all protected field/WORLD return power before the
+    # actual carrier cut; after that cut its isolated state cannot rearm U.
+    ordinary_field_backfeed = actual_field_power
+    portal_power = base_portal_power+ordinary_field_backfeed
     leakage_ratio = F(1)  # Admit the complete rated portal power as backfeed.
     rho = leakage_ratio*F(portal_power, 2)
     discharge_k = F(1,10)
@@ -414,6 +501,7 @@ def runtime_inventory():
     # All capsule, field, reservoir and provisionally rated mechanical stock.
     transducer_store_rating = F(8)
     transducer_capacity = generator_count*transducer_store_rating
+    require(actual_field_stock <= transducer_capacity, 'Existing physical storage allocation is too small')
     total_stored = (upstream_capacity+2*bank_capacity+
                     bound['isolated_energy_capacity']+transducer_capacity)
     supply_upper = 2*upstream_rate
@@ -439,7 +527,13 @@ def runtime_inventory():
         memory_bits=memory_bits, autonomous_bits=autonomous_bits,
         background_clock_rate=background_rate, background_price_per_bit=background_price_per_bit,
         required_auxiliary_rate_checks=raw_rates, background_power=background_power,
-        leakage_power=leakage_power, generator_count=generator_count,generator_power=generator_power,
+        leakage_power=leakage_power, generator_allocation_units=generator_count,generator_power=generator_power,
+        actual_signed_pairs=actual_pairs,actual_force_pair_stock=field['raw_field_storage_per_pair'],
+        actual_force_pair_power=field['healthy_source_power_per_pair'],
+        actual_world_resource_interface=world,actual_field_and_world_stock=actual_field_stock,
+        actual_field_and_world_power=actual_field_power,
+        unused_generator_power_headroom=generator_power-actual_field_power,
+        unused_physical_storage_headroom=transducer_capacity-actual_field_stock,
         per_bank_external_rows=[dict(name=name,count=count,price=price,burst=sigma,rate=rate)
                                 for name,count,price,sigma,rate in external_bank_rows],
         all_capsule_recharge_peak=recharge_peak, per_bank_recharge_peak=bank_recharge_peak,
@@ -453,6 +547,7 @@ def runtime_inventory():
         outage_latency=latency,reserve_margin=margin,upstream_capacity=upstream_capacity,
         per_bank_on=on,per_bank_off=off,per_bank_capacity=bank_capacity,
         per_bank_startup_bound=startup,portal_power=portal_power,
+        base_raw_portal_power=base_portal_power,ordinary_field_backfeed_upper=ordinary_field_backfeed,
         target_pulse_power=target_pulse_power,incoming_data_power=incoming_data_power,
         incoming_command_power=incoming_command_power,incoming_request_power=incoming_request_power,
         backfeed_fraction=leakage_ratio,per_bank_residual_backfeed=rho,discharge_coefficient=discharge_k,
@@ -469,7 +564,9 @@ def runtime_inventory():
         plant_side_effect_upper=coupling*theta+mechanical_effect,
         selected_standing_load=leakage_power,
         actual_outage_drawdown_lower=latency*leakage_power,
-        mechanical_storage_rating_provisional=True,
+        physical_storage_allocation_covers_constructed_field_and_world=True,
+        hard_damaged_body_storage_not_inferred_from_nominal_coil_caps=True,
+        local_thermal_point_requires_its_original_actual_incoming_envelope=True,
         whole_source_conduct_and_return_not_established=True)
 
 
@@ -595,11 +692,12 @@ def main():
     runtime = runtime_inventory()
     result = encode(dict(status="runtime inventory bound; independent source admission and physical realization remain open",
                          sources={name: sha256((HERE/name).read_bytes().replace(b'\r\n', b'\n')).hexdigest()
-                                  for name in ("RESOURCES.md", "resource_model.py", "PROGRAM.md", "program_source.py", "program_model.py", "program_results.json", "RUNTIME-PORTS.md", "port_model.py", "port_results.json", "INCIDENCE.md", "ACQUISITION.md")},
+                                  for name in (("RESOURCES.md", "resource_model.py", "PROGRAM.md", "program_source.py", "program_model.py", "program_results.json", "RUNTIME-PORTS.md", "port_model.py", "port_results.json", "INCIDENCE.md", "ACQUISITION.md", "BOUNDARIES.md", "boundary_model.py", "boundary_results.json", "TRANSDUCER.md", "transducer_model.py", "transducer_results.json")+tuple(name for name in ("INITIAL-RETURN.md", "initial_return_model.py", "initial_return_results.json") if (HERE/name).exists()))},
                          storage=storage_checks(), reservations=reservation_checks(),
                          recurring=recurrent_supply_checks(), branches=branch_checks(),
                          inventories=[finite_inventory(bays=b) for b in (14, 80)],
                          runtime_inventory=runtime, runtime_supply=runtime_supply_checks(runtime), idle_recharge=reset_recharge_checks(),
+                         shared_foreign_heat=[shared_foreign_heat_family(runtime,n) for n in (432,444,504)],
                          heat=heat_checks(), finite_health=finite_health_check()))
     rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
     path = HERE / "resource_results.json"
