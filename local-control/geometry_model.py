@@ -117,7 +117,7 @@ def construct():
         launch_off_threshold_lower=1<<58,discharge_coefficient_lower=F(1,10),
         residual_backfeed_ratio_upper=F(1,20),charge_to_on_upper=charge_bound,
         isolated_nonrearming_tail_capacity=407371776,
-        status='capacity/threshold envelope checked against resource snapshot445bff7; whole-source admission remains separate')
+        status='capacity/threshold envelope checked against resource snapshot89de9b56; whole-source admission remains separate')
     require(F(resource['operating_capacity_upper'],resource['energy_scale'])<=c['RESERVE_CAP'],'Energy head range insufficient')
     halvings=0
     while resource['launch_off_threshold_lower']*(1<<halvings)<resource['operating_capacity_upper']:halvings+=1
@@ -250,7 +250,7 @@ def counterchecks(compiled,result):
 
 
 def bind_resource(compiled,bounds,result):
-    commit='445bff7a11348d9a09870fba78eabc9cc76beb9b'
+    commit='89de9b56c70c7f8609d614688f887b378e6564a7'
     prefix='theories-and-designs/byzantine-control/local-control/'
     payload=subprocess.check_output(['git','show',commit+':'+prefix+'resource_results.json'],cwd=HERE)
     normalized=payload.decode('utf-8-sig').replace('\r\n','\n')
@@ -272,11 +272,31 @@ def bind_resource(compiled,bounds,result):
     require(F(point['per_bank_startup_bound'])<=interface['charge_to_on_upper'],'Carrier recharge exceeds pre-power distance')
     require(F(point['energy_head_unit'])==interface['energy_scale'],'Energy representation mismatch')
     require(point['combined_capsule_field_capacity']==interface['isolated_nonrearming_tail_capacity'],'Funded tail inventory changed')
-    require(F(point['generator_power'])/point['generator_count']==12,'Generator price changed')
-    require(F(22,10)*F(11,10)<=12,'Mechanical maximum power exceeds each generator price')
+    allocation=point['generator_allocation_units']
+    require(F(point['generator_power'])/allocation==12,'Power allocation unit changed')
+    pair_count=2*d.degree*(15+2*d.bays)
+    require(point['actual_signed_pairs']==pair_count,'Actual field array differs from geometry coordinates')
+    require(F(point['actual_force_pair_stock'])==36 and F(point['actual_force_pair_power'])==3000,'Adopted pair rating changed')
+    local_units=d.bays*(64+8*d.bays);local_pairs=15+2*d.bays
+    require(local_pairs*3000<local_units*12 and local_pairs*36<local_units*8,'Same-bank/target allocation cannot fund adopted pairs')
+    require(F(point['actual_field_and_world_power'])==pair_count*3000+16,'WORLD power omitted from actual bound')
+    require(F(point['actual_field_and_world_stock'])==pair_count*36+200,'WORLD storage omitted from actual bound')
+    require(F(point['actual_field_and_world_power'])<point['generator_power'],'Actual aggregate exceeds power allocation')
+    require(F(point['actual_field_and_world_stock'])<F(point['transducer_capacity']),'Actual aggregate exceeds stock allocation')
+    boundary_path=prefix+'boundary_results.json'
+    boundary=json.loads(subprocess.check_output(['git','show',commit+':'+boundary_path],cwd=HERE))
+    parameters=boundary['parameters']
+    require(F(parameters['field_cap'])==F(11,5),'Actual interface does not retain per-coordinate cap')
+    require(F(parameters['complete_command_force_bound'])<3 and F(parameters['open_input_zero_bound'])<6,'Adopted field deadlines exceed the geometry interface')
     return dict(commit=commit,path=prefix+'resource_results.json',sha256=sha256(normalized.encode('utf-8')).hexdigest(),
-        checked_manifest=snapshots,actual_parameters={name:point[name] for name in ('per_bank_capacity','per_bank_off','discharge_coefficient','per_bank_residual_backfeed','per_bank_startup_bound','generator_count','generator_power','energy_head_unit','energy_head_range','post_cut_no_launch_bound','post_cut_half_off_bound','combined_capsule_field_capacity','transducer_store_rating')},
-        new_geometry_storage='quasistatic dissipative carrier/strokes add no length-dependent mechanical store; prior8-per-generator allowance is conservative',
+        checked_manifest=snapshots,actual_parameters={name:point[name] for name in ('per_bank_capacity','per_bank_off','discharge_coefficient','per_bank_residual_backfeed','per_bank_startup_bound','generator_allocation_units','generator_power','actual_signed_pairs','actual_force_pair_stock','actual_force_pair_power','actual_field_and_world_stock','actual_field_and_world_power','energy_head_unit','energy_head_range','post_cut_no_launch_bound','post_cut_half_off_bound','combined_capsule_field_capacity','transducer_store_rating')},
+        actual_field_adapter=dict(per_bank_target_pairs=local_pairs,per_bank_target_allocation_units=local_units,
+            local_pair_power=local_pairs*3000,local_power_allocation=local_units*12,
+            local_pair_store=local_pairs*36,local_store_allocation=local_units*8,
+            source_pair_storage=9,target_pair_storage=27,
+            location='regular40-neighbor graph: per-host outgoing source stores and incoming target stores total36 times14000; these are not a common spendable reservoir',
+            force_response_upper=parameters['complete_command_force_bound'],open_input_zero_upper=parameters['open_input_zero_bound']),
+        new_geometry_storage='mechanical strokes are quasistatic/dissipative; adopted electrical boundary pairs store36 each and WORLD trackers200 perhost, charged against explicit aggregate allocations',
         scope='exact scalar/layout/runtime resource match; physical fault/effect and initialized same-history assembly are not inferred from the inventory')
 
 
