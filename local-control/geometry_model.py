@@ -32,7 +32,7 @@ def source_hash(name):
 
 
 def design(power_at=750000000,warm_at=6400000000):
-    parameters=dict(POSE_MAX=1<<44,LOAD_MARGIN=300,ISOLATION_MARGIN=180,
+    parameters=dict(POSE_MAX=1<<44,LOAD_MARGIN=500,ISOLATION_MARGIN=180,
         ROW_VERIFY_RADIUS=12,POSE_VERIFY_RADIUS=2000000,CAM_VERIFY_RADIUS=4000,
         CLAMP_VERIFY_RADIUS=5000,CAM_ERROR=6000,JOIN_ERROR=8000,JOIN_MARK=5,
         SEGMENT=32000,GUARD=16000,PROGRESS_ERROR=250000000,HIGH_STEP=594059405,
@@ -97,6 +97,20 @@ def construct():
     # Actual normalized isolation/shunt range stays [0,1].
     require(v_plus/iso_length<=F(1,12000),'Actual isolation slew exceeds conduct envelope')
     require(2*v_plus/shunt_length<=F(1,10000),'Working shunt load slew exceeds conduct envelope')
+    horizon=F(cert['functional_guard_horizon']);sensor_error=F(1,100)
+    load_jump=F(1,5);load_slew=F(1,10000)
+    isolation_jump=F(1,10);isolation_slew=v_plus/iso_length
+    load_required=sensor_error+load_slew*horizon+load_jump
+    isolation_required=sensor_error+isolation_slew*horizon+isolation_jump
+    require(load_required<=F(c['LOAD_MARGIN'],1000),'Fast residual load change defeats adopted guard')
+    require(isolation_required<=F(c['ISOLATION_MARGIN'],1000),'Fast bounded isolation bias defeats adopted guard')
+    require(F(1,5)+sensor_error<=1-F(c['LOAD_MARGIN'],1000),'Healthy load never obtains permission')
+    require(F(1,100)+sensor_error<=F(1,5)-F(c['ISOLATION_MARGIN'],1000),'Nominal .99 isolation cannot pass')
+    guard_jump=dict(horizon=horizon,sensor_error=sensor_error,load_slew=load_slew,load_jump=load_jump,
+        isolation_slew=isolation_slew,isolation_jump=isolation_jump,required_load_margin=load_required,
+        required_isolation_margin=isolation_required,selected_load_margin=F(c['LOAD_MARGIN'],1000),
+        selected_isolation_margin=F(c['ISOLATION_MARGIN'],1000),nominal_full_isolation_lower=F(99,100),
+        distinction='bounded residual range change, not a bound on total variation or a zero-slew assumption; source-declared larger unheralded jumps require another bound/obstruction')
     # Every rank contribution remains representable; energy is a bounded raw
     # measurement, never a no-power truth test.
     resource=dict(energy_scale=1<<41,operating_capacity_upper=1<<61,
@@ -171,7 +185,7 @@ def construct():
             driver_at=driver_at,post_driver_information=info,post_driver_overlap=(c['WARM_AT']-driver_at)/v_plus-info,
             iso_length=iso_length,shunt_length=shunt_length,seat_length=seat_length,abort_length=abort_length,
             seating='one rigid carrier; eighty distinct physical bodies and private write leads; aggregate platen force law'),
-        resource_interface=resource,resource_drain=dict(halvings=halvings,no_new_launch_upper=drain,complete_authority_suffix=no_launch_and_tails),
+        guard_jump_certificate=guard_jump,resource_interface=resource,resource_drain=dict(halvings=halvings,no_new_launch_upper=drain,complete_authority_suffix=no_launch_and_tails),
         timing=dict(formation=formation,unknown_cam_probe=probe,settle=settle,copy_cell=own_cell,copy=copy,scan=scan,work=work,boot=boot,
             phase_bounds=phase,normal_band_travel=band_travel,half_cycle=half,abort=abort,rank_spans=spans,maximum_rank=rankmax,
             earliest_timeout=Tmin,latest_timeout=Tmax,timer_window=timer_window,healthy_long_stage_milestone=milestone,
@@ -197,6 +211,21 @@ def actual_helper_checks(compiled):
         results.append(dict(half=half,executed_instructions=m.steps,actual_reset_force=p.fields[(0,c['RESET_PORT'],1-half,0)],
             timer_after=m.W[base+c['TIMER']],cursor_after=m.W[base+c['CURSOR']],source_target_state='formed phase4 with current raw source values; not arbitrary W stabilization'))
     return results
+
+
+def primary_guard_checks(compiled):
+    c=compiled.constants;base=c['TARGET_BASE'];key=3+c['VIEW_WORDS'];out=[]
+    for primary in (490,510):
+        m=pm.Machine(compiled);m.W=[0]*len(m.W);p=pm.RawPorts(compiled)
+        values=[primary]+[490]*6+[510]*6
+        for origin,value in enumerate(values):
+            for bank in range(2):
+                p.fast[(origin,bank,key+1)]=value;p.fast[(origin,bank,key+3)]=0
+        m.enter('permission',(base,1));require(m.run(p,until_yield=False)=='halt','Actual guard failed to return')
+        out.append(dict(primary=primary,actual_result=m.result(),executed_instructions=m.steps))
+    require([x['actual_result'] for x in out]==[1,0],'Main500-threshold primary-consumption witness lost')
+    return dict(cases=out,auxiliary_inputs=[490]*6+[510]*6,actual_constant_load=500,
+        raw_measurement_error=10,isolated_deficit=0,source_scope='same actual functional state and code, different whole-primary-frame contents; all values fit raw error; damaged attenuation may leave this intermediate load')
 
 
 def counterchecks(compiled,result):
@@ -260,6 +289,7 @@ def generate():
     result['resource_binding']=bind_resource(compiled,bounds,result)
     result['actual_phase4']=actual_helper_checks(compiled)
     result['counterchecks']=counterchecks(compiled,result)
+    result['primary_guard_consumption']=primary_guard_checks(compiled)
     result['sources']={name:source_hash(name) for name in ('GEOMETRY.md','geometry_model.py','PROGRAM.md','program_model.py','program_source.py','RUNTIME-PORTS.md','HYBRID.md','CLAMP.md','CONTINUITY.md')}
     return serial(result)
 

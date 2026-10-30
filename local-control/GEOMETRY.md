@@ -29,6 +29,7 @@ The executable constructs and recompiles the actual common image using Design.ph
 | Abort carriage |10000 entering travel and10000 return travel, retained FULL and actual NORMAL_STOP |
 | Watchdog |WATCH2400000000, HIGH_STEP594059405, PROGRESS_ERROR250000000; actual frame range[100/101,1114113/1048576] |
 | Energy head |scale2^41 energy units per head unit; head range at most2^20; never used as a power-off truth flag |
+| Functional margins |LOAD_MARGIN500 and ISOLATION_MARGIN180; the actual norm remains load<=1 and isolation>=.8 |
 
 Since W<28 and G-W-29=11.6, every ordinary long stroke has lower progress min(1,11.6/2)=1 after the compatible fields have actually applied. Cam lower progress is.9. Bad effort alone cannot move a retained coordinate in either direction. The intervals allow nonidentical actual parameters; P(d) is not compiled with their hidden realized values.
 
@@ -63,6 +64,16 @@ The actual nontransferable bank window is5347794885226509/1048576, approximately
 The selected pre-power distance gives750000000/1.1>scan+R. Thus even a first actuator assisted at maximum speed cannot power the selected body before the other maintained scans can finish. The next20000 distance gives20000/1.1>4379.695+2D, covering the current stored formation and old-command clearance. A charger entry bound10000 is also below the pre-power travel; the actual resource construction must establish that charging bound while the supply is connected.
 
 Data/query paths reconnect in phase7 while activation positions are zero, before the prepared-side supply contact. They are already available at selected power-on and remain available during any later activation stall. High-force maintenance and world drivers open only at the later driver threshold. The final distance6400000000−750020000, at maximum speed1.1, leaves a readiness-to-old-field-loss overlap greater than the full nontransferable window even after an additional10000 information allowance. Old shunting cannot remove effective maintenance fields before that endpoint. This proves the geometric inequality consumed by CONTINUITY; it does not independently prove that the new bank's source interfaces or correct image exist.
+
+## Functional changes need not have zero jump or total-variation bounds
+
+The main P(d) now uses LOAD_MARGIN500, giving a report threshold500, while the historical PROGRAM profile300 remains a conditional comparison. This is a changed ordinary program immediate, not a changed safety threshold. With complete functional horizon A_f from the rebound certificate, the actual margin checks are .01+A_f/10000+.2<.5 for load and .01+(11/400000)A_f+.1<.18 for isolation. The.2 and.1 terms are bounds on the change of bounded residual components between sample and use; they allow repeated fast oscillation and do not assert a bound on total variation or zero slew. Reference certificate entries for the older no-jump profiles are not the source hypotheses for this adopted branch.
+
+For example, a load can have a slow component plus an arbitrary residual in[0,.2]. An isolation can be clip_[0,1](kappa zbar+eta_z), with fixed unknown|kappa|<=1, physical zbar speed at most11/400000 and eta_z in[-.05,.05]. This wider damaged-linkage branch still has the stated future envelope. A change in kappa or a larger sudden collapse needs its actual additional jump bound or the explicit no-information/no-common-action obstruction; it is not silently absorbed into.1.
+
+Return availability is a separate condition. At a nominal full shunt, load<=.2 and error.01 comfortably pass threshold.5. At a nominal full isolation stop, require actual isolation>=.99 so worst deficit plus measurement error is at most.02, the actual guard threshold. One nontrivial nominal family has kappa in[.995,1] and eta_nom in[-.005,.005]. Allowing eta_z=-.05 for every nominal linkage would instead permit a permanently nonpassing.95 stop; that larger range belongs to the damaged/exceptional branch when the return theorem excludes persistent physical defects. A failed linkage may therefore be safely refused without being promised repair.
+
+The executed main-image primary witness uses six auxiliary490 readings, six510 readings and primary490 or510 at actual load500 with raw error10. The actual compiled permission function changes from true to false while C and the auxiliary fields remain fixed. Thus the strengthened threshold retains meaningful primary-frame influence; the old690/710 witness does not certify this new image. The accepted case still carries the complete future margin and unchanged functional norm.
 
 ## Energy and rank are different facts
 
