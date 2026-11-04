@@ -292,7 +292,7 @@ def finite_inventory(degree=40, bays=80, image_cells=8192, private_words=32768):
 
 
 def world_resource_checks():
-    """Resource-only rederivation of the supplied four-channel WORLD RC law.
+    """Resource rederivation of RC tracking plus actual controlled-current work.
 
     The controller/source bridge is INITIAL-RETURN's separate proof. Optional
     parent source hashes below make its later arrival a record change.
@@ -316,10 +316,16 @@ def world_resource_checks():
                 'Actual WORLD resistance interval changed')
         require((actual['additional_host_storage'],actual['additional_source_power'],actual['instantaneous_resistor_heat_upper'])==(200,16,32),
                 'Actual WORLD physical budget changed')
-    return dict(scope='four fixed RC resource interfaces; controller/effect bridge checked separately',
+    import hard_boundary_model as hard
+    effect = hard.actual_world_work_checks()
+    require(effect['additional_world_effector_power'] == 4 and effect['total_world_source_power'] == 20,
+            'Actual controlled-current WORLD interface changed')
+    return dict(scope='four RC trackers plus their actual controlled-current outputs on the protected plant prefix',
         source_interface_snapshot='6d23357',channels=4,capacitance=c,resistance_interval=[F(1,2),F(1)],
         state_and_command_interval=[-F(1),F(1)],host_storage=F(200),
-        host_source_power=F(16),host_peak_heat=F(32),exact_power_cases=checks,
+        host_tracker_source_power=F(16),host_effector_source_power=F(4),
+        host_source_power=F(20),host_peak_heat=F(32),exact_power_cases=checks,
+        effector_work=effect,
         parent_source_files_bound=list(parent_files),
         controller_world_bridge_not_proved_by_this_resource_check=True)
 
@@ -692,7 +698,7 @@ def main():
     runtime = runtime_inventory()
     result = encode(dict(status="runtime inventory bound; independent source admission and physical realization remain open",
                          sources={name: sha256((HERE/name).read_bytes().replace(b'\r\n', b'\n')).hexdigest()
-                                  for name in (("RESOURCES.md", "resource_model.py", "PROGRAM.md", "program_source.py", "program_model.py", "program_results.json", "RUNTIME-PORTS.md", "port_model.py", "port_results.json", "INCIDENCE.md", "ACQUISITION.md", "BOUNDARIES.md", "boundary_model.py", "boundary_results.json", "TRANSDUCER.md", "transducer_model.py", "transducer_results.json")+tuple(name for name in ("INITIAL-RETURN.md", "initial_return_model.py", "initial_return_results.json") if (HERE/name).exists()))},
+                                  for name in (("RESOURCES.md", "resource_model.py", "PROGRAM.md", "program_source.py", "program_model.py", "program_results.json", "RUNTIME-PORTS.md", "port_model.py", "port_results.json", "INCIDENCE.md", "ACQUISITION.md", "BOUNDARIES.md", "boundary_model.py", "boundary_results.json", "TRANSDUCER.md", "transducer_model.py", "transducer_results.json", "HARD-BOUNDARY.md", "hard_boundary_model.py")+tuple(name for name in ("INITIAL-RETURN.md", "initial_return_model.py", "initial_return_results.json") if (HERE/name).exists()))},
                          storage=storage_checks(), reservations=reservation_checks(),
                          recurring=recurrent_supply_checks(), branches=branch_checks(),
                          inventories=[finite_inventory(bays=b) for b in (14, 80)],
