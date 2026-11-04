@@ -436,7 +436,7 @@ def microinstruction_checks():
     require(conservative+reset_delay <= available, 'Remote private reset exceeds the instruction interval')
     raw_capture_price, link_price = 1024, 1024
     require(work+raw_capture_price+link_price <= 20480, 'Comparator exceeds I/O energy price')
-    capture_bits = 2*80*(2*40+1)*256
+    capture_bits = 2*80*(3*40)*256
     record_padding = (2048-976)*(2*26*(27283+40))
     require(capture_bits <= record_padding, 'Raw snapshot latches lack paid I storage')
     return dict(native_step_allocation=costs, native_steps=work,

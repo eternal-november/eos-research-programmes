@@ -41,7 +41,7 @@ theorem negative_private_threshold_rejects (raw threshold : Int)
 
 theorem private_and_raw_allocations :
     20362 + 8*(2*40+1) ≤ (32768 : Nat) ∧
-    2*80*(2*40+1)*256 ≤ (2048-976)*(2*26*(27283+40)) := by decide
+    2*80*(3*40)*256 ≤ (2048-976)*(2*26*(27283+40)) := by decide
 
 #print axioms projection_length
 #print axioms projection_covers
