@@ -165,6 +165,12 @@ def private_point():
     rho=F(1); eq=c*rho**2/(2*bleed**2)
     reset_energy=c*32**2/2
     require(2*eq<=reset_energy,"Raw leakage can hold private execution above reset")
+    # Halve E itself while above threshold; do not halve E-equilibrium and
+    # mistakenly omit the residual 128*c.
+    for multiplier in (1,2,4,1024):
+        energy=reset_energy*multiplier
+        require(-bleed*energy/c+rho*rho/(2*bleed)<=-bleed*energy/(2*c),
+                "Threshold-relative decay comparison is invalid")
     start_energy=c*vmax**2
     half=0; bound=reset_energy
     while bound<start_energy: half+=1; bound*=2
