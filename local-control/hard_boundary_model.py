@@ -64,15 +64,18 @@ def inventory():
     require(macro_vertices<nodes_per_zone, 'Finite macro material interface does not fit')
     zones = 2
     nearby_world_terminals = 6  # two coordinates in own/adjacent regions
-    world_cut_edges = zones * nodes_per_zone * nearby_world_terminals
+    world_terminal_pairs = zones * nodes_per_zone * nearby_world_terminals
     all_cut_edges = 2**48
-    require(world_cut_edges < all_cut_edges, 'World edges omitted from all-port cut')
+    # Count physical strands, including parallel bridges; terminal pairs alone
+    # do not bound aggregate conductance after a local rewiring fault.
+    world_cut_edges = all_cut_edges
+    require(world_terminal_pairs < all_cut_edges, 'World pairs exceed available physical strands')
     world_cap = world_cut_edges * (i0 + 2*gmax*vfeed)
     complete_stock = body_cap + feed_cap
-    exogenous_power = F(2**96)
+    other_positive_inflow = F(2**96)
     # Body/feed exchange cancels; all other positive cut work has this cap.
     local_cut_power = all_cut_edges * vfeed * (i0 + 2*gmax*vfeed)
-    heat_power = local_cut_power + exogenous_power
+    heat_power = local_cut_power + other_positive_inflow
     return dict(nominal_inventory_source='resource_results.json', raw_body_parts=parts,
         body_inventory_sum=body, hard_body_capacity=body_cap, hard_feed_capacity=feed_cap,
         hard_nonthermal_convertible_capacity=complete_stock,
@@ -81,8 +84,10 @@ def inventory():
         body_voltage_bound=vbody, feed_voltage_bound=vfeed,
         material_nodes_per_zone=nodes_per_zone, macro_terminal_budget=macro_vertices, zones_per_host=zones,
         nearby_world_terminals=nearby_world_terminals,
-        potential_world_crosswires=world_cut_edges, all_external_cut_edges=all_cut_edges,
-        world_export_cap=world_cap, exogenous_power_upper=exogenous_power,
+        world_terminal_pairs=world_terminal_pairs,
+        potential_world_crosswires_including_parallel=world_cut_edges, all_external_cut_edges=all_cut_edges,
+        world_export_cap=world_cap, other_positive_inflow_upper=other_positive_inflow,
+        other_inflow_scope='all non-electrical positive boundary work plus exogenous electrical supply not in conductive cut',
         all_positive_external_cut_power=local_cut_power,
         local_heat_interval_rate=heat_power,
         local_thermal_capacity=complete_stock, passive_cooling_floor=heat_power,
@@ -270,6 +275,10 @@ def typed_graph_checks():
                 back=tuple((target+k)%N2 for k in offsets).index(origin)
                 require(back==39-offset, 'Translation changed actual writer ordinal')
                 ordinal_checks+=1
+    parallel_count_counterexample=dict(source_voltage=1,world_voltage='1/2',
+        conductance_each=1,parallel_strands=5,actual_total_current='5/2',
+        false_single_pair_bound=2)
+    require(F(5,2)>2,'Parallel strand counterexample lost')
     nominal_world_ports=4
     new_crosswire_flow=F(5)
     require(new_crosswire_flow>nominal_world_ports, 'Maintenance-to-world countercase lost')
@@ -279,6 +288,7 @@ def typed_graph_checks():
         physical_aliases_count_once=True,
         arbitrary_internal_rewire_preserves_fixed_receiving_leaf=True,
         counterexample_omitted_maintenance_world_crosswire_flow=new_crosswire_flow,
+        counterexample_terminal_pairs_do_not_count_parallel_strands=parallel_count_counterexample,
         source_mode='written all-terminal graph plus enumerated translated source-star; not full unbounded graph enumeration')
 
 
