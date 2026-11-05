@@ -1,5 +1,6 @@
 """Exact full-size geometry/runtime binding; source admission remains separate."""
 from __future__ import annotations
+import ast
 from dataclasses import asdict
 from fractions import Fraction as F
 from hashlib import sha256
@@ -68,7 +69,7 @@ def construct():
     # This is not a readiness claim before the source suppliers hold.
     steady_settle=settle
     lambda_join=2*J+2*D+6+3
-    clamp_beta=F(1,4)+v_plus*(age+q['comparison_to_emission']+q['cut_withdrawal'])
+    clamp_beta=F(cert['raw_pose_measurement_error'])+v_plus*(age+q['comparison_to_emission']+q['cut_withdrawal'])
     require(c['CLAMP_VERIFY_RADIUS']>=2*clamp_beta,'Clamp range fails refreshed-stop availability')
     clamp_error=c['CLAMP_VERIFY_RADIUS']+clamp_beta
     require(c['JOIN_ERROR']>=clamp_error,'Clamp join envelope too small')
@@ -250,7 +251,7 @@ def counterchecks(compiled,result):
 
 
 def bind_resource(compiled,bounds,result):
-    commit='89de9b56c70c7f8609d614688f887b378e6564a7'
+    commit='408429253d47fc3ba65d076f40accc83a36bfad5'
     prefix='theories-and-designs/byzantine-control/local-control/'
     payload=subprocess.check_output(['git','show',commit+':'+prefix+'resource_results.json'],cwd=HERE)
     normalized=payload.decode('utf-8-sig').replace('\r\n','\n')
@@ -260,8 +261,25 @@ def bind_resource(compiled,bounds,result):
         text=data.decode('utf-8-sig').replace('\r\n','\n')
         require(sha256(text.encode('utf-8')).hexdigest()==digest,'Bound resource source manifest differs')
         snapshots[name]=digest
-    for name in ('program_model.py','program_source.py','PROGRAM.md','RUNTIME-PORTS.md'):
+    for name in ('program_source.py','RUNTIME-PORTS.md'):
         require(source_hash(name)==snapshots[name],'Geometry uses a changed runtime from its resource inventory')
+    frozen_program=subprocess.check_output(['git','show',commit+':'+prefix+'program_model.py'],cwd=HERE).decode('utf-8-sig')
+    current_program=(HERE/'program_model.py').read_text(encoding='utf-8-sig')
+    def runtime_tree(text):
+        tree=ast.parse(text)
+        # Resource funding is for arbitrary code under the same actual machine,
+        # primitive ABI, layout/compiler and work counter. Observation-envelope
+        # arithmetic and executable-check entry points are separate consumers.
+        omitted={'processing_certificate','pose_quantization_checks','main'}
+        tree.body=[node for node in tree.body if not(isinstance(node,ast.FunctionDef) and node.name in omitted)]
+        return ast.dump(tree,include_attributes=False)
+    require(runtime_tree(frozen_program)==runtime_tree(current_program),
+            'Resource adapter changed actual execution, primitive, compiler or work semantics')
+    observation_adapter=dict(frozen_program_sha256=snapshots['program_model.py'],
+        current_program_sha256=source_hash('program_model.py'),
+        runtime_ast_unchanged=True,raw_pose_total_error='1',
+        current_program_note_sha256=source_hash('PROGRAM.md'),
+        scope='Only certificate/check functions differ; actual source/machine/ABI/layout/work AST is identical. Current complete source hashes remain bound by this record.')
     interface=result['resource_interface'];d=compiled.design
     require(point['design']==dict(bays=d.bays,degree=d.degree,image_cells=d.image_cells),'Resource roster/layout mismatch')
     require(bounds['private_words_with_metadata']<=point['padded_private_words'],'New program exceeds paid private storage')
@@ -279,7 +297,7 @@ def bind_resource(compiled,bounds,result):
     require(F(point['actual_force_pair_stock'])==36 and F(point['actual_force_pair_power'])==3000,'Adopted pair rating changed')
     local_units=d.bays*(64+8*d.bays);local_pairs=15+2*d.bays
     require(local_pairs*3000<local_units*12 and local_pairs*36<local_units*8,'Same-bank/target allocation cannot fund adopted pairs')
-    require(F(point['actual_field_and_world_power'])==pair_count*3000+16,'WORLD power omitted from actual bound')
+    require(F(point['actual_field_and_world_power'])==pair_count*3000+20,'Actual WORLD flow power omitted from bound')
     require(F(point['actual_field_and_world_stock'])==pair_count*36+200,'WORLD storage omitted from actual bound')
     require(F(point['actual_field_and_world_power'])<point['generator_power'],'Actual aggregate exceeds power allocation')
     require(F(point['actual_field_and_world_stock'])<F(point['transducer_capacity']),'Actual aggregate exceeds stock allocation')
@@ -289,7 +307,7 @@ def bind_resource(compiled,bounds,result):
     require(F(parameters['field_cap'])==F(11,5),'Actual interface does not retain per-coordinate cap')
     require(F(parameters['complete_command_force_bound'])<3 and F(parameters['open_input_zero_bound'])<6,'Adopted field deadlines exceed the geometry interface')
     return dict(commit=commit,path=prefix+'resource_results.json',sha256=sha256(normalized.encode('utf-8')).hexdigest(),
-        checked_manifest=snapshots,actual_parameters={name:point[name] for name in ('per_bank_capacity','per_bank_off','discharge_coefficient','per_bank_residual_backfeed','per_bank_startup_bound','generator_allocation_units','generator_power','actual_signed_pairs','actual_force_pair_stock','actual_force_pair_power','actual_field_and_world_stock','actual_field_and_world_power','energy_head_unit','energy_head_range','post_cut_no_launch_bound','post_cut_half_off_bound','combined_capsule_field_capacity','transducer_store_rating')},
+        checked_manifest=snapshots,observation_adapter=observation_adapter,actual_parameters={name:point[name] for name in ('per_bank_capacity','per_bank_off','discharge_coefficient','per_bank_residual_backfeed','per_bank_startup_bound','generator_allocation_units','generator_power','actual_signed_pairs','actual_force_pair_stock','actual_force_pair_power','actual_field_and_world_stock','actual_field_and_world_power','energy_head_unit','energy_head_range','post_cut_no_launch_bound','post_cut_half_off_bound','combined_capsule_field_capacity','transducer_store_rating')},
         actual_field_adapter=dict(per_bank_target_pairs=local_pairs,per_bank_target_allocation_units=local_units,
             local_pair_power=local_pairs*3000,local_power_allocation=local_units*12,
             local_pair_store=local_pairs*36,local_store_allocation=local_units*8,

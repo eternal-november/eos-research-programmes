@@ -913,7 +913,7 @@ def circular_checks():
     return {'all_nominal_wrap_search_candidate':16,'verified':False,'generic_normal_cam_survives_unknown_chart':True,'abort_uses_contacts_without_cam_chart':True,'circular_triangle_cases':triangle,'band_containment_cases':interior,'scope':'Range soundness is independent of the linear candidate; normal forward motion to a retained interior stop supplies liveness under the physical source conditions.'}
 
 
-def processing_certificate(compiled,bounds):
+def processing_certificate(compiled,bounds,raw_pose_error=F(1)):
     """Local arithmetic with explicit raw connector inventory; no global win."""
     c=compiled.constants;mu=1<<26;fast=F(101,100);minimum=F(c['FRAME_STEPS'],mu)/fast;own_read_delay=F(1,64);maximum=F(bounds['padded_frame_upper'],mu)+c['MAINT_BATCH']*own_read_delay
     d_command=F(3);d_data=F(2);d_word=F(6);d_request=F(2);conversion=F(1,64);force_tail=F(6);retirement=F(3)
@@ -966,18 +966,22 @@ def processing_certificate(compiled,bounds):
     require(F(c['ISOLATION_MARGIN'],1000)>=gap_needed,'Isolation margin fails its explicit future envelope')
     require(F(1,5)+error+F(c['LOAD_MARGIN'],1000)<1,'Working low-load guard lacks useful margin')
     require(error+F(c['ISOLATION_MARGIN'],1000)<F(1,5),'Working isolation guard lacks useful margin')
-    require(F(23)/minimum<64,'Nominal branch publication rate exceeds its physical envelope')
-    cam_beta=F(1,4)+pose_age+compare_to_emit+withdrawal
+    nominal_records_per_branch=3+c['FAST_BATCH']+c['QUERY_BATCH']
+    require(F(nominal_records_per_branch)/minimum<64,'Nominal branch publication rate exceeds its physical envelope')
+    nominal_tx_backlog=2*nominal_records_per_branch+F(nominal_records_per_branch)/(256*minimum)
+    require(nominal_tx_backlog<128,'Nominal frame bursts exceed the actual TX queue')
+    require(raw_pose_error>=F(1,2),'Integer pose words cannot uniformly have error below one half')
+    cam_beta=raw_pose_error+pose_age+compare_to_emit+withdrawal
     require(c['CAM_VERIFY_RADIUS']>=2*cam_beta,'Cam range cannot cover every nominal value at a stable stop')
     require(c['CAM_ERROR']>=c['CAM_VERIFY_RADIUS']+cam_beta,'Cam classification forgets its range certificate radius')
     require(F(c['SEGMENT'],4)>c['CAM_ERROR'],'Cam work stop has no recognizable interior')
-    pose_beta=F(1,4)+500*(pose_age+compare_to_emit+withdrawal)
+    pose_beta=raw_pose_error+500*(pose_age+compare_to_emit+withdrawal)
     require(c['POSE_VERIFY_RADIUS']>=2*pose_beta,'Pose range is too narrow for the declared raw rate')
     required_rank_error=c['BAYS']*(c['POSE_VERIFY_RADIUS']+pose_beta)+c['RESERVE_CAP']+10*c['CAM_ERROR']
     require(c['PROGRESS_ERROR']>=required_rank_error,'Progress mark ignores validated pose intervals')
     require(watch_min>scan+per_target+c['HIGH_STEP']+4*c['PROGRESS_ERROR']+1,'A complete scan plus one unit-rate progress milestone can time out')
     native_step_bound=16384
-    return {'raw_delay_bounds':{'command':str(d_command),'data':str(d_data),'word_after_launch':str(d_word),'request':str(d_request),'conversion':str(conversion),'force_tail':str(force_tail),'retirement':str(retirement)},'actual_pending_instruction_tail':str(instruction_tail),'last_possible_word_after_cutoff':str(last_word_tail),'post_stage_causal_tail':str(stage_causal_tail),'boot_causal_tail':str(boot_drain_tail),'helper_command_application':str(per_target+d_command),'world_observation_to_application':str(plant_age+3*maximum+d_command),'world_observation_to_last_effect':str(plant_age+3*maximum+application_tail),'connector_counts':[c['CONNECTORS_A'],c['CONNECTORS_B']],'instruction_service_min_per_quantum':mu,'instruction_service_max_per_quantum':str(mu*fast),'frame_min':str(minimum),'frame_max':str(maximum),'own_read_nonretirement_delay':str(own_read_delay),'own_read_waits_per_frame':c['MAINT_BATCH'],'query_period':str(query_period),'maintenance_period':str(maintenance_period),'plant_period':str(plant_period),'functional_fold_span':str(fold),'query_receipt_lifetime':query_lifetime,'maintenance_receipt_lifetime':maintenance_lifetime,'plant_receipt_lifetime':plant_lifetime,'arbitrary_counter_caps':[query_cap,maintenance_cap,plant_cap],'query_age':int(query_age),'pose_age':int(pose_age),'functional_age':str(functional_age),'plant_age':int(plant_age),'comparison_to_emission':str(compare_to_emit),'cut_withdrawal':str(withdrawal),'functional_guard_horizon':str(horizon),'raw_cam_error_and_age_bound':str(cam_beta),'raw_pose_error_and_age_bound':str(pose_beta),'required_progress_error':str(required_rank_error),'cam_work_stop_half_band':c['SEGMENT']//2,'raw_uniform_failed_state_load_rate':str(load_rate),'raw_uniform_failed_state_isolation_rate':str(isolation_rate),'required_load_margin':str(load_needed),'required_isolation_margin':str(gap_needed),'post_stage_wait_min':str(stage_wait_min),'per_target_response':str(per_target),'conservative_cell_transaction':str(cell),'complete_scan':str(scan),'watch_min':str(watch_min),'high_water_step':c['HIGH_STEP'],'long_rank_min_rate':1,'extra_mark_window':str(scan+per_target+c['HIGH_STEP']+4*c['PROGRESS_ERROR']+1),'local_nontransferable_work':str(work),'new_bank_entry_before_driver_geometry':str(entry),'wide_instruction_upper_per_frame':bounds['padded_frame_upper'],'native64_step_upper':native_step_bound,'native64_work_upper_per_frame':native_step_bound*bounds['padded_frame_upper'],'code_cell_transfer_limbs64':3,'reply_transfer_limbs64':4,'private_memory_limbs64':4,'scope':'Conditional LOCAL processor/acquisition/conduct arithmetic for the provisional closed-enclosure11-conduit source and stated connector counts and raw failed-state envelopes. Full connector map, geometry, energy/thermal prices and same-history renewal remain parent obligations.'}
+    return {'raw_delay_bounds':{'command':str(d_command),'data':str(d_data),'word_after_launch':str(d_word),'request':str(d_request),'conversion':str(conversion),'force_tail':str(force_tail),'retirement':str(retirement)},'actual_pending_instruction_tail':str(instruction_tail),'last_possible_word_after_cutoff':str(last_word_tail),'post_stage_causal_tail':str(stage_causal_tail),'boot_causal_tail':str(boot_drain_tail),'helper_command_application':str(per_target+d_command),'world_observation_to_application':str(plant_age+3*maximum+d_command),'world_observation_to_last_effect':str(plant_age+3*maximum+application_tail),'connector_counts':[c['CONNECTORS_A'],c['CONNECTORS_B']],'instruction_service_min_per_quantum':mu,'instruction_service_max_per_quantum':str(mu*fast),'frame_min':str(minimum),'frame_max':str(maximum),'own_read_nonretirement_delay':str(own_read_delay),'own_read_waits_per_frame':c['MAINT_BATCH'],'query_period':str(query_period),'maintenance_period':str(maintenance_period),'plant_period':str(plant_period),'functional_fold_span':str(fold),'query_receipt_lifetime':query_lifetime,'maintenance_receipt_lifetime':maintenance_lifetime,'plant_receipt_lifetime':plant_lifetime,'arbitrary_counter_caps':[query_cap,maintenance_cap,plant_cap],'query_age':int(query_age),'pose_age':int(pose_age),'functional_age':str(functional_age),'plant_age':int(plant_age),'comparison_to_emission':str(compare_to_emit),'cut_withdrawal':str(withdrawal),'functional_guard_horizon':str(horizon),'nominal_records_per_receiver_branch_per_frame':nominal_records_per_branch,'nominal_tx_backlog_bound':str(nominal_tx_backlog),'raw_pose_measurement_error':str(raw_pose_error),'raw_cam_error_and_age_bound':str(cam_beta),'raw_pose_error_and_age_bound':str(pose_beta),'required_progress_error':str(required_rank_error),'cam_work_stop_half_band':c['SEGMENT']//2,'raw_uniform_failed_state_load_rate':str(load_rate),'raw_uniform_failed_state_isolation_rate':str(isolation_rate),'required_load_margin':str(load_needed),'required_isolation_margin':str(gap_needed),'post_stage_wait_min':str(stage_wait_min),'per_target_response':str(per_target),'conservative_cell_transaction':str(cell),'complete_scan':str(scan),'watch_min':str(watch_min),'high_water_step':c['HIGH_STEP'],'long_rank_min_rate':1,'extra_mark_window':str(scan+per_target+c['HIGH_STEP']+4*c['PROGRESS_ERROR']+1),'local_nontransferable_work':str(work),'new_bank_entry_before_driver_geometry':str(entry),'wide_instruction_upper_per_frame':bounds['padded_frame_upper'],'native64_step_upper':native_step_bound,'native64_work_upper_per_frame':native_step_bound*bounds['padded_frame_upper'],'code_cell_transfer_limbs64':3,'reply_transfer_limbs64':4,'private_memory_limbs64':4,'scope':'Conditional LOCAL processor/acquisition/conduct arithmetic for the provisional closed-enclosure11-conduit source and stated connector counts and raw failed-state envelopes. Full connector map, geometry, energy/thermal prices and same-history renewal remain parent obligations.'}
 
 
 def counter_and_common_image_checks(compiled):
@@ -1059,6 +1063,24 @@ def initial_prefix_checks():
     require(len({x['initial_pc'] for x in results})>=3 and len({x['first_publication_after_instructions'] for x in results})>=3,'Initial timing variation is only a counter relabeling')
     return {'different_actual_prefix_states':results,'scope':'Prefix invariants before first publication, or drain loop with sufficient remaining debt-clearing interval. Not arbitrary-PC stabilization or arbitrary past controller state.'}
 
+def pose_quantization_checks():
+    cap=1<<54
+    cases=0
+    for z in [F(i,16) for i in range(65)]+[F(cap)-F(i,16) for i in range(17)]:
+        for noise in (F(-1,2),F(0),F(1,2)):
+            rounded=math.floor(z+noise+F(1,2))
+            word=max(0,min(cap,rounded))
+            require(abs(F(word)-z)<=1,'Integer pose conversion exceeds the corrected total error')
+            cases+=1
+    require(min(abs(F(n)-F(1,2)) for n in (-1,0,1,2))==F(1,2),
+            'Half-integer obstruction was lost')
+    return dict(total_raw_error='1',nearest_integer_component='1/2',
+                analogue_uncertainty='1/2',exact_conversion_cases=cases,
+                quarter_unit_integer_law_refuted_at_half_integer=True,
+                clipping_reduces_error_on_declared_range=True,
+                scope='Uniform written rounding bound; finite rational probes include large positions')
+
+
 def main():
     require(not sys.flags.optimize,'Optimized Python invalidates checks')
     parser=argparse.ArgumentParser(description=__doc__);g=parser.add_mutually_exclusive_group(required=True);g.add_argument('--check',action='store_true');g.add_argument('--write',action='store_true');args=parser.parse_args()
@@ -1076,6 +1098,7 @@ def main():
     full_bounds=WorkBound(full).report()
     timing=processing_certificate(full,full_bounds);counter=counter_and_common_image_checks(compiled);circular=circular_checks();initial_family=initial_prefix_checks();primary=primary_consumption_check();clipping=clipping_checks();abort=abort_protocol_checks()
     result={'schema':'local-program-v1','python_major_minor':list(sys.version_info[:2]),'scope':'finite stored bank program; physical/evidence/recurrence suppliers remain conditional','sources':before,'code_cells':len(compiled.nodes),'image_cells':len(compiled.image),'register_words':compiled.next_register,'data_words':compiled.constants['DATA_WORDS'],'stack_depth':compiled.stack_depth,'initial_frame':first,'refinement':refinement,'changing_inputs':changing,'adversarial':adversarial,'functional_and_unknown':functional,'small_bounds':bounds,'full_layout_bounds':full_bounds,'processing_certificate':timing,'counter_and_identity':counter,'circular':circular,'initial_prefix_family':initial_family,'definite_assignment':definite_assignment(compiled),'whole_frame_io_inventory':io_inventory(full),'primary_consumption':primary,'functional_clipping':clipping,'abort_protocol':abort}
+    result['pose_quantization']=pose_quantization_checks()
     require(before=={name:digest(HERE/name) for name in names},'Program inputs changed during verification')
     path=HERE/'program_results.json'
     if args.write:path.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
