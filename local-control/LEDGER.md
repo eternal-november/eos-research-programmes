@@ -36,6 +36,8 @@ The selected receiver-current refinement is now integrated from worker66f288. It
 
 [BOUNDARY-FACTORIZATION](BOUNDARY-FACTORIZATION.md) now gives the independently checked exact cut-kernel criterion, reconstruction and quantitative norm transport. It identifies hidden circulation and contact multiplicity as failures of one common quotient law. The729-pair checker and concrete obstruction cases reproduced independently. Physical realization and the coupled return/source invariant remain separate; this theorem does not certify the optional detailed circuit.
 
+[COUPLED-PORTS](COUPLED-PORTS.md) now supplies the independently checked shared-state physical module: the same retained generalized momentum/deformation or flux/charge gives actual energy balance, a distinct clearance potential, delivery and residual-effect bounds. The generic parameter point is inhabited and its11664 derivative/energy probes and128 delivery faces reproduce. It is not the full program point. A low velocity/current certificate does not automatically imply low force; PORT-SOURCE must bind both actual output decoders, mode establishment, resource delivery and the same fault history before using the module in renewal.
+
 ## Checked integrated work
 
 The restored physical checkpoint and repairs arebaf4658/befe294 (workers e62df457/ec284967). Root reproduced cycle/hybrid records and23 selected Hybrid Lean declarations. Repairs include the generic CAM route, early-data/late-driver distinction, current runtime values and locale-independent UTF8 hashes. B14 remains a conditional comparison; B80 is the selected source.
