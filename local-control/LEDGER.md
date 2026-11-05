@@ -26,6 +26,8 @@ The selected receiver-current refinement is now integrated from worker66f288. It
 
 [FLOW-EXISTENCE](FLOW-EXISTENCE.md) supplies the independently checked continuous-mode extension for explicit charge/flux coordinates, state-dependent passive brakes and actual physical diode/stops. It preserves HYBRID's separate finite-event argument and never projects world state into its safety set. The actual transformer, finite-work-cell, causal-input and capacitance/return graph must still reduce to those modes. Individual circuit existence is not credited as full interconnected nonblocking.
 
+[BOUNDARY-FACTORIZATION](BOUNDARY-FACTORIZATION.md) now gives the independently checked exact cut-kernel criterion, reconstruction and quantitative norm transport. It identifies hidden circulation and contact multiplicity as failures of one common quotient law. The729-pair checker and concrete obstruction cases reproduced independently. Physical realization and the coupled return/source invariant remain separate; this theorem does not certify the optional detailed circuit.
+
 ## Checked integrated work
 
 The restored physical checkpoint and repairs arebaf4658/befe294 (workers e62df457/ec284967). Root reproduced cycle/hybrid records and23 selected Hybrid Lean declarations. Repairs include the generic CAM route, early-data/late-driver distinction, current runtime values and locale-independent UTF8 hashes. B14 remains a conditional comparison; B80 is the selected source.
