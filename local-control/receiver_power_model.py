@@ -151,12 +151,15 @@ def private_point():
     bleed_energy=2*bleed*vmax**2*tail
     fronts=c*vmax**2
     control_export=vmax*tail
-    source_energy=work+line_heat+bleed_energy+fronts+control_export
+    remote_work=F(320+1024)
+    local_work=F(608)
+    charge_bound=4*c*vmax+remote_work/299+2*bleed*vmax*tail+tail
+    source_energy=local_work+900*charge_bound
     capsule=F(20480); minimum=F(2048)
     cell_voltage=F(900)
     charging_current=4*capsule*MU/cell_voltage
     require(300<=cell_voltage<1000 and charging_current<1<<64,"Private work-cell voltage/charging current invalid")
-    require(source_energy<capsule-minimum,"Private comparison drains its actual instruction capsule")
+    require(source_energy<6500<capsule-minimum,"Private comparison drains its actual instruction capsule")
     require(3*r*current<F(1,2),"Private power link loses voltage headroom")
     require(current<=1<<64 and 30*current<=1<<64,"Private endpoint exceeds hard alphabet")
     require(2*current+1-3*current-bleed*vmax<0,"Private upper barrier omits raw input leakage")
@@ -191,10 +194,11 @@ def private_point():
     require(terminals<1<<30 and stock<1,"Added terminal/material reservation exceeded")
     return dict(private_native_and_link_work=work,raw_capture_paid_elsewhere=1024,
         nominal_source_voltage_range=[300,1000],source_capsule_voltage=cell_voltage,
+        source_charge_bound=charge_bound,remote_work_bound=remote_work,local_direct_work=local_work,
         work_cell_full_charge=capsule/cell_voltage,maximum_cell_charging_current=charging_current,
         capsule_initial_energy=capsule,capsule_reserved_minimum=minimum,
         endpoint_current=current,endpoint_capacitance=c,series_resistance=r,
-        bleed_conductance=bleed,private_suffix=tail,series_heat_bound=line_heat,
+        bleed_conductance=bleed,private_suffix=tail,linear_regime_only_series_heat_bound=line_heat,
         bleed_energy_bound=bleed_energy,front_storage=fronts,
         control_input_reverse_export_bound=control_export,
         total_capsule_draw_bound=source_energy,
@@ -210,8 +214,147 @@ def private_point():
         no_raw_to_operating_carrier_edge=True)
 
 
+def bank_current_refinement_checks():
+    # A distinct, selected current-compatible refinement. The earlier
+    # standalone power point remains a checked comparison, not silently edited.
+    base=private_point()
+    jp=(F(base['endpoint_current'])-3)/2
+    jwork=jp-1000
+    forward=jp+65
+    returned=forward+4
+    r=F(base['series_resistance']);c=F(base['endpoint_capacitance'])
+    g=F(base['bleed_conductance']);vmax=F(1000)
+    source_coupling,receiver_coupling=F(1),F(2)
+    total_coupling=source_coupling+receiver_coupling
+    h=jp+1
+    source_other=g*vmax+source_coupling
+    actual_receiver=jwork+g*vmax+receiver_coupling
+    require(actual_receiver<=jp,'Reserved current was counted again as load')
+    require(forward-h-source_other>=F(1,2),'Source charging margin ignores actual bleed/control demand')
+    require(h-actual_receiver>=F(1,2),'Receiver charging margin ignores actual load')
+    drop=r*(3*forward+2*returned)
+    require(drop<F(1,2),'Explicit return elements destroy private voltage headroom')
+    # The private unit has no independently powered reference. All net charge
+    # exchange beyond the power pair is in the stated two-current budget.
+    nominal_return_current=forward+2
+    require(nominal_return_current<returned,'Nominal return is in the clipped-current plateau')
+    passive_return_drop=2*r*nominal_return_current
+    require(passive_return_drop<F(1,500),'Actual passive return drop exceeds the nominal headroom envelope')
+    tail=F(base['private_suffix'])
+    # Nonlinear current limiting may saturate. Bound source charge through
+    # KCL and the finite initial upper-voltage excess, not r*I^2 heat.
+    reference_offset=F(1,500)
+    conservative_voltage=vmax+reference_offset
+    remote_work,local_work=F(1344),F(608)
+    source_charge=(4*c*conservative_voltage+remote_work/299+
+                   2*g*conservative_voltage*tail+total_coupling*tail)
+    draw=local_work+900*source_charge
+    for local_link in (F(0),F(512),F(1024)):
+        split=608+local_link+900*((320+1024-local_link)/299+2*g*conservative_voltage*tail+total_coupling*tail+4*c*conservative_voltage)
+        require(split<=draw,'Link work was counted without its actual local share')
+    require(draw<6500<F(base['capsule_initial_energy'])-F(base['capsule_reserved_minimum']),
+            'Current-compatible point exceeds its actual capsule')
+    charge_target=F(29901,100)
+    require(charge_target-reference_offset>=299,"Reference offset destroys nominal work voltage")
+    charge=2*c*(charge_target+reference_offset+2*r*h+2*r*returned)
+    require(charge+F(base['private_round_trip_propagation'])<F(1,8*MU),
+            'Added return resistance loses the nominal private-link interval')
+    equilibrium=c*(source_coupling**2+receiver_coupling**2)/(2*g*g)
+    reset_voltage=64
+    threshold=c*reset_voltage**2/2
+    require(2*equilibrium<=threshold,'Added signal leakage defeats private reset')
+    energy_cases=0
+    for vs,vr in product((F(0),F(32),F(64),F(299),F(1000)),repeat=2):
+        for js,jr in product((-source_coupling,source_coupling),(-receiver_coupling,receiver_coupling)):
+            E=c*(vs*vs+vr*vr)/2
+            derivative=js*vs+jr*vr-g*(vs*vs+vr*vr)
+            upper=-g*E/c+(source_coupling**2+receiver_coupling**2)/(2*g)
+            require(derivative<=upper,'Two-ended signal injection energy inequality fails')
+            energy_cases+=1
+
+    halves=0;bound=threshold
+    while bound<c*vmax**2:halves+=1;bound*=2
+    drain=halves*2*c/g
+    reset=drain+F(base['private_control_reset'])
+    require(reset<F(base['declared_reset_settling']),'Current-compatible reset misses its existing deadline')
+    units_per_bank=80*(2*40+1)
+    # Count every power pair, including unselected source-end front capacitors
+    # and permanently connected return leads. No zero-charge cancellation.
+    private_current=units_per_bank*(forward+returned+2)
+    other_reserve=F(1<<45)
+    combined=private_current+other_reserve
+    J=F(1<<48)
+    require(combined<J,'Actual all-pair current bound exceeds proposed anchor input')
+    anchor_gmin=F(1<<64,41)
+    require(J/anchor_gmin<F(1,1000),'Proposed current budget does not fit the stated anchor band')
+    cpu_signal_leads=4096
+    signal_settle=4*SMALL*cpu_signal_leads
+    require(signal_settle<F(1,8*MU),'Explicit CPU signal limits miss physical settling')
+    terminals=base['additional_terminal_bound']+2*base['private_units_per_host']*(cpu_signal_leads+2)
+    old=json.loads((HERE/'resource_results.json').read_text(encoding='utf-8'))['runtime_inventory']
+    require(64*old['memory_bits']+(1<<38)+terminals<1<<40,
+            'New return/signal terminations exceed complete material-node allowance')
+    return dict(status='selected current-compatible differential-power point; full body-charge and other-port join separate',
+        private_work_current=jwork,reserved_total_current=jp,
+        actual_receiver_load_upper=actual_receiver,source_bleed_and_control_upper=source_other,
+        source_lower_margin=forward-h-source_other,receiver_lower_margin=h-actual_receiver,
+        forward_pole_current_limit=forward,return_pole_current_limit=returned,
+        explicit_series_drop_upper=drop,nominal_return_current_upper=nominal_return_current,
+        passive_private_return_drop=passive_return_drop,independent_private_reference_source=False,
+        private_capsule_draw_upper=draw,source_charge_upper=source_charge,
+        actual_source_voltage=900,nominal_reference_offset=reference_offset,
+        cold_charge_target=charge_target,remote_work_bound=remote_work,local_direct_work=local_work,
+        nominal_cold_charge_bound=charge,receiver_raw_plus_CPU_signal_leakage=receiver_coupling,
+        source_front_CPU_signal_coupling=source_coupling,energy_coupling_box=[source_coupling,receiver_coupling],two_ended_energy_cases=energy_cases,
+        total_outward_coupling_debit=total_coupling*vmax*tail,
+        local_native_work_direct_from_capsule=608,remote_native_work_upper=320,total_native_work=928,
+        private_reset_voltage=reset_voltage,private_off_energy_equilibrium=equilibrium,
+        private_electrical_drain=drain,private_combined_reset=reset,
+        CPU_signal_conductors_per_unit=cpu_signal_leads,
+        CPU_signal_current_per_lead=F(1,cpu_signal_leads),CPU_signal_settling_bound=signal_settle,
+        current_counted_units_per_bank=units_per_bank,
+        counted_forward_paths=units_per_bank,counted_return_paths=units_per_bank,
+        private_bank_absolute_current_upper=private_current,
+        other_nonsupply_current_reserve=other_reserve,combined_conditional_current_upper=combined,
+        proposed_total_bank_current_budget=J,anchor_voltage_ratio=J/anchor_gmin,
+        total_added_terminal_bound=terminals,
+        idle_zero_current_not_assumed=True,onehot_not_used_to_delete_front_capacitor_currents=True,
+        other_current_reserve_not_yet_an_actual_other_port_sum=True,
+        bank_commonmode_and_private_reference_energy_not_proved_by_current_count=True)
+
+
+def charge_balance_checks():
+    cases=0
+    source=F(900);r=F(1,100);cap=F(10);g=F(1,16)
+    clip=lambda x:max(-cap,min(cap,x))
+    for vs,vr in product((F(0),F(800),F(900),F(9999,10),F(1000)),repeat=2):
+        for js,jr,load in product((-1,0,1),(-2,0,2),(0,1,3)):
+            Id=max(F(0),clip((source-vs)/r))
+            line=clip((vs-vr)/(2*r))
+            shs=20*cap*max(F(0),vs-F(9999,10))
+            shr=20*cap*max(F(0),vr-F(9999,10))
+            dqs=Id-line-g*vs-shs+js
+            dqr=line-load-g*vr-shr+jr
+            if vs==0:dqs=max(F(0),dqs)
+            if vr==0:dqr=max(F(0),dqr)
+            require(Id<=dqs+dqr+load+g*(vs+vr)+shs+shr-js-jr,
+                    'Total charge balance omitted a real input')
+            excess=lambda v,dq:dq if v>source else max(F(0),dq) if v==source else F(0)
+            require(excess(vs,dqs)+excess(vr,dqr)+shs+shr<=max(0,js)+max(0,jr),
+                    'Upper-shunt charge was attributed to a lower-voltage source')
+            cases+=1
+    return dict(exact_charge_and_excess_cases=cases,source_voltage=source,
+        scope='declared passive two-front module; additional powered reference paths are not silently admitted')
+
+
 def differential_checks():
     count=0
+    # A saturation counterexample prevents treating r*I^2 as all-mode heat.
+    resistance=F(1,100);current_limit=F(1);drop=F(10)
+    saturation_current=min(current_limit,drop/resistance)
+    saturation_witness=dict(voltage_drop=drop,current=saturation_current,actual_heat=drop*saturation_current,
+        false_ohmic_only_heat=resistance*saturation_current**2)
+    require(saturation_witness["actual_heat"]>saturation_witness["false_ohmic_only_heat"],"Saturated-resistor heat counterexample lost")
     for voltage,current,ratio in product((F(300),F(600),F(1<<70)),(F(0),F(1),F(1<<20)),(F(1),F(1<<70,300))):
         require(voltage*(current/ratio)==(voltage/ratio)*current,'Transformer changed actual port power')
         count+=1
@@ -231,6 +374,7 @@ def differential_checks():
     require(q['load_current']>0 and F(1,10)<299,"Undervoltage countercase empty")
     return dict(exact_energy_inequality_cases=count,unbudgeted_leak_equilibrium=rho_bad/g,
         low_drive_can_preserve_upper_cap_but_not_delivery=True,
+        saturation_counterexample=saturation_witness,
         current_limit_does_not_establish_truth=True)
 
 
@@ -290,12 +434,13 @@ def main():
     hashes={name:digest(name) for name in names}
     result=serial(dict(status='raw/private electrical and resource adapter; joined-source acceptance separate',
         sources=hashes,raw_supply=raw_supply_bill(),private_supply=private_point(),
+        bank_current_refinement=bank_current_refinement_checks(),charge_balance=charge_balance_checks(),
         differential=differential_checks(),recurrence=recurrence_checks(),graph=graph_checks()))
     require(hashes=={name:digest(name) for name in names},"Input changed during checking")
     target=HERE/'receiver_power_results.json'
     if args.write:target.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n',encoding='utf-8',newline='\n')
     else:require(json.loads(target.read_text(encoding='utf-8'))==result,"Receiver-power reproduction differs")
-    print('PASS receiver power:',len(result['raw_supply']['rail_parameters']),'origin rails; private draw',result['private_supply']['total_capsule_draw_bound'])
+    print('PASS receiver power:',len(result['raw_supply']['rail_parameters']),'origin rails; selected current-point draw',result['bank_current_refinement']['private_capsule_draw_upper'],'; all-pair current',result['bank_current_refinement']['private_bank_absolute_current_upper'])
 
 
 if __name__=='__main__':main()
