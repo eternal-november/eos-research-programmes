@@ -11,8 +11,11 @@ from itertools import product
 import json
 from pathlib import Path
 import sys
+import subprocess
 
 HERE=Path(__file__).resolve().parent
+PORT_SOURCE_COMMIT='e6d10f4aa2027a29399bd4fd06535a797edd874b'
+PREFIX='theories-and-designs/byzantine-control/local-control/'
 
 def require(ok,message):
     if not ok: raise AssertionError(message)
@@ -155,6 +158,161 @@ def coupled_storage_checks():
         capacitor_diode_initial_current_derivative=initial_strand_derivative)
 
 
+def force_and_time_checks():
+    cases=0
+    for q0,cs,ct,drift,dt,jump in product((F(-2),F(0),F(2)),
+        (F(1),F(2)),(F(1),F(2)),(F(-3),F(0),F(3)),
+        (F(0),F(1,4),F(2)),(F(-1,2),F(0),F(1,2))):
+        q1=q0+drift*dt+jump
+        upper=2*abs(q0)/cs+3*dt+abs(jump)
+        require(abs(q1)/ct<=upper,'Force continuation lost compliance or a state jump')
+        cases+=1
+    q0=F(1);before=q0/2;after=q0
+    work=q0*q0/2-q0*q0/4
+    require(after>before and after==2*before and work>0,
+        'Paid compliance-change force counterexample missing')
+    time_cases=0
+    for sigma in (F(1,16),F(1),F(16)):
+        k=F(3,5);h=F(7,2);rate=F(2,11);power=F(123,7)
+        require((sigma*k)*(h/sigma)==k*h,'Decay changes under units alone')
+        require((sigma*rate)*(h/sigma)==rate*h,'Fault-rate product changes under units alone')
+        require((sigma*power)*(h/sigma)==power*h,'Delivered energy changed under units alone')
+        time_cases+=1
+    return dict(force_endpoint_cases=cases,
+        compliance_countercase=dict(retained_deformation=q0,force_before=before,
+            force_after=after,actual_parameter_work=work),
+        common_time_scale_cases=time_cases,
+        state_jump_budget_remains_separate=True,
+        physical_speedup_is_not_a_unit_conversion=True)
+
+
+def transit_work_checks():
+    # Coefficient identities in arbitrary positive d and nonnegative b.
+    # No independent bank demand or resource baseline is selected here.
+    a=F(4);k=F(1,10);eta_min=F(1,2)
+    tcap=2/a;pin=(a+k)*tcap;upstream=pin/eta_min
+    require(pin==F(41,20) and upstream==F(41,10),
+        'Transit bleed or conversion loss was omitted')
+    require(a-(a+k)==-k,'Retained E+T does not share the claimed drain')
+    eon=(F(4),F(4),F(4))
+    eoff=tuple(F(2,3)*x for x in eon)
+    emax=(F(8),F(4),F(4));transit=(tcap,F(0),F(0))
+    hysteresis=tuple(eon[i]-eoff[i]-transit[i] for i in range(3))
+    total_off=tuple(4*eoff[i]-emax[i]-transit[i] for i in range(3))
+    require(min(hysteresis)>0 and min(total_off)>0,
+        'The retained transit defeats hysteresis or two-halving retirement')
+    exp_lower=1+F(41,10)+F(41,10)**2/2+F(41,10)**3/6
+    require(exp_lower>20,'Transit cold formation cannot deliver1.9d after1q')
+    cold_margin=(F(1,2),F(-5),F(-4))
+    require(cold_margin[0]*10+cold_margin[1]==0
+        and cold_margin[0]*8+cold_margin[2]==0,
+        'Six-quantum prefix demand/burst condition is misstated')
+    return dict(parameter_order=['d_b','b_b','constant'],
+        transit_rate=a,transit_bleed=k,minimum_converter_efficiency=eta_min,
+        transit_capacity_per_d=tcap,transit_input_per_d=pin,upstream_input_per_d=upstream,
+        hysteresis_margin_coefficients=hysteresis,
+        four_Eoff_minus_Emax_and_transit_coefficients=total_off,
+        cold_exponential_lower=exp_lower,cold_prefix_margin_coefficients=cold_margin,
+        six_quantum_condition='d_b >= 10*b_b+8',
+        initial_transit_charge_not_assumed=True,
+        parameterized_in_authoritative_bank_demand=True)
+
+
+def source_snapshot():
+    names=('PORT-SOURCE.md','port_source_model.py','port_source_results.json')
+    texts={name:subprocess.run(['git','show',PORT_SOURCE_COMMIT+':'+PREFIX+name],
+        cwd=HERE,capture_output=True,encoding='utf-8',check=True).stdout.replace('\r\n','\n')
+        for name in names}
+    source=json.loads(texts['port_source_results.json'])
+    require(all(sha256(texts[name].encode()).hexdigest()==expected
+                for name,expected in source['sources'].items()),
+            'Pinned source manifest differs from its source files')
+    return source,{
+        name:sha256(text.encode()).hexdigest() for name,text in texts.items()}
+
+
+def primary_source_mechanical_checks(source):
+    p=source['parameters'];m=p['mechanical'];given=source['mechanical']
+    n=m['modules_per_host'];side=m['modules_per_braking_side']
+    require(n==p['sides']*side and side==p['contacts_per_side'],
+        'Actual bank/contact state partition changed')
+    lm,lp,cm,cp=(F(m[key]) for key in ('L_min','L_max','C_min','C_max'))
+    r,g=F(m['R_min']),F(m['G_min'])
+    brow,bcol,drow=(F(m[key]) for key in ('hard_B_row_l1','hard_B_column_l1','hard_D_row_l1'))
+    jhard,uhard=F(m['hard_j_l1']),F(m['hard_u_l1'])
+    kh=F(given['k_hard']);kg=F(given['k_good'])
+    hard_slacks=[r/lp-bcol/lm-kh,g/cp-brow/cm-kh]
+    require(min(hard_slacks)>=0,'Primary raw remapping violates the common potential law')
+    forcing=jhard+drow*uhard;W=forcing/kh
+    require(W==F(given['W_hard']),'Raw state envelope is not source-derived')
+    nominal_slacks=[r/lp-1/lm-kg,g/cp-1/cm-kg]
+    require(min(nominal_slacks)>=0,'Intact bank-local modes lack common decay')
+    Fside=side*F(m['nominal_u_abs_per_module'])+F(m['brake_j_l1_per_side'])
+    target=F(given['W_clear_per_braking_side']);clear=F(given['clearance_time'])
+    require(Fside/kg<=target/2,'Useful forced-radius margin is absent')
+    halves=0
+    while 2**halves<2*W/target:halves+=1
+    require(clear>=F(halves)/kg,'Actual source wait does not buy clearance')
+    rating=F(m['force_rating']);rho=cp/cm
+    load_clear=target/(cm*rating)
+    input_growth=jhard+brow*W/lm
+    growth=input_growth/(cm*rating)
+    age=F(source['base_binding']['functional_guard_horizon'])
+    error=F(m['force_head_low_reading_error'])
+    # The pinned main-P witness is the actual LOAD500 one-head/max interface.
+    require(source['primary_force_witness']['actual_guard_verdicts']==[1,0],
+        'Source lost its intact-execution primary-input witness')
+    guard=rho*(F(1,2)+error)+growth*age
+    require(guard<1 and load_clear+error<F(1,2),
+        'Actual finite-head guard and useful clearance do not compose')
+    on_i=tuple(F(x) for x in given['on_i_interval'])
+    on_v=tuple(F(x) for x in given['on_v_interval'])
+    keeper_potential=side*(lp*on_i[1]+cp*on_v[1])
+    require(keeper_potential>target and keeper_potential<W,
+        'A whole-host brake was silently substituted for bank-local clearance')
+    H=W*W*max(1/lm,1/cm)/2
+    max_jump=W*W*max(1/lm-1/lp,1/cm-1/cp)/2
+    coeff_power=W*W*F(m['inverse_coefficient_rate_max'])/2
+    require(H==F(given['mechanical_hard_storage']), 'Physical H bound differs')
+    require(max_jump<=F(given['parameter_work_store_capacity']),
+        'One admissible coefficient change lacks actual stored work capacity')
+    require(coeff_power==F(given['continuous_parameter_work_rate']),
+        'Coefficient work and recharge envelope differ')
+    driver=(W/cm)*jhard
+    received=(W/lm)*drow*uhard
+    require(driver+received==F(given['hard_mechanical_absolute_port_power']),
+        'Mechanical effort/flow input ceiling lost a port')
+    dissipation=W*W*max(F(m['R_max'])/(lm*lm),F(m['G_max'])/(cm*cm))
+    schedule=source['return_schedule']
+    hold=F(schedule['previous_return_H']);hnew=F(schedule['conditional_return_H'])
+    rate=F(schedule['original_raw_acquisition_rate'])
+    require(hnew==hold+5*clear and rate==1/(10*hold),
+        'Clearance changed the original time/rate comparison silently')
+    cover=1+2+(F(3)+2*rate*hnew).__floor__()
+    require(cover==6 and hnew>hold,'The fixed raw fault rate loses the common cover')
+    require(F(schedule['phase_bounds']['0_prepared_isolate_shunt_cut_drain'])
+        <F(schedule['unchanged_earliest_timeout']), 'Whole clearance stage can time out')
+    require(F(schedule['unchanged_timer_job'])<=F(schedule['unchanged_nontransferable_ready_window']),
+        'A nonexistent keeper interval was used')
+    return dict(source_commit=PORT_SOURCE_COMMIT,actual_modules=n,modules_per_braking_side=side,
+        hard_compatibility_slacks=hard_slacks,nominal_side_slacks=nominal_slacks,
+        hard_forcing=forcing,hard_potential=W,physical_mechanical_energy_upper=H,
+        braked_side_forcing=Fside,clearance_potential_level=target,
+        concurrent_keeper_potential_upper=keeper_potential,
+        whole_host_low_potential_not_required=True,
+        conservative_halvings=halves,actual_clearance_time=clear,
+        force_clearance_load=load_clear,force_continuation_multiplier=rho,
+        force_continuation_growth=growth,actual_guard_horizon=age,
+        actual_head_error=error,actual_force_guard_upper=guard,
+        maximum_funded_parameter_jump=max_jump,continuous_parameter_work=coeff_power,
+        driver_delivered_positive_power=driver,recipient_positive_backwork=received,
+        mechanical_dissipation_peak=dissipation,
+        original_raw_compromise_rate=rate,updated_return_H=hnew,effective_cover=cover,
+        mechanical_scale_is_not_clock_rescaling=True,
+        driver_conversion_and_complete_work_inventory_still_required=True,
+        no_operating_bank_rate_selected=True,source_admitted=False)
+
+
 def main():
     require(not sys.flags.optimize,'Unoptimized checks required')
     parser=argparse.ArgumentParser()
@@ -164,8 +322,12 @@ def main():
     args=parser.parse_args()
     names=('COUPLED-PORTS.md','coupled_port_model.py')
     hashes={name:digest(name) for name in names}
-    output=encode(dict(status='derived common port certificate; full source instantiation pending',
-        sources=hashes,certificate=coupled_storage_checks()))
+    source,source_hashes=source_snapshot()
+    output=encode(dict(status='derived common port certificate; full source work inventory pending',
+        authoritative_source=dict(commit=PORT_SOURCE_COMMIT,sources=source_hashes),
+        primary_source_mechanics=primary_source_mechanical_checks(source),
+        sources=hashes,certificate=coupled_storage_checks(),
+        force_and_time=force_and_time_checks(),transit_work=transit_work_checks()))
     require(hashes=={name:digest(name) for name in names},'Suppliers changed during check')
     rendered=json.dumps(output,indent=2,sort_keys=True)+'\n'
     target=HERE/'coupled_port_results.json'
