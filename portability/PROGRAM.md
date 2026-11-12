@@ -1,0 +1,85 @@
+# Research program for reusable Byzantine-control results
+
+Status: proposed program under [CONTRACT](CONTRACT.md), before Goal creation. Its maturity is design for the abstraction/portability obligations and solve/stabilize for identified reusable foundations. The immediate deliverable is a discriminating program and challenged stopping condition, not execution of this research campaign. Source selection and theorem feasibility remain research questions; they cannot be replaced by favorable examples after the fact.
+
+## Starting position and what should be reused
+
+The audit of the completedfb85a76 packet found a real reusable core and a narrower strongest realization. research/Execution.lean transports local policies/runs/properties; integration/Unclocked.lean characterizes compatible prescriptions; joint-control/INFORMATION gives arbitrary-support candidate sets, distinguishability/precision and a bounded rational decoder; local-control/RETURN and CONTINUITY give raw-window/job-interval laws; joint-control and recurring-control COMPOSITION give quantitative substitution laws, an actual estimator replacement and shared-stock counterexamples. COUPLED-PORTS, BOUNDARY-FACTORIZATION and chronological resource results provide further parametric components.
+
+The strongest initialized recurrent theorem is still tied to the forty-neighbor/two-bank/ordinary-candidate-memory architecture. The reusable task is to extract and strengthen its proof factorization, then establish real architectural transfer. Older general information mathematics should not be reproved merely because the final machine uses scalar groups. Existing completion records and all proof/kernel scopes remain historical evidence, not automatic completion of this new program.
+
+## Workstreams and dependency order
+
+The order below follows causal obligations, not a mandatory file layout or seven independent projects. Parallel investigation is useful once the shared semantic interfaces are pinned. Existing EXECUTION governs isolation, prior-art checking and reintegration; writing workers use separate worktrees and read-only reviewers do not change shared definitions.
+
+### P0 — Source-independent obligations and the comparison baseline
+
+Begin with the full fault-tolerance judgment and the failed-transfer findings from the generality audit. Build the transitive premise/discharge graph of the current source. Identify the global steps to be reused, the physical/code-specific lemmas supplying them and the costs currently hidden behind those interfaces. Separate exact theorems, sufficient certificates, constructive implementations, imported results and example-specific choices.
+
+Predeclare the planned architectural diversity and matched comparison interfaces before designing a convenient successor. Candidate mechanisms include materially different physical custody/replacement, or authority retirement through incarnation-scoped operations and fallible consumers. These are alternatives to investigate, not a commitment to a software fence or another fabricated apparatus. Admit a class only after testing that its primitive assumptions do not already supply useful inference, clean execution, access or return.
+
+Produce the RP0 premise graph, initial source/family descriptions, a direct same-source obligation baseline and exact prior-art questions. The prior-art assessment should be result-sensitive: inspect existing control refinement, secure estimation, distributed synthesis, compositional verification and renewal/authority results only where they can discharge a proposed obligation. Record inaccessible sources and hypothesis mismatches. Novelty is not the target.
+
+### P1 — Extract global recurrence and retirement once
+
+Factor PRIMARY-ASSEMBLY's initialized proof into generic common-history, local execution/information, finite progress/custody, relative retirement, resource and maximal-run laws. The source graph should identify which local contracts depend on which others and which already established prefix licenses each use. Supply bootstrap and rank/phase witnesses so the mutual reliance of evidence, access and renewal closes constructively.
+
+Derive H and effective support together from raw incidents and actual operations. Preserve the distinction between execution/output, recipient-specific evidence, maintenance availability and physical exports. Avoid silently generalizing the selected one-item projection to multiple effects. Supply an authority-retirement result in terms of actual remaining causal reach at conforming sinks, with explicit treatment of permanently charged residue.
+
+Replay the current machine through this extracted interface. Its global proof should become an instantiation, with source-specific statements moved only when their semantic dependency support justifies the move. If the extracted core merely calls the old entire theorem, or the adapter still proves the global closure, refine the abstraction rather than count the rearrangement as progress.
+
+### P2 — General causal topology and spatial load
+
+Construct certificates from finite typed observation/communication/maintenance/authority/influence/resource relations and allowed joint incident histories. The local implementation should obtain or select the required observation bundles/routes/operations under their real failure and cost semantics. An opaque optimum oracle or an assumed successful service does not discharge the constructor.
+
+Develop a connected family with bounded useful neighborhoods and a nonvanishing local compromise/service regime. Establish the joint neighborhood constraints on one global history, including overlaps, old routes and nonlocal dependency footprints. Show how actual return horizons, work, state and service scale; contrast this with the old fixed-global-budget family. A bad shared calibrator or an off-body export must affect every relevant projection, even when nominal addresses are local.
+
+Use RP2's actual density and coupling witnesses, not only positive upper budgets or graph connectedness. Normalize by real protected/service units, retain positive recurring density across linearly many consumed neighborhoods and expose any alternative complexity growth. Decorative links and a vanishing global fault density do not establish this result.
+
+Ordinary graph coloring, flow, robust observability or locality results may be imported when their assumptions fit. Their use must preserve adversarial scheduling and achieved service; a graph-theoretic cover is not itself a functioning repair schedule.
+
+### P3 — Operative information and compatible actions
+
+Connect the existing general explanation-set/row/bundle theory to finite local source implementations, deadlines and recurrent suppliers. Choose the representation by the decisions it must preserve: a bounded estimate, a set of compatible source histories, a task query, or a common admissible response. Retain correlations and binding information where an intervention needs them.
+
+Close the mutual dependence of redundancy, computation, evidence age, repair horizon and fault exposure. Give a nonempty joint regime and meaningful separation/aliasing/time failures. Include the cost of malformed input, rejected work and unavailable data. If action/probe selection is needed, include its effects on the world, future information and service; otherwise do not inflate the strand into general active learning.
+
+Produce the actual information/response supplier used in the changed architecture, not an unconsumed general decoder. A more accurate result missing its deadline is not an improvement at this interface. Neither rank loss nor an empty certificate set alone proves every controller impossible.
+
+### P4 — A second positive family and the proof-burden experiment
+
+Construct the materially different source family and its local mechanism using the same exported core. Respect the CONTRACT diversity rule: a changed reconstruction/retirement mechanism and another consumed structural relation, with an exhibited failure or typed inapplicability of a baseline mechanism premise. Keep the full joint fault-tolerance bundle and provide the matched fixed-plant/context comparison. Source-specific hardware laws may be mathematical; fabricating another device is unnecessary.
+
+Maintain the same-source obligation comparison alongside construction. Count all adapter, import, code/refinement and empirical dependencies. Demonstrate that the named global support/retirement, recurrent mission, and time/resource/nonblocking arguments are reused unchanged. Source-specific finite coupling computations and local mechanism proofs remain visible; changing their names or hiding them behind generated code does not reduce the burden.
+
+A materially different controller implementation may be selected from legitimate design data. Copying, interpreting and installing it must preserve its actual interface. Uniform design-time substitution is enough unless live upgrade is claimed. Heterogeneous implementations are a useful possible discriminator; a universal program-equivalence decision procedure is not required.
+
+### P5 — Frozen-core transfer and full scientific/intent checking
+
+Freeze the theorem, constructor, applicability conditions, adapter signature and dependency record. An independent selector commits a consequential structural extension with its unchanged mission and predeclared capacities; the adapter author receives that target after the freeze. Recompute only authorized design data and certificates. Record which proof dependencies reopen and why the rest survive.
+
+The freeze includes executable/checking procedures and their semantic dependencies. Define which constructive component the extension must exercise and which primitive-realization inputs remain open. The selector supplies source data and primitive-class evidence, not a solved adapter; expose any assistance. The target may be independently screened for admissibility/feasibility at that primitive level without supplying the global winning conclusion.
+
+Obtain a positive material transfer and retain meaningful negative/boundary cases. If the core changes, the previous test becomes development evidence and a fresh independent challenge is required. A refusal of an out-of-class source is not positive portability. Conversely, an admitted source counterexample is a defect, not permission to silently narrow the class after observing it.
+
+Finish the RP0–RP6, inherited-fidelity and affected taxonomy/assumption maps. Independently review statement/proof/source/implementation alignment, burden accounting and held-out integrity. Reproduce executable/formal checks at their actual scope and bind the new contract, theory, adapters, source families, comparison ledger and challenge record. Scientific verification, repository acceptance and literature novelty remain separate.
+
+## Shared interfaces and proposed records
+
+Use one maintained theorem/premise ledger, one source/fault interpretation and one evidence map. The useful record for a claim identifies the theorem's quantified class, primitive inputs, local policy construction, conclusion, retained/forgotten distinctions, certificate suppliers, consumed bounds, code/physical realization, checking status and precise residuals. These are information requirements, not a compulsory table format.
+
+A portability comparison identifies its common mission interface, source-to-interface maps, actual changed mechanism, baseline premise that fails or cannot be instantiated/transported unchanged, new suppliers, altered quantitative liabilities and the unchanged core invoked. A proof-burden comparison records semantic obligations and dependency closure, the global work removed from repeated adaptation and every new local/global/empirical obligation. Measures of words, code or hours may supplement this account when actually recorded; they cannot replace it.
+
+The final artifacts should be organized by reusable result and actual consumer. Existing machine details remain an instantiation/reference library. They should not dominate the theorem's statement or require copying its entire implementation into every adapter. No publication novelty or universal algorithm is required, but the resulting theory must do useful work for a different source.
+
+## Prior-art and reuse entry points
+
+These are starting leads, not already proved solutions of RP0–RP6. The earlier source assessments contain detailed hypothesis checks; the preceding generality audit rechecked these primary abstracts/pages [✓ at that limited evidence level]: [feedback refinement](https://arxiv.org/abs/1503.03715), [secure estimation/control](https://arxiv.org/abs/1205.5073), [Byzantine distributed observers](https://arxiv.org/abs/1802.09651), and [safety with nonunique attacked-state estimates](https://arxiv.org/abs/2409.08413). Applicability of their full theorems to the new classes remains [~] until its import check. Familiar mathematics may close a result; renaming it is not the portability contribution.
+
+## Failure routing and stopping
+
+If a proposed abstraction loses a material continuation, refine it and carry the new obligation through its consumers. If a candidate source cannot realize a required supplier, first distinguish a failed certificate, failed mechanism, genuine source impossibility and unproved step. Pursue another justified mechanism or source inside the objective when available. Record failed candidates without allowing their negative outcomes to replace the mandatory positive gates.
+
+Stop this future program only when the CONTRACT conjunction is supported, or at an actual execution limit/permission boundary with a precise resumable state. A proposal, residual ledger, bibliography or second complicated machine is not completion. If the positive portability obligations prove incompatible with the admitted class, the result is an explicit formulation obstacle and incomplete program—not a weaker contract automatically declared finished.
+
+For now, the stopping point is the challenged proposal packet itself. No research Goal is created, no new source theorem is claimed proved, and the completed baseline is not rewritten as evidence for this successor.
