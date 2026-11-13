@@ -1,0 +1,74 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,geometry,hyperref}
+\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{lemma}{Lemma}\newtheorem{proposition}{Proposition}
+\title{Adaptive Snapshot Parallelism:\\An Exact Receipt-Preservation Boundary}
+\author{Contextual Composition programme: worked example, review draft}
+\date{13 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+Parallel tasks may have disjoint write permissions yet invalidate one another's dynamically discovered reads. We give an exact scheduling criterion for deterministic read-then-write tasks evaluated on a shared snapshot: a graph of actual changed writes against retained adaptive read receipts is acyclic exactly when a serial re-execution preserves all those receipts. This is a restricted concurrency example, not a new general contextad construction or a novel serializability theorem. Its programme-specific purpose is to isolate the evidence, resource conditions and observation policy needed before an independent-context interchange can be asserted.
+\end{abstract}
+\section{Operational objective and types}
+The application is a speculative batch of adaptive computations: querying an index chooses which record to read, and that record determines a buffered update. A static union of all possible reads can prevent useful parallelism; forgetting reads can wrongly permit it. The goal is to retain enough evidence to decide whether the actual snapshot computations can be replayed serially, unchanged.
+
+Let $L$ be finite and let $V_\ell$ be a nonempty finite value type for each address. The store is $S=\prod_{\ell\in L}V_\ell$. Task $i$ has a fixed identifier, an output type $O_i$, and an exclusive write capability $C_i\subseteq L$. Require $C_i\cap C_j=\varnothing$ for $i\ne j$. Read access is duplicable; it does not reserve a value against later writes. A task is a finite deterministic query tree: an internal node asks for a typed address $\ell$, its branches are indexed by $V_\ell$, and a leaf contains an output $o_i\in O_i$ and a typed partial update $w_i$ with domain $W_i\subseteq C_i$. Every leaf terminates. Reading and choosing branches are pure; updates occur only after reaching a leaf. Addresses and write sets may depend on previous answers. Input data and capabilities are fixed for the batch.
+
+Execution on $s$ produces $(\rho_i,w_i,o_i)$, with $\rho_i$ the ordered sequence of every queried address and answer, including repetitions. In particular, the selector that chooses a later address is retained. A batch is closed against external store mutation; commits are indivisible updates. Allocation, alias changes, clocks, random draws, failures, hidden reads, external effects and read-after-own-buffered-write semantics are outside this model. Fixing random seeds as explicit input can encode some deterministic instances but does not establish a probabilistic theorem.
+
+The mathematical read receipt is not a claim that real hardware exposes atomic snapshots. Obtaining the initial snapshot is a separate implementation obligation.
+\section{Adaptive replay and exact scheduling}
+\begin{lemma}[Replay]
+If $t$ agrees with $s$ at all addresses occurring in the receipt of task $i$ on $s$, execution on $t$ has the same complete receipt, update and output.
+\end{lemma}
+\begin{proof}
+Induct along the visited query-tree path. Initially the task and its input agree. At each node its address is determined by that same prefix; agreement at the queried address gives the same answer and next node. The same leaf supplies the same output and update. No condition on unvisited branches is needed.
+\end{proof}
+For the snapshot executions define
+\[
+ \Delta_j=\{\ell\in W_j:w_j(\ell)\ne s(\ell)\},\qquad
+ i\longrightarrow j\quad\Longleftrightarrow\quad i\ne j\text{ and }\rho_i\text{ reads a member of }\Delta_j.
+\]
+An edge points from the reader to the writer: the reader must go first to retain the snapshot answer. Self-edges are excluded because the task reads before its own commit. Let $P$ be an optional fixed precedence relation (e.g. prescribed external scheduling order). Put $G=P\cup\{i\to j\}$; $P$ must not be used to pretend an unavailable task input existed at snapshot time.
+
+\begin{theorem}[Exact receipt-preserving serializability]
+A total order satisfying $P$ preserves every snapshot receipt, output and update under serial re-execution if and only if it is a topological order of $G$. Hence such an order exists exactly when $G$ is acyclic. In every such order the final store is $s$ overwritten by the disjoint updates $w_i$.
+\end{theorem}
+\begin{proof}
+For sufficiency, suppose all preceding tasks replayed correctly. An address in the next task's receipt can have changed only by a preceding task's actual changed write. That would give an edge from the next task to a preceding one, contrary to topological order. Thus all its receipt values still match $s$ and the replay lemma applies. Induction proves the claim; disjoint updates give the stated final store.
+
+For necessity, assume all tasks preserve their receipts and take an edge $i\to j$ with $j$ earlier than $i$. Choose its witnessing address $\ell$. Task $j$ commits a value different from $s(\ell)$. No other task can overwrite $\ell$, by disjoint write capabilities; task $i$ has not yet committed. At its occurrence of the query $\ell$, task $i$ therefore cannot obtain its snapshot answer. If the path diverged earlier, receipt preservation already failed. Either alternative contradicts the assumption. Thus every edge is respected. Existence of a total topological order is equivalent to finite acyclicity.
+\end{proof}
+The graph can be built by mapping each changed address to its unique writer, scanning each receipt and then topologically sorting. With hash-address lookup this takes expected $O(\sum_i(|W_i|+|\rho_i|)+n+|P|)$ time, counting duplicate edges if convenient. A directed cycle is a concrete negative certificate for this objective. The theorem does not decide arbitrary semantic equivalence, find an optimal schedule, or minimize aborts.
+\section{Interchange, with its observation boundary}
+\begin{proposition}[Schedule interchange]
+Any two topological orders of $G$ are connected by adjacent swaps of incomparable tasks. Every such swap preserves the final store and every task-tagged receipt, output and update. A deterministic cost assigned to each visited query path is also preserved taskwise and under commutative summation.
+\end{proposition}
+\begin{proof}
+Move the first element of the desired order leftward in the current order. Every crossed element is incomparable: either direction of dependence would contradict one of the two orders. Repeat on the remaining suffix. The exact scheduling theorem applies after each swap, yielding the stated invariant records. A path-determined cost is unchanged because the visited path is unchanged.
+\end{proof}
+This is not equality of ordered audit lists. The schedules $[i,j]$ and $[j,i]$ have different commit-order observations, even if their state transformers agree. The interchange carries an explicit permutation of task-tagged records; an observer that forgets order, or a content comparison explicitly admitting that permutation, identifies them. An order-sensitive observer does not. Wall-clock duration, cache effects and intermediate public states are not covered by additive path costs or final-state equality.
+
+For the catalogue's ``commuting / independent contexts'' direction this gives a concrete operational test, rather than a postulated symmetric tensor. A fibre over $(s,\{\rho_i,w_i,o_i\},P)$ contains the admitted schedules, with invertible adjacent-swap witnesses. The interpretation sends a schedule to its serial run and sends a swap to the record permutation just described. Over different stores these fibres can change; no store-independent commutation law has been proved. In particular, importing this into the existing independent-interaction theorem would additionally require a valid context/content doctrine and its display, transport and coherence hypotheses. Those are not supplied by the scheduling graph.
+
+The programme's \emph{General Independent Interaction Criterion} constructs interaction for separately valid inputs satisfying occurrence-display and Beck--Chevalley conditions. Its ``independent'' refers to independently specified doctrines, not this read/write independence property. Equating those two senses would be a mistake. This example instead supplies an application-level proof obligation that a proposed concurrent enrichment must retain, and a precise limit on content forgetting.
+\section{Separations and dynamic dependency}
+\paragraph{Exclusive writes are insufficient.}
+Start with $x=y=0$. Task $A$ reads $y$, returns that value, and writes $x=1$; task $B$ reads $x$, returns it, and writes $y=1$. Their write permissions are disjoint. Both snapshot outputs are zero, but the graph has $A\to B\to A$. Either serial order changes the second task's receipt and output.
+
+\paragraph{The actual branch matters.}
+Task $A$ reads selector $z$, then reads $x$ if $z=0$ and $y$ otherwise, and writes its answer to $a$. Task $B$ changes $y$ without reading $a$ or $z$ and owns only $y$. At a snapshot with $z=0$, there is no $A\to B$ dependency; at $z=1$ there is. A static footprint $\{z,x,y\}$ is safe but unnecessarily restrictive in the first case. Erasing the selector or actual query receipt loses the evidence needed to justify this improvement. Reuse of a cached certificate at a new snapshot must revalidate the receipt values and changed-write sets, not merely retain the old graph.
+
+\paragraph{No-op writes.}
+Writing $s(\ell)$ back to $\ell$ does not change a reader's answer and creates no edge. Our criterion is consequently more value-sensitive than a graph that treats every syntactic write as a conflict. This improvement depends on excluding externally visible write events from the observation.
+
+\paragraph{A cycle need not obstruct a weaker observation.}
+In the two-task cycle above, discard outputs and all read receipts and keep constant writes. Every execution has final state $(1,1)$, including both serial orders. The graph still has a cycle. Thus our necessity theorem concerns exact receipt preservation, not final-store equivalence or arbitrary view serializability.
+
+\paragraph{Why unique writers matter.}
+If two different tasks may write the same address, one can restore the snapshot value before a reader runs. A reader-to-changing-writer edge is then not necessary for receipt preservation. For example $x=0$, $J$ writes $1$, $K$ writes $0$, and $I$ reads $x$: order $J,K,I$ preserves $I$'s snapshot receipt despite $I\to J$. Exclusive ownership is a real hypothesis, not bookkeeping. Conversely exclusive ownership alone says nothing about invariants such as $x+y\le1$; those require a separate invariant-preservation argument.
+\section{Relationship to classical theory and verification}
+Serialization graphs and conflict-preserving schedules are classical concurrency-control tools; see Bernstein, Hadzilacos and Goodman, \emph{Concurrency Control and Recovery in Database Systems} (1987), available from the author's \href{https://www.microsoft.com/en-us/research/people/philbe/book/}{Microsoft Research page}. The contribution claimed here is a worked integration target and explicit scoped proof, not priority for graph scheduling or trace equivalence. The special graph exploits a shared snapshot, actual values, read-then-write tasks and unique writers. It is not a replacement for general database concurrency control or crash recovery.
+
+The accompanying standard-library Python program exhausts 1,024 two-cell Boolean program/store cases and tests 4,000 seeded four-task, five-cell cases. It compares the graph criterion against actual serial re-execution for all orders: 98,048 order checks. Programs query a selector and then one of two dynamically selected locations; their uniquely owned write is a Boolean function of the answer. Additional assertions test branch sensitivity, a cycle and no-op writes. Run \texttt{python checks.py}; the JSON result is regenerated. These finite diagnostics support the implementation but do not constitute a formal proof, general query-tree enumeration or a fresh audit of existing programme sources. The above written proofs carry the general claims. No Lean replay or physical concurrency experiment is claimed.
+\end{document}
