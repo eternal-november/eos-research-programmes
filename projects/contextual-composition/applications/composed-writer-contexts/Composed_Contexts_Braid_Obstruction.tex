@@ -1,0 +1,195 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{proposition}{Proposition}
+\newcommand{\F}{\mathbb F}
+\title{Pairwise-valid context mechanisms need not compose:\\a finite braid obstruction and minimal action repair}
+\author{Contextual composition programme}
+\date{13 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+We give a small exact obstruction to composing independently supplied context
+mechanisms. Each of two mode mechanisms crosses a resource accumulator by a
+valid distributive law, and the mode mechanisms themselves have the usual
+independent swap. Nevertheless the three crossings fail their braid equation;
+the proposed combined multiplication is not associative. In the displayed
+two-bit model, replacing independent mode parities by their generated action
+group repairs composition, with six mode states and 24 total states. These
+counts are minimal for the specified observations. This is a worked strict
+writer/accumulator specialization of classical distributive-law mathematics,
+not a new general composition theorem for arbitrary contextads.
+\end{abstract}
+
+\section{What is being combined?}
+The catalogue's composed-contextads direction asks for coherent combinations
+of mechanisms, not just several pieces of data in a tuple. The existing
+\emph{One relative construction for context, content, and effects}, section
+``One mixed multiplication from a coherent crossing'', explicitly assumes a
+complete supplied pseudodistributive law. It does not assert that arbitrary
+independently valid mechanisms admit one. Here we isolate an additional
+problem when there are three mechanisms: pairwise laws are insufficient.
+
+Our strict setting uses accumulator grades. A monoid $M$ defines the writer
+monad $W_M X=M\times X$ on sets, with unit $(1,x)$ and multiplication
+$(m,(n,x))\mapsto(mn,x)$. A crossing between grade monoids satisfying the two
+unit and two multiplication equations extends naturally to a distributive
+law of their writer monads. The payload $x$ is untouched. This supplies an
+ordinary compositional semantics with explicit accumulated grades; the
+resulting grade monoid can also be regarded as a one-object category. We do
+\emph{not} identify every writer monad with the programme's general native
+contextad presentations, nor supply dependent reindexing, nontrivial grade
+cells, or their pseudocoherences here.
+
+The familiar higher compatibility condition is the Yang--Baxter equation
+for iterated distributive laws, treated generally by Cheng
+\cite{Cheng}. Our contribution here is the explicit failure, repair, and
+observable-state accounting for this finite application; no novelty is
+claimed for the underlying theory.
+
+\section{An exact compatibility criterion}
+Let $A$ be a group, written multiplicatively for this section, and let $P,Q$
+be involutive automorphisms of $A$. Let $B=C=\mathbb Z/2$ be mode grades.
+Define pairwise crossings toward normal order $ABC$ by
+\[
+ BA\longrightarrow AB:(b,a)\longmapsto(P^b(a),b),\qquad
+ CA\longrightarrow AC:(c,a)\longmapsto(Q^c(a),c),
+\]
+and $CB\to BC:(c,b)\mapsto(b,c)$. The last crossing says that the two
+mode mechanisms are independent.
+
+\begin{proposition}[Pairwise validity]
+All three crossings are distributive laws of the corresponding writer
+monads, regardless of whether $P$ and $Q$ commute.
+\end{proposition}
+\begin{proof}
+For $BA\to AB$, the unit equations are $P^0a=a$ and $P^b1=1$.
+The two multiplication equations are
+\[
+ P^b(ad)=P^b(a)P^b(d),\qquad
+ P^{b+e}(a)=P^b(P^e(a)),
+\]
+where mode addition is modulo two. They follow from automorphism and
+involution. The $Q$ case is identical, and swap is the product-monoid law.
+Naturality in the untouched payload is immediate.
+\end{proof}
+
+\begin{proposition}[Three-way obstruction]
+The three crossings satisfy the braid equation if and only if $PQ=QP$.
+Equivalently, the attempted multiplication on $A\times B\times C$,
+\begin{equation}\label{eq:attempt}
+ (a,b,c)(d,e,f)=(aP^bQ^c(d),\ b+e,\ c+f),
+\end{equation}
+is associative if and only if $P$ and $Q$ commute.
+\end{proposition}
+\begin{proof}
+The two rewriting paths from $CBA$ to $ABC$ send $(c,b,a)$ to
+$(Q^cP^b(a),b,c)$ and $(P^bQ^c(a),b,c)$. They agree exactly when
+$P$ and $Q$ commute. If they do, $(b,c)\mapsto P^bQ^c$ is an action
+of $B\times C$ by automorphisms, and \eqref{eq:attempt} is its semidirect
+product. For necessity, use $x=(1,0,1)$, $y=(1,1,0)$, and $z=(d,0,0)$.
+The $A$ coordinates of $(xy)z$ and $x(yz)$ are $PQ(d)$ and $QP(d)$.
+\end{proof}
+
+Thus the defect is not an implementation race: the proposed algebra fails
+associativity before scheduling or probabilities enter. A compilation rule
+that moves mode instructions past accumulated updates must check this
+three-way condition, even after all pairwise tests pass.
+
+\section{Two binary wires: a concrete failure}
+Take $A=V=\F_2^2$, with vector addition. Translations by $a\in V$
+toggle a specified pair of binary wires. Mode $P$ swaps the wire roles;
+mode $Q$ performs the reversible linear recoding that XORs the second wire
+into the first:
+\[
+ P(x,y)=(y,x),\qquad Q(x,y)=(x+y,y).
+\]
+Both square to the identity and preserve vector addition. Moving a linear
+recoding past a toggle changes the toggle mask by that recoding, precisely
+the crossing above. Each isolated mechanism therefore has coherent
+accumulation semantics. But they are not independent modes:
+\[
+ PQ(1,0)=(0,1),\qquad QP(1,0)=(1,1).
+\]
+This difference is observable on actual wire values, not just in the choice
+of notation. If $x=(0,0,1)$, $y=(0,1,0)$, and
+$z=((1,0),0,0)$, interpreting the first $0$ as the zero vector, then
+\eqref{eq:attempt} assigns different toggle masks to its two bracketings.
+Among the 4096 triples in the attempted 16-element structure, the exact
+test finds 768 associativity failures.
+
+There is a second intuitive diagnosis. Recording only how many $P$ and $Q$
+instructions occurred modulo two identifies the empty history with $PQPQ$.
+Yet $(PQ)^2\ne1$. Reordering and accumulating the separate mode parities
+has thrown away a cross-mechanism effect. Keeping the chronological mode
+word would work but is unnecessarily large for the present observations.
+
+\section{A repair that retains exactly the observable action}
+Let $G=\langle P,Q\rangle\leq\operatorname{Aut}(V)$ be the group of actual
+linear transformations generated by these instructions. The three nonzero
+vectors of $V$ are permuted by $G$. Here $P$ exchanges $(1,0)$ and $(0,1)$,
+while $Q$ exchanges $(0,1)$ and $(1,1)$. These transpositions generate every
+permutation of the three nonzero vectors, so $G\cong S_3$ and $|G|=6$.
+The generated context is
+\[
+ H=V\rtimes G,\qquad (a,g)(d,h)=(a+g(d),gh).
+\]
+Products of functions are composed right to left. It acts on wire values by
+$F_{a,g}(v)=a+g(v)$, with $F_{(a,g)(d,h)}=F_{a,g}\circ F_{d,h}$.
+Thus our convention executes the right factor first. Reversing the temporal
+convention consistently gives the same obstruction and repair.
+
+\begin{proposition}[Repair and minimality at the stated observation scope]
+$H$ is an associative 24-element context monoid. Any exact summary of mode
+histories from which one can recover their action on every $v\in V$ has
+at least six states. Any exact summary of combined toggle and mode histories
+recovering their action on every $v\in V$ has at least 24 states. Both bounds
+are attained by $G$ and $H$, respectively.
+\end{proposition}
+\begin{proof}
+The semidirect formula is associative because $g$ is additive and
+$(gh)(v)=g(h(v))$; $(0,1)$ is the unit. There are six distinct generated
+mode functions, so any summary identifying two of them loses some probe
+value. Every $(a,g)$ is generated by toggles and modes. If
+$F_{a,g}=F_{d,h}$ on all probes, evaluating at zero gives $a=d$, and then
+subtracting $a$ gives $g=h$. Hence all 24 affine behaviors are distinct,
+giving the lower bound. Their multiplication supplies attaining summaries.
+\end{proof}
+
+Minimality means distinguishability under arbitrary initial wire probes
+and exact output observation, not minimum memory under a fixed input,
+restricted tests, approximation, or a demand to retain the entire history.
+For example, observing zero only cannot distinguish linear modes. The
+repair deliberately forgets different mode words with the same total action;
+that is sound for these observations but would not preserve provenance,
+instruction costs, or intermediate traces. Including those observations
+would require a different summary.
+
+The general repair pattern is to retain the image of the mode-word monoid
+in $\operatorname{Aut}(A)$ and form the corresponding semidirect product.
+It is not always finite. Here it is finite, and preserves the meaning of
+each individual mechanism but rejects their asserted independence. It does
+not magically provide a law combining the original independent mode bits.
+
+\section{Checks and limitations}
+\texttt{check\_composed.py} checks both pairwise multiplication equations,
+the unit equations, all 16 braid inputs, all 4096 attempted-product
+associativity cases, all 13824 repaired-product associativity cases, and the
+24 distinct affine observations. As a positive control it replaces $Q$ by
+the identity and checks all 4096 associative triples in the resulting
+independent-mode construction. The output is in
+\texttt{check-results.json}; no external Python dependencies are needed.
+
+The written propositions give the general criterion; finite enumeration is
+regression support, not their substitute. No Lean formalization or new
+literature/novelty claim is made. In particular, this example does not solve
+the general composed-contextad direction, construct a pseudodistributive
+law in the native dependent setting, or show that all possible combinations
+of these mechanisms are impossible. It rules out precisely the simultaneous
+specified pairwise crossings and independent swap. The positive repair
+shows what additional interaction data make this instance compositional.
+
+\begin{thebibliography}{9}
+\bibitem{Cheng} Eugenia Cheng, \emph{Iterated distributive laws},
+Mathematical Proceedings of the Cambridge Philosophical Society 150 (2011),
+459--487. \url{https://arxiv.org/abs/0710.1120}.
+\end{thebibliography}
+\end{document}
