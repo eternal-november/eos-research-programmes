@@ -34,9 +34,12 @@ Additional scoped worked examples:
 
 - [Composed accumulator contexts](applications/composed-writer-contexts/README.md): the braid obstruction for independently swapping writer modes and a scope-limited action repair.
 
+- [Verified neural control](applications/verified-neural-control/README.md): exact finite safety certificates and moving admissible parameter fibres under stated model assumptions.
+
 These integrate established ideas with the existing framework; they make no new general categorical theorem claim.
 
 The manuscripts contain written proofs at their stated scope. Python checks are finite diagnostics or source checks, not proof-assistant certification. Run checks with Python 3 in their containing directory. Use a disposable copy because several scripts write diagnostic outputs. TeX source checks may require the local manuscript filename as an argument; these do not compile TeX.
+
 
 
 

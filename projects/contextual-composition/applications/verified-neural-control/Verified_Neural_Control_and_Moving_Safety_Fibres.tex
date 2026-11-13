@@ -1,0 +1,115 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,geometry,hyperref}
+\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Verified neural control: moving safety fibres, compositional certificates, and two obstructions}
+\author{}\date{13 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+We combine fixed-feature ReLU controllers, robust state predicates and parameter differentiation in an exactly solvable example. A general finite-cell theorem identifies the complete safe output-weight polyhedron. For a scalar residual controller we compute this fibre explicitly, give coherent transport between operating conditions, and derive the derivative terms required by that transport. Safe parameter updates compose over arbitrarily many deployment steps. Independent bounds on hidden activations can nevertheless destroy completeness, and training hidden weights destroys the convexity used by the update rule. These are scoped worked results, not a general theory of verified neural contextads or a novelty claim for neural verification.
+\end{abstract}
+\section{Operational question and relation to the programme}
+A trained map is not by itself a safe controller. A certificate relates its parameters to a plant, disturbance model and admissible state region. If these conditions change, a previously safe parameter may cease to be legal. Can training and deployment compose while retaining the certificate, and can differentiation respect the changing legal parameter set?
+
+The contextual-composition catalogue's verified-network and neural-controller combinations motivate this example. The earlier moving-parameter-fibre note established that differentiating legal moving parameters requires a specified lift and cross terms. The quantitative-doctrine example emphasized preserving the information needed by predicates. Here the legality fibre is a closed convex polyhedron, not a vector bundle: its boundary is significant, so the earlier smooth-bundle formulas cannot be applied globally without modification. We supply an explicit box trivialization on a restricted family instead. No crossing, recognition, general reverse-derivative axioms, or full contextual-equivalence result is asserted.
+
+\section{General fixed-feature certificate}
+Let $S=\{x:Hx\le h\}$ be a compact polytope, $D$ a compact disturbance polytope, and consider
+\[
+ x^+=Ax+B(W\phi(x)+b)+Ew,\qquad x\in S,\quad w\in D.
+\]
+The feature network $\phi:S\to\mathbb R^k$ is a fixed finite ReLU network. Only the final affine layer $(W,b)$ is trained. Its activation patterns give a finite cover of $S$ by compact polytopes $S_j$, on each of which $\phi(x)=M_jx+d_j$. Empty cells are discarded; lower-dimensional cells cause no problem. All plant matrices and feature weights are fixed.
+\begin{theorem}[Exact finite safety fibre]
+The parameters preserving $S$ for every allowed disturbance form precisely the closed convex polyhedron
+\[
+ C=\bigcap_{j,v\in\operatorname{vert}S_j,\ q\in\operatorname{vert}D}
+ \{(W,b):H[Av+B(W\phi(v)+b)+Eq]\le h\}.
+\]
+Thus feasibility and linear optimization over safe output weights reduce to linear programming. The region enumeration may be exponentially expensive, and $C$ may be empty or unbounded.
+\end{theorem}
+\begin{proof}
+For fixed $(W,b)$, each component of the next-state predicate is affine in $(x,w)$ on $S_j\times D$. Every point in this product is a convex combination of its vertex pairs, so the vertex inequalities imply all inequalities on the product. Necessity follows by evaluating at those vertices. Each displayed inequality is affine in $(W,b)$, proving convexity and the polyhedral description. Finite ReLU networks are piecewise affine by induction over layers: intersect each preceding cell with the finitely many preactivation half-spaces, then apply its fixed activation pattern.
+\end{proof}
+This is a completeness claim only for the stated robust invariant predicate and exact fixed-feature model. It is not completeness for arbitrary neural-network properties.
+
+\begin{proposition}[Training and deployment compose]
+If $C\ne\varnothing$, a Euclidean projected update
+$T(p)=\Pi_C(p-\eta\nabla L(p))$ is safe for every step size $\eta$ whenever the gradient is defined. Let $p_t\in C$ be chosen adaptively from the entire past, and let each $w_t\in D$ also be chosen adaptively. Then $x_0\in S$ implies $x_t\in S$ at all times.
+\end{proposition}
+\begin{proof}
+A nonempty closed convex set in finite-dimensional Euclidean space has a unique nearest point. The update therefore lands in $C$. The finite safety theorem gives $x_{t+1}\in S$ from $x_t\in S$, independently of the adaptive choices; induction proves the claim.
+\end{proof}
+The claim is about feasible updates, not loss descent, learning convergence, numeric solver tolerances, or smoothness of projection. If operating conditions vary, the same induction works for a common state predicate when each step is certified for its actual plant and disturbance set. For varying sets $S_t$, the required premise is instead $F_t(S_t,D_t)\subseteq S_{t+1}$; separate self-invariance certificates do not supply it.
+
+\section{A fully computed residual neural controller}
+Let $r>0$, $0\le\delta<r$, $S_r=[-r,r]$, and $w\in[-\delta,\delta]$. Use the integrator plant $x^+=x+u+w$ with skip-connected two-unit network
+\[
+ u_{a,b,c}(x)=-x+a\operatorname{ReLU}(x)+b\operatorname{ReLU}(-x)+c.
+\]
+This is an ideal exact plant; actuator saturation, delays, sensor error and plant uncertainty are not included. Its closed-loop nominal output is piecewise affine with values
+\[
+ t_- =c+rb\quad(x=-r),\qquad t_0=c\quad(x=0),\qquad t_+=c+ra\quad(x=r).
+\]
+Write $m=r-\delta>0$.
+\begin{theorem}[Complete scalar certificate]
+The controller robustly preserves $S_r$ if and only if
+\[
+ |c|\le m,\qquad |c+ra|\le m,\qquad |c+rb|\le m.
+\]
+Equivalently, with $z=(z_0,z_+,z_-)\in[-1,1]^3$, all and only safe parameters are
+\[
+ c=mz_0,\qquad a=\frac m r(z_+-z_0),\qquad b=\frac m r(z_--z_0).
+\tag{1}
+\]
+\end{theorem}
+\begin{proof}
+The extrema of each affine piece occur at its endpoints. Adding an adversarial interval disturbance preserves $[-r,r]$ exactly when each nominal endpoint lies in $[-m,m]$. The invertible endpoint-coordinate map gives (1).
+\end{proof}
+At $r=1,\delta=1/4$, take $a=b=3/4,c=0$. The nominal next state is $(3/4)|x|$, so the maximal next state including disturbance is exactly $1$; safety is sharp. This controller need not converge to zero under disturbances: invariance is the certified objective.
+
+\section{Moving conditions and differentiable safe learning}
+Let the operating context be $q=(r,\delta)$ in the open region $r>\delta>0$. Denote (1) by $p=\Psi_q(z)$. Each legal fibre $C_q$ is linearly isomorphic to the same closed cube. Define
+\[
+ R_{q\to q'}=\Psi_{q'}\Psi_q^{-1}:C_q\longrightarrow C_{q'}.
+\]
+These transports satisfy $R_{q'\to q''}R_{q\to q'}=R_{q\to q''}$ and $R_{q\to q}=1$. They preserve normalized endpoint values, which is the specified semantic convention, not a uniquely mandated physical transport.
+
+If the state radius stays fixed but $\delta$ grows from $1/4$ to $1/2$, retaining $a=b=3/4,c=0$ becomes unsafe: $x=1,w=1/2$ gives $x^+=5/4$. The transport scales $a,b$ to $1/2$ and restores the certificate. When $r$ changes, transporting parameters alone does not establish that the current state belongs to the new interval. That state-admission check must also be made.
+
+The learning rule in normalized coordinates is
+\[
+ z^+=\operatorname{clip}_{[-1,1]^3}\bigl(z-\eta\nabla_z[L(q,\Psi_q(z))]\bigr).
+\]
+It preserves safety for arbitrary $\eta$, and can be interleaved with the transports because both keep $z$ in the cube. Its metric is the Euclidean metric on $z$, not on $(a,b,c)$; these different projections need not agree. Clipping is only piecewise differentiable.
+
+In the interior, let a dot denote a changing context and hold $z$ fixed. Then
+\[
+ \dot c=(\dot r-\dot\delta)z_0,\qquad
+ \dot a=\frac{\delta\dot r-r\dot\delta}{r^2}(z_+-z_0),\qquad
+ \dot b=\frac{\delta\dot r-r\dot\delta}{r^2}(z_--z_0).
+\]
+For any differentiable loss,
+\[
+ \frac{d}{dt}L(q,\Psi_q(z))=D_qL\,\dot q+D_pL\,D_q\Psi_q\dot q.
+\]
+The second term is necessary. At fixed $r=1$, $z=(0,1,1)$ and $L=a+b$, the legal derivative with respect to $\delta$ is $-2$; the ambient partial derivative holding $(a,b,c)$ fixed is $0$. This is the same moving-fibre issue as in the earlier differential example, now attached to an exact robust safety predicate. Boundary nonsmoothness and $m\to0$ prevent a global smooth-vector-bundle interpretation. At $\delta=r$ the fibre collapses to zero; for $\delta>r$ it is empty.
+
+\section{What cannot be forgotten when composing certificates}
+For $r=1$ the reachable feature pair
+$(\operatorname{ReLU}(x),\operatorname{ReLU}(-x))$ lies on two coordinate segments, never at $(1,1)$. Bounding each coordinate independently by $[0,1]$ replaces this set by a square. For the sharp safe controller above, that abstraction permits the impossible value $3/4+3/4+1/4=7/4$ and rejects the certificate. The exact maximum is $1$.
+
+This is incompleteness, not unsoundness, of the interval abstraction. A compositional verifier may safely overapproximate, but preserving each marginal range is not enough for exact predicate transport through arbitrary affine readouts. Retaining the union of activation cells or its convex hull suffices for affine readouts: affine extrema depend only on the convex hull. Thus the relevant interface for this verification problem is a joint feature polytope, not merely a vector of ranges. The scalar feature hull is the triangle with vertices $(0,0),(1,0),(0,1)$, which restores the sharp certificate without retaining the full nonconvex feature image. In this scalar example the skip connection cancels the plant state term, so the feature hull alone suffices. For the general plant $Ax+B(W\phi(x)+b)+Ew$, when $Ax$ survives, one must instead retain the joint hull of $(x,\phi(x))$ (together with the disturbance set), or equivalent relational information; the feature hull alone can forget correlations needed by the state predicate.
+
+\section{Hidden-layer learning breaks the convex update argument}
+Take $x\in[0,1]$, disturbance zero, and closed-loop map
+$f_{v,w}(x)=v\operatorname{ReLU}(wx)$ with $v,w\ge0$ (implementable by the integrator controller $u=-x+f_{v,w}(x)$). Invariance of $[0,1]$ is equivalent to $vw\le1$. Both $(v,w)=(0,4)$ and $(4,0)$ are safe, while their midpoint $(2,2)$ sends $1$ to $4$.
+
+Hence safe interpolation of complete parameter vectors fails, and the convex-fibre/projection theorem does not extend to hidden-weight training. This does not prove safe hidden-layer learning impossible: one may reverify, use different coordinates, exploit symmetries, or solve a nonconvex constrained problem. It identifies exactly which premise of the fixed-feature result was doing the work.
+
+\section{Established context, contribution, and verification}
+Exact piecewise-linear neural verification is established work; Katz et al., \emph{Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks}, \url{https://arxiv.org/abs/1702.01135}, supplies a major verification approach. Zhao et al., \emph{Learning Safe Neural Network Controllers with Barrier Certificates}, \url{https://arxiv.org/abs/2009.09826}, develops verification-in-the-loop synthesis. These references motivate the distinction between training and certification; we neither implement their algorithms nor claim priority over their guarantees. Parameterized lenses and reverse differentiation are treated by Cruttwell et al., \emph{Categorical Foundations of Gradient-Based Learning}, \url{https://arxiv.org/abs/2103.01931}.
+
+The contribution to this programme is the assembled worked example: an exact safety fibre, an explicit coherent operating-condition transport, the associated cross derivative, and precise failures of independent feature abstraction and joint-layer convexity. The general finite-cell theorem and projected feasibility principle are elementary applications of established polyhedral verification and convex analysis; no new field-wide theorem is claimed. No empirical neural training, physical robot deployment, general nonlinear plant theorem, Lean formalization or exhaustive literature audit was performed.
+
+The standard-library Python checks use rational arithmetic. They test the six scalar inequalities against endpoint disturbance enumeration over a parameter grid; exact box reparameterization and transport composition; the contextual derivative by rational difference quotients; clipping; a multi-step adaptive deployment; the marginal-abstraction gap; and the hidden-layer midpoint failure. They are regression witnesses, not proofs of the symbolic theorems.
+\end{document}
