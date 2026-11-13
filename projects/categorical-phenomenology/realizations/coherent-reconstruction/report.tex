@@ -1,0 +1,733 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,array}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\newcommand{\R}{\mathbb R}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\rk}{\operatorname{rank}}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\cone}{\operatorname{cone}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\W}{\mathcal W}
+\newcommand{\Pcal}{\mathcal P}
+\newcommand{\Kcal}{\mathcal K}
+\newcommand{\Ccal}{\mathcal C}
+\newcommand{\rrk}{\operatorname{rank}_{\Kcal}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\title{Joint native realization with fixed local mechanisms}
+\author{Technical note}
+\date{3 November 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Fixed finite local stochastic factorizations can be assembled while retaining their hidden occurrences and their complete continuation rows, but equality of their observable laws is not sufficient. For a prescribed joint retained carrier, allowed hidden tuples, retained marginal, and observable target, we give an exact linear compatibility criterion. A feasible tensor produces a native two-stage generator by splitting each hidden tuple according to the first announcement. Its exact minimum middle-state count is the sum of coupling-constrained factor ranks, optimized over the feasible tensors. A finite conic dual gives independently checkable obstruction certificates. Each feasible tensor has an initial native reconstruction in its fibre; this reconstruction gives coherent posterior comparison maps under explicit changes of observation and subsystem, without selecting an optimizer. Examples distinguish observable agreement from deterministic occurrence retention, show unbounded correlation-memory cost with one-state local factors, and exhibit a full-support cycle obstruction. The result is a finite fixed-witness refinement of standard coupling, marginal-extension, and factorization machinery, not a new general theory of gluing or a claim about unrestricted causal mechanisms.
+\end{abstract}
+
+\section{The result and its exact scope}
+
+The input is not just a collection of observable tables. For every local module $i$, the matrices
+\[
+ A_i:J\longrightarrow H_i,\qquad B_i:H_i\longrightarrow S_i
+\]
+are fixed: $A_i$ is a joint first-announcement--hidden-state law, and $B_i$ is a stochastic continuation link. The question is whether a single implementation can retain these particular factors through deterministic maps to the $H_i$, not merely produce the same local products $A_iB_i$. Its joint retained state must lie in a specified $S\subseteq\prod_iS_i$, its tuple of local hidden occurrences must lie in a specified $E\subseteq\prod_iH_i$, and it must satisfy a joint target observation law. The answer separates four questions.
+
+\begin{enumerate}
+\item \emph{Compatibility.} A finite nonnegative tensor $Z_{jhs}$ exists satisfying the explicit linear equations in Section~\ref{sec:criterion}. This is necessary and sufficient for a finite layer-native implementation, with at most $|J||E|$ middle states. Its failure has the exact dual certificate in Section~\ref{sec:dual}.
+\item \emph{Resources.} Feasibility does not ensure that one state per hidden tuple suffices. The exact minimum is two phase states plus an optimized sum of factor ranks constrained to the row-coupling polytopes $\Kcal_h$; see Section~\ref{sec:resources}. Correlation can force arbitrarily many states even when every local factor has one.
+\item \emph{Reconstruction.} For every feasible tensor there is an initial object in the category of native implementations retaining that tensor. The reconstruction is therefore specified by a universal property, not by an arbitrary factorization choice; see Section~\ref{sec:initial}.
+\item \emph{Coherence.} Explicit lawful interface changes transport all witnesses and native arrows. Reconstruction before and after transport is related by a derived posterior comparison, with a sequential coherence law. Rebracketing gives isomorphisms. Chosen intermediate models impose additional simultaneous constraints; independently chosen optimizers do not inherit a coherence theorem.
+\end{enumerate}
+
+The local continuation rows are preserved \emph{state by state}, including before the public output is read. This is stronger than preserving a local joint law but narrower than preserving arbitrary interventions, histories, or physical mechanisms. The generators are finite, normalized, time-homogeneous, and have three disjoint phase alphabets. All phase memory is counted. The main resource theorem is stated first for this explicitly defined native class. Section~\ref{sec:general-native} gives its extension to arbitrary finite generators only under an explicit joint retained-link hypothesis. Section~\ref{sec:umbrella} also constructs a joint one-step transition witness directly from the local kernels, without assuming a global coarse readout; it separates this from the stronger requirement of a prescribed global coarse quotient. No equivalence with the category of all stochastic processes is asserted.
+
+The standard mathematical controls are substantial: marginal extension, Markov combination, semiring-valued global sections, and Markov-process semipullbacks already solve important nearby problems. Section~\ref{sec:prior-art} records the reductions and the limits of the bounded source audit. The additional obligation here is to preserve the specified local factorization rows and occurrence labels while accounting for joint correlation memory.
+
+\section{Finite input data and the preservation obligation}\label{sec:data}
+
+All matrices in this note have nonnegative real entries. A matrix is stochastic when every row sums to one; rows representing joint laws need not be stochastic. Matrix products act from left to right on row distributions. Functions are identified with their deterministic stochastic matrices.
+
+Let $L$ be a finite nonempty set of modules. Let $J,H_i,S_i,I_i$ be finite nonempty sets. Fix
+\[
+ A_i\in\R_{\ge0}^{J\times H_i},\qquad
+ B_i\in\R_{\ge0}^{H_i\times S_i},\qquad
+ Q_i\in\R_{\ge0}^{S_i\times I_i},
+\]
+where $B_i,Q_i$ are stochastic and $A_i\one=p$ for a common probability column $p\in\R_{\ge0}^J$. Put
+\[
+ T_i=A_iB_i,\qquad w_i=\one^{\mathsf T}T_i,
+ \qquad R_i=T_iQ_i.
+\]
+The local native model has a root, the hidden states $H_i$, and a terminal: it emits $a_j$ while entering $h_i$ with weight $A_i(j,h_i)$, then reads its retained state through $B_i$ and emits $b_{i,u}$ with probability $(B_iQ_i)(h_i,u)$, then loops on a terminal symbol. Thus its hidden factors, not just $R_i$, are named input data.
+
+Fix nonempty finite sets
+\[
+ S\subseteq\prod_{i\in L}S_i,\qquad
+ E\subseteq\prod_{i\in L}H_i,
+\]
+with deterministic projections $\pi_i:S\to S_i$ and $e_i:E\to H_i$. Membership in $S$ can encode agreement of shared coordinates or other forbidden retained combinations. Membership in $E$ can constrain which local hidden occurrences may coexist. Neither restriction is inferred from the observed tables.
+
+The joint retained and observed data are a probability row $w$ on $S$, a stochastic matrix $Q:S\to I$, and a total-one matrix $R\in\R_{\ge0}^{J\times I}$. Require
+\begin{equation}\label{eq:data-consistency}
+ R\one=p,\qquad \one^{\mathsf T}R=wQ,\qquad w\pi_i=w_i.
+\end{equation}
+For native output comparisons, specify actual deterministic output maps $g_i:I\to I_i$ satisfying
+\begin{equation}\label{eq:output-square}
+ Qg_i=\pi_iQ_i,\qquad Rg_i=R_i.
+\end{equation}
+The first equation is statewise; equality only after weighting by $w$ would not suffice. The second equation is necessary and will follow from any realization. We include it among the cheap input checks. A stochastic $g_i$ may instead be treated as an explicitly applied output channel, but it is then not a deterministic relabelling of native words. This distinction does not alter the tensor equations; it does alter the interpretation of a labelled comparison.
+
+Zero announcement probabilities and zero coordinates of $w$ are allowed. Nonnegativity forces all relevant tensor mass on these coordinates to vanish. Reconstruction below omits zero-mass states rather than dividing by zero. Unused local hidden states remain named input rows, but a joint implementation need not have a preimage for such a state. The deterministic occurrence maps are not required to be surjective.
+
+For $h=(h_i)\in E$, define the row-coupling polytope
+\begin{equation}\label{eq:Kh}
+ \Kcal_h=\{\beta\in\R_{\ge0}^{1\times S}:
+ \beta\one=1,\quad \beta\pi_i=B_i(h_i,-)\text{ for every }i\}.
+\end{equation}
+It can be empty. If $S$ is the full product, every $\Kcal_h$ is nonempty, by taking the independent product of the indicated rows. If $S$ is a diagonal shared-state carrier, its nonemptiness instead requires those rows to agree. A row in $\Kcal_h$ can contain correlation not present in any individual local model.
+
+\begin{definition}\label{def:implementation}
+A \emph{joint layer-native implementation} is $X=(V,A,B,f)$, with $V$ a finite nonempty set, $A\in\R_{\ge0}^{J\times V}$, $B:V\to S$ stochastic, and a function $f:V\to E$, such that
+\begin{align}
+ A f_i&=A_i &&(i\in L),\label{eq:root-preservation}\\
+ B\pi_i&=f_iB_i &&(i\in L),\label{eq:row-preservation}\\
+ \one^{\mathsf T}AB&=w,\qquad ABQ=R,\label{eq:global-laws}
+\end{align}
+where $f_i=e_i\circ f$. Its cost is $|V|+2$.
+\end{definition}
+
+Equation~\eqref{eq:row-preservation} says $B(v,-)\in\Kcal_{f(v)}$ for \emph{each} middle state $v$. It is not merely the averaged condition $AB\pi_i=A_iB_i$. A native generator for $X$ has root $r$, middle states $V$, and terminal $t$. Its transitions are
+\[
+ r\xrightarrow{a_j}v\text{ with weight }A_{jv},\qquad
+ v\xrightarrow{b_u}t\text{ with weight }(BQ)_{vu},\qquad
+ t\xrightarrow{\#}t\text{ with weight }1.
+\]
+The root is normalized because $Af_i=A_i$ implies $A\one=p$ and $\sum_jp_j=1$. The middle rows are normalized. It has target cylinder weights $R_{ju}$ for $a_jb_u\#^m$, first-prefix weights $p_j$, and zero weights for forbidden phase patterns. Sending $V$ to $S$ by $B$ and fixing root and terminal is a stochastic native comparison to the retained model with root law $w$ and second-output kernel $Q$. Sending $V$ to $H_i$ by $f_i$ gives a deterministic native comparison to the fixed local model after the output map $g_i$: indeed
+\[
+ BQg_i=B\pi_iQ_i=f_iB_iQ_i.
+\]
+These are actual transition comparison squares, not only identities of terminal distributions.
+
+\section{A complete linear compatibility criterion}\label{sec:criterion}
+
+For a nonnegative tensor $Z\in\R_{\ge0}^{J\times E\times S}$, write
+\[
+ \alpha_{jh}=\sum_sZ_{jhs},\qquad
+ Z^h=(Z_{jhs})_{j,s},\qquad T_{js}=\sum_hZ_{jhs}.
+\]
+Define $\Pcal(D)$ by the following linear equations, with $\alpha$ an abbreviation rather than an independent nonlinear quantity:
+\begin{align}
+ \sum_{h:e_i(h)=u}\alpha_{jh}&=A_i(j,u)
+ &&(i,j,u),\label{eq:Zroot}\\
+ \sum_{s:\pi_i(s)=x}Z_{jhs}&=\alpha_{jh}B_i(e_i(h),x)
+ &&(i,j,h,x),\label{eq:Zrow}\\
+ \sum_{j,h}Z_{jhs}&=w_s &&(s),\label{eq:Zw}\\
+ \sum_{h,s}Z_{jhs}Q_{su}&=R_{ju} &&(j,u).\label{eq:ZR}
+\end{align}
+Here and below $D$ denotes all the fixed input data. The crucial equation is~\eqref{eq:Zrow}. It requires the local retained law to remain the specified $B_i(h_i,-)$ even after conditioning on both the first announcement and the complete hidden tuple. Merely imposing local marginals on a joint law of $(j,h,s)$ would not imply this.
+
+\begin{theorem}[Compatibility and finite reconstruction]\label{thm:compatibility}
+A joint layer-native implementation exists if and only if $\Pcal(D)$ is nonempty. Every $Z\in\Pcal(D)$ has an implementation with
+\[
+ |V|=|\{(j,h):\alpha_{jh}>0\}|\le |J||E|.
+\]
+The feasible set is a compact polytope, possibly empty. Rational input has a rational feasible tensor and a rational reconstruction whenever it is feasible.
+\end{theorem}
+\begin{proof}
+From $X=(V,A,B,f)$ define
+\begin{equation}\label{eq:PX}
+ P(X)_{jhs}=\sum_{v:f(v)=h}A_{jv}B_{vs}.
+\end{equation}
+Summing over $s$ gives $\alpha_{jh}=\sum_{v:f(v)=h}A_{jv}$. Equation~\eqref{eq:root-preservation} then yields~\eqref{eq:Zroot}. The statewise equation~\eqref{eq:row-preservation} yields
+\[
+ \sum_{s:\pi_i(s)=x}Z_{jhs}
+ =\sum_{v:f(v)=h}A_{jv}B_i(h_i,x)
+ =\alpha_{jh}B_i(h_i,x),
+\]
+which is~\eqref{eq:Zrow}. The two global equations give~\eqref{eq:Zw} and~\eqref{eq:ZR}.
+
+Conversely, retain only pairs $(j,h)$ with $\alpha_{jh}>0$ and put
+\begin{equation}\label{eq:normal-form}
+ \begin{split}
+ V_Z&=\{(j,h):\alpha_{jh}>0\},\\
+ A^Z_{k,(j,h)}&=\mathbf1_{k=j}\alpha_{jh},\\
+ B^Z_{(j,h),s}&=Z_{jhs}/\alpha_{jh},\\
+ f^Z(j,h)&=h.
+ \end{split}
+\end{equation}
+Total tensor mass is one by~\eqref{eq:Zw}, so $V_Z$ is nonempty. Equation~\eqref{eq:Zrow} says $B^Z_{(j,h),-}\in\Kcal_h$, and the other equations give all requirements of Definition~\ref{def:implementation}. If $\alpha_{jh}=0$, nonnegativity makes $Z_{jhs}=0$ for every $s$, so omitting that pair loses no mass or equation. The number of pairs proves the bound.
+
+The constraints are finitely many linear equalities and nonnegativity inequalities. Equation~\eqref{eq:Zw} bounds their total mass by one, so the feasible set is closed and bounded. For rational data, a nonempty bounded rational polyhedron has a rational vertex; equivalently, elementary elimination and a basic feasible solution give rational coordinates. Division by positive rational $\alpha_{jh}$ preserves rationality in~\eqref{eq:normal-form}.
+\end{proof}
+
+The reconstruction deliberately remembers $j$. This is not free external time information: $(j,h)$ is the actual middle-state name, and its contribution is counted in $|V_Z|$. If the conditional joint retained law varies with $j$ while all local rows stay fixed, this extra memory may be essential.
+
+Several necessary consequences are immediate but not sufficient: each local root marginal is $A_i$, the retained marginal is $w$, the observed law is $R$, and $T\pi_i=T_i$. In particular, agreement on observable overlaps and agreement on local retained marginals do not replace~\eqref{eq:Zrow}. The theorem is an independent finite test: it does not take as a hypothesis that a simultaneous native factorization already exists.
+
+\section{Exact obstruction certificates}\label{sec:dual}
+
+The linear criterion admits a useful finite conic form that incorporates the fixed mechanism rows before checking the target. Let $E_+=\{h\in E:\Kcal_h\ne\varnothing\}$, and let $\mathcal V_h$ be the finite vertex set of $\Kcal_h$ for $h\in E_+$. For $j\in J$, $h\in E_+$, and $\beta\in\mathcal V_h$, define a vector $v(j,h,\beta)$ with three blocks:
+\[
+ \begin{array}{ll}
+ \text{local-root block }(i,k,u):&\mathbf1_{k=j}\mathbf1_{u=h_i},\\
+ \text{retained block }s:&\beta_s,\\
+ \text{observed block }(k,u):&\mathbf1_{k=j}(\beta Q)_u.
+ \end{array}
+\]
+Let $b=((A_i)_i,w,R)$ in the same coordinate space and put
+\begin{equation}\label{eq:cone}
+ \Ccal(D)=\cone\{v(j,h,\beta):j\in J,\ h\in E_+,\ \beta\in\mathcal V_h\}.
+\end{equation}
+An empty generating set gives the zero cone.
+
+\begin{theorem}[Finite dual criterion]\label{thm:dual}
+The following conditions are equivalent:
+\begin{enumerate}
+\item $\Pcal(D)\ne\varnothing$;
+\item $b\in\Ccal(D)$;
+\item for every family of real coefficients $\lambda_{iju},\mu_s,\nu_{ju}$ satisfying
+\begin{equation}\label{eq:dual-generator}
+ \sum_i\lambda_{ijh_i}
+ +\sum_s\mu_s\beta_s
+ +\sum_u\nu_{ju}(\beta Q)_u\ge0
+ \quad(j,h,\beta\in\mathcal V_h),
+\end{equation}
+one has
+\begin{equation}\label{eq:dual-target}
+ \sum_{i,j,u}\lambda_{iju}A_i(j,u)
+ +\sum_s\mu_sw_s
+ +\sum_{j,u}\nu_{ju}R_{ju}\ge0.
+\end{equation}
+\end{enumerate}
+Consequently infeasibility has an explicit separating tuple obeying~\eqref{eq:dual-generator} but making~\eqref{eq:dual-target} strictly negative. For rational input such a certificate can be chosen rational.
+\end{theorem}
+\begin{proof}
+For a feasible $Z$, each positive-mass row $Z_{jh,-}/\alpha_{jh}$ lies in $\Kcal_h$. Write it as a convex combination $\sum_{\beta\in\mathcal V_h}t_{jh\beta}\beta$. Then the constraints say precisely
+\[
+ b=\sum_{j,h,\beta}\alpha_{jh}t_{jh\beta}v(j,h,\beta).
+\]
+Conversely a nonnegative conic combination defines
+$Z_{jhs}=\sum_{\beta\in\mathcal V_h}\theta_{jh\beta}\beta_s$ and satisfies all four equations. Its total mass is one because its retained block is $w$; no unnormalized extra freedom is introduced by using a cone.
+
+A finitely generated cone is a closed convex polyhedral cone. Membership is equivalent to nonnegative pairing with every functional nonnegative on its generators. This is the finite conic separation theorem, or Farkas' lemma, and gives exactly the displayed inequalities. For rational data the coupling polytopes have rational vertices, so the usual rational linear-feasibility alternative supplies a rational strict separator; it may be rescaled to make the target pairing at most $-1$.
+\end{proof}
+
+The vertex presentation is conceptual, not a recommendation to enumerate all vertices. Directly solving~\eqref{eq:Zroot}--\eqref{eq:ZR} is usually smaller. Condition~\eqref{eq:dual-generator} can equivalently be required for every $\beta\in\Kcal_h$, or checked by minimizing the displayed linear functional over each row-coupling polytope. Empty $\Kcal_h$ contribute no permitted generator. This dual theorem uses standard polyhedral duality; its task-specific content is the exact cone dictated by the statewise mechanism requirement.
+
+\section{The exact native resource law}\label{sec:resources}
+
+For a nonnegative $J\times S$ matrix $M$ and a row polytope $\Kcal\subseteq\Delta(S)$, define its \emph{coupling-constrained factor rank}
+\begin{equation}\label{eq:restricted-rank}
+ \operatorname{rank}_{\Kcal}(M)
+ =\min\left\{r:M=CD,\ C\in\R_{\ge0}^{J\times r},\ D_{v,-}\in\Kcal\ (1\le v\le r)\right\}.
+\end{equation}
+Set $\operatorname{rank}_{\Kcal}(0)=0$, allowing the empty factorization even if $\Kcal$ is empty. Set the value to $+\infty$ if no factorization exists. This is not ordinary nonnegative rank unless the allowed rows range over the whole simplex.
+
+\begin{theorem}[Exact state minimum]\label{thm:cost}
+The minimum cost over all joint layer-native implementations is
+\begin{equation}\label{eq:cost}
+ c(D)=2+\min_{Z\in\Pcal(D)}\sum_{h\in E}
+ \operatorname{rank}_{\Kcal_h}(Z^h),
+\end{equation}
+with the minimum $+\infty$ if $\Pcal(D)$ is empty. In every feasible instance,
+\begin{equation}\label{eq:bounds}
+ 3\le c(D)\le 2+|J||E|,\qquad c(D)\ge2+\rk(R).
+\end{equation}
+For each fixed feasible $Z$, the sum in~\eqref{eq:cost} is the exact minimum number of middle states among implementations with tensor $Z$.
+\end{theorem}
+\begin{proof}
+Given an implementation, partition $V$ into $V_h=f^{-1}(h)$. Equation~\eqref{eq:PX} factors $Z^h$ through $V_h$ and every corresponding row of $B$ lies in $\Kcal_h$. Hence $|V_h|\ge\operatorname{rank}_{\Kcal_h}(Z^h)$, and summation gives the lower bound for a fixed tensor and then for the global minimum.
+
+Conversely, choose for every $h$ a least factorization $Z^h=C^hD^h$ with rows of $D^h$ in $\Kcal_h$. Form the disjoint union of its factor states, label the states from the $h$th factor by $h$, and concatenate the $C^h$ and $D^h$ blocks to form $A$ and $B$. Since each $D^h$ is stochastic, the row sums of $C^h$ are $\alpha_{jh}$. Equation~\eqref{eq:Zroot} gives $Af_i=A_i$; membership in $\Kcal_h$ gives the statewise row equations; and the remaining constraints give the global laws. This achieves the sum.
+
+For feasible $Z$, the splitting factorization~\eqref{eq:normal-form} proves each summand finite and their sum at most $|J||E|$. The set of attained integer sums is thus a nonempty subset of $\{1,\ldots,|J||E|\}$, so it has a least attained value. No continuity assertion about factor rank is needed. At least one middle state is necessary because total mass is one. Finally $R=ABQ$ implies $\rk(R)\le |V|$ for every implementation.
+\end{proof}
+
+The theorem is an exact characterization, not a polynomial-time rank algorithm. Linear feasibility and rank-constrained feasibility are different problems. A prescribed budget $r_h$ for each hidden tuple requires factorizations of the blocks with at most $r_h$ rows in $\Kcal_h$; these introduce bilinear variables. In particular, one unsplit state per tuple is possible exactly when some feasible $Z$ has $\operatorname{rank}_{\Kcal_h}(Z^h)\le1$ for every $h$. Since all nonzero normalized rows of such a rank-one block must coincide, this means that the joint conditional continuation given $h$ is independent of $j$. The local row equations alone do not impose that independence.
+
+The cost is not claimed monotone along arbitrary native simulation arrows. Such an arrow can duplicate or merge presented states. Section~\ref{sec:transport} gives monotonicity for a specific transport operation that keeps the middle carrier, not for every arrow in the implementation category.
+
+There is a second useful upper bound. If $v_h$ is the number of vertices of a nonempty $\Kcal_h$, every normalized nonzero row of $Z^h$ is a convex combination of those vertices. Therefore
+\[
+ \operatorname{rank}_{\Kcal_h}(Z^h)
+ \le\min\bigl(|\{j:\alpha_{jh}>0\}|,v_h\bigr).
+\]
+Summing gives $c(D)\le2+\sum_{h\in E_+}v_h$. This can improve the announcement-splitting bound, but vertex enumeration itself can be expensive.
+
+\subsection{When the same minimum covers arbitrary finite generators}\label{sec:general-native}
+
+An arbitrary finite labelled generator is a normalized initial row $\xi$ and nonnegative matrices $X_z$ on a finite carrier $\Omega$, with $\sum_zX_z\one=\one$. Its finite-word weight is $\xi X_{z_1}\cdots X_{z_n}\one$. A strong comparison $M$ to a generator $Y$ under a deterministic output map $q$ is stochastic and satisfies
+\begin{equation}\label{eq:strong-native}
+ \xi M=\xi_Y,\qquad
+ \sum_{z:q(z)=o}X_zM=MY_o\quad\text{for every }o.
+\end{equation}
+The following extension requires \emph{more} than strong comparisons to the local observable generators alone.
+
+Let $Y$ be the joint coarse generator with carrier $\{r\}\sqcup S\sqcup\{t\}$, root transition $w$ labelled $a$, second kernel $Q$ labelled $b_u$, and terminal loop $\#$. Let $Y_i$ be the fixed local generator with middle carrier $H_i$ and factors $A_i,B_iQ_i$. Let $\Lambda_i$ be its stochastic retained link to the local coarse generator, equal to $B_i$ on the middle layer and identity on the two phase states. Let $\Pi_i$ extend $\pi_i$ to the joint and local coarse carriers, also fixing phases.
+
+Call $X$ an \emph{admissible arbitrary native realization} if it has exactly the target finite-word weights, a strong stochastic comparison $\Lambda$ to $Y$ that forgets $j$, and strong deterministic comparisons $F_i$ to $Y_i$ that retain $j$ and relabel $u$ by $g_i(u)$, such that
+\begin{equation}\label{eq:retained-square}
+ \Lambda\Pi_i=F_i\Lambda_i\quad(i\in L).
+\end{equation}
+Require also that the tuple $(F_i(x))_i$ belongs to $E$ whenever $x$ is reached after one first-phase output. This requirement has a meaning because the argument below puts each such $F_i(x)$ in $H_i$. The phase alphabets are disjoint and kernels are time-homogeneous.
+
+\begin{proposition}\label{prop:arbitrary-native}
+The minimum number of states of admissible arbitrary native realizations is exactly $c(D)$ in~\eqref{eq:cost}.
+\end{proposition}
+\begin{proof}
+Every layer-native implementation gives such a generator and the required extended squares, so the minimum in the larger class is no greater. For the reverse inequality let
+\[
+ \eta_j=\xi X_{a_j},\qquad
+ V=\{x\in\Omega:\eta_j(x)>0\text{ for some }j\}.
+\]
+Every state in $V$ has all its next-output mass in the second-phase alphabet. Otherwise a positive reaching weight followed by a forbidden next label would give a forbidden cylinder positive weight. No cancellation is possible. The strong comparison to $Y$ forces the row $\Lambda(x,-)$ to be supported on $S$: positive mass at the coarse root or terminal would give positive first-phase or terminal next-output probability. Normalization then gives a stochastic row on $S$. The same next-label argument for deterministic $F_i$ puts $F_i(x)$ in $H_i$.
+
+Set $A_{jx}=\eta_j(x)$, $B_{xs}=\Lambda_{xs}$, and $f_i(x)=F_i(x)$ for $x\in V$. The initialized first-label equations for $F_i$ give $Af_i=A_i$. Restricting~\eqref{eq:retained-square} to these rows gives $B\pi_i=f_iB_i$. The initialized coarse first-label equation gives $\one^{\mathsf T}AB=w$. Finally
+\[
+ R_{ju}=\eta_jX_{b_u}\one
+ =\eta_jX_{b_u}\Lambda\one
+ =\eta_j\Lambda Y_{b_u}\one
+ =(ABQ)_{ju}.
+\]
+Thus the extracted middle data form a layer-native implementation with $|V|$ states.
+
+The supports reached initially, after one output, and after two outputs are pairwise disjoint. Their allowed next-output alphabets are respectively first, second, and terminal; a normalized time-homogeneous state cannot have next-output support in two disjoint nonempty phases. All three supports are nonempty because total target mass is one. Hence $|\Omega|\ge |V|+2\ge c(D)$.
+\end{proof}
+
+Without~\eqref{eq:retained-square}, a comparison to $Y_i$ only yields the weaker observable row equality $B\pi_iQ_i=f_iB_iQ_i$. Noninjective $Q_i$ can conceal a failure of the retained-row equality. The proposition therefore cannot be applied to arbitrary generators that merely reproduce all local output laws. Nor does it identify every such generator categorically with a layer-normal-form object; it proves a sharp minimum by extraction.
+
+\section{The witness category and an initial reconstruction}\label{sec:initial}
+
+Let $\W(D)$ have the layer-native implementations as objects. A morphism
+$C:(V,A,B,f)\to(V',A',B',f')$ is a stochastic matrix $C:V\to V'$ such that
+\begin{equation}\label{eq:witness-arrow}
+ AC=A',\qquad CB'=B,\qquad Cf'=f.
+\end{equation}
+Here $f,f'$ are deterministic matrices into the tuple set $E$. The last equation is equivalently
+\begin{equation}\label{eq:type-support}
+ C_{vv'}>0\ \Longrightarrow\ f(v)=f'(v').
+\end{equation}
+Indeed a convex combination of point masses is a given point mass only if all positive summands have its value. Identity and multiplication make this a category. Extending $C$ by identity on root and terminal gives a strong native simulation, since $AC=A'$ and $CB'Q=BQ$; it also commutes with the retained and all local links.
+
+\begin{proposition}\label{prop:tensor-functor}
+Every morphism preserves the full tensor~\eqref{eq:PX}. Consequently
+\[
+ P:\W(D)\longrightarrow\operatorname{Disc}(\Pcal(D))
+\]
+is a functor to the discrete category of feasible tensors.
+\end{proposition}
+\begin{proof}
+Using~\eqref{eq:type-support}, for each $j,h,s$ one obtains
+\begin{align*}
+ P(X')_{jhs}
+ &=\sum_{v':f'(v')=h}\sum_vA_{jv}C_{vv'}B'_{v's}\\
+ &=\sum_{v:f(v)=h}A_{jv}\sum_{v'}C_{vv'}B'_{v's}
+ =P(X)_{jhs}.
+\end{align*}
+Thus the image arrow is the identity at this tensor.
+\end{proof}
+
+Let $N(Z)$ be the split-pair construction~\eqref{eq:normal-form}.
+
+\begin{theorem}[Initiality and adjunction]\label{thm:initial}
+For every feasible $Z$, $N(Z)$ is initial in the full fibre $P^{-1}(Z)$. More explicitly, for every $X=(V,A,B,f)$ with $P(X)=Z$, the unique arrow $\varepsilon_X:N(Z)\to X$ is
+\begin{equation}\label{eq:counit}
+ (\varepsilon_X)_{(j,h),v}
+ =\begin{cases}
+ A_{jv}/\alpha_{jh},&f(v)=h,\\
+ 0,&f(v)\ne h.
+ \end{cases}
+\end{equation}
+The resulting functor $N:\operatorname{Disc}(\Pcal(D))\to\W(D)$ is fully faithful, $PN=\mathrm{Id}$, and $N\dashv P$ with identity unit and counit $\varepsilon$.
+\end{theorem}
+\begin{proof}
+For an included pair $(j,h)$, $\sum_{v:f(v)=h}A_{jv}=\alpha_{jh}>0$, so~\eqref{eq:counit} is stochastic. Its support preserves the tuple. The root equation follows entrywise: for fixed $k,v$, only the source pair $(k,f(v))$ can contribute, and its contribution is $A_{kv}$. If this pair is omitted, its mass is zero and therefore $A_{kv}=0$. The continuation equation is
+\[
+ (\varepsilon_XB)_{(j,h),s}
+ =\frac{\sum_{v:f(v)=h}A_{jv}B_{vs}}{\alpha_{jh}}
+ =\frac{Z_{jhs}}{\alpha_{jh}}=B^Z_{(j,h),s}.
+\]
+Hence it is an arrow. Conversely, tuple preservation and $A^ZC=A$ force $\alpha_{jh}C_{(j,h),v}=A_{jv}$ when $f(v)=h$, and force zero entries otherwise. This proves uniqueness, including target states with zero incoming weight.
+
+There are no arrows from $N(Z)$ to an object above a different tensor, by Proposition~\ref{prop:tensor-functor}. Thus
+\[
+ \Hom_{\W(D)}(N(Z),X)
+ \cong\Hom_{\operatorname{Disc}(\Pcal(D))}(Z,P(X))
+\]
+is a natural bijection: both sides are empty or singleton. This gives the adjunction. The construction satisfies $PN(Z)=Z$, and the same description of hom-sets proves full faithfulness. Naturality of the counit follows either from the adjunction or because any two arrows from the initial object to the same fibre target coincide.
+\end{proof}
+
+This initial object is generally not a minimum-state object. Initiality says that every implementation of \emph{the same tensor} receives a unique compatible stochastic comparison from the split construction. It does not make all feasible tensors equal, give a canonical optimizer, or make the posterior comparison invertible.
+
+\section{Lawful transport and coherent native comparisons}\label{sec:transport}
+
+We now specify independently checkable conditions that produce a transport functor. It is not enough to assume that an unspecified ``compatible change'' exists. Let $D'$ be another datum with primed notation. Choose stochastic channels
+\[
+ U:J\to J',\qquad L:S\to S',\qquad G:I\to I',
+\]
+and a deterministic tuple map $e:E\to E'$. For every target local module $k$, choose a source module $i=i(k)$, a deterministic map $C_k:H_i\to H'_k$, and a stochastic channel $L_k:S_i\to S'_k$. Require
+\begin{align}
+ e(h)_k&=C_k(h_i) &&(h\in E),\label{eq:transport-tuple}\\
+ \pi_iL_k&=L\pi'_k,\qquad B_iL_k=C_kB'_k,\label{eq:transport-rows}\\
+ A'_k&=U^{\mathsf T}A_iC_k,\label{eq:transport-root}\\
+ w'&=wL,\qquad R'=U^{\mathsf T}RG,\qquad QG=LQ'.\label{eq:transport-global}
+\end{align}
+These equations are finite input checks. In particular, for $\beta\in\Kcal_h$,
+\begin{equation}\label{eq:Ktransport}
+ (\beta L)\pi'_k=\beta\pi_iL_k
+ =B_i(h_i,-)L_k=B'_k(e(h)_k,-),
+\end{equation}
+so $\beta L\in\Kcal'_{e(h)}$. This important preservation statement is a consequence of the supplied squares, not an assumed conclusion.
+
+Ordinary subsystem restriction takes $U=\mathrm{Id}$ and projects tuples, retained coordinates, and outputs; the equations say precisely that the remaining local models and readouts are the same ones. Reindexing and rebracketing use bijective deterministic maps. Observation erasure is allowed only where the displayed equations hold. Stochastic $U,G$ describe explicit randomized announcement and output postprocessing; when literal relabelling of native symbols is intended, take them deterministic. A stochastic $L$ remains a retained-state comparison channel and need not be a pathwise function.
+
+\begin{theorem}[Transport]\label{thm:transport}
+Data satisfying~\eqref{eq:transport-tuple}--\eqref{eq:transport-global} define a functor
+\[
+ F:\W(D)\longrightarrow\W(D'),\qquad
+ F(V,A,B,f)=(V,U^{\mathsf T}A,BL,e\circ f),\qquad F(C)=C.
+\]
+Its tensor pushforward is
+\begin{equation}\label{eq:pushforward}
+ (F_*Z)_{j'h's'}
+ =\sum_{j,h,s}U_{jj'}\mathbf1_{e(h)=h'}Z_{jhs}L_{ss'},
+\end{equation}
+and $P'F=F_*P$. It does not increase presented state count, and hence $c(D')\le c(D)$ whenever the source is feasible.
+\end{theorem}
+\begin{proof}
+Let $f'_k=C_k\circ f_i$. Then
+\[
+ U^{\mathsf T}Af'_k=U^{\mathsf T}A_iC_k=A'_k,
+ \qquad BL\pi'_k=B\pi_iL_k=f_iB_iL_k=f'_kB'_k.
+\]
+The global output equation follows from
+$U^{\mathsf T}ABLQ'=U^{\mathsf T}ABQG=R'$.
+Since $U\one=\one$, the retained marginal is
+$\one^{\mathsf T}U^{\mathsf T}ABL=\one^{\mathsf T}ABL=wL=w'$.
+Thus $F(X)$ is an implementation. The arrow equations survive multiplication by $U^{\mathsf T}$ and $L$, and tuple preservation survives $e$; identities and composition are unchanged. Expanding~\eqref{eq:PX} gives~\eqref{eq:pushforward}. The middle set remains $V$, establishing the cost statement.
+\end{proof}
+
+For $Z\in\Pcal(D)$, write $\alpha'_{j'h'}=\sum_{s'}(F_*Z)_{j'h's'}$. Stochasticity of $L$ gives
+\begin{equation}\label{eq:alpha-push}
+ \alpha'_{j'h'}=\sum_{j,h:e(h)=h'}U_{jj'}\alpha_{jh}.
+\end{equation}
+
+\begin{theorem}[Posterior comparison and sequential coherence]\label{thm:coherence}
+There is a canonical native arrow
+\begin{equation}\label{eq:chi-type}
+ \chi_F(Z):N'(F_*Z)\longrightarrow F(N(Z))
+\end{equation}
+given, on the included positive-mass states, by
+\begin{equation}\label{eq:chi}
+ \chi_F(Z)_{(j',h'),(j,h)}
+ =\frac{\mathbf1_{e(h)=h'}U_{jj'}\alpha_{jh}}
+ {\alpha'_{j'h'}}.
+\end{equation}
+If $F$ is followed by a lawful transport $H$, and composition $HF$ means first $F$ then $H$, then
+\begin{equation}\label{eq:coherence}
+ \chi_{HF}(Z)=H(\chi_F(Z))\circ\chi_H(F_*Z).
+\end{equation}
+The identity transport gives the identity comparison. In matrix execution order, the right side of~\eqref{eq:coherence} is $\chi_H(F_*Z)\,H(\chi_F(Z))$.
+\end{theorem}
+\begin{proof}
+Both objects in~\eqref{eq:chi-type} lie above $F_*Z$. Apply Theorem~\ref{thm:initial} to the target $F(N(Z))$: its initialization entry at $j'$ and state $(j,h)$ is $U_{jj'}\alpha_{jh}$ and its tuple is $e(h)$. This gives exactly~\eqref{eq:chi}. Formula~\eqref{eq:alpha-push} proves row normalization directly, and the same initiality theorem gives every arrow equation.
+
+The composite on the right of~\eqref{eq:coherence} and the left side have the same source $N''(H_*F_*Z)$ and target $HF(N(Z))$, in the same tensor fibre. Initiality makes them equal. Equivalently, if the second announcement channel is $U'$, summation over $j',h'$ cancels the intermediate positive $\alpha'_{j'h'}$ and gives $\sum_{j'}U_{jj'}U'_{j'j''}$. Terms with zero intermediate mass contribute zero already, because their nonnegative incoming summands vanish. This proves the formula without undefined divisions. The identity case follows in the same way.
+\end{proof}
+
+Transport data compose: multiply $U,L,G$ in their execution order, compose tuple maps and the deterministic local maps, and multiply corresponding local retained channels. The displayed compatibility squares then compose by matrix multiplication. The coherence theorem consequently covers arbitrary finite chains of \emph{these lawful changes}.
+
+When all coordinate changes are bijective deterministic rebracketings, every active pair maps bijectively to an active pair and~\eqref{eq:chi} is a permutation matrix. The comparison is then an isomorphism. The usual associativity pentagon and permutation identities hold because every route is the same flattened coordinate bijection; the induced matrices are identical. This is coherence for rebracketing an already retained full witness, not an associator for independently selected binary completions.
+
+There is also a precise comparison to each original local model. Restrict $Z$ to module $i$ and use $Q_i$ as its local readout. Its local tensor is forced to be
+\[
+ Z^{(i)}_{j,u,x}=A_i(j,u)B_i(u,x).
+\]
+Let $F_i$ denote this restriction and let $Y_i$ denote the original local implementation. The deterministic local projection is a native arrow $\rho_i:F_i(N(Z))\to Y_i$. The correctly typed triangle is
+\begin{equation}\label{eq:local-triangle}
+ \rho_i\circ\chi_{F_i}(Z)=\varepsilon_{Y_i}:
+ N_i(Z^{(i)})\longrightarrow Y_i.
+\end{equation}
+Both sides are arrows from the initial object in that local tensor fibre. These comparisons need not be invertible and do not identify the sizes of the global and local carriers.
+
+\section{Simultaneous retention of committed intermediate models}\label{sec:intermediates}
+
+There is a finite test for retaining already chosen intermediate implementations, but it must include their arrows as well as their objects. Index all base and intermediate modules by a finite set $\mathcal A$. For each directed interface $a\to b$, suppose the chosen diagram supplies deterministic maps
+\[
+ d_{ab}:H_a\to H_b,\qquad \phi_{ab}:S_a\to S_b
+\]
+with the checked equations
+\begin{equation}\label{eq:intermediate-squares}
+ A_ad_{ab}=A_b,\qquad B_a\phi_{ab}=d_{ab}B_b.
+\end{equation}
+Require any specified compositions of these maps to agree. Define the allowed carriers by imposing all the diagram equations,
+\begin{equation}\label{eq:diagram-carriers}
+ \begin{split}
+ E_{\mathcal A}&=\{(h_a)_a:h_b=d_{ab}(h_a)\text{ for each }a\to b\},\\
+ S_{\mathcal A}&=\{(s_a)_a:s_b=\phi_{ab}(s_a)\text{ for each }a\to b\},
+ \end{split}
+\end{equation}
+intersected with any further explicitly required support restrictions. Use the corresponding coordinate projections and all the fixed intermediate $A_a,B_a$ in the tensor constraints. If either allowed carrier is empty, no probability realization exists.
+
+\begin{corollary}[An independent simultaneous-cover test]\label{cor:intermediate}
+With fixed joint data as in Section~\ref{sec:data}, the expanded linear system~\eqref{eq:Zroot}--\eqref{eq:ZR} on~\eqref{eq:diagram-carriers} is feasible if and only if there is a finite joint layer-native realization retaining every specified base and intermediate implementation and commuting with all the displayed deterministic interface maps. When feasible, the reconstruction~\eqref{eq:normal-form} is such a simultaneous cover, and Theorems~\ref{thm:cost}, \ref{thm:dual}, and~\ref{thm:initial} apply to the expanded datum.
+\end{corollary}
+\begin{proof}
+A simultaneous realization has a tuple of deterministic hidden images obeying the $d_{ab}$ equations, hence valued in $E_{\mathcal A}$; its joint retained link is supported in $S_{\mathcal A}$. Extracting its tensor gives the expanded linear constraints as in Theorem~\ref{thm:compatibility}. Conversely the split construction has $f_b=d_{ab}f_a$ by membership in $E_{\mathcal A}$, while its retained projections obey $\pi_b=\pi_a\phi_{ab}$ by membership in $S_{\mathcal A}$. It therefore commutes with the specified diagram, and its individual root and row equations retain every intermediate model exactly.
+\end{proof}
+
+The statement includes the existence of a joint retained link supported on the indicated carrier; it does not infer such a link from a collection of unrelated marginal comparison maps. Stochastic hidden arrows between committed intermediate models are not expressible merely by equations $h_b=d_{ab}(h_a)$. Their simultaneous preservation would need additional witness variables and a separately stated theorem. They are not covered by this corollary.
+
+If one starts with a single full feasible $Z$, all restrictions and rebracketings above are coherent. If instead one chooses a new intermediate completion at each binary assembly, those choices introduce new constraints and can fail this expanded LP. A minimum-state choice is still a choice of a completion. Neither initiality nor the existence of some global coupling makes arbitrary optimizers jointly compatible. Thus the note proves a coherence theorem for lawful transport of retained witnesses and an independent obstruction test for committed intermediate diagrams, not an unconditional theorem about every sequential assembly procedure.
+
+\section{Joint one step assembly without a prescribed global readout}\label{sec:umbrella}
+
+The fixed $Q$ in the main formulation is architectural input. The equations there do not discover a joint coarse observation mechanism. There is, however, a direct one-step assembly theorem that does not require that input and uses the same mathematics.
+
+Let $\Omega$ be a finite nonempty transition-witness set, let $e_i:E\to H_i$ be the fixed hidden projections, and let each $\Kcal_h\subseteq\Delta(\Omega)$ be an explicitly specified polytope, possibly empty. Fix the local initialization matrices $A_i$. Impose any additional linear readout constraints $\mathcal L(Z)=b$ on $Z\in\R_{\ge0}^{J\times E\times\Omega}$. To encode normalized row membership linearly, write
+\[
+ \Kcal_h=\{\beta\ge0:\beta\one=1,\ D_h\beta^{\mathsf T}=d_h,
+ \ F_h\beta^{\mathsf T}\le f_h\}
+\]
+and replace it on row $Z_{jh,-}$ by
+\begin{equation}\label{eq:homogeneous-polytope}
+ D_hZ_{jh,-}^{\mathsf T}=\alpha_{jh}d_h,
+ \qquad F_hZ_{jh,-}^{\mathsf T}\le\alpha_{jh}f_h,
+ \qquad\alpha_{jh}=\sum_\omega Z_{jh\omega}.
+\end{equation}
+Together with~\eqref{eq:Zroot}, these equations define a finite feasibility problem. The common $p$ forces total tensor mass one, even when no global retained marginal is prescribed. For zero $\alpha$ the row is identically zero by nonnegativity, so~\eqref{eq:homogeneous-polytope} imposes no spurious choice of a conditional distribution.
+
+\begin{theorem}[Finite row-polytope assembly]\label{thm:umbrella}
+The preceding linear system is feasible if and only if there are finite $V$, $A\ge0$, a stochastic $B:V\to\Omega$, and $f:V\to E$ with $Af_i=A_i$, $B(v,-)\in\Kcal_{f(v)}$, and $\mathcal L(P(X))=b$. The split reconstruction, finite upper bound, constrained-rank minimum, tensor-fibre initiality, and adjunction hold with $S$ replaced by $\Omega$. The conic dual holds by applying the specified linear readouts to the same row generators. Lawful transport and its posterior coherence hold whenever the initialization squares and the row-polytope preservation $\Kcal_hL\subseteq\Kcal'_{e(h)}$ are independently verified and the readouts commute.
+\end{theorem}
+\begin{proof}
+Extraction~\eqref{eq:PX} takes nonnegative mixtures of rows in the same convex $\Kcal_h$, so its normalized positive rows lie in that polytope and satisfy~\eqref{eq:homogeneous-polytope}. Conversely division by positive $\alpha$ recovers membership and gives exactly~\eqref{eq:normal-form}. The root constraints force total mass one. These are the only properties of~\eqref{eq:Kh} used in the compatibility proof. The factor-rank proof uses only partition by $h$ and row membership, so it is unchanged. The arrow, initiality, and posterior proofs use only the tensor identity, stochasticity, and deterministic tuple preservation, so they too are unchanged. Decomposing rows into vertices and applying $\mathcal L$ gives the same finite-generator cone and separation alternative. Finally independently checked row-polytope preservation and initialization/readout squares give the same transport calculation; initiality proves its coherence. Row-polytope preservation is itself a finite collection of linear optimization tests, one for each target defining inequality or equality and source $h$, so it is not an existence assumption about an unknown implementation.
+\end{proof}
+
+For direct assembly of local retained-state/output steps, take
+\[
+ \Omega\subseteq\prod_i(S_i\times I_i),\qquad
+ M_i(h_i,(s_i,u_i))=B_i(h_i,s_i)Q_i(s_i,u_i),
+\]
+and set $\Kcal_h$ to the couplings on $\Omega$ whose $(s_i,u_i)$ marginal is the \emph{complete} row $M_i(h_i,-)$. These polytopes are explicit, and they are nonempty on the unrestricted product by the independent product construction. One can prescribe a global retained marginal by summing over output coordinates and a global observable law by summing along any supplied output projection $g:\Omega\to I$. Both are linear readouts. With no such prescriptions, the construction simply yields a compatible joint law and its retained prior. The native second step can emit $\omega$ itself, with local and public observations obtained by deterministic projection. It then retains each local pair $(s_i,u_i)$ response, not only the emitted law $B_iQ_i$.
+
+This direct construction does \emph{not} promise a common kernel $Q(s,u)$ independent of the joint hidden state or announcement after conditioning on $s$. To require that stronger global coarse quotient, prescribe $Q$ and add the linear row equations
+\begin{equation}\label{eq:fixedQ-extra}
+ \beta(s,u)=\left(\sum_{u'}\beta(s,u')\right)Q(s,u).
+\end{equation}
+For the main formulation, take $\Omega=S\times I$, allow the local outputs to be $g_i(u)$, and impose~\eqref{eq:fixedQ-extra}. The map $b\mapsto\beta$, $\beta(s,u)=b_sQ(s,u)$, is an affine bijection between its $\Kcal_h$ and~\eqref{eq:Kh}. Indeed its $(\pi_i(s),g_i(u))$ marginal at $(x,y)$ is
+\[
+ \sum_{s:\pi_i(s)=x}b_s\sum_{u:g_i(u)=y}Q(s,u)
+ =(b\pi_i)_xQ_i(x,y)=B_i(h_i,x)Q_i(x,y),
+\]
+using $Qg_i=\pi_iQ_i$; conversely summing the required pair marginal over $y$ forces $b\pi_i=B_i(h_i,-)$, and~\eqref{eq:fixedQ-extra} determines $\beta$ from $b$. The original theorem is thereby recovered. Alternatively, if only a default compatible output coupling is needed on the full output product, the supplied local readouts give
+\[
+ Q\bigl(s,(u_i)_i\bigr)=\prod_i Q_i(\pi_i(s),u_i).
+\]
+This is a particular independent readout choice, not a realization of every desired output correlation. An unknown global $Q$ constrained jointly with unknown $Z$ by $TQ=R$ reintroduces bilinearity and is outside the linear criterion.
+
+The layer-native resource theorem in this section counts states of implementations with the actual retained transition-witness kernel $B:V\to\Omega$. Arrows retain the full $B$ through $CB'=B$, not only its local marginals; otherwise the tensor functor and initiality need not hold. Its extension to arbitrary native generators requires this witness statewise, or actual $\omega$-labelled second-step transitions, in addition to disjoint phases. Separate local simulations and unrelated stochastic links do not establish that joint witness. Proposition~\ref{prop:arbitrary-native} is therefore not silently enlarged to a weaker comparison class. State count does not include the size of the witness alphabet or kernel tables, or the computational cost of sampling a row; those are additional resources and can grow with the product architecture.
+
+For a sharp distinction, take two singleton local hidden carriers, one announcement, a shared fair retained bit $s$, and $B_1=B_2=(1/2,1/2)$. Let the local readouts be $u_1=s$ and $u_2=1-s$. A desired public pair with probabilities $\Pr((u_1,u_2)=(0,0))=\Pr((u_1,u_2)=(1,1))=1/2$ has the correct fair local output marginals, and the separate retained links agree. Yet any joint transition witness retaining both full local pair laws must have $u_1=s$ and $u_2=1-s$, hence $u_1\ne u_2$ almost surely. Equivalently the pointwise sum of the three indicators for $u_1=s$, $u_2=1-s$, and $u_1=u_2$ is at most two, while the requested witness laws require expected sum three. Separate public simulations and retained links are therefore strictly weaker than joint transition-witness preservation.
+
+This boundary is observable in a small example. Let the local retained carriers be singletons and the local readouts be uniform on $\mathbb Z_m$, with one local hidden state each. Use the announcement-dependent joint output law~\eqref{eq:correlation-example}. The transition-witness construction realizes it with $m$ middle states by the same rank proof as below. But the product retained carrier is still a singleton. Any global readout from that singleton has the same conditional output row for every $j$, whereas~\eqref{eq:correlation-example} has $m$ distinct rows for $\epsilon<1$. Thus local coarse quotients and a valid joint witness need not assemble into a quotient on the prescribed product coarse carrier. One must enlarge that carrier or relinquish that global quotient requirement.
+
+\section{Exact examples separating the obligations}\label{sec:examples}
+
+\subsection{Equal observable laws need not have a deterministic shared cover}
+
+Take $J=\{*\}$, a genuinely shared retained set $S_0=\{0,1\}$, and identity output. The first local factor has one hidden state, $A_1=(1)$ and $B_1=(1/2,1/2)$. The second has $A_2=(1/2,1/2)$ and $B_2=I_2$. Both products are $(1/2,1/2)$. Let the joint retained carrier be the diagonal $S=\{(0,0),(1,1)\}$.
+
+For either hidden tuple $(\ast,h_2)$, a row supported on the diagonal has equal coordinate marginals. Those marginals would have to be $(1/2,1/2)$ and the point mass at $h_2$, which is impossible. Every $\Kcal_h$ is empty, so no deterministic occurrence-preserving joint cover exists at any size. The ordinary joint law $H_1=\ast$, $S_0$ fair, $H_2=S_0$ exists, but its conditional retained-state law given $H_2$ is not the row $B_1$. That is exactly the stronger statewise requirement it violates.
+
+This special case has a complete criterion. Suppose all local retained sets are the same $S_0$, the joint retained carrier is diagonal, $E=\prod_iH_i$, and no additional global law is required beyond the shared induced law. Let $\mathcal B$ be the finite set of distinct rows among the $B_i$, and define
+\begin{equation}\label{eq:profile}
+ m_i(j,\beta)=\sum_{u:B_i(u,-)=\beta}A_i(j,u).
+\end{equation}
+There exists a deterministic shared cover if and only if $m_i(j,\beta)$ is independent of $i$ for every $j,\beta$.
+
+Necessity follows because every used joint state has one shared continuation row, and deterministic projections must preserve that row. For sufficiency let $m(j,\beta)$ be the common value. For positive $m(j,\beta)$, couple the local hidden states independently conditional on their common row profile $\beta$:
+\[
+ \alpha_{jh}=m(j,\beta)\prod_i\frac{A_i(j,h_i)}{m(j,\beta)}
+ \quad\text{if every }B_i(h_i,-)=\beta;
+\]
+put zero mass elsewhere and skip zero $m$ fibres. Summing over all but one coordinate recovers $A_i(j,h_i)$. Give every such tuple the shared row $\beta$. This is a joint implementation, with induced $T_j=\sum_\beta m(j,\beta)\beta$. Thus equality of complete row-profile measures, not just equality of $T_i$, is the exact deterministic condition in this unconstrained shared-state case.
+
+Allowing stochastic hidden comparisons changes the answer. For fixed $A_i,B_i$ on one common retained $S_0$, there exist $A,B$ and stochastic $C_i$ with
+\begin{equation}\label{eq:stochastic-common}
+ AC_i=A_i,\qquad C_iB_i=B
+\end{equation}
+if and only if all $A_iB_i$ are the same matrix $T$. Necessity follows by multiplication. For sufficiency use one source state for each $j$ with $p_j>0$ and set
+\[
+ A_{k,j}=\mathbf1_{k=j}p_j,
+ \quad C_i(j,u)=A_i(j,u)/p_j,
+ \quad B(j,s)=T(j,s)/p_j.
+\]
+Zero-probability announcements have zero rows and are omitted. These formulas satisfy~\eqref{eq:stochastic-common}. In the binary example a single source state with $B=(1/2,1/2)$ and $C_2=(1/2,1/2)$ suffices. This theorem concerns unrestricted stochastic comparisons with no forbidden tuple or additional coupling requirement; it must not be substituted for the deterministic occurrence-preserving problem.
+
+\subsection{Unbounded correlation memory with one state in each local factor}
+
+Let $m\ge2$, $J=\mathbb Z_m$, and take two local hidden sets both singleton. Let $S_1=S_2=\mathbb Z_m$, $B_i(\ast,x)=1/m$, $A_i(j,\ast)=1/m$, and local identity readouts. Set $E=\{(\ast,\ast)\}$, $S=\mathbb Z_m^2$, $Q=I_S$, and $w(x,y)=1/m^2$. For $0\le\epsilon<1$, prescribe
+\begin{equation}\label{eq:correlation-example}
+ \beta_j(x,y)=\frac{1-\epsilon}{m}\mathbf1_{y=x+j\pmod m}
+ +\frac{\epsilon}{m^2},\qquad
+ R(j,(x,y))=\frac1m\beta_j(x,y).
+\end{equation}
+Each $\beta_j$ has the required uniform local marginals, and averaging over $j$ gives $w$. Thus $Z_{j,h,s}=R_{js}$ is feasible and $m$ middle states realize it by remembering $j$.
+
+They are necessary. Let $D$ be the $m\times m^2$ matrix whose $j$th row is the uniform distribution on the matching $y=x+j$. Its rows have disjoint supports and are linearly independent. The matrix with rows $\beta_j$ is
+\[
+ \left((1-\epsilon)I_m+\frac{\epsilon}{m}\one\one^{\mathsf T}\right)D.
+\]
+The left factor has eigenvalue $1$ on constants and $1-\epsilon$ on their complement, so $\rk(R)=m$. The lower bound in~\eqref{eq:bounds} proves $c(D)=m+2$. Equivalently the minor selecting columns $(0,y)$ has determinant
+\begin{equation}\label{eq:minor}
+ \det R_{j,(0,y)}=\frac{(1-\epsilon)^{m-1}}{m^{2m}}>0.
+\end{equation}
+For $\epsilon=1/2$ every joint outcome is positive under every announcement. Hence the gap is not a support artifact. Each local model has total state cost $3$, the tuple set still has one element, and yet the joint cost is unbounded. The cost is correlation memory, not a failure to couple local rows.
+
+\subsection{A full support cycle obstruction in retained interfaces}
+
+Let three modules retain the pairs $XY$, $YZ$, and $XZ$ of fair binary variables. Each module has one hidden state and one announcement. On $XY$ and $YZ$, give each equal pair probability $9/20$ and each unequal pair probability $1/20$. On $XZ$, reverse these values. The three pair laws have full support and agree on all singleton overlaps. Let $S$ encode a consistent triple of bits and project to the three retained pairs. This is the direct-assembly problem with no supplied joint prior $w$, as allowed in Section~\ref{sec:umbrella}. The sole row-coupling polytope would be the set of global laws with those pair marginals. Its emptiness blocks any admissible choice of $w$; it is not an example that first passes the main formulation's fixed-$w$ marginal checks.
+
+For every bit assignment, at most two of the relations $X=Y$, $Y=Z$, and $X\ne Z$ hold. Every global distribution must therefore obey
+\begin{equation}\label{eq:cycle-certificate}
+ \Pr(X=Y)+\Pr(Y=Z)+\Pr(X\ne Z)\le2.
+\end{equation}
+The prescribed pair rows give $27/10$, a contradiction. This is an explicit separating linear certificate: the pointwise inequality is checked on all eight deterministic assignments and extends by convexity. In the sharp zero-noise version the required sum is $3$, but zeros are not necessary for failure.
+
+If every public local readout is constant, all observable local systems and their joint observation have trivial one-output realizations. The obstruction remains entirely at the retained-interface level. It is a standard marginal-extension or contextuality obstruction placed inside this native preservation requirement, not a new obstruction principle.
+
+\subsection{Tree compatibility does not determine a chosen global correlation}
+
+For fair bits $X,Y,Z$, prescribe independent pair marginals on $XY$ and $YZ$. The independent triple extends them. So does the law with $X=Z$ fair and independent of $Y$. These are different full retained witnesses. Conditional-independent tree gluing selects the first law, but edge consistency does not make all admissible global laws equal. Retaining one such completion is an additional commitment; retaining several chosen completions is subject to the simultaneous test in Section~\ref{sec:intermediates}. Rebracketing one fixed witness does not replace that test.
+
+\section{What is standard and what this note adds}\label{sec:prior-art}
+
+The strongest relevant reduction is to fixed-kernel coupling. In the transition-coupling formulation of O'Connor, McGoff, and Nobel, each row of a joint transition matrix couples specified local transition rows, and the resulting constraints are linear~\cite{OConnor2022}. Moulos uses the same fixed-marginal joint kernels in bicausal transport for Markov chains~\cite{Moulos2020}. Equation~\eqref{eq:Zrow} is the finite joint-mass form of that condition: on a positive $\alpha_{jh}$ fibre, $Z_{jh,-}/\alpha_{jh}$ couples the prescribed local responses. Substituting joint mass for a conditional kernel makes the equations linear; it does not invent a new preservation principle.
+
+Multicausal coupling theory goes further than static marginal compatibility. Acciaio, Kr\v sek, and Pammer characterize multicausal laws by successive joint kernels with prescribed local conditional marginals, and prove gluing statements over a shared process~\cite{Acciaio2025}. These are close controls on any claim about mechanism-preserving assembly. We use only the finite per-fibre coupling calculation here. An identification with a particular multicausal path-space problem would also have to specify where the public announcement $j$ occurs in every local filtration; it is not automatic when the conditioning information differs.
+
+Ordinary marginal-extension obstructions are older. Vorob'ev characterizes when consistent families extend~\cite{Vorobev1962}. Dawid and Studen\'y axiomatize conditional products, distinguish agreement on overlaps from existence of a common extension, and include probability and set-theoretic cases~\cite{DawidStudeny1999}. Their work already supplies common gluing structure across quantitative and relational settings. The finite conditional-independent product combines two compatible marginals by multiplying their densities and dividing by the shared marginal, with zero-mass fibres assigned zero. Its controlled associativity does not make arbitrary cyclic completions or selected optimizers coherent.
+
+Markov combination preserves more than the names of hidden variables. For submodels with a common link-parameter marginal, it preserves their joint laws and conditional models while selecting conditional independence; Markov melding explicitly modifies conflicting link marginals before combination~\cite{Goudie2019}. Such modification is not exact retention of the fixed input factors in the present problem. Conversely merely calling a local factor a mechanism does not place its coupling outside this established literature.
+
+Abramsky and Brandenburger formulate finitely supported distributions over commutative semirings, including Boolean and nonnegative-real coefficients; write global extension as linear incidence constraints; and distinguish probabilistic from support-level extension~\cite{AbramskyBrandenburger2011}. Their hidden-variable/global-section result is an important control on any supposed universal existence theorem. The valuation-algebra framework of Abramsky and Car\`u also separates local agreement, global extension, and combination operations~\cite{AbramskyCaru2019}. Neither the presence of a category nor the mere existence of an adjunction establishes a new general theory. Here the particular adjunction is proved by the explicit posterior matrix~\eqref{eq:counit} and its uniqueness.
+
+Deterministic transition-preserving shared quotients already admit semipullback constructions in substantial Markov-process categories. Edalat proves such results for Polish and related settings~\cite{Edalat1999}; Pachl and S\'anchez Terraf give kernel and labelled-process versions with explicit measurable hypotheses~\cite{Pachl2021}. Thus retaining transition behavior through deterministic maps is not, by itself, an unsolved gluing problem. A semipullback is not a categorical pullback with a unique mediating arrow, nor does existence choose a coherent minimum-cardinality implementation.
+
+Finally, the separation theorem is standard finite polyhedral duality, and the resource formula is a constrained factorization problem. Nonnegative ranks and normalizations are classical~\cite{CohenRothblum1993}. Entropy-minimizing couplings concern a different resource; their optimization results do not give a latent-cardinality theorem without a reduction. We do not claim that the rank problem has been solved efficiently, that its optimizer is rational, or that the displayed constrained rank has an established novelty status.
+
+What has been established in this note is therefore specific: a checkable compatibility system for the supplied factors and support architecture; a finite native implementation with all added memory counted; an exact state formula for its declared comparison class; explicit native reconstruction maps and coherent transport; and a simultaneous test for the allowed committed intermediate diagrams. These statements go beyond reporting local observational agreement, but they are a finite synthesis and refinement of existing coupling and factorization machinery. The source audit was bounded, not a complete literature or priority search. Original records and abstracts were checked for Vorob'ev and Edalat rather than their full proofs; no unverified theorem numbers or unrestricted extensions are attributed to them.
+
+\section{Using the theorem and keeping the boundary visible}
+
+First decide what is actually to be retained: public outputs alone, local hidden occurrences, full retained-state rows, or the augmented retained-state/output transition witnesses. These are different native requirements. Supply the fixed local factors and all named interface maps. If a global coarse readout is part of the architecture, verify its statewise output squares rather than only its averaged output law. If it is not supplied, use the transition-witness construction and do not claim a global coarse quotient that has not been constructed.
+
+Next form the explicit $E$, $S$ or $\Omega$ and solve the corresponding finite linear system. A solution gives an actual finite implementation by row splitting. A failure admits a finite dual certificate. This is polynomial-size linear programming relative to the expanded rational tables, not necessarily relative to the number of modules: product carriers can be exponential. If a concrete resource budget is required, solve the separate constrained factorization problem or establish upper and lower bounds; feasibility alone does not promise the budget.
+
+Keep the full tensor when transporting or rebracketing. The posterior comparison then has a uniquely determined direction and coheres under sequential lawful changes. If intermediate completions have already been chosen, add their data and deterministic arrows to the simultaneous system rather than silently replacing them. A failed simultaneous test is an obstruction to those commitments, not an obstruction to every possible observational realization.
+
+The note does not infer interfaces or hidden factors from experience; the named data are assumptions. It does not establish preservation of arbitrary interventions, a full causal semantics, arbitrary multistage dynamics, or coherent selection among all optimal binary glues. The general one-step polytope version shows how additional \emph{fixed linear} obligations can be retained, but unknown kernels, stochastic intermediate diagram maps, and nonlinear or history-dependent preservation demands require their own formulation and proof.
+
+\section{Reproducibility and artifact status}\label{sec:reproducibility}
+
+The deliverable is intentionally uncompiled \LaTeX{} source. No PDF layout is claimed to have been rendered or visually certified. The accompanying source audit and example notes record the research boundary and exact obstruction calculations. The dependency-free checker uses Python's exact rational arithmetic and explicit exceptions rather than floating-point tolerances or removable assertions. Run it from the bundle root with
+\begin{verbatim}
+./checks/run_checks.sh
+\end{verbatim}
+The wrapper runs ordinary and optimized Python and compares their output to the checked expected output. All nine check groups pass in both modes with byte-identical output. They verify supplied witnesses and exact obstruction certificates, split reconstruction with zero announcement, retained, and hidden-pair masses, a nontrivial aggregated implementation, the noisy correlation-memory determinants, the full-support cycle inequality, and the direction and composition of posterior maps. Transport checks include stochastic $U,L,G$, tuple forgetting, and zero intermediate announcement masses. A separate regression verifies the additional joint transition-witness obligation. These are finite regression checks, not a general linear-program solver, a proof of convex separation, or an algorithm for arbitrary constrained nonnegative rank.
+
+Source-level checks cover balanced environments and braces and resolved internal references and bibliography keys. Such checks are not compilation. The proofs, exact tests, assumptions, and remaining boundaries are part of the reproducible source rather than claims inferred from a rendered artifact.
+
+\begin{thebibliography}{99}
+\bibitem{OConnor2022}
+Kevin O'Connor, Kevin McGoff, and Andrew B. Nobel.
+\emph{Optimal Transport for Stationary Markov Chains via Policy Iteration}.
+Journal of Machine Learning Research 23(45), 2022. Definition 2.
+\url{https://www.jmlr.org/papers/volume23/21-0519/21-0519.pdf}.
+
+\bibitem{Moulos2020}
+Vrettos Moulos.
+\emph{Bicausal Optimal Transport for Markov Chains via Dynamic Programming}.
+2020 author manuscript, Section 2, equations (8)--(9).
+\url{https://arxiv.org/pdf/2010.06831}.
+
+\bibitem{Acciaio2025}
+Beatrice Acciaio, Daniel Kr\v sek, and Gudmund Pammer.
+\emph{Multicausal transport: barycenters and dynamic matching}.
+SIAM Journal on Financial Mathematics 16(3), 1104--1138, 2025.
+Lemmas A.3, A.5, and A.6 of the author manuscript.
+\url{https://arxiv.org/pdf/2401.12748}.
+DOI \url{https://doi.org/10.1137/24M1634096}.
+
+\bibitem{Vorobev1962}
+N. N. Vorob'ev.
+\emph{Consistent Families of Measures and Their Extensions}.
+Theory of Probability and its Applications 7(2), 147--163, 1962.
+Original record and abstract:
+\url{https://www.mathnet.ru/php/archive.phtml?jrnid=tvp&option_lang=eng&paperid=4710&wshow=paper}.
+DOI \url{https://doi.org/10.1137/1107014}.
+
+\bibitem{DawidStudeny1999}
+A. P. Dawid and M. Studen\'y.
+\emph{Conditional Products: An Alternative Approach to Conditional Independence}.
+AISTATS 1999, 27--35. Sections 2--4 and Observation 2.1.
+\url{https://proceedings.mlr.press/r2/dawid99a/dawid99a.pdf}.
+
+\bibitem{Goudie2019}
+R. J. B. Goudie, A. M. Presanis, D. Lunn, D. De Angelis, and L. Wernisch.
+\emph{Joining and splitting models with Markov melding}.
+Bayesian Analysis. Section 3.1.
+\url{https://pmc.ncbi.nlm.nih.gov/articles/PMC6324725/}.
+DOI \url{https://doi.org/10.1214/18-BA1104}.
+
+\bibitem{AbramskyBrandenburger2011}
+Samson Abramsky and Adam Brandenburger.
+\emph{The Sheaf-Theoretic Structure of Non-Locality and Contextuality}.
+New Journal of Physics 13, 113036, 2011.
+Sections 2.3 and 4.3, Proposition 4.4, and Theorem 8.1.
+\url{https://arxiv.org/pdf/1102.0264}.
+
+\bibitem{AbramskyCaru2019}
+Samson Abramsky and Giovanni Car\`u.
+\emph{Non-locality, contextuality and valuation algebras: a general theory of disagreement}.
+2019 author manuscript. Sections 4--5.
+\url{https://arxiv.org/pdf/1911.03521}.
+
+\bibitem{Edalat1999}
+Abbas Edalat.
+\emph{Semi-pullbacks and bisimulation in categories of Markov processes}.
+Mathematical Structures in Computer Science 9(5), 523--543, 1999.
+Publisher abstract and DOI:
+\url{https://doi.org/10.1017/S0960129599002819}.
+
+\bibitem{Pachl2021}
+Jan Pachl and Pedro S\'anchez Terraf.
+\emph{Semipullbacks of labelled Markov processes}.
+Logical Methods in Computer Science 17(2:3), 2021.
+Theorems 2.2, 5.1, and 5.3.
+\url{https://arxiv.org/pdf/1706.02801}.
+DOI \url{https://doi.org/10.23638/LMCS-17(2:3)2021}.
+
+\bibitem{CohenRothblum1993}
+Joel E. Cohen and Uriel G. Rothblum.
+\emph{Nonnegative Ranks, Decompositions, and Factorizations of Nonnegative Matrices}.
+Linear Algebra and its Applications, 1993.
+\url{https://lab.rockefeller.edu/cohenje/PDFs/211CohenRothblumLAA1993.pdf}.
+\end{thebibliography}
+\end{document}
+
+
+

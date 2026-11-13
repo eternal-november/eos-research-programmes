@@ -1,0 +1,365 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,array}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\newcommand{\K}{\mathbb K}
+\newcommand{\B}{\mathbb B}
+\newcommand{\R}{\mathbb R}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\rk}{\operatorname{rank}}
+\newcommand{\frk}{\operatorname{frk}}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\ri}{\operatorname{ri}}
+\newcommand{\W}{\mathcal W}
+\newcommand{\Pcal}{\mathcal P}
+\newcommand{\cost}{\operatorname{cost}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\title{A common native construction for finite relational and stochastic refinements}
+\author{Technical note}
+\date{2 November 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A common construction has concrete content for a finite two-stage refinement problem. Over the Boolean semifield and the nonnegative real semifield, the same matrix equations define native implementations retaining a chosen coarse realization, not merely its observable image. Their factorization category carries explicit interface-change functors and coefficient-change functors. The exact state minimum is two phase states plus a constrained factor rank. Boolean feasibility has an inclusion-and-union test; stochastic feasibility with prescribed coupling support has an independent convex-geometric criterion, dual obstruction certificates, and a relative-interior test for exact support. These criteria do not solve rank-constrained lifting. Full-support examples separate relational feasibility, stochastic feasibility, and their resource costs by arbitrarily large gaps. The construction is a precise common finite fragment, using established semiring, convex, and factorization machinery. It is not a universal realization theory, a method for discovering primitives from experience, or a substitute for sequential realization theory.
+\end{abstract}
+
+\section{Question and bounded conclusion}
+
+The question is whether a common construction can do more than place relational and stochastic systems under a shared name. The test here asks it to retain native implementations, produce comparison maps from checkable hypotheses, derive resource consequences, and expose numerical lifting obstructions that a qualitative description cannot see. The answer is affirmative for the phase-tagged two-stage problem below. Its scope matters: a chosen coarse state realization is part of the input, and a statewise comparison must retain that realization.
+
+The construction has three distinct levels. A feasible coupling is a joint witness linking an early announcement to the retained coarse middle state. A factorization of that coupling is a native implementation with an explicit latent carrier. A matrix between latent carriers is an internal simulation preserving the coupling. Changes of the input interface then act on these implementations by a derived formula. Keeping these levels separate prevents an existence theorem from being mistaken for an optimality theorem, or an equality of observable laws from being mistaken for preservation of a chosen state interface.
+
+The principal results are proved directly. The audit in Section~\ref{sec:sources} identifies their standard mathematical ingredients and relevant comparison literature. No claim of new general machinery follows from combining them. Nor does this note adopt a broader research contract: arbitrary multistage systems, empirical discovery of interfaces, and applications to physics require additional work not supplied here.
+
+\section{Coefficient systems and the retained model}
+
+Fix a nontrivial commutative zerosumfree semifield $\K$. Thus $0\ne1$, addition and multiplication form a commutative semiring, every nonzero element is multiplicatively invertible, and $x+y=0$ implies $x=y=0$. There are no zero divisors. The two intended instances are
+\[
+ \K=\B=(\{0,1\},\vee,\wedge),\qquad
+ \K=\R_{\ge0}.
+\]
+A matrix is \emph{normalized} if each row sums to $1$. For the reals these are stochastic matrices; for $\B$ these are total relations. For general $\K$, ``nonzero'' rather than an unstated order is meant by positive support. Throughout, support means nonzero coefficient support, not an independently declared possibility relation that may include zero-weight branches. Models with such separate possibility and weight data are outside this construction. The common algebra does not give arbitrary semifields an empirical probability interpretation.
+
+Let $J,S,I$ be finite nonempty sets. The datum $D=(w,Q,R)$ consists of a row $w\in\K^{1\times S}$ with every $w_s\ne0$ and $w\one=1$, a normalized matrix $Q\in\K^{S\times I}$, and a matrix $R\in\K^{J\times I}$ of total weight $1$. Require every component of $p=R\one$ to be nonzero and impose the necessary marginal identity
+\begin{equation}\label{eq:marginal}
+ \one^{\mathsf T}R=wQ.
+\end{equation}
+Rows of $R$ are joint weights, not conditional distributions. In the real case, $p_j$ is the probability of the first announcement.
+
+The chosen coarse generator has a root $r$, middle states $S$, and a terminal state $t$. Its root emits $a$ and moves to $s$ with weight $w_s$. Middle state $s$ emits $b_i$ and moves to $t$ with weight $Q_{si}$. The terminal state loops on $\#$. The richer target has words
+\[
+ a_jb_i\#\#\cdots\quad\text{with joint weight }R_{ji}.
+\]
+Realizing this target means equality of all finite cylinder weights: the empty word has weight $1$, the prefix $a_j$ has weight $p_j$, every prefix $a_jb_i\#^m$ with $m\ge0$ has weight $R_{ji}$, and words violating this phase pattern have weight zero. This finite-word formulation applies to both Boolean and stochastic semantics and does not require a measure theory over a general semifield.
+
+The output map identifies every $a_j$ with $a$, and fixes $b_i$ and $\#$. These three phase alphabets are disjoint. All kernels are time-homogeneous; any phase or clock memory is counted as state. In particular, the two phase states in the result are not supplied by an uncounted external clock.
+
+For precision, a finite native generator has an initial normalized row $\pi_X$ and labelled matrices $X_z$ with $\sum_zX_z\one=\one$. The native weight of a finite word $z_1\cdots z_m$ is $\pi_XX_{z_1}\cdots X_{z_m}\one$; the empty product gives empty-word weight $\pi_X\one=1$. A strong comparison to the chosen generator $Y$ is a normalized state matrix $\Lambda$ satisfying
+\begin{equation}\label{eq:strong}
+ \pi_X\Lambda=\pi_Y,\qquad
+ \sum_{z:q(z)=o}X_z\Lambda=\Lambda Y_o
+ \quad\text{for each coarse label }o.
+\end{equation}
+These equations concern every state, not only the initial output law. Deterministic comparison means each row of $\Lambda$ is a point mass; Boolean deterministic comparison is therefore a function, not an arbitrary total relation. We minimize over native generators realizing the target and satisfying~\eqref{eq:strong}.
+
+\section{A category of native implementations}
+
+Define the feasible coupling set
+\begin{equation}\label{eq:feasible}
+ \Pcal_\K(D)=\{T\in\K^{J\times S}:TQ=R,\ \one^{\mathsf T}T=w\}.
+\end{equation}
+Every such $T$ also has $T\one=p$, by normalization of $Q$. Its entries describe the joint first-announcement and retained-middle-state witness. Different $T$ may generate the same $R$, and we deliberately retain this distinction.
+
+\begin{definition}\label{def:category}
+The category $\W_\K(D)$ has objects $(h,A,B)$, where $h$ is a positive integer, $A\in\K^{J\times h}$, $B\in\K^{h\times S}$ is normalized, and $AB\in\Pcal_\K(D)$. A morphism
+\[
+ (h,A,B)\longrightarrow(h',A',B')
+\]
+is a normalized $C\in\K^{h\times h'}$ satisfying
+\begin{equation}\label{eq:arrow}
+ AC=A',\qquad CB'=B.
+\end{equation}
+Identity and composition are matrix identity and multiplication.
+\end{definition}
+
+The arrow equations compose: if $C$ is followed by $C'$, then $A(CC')=A''$ and $(CC')B''=B$. They also give $A'B'=ACB'=AB$. Thus every arrow preserves the full coupling. There is a functor from $\W_\K(D)$ to the discrete category on $\Pcal_\K(D)$, not a collapse of all witnesses into one observable behavior.
+
+An object is an actual native implementation. Use one root, $h$ middle states, and one terminal. From the root, emit $a_j$ and enter $v$ with weight $A_{jv}$. Middle state $v$ emits $b_i$ with weight $(BQ)_{vi}$ and moves to terminal; terminal loops on $\#$. The root is normalized because
+\[
+ \sum_{j,v}A_{jv}
+ =\sum_{j,s}(AB)_{js}=\sum_sw_s=1.
+\]
+The middle kernels are normalized because $BQ\one=B\one=\one$. Link the middle states to the coarse states by $B$, and link root and terminal identically. The first comparison equation uses $\one^{\mathsf T}AB=w$; the later equations use $BQ$. The target joint law is $ABQ=R$.
+
+Moreover, a morphism $C$ extends by identity on root and terminal to a native simulation between these implementations. The root equations are $AC=A'$ and the middle-output equations follow from $CB'Q=BQ$. The same map commutes with the retained coarse links because $CB'=B$. This is why the category is more than an untyped collection of factorizations.
+
+The numerical meaning of the same presentation differs in the two native settings. A Boolean entry of $A$ records that an announcement can reach a latent state, and a row of $B$ lists its possible retained coarse states. The multiplication $AB$ asserts existence of a compatible latent route. In the stochastic setting, $A$ is a joint announcement--latent-state law, $B$ is a conditional law of the retained state, and $AB$ sums the route probabilities. Neither interpretation is obtained by pretending that Boolean addition is ordinary probability addition. What is shared is the normalized compositional interface and the exact equations it must satisfy.
+
+Its objects are phase-normal-form implementations. We do not claim an equivalence between this category and the category of all possible native generators. What is proved next is that these normal forms attain the same optimal state cost as arbitrary finite generators satisfying the stated model assumptions.
+
+\section{Exact native resource laws}
+
+For a nonzero matrix $T$, let $\frk_\K(T)$ be its least inner factorization dimension: the least positive $h$ for which $T=A_0B_0$ over $\K$. This is Boolean rank for $\B$, and nonnegative rank, written $\rk_+$, for $\R_{\ge0}$. All minima below are $+\infty$ when the feasible set is empty.
+
+\begin{theorem}\label{thm:cost}
+A native refinement exists if and only if $\Pcal_\K(D)$ is nonempty. Its minimum state count with normalized comparison is
+\begin{equation}\label{eq:cost}
+ c_\K(D)=2+\min_{T\in\Pcal_\K(D)}\frk_\K(T).
+\end{equation}
+A deterministic-comparison refinement exists under exactly the same feasibility condition, and then its minimum state count is $|S|+2$.
+\end{theorem}
+
+\begin{proof}
+First, any factorization can be normalized without increasing its inner dimension. Delete zero rows of $B_0$. For each remaining row let $d_v=\sum_s(B_0)_{vs}$. Zerosumfreeness makes $d_v\ne0$, so set
+\[
+ B_{vs}=d_v^{-1}(B_0)_{vs},\qquad
+ A_{jv}=(A_0)_{jv}d_v.
+\]
+Then $AB=T$ and $B\one=\one$. The native construction above proves the upper bound. This normalization is algebraic; it is not an assumption that Boolean coefficients have probability values.
+
+For the lower bound take any refinement $X$. Write $\eta_j=\pi_XX_{a_j}$ and let $H$ be the fine states reached with nonzero weight after a first-phase label. Behavior and zerosumfreeness force every such state's next labels to belong to the second-phase alphabet. Equation~\eqref{eq:strong} then forces its link row to be supported on coarse middle states: a nonzero link to root or terminal would create a forbidden first-phase or terminal output. Hence
+\[
+ A_{jx}=\eta_j(x)\ (x\in H),\qquad B_{xs}=\Lambda_{xs}
+\]
+define a factorization $T=AB$ with normalized $B$. The initial and first-output comparison equations give $\one^{\mathsf T}T=w$. For the second-output law, normalization of $\Lambda$ and the labelled comparison give, componentwise,
+\[
+ R_{ji}=\eta_jX_{b_i}\one
+ =\eta_jX_{b_i}\Lambda\one
+ =\eta_j\Lambda Y_{b_i}\one
+ =(TQ)_{ji}.
+\]
+Thus the extracted coupling satisfies both defining equations.
+
+The support argument uses the coefficient assumptions explicitly. If a reachable fine state had a nonzero transition with a forbidden next label, its nonzero reaching weight times that transition would contribute nonzero weight to a forbidden finite word. Multiplicative inverses rule out zero divisors, and zerosumfreeness rules out cancellation by other paths. The same argument applied to a normalized link row and the coarse kernels excludes a link to a coarse phase with the wrong next-output alphabet. Restricting that row to $S$ therefore preserves its row sum $1$, which is the required normalization of $B$. These are native support consequences, not an appeal to an ordered real inequality.
+
+States reached at time zero, after one output, and after two outputs are disjoint. Their possible next-output alphabets are respectively first, second, and terminal; normalized, time-independent kernels cannot serve two of these disjoint requirements. Each phase has a nonempty reachable set. Therefore $X$ has at least $|H|+2$ states, and $\frk_\K(T)\le|H|$. This includes mixed initializations and extra latent states, so it proves the lower bound in~\eqref{eq:cost}.
+
+If $T$ is feasible, choose $A=T$, $B=I_S$. This retains the coarse state set and makes the comparison deterministic, giving $|S|+2$ states. Conversely, all coarse middle states have nonzero incoming weight $w_s$. A deterministic comparison therefore needs at least one fine middle-state preimage for each $s$, in addition to the two phase states. This proves its sharp lower bound and the existence equivalence.
+\end{proof}
+
+The cost of a presented object is $h+2$, including any unused middle states; unused factors can be removed when minimizing. This cost is \emph{not} asserted monotone along arbitrary internal morphisms. A normalized simulation may increase or decrease the number of presented states. Resource monotonicity below is a property of specified transport functors that keep $h$, followed by optimization.
+
+Two useful boundaries are already input-level statements. Put $\mu=wQ$. There is a one-middle-state implementation exactly when
+\begin{equation}\label{eq:rankone}
+ R=p\mu.
+\end{equation}
+Indeed, if $T=AB$ with one normalized row $B$, total mass gives $\sum_jA_j=1$; column sums force $B=w$ and row sums force $A=p$. Conversely $A=p,B=w$ works under~\eqref{eq:rankone}. Over the reals this is independence of early and late outputs; over the Booleans every row of $R$ must equal the union of the rows of $Q$.
+
+Every feasible instance has $3\le c_\K(D)\le\min(|J|,|S|)+2$. In the real case, $\rk(R)+2$ is a further lower bound because $R=TQ$. At the opposite extreme, take $Q=I_S$ and any nonnegative total-one matrix $R$ with nonzero row and column masses; set $w=\one^{\mathsf T}R$. Then $\Pcal(D)=\{R\}$ and $c(D)=2+\rk_+(R)$. Thus the common construction contains arbitrary finite nonnegative factorization, rather than eliminating that classical optimization problem.
+
+\section{Independent relational feasibility}
+
+For Boolean data, let $B_s=\supp(Q_s)$ and $C_j=\supp(R_j)$. Both are nonempty. Since $w_s=1$, every column of a feasible relation $T$ must be covered. Define the maximal allowed relation by
+\begin{equation}\label{eq:maxrelation}
+ E_j=\{s\in S:B_s\subseteq C_j\}.
+\end{equation}
+
+\begin{proposition}\label{prop:boolean}
+Boolean native feasibility holds exactly when
+\begin{equation}\label{eq:booleancriterion}
+ \bigcup_{s\in E_j}B_s=C_j\quad(j\in J),
+ \qquad \bigcup_{j\in J}E_j=S.
+\end{equation}
+\end{proposition}
+\begin{proof}
+Every pair $(j,s)$ used by a feasible $T$ must satisfy $B_s\subseteq C_j$: relational composition cannot remove an unwanted output. Thus $T$ is contained in the maximal relation~\eqref{eq:maxrelation}. Feasibility forces its output coverage and its column coverage, hence~\eqref{eq:booleancriterion}. Conversely the maximal relation creates no unwanted outputs by definition, and these two coverage equalities make it a feasible $T$.
+\end{proof}
+
+This is a finite inclusion-and-union test from the input, not an instruction to search all factorizations. For an exact prescribed relation $E\subseteq J\times S$, Boolean coupling feasibility is simply $EQ=R$ and nonempty columns of $E$. Its minimum Boolean factor rank remains a separate resource question. Total relations are essential: allowing empty link rows would change the native semantics and invalidate the direct translation of normalization.
+
+\section{Independent stochastic lifting with prescribed support}\label{sec:convex}
+
+Now work over $\R_{\ge0}$ and prescribe allowed pairs $E\subseteq J\times S$. Write $E_s=\{j:(j,s)\in E\}$, assuming every $E_s$ is nonempty; otherwise $w_s>0$ immediately rules out a lift. Let $e_jQ_s$ denote the $J\times I$ matrix with row $Q_s$ in position $j$ and zero other rows. Form the explicit compact polytope
+\begin{equation}\label{eq:PE}
+ P_E=\sum_{s\in S}w_s\conv\{e_jQ_s:j\in E_s\},
+\end{equation}
+where the sum is a Minkowski sum in $\R^{J\times I}$.
+
+\begin{theorem}\label{thm:lift}
+There exists $T\in\Pcal_{\R_{\ge0}}(D)$ with $\supp(T)\subseteq E$ if and only if $R\in P_E$. There exists such a $T$ with $\supp(T)=E$ if and only if $R\in\ri(P_E)$, where relative interior is taken in the affine hull of $P_E$.
+\end{theorem}
+\begin{proof}
+The matrices supported within $E$ with column sums $w$ form a product of weighted simplices,
+\[
+ C_E=\prod_{s\in S}w_s\Delta(E_s).
+\]
+The linear map $L(T)=TQ$ sends this product onto~\eqref{eq:PE}. This proves weak support feasibility directly: $T_{js}/w_s$ are the simplex coordinates for column $s$.
+
+Here is an elementary proof of the exact-support assertion, including redundant vertices. Let $T^0_{js}=w_s/|E_s|$ on $E$ and zero elsewhere. It lies in $\ri(C_E)$. Its image $R^0=L(T^0)$ lies in $\ri(P_E)$: otherwise a proper supporting hyperplane through $R^0$ would, by positivity of all the column coordinates, force every available column choice to attain that same supporting value, making the functional constant on all of $P_E$.
+
+If $R\in\ri(P_E)$ and $R\ne R^0$, extend the segment from $R^0$ through $R$ a sufficiently small distance within the affine hull to obtain $R'\in P_E$ and $0<\epsilon<1$ with $R=(1-\epsilon)R'+\epsilon R^0$. Choose $T'\in C_E$ above $R'$. Then $(1-\epsilon)T'+\epsilon T^0$ is positive on every edge of $E$ and maps to $R$. For $R=R^0$, use $T^0$. Conversely, if a positive-on-$E$ lift mapped to the relative boundary, a nonconstant supporting functional would have to be minimized by every available column choice, again a contradiction. This proves the relative-interior equivalence.
+\end{proof}
+
+This is the finite specialization of linear images preserving relative interiors, a standard theorem of convex analysis~\cite{Rockafellar1970}. It does not require independent rows of $Q$, distinct vertices, or injectivity of $L$. It also covers a singleton $P_E$, whose relative interior is itself.
+
+A dual version makes failure independently certifiable. For every tuple of real row vectors $u_j\in\R^I$, weak feasibility is equivalent to
+\begin{equation}\label{eq:dual}
+ \sum_j\langle u_j,R_j\rangle
+ \ \ge\ \sum_sw_s\min_{j\in E_s}\langle u_j,Q_s\rangle.
+\end{equation}
+Necessity follows by minimizing a linear functional separately in each column simplex. If $R\notin P_E$, strict separation from this compact convex polytope supplies a tuple violating~\eqref{eq:dual}; this proves sufficiency. Testing $-u$ includes the opposite orientation and all affine-hull constraints. Exact support replaces the inequality by a strict one for every functional nonconstant on $P_E$, retaining equality for functionals constant there. Requiring strictness for all $u$ would be incorrect.
+
+An equivalent finite linear-program test for exact support maximizes $\delta$ under $TQ=R$, $\one^{\mathsf T}T=w$, $T_{js}\ge\delta$ on $E$, $T_{js}=0$ off $E$, and $\delta\ge0$. Exact support holds precisely when a feasible solution has $\delta>0$; total mass bounds the objective. For rational input, linear feasibility has rational witnesses when it has real witnesses. This statement does not transfer to optimal nonnegative factorizations.
+
+The distinction is decisive. The theorem lifts a coupling relation $E$ using unrestricted latent size, for example $A=T,B=I_S$. It does not lift an arbitrary prescribed Boolean object $(h,A_{\B},B_{\B})$, preserve its factor supports, or retain its $h$. Requiring $T=AB$ at a chosen size reintroduces bilinear nonnegative-factorization constraints. An exact support criterion is not a fixed-resource lifting theorem.
+
+\section{Derived comparison functors and resource transport}\label{sec:transport}
+
+Consider another admissible datum $D'=(w',Q',R')$. Let $U:J\to J'$, $F:S\to S'$, and $G:I\to I'$ be normalized matrices over the same coefficient system, with
+\begin{equation}\label{eq:comparison}
+ w'=wF,\qquad QG=FQ',\qquad R'=U^{\mathsf T}RG.
+\end{equation}
+These are supplied, checkable interface compatibility equations. Their existence is not promised for arbitrary changes of state or observation. Both declared data are required to satisfy the earlier nonzero-marginal assumptions. If a raw transformation creates zero target rows or coarse states, those can be removed as a separate preprocessing step before invoking the state-count formulas. Such removal is not part of the strict comparison operation stated here: arbitrary deletion or reindexing would introduce choices that the displayed composition law does not make.
+
+\begin{theorem}\label{thm:transport}
+Equations~\eqref{eq:comparison} induce a functor
+\begin{align*}
+ \Phi_{U,F,G}:\W_\K(D)&\longrightarrow\W_\K(D'),\\
+ (h,A,B)&\longmapsto(h,U^{\mathsf T}A,BF),\qquad C\longmapsto C.
+\end{align*}
+It preserves the presented latent size. Consequently $c_\K(D')\le c_\K(D)$.
+\end{theorem}
+\begin{proof}
+For $T=AB$, its transported coupling is $T'=U^{\mathsf T}TF$. Direct calculation gives
+\[
+ T'Q'=U^{\mathsf T}TQG=R',\qquad
+ \one^{\mathsf T}T'=(U\one)^{\mathsf T}TF=wF=w'.
+\]
+The second factor remains normalized: $BF\one=B\one=\one$. On arrows, $AC=A'$ gives $U^{\mathsf T}AC=U^{\mathsf T}A'$, while $CB'=B$ gives $C(B'F)=BF$. Identity and composition are unchanged. Every source implementation therefore has a target implementation with the same $h+2$ states, proving the optimized inequality.
+\end{proof}
+
+Successive comparisons compose as $(U\widetilde U,F\widetilde F,G\widetilde G)$. Associativity makes direct and successive witness transport exactly equal, not merely isomorphic. This is a coherent family of native realization categories over admissible input data. It is unnecessary to assume unspecified categorical lifts and then call their existence a theorem: the actual lift is the displayed formula.
+
+For deterministic native links, preservation needs an extra condition. A stochastic $F$ can turn a point-mass link into a nontrivial distribution. If $F$ is deterministic, then $BF$ stays deterministic whenever $B$ is, and the same construction transports deterministic implementations. The unrestricted theorem concerns normalized links, not an automatic deterministic-cost inequality.
+
+A unital coefficient homomorphism $\varphi:\K\to\mathbb L$ acts entrywise on data, objects, and arrows, preserving all equations and normalization. Since a nonzero element has an inverse, such a homomorphism into a nontrivial semifield cannot send it to zero. The required nonzero marginals are therefore retained. It gives
+\[
+ \W_\K(D)\longrightarrow\W_{\mathbb L}(\varphi D),
+ \qquad c_{\mathbb L}(\varphi D)\le c_\K(D),
+\]
+and commutes with the interface-change functors. The most important example is $\supp:\R_{\ge0}\to\B$, since support sends addition to union and multiplication to conjunction. It transports concrete native witnesses and their simulations. It need not reflect feasibility, lift a given qualitative object, or preserve minimum cost.
+
+\subsection{Observation change and exact recovery}
+
+For output-only change, take $U$ and $F$ to be identities. Every $T$ feasible for $(w,Q,R)$ remains feasible for $(w,QG,RG)$, so
+\begin{equation}\label{eq:garbling}
+ \Pcal_\K(w,Q,R)\subseteq\Pcal_\K(w,QG,RG).
+\end{equation}
+Suppose a normalized $L:I'\to I$ simultaneously recovers both matrices:
+\begin{equation}\label{eq:recovery}
+ QGL=Q,\qquad RGL=R.
+\end{equation}
+Then the feasible sets in~\eqref{eq:garbling} are \emph{identical}: $TQG=RG$ implies $TQGL=RGL$, hence $TQ=R$. All coupling-support questions, all rank optimizations, and both native resource costs are consequently unchanged. Under the fixed $J,S$ coordinates, the factorization categories are literally identical: their object conditions depend on $Q,R$ only through membership of $AB$ in the feasible set, and their arrow equations are unchanged. The associated transducers still have different readout kernels, $BQ$ and $BQG$. Identity of these factorization categories does not say that the physical observations or labelled generators are identical, and no choice of a canonical optimizer is needed. This conclusion is stronger than merely having abstract comparisons in both directions. Recovery of only one displayed matrix does not establish it. The criterion is sufficient; no necessity claim is made.
+
+\section{Full support stress tests}\label{sec:tests}
+
+Take the stochastic data
+\[
+ Q=\begin{pmatrix}4/5&1/5\\1/5&4/5\end{pmatrix},
+ \qquad w=(1/2,1/2),\qquad
+ Q^{-1}=\tfrac13\begin{pmatrix}4&-1\\-1&4\end{pmatrix}.
+\]
+Every target below has row and column masses $1/2$. Invertibility forces the unique candidate $T=RQ^{-1}$. All $Q$ and $R$ supports are the same full Boolean relation.
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Case & Target $R$ & Candidate $T$ & Stochastic result\\
+\midrule
+Independent & $\left(\begin{smallmatrix}.25&.25\\.25&.25\end{smallmatrix}\right)$ & $\left(\begin{smallmatrix}.25&.25\\.25&.25\end{smallmatrix}\right)$ & cost $3$\\[3pt]
+Interior & $\left(\begin{smallmatrix}.37&.13\\.13&.37\end{smallmatrix}\right)$ & $\left(\begin{smallmatrix}.45&.05\\.05&.45\end{smallmatrix}\right)$ & cost $4$\\[3pt]
+Boundary & $\left(\begin{smallmatrix}.40&.10\\.10&.40\end{smallmatrix}\right)$ & $\left(\begin{smallmatrix}.50&0\\0&.50\end{smallmatrix}\right)$ & cost $4$\\[3pt]
+Infeasible & $\left(\begin{smallmatrix}.45&.05\\.05&.45\end{smallmatrix}\right)$ & $\left(\begin{smallmatrix}7/12&-1/12\\-1/12&7/12\end{smallmatrix}\right)$ & no lift\\
+\bottomrule
+\end{tabular}
+\end{center}
+The first candidate has rank one, and the two other nonnegative candidates have ordinary and nonnegative rank two. In every case the Boolean datum admits the all-one coupling of Boolean rank one, hence Boolean native cost $3$. Thus support fails both feasibility reflection and resource reflection, even when the visible matrices contain no zeros. The interior case also shows that an exact full-support stochastic coupling need not lift the Boolean rank-one implementation at its original size.
+
+For allowed support $E=J\times S$, the boundary case lies in $P_E$ but not its relative interior. It has a weak full-allowed-support lift, but no lift whose support equals $E$. For the infeasible case, choose $u_1=(-1,0)$ and $u_2=(0,-1)$. The left side of~\eqref{eq:dual} is $-.9$, while its right side is $-.8$. This is an explicit separating certificate, independent of observing negative entries in the inverse calculation. The binary values are rational and can be checked without floating-point tolerances.
+
+The resource gap is unbounded. For $n\ge2$, let $U_n$ be the all-$1/n$ matrix, take $0<\epsilon,\delta<1$, and set
+\[
+ Q=(1-\epsilon)I+\epsilon U_n,\qquad
+ T=\frac{(1-\delta)I+\delta U_n}{n},\qquad
+ w=(1/n,\ldots,1/n),\qquad R=TQ.
+\]
+All entries of $Q,T,R$ are positive. On constant vectors $Q$ has eigenvalue $1$, and on the zero-sum complement eigenvalue $1-\epsilon$, so $Q$ is invertible. The unique coupling $T$ has eigenvalues $1/n$ and $(1-\delta)/n$, hence rank and nonnegative rank $n$. The stochastic native cost is $n+2$, while the unchanged full Boolean pattern has cost $3$. Both additive and multiplicative gaps grow without bound.
+
+Now hide the second output using the normalized all-one column $G:I\to\{*\}$. Then $QG=\one$ and $RG=p$, so the rank-one coupling $pw$ is feasible. The stochastic cost becomes $3$. The same erasure makes the binary infeasible case feasible. Observation loss can therefore strictly lower cost or remove an obstruction; it does not preserve the original observation problem. The shared-recovery hypothesis~\eqref{eq:recovery} cannot hold in these strict examples.
+
+\section{Standard machinery and limits of the result}\label{sec:sources}
+
+The convex lifting theorem is a direct finite application of linear images of products of simplices. Rockafellar's relative-interior theorem and separation results provide the standard general statements~\cite{Rockafellar1970}; Section~\ref{sec:convex} gives the relevant proof rather than treating an abstract lifting hypothesis as established. Nonnegative rank and normalization are classical factorization tools~\cite{CohenRothblum1993}. Support transport and its Boolean-rank lower bound follow entrywise; related rank comparisons are discussed by DeSantis and collaborators~\cite{DeSantis2020}. Boolean rank here always uses OR/AND arithmetic, not binary factors multiplied with ordinary addition.
+
+There is also a precise Blackwell comparison. In the real case put $\mu=wQ$, discard zero-$\mu_i$ columns, and reverse the two experiments:
+\[
+ D_{is}=\frac{w_sQ_{si}}{\mu_i},\qquad
+ E_{ij}=\frac{R_{ji}}{\mu_i}.
+\]
+A feasible $T$ defines a normalized $L_{sj}=T_{js}/w_s$ and gives $E=DL$. Conversely such a garbling yields $T_{js}=w_sL_{sj}$ satisfying both coupling equations. This is the standard finite garbling condition, not a new decision-theoretic theorem. Categorical formulations of comparison and compatible joint implementation provide relevant context~\cite{Fritz2020}; their additional hypotheses should not be silently imported into this finite argument.
+
+Supported-coupling Hall or finite Strassen criteria solve a related but simpler problem: prescribed marginals and allowed edges. They supply exact existence and deficiency certificates~\cite{Koperberg2022}. They do not by themselves impose $TQ=R$ for genuinely stochastic $Q$. The full-support infeasible example passes any purely support-based coverage intuition while failing the required numerical mixture equations. Nor does max flow optimize the constrained nonnegative rank.
+
+The common construction therefore has content at a definite level: it builds native phase implementations, transports them coherently under explicit interface equations, gives exact resource identities, and separates qualitative from quantitative lifting through independently checkable conditions. It does not establish that every prescribed diagram lifts, that a qualitative optimizer lifts, or that local lifts glue while preserving all latent constraints. It does not characterize arbitrary positive dynamical realizations, predictive filtering, or multistage minimal state spaces. Those involve continuation and transition compatibility beyond this two-stage table.
+
+The dependency on assumptions is also limited and visible. The factorization-category equations and the transport calculations already make sense over a commutative semiring. The normalization of arbitrary factors, and the support-based passage from unrestricted native generators to phase normal form, use the stronger zerosumfree semifield hypotheses. The relative-interior and separating-hyperplane arguments use real convex geometry and have not been asserted over an arbitrary coefficient system. Stating these dependencies prevents a true algebraic transport statement from being extended without proof into a general numerical existence theorem.
+
+A useful standard for extending the result is now explicit. An extension must specify its native objects and comparisons, construct transport from independently testable conditions, account for all state memory, and distinguish feasibility from the cost of an optimal lift. Merely placing new systems into a category would not meet that standard. The present note establishes a worked common fragment, not a universal phenomenology or a priority claim for its established components.
+
+\section{Using the construction without conflating the questions}
+
+For a concrete finite instance, the results suggest a clear order of operations. First identify the retained $w,Q$ and the target joint law $R$, including the phase convention and the type of state comparison. Check normalization, nonzero marginals, and~\eqref{eq:marginal}. These preliminary conditions are necessary but not sufficient. The full-support infeasible control satisfies every one of them. If the input is relational, the maximal-relation coverage test decides feasibility. If it is stochastic, the linear system~\eqref{eq:feasible}, or its support-constrained version, decides whether any native realization is possible.
+
+Second, keep the selected coupling rather than immediately discarding it after producing the observable $R$. It is the witness that records how the first announcement relates to the chosen coarse middle states. A feasible $T$ always gives a deterministic realization through $S$, so existence already comes with a finite construction and a state bound. If a particular exact support is required, verify the relative-interior or positive-$\delta$ condition before considering compression. Feasibility with allowed edges alone does not promise that every allowed edge can carry positive weight.
+
+Third, optimize the latent factorization only if the resource question is required. The one-state criterion~\eqref{eq:rankone} answers its smallest boundary directly. Ordinary rank can certify lower bounds, while explicit nonnegative or Boolean factorizations certify upper bounds. In general the optimization is over all feasible couplings, not just over $R$, and one feasible coupling need not be optimal. A rank of the observed table cannot silently replace this constrained optimization. The identity-$Q$ reduction explains why the independent linear feasibility test does not also provide an easy exact resource algorithm.
+
+Finally, when changing the interface, verify~\eqref{eq:comparison} and transport the witness and its factors explicitly. A forward garbling can legitimately make a formerly impossible target possible by discarding constraints; that is a new observation problem, not a solution of the old one. To assert exact retention, use a demonstrated recovery condition such as~\eqref{eq:recovery}. To assert that a specific qualitative implementation has a quantitative lift, additional constraints on its factors must actually be solved. These checks delimit what the common construction establishes in an application.
+
+\section{Reproducibility and artifact status}
+
+This deliverable is intentionally uncompiled \LaTeX{} source. No PDF layout has been rendered or visually certified. The accompanying notes contain the source audit, independent lifting derivations, and stress-test calculations. The standard-library Python checker reproduces its results from a clean temporary copy under both ordinary Python and optimized Python, using exact rational arithmetic. Its Boolean enumeration covers all 81 pairs of row-total $2\times2$ input matrices: 29 feasible pairs, 52 infeasible pairs, and 63 feasible coupling witnesses. The minimum Boolean factor rank is one for 9 pairs and two for 20. It also checks all four binary controls, the separating inequality, 96 comparison squares, 96 sequential-composition identities, 3 coarse-state collapses, and 9 factorization-arrow transports.
+
+These are finite regression checks, not proofs of the general semifield theorem, convex separation, relative-interior criterion, or an arbitrary nonnegative-rank algorithm. The source has been checked for balanced environments and braces and resolved internal references and citation keys; this is not a compilation or a layout check. All native-state claims remain bounded by the finite normalized phase-tagged model specified in Section~2.
+
+\begin{thebibliography}{9}
+\bibitem{Rockafellar1970}
+R. Tyrrell Rockafellar.
+\emph{Convex Analysis}. Princeton University Press, 1970.
+Theorem 6.6 and Corollary 6.6.2 on relative interiors and linear images; separation results in Section 11.
+Primary book text consulted through \url{https://djvu.online/file/68u51YEBQaqiP}.
+
+\bibitem{CohenRothblum1993}
+Joel E. Cohen and Uriel G. Rothblum.
+\emph{Nonnegative Ranks, Decompositions, and Factorizations of Nonnegative Matrices}. 1993.
+\url{https://lab.rockefeller.edu/cohenje/PDFs/211CohenRothblumLAA1993.pdf}.
+
+\bibitem{DeSantis2020}
+Derek DeSantis, Erik Skau, Duc P. Truong, and Boian Alexandrov.
+\emph{Factorization of Binary Matrices: Rank Relations, Uniqueness and Model Selection of Boolean Decomposition}.
+\url{https://arxiv.org/abs/2012.10496}.
+
+\bibitem{Fritz2020}
+Tobias Fritz, Tomas Gonda, Paolo Perrone, and Eigil Fjeldgren Rischel.
+\emph{Representable Markov Categories and Comparison of Statistical Experiments in Categorical Probability}.
+Section 5.1 and Theorem 5.4.
+\url{https://arxiv.org/abs/2010.07416}.
+
+\bibitem{Koperberg2022}
+Twan Koperberg.
+\emph{Couplings and Matchings: Combinatorial Notes on Strassen's Theorem}.
+Theorem 1 and Proposition 6.
+\url{https://arxiv.org/abs/2202.02092}.
+\end{thebibliography}
+\end{document}
