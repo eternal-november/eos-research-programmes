@@ -1,0 +1,71 @@
+Crossing network reconstruction and exact physical lifting
+Verification
+26 October 2026
+
+Verification scope
+
+The release verification checks all packaged file hashes, extracts the archive
+into a fresh directory, and reruns 19 Python programs: nine checks for this
+milestone and ten checks for the selected local foundations. All reproduced
+their packaged JSON results. The runtime was Python 3.12.14 using only the
+standard library, with assertions enabled. No network or external package is
+required by the check programs.
+
+The runner first verifies SHA256SUMS, then copies the package into a temporary
+directory. Checks run there, so the extracted source files and recorded results
+remain unchanged. Newly printed or written JSON is parsed and compared to the
+packaged result. Formatting differences in JSON are immaterial; the parsed
+values must match exactly. CheckManifest.json maps each program to its result
+and identifies author versus independently written checks. The randomized
+bounded input generator in the independent structural checker uses its fixed
+recorded seed; it is exhaustive within each generated bounded instance, not
+an exhaustive enumeration of all possible inputs.
+
+Recorded results
+
+PASS packaged SHA-256 integrity checks
+PASS theory/check_anchored_partitions.py
+PASS theory/check_integrated_lifting.py
+PASS implementation/check_acquisition_lifting.py
+PASS implementation/check_permitted_restrictions.py
+PASS examples/check_cartesian_partial_whole.py
+PASS examples/check_cycle_obstruction_arity.py
+PASS checks/independent/check_reconstruction_independent.py
+PASS checks/independent/check_symmetry_and_transport.py
+PASS checks/independent/check_integrated_flagships.py
+PASS foundations/checks/author/check_witnessed_square.py
+PASS foundations/checks/author/check_crossing_grid.py
+PASS foundations/checks/author/check_internal_cylinder_retyping.py
+PASS foundations/checks/author/check_four_component_cylinder.py
+PASS foundations/checks/independent/check_witnessed_square_independent.py
+PASS foundations/checks/independent/check_crossing_cylinder_independent.py
+PASS foundations/checks/independent/check_typed_empty_squares.py
+PASS foundations/checks/independent/check_all_fibres_grid_independent.py
+PASS foundations/checks/independent/check_internal_retyping_independent.py
+PASS foundations/checks/independent/check_cylindrical_retyping_independent.py
+PASS all 19 finite check programs; JSON results reproduced
+
+Interpretation and limits
+
+The new independent structural comparisons covered 475 bounded input instances
+and 127 partial-operation partition instances. The independent flagship check
+verified 48 actual whole equations for each of the twisted and untwisted active
+covers. It found zero versus one structural quotient respectively. The active
+AND grid had one structural quotient, no affine exact lift, and one exact lift
+when AND was admitted, including all four exact face wrappers. The permitted-
+restriction checker passed 3,436 restriction instances and 494 deterministic-
+map instances. These are the scopes of those specific programs, not a claimed
+sum of mathematically independent tests or coverage of every finite system.
+
+Other included checks cover the visible square and cylinder foundations,
+selected empty-fibre cases, internal and cylindrical retyping, active examples,
+shared versus fresh acquisition records, invisible witness symmetries,
+noninjective interface transport, the structural-first/hardware-first
+comparison, and hidden-wrapper multiplicity rejection. Each result JSON
+records its own finite bounds where supplied by the program.
+
+The mathematical proofs and these computational checks are distinct evidence.
+The proofs received independent AI review, including the final source snapshots
+identified in SourceProvenance.json. No external human peer review or formal
+proof-assistant verification is claimed. Passing this suite is not a proof of
+all instances or a complete implementation of the synthesis theorem.

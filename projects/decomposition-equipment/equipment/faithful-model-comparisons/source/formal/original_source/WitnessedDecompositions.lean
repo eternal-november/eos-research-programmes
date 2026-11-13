@@ -1,0 +1,18 @@
+module
+
+public import WitnessedDecompositions.Core
+public import WitnessedDecompositions.Examples
+
+public import WitnessedDecompositions.Collections
+public import WitnessedDecompositions.PathOccurrences
+public import WitnessedDecompositions.Positive
+public import WitnessedDecompositions.TreeOccurrences
+public import WitnessedDecompositions.Calculus
+public import WitnessedDecompositions.FreeCalculus
+public import WitnessedDecompositions.FreeExtension
+public import WitnessedDecompositions.FreeAdjunction
+public import WitnessedDecompositions.Congruence
+public import WitnessedDecompositions.QuotientCalculus
+public import WitnessedDecompositions.PresentedCalculus
+public import WitnessedDecompositions.WeightInvariant
+public import WitnessedDecompositions.PresentationExamples

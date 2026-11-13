@@ -1,0 +1,149 @@
+Ambiguous decomposition discovery from noisy partial histories
+Research results
+28 October 2026
+
+Lay abstract
+
+Can we learn a system's organization without identifying its complete hidden mechanism? This research answers yes for a growing family of interacting binary systems. Each experiment watches only two noisy outputs, the same two during that run. Internal connections, shared randomness, and sensor error rates are initially unknown.
+
+Exact observation laws determine several useful features: which stored bits influence which others, which outputs share an innovation source, the sensor error rates, and all one-bit and two-bit probabilities of those sources. They do not determine the sources' three-way interactions. The result describes every remaining source law that draws independently over time by one learned interval per three-bit source, rather than selecting an unjustified single answer.
+
+The ambiguity can hide memory and source connections. A source with a persistent internal bit can generate exactly the same permitted two-output histories as a memoryless source, while richer observations distinguish their higher-order temporal behavior. Nevertheless, each compatible mechanism has an explicit local implementation. Overlapping descriptions can be assembled into one execution, provided they reuse the same states and random events rather than resampling them.
+
+The construction works at arbitrarily large system sizes without enumerating all global states. It includes exact stationary initialization and constructive finite-data confidence families with an explicit error bound for the permitted observations. The limitations matter: the binary update and sensor types are assumed, observation masks cannot switch within a run, and the result neither identifies unique physical hardware nor certifies safety. Its achievement is useful discovery and coherent implementation despite unresolved hidden mechanisms.
+
+The setting and the main result
+
+There are N named noisy binary ports. The declared grammar assigns one hidden bit to each port. Those bits follow an unknown permutation whose directed cycles each have length at least five. The number of rings, their possibly unequal lengths, membership, cyclic ordering and source alignment are unknown. Independently at each tick, a site copies its first predecessor with probability q1, its second with q2, or takes a fresh innovation with probability r=1-q1-q2. Assume q1>q2>0 and r>0. Thus feedback and two possible parent inputs are real; there is no global refresh clock or controlled reset.
+
+Unknown innovation sources partition the sites into blocks of size one, two or three. Each block is rainbow: it contains at most one site from any causal ring. Its positive probability table is unknown; draws are independent across sources and time. No source count, mean, pair covariance or reference table is supplied. Within each nonsingleton block, nonzero pair covariances must form a connected graph; signed covariances are allowed. This excludes a genuinely three-way source whose pair covariances all vanish.
+
+Each port has independent fresh binary-symmetric sensor noise with unknown attenuation rho_i in (0,1). Experiments provide stationary histories of one or two fixed named ports from separate runs. Later masks may depend on completed experiments, but masks cannot change within a run and unrelated runs cannot be stitched into joint observations. Stationary-run access is an observation facility, not permission to initialize hidden states.
+
+Under these assumptions, the population theorem identifies sensors, weighted causal connections, both component counts and sizes, source blocks, and all source singleton and pair marginals. It exactly characterizes every observationally equivalent IID-source completion. A declared independent binary-memory subclass also has a complete parameterized realization fiber. Every retained world has a local positive implementation and coherent crossing descriptions. These results are class-relative, not arbitrary-process membership tests. [1–3]
+
+What the histories identify
+
+Use hidden spins S_i=(-1)^X_i and observed spins T_i=(-1)^Y_i. Let a=E[T] and Gamma_l=Cov(T(t+l),T(t)) for l=1,2. Fixed-pair histories supply these entries without simultaneous access to the whole system. With D=diag(rho_i), hidden spin covariance C_s, and weighted copy matrix A,
+
+    Gamma_l = D A^l C_s D.
+
+Consequently, setting B=Gamma_2 Gamma_1^(-1) and G=B^(-1)Gamma_1 gives
+
+    rho_i = sqrt(G_ii+a_i^2),   A=D^(-1)BD,
+    mu_s=D^(-1)a,              C_s=D^(-1)GD^(-1).
+
+The unit second moment of a binary spin supplies the calibration; a known biased mean is unnecessary. Invertibility is substantive: the ring matrix has smallest singular value at least q1-q2, while positive innovations make C_s positive definite.
+
+In bit coordinates, let mu=(1-mu_s)/2 and C=C_s/4. Innovation means are e=(mu-A mu)/r. For distinct sites,
+
+    Cov(E_i,E_j)=(C-A C A^T)_ij/r^2.
+
+The diagonal residual includes selector variance and must not be used this way. Instead, the innovation variance is e_i(1-e_i). The larger-weight entries of A recover the permutation; the smaller-weight entries must follow its square. This reveals every ring and its ordering and length. Connected components of the nonzero off-diagonal innovation covariance reveal source blocks, with isolated vertices identifying singleton sources. This discovers two different decompositions: the causal rings and shared innovation ownership. Heterogeneous, biased sources and nonuniform history distributions are admitted throughout. [1]
+
+The exact unresolved source fiber
+
+For a discovered triple, write p_i=P(E_i=1), p_ij=P(E_i=E_j=1), and t=P111. Normalization and the learned lower marginals force
+
+    P111=t;  P110=p12-t;  P101=p13-t;  P011=p23-t;
+    P100=p1-p12-p13+t;  P010=p2-p12-p23+t;
+    P001=p3-p13-p23+t;
+    P000=1-p1-p2-p3+p12+p13+p23-t.
+
+Define
+
+    L=max(0,p12+p13-p1,p12+p23-p2,p13+p23-p3),
+    U=min(p12,p13,p23,1-p1-p2-p3+p12+p13+p23).
+
+Exactly the strictly positive completions have L<t<U. Requiring each atom to be at least gamma gives [L+gamma,U-gamma]. Singleton and two-site source tables are fully identified by their lower marginals. The full IID-source observational fiber is the product of the triple intervals and these fixed smaller-source factors. If no three-site sources occur, this IID fiber is a single model.
+
+Necessity follows because identical allowed histories give identical calibrated moments, graphs, source assignments and lower marginals. Sufficiency requires more than matching moments: any fixed pair of ports belongs to at most two causally closed rings. The rainbow condition ensures each source contributes at most two coordinates, whose entire IID projected law is unchanged by t. Therefore every finite stationary pair history agrees, however long it is; consistent infinite histories agree as well.
+
+Changing t changes the whole transition mechanism. The canonical log-linear triple contrast J3(t)=sum_x (-1)^|x| log P_t(x) decreases strictly from positive infinity to negative infinity. Every unrestricted positive interval therefore contains exactly one zero-triple-interaction table and continuum many nonzero alternatives. Across m3 discovered three-site sources, 2^m3 labeled interaction-support patterns can be represented symbolically. A prescribed margin subinterval may exclude the zero-interaction point.
+
+An empty interval is an actual local obstruction. Overlap-consistent positive pair tables need not admit any joint triple: three proposed pair-disagreement probabilities totaling more than two are impossible. [1,2]
+
+Memory that every permitted history misses
+
+The enlarged subclass attaches an independent fair stationary binary Markov spin H_b to each discovered three-site source. Its transition is (1+lambda_b h h')/2, with |lambda_b|<=lambda_max<1. Conditional on all H paths, source emissions are independent, using the learned table P_t with
+
+    t_b(H_b)=t0_b+delta_b H_b.
+
+The complete parameterized realization fiber in this subclass is exactly L_b+gamma<=t0_b±delta_b<=U_b-gamma, together with the lambda bounds. Without a fixed atom margin, use strict interval membership. Smaller-source tables remain fixed; such modulators there would be redundant and are omitted. This classification depends on the stipulated source type; it does not classify arbitrary hidden temporal mechanisms.
+
+Conditional singleton and pair tables do not depend on H. Hence projected source paths on any two rings remain IID even when the full triple process has memory. All permitted histories remain identical.
+
+For source b, form the product W_b(t) of the three centered update residuals U_i(t)=X_i(t+1)-sum_j A_ij X_j(t)-r e_i. The higher-order temporal statistic satisfies, for positive lags ell,
+
+    Cov(W_b(t),W_b(t+ell))=r^6 delta_b^2 lambda_b^ell.
+
+Thus genuine source persistence is distinguishable by richer, bounded-width noisy probes after calibration. Negative lambda produces alternating correlations. Changing the sign of delta merely exchanges H labels; delta=0 or lambda=0 makes the extra store redundant. A nonzero correlation rules out an autonomous memoryless source with independent fresh randomness and no external temporal resource. It is not a universal lower bound against simulators allowed other memory or correlated tapes. [1,3]
+
+Discovering hidden connections with richer observations
+
+A separate extension treats the original all-triple, three-ring subclass, not the entire count-free class. Source bits H themselves follow an unknown bounded-degree nonnegative noisy-copy graph A_H, with independent fair fresh spins and refresh probabilities at least r_H>0. This graph is autonomous: site states do not feed back into it. Positive modulation gains delta_b>0 and nonsingular A_H are assumptions, not consequences of arbitrary source-label changes.
+
+Every original fixed-pair history remains blind to this graph. Nevertheless, appropriately signed centered triple residuals have positive-lag covariance
+
+    Gamma_k=G_H A_H^k C_H G_H,  k=1,2,
+
+where G_H denotes the positive diagonal gain matrix with entries r^3 delta_b. Fair stationary source spins have unit variance. Lag-shift calibration therefore reconstructs G_H and A_H. In particular, nonzero off-diagonal entries reveal previously invisible persistent source-to-source connections.
+
+Each required moment uses at most 18 named noisy ports over four consecutive ticks, with one fixed enlarged mask in each separate stationary run. Repeated binary coordinates are reduced before calibrated polynomial inversion. These joint moments cannot be manufactured from independent pair runs.
+
+Exact stationary initialization uses nested backward ancestry, first for site states and then for the requested H states. Expected ancestry work is at most N/r+(N+m3)/r_H, with unbounded worst-case temporary resources. The source graph adds O(m3 d) parent wires and local table entries for degree bound d. Adding its parent-read, selector and innovation occurrences to the common fine record graph preserves the same coherent ring/source-column regrouping. [9]
+
+One world and coherent crossing implementations
+
+Choose a parameter vector once. Own exactly one innovation tuple per source and tick, one selector per site and tick, and one sensor-noise event per port and tick. A shared coordinate is an alias of that occurrence, never a fresh resample. Sites read old parent registers and update synchronously.
+
+Complete execution records admit ring and source-block organizations, genuinely crossing when source blocks span different rings. Ring grouping keeps each ring together and retains shared source owners at its boundary. Column grouping places each source with its one, two or three assigned sites, leaving predecessor wires between these variable-size columns. Flattening either organization produces the same fine graph of site and source states, full source tuples, selectors, transitions, updates and noise occurrences. The inverse operation simply repackages those records. This explicit bijection preserves probabilities, endpoints and concatenation; it does not assume a planar interchange rule. Pair projections alone discard records and would not prove this stronger statement. These are records of the constructed model, not empirically identified physical event tokens.
+
+The quantifiers matter. Every compatible world has a coherent lift, and one parameterized program scheme expresses them all. No fixed whole process law can equal two compatible worlds with different higher-order temporal laws. Choosing an IID representative preserves allowed observations, but cannot preserve every possible actual whole law.
+
+Without the added source graph, each implementation uses N site bits, at most m3 optional source bits, O(N) local table data, two potential parent-bit inputs per site, and constant-width source delivery. Synchronous double buffering and communication between separated components are additional charged resources. Neither global transition tables nor unique actual hardware are required. [1,3]
+
+Exact stationary initialization
+
+Trace each requested site's copy ancestry backward until a fresh innovation is selected, coalescing repeated named site-time visits. Each lineage follows one selected parent, not a branching tree. With q=q1+q2, the probability any of N lineages exceeds depth T is at most Nq^T, and the expected number of visited ancestry nodes is at most N/r. Source-time sorting and bounded-table sampling are additional work.
+
+For independent persistent sources, collect terminal source-time requests and time zero. Sample each stationary H chain jointly at those times, using skip transitions (1+lambda^d h h')/2 across a gap d. Draw each requested innovation tuple once and cache its coordinates. This preserves both shared-source dependence and the correlation between X(0) and H(0).
+
+This independent-source algorithm reveals a finite restriction of a two-sided stationary graphical construction and terminates almost surely. It is exact with finite expected work, but unbounded worst-case temporary resources. Capping its depth at T gives an approximate sampler with total-variation error at most Nq^T. Independent initialization of X and H would be incorrect. The coupled-source extension uses the nested sampler above. [3]
+
+Constructive finite-data guarantees
+
+With atom margin gamma, sensor attenuation bounded below, and positive margins on r, q1-q2 and nonzero source-covariance edges, C_s>=2r gamma I controls inversion uniformly over source sizes one through three. O(N^2) pair moments, polynomial-accuracy estimation and matrix perturbation yield polynomial structural recovery requirements. Actual per-statistic sample counts and dependence must be charged; an optimized sample exponent is not established.
+
+After correct discrete recovery, consider a three-site source whose estimated singleton/pair probabilities have coordinate error at most eta. Then |Lhat-L|<=3eta, |Uhat-U|<=6eta, and Uhat-Lhat>=2gamma-9eta. If eta<=gamma/12, choosing t_hat=(Lhat+Uhat)/2 gives an explicitly positive table reproducing the estimated marginals. A constant-size eight-atom linear program provides an alternative when imposing additional local margins. Smaller sources use corresponding two- or four-atom polytopes.
+
+Parameter boxes and local atom-positivity/marginal polytopes give a constructive confidence outer family containing truth on the simultaneous confidence event. They are valid models, not the exact nonlinear empirical identified set. Retained ownership may include points with a vanishing covariance edge, a disclosed outer-class relaxation.
+
+For an H-tick fixed-pair history, set K=2(H+1). If selector, projected-source and sensor total-variation errors are bounded by epsilon_sel, epsilon_pair and epsilon_sensor, and refresh probability is at least r0, then
+
+    TV(P_pair,H,P_hat_pair,H)
+      <= min(1,K[epsilon_sel/r0+epsilon_pair+epsilon_sensor]).
+
+The stationary ancestry coupling queries at most K/r0 selector events in expectation and at most K terminal source events. This bound is independent of N and unresolved triple parameters. It controls permitted pair laws, not the full whole law, whose hidden higher-order behavior can remain far apart. [1]
+
+Contribution and remaining boundaries
+
+Generalized binary vector autoregression already supplies the copy/innovation model and observed-state Yule-Walker recovery. Triple marginal completion, higher-order information loss, voter ancestry and perfect sampling are established ingredients. Earlier project results already preserve one physical world and coherent event identities across crossings. None is claimed invented here. [4–8]
+
+The additional result is the constructive chain from partially informative noisy histories to an exact compatibility family, nontrivial when three-site sources occur, and world-indexed local crossing realizations, with learned source domains, persistent alternatives, correct stationary initialization and finite-data outer approximations. It avoids exhaustive global-state completion at arbitrarily large sizes in the declared family. Literature priority and superiority over a baseline combining the same ingredients remain unestablished. Arbitrary latent types, observation mixing, mask switching, general source automata, optimal hardware resources and physical safety certification remain outside scope.
+
+Verification status
+
+The results received independent AI proof review and bounded numerical/algebraic regression checks. There is no new Lean formalization, external human review or physical validation. Constructive algorithms and certificates are specified; a full production implementation is not provided.
+
+Sources
+
+[1] Learned_Source_Fiber_Theorem.md, scope and sections 1–12, especially 9–12.
+[2] Ambiguous_Family.md, sections 1–10.
+[3] Partial_Process_Gluing.md, sections 3–6, especially 5a–5b.
+[4] Prior_Lifting_Boundary.md; Main_Route_Prior_Art.md; Target_Fidelity.md, latest review sections. These local sources are in the accompanying source archive.
+[5] Jentsch and Reichmann, Generalized binary vector autoregressive processes, Journal of Time Series Analysis 43 (2022), Definition 2.1 and Theorems 2.7–2.8. https://d-nb.info/127887058X/34
+[6] Wainwright and Jordan, Graphical Models, Exponential Families, and Variational Inference, section 8.5. https://people.eecs.berkeley.edu/~jordan/sail/readings/wainwright-jordan-fnt.pdf
+[7] Aldous and Fill, Reversible Markov Chains and Random Walks on Graphs, section 14.3. https://www.stat.berkeley.edu/~aldous/RWG/Book_Ralph/Ch14.S3.html
+[8] Propp and Wilson, Exact sampling with coupled Markov chains and applications to statistical mechanics (1996). https://www.stat.berkeley.edu/~aldous/206-RWG/RWGpapers/propp_wilson.pdf
+[9] Coupled_Interface_Discovery.md, sections 1–7. Restricted coupled-source extension and richer-probe theorem.

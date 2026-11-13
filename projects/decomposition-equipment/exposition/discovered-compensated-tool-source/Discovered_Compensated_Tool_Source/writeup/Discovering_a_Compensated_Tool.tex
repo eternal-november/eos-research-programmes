@@ -1,0 +1,516 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=25mm]{geometry}
+\usepackage{booktabs,array,enumitem,microtype}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlist{leftmargin=1.7em,itemsep=2pt,topsep=3pt}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\row}{\operatorname{rowspan}}
+\newcommand{\kerA}{\operatorname{ker}}
+\newcommand{\V}{\mathcal V}
+\newcommand{\Ret}{\mathsf{ret}}
+\newcommand{\Cost}{\mathsf{Cost}}
+\title{Discovering a Compensated Tool in an Unfamiliar Workshop\\[5pt]
+\large A finite application of joint witnesses and typed interaction}
+\date{2 November 2026}
+\begin{document}
+\maketitle
+
+\section{What the robot learns}
+
+A repair robot enters a workshop whose controls have undocumented side
+effects. It needs to route a connector correctly while doing two required processing jobs on that same
+connector in the fixture. The model permits either job order. A safe test can reveal that two jobs have a predictable \emph{combined}
+effect, even when neither job is predictable on its own. The robot can then
+do both jobs and compensate their combined disturbance before releasing the
+connector. It need not first identify every hidden interaction.
+
+This useful discovery has a sharp limit. If the robot is interrupted after
+the first job, the certificate for the pair does not authorize release.
+Finishing the second required job may restore a certifiable state, but it
+costs time and consumes real work authority. A theorem about compensation
+does not undo the first job, create an actuator, or make waiting safe
+forever.
+
+The result below answers one exact question:
+\begin{quote}
+When does finite evidence about a stipulated family of hidden interactions
+justify a reusable compensated interface for the work actually performed?
+\end{quote}
+The algebraic answer is a row-space test. The operational answer additionally
+requires a current physical lease, a guarded release, accounted work tokens,
+and enough time. We prove the finite instance and identify the precise
+existing theorems that propagate its local proof. The workshop is a motivating
+interpretation of a simplified finite machine, not a physical robot
+demonstration or a general method for discovering arbitrary world dynamics.
+
+
+\section{The finite machine and the exact discovery theorem}
+\label{sec:model}
+
+Fix a dimension $m\ge2$, a finite time horizon, a finite collection of
+individually identified work tokens, and one machine epoch $e$. A hidden
+vector $\theta\in\F^m$ is fixed throughout that epoch. All additions below
+are in $\F$. No probability distribution on $\theta$ is assumed.
+
+One owned station token contains the shared routing latch, gate, and
+controller state. Loading a fresh real connector with desired route
+$x\in\F$ sets its private latch to $s=x$. During the pending phase, an
+addressed work operation $j$ performs
+\begin{equation}\label{eq:work}
+ s\longmapsto s+\theta_j,\qquad
+ v\longmapsto v+e_j,
+\end{equation}
+where $v$ is the parity vector of the \emph{actual} work history, initially
+zero. It also consumes its particular work token, emits that job's receipt,
+and incurs its declared duration. Required jobs must be done after loading
+the real connector. Their tokens, receipts, order, and elapsed time are
+retained separately from $v$: cancellation modulo two does not cancel work
+or its resource cost. The invariant is
+\begin{equation}\label{eq:invariant}
+                  s=x+\theta\mathbin{\cdot}v.
+\end{equation}
+There is no production readout of $s$ or $\theta$.
+
+\paragraph{What is supplied rather than learned.}
+The family \eqref{eq:work}, truthful addressed event accounting, stationarity
+within an epoch, and the connection between the final latch and routing are
+assumptions. Calibration has a shielded dummy mode: load a dummy with latch
+zero, pulse each selected address once, read its result, and drain it before
+returning to Idle. A probe $q\in\F^m$ therefore returns
+$b=\theta\cdot q$. With unit durations it costs $|q|+3$ actions, including
+load, read, and drain. Calibration tokens are distinct from productive work
+tokens. Safe calibration, the correction actuator, gate retention, and a
+physical exclusive-control lease are supplied capabilities, not conclusions
+of the observations.
+
+For $k$ probes in the same epoch, retain the ordered evidence
+$E=((q_i,b_i))_{i=1}^k$ and write
+\[
+ A\theta=b,\qquad
+ \V_E=\{\eta\in\F^m:A\eta=b\},\qquad L_E=\row(A).
+\]
+The actual machine witnesses $\V_E\ne\varnothing$. Inconsistent evidence
+instead marks the interface invalid; an empty version space never certifies
+a command by vacuous truth. Bounds on time, tokens, and evidence length make
+each chosen instance a finite transition system.
+
+\begin{theorem}[Exact task relative identification]\label{thm:identify}
+For every such finite instance with $\V_E\ne\varnothing$ and every actual
+work vector $v\in\F^m$, the following are equivalent:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item a single correction $d\in\F$ satisfies $\eta\cdot v=d$ for every
+$\eta\in\V_E$;
+\item $v\in L_E$;
+\item some $\lambda\in\F^k$ satisfies $\lambda A=v$.
+\end{enumerate}
+When these hold, the correction is uniquely $\delta_E(v)=\lambda b$,
+independent of the choice of $\lambda$. When they fail, two machines agree
+on every recorded probe but require different corrections after this work.
+\end{theorem}
+\begin{proof}
+If $v=\lambda A$, then $\eta\cdot v=\lambda(A\eta)=\lambda b$.
+For two witnesses $\lambda,\lambda'$, choose $\eta_0\in\V_E$ to get
+$(\lambda+\lambda')b=(\lambda+\lambda')A\eta_0=0$.
+Conversely, $\row(A)=(\kerA A)^\perp$. If $v\notin\row(A)$, choose
+$n\in\kerA A$ with $n\cdot v=1$. Both $\eta_0$ and $\eta_0+n$ satisfy the
+evidence and their evaluations on $v$ differ. This is standard
+finite-dimensional row-space and null-space duality.
+\end{proof}
+
+Thus evidence exposes a partially defined linear interface
+$\delta_E:L_E\to\F$, rather than necessarily identifying $\theta$.
+To support every context vector in a specified subspace $U$, probing a
+basis of $U$ suffices. At least $\dim U$ independent scalar measurements
+are necessary to have $U\subseteq L_E$. This counts measurements in this
+noiseless linear model, not acquisition time or universal learning complexity.
+
+\paragraph{The guarded production protocol.}
+The controller retains the epoch, evidence, actual history, remaining work
+tokens, target, mode, and clock. Its modes include Idle, Pending, Sealed,
+Finished, Abort, and Expired. Load and Work implement the transitions above. A
+\textsf{Seal} request requires all mandatory jobs complete, consistent
+current-epoch evidence, and a checked witness $\lambda A=v$. Its effect
+is $s\mapsto s+\lambda b$, and it retypes the station to Sealed. Even a
+zero correction has a positive declared duration. Only Sealed can
+\textsf{Commit}; commit releases the connector and returns the route bit.
+
+The seal guard also checks that the actual physical lease and gate-retention
+bounds cover \emph{both} seal and commit through final routing. Completed
+work has no outstanding delayed latch writes, no work is admitted in Sealed,
+and the supplied lease excludes other interference throughout the tail.
+A software token alone does not establish these hardware conditions. A
+current tag is insufficient if control can be revoked after checking it.
+The unit-duration Commit below includes final physical capture; there is no
+unaccounted post-Commit arrival tail.
+
+Rejected requests cost one controller tick, emit a public rejection, and
+preserve the physical latch, work tokens, mode, and evidence, except for
+the clock-expiry transition described below. A rejected
+request is not an instantaneous free operation: its clock advance consumes
+remaining retention time. Hold is available only in Pending, costs time,
+and is permitted only within its supplied retention horizon. An authorized, timely abort safely disposes of
+the pending connector if that primitive is supplied, but yields mission
+failure. No safety claim is made for waiting beyond the holding horizon or
+for an unavailable or too-late abort. Crossing the holding bound without
+Commit or Abort enters a public terminal Expired mode with a saturated
+clock; no physical safety assertion is made there.
+
+\begin{theorem}[Guarded correctness]\label{thm:production}
+For every $\theta\in\V_E$, every admitted finite execution of this protocol
+returns $x$ at each accepted Commit. It preserves actual work-token
+accounting. This holds for public adaptive work orders, not only a fixed
+batch. It is partial correctness, not a guarantee that every execution
+commits or meets its deadline.
+\end{theorem}
+\begin{proof}
+Load establishes \eqref{eq:invariant}; each actual Work preserves it by
+\eqref{eq:work}. Its token is consumed once and its receipt retained.
+At an accepted Seal, the new latch is
+$s+\lambda b=x+\theta\cdot v+\lambda A\theta=x$.
+The sealed phase and physical lease preserve that value through Commit.
+Hold and rejection preserve the latch and work state while accounting for
+time. Abort terminates without a successful routing output. Expired is terminal and cannot produce an accepted Commit. These are all
+declared transitions, so induction proves the claim.
+\end{proof}
+
+If $v\notin L_E$ and no further informative production observation is
+available, no controller selecting one correction from this public history
+can guarantee a correct release for all consistent machines. The two
+machines in Theorem~\ref{thm:identify} have the same observations and need
+opposite corrections. Random selection does not give zero-error correctness
+in both. This obstruction concerns the specified decision state: further
+permitted work or measurements can change it.
+
+
+
+\section{A paid successful mission and its interruption boundary}
+\label{sec:mission}
+
+Take $m=3$ and probe $q=(1,1,0)$. The answer is
+$b=\theta_1+\theta_2$ and leaves four of the eight machines possible.
+Neither individual coupling is determined, and $\theta_3$ remains unknown.
+The mission requires one fresh job $\mathsf A$ at address 1 and one fresh
+job $\mathsf B$ at address 2 after loading the connector. It supplies one
+token for each and fixes the total deadline at $T=10$ \emph{before}
+calibration. All action durations are one. The absolute holding bound is $H=11$,
+and the physical lease covers the entire mission through capture. Seal
+reserves the two ticks needed for Seal and Commit, with completion no later
+than both $T$ and $H$.
+
+\begin{center}
+\begin{tabular}{@{}p{0.57\linewidth}rr@{}}
+\toprule
+Actions & Duration & Finish time\\
+\midrule
+Dummy load, $\mathsf A$, $\mathsf B$, read, drain & 5 & 5\\
+Real Load$(x)$ & 1 & 6\\
+Required Work$(\mathsf A)$ and Work$(\mathsf B)$ & 2 & 8\\
+Seal with $\lambda=1$ and correction $b$ & 1 & 9\\
+Commit & 1 & 10\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The real work ends with $v=q$, so its correction is the measured $b$.
+Both jobs are complete and the route is $x$ at time 10 for every hidden
+machine and either work order. This proves positive completion separately
+from guarded correctness. The five calibration actions, two real work
+actions, loading, correction, and release are all paid.
+
+For the illustrative answer $b=1$, the retained alternatives are
+\[
+ \V_E=\{(0,1,0),(0,1,1),(1,0,0),(1,0,1)\}.
+\]
+Their individual coordinate marginals are all $\{0,1\}$, but their joint
+constraint fixes the pair's disturbance to one. Replacing the joint set by
+the Cartesian product of its marginals loses the useful certificate. Used
+honestly, this replacement is conservative but incomplete; pretending that
+isolated success implies contextual safety is a different, unsound move.
+
+\paragraph{Why isolated success does not suffice.}
+For every $\theta$, loading and immediately releasing with $v=0$ returns
+$x$. Nevertheless, a surrounding job at an address with $\theta_j=1$
+changes the latch. In the required two-job mission, machines with
+$\theta_1+\theta_2=1$ send an uncorrected connector to the wrong route.
+Before informative calibration, the same mandatory workflow admits final
+disturbances zero and one, while all pre-release public production
+observations agree. No choice of correction gives uniform zero-error
+completion. Moving the jobs before Load, adding a production sensor, or
+providing a direct reset changes this comparison and is not silently allowed.
+
+\paragraph{The interrupted prefix.}
+After only $\mathsf A$, $v=(1,0,0)\notin\operatorname{span}\{q\}$.
+Both values of $\theta_1$ remain possible. The pair's certificate is not a
+certificate for this prefix. Performing the remaining required $\mathsf B$
+job restores $v=q$; Work, Seal, and Commit then need three units. They
+finish on time from the scheduled time 7, but not if fewer than three units
+remain or $\mathsf B$ is unavailable. Repeating $\mathsf A$ would need a
+new token and would still omit the required $\mathsf B$ job. This repair
+completes real work; it is not free undo. A timely safe abort may avoid an
+incorrect release but is not mission completion: an abort begun at time 10
+finishes at $H=11$, whereas one begun at 11 is too late.
+
+\paragraph{The physical lease is essential.}
+For $\theta=(0,1,0)$ the measured correction is one. After both jobs and
+Seal, the latch is $x$. One unauthorized $\mathsf B$ pulse between Seal and
+capture changes it to $x+1$. The evidence remains mathematically true, yet
+the connector is misrouted. The supplied lease excludes this trace; a
+point-in-time certificate and a software token do not.
+
+\paragraph{Evidence has a validity boundary.}
+Adding truthful rows in the same epoch shrinks $\V_E$, enlarges $L_E$, and
+extends $\delta_E$; an old coefficient witness can be padded with zeros.
+Withdrawing rows can shrink the certified domain: removing the only $q$
+row invalidates the paired-work correction. The controller must use any
+remaining valid witness, acquire new evidence only where the physical
+protocol permits it, or refuse/abort. It does not erase completed work.
+Withdrawal after Seal conservatively invalidates the Sealed token: only
+a timely authorized Abort is then available, not a second correction or
+Commit. Known reconfiguration is allowed only while quiescent and retypes
+the station into a new epoch, invalidating old receipts. Contradictory evidence
+invalidates the interface. Arbitrary silent drift is excluded, not magically
+detected by the guard.
+
+
+\section{What connects the two programmes}
+
+
+\subsection{A common witness before any abstraction}
+
+For a fixed work word $j_1,\ldots,j_n$, use variables
+$\theta,s_0,\ldots,s_n,v_0,\ldots,v_n$ and the Boolean factors
+\begin{align*}
+ A\theta&=b,&s_0&=x,&v_0&=0,\\
+ s_{i+1}&=s_i+\theta_{j_{i+1}},&&
+ v_{i+1}=v_i+e_{j_{i+1}}\quad(0\le i<n).
+\end{align*}
+Further factors impose the actual resource, gate, clock, seal, and commit
+rules. Every occurrence shares the \emph{same} $\theta$ through equality
+wires. A physical run satisfies these factors. Conversely, a satisfying
+assignment fixes its initial machine and determines each next state by the
+transition equations; induction gives exactly a physical run with the
+specified work occurrences. Thus the joint boundary relation is the
+operational support, not an arbitrary gluing of local marginals.
+Conditional on a separately admissible actual work word, its algebraic
+disturbance relation is
+\[
+ K_E(v,d)\quad\Longleftrightarrow\quad
+       \exists\theta\;(A\theta=b\ \land\ d=\theta\cdot v).
+\]
+The full operational boundary additionally retains the word's resource,
+time, and gate-admissibility factors; $K_E$ alone does not make every $v$
+physically realizable. This is a possibility relation, not a probability
+kernel. Evidence $b$ is
+observed, not a control that physically selects a hidden machine.
+
+The existing Boolean cylinder construction \cite{Cylinder} may now be
+applied to these established factors: retain all shared assignments $z$ in
+$X_N=\bigoplus_z\bigotimes_i M_{F_i}$. Its preparation/test pairing is
+$\bigvee_z\bigwedge_i F_i$, the physical relation just proved. The existing
+comparison span $X_N\leftarrow U_N\twoheadrightarrow\operatorname{im}(K_!)$
+normalizes the generated preparation submodule while preserving its pairing.
+Only complete shared boundaries are normalized. The operational
+factor-to-run proof above is the instance-specific step; the older theorem
+does not discover the physical factors for us.
+
+\subsection{Exact decoding only for the declared observations}
+
+The existing exact-record criterion \cite{Decoder} requires
+\[
+ \overline P(q(a),z)\quad\Longleftrightarrow\quad
+ \exists w\;(P(a,w)\land r(w)=z)
+\]
+at \emph{each fixed concrete source} $a$. Equivalently, concrete sources
+with the same code must have the same sets of encoded complete records.
+The operative requirement is source-fixed lifting, not merely existence
+at some compatible source. Complete occurrence records retain their common
+witness; two individually possible answers need not be jointly possible.
+
+For guarded production, the full-state relation in the next subsection
+proves exactly this stability for the retained public histories, outputs,
+costs, and resource changes. Deterministic steps descend by their explicit
+transition checks; composing records retains the intermediate state and
+its common $\theta$. The existing exact-decoder and finite generated-test
+theorems can then be used for those supplied step and cut instances. They
+do not authorize extra hidden-state observations or arbitrary crossing
+tests that the declared test language does not contain.
+
+This abstraction is \emph{not} exact for unrestricted future probes when
+$\theta$ is forgotten. At a fixed machine a new probe has one answer;
+the union over compatible machines may contain two. For example the
+$q=(1,1,0), b=1$ evidence permits both answers to the probe $(1,0,0)$,
+but no fixed machine produces both. That union is useful epistemic support,
+not a source-fixed exact decoder. Discovery and certified production have
+different observation boundaries.
+
+\subsection{Local simulation followed by the actual native span}
+
+Fix $\theta\in\V_E$. Compare the wrapped physical station $P_\theta$ with
+an ideal guarded station $Q_E$ that retains the same target, parity,
+ordered events, work receipts, remaining tokens, epoch, clock, lease checks,
+rejections, and costs, but omits the hidden latch and predicts the accepted
+route as $x$. Relate Pending states by agreement of every public field and
+$s=x+\theta\cdot v$, and Sealed states by agreement of public fields and
+$s=x$. Initial, finished, aborted, and expired states have their corresponding
+matching public fields; Expired makes no physical safety assertion.
+
+Load establishes this relation, Work preserves it, and Seal and Commit
+preserve it by Theorem~\ref{thm:production}. Hold, rejection, and timely
+abort preserve their stated relation and exact public costs. Every other
+admitted client primitive must do likewise; an extra latch reader or
+unlogged actuator would fail this premise. The station's shared private
+state remains under one owner, so no disjoint-store rule is used.
+
+Each deterministic local table has one outcome on each side. Coupling the
+two outcomes with weight one gives the required O5 local matrix, with equal
+public constructor shapes, related private leaves, and equal costs.
+Initialization provides the corresponding point mass; pure syntax uses
+only public data. These verify O5 L1--L4 for this finite signature, rather
+than assuming a theorem from endpoint agreement. O4 typing
+\cite{O4} supplies legal finite plugging and owned-token discipline;
+it does not supply physical exclusion.
+
+O5's raw-lift construction \cite{O5} turns the local coupling into the
+\emph{native} common-witness span, not an informal simulation arrow. For
+a deterministic step, the common retained carrier is the single paired
+history of weight one and its actual charged cost. Its two witness
+projections satisfy the probability pushforward, body commutation, and
+cost equations; both legs are cost-exact here. O5's occurrence composition
+then retains the dependent continuation witnesses and sums their costs.
+For fixed $E$ and epoch, the resulting open contextual theorem applies to
+every admitted finite typed production client, including public adaptive choices and legal reuse
+with fresh tokens. It supplies contextual closure of the local proof,
+not the time bound of Section~\ref{sec:mission}. The evidence-withdrawal
+and reconfiguration rules above are separate boundary protocols, not
+quietly added to this fixed-evidence contextual theorem.
+
+This argument is pointwise in $\theta$ and retains the same machine across
+calls. It never resamples the coupling or invents an epistemic prior. A
+probabilistic extension would need the existing full joint initialization
+and local coupling hypotheses; an all-declared-possibility claim would
+also need the stronger coverage premises. Neither extension is needed for
+this deterministic mission.
+
+
+\section{Relation to existing methods}
+
+The row-space criterion is elementary linear algebra, and learning a useful
+interface is not itself new. Angluin's exact-learning framework obtains
+information from an expressly supplied query and counterexample teacher
+\cite{Angluin}. Here the family of possible dynamics and the exact safe-probe
+oracle are supplied instead; the finite observations do not establish that
+the real world belongs to this family.
+
+The closest architectural baseline is learning assumptions for compositional
+verification \cite{Cobleigh}. That method already learns an environmental
+assumption sufficient for a particular composition and can stop before
+learning the entire weakest assumption. Our closed-form experiment-driven
+instance should therefore not be described as a new assume--guarantee
+principle. Its contribution to this application is to make the retained
+joint evidence, physical authority, full-state coupling, and paid mission
+boundary explicit in one small worked case.
+
+Abstract separation logic supplies frame rules under semantic locality
+conditions \cite{LocalAction}. Those conditions do not follow from an
+isolated successful call. The work actions here intentionally change shared
+state; a shared invariant or a verified compensated composite is the right
+proof object, rather than a claim that the actions are disjoint.
+
+Runtime assurance likewise needs an actual safe alternative.
+Black-Box Simplex assumes an initially permanently safe command sequence
+and a correct decision mechanism \cite{Simplex}. Assumption-based monitors
+also require care over which state is observable, and rejecting an action
+does not establish mission completion \cite{Assumptions}. In this finite
+model the gate, bounded holding safety, exact observations, and lease are
+supplied operational premises. None is inferred from the learning lemma.
+
+
+\section{Evidence and limits of this result}
+
+The general finite claims have the hand proofs above. The accompanying
+independent programs exhaustively check the row-space criterion on bounded
+finite instances and replay the paid mission and adversarial variants.
+They cover all nonempty affine evidence fibres through $m=5$ (83,802
+fibre/activity cases), 64 complete paid mission runs, and 96 interrupted
+runs. Forged, stale, and withdrawn evidence and forbidden production
+operations have explicit negative tests. Precise scopes and receipts are
+supplied alongside the source; finite regression is not a proof for all $m$. Existing formal backbone declarations
+are cited at their exact scope, not represented as a new proof-assistant
+verification of this workshop model. This document is supplied as
+uncompiled TeX; no rendered-layout or compiled-PDF claim is made.
+
+What is established is a useful, partially identified compensated interface,
+a successful paid mission, an obstruction outside the learned row space,
+and a source-level route from one retained joint witness to all admitted
+finite production contexts. What is not established is automatic discovery
+of the dynamics class, safe experiments in an unknown physical world,
+noise tolerance, hidden-drift detection, unbounded waiting, unrestricted
+concurrency, or universal mission completion. A new physical realization
+would require validating the supplied gate, lease, sensor, actuator, and
+model assumptions; it is not an obligation silently added to this example.
+For this bounded application, the existing machinery plus elementary
+linear algebra and the explicit instance proofs suffice. The example
+demonstrates no need for a new generic categorical theorem or a new
+research contract.
+
+
+\begin{thebibliography}{99}
+\bibitem{O4} \emph{Typed Protocols and Bounded Higher Order Interaction}.
+1 November 2026. Source labels \texttt{lem:execution},
+\texttt{thm:substitution}, and \texttt{thm:main} in the recovered relative
+computation source package.
+
+\bibitem{O5} \emph{Contextual Refinement and Controlled Recovery}.
+1 November 2026. Local premises L1--L4, Theorem \emph{Open contextual
+soundness} (\texttt{thm:replacement}), and Lemma \emph{Raw lift and common
+cost} (\texttt{lem:raw-lift}) in the recovered relative computation source
+package.
+
+\bibitem{Decoder} \emph{JointQuotientDecoder.lean}.
+Recovered witnessed decomposition formal backbone, 2 November 2026.
+Declarations \texttt{exact\_iff\_sound\_and\_sourceFixedLift},
+\texttt{quotient\_exact\_iff\_stable}, \texttt{exact\_compose\_records},
+and \texttt{generated\_tests\_preserved}.
+
+\bibitem{Cylinder} \emph{Cylinder priority bridge theorem}.
+Recovered return cylinder bridge, 31 October 2026, Sections 2--5.
+The accompanying source ledger gives the exact local path.
+
+\bibitem{Angluin} D. Angluin.
+\emph{Learning Regular Sets from Queries and Counterexamples}.
+Information and Computation 75, 87--106, 1987.
+\href{https://doi.org/10.1016/0890-5401(87)90052-6}{doi:10.1016/0890-5401(87)90052-6}.
+
+\bibitem{Cobleigh} J. M. Cobleigh, D. Giannakopoulou, and C. S. P\u{a}s\u{a}reanu.
+\emph{Learning Assumptions for Compositional Verification}.
+TACAS 2003, Sections 3--5 and Theorem 1.
+\href{https://ntrs.nasa.gov/api/citations/20030017771/downloads/20030017771.pdf}{NASA primary preprint}.
+
+\bibitem{LocalAction} C. Calcagno, P. W. O'Hearn, and H. Yang.
+\emph{Local Action and Abstract Separation Logic}.
+LICS 2007, Section 3.
+\href{https://www.cs.ox.ac.uk/people/hongseok.yang/paper/asl.pdf}{Author hosted paper}.
+
+\bibitem{Simplex} U. Mehmood et al.
+\emph{The Black-Box Simplex Architecture for Runtime Assurance of Autonomous CPS}.
+2022 manuscript version, Definitions 3--5 and Theorems 2.1--2.2.
+\href{https://arxiv.org/html/2102.12981v3}{Primary manuscript}.
+
+\bibitem{Assumptions} C. S. P\u{a}s\u{a}reanu, R. Mangal, D. Gopinath, and H. Yu.
+\emph{Assumption Generation for the Verification of Learning-Enabled Autonomous Systems}.
+2023 manuscript, Sections IV--V and Appendix A.
+\href{https://arxiv.org/html/2305.18372v1}{Primary manuscript}.
+\end{thebibliography}
+\end{document}

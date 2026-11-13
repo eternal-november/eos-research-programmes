@@ -1,0 +1,107 @@
+# Workstream A: foundations, presentations, and a mixed normalizer
+
+Checkpoint: 24 October 2026, 18:57 UTC. This report concerns the authorized first workstream only. The governing text is `research/CompletionContract.md`, SHA256 `47c53465b745aaa0397d8972cdc760de7da1f9c86bcab0e3bbeecf0aaf6a165e`; it has not been weakened or replaced.
+
+## Result and remaining boundary
+
+- **A1 accepted:** genuine typed operation fibres, occurrence-sensitive substitution with all laws, comparison with independently defined planar incidence trees, and the category of calculi.
+- **A2 accepted:** the free-calculus universal property for arbitrary targets, both inverse maps, uniqueness among all strict morphisms, both-variable naturality, and free/forgetful adjunction packaging. A nontrivial arbitrary-relation model and distinct legal assignments are supplied.
+- **A3 accepted:** arbitrary declared parallel equations, least substitution congruence, actual quotient calculus, universal factorization, and equivalence of derivability, quotient equality, and equality in all models.
+- **A4 LOCAL_VERIFIED, with integration pending. A4 remains OPEN as a complete scientific obligation.** The positive result is a genuinely mixed graph-cut/finite-commutative-monoid fragment, not associativity alone. Its general proof, exact comparison to the accepted A3 quotient, and substantial executable Lean instance are verified local components; the remaining refinement/transport integration is not supplied.
+
+The binding integrated gate remains open: contract §3.6 requires A4 together with B3–B4 and C5, including comparison of refinement arrows. C1 additionally requires downstream use in C5/F2. Normalizing objects does not construct the categorical completion of raw refinements or establish those comparisons. No B/F workstream, full C1/C5 acceptance, or completion of the overall research program is claimed.
+
+The acceptance ledger records final decisions. Earlier frozen target documents retain their truthful historical “pending” labels; this report and the ledger distinguish later checkpoints without rewriting that history.
+
+## What was actually proved
+
+### A1: full boundary and occurrence infrastructure
+
+The interface type, directed component family, and signature are arbitrary. Core results impose no finite-base or decidable-equality assumption. Input paths are finite, but their lengths are unrestricted. Nullary generators are supported; a separate positive-signature theorem gives the nonempty subcalculus.
+
+`Path.slotExpand`, `Path.slotExpand_assoc`, and `Path.expandFamily_assoc` identify actual ordered nested occurrences and preserve their component labels. `Tree.frontierLeafEquiv` and `Tree.operationSubstitutionEquiv` connect prescribed profile slots to actual leaves. Equal colors in different positions do not merge.
+
+`Tree.substituteOperation` lands in the independently prescribed expanded profile fibre. `Tree.substituteOperation_identity`, `Tree.identityOperation_substitute`, and `Tree.substituteOperation_assoc` prove the laws in those fibres, with the canonical transports explicit. The structural proof `Tree.profileGraft_assoc` supplies the source associativity used by `Tree.freeCalc`; it is not an assumed field.
+
+`Calc` packages the target theory, and `Calc.Hom` its strict maps. The total-operation/profile representation is compared in both directions with arbitrary fibre families, including substitution and morphisms. A separate proof constructs inverse maps between recursive syntax and genuinely independent finite edge/vertex planar incidence trees, preserving witnesses, order, occurrences, and grafting. It also identifies the precise admissible-profile restriction of an ordinary colored nonsymmetric multicategory.
+
+Principal files: `Collections.lean`, `PathOccurrences.lean`, `TreeOccurrences.lean`, `Positive.lean`, `Calculus.lean`, `FreeCalculus.lean`; prose proofs `A1_RepresentationProof.md` and `A1_CalculusComparison.md`.
+
+### A2: universal extension, not just a recursive evaluator
+
+`Tree.interpretOperation` evaluates every tree in an arbitrary target calculus, using target identities at leaves. `Tree.interpret_profileGraft` and `Tree.interpretFiber_substituteOperation` prove preservation of every independently chosen occurrence-wise forest.
+
+`Tree.interpret_unique_of_preserves` derives the node equation from corolla decomposition and full substitution preservation. It does not restrict competitors to functions already satisfying the desired recursion. `Tree.extend`, `Tree.restrict`, their inverse laws, `Tree.homEquiv`, and `Tree.extend_unique` therefore cover all strict maps.
+
+`Free.extend_natural_source`, `Free.extend_natural_target`, `Free.extend_natural`, `Free.triangle_free`, and `Free.triangle_forget` supply naturality and both triangles. `Free.adjunction` gives actual categorical packaging. Raw generator signatures and profiled generating collections are compared in both directions. The explicit hom correspondence permits independent target operation universes.
+
+The second target is the full calculus of arbitrary multi-input relations on component-indexed carriers: equality identities and existential occurrence substitution. Its laws are proved uniformly, including empty carriers and nullaries. The displayed finite instance has several interfaces, genuinely multivalued operations, repeated components, and two distinct assignments distinguishable inside a nontrivial context. Exhaustive finite checks supplement, but do not replace, that uniform proof.
+
+Principal files: `FreeExtension.lean`, `FreeAdjunction.lean`, `A2_AdjunctionProof.md`, and `relational/RelationalTargetProof.md`.
+
+### A3: generated equality, not a chosen model's kernel
+
+`Presentation.Derives` is independently inductive: declared parallel equations, equivalence closure, and simultaneous substitution closure. `derives_parallel` and `derives_least` prove its typing and leastness. No model, normalization assumption, or finite search appears in its definition.
+
+For any parallel substitution congruence, `ParallelCongruence.quotientSubstitute_project` proves simultaneous representative independence. The actual quotient identities and associativity are proved, giving `quotient` and its strict `projection`. `factor`, `factor_unique`, and `homEquiv` establish arbitrary-target descent, not merely a quotient type.
+
+For a presentation, `Presentation.homEquiv` identifies strict quotient maps with equation-satisfying assignments. `Presentation.extend_natural` proves target naturality. `derives_iff_all_models` and `quotient_eq_iff_all_models` use a model universe explicitly containing the newly constructed quotient; completeness uses that canonical model, while soundness holds in arbitrary target universes.
+
+The example declares associativity over the full mixed profile 0→1→2→3. An independently proved red-count invariant and an independent Boolean relational assignment (binary XOR, red identity, blue complement) satisfy the declaration but separate undeclared red/blue. Additional adversarial tests show a lossy model may equate red/blue without derivability, and adding that missing equation really changes derivability. Nonparallel declarations are rejected. Nullary insertion and independently chosen repeated occurrences are retained.
+
+Principal files: `Congruence.lean`, `QuotientCalculus.lean`, `PresentedCalculus.lean`, `WeightInvariant.lean`, `PresentationExamples.lean`, `A3_QuotientConstruction.md`, `A3_PresentedUniversalProof.md`.
+
+### A4: a substantial but locally bounded result
+
+The general fragment has finite ordered graphs of any declared size bound N, a finite interface category K, and an arbitrary finite commutative witness monoid M. The bound is on the retained graph, not syntax depth; arbitrary finite substitutions remain admitted. Full semantics retains the whole graph, ordered partition, every interface arrow, and total decoration.
+
+Seven interacting rules cover cut rotation, two unit eliminations, identity-decoration erasure, decoration aggregation, and movement out of either cut argument. Matching is decidable from finite data. The general proof supplies a strict lexicographic reduction measure, canonical irreducibles, full semantic completeness, and an exhaustive 18-family overlap analysis. The commutativity assumption is exposed at the mixed decoration peak, not smuggled into a conclusion.
+
+The standalone Lean representative in `research/workstream_A/rewrite/` uses a three-object chain, Z/3 decorations, all support subsets of a six-vertex ambient graph, and arbitrary finite well-typed syntax. Important declarations include `TypedNormalizer.equiv_iff_normalize_eq`, `TypedNormalizer.decidableE`, `TypedNormalizer.reify_irreducible`, `RewriteFragmentCandidate.equiv_iff_standard_cut_eq`, and `valid_frontierForest_graft`. The last theorem includes a proved traversal/offset correspondence for every independently supplied finite replacement forest.
+
+Certificates distinguish identical nonempty component colors at different positions, different retained wholes with the same pieces, and different partitions. Rotation, both decoration movements, aggregation, and unit handling interact. Empty identity leaves are not confused with designated nullary generators; an empty nonidentity-arrow component is retained.
+
+`rewrite/A3_LOCAL_COMPARISON.md` instantiates the exact finite seven-template schema in `Presentation.Equations`, proves both directions of agreement with `Presentation.Derives`, and constructs inverse strict maps between the actual `Presentation.quotient` and the independent full flat-witness calculus. The located/raw syntax comparison preserves all occurrences and substitutions. This is P evidence, not a claimed Lean graph-signature adapter.
+
+The general all-rewrite-sequence termination/confluence theorem is prose evidence. The Lean instance verifies its executable normalizer, generated-equation soundness/completeness, output irreducibility, and exact graph-cut witnesses; it does not separately mechanize the general lexicographic rewrite-termination argument.
+
+## Assumptions versus conclusions
+
+1. **Target laws:** a target `Calc` is assumed to satisfy ordinary calculus laws because these define the target class. Source tree laws, relational target laws, and quotient laws are each separately proved. Freeness, completeness, and factorization are not target fields.
+2. **Representations:** total operations with a profile do not replace arbitrary fibres without justification; the two-way law/morphism comparison is supplied. Recursive syntax is compared with independent incidence data, not another wrapper around the same datatype.
+3. **Generated congruence:** declarations are inputs. Parallelism, leastness, substitution closure, quotient descent, and the all-models theorem are proved. Equality in one selected model is explicitly insufficient.
+4. **Representative choice:** A3 uses standard classical choice to select quotient representatives, then proves all independence statements. The chosen representative is not asserted to be canonical or computable.
+5. **Selected decidability:** A4's finite commutative palette and explicit seven-rule presentation are hypotheses of the positive theorem. The semantic kernel is not the definition of its generated equations; soundness and completeness connect them. Removing a movement rule or commutativity breaks confluence; adding reverse rotation breaks termination.
+6. **Unrestricted limit:** a precise unary-chain translation identifies arbitrary finite monoid presentations with a subclass of typed witness presentations. Post's undecidability theorem therefore rules out a general equality algorithm. It says nothing against the positively proved selected fragment.
+7. **Scientific integration:** neither standard free/presented-algebra infrastructure nor object normalization establishes refinement-arrow coherence, 2-Segal recognition, or the other promised bundles. Those remain explicitly open.
+
+## Evidence and reproducibility
+
+L means Lean-kernel-checked declarations, P means a complete written mathematical proof, and C means bounded executable evidence. These classes are not interchangeable. A1/A2 core, A3 closure/quotient/universal property, and the representative A4 normalizer have L evidence. The abstract incidence comparison, arbitrary-relation model, and parameterized A4 theorem have P evidence. Finite tables and mutation checks are C evidence only. Independent review here means a separate automated mathematical review and reproduction, not external human certification.
+
+Use the pinned Lean 4.35.0 environment. From the project root:
+
+    sha256sum -c research/workstream_A/A1_SourceSnapshot.sha256
+    ./verify_workstream_A.sh
+    sha256sum -c research/workstream_A/A2_SourceSnapshot.sha256
+    ./verify_workstream_A2.sh
+    sha256sum -c research/workstream_A/A3_SourceSnapshot.sha256
+    ./verify_workstream_A3.sh
+    sha256sum -c research/workstream_A/A4_LocalSnapshot.sha256
+    ./verify_workstream_A4_local.sh
+
+A1 and A2 required core axiom closures contain only `propext` and `Quot.sound`. The optional bundled adjunction and A3 quotient implementation separately disclose standard `Classical.choice`; the narrower audits were not silently broadened. Principal checked results have no custom axiom, `sorryAx`, `admit`, or unchecked computation oracle. Kernel `decide` proofs are distinguished from regression `#eval` output and Python enumeration.
+
+Checkpoint reproduction logs include:
+- A1: `logs/workstream-A-verification-20261024T182717Z.log`.
+- A2: `logs/workstream-A2-20261024T183621Z-verification.log`.
+- A3: `logs/workstream-A3-20261024T184253Z-verification.log`.
+- A4 local mathematical reproduction: `logs/workstream-A4-local-20261024T184925Z/verification.log`; this is not A4 scientific acceptance.
+
+The review records preserve unsuccessful attempts rather than counting them as evidence: initial nested-occurrence audit heartbeat timeouts and failed direct reduction, an A2 test elaboration failure, and an A3 fresh-directory import-layout failure. Their repaired tests and successful logs are separately identified. The A4 finite-forest traversal gap was explicitly identified and repaired by a general correspondence theorem, not bypassed by a bounded example. Earlier seed sources and their checks remain intact. A4’s class-level scope check preceded the general proof, but review of the exact seven-rule artifact followed its first draft; this chronology limitation is preserved, not called advance exact-schema approval. The separate Lean instance was frozen and reviewed before its formal attempt.
+
+## Sources, significance, and timing
+
+The project attributes ordinary multicategory/free-algebra infrastructure to established mathematics, including Leinster's *Higher Operads, Higher Categories*. The A4 comparison uses the ordered-partition/restriction-species baseline of Gálvez-Carrillo, Kock and Tonks, arXiv:1708.02570. Its limit uses Post, “Recursive Unsolvability of a Problem of Thue,” JSL 12(1), 1947, DOI 10.2307/2267170. The DPOI confluence comparison is explicitly distinguished from this planar-tree proof: Bonchi et al., arXiv:2109.06049v2. Exact theorem/page provenance and limitations are in the proof dossiers. No global novelty claim is made for the standard infrastructure or graph partitions.
+
+The recorded authorized run began at 17:48:29 UTC on 24 October. A1 was independently reproduced at about 18:27, A2 at about 18:36, A3 at about 18:43, the full local A4 reproduction between 18:49 and 18:52, and the exact local A3-linkage review at about 18:57. Mathematical development, formalization, finite tests, and separate review overlapped in parallel. These timestamps measure elapsed windows, not additive expert person-hours or a measured pre-AI/AI speedup. Toolchain recovery and failed attempts are included in elapsed time. No quantitative speedup is asserted.

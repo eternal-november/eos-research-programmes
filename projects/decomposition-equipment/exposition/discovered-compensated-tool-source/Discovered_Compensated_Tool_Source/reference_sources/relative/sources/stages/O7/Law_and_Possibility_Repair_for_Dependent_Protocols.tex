@@ -1,0 +1,1523 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=25mm]{geometry}
+\usepackage{booktabs,longtable,array,enumitem,microtype}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlist{leftmargin=1.7em,itemsep=3pt,topsep=4pt}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Dfin}{\mathcal D_{\mathrm{fin}}}
+\newcommand{\Pfin}{\mathcal P_{\mathrm{fin}}^{+}}
+\newcommand{\Cost}{\mathsf{Cost}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\leaf}{\operatorname{leaf}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Law}{\operatorname{Law}}
+\newcommand{\All}{\operatorname{All}}
+\newcommand{\Ret}{\mathsf{ret}}
+\newcommand{\Bind}{\mathsf{bind}}
+\newcommand{\Batch}{\mathsf{batch}}
+\newcommand{\st}{\operatorname{st}}
+\newcommand{\den}[1]{\llbracket #1\rrbracket}
+\newcommand{\E}{\mathbb E}
+\newcommand{\qobs}{\mathsf{q}}
+\title{Law and Possibility Repair for Dependent Protocols\\[5pt]
+\large A compositional finite repair of the all path observation gap}
+\date{1 November 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The probability-law interpretation of the O1 mixed construction preserves
+finite probability and dependent composition, but cannot preserve universal
+claims over all retained raw histories. A zero-weight branch can change
+not only cost but the number and ownership of the continuations. We make
+this obstruction exact and repair its semantic bridge without banning
+zero weights or returning to full raw-history identity.
+
+The repaired observation is a pair $(\mu,S)$: one finite probability law
+and a finite nonempty set of joint possible outcomes containing its
+positive support. We prove its monad laws, an occurrencewise tree and cost
+composition theorem, compatibility with every admitted O4 constructor
+and ordinary-data frame, and natural forgetting to the old probability
+semantics. It retains precisely the full joint law and all predicates of
+joint outcomes interpreted universally over raw histories; it still
+forgets raw multiplicity and witness identity.
+
+A probability coupling together with candidate possibility coverage is
+proved equivalent to the existence of an original O1 paired-history span
+whose candidate projection is raw-history-surjective. Positive coupling
+pairs plus zero-weight fillers give the constructive converse. This
+criterion composes through result-dependent bind and separated batch,
+and applies to the parameterized destructive-diagnostics family of O6.
+An independent presence-enriched coefficient semiring realizes the repair
+inside the O1 input theorem. Its native maps deliberately reject old
+non-surjective zero-branch insertions. Its two-sided native spans are not
+confused with the asymmetric original-O1 refinement certificates.
+
+The result is finite, parameterized and genuinely dependent. It is not a
+solution of the general probability--nondeterminism distributive-law
+problem, a continuous-support theorem, a full-abstraction result, or a
+claim of historical novelty. The requested deliverable is TeX source;
+compilation and proof-assistant certification are not assumed.
+\end{abstract}
+\tableofcontents
+
+\section{The result and its exact increment}\label{sec:scope}
+O7 of the active contract~\cite{Contract} asks for an obstruction to an
+actual positive theorem or semantic bridge, followed by a useful proved
+repair connected to O1 and a selected application. We test the bridge
+from retained O1 executions to the O3 finite probability semantics, in
+the O4 language and O5 observation regime~\cite{O1,O3,O4,O5}. The
+plausible overextension is:
+\begin{quote}
+Because the bridge preserves the full joint probability law and every
+admitted composition, it also preserves all-raw-path specifications,
+including universal resource budgets.
+\end{quote}
+This statement is false. The failure is information loss and unsound
+observation transfer, not failure of the original interaction law.
+
+O3 already exhibited the zero-weight cost obstruction and named retention
+of raw paths as a repair. O5 already proved that a candidate-surjective
+paired span transfers all-path bounds. Those results are reused, not
+reclaimed. The new increment is a smaller compositional law-and-possibility
+quotient, its exact finite span-recognition theorem, an independent O1
+coefficient realization and a genuinely dependent application. Neither
+repeating the old two-row example nor saying ``retain the paths'' would
+suffice.
+
+\begin{theorem}[Bounded obstruction and positive repair]\label{thm:main}
+Fix a finite-signature instance of the O3--O4 protocol language, the finite
+planar causal-tree monad $T$, and finite vector execution costs
+$C=\mathbb N^d$, $d\geq1$. Interface sets may vary; all primitive witness
+fibres and all trees have finitely many occurrences. Keep complete typed
+leaf states during composition and the admitted continuation discipline
+of Section~\ref{sec:raw}. Then:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item On the parameterized diagnostics subfamily of
+Section~\ref{sec:application}, no interpretation factoring through the
+full joint finite law can decide every all-raw-path upper budget.
+This remains true although the law interpretation preserves pure maps,
+occurrence bind and batch, and although an offending inclusion is an
+actual cost-exact old O1 native square.
+\item The carriers
+\[
+ MX=\{(\mu,S)\in\Dfin X\times\Pfin X:\supp\mu\subseteq S\},
+ \qquad KX=M(C\times TX)
+\]
+carry the explicit compositional structures proved below. The map from
+raw executions to $K$ preserves every admitted typed constructor,
+substitution and ordinary-data framing. Probability forgetting is a
+natural monad morphism to the old finite-law execution semantics.
+\item Equality in $K$ is exactly agreement of the full joint law and
+of every universal predicate of the retained joint outcome. It need not
+imply equality of raw witnesses, multiplicities or native cells.
+\item A finite probability coupling supported on the required
+body/state/cost relation, together with candidate possibility coverage,
+is equivalent to the existence of an original O1 paired-history span
+with a surjective candidate-history projection, a cost-exact reference
+leg and a cost-lowering candidate leg. These existence judgments are
+closed under the admitted dependent constructors and compose vertically.
+\item The presence-enriched semiring $\E$ of
+Section~\ref{sec:rig} supplies an independent O1 input realization of
+law and possibility, with a strong forgetful rig map to the old
+probability--cost input. All original raw objects lift with every raw
+row marked present, but precisely the surjective original native maps
+lift between these all-present objects. Thus not all old cells survive
+as exact repaired comparisons.
+\item The repaired branch includes all admissible finite diagnostic
+kernels, including zero weights, arbitrary legal result-dependent arities
+and resource partitions, and a nonidentity family of covered audit
+implementations. The explicit two-hole zero branch is correctly rejected
+as an all-path refinement of its one-hole-only counterpart.
+\end{enumerate}
+\end{theorem}
+The theorem is not a claim about arbitrary raw-history-dependent
+continuations, unrestricted private-state erasure, infinite trees,
+continuous kernels, unbounded recursion or general concurrency. Its
+positive class is the same finite typed family, not a finite list of
+exceptional examples. Ordered costs other than $\mathbb N^d$ can replace
+$C$ in the direct $K$ construction whenever addition is commutative and
+monotone. The specific O1 coefficient realization below uses the inherited
+min-plus vector rig.
+
+\section{The retained model and the observation interface}\label{sec:raw}
+An O4 interface $F$ has finite public configurations $b$, a declared
+bundle of owned token identities and kinds $\Delta_F(b)$, and semantic
+private states for those actual tokens. Write $\widehat F$ for its full
+state carrier. A tree leaf is labelled by an element of $\widehat F$,
+not just a public return value. Distinct leaf occurrences own disjoint
+subsets of the actual input inventory, as required by the type system.
+A token name in ordinary data is an alias, not an additional owner.
+
+At an input $a$, a retained computation has a finite nonempty carrier
+$\Omega_a$, normalized weights $p_a(h)\geq0$, finite costs $c_a(h)\in C$,
+and a body $\theta_a(h)\in T\widehat F$. Zero-weight rows are genuine
+members of $\Omega_a$. The joint outcome and raw quotient are
+\begin{equation}\label{eq:raw-quotient}
+ o_a(h)=(c_a(h),\theta_a(h)),\qquad
+ \qobs_a=(\mu_a,S_a)
+ =\left(\sum_{h\in\Omega_a}p_a(h)\delta_{o_a(h)},\ o_a[\Omega_a]\right).
+\end{equation}
+Thus $S_a$ records a joint cost, causal tree, typed postconfiguration and
+needed private state. It is not a set of separate marginal observations.
+The fixed O5 normalization may remove declared private unary events when
+comparing implementations. Its tree-multiplication and occurrence
+compatibility are inherited from O5. Private stores are not erased
+between calls; a declared public observation may erase them after closing.
+
+For a prefix witness $h$ with leaves $b_j$ indexed by its actual address
+set $\leaf(\theta_a(h))$, old O1 composition is
+\begin{equation}\label{eq:raw-bind}
+\begin{split}
+ \Omega_{P;R}(a)&=\coprod_{h\in\Omega_P(a)}
+       \prod_{j\in\leaf(\theta_P(h))}\Omega_R(b_j),\\
+ p(h,\mathbf k)&=p_P(h)\prod_jp_R(k_j),\qquad
+ c(h,\mathbf k)=c_P(h)+\sum_jc_R(k_j),\\
+ \theta(h,\mathbf k)&=\theta_P(h)[\theta_R(k_j)]_j.
+\end{split}
+\end{equation}
+An empty product is a singleton of weight one and cost zero. Equal-valued
+leaves at different addresses are different occurrences and make separate
+choices. No common-output-label sampling or implicit sharing is used.
+
+\paragraph{The continuation restriction.}
+Admitted continuations depend on the retained typed leaf input, including
+private semantic state where relevant, and not on discarded raw witness
+labels. This is the O3--O4 discipline, not a new program restriction.
+Two raw prefixes with the same joint tree and leaf states have identical
+continuation kernels and possibility choices at corresponding addresses.
+Without this condition the quotient in~\eqref{eq:raw-quotient} need not
+compose: a continuation could distinguish two hidden raw labels that it
+has already identified. Full state is semantic bookkeeping; clients do
+not thereby obtain a private-state oracle.
+
+The original coefficient rig and native squares remain explicit. Put
+\[
+ \Cost=(\mathbb N\cup\{\infty\})^d,\quad
+ c\longrightarrow c'\ \Longleftrightarrow\ c\geq c',\qquad
+ \mathcal V=(\mathbb R_{\geq0})_{\rm disc}\times\Cost.
+\]
+Direct sum is $(p,c)\oplus(q,e)=(p+q,\min(c,e))$ and tensor is
+$(p,c)\otimes(q,e)=(pq,c+e)$. For endpoint maps
+$u:\widehat E\to\widehat E'$ and $v:\widehat F\to\widehat F'$, a native
+square has functions $r_a:\Omega_a\to\Omega'_{u(a)}$ satisfying
+\begin{equation}\label{eq:old-native}
+ p'_{u(a)}(y)=\sum_{r_a(h)=y}p_a(h),\qquad
+ c'_{u(a)}(y)\leq\min_{r_a(h)=y}c_a(h),\qquad
+ Tv\,\theta_a(h)=\theta'_{u(a)}(r_a(h)).
+\end{equation}
+The empty minimum is $\infty$. ``Cost-exact'' means equality of source
+and target costs on every source witness; it does not mean that $r_a$
+is surjective. Distinct functions $r_a$ remain distinct native cells.
+Neither $\qobs$ nor any equality of its values is claimed to retain all of
+those cells faithfully.
+
+\section{The precise law only obstruction}\label{sec:obstruction}
+For a raw presentation $P$ and predicate $A\subseteq C\times T\widehat F$,
+define
+\[
+ \All_A(P)\quad\Longleftrightarrow\quad
+       (\forall h\in\Omega_P)\ o_P(h)\in A.
+\]
+In particular $\All_B(P)$ denotes $c_P(h)\leq B$ for every raw $h$,
+coordinatewise. This is different from the almost-sure condition
+$\mu_P\{(c,t):c\leq B\}=1$.
+
+\begin{theorem}[No law factoring decision for all raw budgets]
+\label{thm:obstruction}
+For every pair of integers $1\leq\ell<H$ in the legal finite
+diagnostic construction of Section~\ref{sec:application}, and every
+$B$ with $\ell\leq B<H$, there are well-typed finite programs $P,Q$ with
+the same input and output interfaces such that:
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item their full joint causal-tree, typed-result and cost probability
+laws are equal;
+\item $\All_B(P)$ holds and $\All_B(Q)$ fails;
+\item $P$ has a cost-exact original O1 native square to $Q$ with
+identity endpoints, and the law bridge sends it to equality;
+\item the extra raw branch of $Q$ has two actual resource-separated
+continuation holes instead of one, and both children are executed.
+\end{enumerate}
+Consequently, for every set $Y$, every map $F$ from joint finite laws to
+$Y$, and every function $d:Y\to\{0,1\}$, the identity
+\[
+ d(F(\Law(R)))=\mathbf1_{\All_B(R)}
+\]
+cannot hold for every program $R$ in this family. In particular no law
+factoring compositional interpretation with an exact all-path decision
+map can satisfy that identity, even if it preserves all the pure and
+composition operations already preserved by the O3 law bridge.
+\end{theorem}
+\begin{proof}
+Let $P$ retain only the low branch of probability one and final cost
+$\ell$. Let $Q$ retain the same branch together with the well-typed high
+branch of probability zero and final cost $H$. The two joint laws are
+the same point mass at the completed low outcome; the high tree contributes
+zero mass even though its shape differs. The raw cost conditions give
+(b). The inclusion of the low raw row has correct weight on its image;
+the missing high target row has mass zero and satisfies its cost inequality
+against the empty minimum $\infty$. The body equation holds on the low
+row. Thus~\eqref{eq:old-native} holds and this is a cost-exact old square.
+Occurrence composition with the typed continuations gives (d) and the
+same square on completed executions. Finally $F$ and $d$ receive the same
+argument on $P$ and $Q$ but would have to return different truth values.
+\end{proof}
+This theorem rules out a specified stronger preservation claim, not
+existence of the old semantics, of a different observation semantics, or
+of a general interaction law. The counterexample preserves the old pure
+embedding and operations; it changes the information demanded from their
+semantic image. Requiring strictly positive raw weights would remove this
+particular obstruction, but would discard permitted finite tables and is
+not the repair chosen here.
+
+\section{A finite monad of one law and its possible outcomes}\label{sec:M}
+\begin{definition}
+For a set $X$, let $MX$ be the pairs in Theorem~\ref{thm:main}. For
+$f:X\to Y$ define
+\[
+ Mf(\mu,S)=(f_*\mu,f[S]),\qquad
+ \eta^M_X(x)=(\delta_x,\{x\}).
+\]
+If $k(x)=(\nu_x,S_x)\in MY$, define
+\begin{equation}\label{eq:M-bind}
+ (\mu,S)\mathbin{\gg=_M}k
+   =\left(\sum_x\mu(x)\nu_x,\ \bigcup_{x\in S}S_x\right).
+\end{equation}
+The first sum is over the finite positive support of $\mu$; its extension
+by zero to $S$ is harmless. Only $k$ on $S$ is needed.
+\end{definition}
+
+\begin{proposition}[The law and possibility monad]\label{prop:M}
+The preceding formulas define a commutative monad on $\Set$. Both
+projections $\pi_D:M\to\Dfin$ and $\pi_P:M\to\Pfin$ are monad
+morphisms. The canonical independent product is
+\begin{equation}\label{eq:M-product}
+ (\mu,S)\boxtimes(\nu,R)=(\mu\otimes\nu,S\times R).
+\end{equation}
+The empty product is $(\delta_{()},\{()\})$.
+\end{proposition}
+\begin{proof}
+Pushforward preserves total mass and takes support into the image of
+support, so $Mf$ is well defined. In~\eqref{eq:M-bind} the law is
+normalized. Its positive mass at $y$ comes from some $x$ with
+$\mu(x)>0$ and $\nu_x(y)>0$; then $x\in S$ and $y\in S_x$.
+The union is finite and nonempty. The two unit identities follow from
+Dirac laws and singleton unions. If $l(y)=(\rho_y,R_y)$, both
+associativity sides have law and possibility set
+\[
+ \sum_{x,y}\mu(x)\nu_x(y)\rho_y,
+ \qquad \bigcup_{x\in S}\ \bigcup_{y\in S_x}R_y.
+\]
+The finite sums can be reassociated and the unions are equal. These
+identities also prove the projection equations. The two orders of
+independent bind give the product law and $S\times R$, up to the
+specified swap; symmetry of real multiplication and Cartesian products
+proves commutativity. Naturality, associativity and units of the products
+follow by the same finite-tuple bijections.
+\end{proof}
+Equivalently, $M$ is the support-compatible submonad of the componentwise
+product of the finite probability and finite nonempty powerset monads.
+This is standard elementary monad machinery. The chosen $S$ may strictly
+contain $\supp\mu$: a zero-weight possible outcome is precisely the
+additional datum of interest.
+
+The meaning of $S$ is the image of retained raw verification possibilities.
+It is not an operational scheduler, and a member of $S\setminus\supp\mu$
+is not asserted to occur with positive probability. There is one specified
+law, not a convex family of alternative laws. Arbitrary nondeterministic
+choice with all of its usual interaction axioms is not being added.
+
+\section{Occurrence dependent tree and cost composition}\label{sec:K}
+Let $T$ be the finite planar tree monad over the fixed ranked event
+signature. Its unit is a leaf and its multiplication is grafting. Write
+$UX=C\times TX$. The unit of $U$ is $(0,\eta^T x)$; its multiplication
+adds the outer cost and the costs on all actual inner leaves, and grafts
+the inner trees. Commutative addition and the bijection
+\[
+ \leaf(t[t_i]_i)\cong\coprod_{i\in\leaf(t)}\leaf(t_i)
+\]
+prove the unit and associativity laws of $U$. This construction does not
+replace a tree's actual positions by its set of leaf values.
+
+Given $k:X\to KY$ with $k(x)=(\nu_x,R_x)$ and an outcome
+$z=(c,t)\in UX$, let $I=\leaf(t)$ and write $x_i$ for its leaf labels.
+Define the graft-and-sum map
+\begin{equation}\label{eq:graft-map}
+ g_z:\prod_{i\in I}UY\longrightarrow UY,
+ \quad ((c_i,t_i))_i\longmapsto
+          \left(c+\sum_i c_i,\ t[t_i]_i\right).
+\end{equation}
+Set
+\[
+ L_k(z)=(g_z)_*\bigotimes_{i\in I}\nu_{x_i},\qquad
+ R_k(z)=g_z\left[\prod_{i\in I}R_{x_i}\right].
+\]
+For $I=\varnothing$, this is the point law and singleton possibility at
+$(c,t)$, not an empty possibility set. Define
+\begin{equation}\label{eq:K-bind}
+ (\mu,S)\mathbin{\gg=_K}k
+   =\left(\sum_{z\in UX}\mu(z)L_k(z),\
+               \bigcup_{z\in S}R_k(z)\right),
+ \qquad \eta^K(x)=(\delta_{(0,\eta^T x)},\{(0,\eta^T x)\}).
+\end{equation}
+The sum and union only use finite carriers.
+
+\begin{theorem}[The occurrence composition law]\label{thm:K}
+These formulas make $K=M U$ a monad. They give a distributive law
+$\lambda:UM\Rightarrow MU$ by occurrencewise traversal. They are
+natural in leaf relabelling and preserve the complete joint cost/tree
+outcome. In particular the law includes sample-dependent arities,
+nullary trees and equal-valued distinct occurrences.
+\end{theorem}
+\begin{proof}
+Each $L_k(z)$ is normalized; its support lies in $R_k(z)$ by
+Proposition~\ref{prop:M}. A finite nonempty union of the latter is
+finite and nonempty. Thus~\eqref{eq:K-bind} is well defined.
+
+For the left unit the outer tree has one occurrence, outer cost zero and
+one possible outcome. For the right unit every child is the single leaf
+with cost zero and unit mass. The unit equations for tree grafting prove
+both $K$ unit laws, in both law and possibility coordinates.
+
+For associativity retain the following complete data before taking any
+image: an outer outcome $(c,t)$; for each outer occurrence $i$, a middle
+outcome $(c_i,t_i)$; and for each leaf $j$ of $t_i$, an inner outcome
+$(c_{ij},t_{ij})$. Both parenthesizations of three-stage composition
+range over exactly these finite dependent choices. In the possibility
+coordinate every declared choice is retained, even if an outer or child
+probability is zero. In the law coordinate the unaggregated weight is
+\[
+ \mu(c,t)\prod_i\nu_{x_i}(c_i,t_i)
+                  \prod_{i,j}\rho_{y_{ij}}(c_{ij},t_{ij}).
+\]
+The total cost is $c+\sum_i c_i+\sum_{i,j}c_{ij}$. The final tree is
+$t[t_i[t_{ij}]_j]_i=(t[t_i]_i)[t_{ij}]_{i,j}$, using the addressed
+leaf bijection. Reassociation and finite distributivity identify the
+weights after summing all presentations of an identical final outcome;
+the same choice bijection identifies the image sets. Empty factors obey
+the stipulated singleton convention. Hence the $K$ associativity law
+holds exactly, not only up to equality of probabilities after dropping
+cost or tree shape.
+
+For completeness, $\lambda_X$ takes $(c,t)$ with each leaf labelled by
+$(\mu_i,S_i)\in MX$ to the independent product choices pushed along
+$(x_i)_i\mapsto(c,t[x_i]_i)$. It satisfies all four Beck equations:
+\begin{align*}
+ \lambda\circ\eta^U_M&=M\eta^U,&
+ \lambda\circ U\eta^M&=\eta^M_U,\\
+ \lambda\circ\mu^U_M&=M\mu^U\circ\lambda_U\circ U\lambda,&
+ \lambda\circ U\mu^M&=\mu^M_U\circ M\lambda\circ\lambda_M.
+\end{align*}
+The first two equations are respectively the one-leaf product and the
+product of singleton Dirac choices. The third equation compares nested
+outer/inner trees: both sides have the addressed choices $(x_{ij})_{i,j}$,
+the same sum of deterministic costs and the same grafted tree. Their
+products and Cartesian products coincide. For the fourth equation, a
+leaf carries a law-and-possibility object whose outcomes are themselves
+such objects. Both sides first select an intermediate pair at each
+address and then a value from that pair. Finite distributivity gives the
+same sum of products of weights; distribution of finite Cartesian
+products over unions gives the same possible tuples. An empty address
+set has one empty tuple on both sides. Relabelling leaves commutes with
+every selection and graft map, proving naturality. The induced composite
+monad bind is exactly~\eqref{eq:K-bind}.
+\end{proof}
+This theorem derives the needed interaction rather than assuming a
+law that already includes it. It does not assert that $M$ itself is a
+cartesian monad or that arbitrary monads distribute over $T$.
+
+\begin{corollary}[Natural probability forgetting]\label{cor:forget}
+Let $K_DX=\Dfin(C\times TX)$ with the same occurrence formula using
+only probabilities. The map $\pi_D:K\to K_D$, $(\mu,S)\mapsto\mu$,
+is a natural monad morphism. The possibility projection similarly maps
+$K$ to the occurrence monad $K_PX=\Pfin(C\times TX)$.
+\end{corollary}
+\begin{proof}
+Both unit equations are immediate. Taking either coordinate of
+\eqref{eq:K-bind} gives its target bind formula. The relabelling equation
+is the corresponding pushforward or image equation.
+\end{proof}
+
+\section{The typed interpretation and data frames}\label{sec:interpretation}
+\begin{theorem}[Compositional raw quotient]\label{thm:interpretation}
+For every admitted finite O4 command $t:E\Rightarrow F$ and every full
+input $a\in\widehat E$, the $K$ interpretation obtained from primitive
+raw tables satisfies
+\begin{equation}\label{eq:interpretation}
+ \den{t}_K(a)=
+ \left(\sum_{h\in\Omega_t(a)}p_t(h)\delta_{(c_t(h),\theta_t(h))},\
+       \{(c_t(h),\theta_t(h)):h\in\Omega_t(a)\}\right).
+\end{equation}
+This identity is preserved by pure return, primitive operation,
+result-dependent case, occurrence bind, separated batch, pure
+substitution, open-command substitution and the finite rank-decreasing
+procedure invocation of O4. It commutes with the ordinary-data framing
+of O2.
+\end{theorem}
+\begin{proof}
+At a primitive it is the definition. Return has one raw witness of
+weight one and cost zero, so gives $\eta^K$. Case selects the same public
+branch from the same full typed input; it does not condition a law on an
+unobserved event. For bind, the raw choices are exactly
+\eqref{eq:raw-bind}. Prefixes with the same retained joint outcome use
+the same continuation family by the continuation restriction. Their
+weights can therefore be aggregated before or after taking the child
+products. Finite distributivity gives the law in~\eqref{eq:K-bind};
+taking the image of all raw tuples gives its union of Cartesian-product
+images. Duplicates are collapsed only after this joint calculation.
+Zero-weight prefixes and children remain in the second coordinate.
+
+Separated batch takes the product of the child raw carriers conditional
+on the actual full input, then adds child costs and places their trees
+under the declared $\mathsf{Fork}$ constructor. Formula
+\eqref{eq:M-product} followed by that deterministic map gives exactly
+its joint law and image. Disjoint ownership is supplied by typing;
+product laws do not turn initially correlated token states into
+independent states. Pure substitution relabels the input or output and
+commutes with sums and images. Open-command substitution uses the bind
+and case identities at the substituted occurrence. Procedure invocation
+is proved by induction on the strictly decreasing finite rank and then
+on its body. Ordinary data captures do not hide owned capabilities.
+These are the O4 constructors; no recursion principle beyond those
+inductions is invoked.
+
+For an ordinary data frame $Z$, let
+\[
+ f_z:C\times T\widehat F\longrightarrow C\times T(Z\times\widehat F),
+ \qquad f_z(c,t)=(c,T(b\mapsto(z,b))(t)).
+\]
+The framed interpretation is $M f_z(\mu,S)$. Both ways of framing a
+bind put the same $z$ at every final leaf and leave costs unchanged.
+Return gives the frame unit equation. Relabelling $z$ and a leaf commutes,
+so frame naturality and the associativity/unitor comparisons follow by
+the same leaf equations. On raw objects the witnesses and coefficients
+are unchanged. This is exactly O2's external data action, not copying of
+capabilities or mutable stores. A nullary tree has no leaf that can retain
+$z$; no frame-information reflection is asserted.
+\end{proof}
+After a command closes, any declared deterministic observation map $o$
+can be applied to both coordinates by $Mo$. Its possibility set then
+preserves all predicates of that observation, not predicates of private
+information that $o$ deliberately discards. Applying $\pi_D$ gives the
+old O3 finite law and hence its established finite-discrete QBS inclusion.
+There is no new general QBS support or measurable-selection theorem.
+
+\section{Exactly what the quotient preserves and forgets}\label{sec:information}
+\begin{proposition}[Observation completeness for all joint predicates]
+\label{prop:predicates}
+For every raw presentation $P$, every joint outcome predicate $A$ and
+$\qobs(P)=(\mu_P,S_P)$,
+\[
+ \All_A(P)\quad\Longleftrightarrow\quad S_P\subseteq A.
+\]
+For two presentations over the same joint outcome set, $\qobs(P)=\qobs(R)$ if
+and only if their full joint probability laws agree and their universal
+truth values agree for every such predicate $A$.
+\end{proposition}
+\begin{proof}
+The first equivalence is the definition of image. If the pairs are
+equal, all the observations agree. Conversely equality of laws gives
+$\mu_P=\mu_R$. If $S_P\neq S_R$, a point in their symmetric difference
+is excluded by a predicate containing the other set, which distinguishes
+the universal truth values. Hence the sets must agree.
+\end{proof}
+Thus $\qobs$ is precisely the quotient by the declared observation
+equivalence. Any representation preserving and reflecting all these
+observations must distinguish different $\qobs$-values. This is a bounded
+observation statement, not a universal categorical completion. In
+particular it is not minimality for scalar budgets alone: the truth
+values of all scalar upper bounds see only the maximum cost, not the
+entire set of joint outcomes.
+
+A raw family with two equal-outcome rows of masses $1/3,2/3$ and a
+single equal-outcome row of mass one have the same quotient. Splitting
+an atom into several raw indices, raw multiplicity, unused provenance
+and the distinct functions implementing native maps are still lost.
+They remain available in the separate O1 presentation and certificate
+layer when needed.
+
+\begin{proposition}[Exact equality via two covered raw spans]
+\label{prop:exact-span}
+Let $P,R$ be raw presentations over the same full endpoint carrier and
+joint outcome set $Z=C\times T\widehat F$. Their repaired observations
+are equal if and only if they admit an original O1 span whose two raw
+projections are surjective and cost-exact, and whose bodies have equal
+full joint outcomes. At this fixed observation level every $MZ$-value
+has a canonical raw representative with carrier $S$ and weights $\mu(s)$.
+\end{proposition}
+\begin{proof}
+Suppose $\qobs(P)=\qobs(R)=(\mu,S)$. Retain every pair in the finite fibre
+product
+\[
+ H=\{(w,v):o_P(w)=o_R(v)\}.
+\]
+Both projections are onto because the image sets agree. Give a pair
+with common outcome $z$ weight
+\[
+ \Gamma(w,v)=
+ \begin{cases}p_wq_v/\mu(z),&\mu(z)>0,\\0,&\mu(z)=0.\end{cases}
+\]
+For a positive $p_w$, summing $q_v/\mu(z)$ over the matching fibre
+is one. For $p_w=0$ the row is zero, including when $\mu(z)=0$.
+Thus the marginals are $p,q$. Give each pair its common cost and tree.
+All native equations hold, with exact costs on both legs; zero pairs
+are retained to ensure coverage. Conversely push the common weights
+along the legs to obtain equal laws, and use the two surjections and
+body equalities to obtain equal image sets. The canonical representative
+uses each $z\in S$ once with its specified cost and tree; its normalized
+weights are $\mu(z)$, including zero values.
+\end{proof}
+This proposition is at a fixed full observation interface, after any
+specified compatible normalization. It does not silently identify
+different private endpoint types; those require the related-state
+construction in the next section.
+
+\begin{proposition}[The exact direct-cell boundary]\label{prop:direct-boundary}
+For a cost-exact original native square~\eqref{eq:old-native}, let
+$\bar v(c,t)=(c,Tv(t))$. Then, at each input,
+\[
+ \bar v_*\mu_a=\mu'_{u(a)},\qquad
+ \bar v[S_a]\subseteq S'_{u(a)}.
+\]
+Equality of repaired observations after this transport holds exactly
+when $\bar v[S_a]=S'_{u(a)}$. Raw surjectivity of $r_a$ suffices, but is
+not necessary when missing raw rows duplicate outcomes already covered.
+\end{proposition}
+\begin{proof}
+The native mass and exact-body equations give the pushforward law.
+Every source outcome appears as its target outcome, giving inclusion.
+The definition of $\qobs$ then makes the extra equality condition necessary
+and sufficient. A surjective raw map covers all target outcomes; a
+nonsurjective map can still cover them if distinct rows have the same
+joint outcome.
+\end{proof}
+For cost-lowering maps the joint exact-cost laws need not be equal.
+Their graph instead gives the inherited monotone-cost coupling, with
+the precise body/state relation specified below. The repair does not
+turn that order into equality. In particular the ghost insertion of
+Theorem~\ref{thm:obstruction} cannot be sent to equality by a semantics
+that also reflects all joint universal predicates.
+
+\section{Possibility sensitive refinement and exact span recognition}
+\label{sec:refinement}
+Fix candidate and reference full endpoint carriers, related owned-token
+private states, and the common normalized public event signature of O5.
+The lifted outcome relation $\mathcal R$ holds between
+$x=(c,t)$ and $y=(d,u)$ when $t,u$ have the required equal public tree
+shape, corresponding leaves have related full typed states, actual
+capability identities and kinds correspond as declared, and $c\leq d$.
+Matching trees have the same addressed leaf occurrences. These are the
+specified comparison conditions, not arbitrary consequences of having
+some native cell. Write the candidate first.
+
+\begin{definition}[Law coupling and candidate possibility coverage]
+\label{def:refinement}
+For $(\mu,S)\in K\widehat F_P$ and $(\nu,R)\in K\widehat F_Q$, put
+\[
+ (\mu,S)\preceq_{\mathcal R}(\nu,R)
+\]
+if both of the following hold:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item there is a finite probability coupling $G(x,y)$ of $\mu,\nu$
+whose positive support lies in $\mathcal R$;
+\item for every $x\in S$ there exists $y\in R$ with $x\mathcal R y$.
+\end{enumerate}
+The second condition is candidate possibility coverage. It does not
+require positive coupling mass on zero-weight pairs, and it does not
+require every reference possibility to have a candidate partner.
+\end{definition}
+
+If predicates $A_P,A_Q$ are compatible in the sense that
+$x\mathcal R y$ and $y\in A_Q$ imply $x\in A_P$, then reference
+universal validity transfers to the candidate. Indeed, for each candidate
+possibility choose its reference partner and apply that implication.
+Every common coordinatewise upper cost bound has this property. The
+coupling condition separately supplies the old O5 probabilistic
+conclusions. Neither condition is substituted for the other.
+
+The next criterion is fibrewise. At one chosen related input, the input
+relation carrier in its diagram can be that singleton. If the hypotheses
+hold at every pair in a finite related-input carrier, the constructed
+fibres assemble into the displayed full endpoint square.
+
+\begin{theorem}[Exact marked original O1 span criterion]
+\label{thm:span}
+Let $P,Q$ be finite original O1 raw presentations at a related full input,
+with outcome maps $a:\Omega_P\to C\times T\widehat F_P$ and
+$b:\Omega_Q\to C\times T\widehat F_Q$. All raw rows, including
+zero-weight rows, are retained. Then
+\[
+ \qobs(P)\preceq_{\mathcal R}\qobs(Q)
+\]
+if and only if there exists a finite common paired-history presentation
+$W$ with native endpoint-square legs
+\[
+ \begin{array}{ccc}
+ &W:E_{PQ}\Rightarrow F_{PQ}&\\[-2pt]
+ {}_{(\pi_P^E,\pi_P^F)}\swarrow&&
+          \searrow_{(\pi_Q^E,\pi_Q^F)}\\[-2pt]
+ P:E_P\Rightarrow F_P&&Q:E_Q\Rightarrow F_Q
+ \end{array}
+\]
+such that every common raw history has the specified paired public body
+and related leaf states, its cost is the projected reference cost, its
+candidate cost is no greater, and the candidate raw projection is
+surjective. The legs are in the original probability--cost O1 model;
+the candidate-coverage mark is extra certificate data.
+\end{theorem}
+\begin{proof}
+Suppose first that Definition~\ref{def:refinement} holds. Write $p_w,q_v$
+for the raw weights and $\mu,\nu$ for their outcome laws. As in the
+O5 raw-lift lemma, define
+\begin{equation}\label{eq:raw-lift}
+ \Gamma(w,v)=
+ \begin{cases}
+ G(a(w),b(v))\dfrac{p_w}{\mu(a(w))}\dfrac{q_v}{\nu(b(v))},
+       &\mu(a(w))\nu(b(v))>0,\\[5pt]
+ 0,&\text{otherwise}.
+ \end{cases}
+\end{equation}
+For $p_w>0$, sum first over the raw reference fibre of each outcome $y$.
+Its conditional factors $q_v/\nu(y)$ sum to one, so the coupling
+marginal gives
+\[
+ \sum_v\Gamma(w,v)
+    =\frac{p_w}{\mu(a(w))}\sum_yG(a(w),y)=p_w.
+\]
+If $p_w=0$, every summand is zero. The other marginal is symmetric.
+Thus the positive-pair carrier is normalized and covers each positive
+candidate raw row. Each positive pair is in $\mathcal R$.
+
+Now take each candidate raw row $w$ not yet covered. Necessarily $p_w=0$.
+By candidate possibility coverage, $a(w)$ has a partner $y$ in the raw
+image of $Q$ with $a(w)\mathcal R y$. Choose a raw $v$ above $y$ and
+adjoin $(w,v)$ to the common carrier with weight zero. This is a finite
+choice, made for the actual input under discussion. Distinct duplicate
+candidate rows are covered separately, even when their joint outcomes
+are equal. Adding the rows changes neither marginal and gives a
+surjective candidate projection.
+
+Every retained pair has matched tree addresses and related leaves, hence
+a paired tree over the state-relation carrier. Give it cost $c_Q(v)$.
+The two witness functions are projection to $w$ and to $v$. Their
+probability equations are exactly the marginals. Their body equations
+are the two paired-tree projections. For each reference fibre the target
+cost equals every common cost in that fibre. For each candidate fibre
+the target cost is at most every common cost, hence at most their minimum.
+An empty target fibre has mass zero and its cost inequality holds against
+$\infty$. These are precisely~\eqref{eq:old-native}. Nonnegative common
+costs and total mass one give the inherited global augmentation. This
+constructs the required original O1 span.
+
+Conversely push the common probability weights along the pair of raw
+projections and then along $(a,b)$. The native marginal equations give
+a coupling of $\mu,\nu$, and the stipulated paired-body and cost
+conditions put its support in $\mathcal R$. For any candidate outcome
+$x\in S_P$, choose a raw $w$ above it. Surjectivity provides a common
+history above $w$; its reference projection provides a raw reference
+outcome $y\in S_Q$ with $x\mathcal R y$. This proves candidate
+possibility coverage.
+\end{proof}
+The conditional formula~\eqref{eq:raw-lift} and the native cost argument
+are inherited from O5 and reproduced to show the exact hypothesis match.
+The new part is the converse use of semantic possibility coverage to
+adjoin all needed zero fillers, giving the equivalence. The statement
+concerns existence of a finite certificate, not a natural canonical
+choice of every filler or equality of all chosen spans. A particular
+previously supplied span may omit zero histories; the theorem constructs
+an adequate span from the semantic conditions.
+
+Candidate possibility coverage is weaker than raw surjectivity of a
+\emph{specified direct map}. Nevertheless it is equivalent to existence
+of a suitable raw-surjective \emph{span}, because zero fillers can cover
+all duplicate raw rows. These two assertions do not conflict.
+
+\begin{theorem}[Contextual closure of the repaired criterion]
+\label{thm:contextual}
+Consider the complete finite O4 context class and tokenwise private-state
+relations of O5. Suppose:
+\begin{enumerate}[label=\textup{(L\arabic*)}]
+\item the joint initial state laws have a relation-supported coupling,
+and every declared candidate initial possibility has a related reference
+initial possibility;
+\item at every related full method input, not just positive-probability
+reachable inputs, the primitive outcome pairs satisfy
+Definition~\ref{def:refinement};
+\item every other client primitive satisfies the same relation and
+coverage conditions, and the public observations, normalizations and
+ranked code interpretations are the fixed ones used by the comparison;
+\item disjoint owned bundles restrict and reassemble the state relation,
+and continuation bodies respect the retained typed interface.
+\end{enumerate}
+Then every admitted finite open context preserves the repaired criterion.
+Every closing context has the O5 law coupling and candidate possibility
+coverage, and hence transfers all compatible all-raw-path predicates,
+including coordinatewise upper costs. Its certificate is an actual
+occurrence-composed original O1 span with surjective candidate projection.
+\end{theorem}
+\begin{proof}
+The law part is the O5 conditional coupling induction, not a new
+uncorrelated-product argument. For precision, at a paired prefix retain
+its complete related private leaf states. At each actual matched address
+use the continuation coupling for that input pair; multiply these
+conditional child matrices and then mix with the prefix coupling. When
+summing one side, each child's marginal is that side's original kernel
+at its actual input. Finite distributivity therefore gives the required
+marginal law. Equality of public tree shape and monotonicity of cost
+addition give the supported relation. This is the O5 calculation with
+exactly the same occurrence indices.
+
+For the possibility part, fix any candidate possible prefix outcome.
+Coverage chooses a matching reference possible prefix. Fix any candidate
+child outcome at each of its actual addresses, including zero-weight
+choices. By the inductive coverage premise choose a related reference
+child at each matched address. Their finite tuple is a declared reference
+choice; the grafted tree has related leaves and its cost dominates the
+candidate's sum. Thus every candidate composite possibility is covered.
+If the prefix is nullary, there is exactly one empty tuple on each side.
+
+At the raw-certificate level apply the same construction to an arbitrary
+candidate raw prefix and each of its raw child histories. The local span
+surjections supply paired lifts. Their tuples are precisely the O1
+occurrence carrier~\eqref{eq:raw-bind}, so the composite candidate
+projection is surjective. Its reference cost is the sum of reference
+costs; its candidate leg is cost-lowering. The O1 marginal and grafting
+calculations give native endpoint squares, not merely abstract couplings.
+
+Return is diagonal. A public case selects corresponding branches.
+Separated batch applies the same finite-tuple construction to disjoint
+children conditional on the complete paired input, and retains the
+reserve. Substitution and framed ordinary data preserve the selected
+relations. Induction on body structure and decreasing invocation rank
+handles procedure calls, aliases and all the bounded callbacks admitted
+by O4. Finally the initial coupling mixes the law part, and initial
+possibility coverage supplies a partner for every candidate raw starting
+point. At no stage is an initially correlated joint state law replaced
+by a product of its marginal token laws.
+\end{proof}
+The stronger premises are justified by the stronger conclusion: without
+candidate coverage, Theorem~\ref{thm:obstruction} refutes the conclusion.
+They are independently checkable local finite conditions. They are not
+the desired global all-context theorem smuggled into its hypotheses.
+
+\begin{proposition}[Vertical composition of existence judgments]
+\label{prop:vertical}
+The repaired relation is reflexive at identity state relations and
+transitive under composition of the specified state relations. Together
+with Theorem~\ref{thm:contextual}, this gives compositional existence
+judgments and proof-relevant original O1 certificates.
+\end{proposition}
+\begin{proof}
+Use diagonal law couplings and identity possibility witnesses for
+reflexivity. For couplings $G(x,y)$ and $D(y,z)$ with common middle law
+$\nu$, retain middle outcomes and give $(x,y,z)$ weight
+\[
+ J(x,y,z)=
+ \begin{cases}G(x,y)D(y,z)/\nu(y),&\nu(y)>0,\\0,&\nu(y)=0.\end{cases}
+\]
+Summing the other endpoint yields the original adjacent coupling; after
+summing $y$ this couples the outer laws. Zero middle mass forces the
+associated marginal fibres to be zero, so no undefined division is used.
+Compose the possibility partners existentially, including zero outcomes.
+State-relation composition and transitivity of cost order give the outer
+relation. For related inputs and leaves, retain the needed middle state
+witnesses before gluing. Disjoint tokens permit their reassembly. Finally
+Theorem~\ref{thm:span} realizes the outer judgment by a native marked
+span. Alternatively the horizontal constructions already give explicit
+native occurrence certificates.
+\end{proof}
+This is not a strict double category of chosen conditional couplings,
+a canonical horizontal--vertical interchange theorem, an equipment, or
+a faithful image of every O1 parallel cell. Only the stated existence
+judgments and explicit witnesses are claimed.
+
+\section{An independent presence enriched O1 coefficient input}
+\label{sec:rig}
+\begin{definition}
+Let
+\[
+ \E=\{(p,b):p\in\mathbb R_{\geq0},\ b\in\{0,1\},\ p>0\Rightarrow b=1\}.
+\]
+Define
+\begin{align*}
+ (p,b)+(q,e)&=(p+q,b\lor e),&0_{\E}&=(0,0),\\
+ (p,b)(q,e)&=(pq,b\land e),&1_{\E}&=(1,1).
+\end{align*}
+The nonzero coefficient $\epsilon=(0,1)$ records a declared possible
+outcome of probability zero. It is different from the absent coefficient
+$0_{\E}$.
+\end{definition}
+
+\begin{proposition}[The coefficient realization]\label{prop:E}
+$\E$ is a commutative semiring. Finitely supported normalized
+$\E$-valued distributions on $X$ are exactly $MX$. The projection
+$\varphi:\E\to\mathbb R_{\geq0}$, $(p,b)\mapsto p$, is a unital
+semiring homomorphism realizing probability forgetting.
+\end{proposition}
+\begin{proof}
+If a sum has positive real component, one summand is positive and its
+flag is one, so the resulting disjunction is one. If a product has
+positive real component, both factors are positive and both flags are
+one. Hence the operations are closed. Associativity, commutativity,
+units and absorption are the componentwise real and Boolean identities.
+Boolean conjunction distributes over disjunction, as real multiplication
+distributes over addition, proving distributivity.
+
+Given $(\mu,S)$, assign coefficient $(\mu(x),1)$ to $x\in S$ and
+$(0,0)$ elsewhere. Its finite coefficient support is $S$ and its sum is
+$(1,1)$. Conversely such a normalized coefficient distribution has total
+real mass one, a finite nonempty flag-one set $S$, and positive real
+support inside $S$. These operations are inverse. Coefficient
+multiplication and summation give the product and bind formulas already
+proved for $M$. The projection preserves all four operations and units
+componentwise.
+\end{proof}
+
+Use the discrete semiring category $\E_{\rm disc}$ and put
+\[
+ \widetilde{\mathcal V}=\E_{\rm disc}\times\Cost.
+\]
+Its direct sum and tensor use the semiring operations with minimum and
+addition on costs. Its units are $(0_{\E},\infty)$ and $(1_{\E},0)$.
+The global augmentation of a finite family requires total coefficient
+$(1,1)$ and minimum cost at least zero; it is not an all-path budget.
+Every original executable raw row is lifted with flag one, even if its
+probability is zero. A formal flag-zero row permitted by the ambient rig
+is an absent or dummy summand, not an extra raw execution counted by
+our all-path assertions.
+
+\begin{theorem}[O1 input match and strong forgetting]\label{thm:O1-input}
+The terminal-grade causal-tree content and
+$\widetilde{\mathcal V}$ satisfy the independent hypotheses of the
+O1 theorem. Their occurrence mixed construction restricts to an
+all-present raw execution fragment, closed under return, bind, batch,
+pure framing and the finite O4 syntax. Forgetting flags is a strong
+comparison of the independent rig inputs and their induced mixed
+constructions. On joint outcome observations it is
+$\pi_D:K\to K_D$.
+\end{theorem}
+\begin{proof}
+Take the same ambient base $\Set$ and admissible class of all set maps
+as O6 A. Identities, pullbacks and composition stay in that class, and
+$T$ preserves membership trivially. Proposition~\ref{prop:E} with the
+min-plus cost rig gives an independently supplied coherent symmetric rig
+category. The finite tree monad is polynomial, with the unit and
+multiplication cartesian by the one-leaf and addressed grafting
+bijections. Its content-grade fibres are terminal; the occurrence display
+is $\id_T$. The covariant transport, cartesian grade lifts and their
+Beck--Chevalley comparison are the unique terminal-grade maps. The unit
+and accumulation occurrence equations are exactly the leaf-address
+identities. These checks precede and do not assume the desired mixed
+composition or a proposed comparison certificate. The O1 independent
+criterion therefore supplies its full law on native maps and endpoint
+squares.
+
+Within the actual execution fragment every row flag is one. A finite
+tuple of actual child choices has product flag one; a prefix together
+with that tuple also has flag one. A nullary child product has the
+multiplicative unit flag one. Return and the typed constructor induction
+therefore keep the fragment all-present. Aggregating equal outcomes uses
+disjunction, so its flag is one exactly when some raw outcome represents
+it. The coefficients consequently reproduce~\eqref{eq:raw-quotient}.
+
+The map $\varphi\times\id_{\Cost}$ is strict on the displayed sums,
+products and units and is therefore strong as a rig functor. Leave the
+content input and its display maps unchanged. Every occurrence product,
+fibre sum, unit and accumulation diagram is sent to the corresponding
+old diagram, since the real component of each coefficient is unchanged.
+Thus the O1 parameter comparison is strong, including changing-endpoint
+squares and the pure embedding. Applying it to observed coefficients
+is exactly forgetting $S$ while retaining $\mu$.
+\end{proof}
+The old independent O1 theorem is the structural source of the retained
+native calculus; the direct finite $K$ proof supplies the smaller
+observation semantics. We are not asserting a new general theorem for
+arbitrary graded contentads, nor revisiting the deferred display/codisplay
+branch.
+
+\begin{proposition}[The native preservation cost]\label{prop:E-native}
+An original native map between fixed all-present raw objects lifts to
+$\widetilde{\mathcal V}$ if and only if its raw witness function is
+surjective in every input fibre. Cost and body conditions are unchanged.
+Consequently the old ghost insertion in
+Theorem~\ref{thm:obstruction} has no all-present enriched lift.
+\end{proposition}
+\begin{proof}
+The new coefficient equation at a target row $y$ adds exactly
+\[
+ 1=\bigvee_{r(h)=y}1.
+\]
+An empty disjunction is zero; thus this equation holds precisely when
+the fibre is nonempty. With that condition, the real-weight equation is
+the original one and all other native equations are unchanged. The
+missing zero target row of a ghost insertion has an empty fibre and
+violates this equation.
+\end{proof}
+Marking every actual row present is a constructorwise program lift, not
+a semiring section in the opposite direction: the assignment
+$p\mapsto(p,1)$ sends the old additive zero to $(0,1)\neq0_{\E}$.
+No strong rig embedding of all old coefficients or cells is asserted.
+The strong rig map proved above is the forgetful direction.
+
+Objects and zero-weight programs are retained. The loss is specific old
+native arrows as exact presence-preserving comparisons, not the old
+programming operations or probability laws. Flag forgetting retains
+the same witness functions, and is faithful on these native hom-sets;
+it is generally not full. No conservative recovery of every old cell
+is claimed.
+
+\paragraph{Why the two span notions are different.}
+An enriched native span with two all-present endpoints forces both raw
+projections to be surjective. Theorem~\ref{thm:span} only requires the
+candidate projection to be surjective, and correctly lives in the
+original O1 model with a coverage mark. For example, a candidate with
+law $\delta_t$ and possibility set $\{t\}$ refines a reference with the
+same law and possibilities $\{t,u\}$, where $u$ has a different public
+tree and zero mass. The candidate's single possible tree is covered;
+the reference's unused $u$ need not be matched. A paired enriched span
+with both projections onto cannot exist if its body relation requires
+equal public trees and the candidate has no $u$. Cost zero on all rows
+already suffices for this distinction. No asymmetric refinement theorem
+is falsely presented as an enriched native span theorem.
+
+\section{A local reflection and its lax reconstruction comparisons}
+\label{sec:reflection}
+Fix retained endpoint carriers $A,B$, exact cost/tree observations and
+the all-present enriched raw objects. Restrict morphisms to cost-exact
+native maps with identity endpoints. Call this category
+$\mathcal C_{\rm ex}(A,B)$. It still has raw witness functions and may
+have nontrivial parallel maps. Let $\mathcal D(A,B)$ be the discrete
+category of realizable input-indexed pairs $a\mapsto(\mu_a,S_a)$ on
+$C\times TB$. Here ``realizable'' means a finite-fibre ambient raw
+presentation; it does not assert definability by an O4 source term.
+
+The quotient gives a functor
+$L:\mathcal C_{\rm ex}(A,B)\to\mathcal D(A,B)$: enriched maps are
+surjective and cost-exact, so preserve both coordinates. Define
+$R:\mathcal D(A,B)\to\mathcal C_{\rm ex}(A,B)$ by the canonical
+representative with carrier $S_a$ and coefficient
+$(\mu_a(z),1)$ on row $z$.
+
+\begin{theorem}[Local observation reflection]\label{thm:reflection}
+At these fixed endpoints and this restricted map class, $L\dashv R$,
+$LR=\id$, and $R$ is fully faithful. Its unit is the canonical native
+collapse of each raw history to its joint outcome. Reconstruction has
+coherent comparisons
+\begin{equation}\label{eq:lax-reconstruction}
+ R(g)\circ R(f)\longrightarrow R(g\circ_K f),
+\end{equation}
+which are cost-exact and all-present enriched native maps. They are
+generally noninvertible. Thus reconstruction is lax with respect to
+occurrence composition, not a strong recovery of raw presentations.
+\end{theorem}
+\begin{proof}
+For an object $H$ and a pair family $d$, body and cost preservation force
+any map $H\to R(d)$ to send raw $w$ to its joint outcome
+$(c_w,\theta_w)$. There is at most one such function in each fibre.
+It is surjective and mass-balanced exactly when $LH=d$. Therefore
+\[
+ \operatorname{Hom}_{\mathcal C_{\rm ex}}(H,Rd)
+  =\begin{cases}\{\text{canonical collapse}\},&LH=d,\\
+                \varnothing,&LH\neq d,
+    \end{cases}
+ =\operatorname{Hom}_{\mathcal D}(LH,d).
+\]
+This bijection is natural; the nonempty map is forced on each raw
+witness. It proves the adjunction, and $LR=\id$ gives the stated
+counit and full faithfulness.
+
+The raw composite of $R(f)$ and $R(g)$ has, by
+Theorem~\ref{thm:interpretation}, observation $g\circ_K f$. Applying
+its unit collapse gives~\eqref{eq:lax-reconstruction}. For three
+composable arrows, identify the two raw bracketings by the canonical
+O1 occurrence isomorphism. Both coherence routes are cost-exact
+all-present maps from that raw object to the same canonical representative.
+The hom-set just proved is a singleton, so the routes agree. The same
+argument proves unit coherence and compatibility with a fixed separated
+batch constructor and ordinary-data framing.
+
+For noninvertibility take a unary event primitive with two raw outcomes
+of the same leaf and event shape, costs zero and one, each of probability
+$1/2$. Compose it with an identical primitive. The two independent choices
+$(0,1)$ and $(1,0)$ have the same two-event tree and total cost one.
+The composite raw representatives have two such histories, whereas the
+representative of the composite has one cost-one row of mass $1/2$.
+The comparison aggregates them and is not bijective. Empty capability
+bundles suffice for this ambient structural example.
+\end{proof}
+This is a family of local reflections onto discrete joint-observation
+classes, with the displayed controlled composition comparisons. It is
+not a global equivalence of the original O1 bicategory with a discrete
+semantics, nor an adjunction on arbitrary cost-lowering maps or differing
+private endpoint carriers. Those require the distinct relational
+statements of Section~\ref{sec:refinement}. The underlying raw presentation
+category retains its nontrivial parallel maps, but $L$ sends parallel maps
+to the same identity in the discrete target and is not faithful in general.
+A canonical representative packages entire joint outcomes into raw rows;
+it need not be generated by the same allowed primitive signature or have
+a physical implementation. There is no compiler or executable-realization
+claim for $R$. The positive branch instead interprets the unchanged
+well-typed programs, independently of whether their canonical ambient
+representatives are source-definable.
+
+\section{The dependent diagnostic application and its positive family}
+\label{sec:application}
+This is a new boundary instance within O6 Case A, not a revision of the
+previously reported O6 numerical experiment~\cite{O6}. It retains that
+family's synthetic destructive-specimen model, actual token identities,
+result-dependent capability kinds and disjoint returned bundles. The
+numbers below isolate the O7 distinction; no empirical instrument or
+human medical claim is made.
+
+\subsection{A legal one hole and two hole screen}
+Initially own
+\[
+ \{r_0:\mathsf{Screen},\ r_1:\mathsf{Reserve},\ r_2:\mathsf{Reserve}\}.
+\]
+Screen consumes $r_0$, costs one and has two declared raw rows:
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Result & Weight & Public constructor & Actual returned holes\\
+\midrule
+low & $1-p$ & unary $\mathsf{screen.low}$ &
+$\{r_1:\mathsf{Confirm},r_2:\mathsf{Reserve}\}$\\
+high & $p$ & binary $\mathsf{screen.high}$ &
+$\{r_1:\mathsf{AssayA}\}$ and $\{r_2:\mathsf{AssayB}\}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+Here $p\in[0,1]$. The low hole runs confirmation, consumes $r_1$ and
+costs two. In the minimal instance it returns pass with the actual
+remaining owner $r_2:\mathsf{Discard}$; discard costs zero and consumes
+$r_2$. The high left hole runs $A$, costs three and consumes $r_1$; the
+high right hole runs $B$, costs five and consumes $r_2$. Their result bits
+have parameters $a,b\in[0,1]$. Every completed leaf owns no resource.
+All declared raw branches are typed, even at probability zero.
+
+The controller is the actual dependent term
+\begin{quote}\ttfamily\small
+screen ; case actual hole tag of\\
+\hspace*{1em}low: confirm ; discard ; return low report\\
+\hspace*{1em}high left: A ; return A bit\\
+\hspace*{1em}high right: B ; return B bit
+\end{quote}
+It does not run both high methods on a copied bundle. The two calls fill
+different holes with different owned resources, and their costs add.
+The low branch has one continuation hole owning two survivors; the high
+branch has two holes of different capability kinds. This is genuine
+result dependence in both arity and ownership. Ordinary earlier data may
+be framed into the holes; neither owner is duplicated.
+
+Let $\tau_L$ be the completed low tree and let
+$\tau_H^{ij}$, $i,j\in\{0,1\}$, be the four completed high trees with
+the actual two reported bits. The repaired completed value is
+\begin{align}
+ \mu_{p,a,b}
+   &=(1-p)\delta_{(3,\tau_L)}
+      +p\sum_{i,j}\operatorname{Ber}_a(i)\operatorname{Ber}_b(j)
+                           \delta_{(9,\tau_H^{ij})},\label{eq:app-law}\\
+ S&=\{(3,\tau_L)\}\cup\{(9,\tau_H^{ij}):i,j\in\{0,1\}\}.
+ \label{eq:app-may}
+\end{align}
+All bit rows here are represented, so this $S$ is unchanged when any
+parameter becomes zero or one. Its elements have distinct displayed
+public trees.
+
+For the obstruction put $p=0$ and $a=b=1/2$. Compare the full raw screen
+with the pruned screen whose only represented row is low. Their exact
+joint completed laws are both $\delta_{(3,\tau_L)}$. The full presentation
+has five possible outcomes and raw maximum cost nine; the pruned one
+has one possible outcome and maximum three. Thus the external all-raw
+bound three is true only of the pruned program. A budget premise has not
+filtered the high branch out of the type system or execution table.
+
+The old native inclusion maps the low row to low. Its high target fibre
+is empty, sums to zero and satisfies the inherited empty-minimum cost
+convention. The inclusion persists after the typed bind. In the enriched
+coefficient model, its target high coefficient $(0,1)$ cannot be obtained
+from the empty source sum $(0,0)$. The repaired semantics likewise
+separates the two sets. The full program does not refine the pruned one
+under the repaired body/cost relation: its high possibility has no
+reference tree partner. The reverse candidate-to-reference comparison
+is valid and needs only low coverage.
+
+The scalar costs can be varied independently. For any integers
+$1\leq\ell<H$, keep screen cost one, give confirmation cost $\ell-1$,
+discard cost zero, and high assays costs $H-1$ and zero. The same legal
+resource transitions give completed costs $\ell$ and $H$, proving the
+parameter range used in Theorem~\ref{thm:obstruction}. Both high
+operations still execute and consume their actual tokens. Alternatively,
+for any $n\geq2$, the O6 A schema can return $n$ disjoint assay holes
+after screening, each of cost $h\geq1$, versus one low disposal-bundle
+hole of cost zero. The two completed costs are $1$ and $1+nh$. No fixed
+arity or numerical accident is needed.
+
+\subsection{A result dependent continuation whose zero branch also matters}
+The low confirmation can have two represented outcomes: pass of weight
+$1-q$ returning $r_2:\mathsf{Discard}$, and uncertain of weight $q$
+returning $r_2:\mathsf{RescueD}$. Rescue costs seven and consumes $r_2$.
+The continuation branches on the actual response; rescue after pass is
+not merely unnecessary but unavailable at the returned kind. With both
+rows represented, for all $p,q,a,b\in[0,1]$ the possible completed costs
+are three, ten and nine, with
+\begin{equation}\label{eq:app-costs}
+ \mathbb E[c]=(1-p)(3+7q)+9p,
+ \qquad \max_{\text{all raw histories}}c=10.
+\end{equation}
+In particular setting $q=0$ does not remove the represented uncertain
+history. The minimal obstruction above uses a genuinely one-row
+confirmation table, not this two-row table with its second probability
+merely set to zero. Distinguishing absence from zero mass is the purpose
+of the repair.
+
+More generally, for every finite raw prefix $h$, let $W_i(h)$ be the
+maximum represented continuation cost at its $i$th actual typed leaf.
+Then finite nonempty raw fibres give the exact scalar recurrence
+\begin{equation}\label{eq:worst-recurrence}
+ W=\max_h\left(c_h+\sum_{i\in\leaf(\theta_h)}W_i(h)\right).
+\end{equation}
+For vector costs, take maxima coordinatewise; the result is the least
+coordinatewise upper bound and need not be attained by one common path
+in all coordinates. Formula~\eqref{eq:worst-recurrence} follows by taking
+the image of all occurrence tuples in~\eqref{eq:raw-bind}. Nonempty finite
+choices attain each scalar child maximum; nullary trees use the empty
+sum. The dependence on the actual prefix and leaf state is retained.
+
+These bounds are external verification observations, not new runtime
+oracles. A declared zero-weight raw branch is not asserted to have
+positive chance, nor does the formal model certify that it is physically
+executable. The theorem states precisely what the chosen retained
+semantics can and cannot establish.
+
+\subsection{A nonidentity covered implementation family}
+Keep the full parameter class of O6 A: arbitrary finite inventories,
+finite public and private quality states, finite menus, response-dependent
+resource partitions and capability-kind changes, arbitrary normalized
+finite real or rational tables including zeros, finite cost vectors, and
+arbitrary admitted finite adaptive O4 clients. Initial qualities may have
+an arbitrary specified joint correlation. Primitive continuations can be
+any legal finite kernels, not just the deterministic terminals above.
+
+For every candidate method raw outcome $y$ at full input $x$, choose an
+independently supplied finite nonempty audit carrier $A_{x,y}$ and a
+normalized conditional law $\alpha_{x,y}$ on it. The reference retains
+rows $(y,a)$ with weights and costs
+\[
+ p_{x,y}\alpha_{x,y}(a),\qquad
+ c_{x,y}+\delta_{x,y,a},\qquad \delta_{x,y,a}\geq0.
+\]
+The public result, causal constructor, surviving quality and resource
+partition are the candidate's; optional redundant private state and
+private unary audit nodes obey the same O6 A relation and the fixed O5
+normalization. The audit may depend on the result and input; it is not
+assumed independent of all private correlations. Candidate and reference
+initializations have the O5 joint law coupling and, for an all-path
+claim, candidate initial possibility coverage.
+
+\begin{theorem}[Covered diagnostic replacement with raw zeros]
+\label{thm:application}
+For every such parameter instance, the candidate refines the reference
+under Definition~\ref{def:refinement} in every admitted finite O4 context.
+Every reference all-raw compatible predicate transfers to the candidate.
+The result allows zero outer and audit weights, changing arities and
+resource kinds, and noninvertible audit aggregation and cost decrease.
+\end{theorem}
+\begin{proof}
+At each full related input the projection $(y,a)\mapsto y$ is
+mass-balanced because $\sum_a\alpha_{x,y}(a)=1$. It preserves the
+specified public tree and related survivor states. Its candidate cost
+is at most every reference fibre cost. The carrier $A_{x,y}$ is nonempty
+for every represented $y$, including $p_{x,y}=0$; hence the projection
+is onto every candidate raw row. It is an actual native endpoint square,
+noninvertible when an audit fibre has multiple rows or overhead is
+strictly positive. Marking all rows present also gives an enriched map
+in this particular direct-projection example.
+
+Equivalently pair $(y,a)$ with $y$. The weights give the local coupling;
+the nonempty audit fibre gives possibility coverage independently of
+positive mass. The state relation restricts and reassembles on the same
+disjoint token identities. Apply Theorem~\ref{thm:contextual} with the
+specified joint initialization. Its occurrence products run the actual
+number of children on each branch, preserve all zero-row lifts, and
+satisfy the inherited O1 native equations. Thus the conclusion holds for
+all admitted contexts, not just for the numerical controller.
+\end{proof}
+This supplies a positive repair, rather than a negative example followed
+by a refusal to compare any programs. The audit expansion and direct
+projection were already part of O6 A; O7 adds their complete
+law-and-possibility interpretation, exact span criterion and explicit
+zero-sensitive preservation account. The independently specified O6
+two-stage XOR screen also falls under the repaired criterion when its
+actual outcome possibilities are covered. Equal probability laws alone
+do not certify arbitrary zero-sensitive implementation compression.
+
+\section{Hypotheses failures and preservation costs}\label{sec:ledger}
+The following ledger records supplied conditions, their uses and their
+boundary witnesses. It is a ledger for this O7 branch, not a claim that
+every global programme assumption is discharged here.
+\small
+\begin{longtable}{@{}p{0.08\linewidth}p{0.27\linewidth}p{0.29\linewidth}p{0.28\linewidth}@{}}
+\toprule
+ID & Condition and role & Proof use and source status & Failure or preservation cost\\
+\midrule
+\endhead
+F1 & Finite nonempty normalized raw fibres and finite tree positions.
+Existence. & Supplied O3--O4 scope. Finite sums, products, zero fillers,
+maxima and local representatives. & No infinite-tree, atomless-kernel,
+measurable-selection or topological-support extension follows.\\
+F2 & Zero rows are retained and marked present. Observation. & Supplied
+raw meaning; enriched coefficient distinguished from additive zero.
+Sections~\ref{sec:M} and \ref{sec:rig}. & Deleting them leaves the law
+unchanged but can invalidate all-path transfer.\\
+F3 & Full joint cost, tree and typed state retained. Observation and typing.
+& Supplied interface; $\qobs$ preserves their exact joint image.
+Theorem~\ref{thm:interpretation}. & Separate marginal possibility sets
+lose correlations needed by predicates and dependent continuation.\\
+F4 & Continuations depend only on retained typed inputs; stores persist
+between calls. Coherence. & Inherited O4 discipline; used when aggregating
+equal prefix outcomes. & A raw-label-sensitive continuation or early
+private-store erasure need not descend through $\qobs$.\\
+F5 & Addressed actual occurrences and disjoint owners. Typing and coherence.
+& Inherited O1--O4 data; grafting bijections and conditional products.
+Theorem~\ref{thm:K}. & Equal leaf values do not authorize shared samples,
+merged holes or duplicated resources.\\
+F6 & Candidate possibility coverage at every related local input and at
+initialization. Preservation. & Independently checkable strengthening.
+Theorems~\ref{thm:span} and \ref{thm:contextual}. & Coupling alone covers
+positive mass, not every zero candidate history.\\
+F7 & Same public tree comparison and related full leaves; monotone additive
+cost. Preservation. & Inherited O5 relation; paired bodies and cost sums.
+& Mere endpoint marginals or unrelated native squares do not imply open
+replacement. Exact cost law is not asserted for cost decrease.\\
+F8 & All-present enriched native comparison preserves flags. Cell scope.
+& Derived fibre equation; Proposition~\ref{prop:E-native}. & Old
+non-surjective zero insertions do not lift; the forgetful comparison is
+not full. Objects and probabilities remain.\\
+F9 & Reflection fixes endpoints, exact observations and cost-exact enriched
+maps. Reconstruction. & Derived local adjunction, Theorem~\ref{thm:reflection}.
+& No global equivalence, executable realization of canonical objects,
+or strong recovery of raw multiplicity.\\
+F10 & No hidden scheduler or extra probability law inferred from $S$.
+Semantic scope. & Definition of $M$; primary-source boundary below.
+& Not a convex powerset, free mixed-choice algebra or solution of general
+probability--nondeterminism distribution.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+The jointness warning F3 has a concrete finite witness. Fix distinct
+public trees $v,t,u$ and the same law $\delta_{(0,v)}$. The sets
+\[
+ S_1=\{(0,v),(1,t),(2,u)\},\qquad
+ S_2=\{(0,v),(2,t),(1,u)\}
+\]
+have the same cost marginal set and the same tree marginal set. Only
+$S_1$ satisfies ``every $t$ outcome costs at most one.'' Thus even the
+law plus two separate marginal possibility sets is weaker than the
+repaired joint observation.
+
+\paragraph{The exact sacrifice.}
+The repair does not weaken the finite language's type rules, alter the
+probability execution law, impose strict positivity, or replace dependent
+composition by fixed arity. It retains all typed raw branches and their
+complete joint outcome image. It sacrifices the demand that every old
+cost-exact native square induce equality of the stronger observation;
+zero-branch insertions demonstrate why that demand is inconsistent.
+Exact enriched maps are correspondingly restricted, while asymmetric
+replacement uses the separately stated candidate-covered original spans.
+It also does not restore raw multiplicity, witness-sensitive assertions
+or every native cell. Those remain in the retained presentation layer.
+
+\section{Existing theory and source credit}\label{sec:sources}
+The project dependencies have distinct roles. O1 supplies the independent
+rig/content criterion and the full retained native calculus; O2 supplies
+the ordinary-data framing; O3 supplies the common raw/law interpretation
+and already identifies zero-path information loss; O4 supplies the
+bounded dependent typed syntax; O5 supplies conditional cost couplings,
+the finite raw lift, the contextual induction and the sufficiency of
+candidate coverage; O6 A supplies the diagnostic family and audit
+implementation pattern~\cite{O1,O2,O3,O4,O5,O6}. This dossier proves the
+smaller compositional observation repair, its exact finite recognition
+and local reconstruction statements, and the explicit enriched-input
+specialization. It does not relabel the old ingredients as new results.
+
+Finite-distribution support as a finite-powerset monad morphism is an
+established elementary construction, explicitly discussed by Fritz,
+Perrone and Rezagholi~\cite{FPR}. Our possibility coordinate is a chosen
+finite superset of that support, so it can retain declared zero-weight
+outcomes; the support morphism itself is not new. Their richer
+topological results do not automatically extend the present raw-possibility
+interpretation to continuous spaces. No topological support is being
+identified with all declared raw paths.
+
+Varacca and Winskel~\cite{VW} study substantive interactions between
+probability and nondeterminism, including indexed valuations and
+alternative combination constructions. Goy and Petri\c{s}an~\cite{GP}
+use weak distributive laws to recover convex-powerset structure. Those
+are important baselines, not unsolved generic constructions that the
+simple pair $M$ displaces. Here a single fixed probability law accompanies
+an additional may-set; there is no set of scheduler-dependent laws and
+no claim of freely adjoining arbitrary nondeterministic choice while
+retaining all its expected equations. The construction is therefore not
+a counterexample to or solution of the general distributive-law
+obstructions studied there.
+
+The proofs needed for this finite specialization are given directly.
+The primary sources establish context and credit rather than hiding a
+missing hypothesis match. No exhaustive priority review has been
+performed for this exact carrier, coefficient semiring or local
+reflection; no publication novelty is claimed.
+
+\section{Acceptance crosswalk and verification status}\label{sec:acceptance}
+\begin{longtable}{@{}p{0.31\linewidth}p{0.61\linewidth}@{}}
+\toprule
+O7 requirement & Result and exact scope\\
+\midrule
+\endhead
+A boundary of the actual positive bridge &
+Theorem~\ref{thm:obstruction}: law factoring cannot decide all-raw budgets,
+even with old native cells and genuinely dependent typed composition.\\
+Exact quantifiers and failure kind &
+Every specified finite diagnostic cost pair $1\leq\ell<H$ and intermediate
+budget; every law factoring decision map. Failure is representation loss
+and observation transfer, not O1 existence or coherence.\\
+A proved positive repair &
+Proposition~\ref{prop:M}, Theorems~\ref{thm:K} and
+\ref{thm:interpretation}: $M$, the four traversal equations, $K$, all
+constructors, pure frames and natural probability forgetting.\\
+Connection to O1 &
+Theorem~\ref{thm:span} gives exact original native-span recognition;
+Theorem~\ref{thm:O1-input} independently checks enriched rig inputs and
+the strong flag-forgetting comparison.\\
+Smaller retention and controlled reconstruction &
+Proposition~\ref{prop:predicates}, Proposition~\ref{prop:exact-span} and
+Theorem~\ref{thm:reflection}: exact observation quotient, equality spans,
+restricted local reflection and generally lax reconstruction.\\
+Parameterized genuine dependence and application &
+Theorem~\ref{thm:contextual} and Theorem~\ref{thm:application}: arbitrary
+admitted finite contexts, finite diagnostic parameters, legal changing
+ownership and arity, zero weights and nonidentity covered implementations.\\
+Hypothesis to failure account &
+Section~\ref{sec:ledger}: jointness, zero presence, continuation discipline,
+coverage, finite scope and exact lost cell class are explicit.\\
+Known results not counted again &
+Section~\ref{sec:sources}: O3's old zero witness and O5's raw lift/coverage
+sufficiency are credited; the new repair is more than their repetition.\\
+\bottomrule
+\end{longtable}
+
+The supporting standard-library checks are finite regressions, not
+proofs of the parameterized theorems. The mathematical family statements
+rest on the finite-sum, occurrence-bijection and native-equation proofs
+above. The source package contains:
+\begin{itemize}
+\item \texttt{check\_repair\_structure.py} and its result file: exact rational
+checks of $M$ unit/associativity/product identities, presence semiring
+identities, raw lift fixtures, canonical collapse uniqueness and the
+noninvertible lax comparison. Its reported run has 4,442 predicates,
+including 3,125 associativity and 726 semiring predicates. Negative
+controls distinguish old from enriched ghost cells and one-sided from
+two-sided coverage.
+\item \texttt{check\_dependent\_repair.py} and its result file: 256 parameter
+instances over $\{0,1/3,1/2,1\}^4$, 1,536 completed raw histories and
+1,792 grouped assertions, using exact rational arithmetic. It compares
+separately implemented raw and law-and-possibility composition, checks
+this fixture's associativity and declared ownership partitions, and
+verifies~\eqref{eq:app-costs} and the five-versus-one zero-high witness.
+It is not a general language type checker or categorical proof assistant.
+\end{itemize}
+
+The deliverable is the requested technical TeX source with reproducible
+checks, not a claim of machine-certified mathematics. Any source syntax
+or compilation check is separate from the proof review. Worker notes,
+private review files and rendered intermediates are not required parts
+of the user-facing source package.
+
+At the explicitly finite scope, the dossier supplies a connected
+obstruction and proved positive repair meeting O7's stated form. It does
+not complete O8, reopen optional tracks, upgrade the O6 continuous case
+to finite representability, or claim that every pending obligation of
+the whole programme is already resolved. Acceptance of the integrated
+programme remains a separate review.
+
+\begin{thebibliography}{99}
+\bibitem{Contract}
+\emph{Relative Computation World Models and Open Interaction}.
+Expanded Research Contract Version 0.1 amended for O6, 1 November 2026.
+Active project source, Section O7. The O7 wording is unchanged by the O6
+boundary amendment.
+
+\bibitem{O1}
+\emph{General Independent Interaction Criterion}.
+Project O1 dossier, 1 November 2026.
+Source: \path{General_Independent_Interaction_Criterion.tex}.
+Independent augmented-rig and occurrence-displayed-content theorem;
+native cells, coherence and parameter comparisons.
+
+\bibitem{O2}
+\emph{External Framing and Representation Comparison}.
+Project O2 dossier, 1 November 2026.
+Source: \path{External_Framing_and_Representation_Comparison.tex}.
+
+\bibitem{O3}
+\emph{Plural Semantics for Result Dependent Protocols}.
+Project O3 dossier, 1 November 2026.
+Source: \path{Plural_Semantics_for_Result_Dependent_Protocols.tex}.
+Common finite fragment, raw/law comparison and zero-path boundary.
+
+\bibitem{O4}
+\emph{Typed Protocols and Bounded Higher Order Interaction}.
+Project O4 dossier, 1 November 2026.
+Source: \path{Typed_Protocols_and_Bounded_Higher_Order_Interaction.tex}.
+Dependent interfaces, ownership, substitution and ranked invocation.
+
+\bibitem{O5}
+\emph{Contextual Refinement and Controlled Recovery}.
+Project O5 dossier, 1 November 2026.
+Source: \path{Contextual_Refinement_and_Controlled_Recovery.tex}.
+Sections on raw coupling lifts, occurrence composition, vertical gluing
+and the additional coverage guarantee.
+
+\bibitem{O6}
+\emph{Applications and Boundaries of Result Dependent Interaction}.
+Project O6 casebook, 1 November 2026.
+Source: \path{Applications_and_Boundaries_of_Result_Dependent_Interaction.tex}.
+Case A and the common O1--O5 instance sheet.
+
+\bibitem{FPR}
+Tobias Fritz, Paolo Perrone and Sharwin Rezagholi.
+\emph{Probability valuations hyperspace Three monads on Top and the
+support as a morphism}.
+Mathematical Structures in Computer Science 31(8), 850--897, 2021.
+\href{https://doi.org/10.1017/S0960129521000414}{doi:10.1017/S0960129521000414}.
+\href{https://arxiv.org/abs/1910.03752}{Author preprint}.
+
+\bibitem{VW}
+Daniele Varacca and Glynn Winskel.
+\emph{Distributing probability over nondeterminism}.
+Journal version, 2006.
+\href{https://www.cl.cam.ac.uk/~gw104/distprobnd_journal.pdf}{Author-hosted primary paper}.
+
+\bibitem{GP}
+Alexandre Goy and Daniela Petri\c{s}an.
+\emph{Combining probabilistic and non-deterministic choice via weak
+distributive laws}.
+LICS 2020.
+\href{https://doi.org/10.1145/3373718.3394795}{doi:10.1145/3373718.3394795}.
+\href{https://agoy.fr/publication/goypetr-dp/}{Author publication page}.
+\end{thebibliography}
+\end{document}

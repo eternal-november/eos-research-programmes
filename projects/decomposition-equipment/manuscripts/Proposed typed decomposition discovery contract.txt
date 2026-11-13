@@ -1,0 +1,137 @@
+Proposed typed decomposition discovery contract
+
+TDD-0.1-proposed
+25 October 2026
+Review draft only
+
+1  Plain language abstract
+
+The proposed task is to take a specified system and find a useful part of it whose behavior can be understood and controlled through an explicit boundary. The boundary is not assumed to be known. The search must decide which state belongs inside, what information must cross, what actions are available, and what influence remains outside. A useful part might behave deterministically once its boundary inputs are known, or it might remain uncertain but still satisfy a safety or finite-time task requirement.
+
+The result must also assess a specified existing controller. Finding a predictable subsystem does not establish that this controller can observe enough, issue the right actions, or tolerate the remaining uncertainty. A failed candidate should explain what went wrong: missing measurements, unavailable actions, timing, an environmental assumption, or a genuine impossibility within the permitted choices. Sometimes the useful answer will be a smaller boundary; sometimes it will be a precise reason why no permitted boundary works.
+
+This is a proposal for a bounded research contract, not a claim that these capabilities exist. It starts with known finite models and a declared finite search space for each input. Data-only discovery is a separately scoped stage. The value sought is an intelligible answer to a concrete system question. Neither new mathematics nor the necessity of the full equipment framework is presumed.
+
+2  Status and the decision being requested
+
+The current authorization covers drafting and reviewing this proposal only. It adopts no criteria and authorizes no proof program, implementation, experiment, deployment, or external expenditure. Adoption and permission to execute a specified stage require separate decisions.
+
+CompletionContract.md v0.1 remains unchanged. Its structural obligations and their recorded statuses are neither weakened nor discharged here. RCA-0.1-proposed remains a separate unadopted amendment. OIR-0.1-proposed is the rejected replacement-centered proposal; retain it as history rather than replacing or silently rehabilitating it. This companion makes discovering the decomposition itself central. Preservation after replacing a component at a supplied boundary is not its organizing problem.
+
+The requested review decision is whether the scope, positive targets, evidence standards, and later specification gate below express the intended research task. Producing this document satisfies no mathematical obligation.
+
+3  The question and the answers that count
+
+For a given system, task, available controller, and permitted boundary resources, discover and assess typed decompositions exposing a task-relevant subsystem. “Typed” means that state, measurements, boundary messages, and actions have declared domains and compatibility rules. A temperature measurement, a Boolean permission, and a motor command cannot be interchanged because each happens to have two encoded values.
+
+Three judgments must remain linked but separate:
+
+• Subsystem quality. What behavior becomes predictable or otherwise well behaved when conditioned on the stated boundary information? Determinism is an anchor case, not the definition of all useful behavior.
+• Controller suitability. Can the named controller, with the stated sensing, action adapter, memory, and timing, achieve the specified task despite the admitted residual influence?
+• Boundary diagnosis. Which missing information, constraints, or architectural changes would repair a failure, and which permitted alternatives are ruled out?
+
+A returned candidate includes the selected subsystem, residual system, typed interface, actual sensing and action maps, retained coupling, assumptions, and evidence for each claimed judgment. A decomposition witness records the subsystem, residual, interface, and interconnection, together with a reconstruction map or a precisely stated behavioral comparison to the original whole. For coordinate cuts, rejoining the coordinates must recover the original joint states and transitions. If aggregation is allowed, T0 fixes the observation and direction of behavioral comparison. Discarding the residual and renaming a sufficient statistic a decomposition does not pass. Offline witness information is not automatically available to the running controller.
+
+Permitted answers are a verified candidate with its task verdict; a verified candidate whose controller is unsuitable, with a cause; a class-scoped nonexistence certificate; or an explicitly inconclusive search with its remaining candidates or unresolved assumptions. A conservative certificate failure means only that this certificate failed unless semantic failure is separately established. One bad cut does not prove that no good cut exists.
+
+The frozen objective must distinguish good candidates without rewarding a constant output or the entire system by default. It specifies task observations that must remain recoverable, nonempty relevant initial conditions, allowed subsystem sizes, boundary and processor costs, and an ordering or Pareto comparison. Whole-system and constant candidates may be controls but cannot supply the mandatory proper-subsystem success. Their exclusion must follow an explicit task/resource requirement, not a last-minute rule to favor a preferred example. “Smallest” always names its cost and search class.
+
+4  Principal model and the specification gate
+
+T0 is a mandatory specification and planning gate. Before execution, freeze one complete principal family, its task, exact queries, and test instances. The proposed starting family is finite controlled transition systems with a named finite tuple of state coordinates, finite action and disturbance alphabets, an explicit nonempty initial relation, and a finite transition relation. Nondeterministic choices represent admitted uncertainty, not hidden probabilities. The principal family varies in coordinate count or cardinalities and contains competing cuts with task-relevant residual interaction; each submitted system and its declared candidate set are finite. General checker and search claims must cover its declared parameters. Variation must change a task-relevant interaction, boundary requirement, or uncertainty, not merely make disconnected copies of one fixed toy. A single finite pilot can establish feasibility, not the complete companion package.
+
+A candidate cut selects task-relevant coordinates and assigns the rest to a residual system. The witness retains the actual joint transitions and initialization, including correlations and shared state. It does not replace them by an independently varying product unless that approximation is justified and its conservatism reported. A finite predeclared dictionary of aggregations may be added, but each must retain a proved relation to the original states and required task observations. Unknown cuts are generated from these choices; the input does not supply the winning cut.
+
+The boundary has named, directed input and output ports with finite alphabets. A boundary processor is an explicitly allowed computation converting available measurements into messages, possibly with declared finite memory. Computation outside the selected subsystem is allowed. Its observations, memory, delay, and resource charges belong in the model, not in an uncharged mathematical oracle. Raw current wires and computed messages are alternative admissible interface classes; neither is universally more physically legitimate. The gate must explain the task-based reason for any restriction. Ports cannot reveal future outputs or an unobserved disturbance choice. Revealing the entire residual must be identified and costed as such, not accepted automatically as useful isolation. A current message must be computable from information actually available at its declared time.
+
+The specification fixes the order of measurement, processor update, controller decision, actuation, and environmental transition. It states whether a value is current, delayed, or predicted; when disturbances occur; whether actions are enabled; and how failures and deadlocks are treated. It also lists residual pathways, shared resources, initialization correlations, and environmental constraints. Constraints require an independent reason or verification obligation. They cannot be defined as precisely the executions on which the desired answer holds.
+
+The existing controller is supplied as a finite-state machine with an observation alphabet and command alphabet. Permitted sensing and action adapters are fixed before the search. An adapter may translate a command but cannot silently synthesize a different policy or read hidden state. The comparison records both the controller's specified guarantee and the guarantee actually established after connection. The controller need not fit every well-behaved subsystem.
+
+The mandatory property coverage is conditional deterministic update and at least one task property that allows genuine nondeterminism, such as invariant safety with a bounded reach-avoid requirement. Conditional deterministic update means that the current local state, admitted action, and current boundary message determine a unique next local state across every allowed residual choice. It does not mean that the subsystem evolves independently of its environment. Enabledness and initialization are checked separately. Safety forbids designated bad states; bounded reach-avoid requires reaching a stated goal within a fixed horizon while avoiding bad states. Unbounded eventual success, fairness, stochastic risk, continuous stability, and empirical adequacy are excluded unless explicitly added through an amendment.
+
+T0 freezes the admissible types, cut grammar, processor/adapter classes, bounds and costs, task predicates, observation assumptions, search objective, semantic checker, baseline access, and exact theorem claims. It must include a meaningful fully specified principal model beyond the small example below, with real residual uncertainty and competing cuts. Approval of an indefinite menu of future models does not pass. Computational limits and mathematical scope are recorded separately. The gate may choose a smaller tractable instance; it may not conceal that restriction inside a claim about arbitrary systems.
+
+5  What model based and data based claims mean
+
+The first mandatory stage may use a complete known transition model. It still discovers a decomposition: knowing the system does not mean knowing the useful cut. Search soundness means that every returned certificate establishes its stated property under the frozen semantics. Search completeness means that every qualifying candidate in the declared finite class is found or accounted for. A complete search with an exact semantic checker can certify that this class has no solution. A search over sufficient certificates alone can certify only that none of those certificates exists, unless completeness of the certificate language is also proved.
+
+Data-only discovery is not an implicit universal identification theorem. Before such a stage, define the model class, observation and intervention maps, noise assumptions, data compatibility test, and nonempty set Models(D) of models consistent with data D. An inconsistent model class is a failed assumption check, not a vacuous positive result. The data stage must state whether it seeks a possible solution for one compatible model or a robust implementable solution across all of them.
+
+For a robust answer, the required order is:
+
+There exists one permitted observable interface and implementable controller adapter, including any runtime selection rule, such that every model in Models(D) has an admissible decomposition realizing that same runtime design, and every execution allowed by that model and the declared assumptions satisfies the stated task and interface claims with the supplied controller.
+
+The common design uses the same available observations, port meanings, timing, and implementation across models. Hidden factorizations and proof witnesses may differ between models under the correspondence fixed at T0; the claim need not impose identical latent coordinates. Such witnesses cannot provide runtime access to the unknown true model, and any local state required by the implementation must be obtainable from its permitted information. “Every compatible model has some solution” is weaker: its different solutions may be impossible to choose or implement from the data. Where internal coordinates are unobserved, the gate must specify how the common design refers to them operationally; merely renaming different hidden states does not establish a common subsystem.
+
+Unique identification of the whole system is sufficient in some settings but is not automatically necessary for answering this task. Conversely, successful fitting of observed traces is not robust discovery. A model pair consistent with the data can refute a candidate when it requires incompatible interface or controller behavior. Such a pair proves global nonexistence only if it rules out every allowed common design. A proposed extra measurement or intervention is a recommendation, not authorization to collect data.
+
+6  Required result package
+
+T1  Operational meaning and candidate assessment
+
+Provide a precise candidate representation and an independently defined assembly semantics. Prove its stated reconstruction or behavioral comparison with the original system, including initialization, observations, action availability, transition timing, and residual coupling. Every interaction used by the subsystem guarantee must be exposed at the boundary or covered by an explicit, discharged residual assumption. An offline witness cannot hide an extra runtime channel. Distinguish autonomous local closure, response determined only after boundary inputs are supplied, and the connected controller guarantee. Give a sound test for conditional determinism and an exact finite-state assessment of the specified controller against the frozen task property, or clearly separate an exact semantic test from a conservative abstraction test. The specification must make visible how nondeterminism remains after a cut. A successful local transition table alone does not prove controller suitability.
+
+T2  Discovery with an explicit search boundary
+
+Give an effective search procedure for the finite class frozen at T0, with a termination argument, soundness, and a precise completeness or incompleteness statement. Exhaustive enumeration is an acceptable baseline and may be the appropriate initial algorithm. If pruning or abstraction is used, prove which solutions it preserves. Record candidate counts, rejected classes, ties, and cost comparisons where computed. Do not advertise a universal algorithm for inferring arbitrary hidden decompositions from arbitrary observations. Parameterized proofs may cover every finite input satisfying the declared grammar without promising practical scaling.
+
+T3  Positive discovery and controller use
+
+The package must contain genuine positive discovery on the principal parameterized family: without being given the winning boundary, find a proper task-relevant subsystem, exhibit its interface, and establish a useful task outcome with the supplied controller. State the parameter range for which the positive result holds. Also assess a positive nondeterministic case rather than making every example deterministic by hiding uncertainty. These may be closely related members of the principal family. Show which rejected alternatives lose relevant information or exceed resources. A known controller theorem may supply the guarantee once its hypotheses are checked. New controller synthesis is not required.
+
+The result must answer the concrete design question, not just report that some relation exists. Its evidence includes the controller-visible signals, commands, residual influences, resulting guarantee, and costs. Any claim of practical improvement needs a declared measure and comparison. A correct but costly method may have explanatory value; it does not automatically have practical value. Failure of the positive target is a failed or open obligation, not success through an unrelated impossibility example.
+
+T4  Missing boundary information and obstruction
+
+Provide at least one substantive failure diagnosis linked to the same task family and a verified repair within a separately identified permitted alternative, or a proved class-scoped impossibility where no repair is allowed. Distinguish too little observation, unavailable control, uncontrolled residual influence, adverse timing, insufficient data, and a restrictive certificate language. State what changes under the repair and what does not. Compare added sensing, computed messages, larger local state, or a justified environmental constraint when these are legitimate alternatives.
+
+An exact minimal repair claim needs a lower bound or exhaustive comparison over the frozen repair class. Otherwise call it sufficient, not minimal. A counterexample to one candidate may be valuable without being a classification theorem. The required analysis must connect failure and repair to the search outcome; a collection of unrelated tiny counterexamples does not pass.
+
+T5  Fair comparison and necessary structure
+
+Compare against direct finite-state projection/search and controller verification, and the strongest applicable established abstraction or feedback-refinement method. Baselines receive the same original model or data, processor choices, correlations, timing, costs, and target. They may compute boundary predicates, retain useful state, or use standard abstractions whenever the proposed method may. Compare the entire task, including finding the cut, rather than contrasting a discovery method with a baseline artificially given no search capability.
+
+Give explicit translations or precise reasons why one baseline's assumptions do not match. Credit known methods, adaptations, and implementation separately. Determine the lightest structure actually needed: typed records and relations, a witnessed calculus, or stronger interface-transport machinery. Full equipment structure is not required merely because the original structural contract studies it. If a stronger structure is claimed useful, identify the exact operation or guarantee it supplies and verify its laws. “Equipment” is not a substitute for checking sensing or timing. Honest parity, or a finding that standard methods already solve the task, is an admissible comparative result.
+
+T6  Evidence and independent acceptance
+
+Maintain a claim ledger with exact assumptions, quantifiers, sources, artifacts, and statuses. P is a complete mathematical proof with no central gap left to the reviewer. L is an exact Lean theorem with source, dependency closure, and axiom report. C is executable evidence with its finite domain and independent or redundant checking. X is a fully specified counterexample with checked types, transitions, and scope analysis. Finite tests do not establish unrestricted theorems. Existing results may be imported only at their actual proved scope.
+
+P supports general soundness/completeness claims; finite instances and failures receive inspectable certificates and, if implementation is authorized, independently checked C evidence. X supports negative conclusions. L is optional here unless a later bounded formalization is explicitly adopted; this proposal imposes no automatic full Lean program. Reproduction records include source versions, exact domains, dependencies, and trust assumptions. Claimed computations must actually run; hand reasoning is labeled as proof, not benchmark evidence.
+
+A competent nonauthor reviewer must inspect the actual arguments and artifacts, reconstruct the critical positive reasoning, challenge the broadest quantifiers, and test the strongest failure claim. Scope review separately asks whether an unknown useful cut was really found, whether the controller can implement it, and whether the comparison is fair. Every clause and material defect receives an explicit disposition. Agent-managed review is eligible with provenance and correlated-model limitations disclosed; external human certification is not implied.
+
+7  Small interface sensitivity example
+
+This example is an anchor, not the principal research result. A state is (p,x,y), with p equal to before, past, or crashed and x,y Boolean. All twelve states are in the model. On each step x becomes not x and y may become either Boolean after the action. At before, advance sets p to past if the current x XOR y is one, otherwise to crashed. Wait preserves p. Past and crashed are absorbing for p; sensors still evolve. XOR means that the two current sensor values differ.
+
+For cuts retaining p, consider local state p, (p,x), (p,y), or (p,x,y). With at most one raw current external sensor wire and deterministic local update, p alone fails: neither x nor y alone determines the current XOR. The cut (p,x) succeeds using y at its boundary. Cuts retaining y fail this determinism test because the next y remains arbitrary. These conclusions quantify over the stated transitions and all twelve states, not a favorable initial sample.
+
+If a processor may instead send the current one-bit message b = x XOR y, p alone succeeds and has smaller local state. The processor must access both current sensors before the action; its resource cost is not zero by implication. This is a different admissible interface class, not evidence that raw wiring is inherently necessary.
+
+For this illustration, retained x is available as a current local measurement. In the raw-wire cut (p,x), an adapter inside the subsystem computes b from local x and incoming y; in the p-only cut, the external processor supplies b. Thus the comparison changes the placement of computation, not the controller policy or the need to access both sensors. From a task initial set with p = before, the controller “advance when b is one, otherwise wait” avoids crashing and advances on an available opportunity. There is no guaranteed eventual opportunity: adversarial y can prevent it forever. Any finite-time or eventual-progress claim needs its own explicit assumption and check. The example shows why boundary type, sensing, timing, and target property affect the discovered answer. It establishes neither novelty nor a need for the full equipment framework.
+
+8  Relationship to the original structural program
+
+A and B may supply typed witnesses, occurrences, and presentation comparison if an operational interpretation is proved. Their existing refinement of a presentation does not automatically discover a subsystem or change its physical implementation. C supplies useful separation examples and comparison discipline; graph labels are not physical sensors without an observation map. D may support boundary transport, but only after the operational maps and hypotheses are identified.
+
+E retains its original equipment obligations unchanged. A finding that TDD needs lighter structure neither discharges nor deletes them. F and I3 are not prerequisites by default. G1 and G2 are relevant to distinguishing observations and identifying retained information; G3 remains its original synthetic application requirement. I2 and I5 may support compositional observation and information repair, while I4 may matter if cut/substitution compatibility is actually used. I1 is not activated merely by assembling this proposal. H supplies compatible audit principles. Import exact accepted claims or mark a dependency conditional; do not activate the entire A–I program to make this companion sound complete.
+
+9  Planning stopping and final decisions
+
+Before execution, the T0 packet must include the concrete model and query, finite search/repair classes, positive targets, strongest baselines, dependency ledger, evidence plan, and a bounded next-stage authorization request. A nonauthor should identify the cheapest apparently compliant solution and check whether it genuinely answers the task. Do not exclude a cheap solution merely because it is already known.
+
+No person-hour forecast is asserted here. After specification and source review, prepare an evidence-based estimate separating imported results, new proof obligations, finite checking, engineering, and independent review. State uncertainty and high-risk dependencies; charge shared work once. Neither the rejected OIR estimate nor the historical structural estimate is an automatic budget for TDD.
+
+At each authorized stage, stop at the specified deliverable and review gate. The final packet contains the discovered candidates, controller verdicts, failure/repair analysis, class-scoped search conclusion, comparison, evidence ledger, and independent review. Report correctness, task adequacy, practical value, and novelty separately. Technical acceptance of this companion alone requires T0–T6, including the positive target; a proved nonexistence result for an individual query is useful without satisfying that positive package by itself. Practical value remains a reviewed outcome, not a promise.
+
+An unresolved mandatory target remains OPEN or FAILED. A stopped or incomplete search reports its exact coverage, not “no decomposition.” Once the approved comparison establishes known-method parity or a bounded obstruction, do not continue hunting for novelty or add unrelated applications to rescue significance. Material changes to models, objectives, observation powers, controller class, bounds, or acceptance floors require a versioned amendment before dependent execution. Preserve failed claims and rejected alternatives. The present stopping condition is a reviewed draft for the user's decision, not research execution.
+
+Primary comparison sources
+
+Reissig, Weber, and Rungger, Feedback Refinement Relations for the Synthesis of Symbolic Controllers: https://arxiv.org/abs/1503.03715. The comparison must check input availability, successor matching, and controller-transfer hypotheses, rather than treating state aggregation alone as sufficient. This is a baseline for assessment and transfer, not a claim that it already solves every permitted decomposition search.
+
+van Waarde, Eising, Trentelman, and Camlibel, Data informativity: a new perspective on data-driven analysis and control: https://arxiv.org/abs/1908.00468. This motivates separating information sufficient for a task from unique whole-system identification. Its particular results are not automatically theorems for the finite model class proposed here.
+
+Celi and Pasqualetti, Data-driven Meets Geometric Control: Zero Dynamics, Subspace Stabilization, and Malicious Attacks: https://arxiv.org/abs/2201.03656. Its data-derived invariant-subspace results for linear systems are relevant prior art when broader subsystem-discovery claims are considered, not evidence of unrestricted discovery from arbitrary data. Exact imported statements and assumptions belong in T0 and the claim ledger.

@@ -1,0 +1,44 @@
+import WitnessedDecompositions.Dynamic.Bridge
+import audit.dynamic_independent.BridgeRegressions
+import audit.dynamic_independent.OriginalOccurrenceRegressions
+
+open WitnessedDecompositions WitnessedDecompositions.Dynamic
+#print axioms Graph.isIso_iff_bijective
+#print axioms Assignment.MapOp.calculus
+#print axioms Assignment.compatible_joinFamily
+#print axioms Assignment.calculus
+#print axioms Assignment.compatibleFamilyEquiv
+#print axioms Assignment.operationEquiv
+#print axioms Assignment.Op.identity_exact
+#print axioms Assignment.nullary_operation_nonempty_iff
+#print axioms Assignment.nullary_operation_subsingleton
+#print axioms Assignment.nullary_operation_map_eq
+#print axioms Assignment.nullary_exact_iff_leg
+#print axioms Assignment.freeExtend
+#print axioms Assignment.freeHomEquiv
+#print axioms Assignment.equationMaps_iff_satisfies
+#print axioms Assignment.presentedExtend
+#print axioms Assignment.projection_presentedExtend
+#print axioms Assignment.descends_iff
+#print axioms Assignment.freeRefinementFunctor
+#print axioms Assignment.presentedRefinementFunctor
+
+#print axioms DynamicIndependent.OriginalOccurrences.different_occurrences
+#print axioms DynamicIndependent.Tuples.empty_states_not_collapsed
+#print axioms DynamicIndependent.Tuples.empty_events_not_collapsed
+#print axioms DynamicIndependent.Tuples.unequal_legs_have_no_nullary
+#print axioms DynamicIndependent.Tuples.valid_unique_but_nonexact
+#print axioms DynamicIndependent.Tuples.actual_events_distinguish_maps
+#print axioms DynamicIndependent.Target.different_repeated_occurrences
+#print axioms DynamicIndependent.Target.actual_calc_associative
+#print axioms DynamicIndependent.Target.all_nullary_retains_state
+#print axioms DynamicIndependent.Target.all_nullary_retains_event
+#print axioms DynamicIndependent.Target.target_contains_nonexact_nullary
+#print axioms DynamicIndependent.Bridge.equal_total_operation_does_not_erase_forest
+#print axioms DynamicIndependent.Bridge.nonempty_equation_satisfied
+#print axioms DynamicIndependent.Bridge.actual_original_free_extension
+#print axioms DynamicIndependent.Bridge.actual_original_presented_extension
+#print axioms DynamicIndependent.Bridge.actual_projection_factorization
+#print axioms DynamicIndependent.Bridge.actual_original_refinement_functor
+#print axioms DynamicIndependent.Bridge.event_permutation_equation_rejected
+#print axioms DynamicIndependent.Bridge.no_descent_from_equal_states_alone

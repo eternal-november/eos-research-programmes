@@ -1,0 +1,11 @@
+--- original_verify_i5.py
++++ verify_i5.py
+@@ -184,7 +184,7 @@
+  return {'unary_local_blocks':[blocks(P),blocks(Q)],'combined_blocks':blocks(R),'combined_C_blocks':blocks(cstep(R,m)),'N2_C_traces':cuts,'scope':'local optimum counterexample is unary N1 ONLY; N2 local seeds not stable'}
+ 
+ def main():
+- pins={f:hashlib.sha256((ROOT/f).read_bytes()).hexdigest() for f in ['concrete_model_gate.md','monoid_repair_theorem.md','repair_calculus_draft.md','profile_schemata_draft.md','modular_repair_draft.md']}
++ pins={f:hashlib.sha256((ROOT/f).read_bytes()).hexdigest() for f in ['i5_joint_repair_theorem.md', 'concrete_model_gate.md', 'model_and_core_comparison.md', 'monoid_repair_theorem.md', 'profile_schemata_theorem.md', 'repair_calculus.md', 'modular_repair_theorem.md', 'baseline_comparison.md']}
+  fs,m,n=monoid(4)
+  result={'scope':'finite checks only; active-size templates are not all old graph profiles','source_pins':pins,'extra':extra_checks(),'modular_control':modular_control(),'scalar':[scalar(k) for k in range(4,65)],'scalar_N2':typed_n2(m,canon(i==0 for _,i,_ in fs)),'scalar_N2_C_only':typed_n2(m,canon(i==0 for _,i,_ in fs),False),'channels':channels(),'diagnostics':diagnostics(),'group_N2':typed_n2([[(a+b)%4 for b in range(4)] for a in range(4)],[0,1,0,1])}
+  assert result['scalar_N2']['combined_trace'][-1]==[10,10,100]

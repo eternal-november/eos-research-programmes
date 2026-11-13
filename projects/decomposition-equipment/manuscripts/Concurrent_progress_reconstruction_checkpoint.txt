@@ -1,0 +1,111 @@
+Concurrent progress and reconstruction checkpoint
+31 October 2026
+
+The reuse result
+
+The concurrency test succeeds in a restricted but genuinely concurrent domain. The previous intrinsic P/G service-tail certificate can be reused when workers contend for ordered mutex resources under an implemented cyclic scheduler. The new work is the resource-sensitive interface, the scheduler progress lemma, and the actual reconstruction comparison connecting that interface to an assembled network. It is not a general theorem about arbitrary shared-state concurrency.
+
+Two results must remain separate. Exact reconstruction preserves an admitted context's trace law, including its failures and nontermination. The ordered-lock theorem independently proves almost-sure completion for a particular context. Combining them transports that proved completion result to positive realizations preserving the richer interface. Neither reconstruction nor a formal canonical factorization creates progress by itself.
+
+The discovery-assumptions line remains deferred. This checkpoint concerns the authorized test of framework reuse.
+
+Why the old interface fails
+
+Take two workers and two mutexes, L and R. Each isolated invocation performs five successful commands: acquire its first lock, acquire its second, release the second, release the first, and return done. Every isolated duration/output law is therefore identical: five transitions and done with probability one.
+
+Use the same alternating scheduler for two networks. If both workers acquire L before R, one waits while the other finishes, then completes itself. If the second instead acquires R before L, the first two ticks leave each holding one lock and requesting the other's. Every later visit reports busy. Both workers are scheduled infinitely often, yet neither finishes.
+
+This distinguishes networks that the old completed-invocation interface identifies. Resource effects during an invocation cannot be discarded if these contexts are to be preserved. It is interface insufficiency, not mission impossibility: serializing whole invocations would avoid this deadlock if serialization is allowed.
+
+A constructive richer interface
+
+The replacement data records controlled finite prefixes: declared preparation and entry, supplied inputs, pending action, requested resource, grant or busy response, ownership and releases, completion and typed reentry, and primitive tick cost. Relevant shared-state observations must also enter the boundary; they are not implicitly permitted by the autonomous-worker theorem.
+
+For each deterministic intervention word, retain its exact output-prefix probabilities p. Causal consistency and normalization give, at every positive-probability local history h,
+
+    K(o | h,u) = p(h,(u,o)) / p(h).
+
+The denominator concerns the controlled experiment, not observational conditioning on a policy's chosen inputs. The state consisting of the accumulated local history, updated using K, is a positive countable-state realization. Unreachable zero-probability histories may be assigned arbitrary normalized continuations without changing the specified experiments.
+
+Thus reconstruction is constructive at the mathematical level. It does not assert finite data, efficient identification, computable probabilities, or an efficient sampler. Full controlled-prefix data is sufficient, not claimed minimally necessary for every particular mission. Ordinary observations under one policy need not identify the missing interventions.
+
+The conditional boundary matters
+
+For each admitted initial preparation, contextual substitution requires the next worker output, conditional on the retained interaction history AND the context's actual current operational state, to have law K given that worker's local history and input. Current context state includes private manager or scheduler memory. The context's own next-step law must likewise be its specified kernel given the retained record, without unmodeled dependence on hidden worker state. Neither condition includes unrevealed future worker tapes.
+
+Visible-history conditioning alone is insufficient. Let a context privately hold a fair bit Z. A correlated worker first emits Z, after a fixed input; the context then supplies Z as its next visible input. The first output is marginally fair. Replacing it by an independent fair output preserves that marginal but destroys the visible output/input correlation. Conditioning on the current context state exposes the defect immediately.
+
+Private initial randomness and innovations independent across workers and of the context, with all external influence entering through the specified boundary, give a sufficient implementation discipline for the stronger closure condition. Correlated implementations require an appropriate retained common preparation/state or a direct closure proof. Local cylinders cannot recover an unrecorded shared coupling.
+
+Under these conditions, induction on joint prefixes, including retained context states, proves exact asynchronous trace equality. The same context kernel chooses the next interaction; both worker realizations then use K. Countable summation establishes the next-prefix equality. Finite cylinders determine the full sequence law, so completion, deadlock, infinite execution, and measurable trace costs are preserved. Recoverable blocking retains the context's actual transition rules, rather than being silently turned into permanent failure. This theorem does not assume fairness or termination.
+
+The quantitative progress theorem
+
+The core protocol has W fixed worker slots, finitely many ordered mutexes, finitely many episode modes, and possibly countably infinite entry and local-state spaces. Acquisition is strictly above every currently held resource. Finishing releases all locks; terminal slots hold none. Mutex unavailability is the only source of blocking. Other workers may delay a worker but do not alter its autonomous local state or randomness.
+
+The scheduler visits slots cyclically. Each visit costs one tick and either skips, reports busy without advancing intrinsic randomness, or performs one successful primitive transition. No hidden unbounded computation occurs within a tick.
+
+Let L be an episode's intrinsic number of successful transitions when requests are granted immediately. At every actual entry (i,x), conditional on the revealed past, assume finite v_i(x) >= 1 and
+
+    Pr(L > t | entry and past) <= b_i(t) v_i(x),  b_i(t) -> 0;
+    Pr(next mode = j | entry and past) <= p_ij;
+    E[1_next=j v_j(Y) | entry and past] <= g_ij v_i(x).
+
+Write P=(p_ij), G=(g_ij), and require rho(P)<1. These are intrinsic path bounds, not laws selected by conditioning on actual completion. Nonanticipating availability decisions reveal a prefix of the latent intrinsic path. A successor that never actually occurs contributes zero; this avoids completion-selection bias.
+
+The deterministic addition is precise: every unfinished configuration has a runnable worker. Otherwise following lock-owner edges produces a cycle along which lock ranks strictly increase, an impossibility. Hence every W consecutive ticks before completion contain at least ONE successful local transition globally. This does not promise service to every worker in that interval.
+
+For worker a starting in mode i_a with potential v_a, global completion time T satisfies, for integers m,t >= 1,
+
+    Pr(T > W^2 m t)
+      <= sum_a (P^m 1)_[i_a]
+         + sum_a v_a [sum_(k=0)^(m-1) G^k b(t)]_[i_a].
+
+Here 1 is the all-ones column and b(t) contains the local tails. The first term bounds more than m actual entries; the second bounds an excessively long intrinsic episode among those entries. Outside these events, total intrinsic work is at most Wmt. One global success per W ticks completes that work within W^2mt ticks.
+
+First send t to infinity for fixed m, then m to infinity. Completion follows almost surely even when rho(G)>=1. Starvation and permanent lock retention are consequently ruled out, rather than excluded by a fairness oracle or a global termination assumption. Infinite expected duration is allowed. If additionally E[L|entry]<=c_i v_i(x) and rho(G)<1, then
+
+    E[T] <= W sum_a v_a [(I-G)^(-1)c]_[i_a].
+
+An unbounded example
+
+An episode acquires an ordered resource subset, holds it while a nearest-neighbor walk descends from entry n to zero, then releases and returns or terminates. Local states and entries are unbounded. Overlapping subsets create real contention; disjoint subsets permit interleaved work. This is not whole-invocation serialization.
+
+For the symmetric walk, the service tail is bounded by a constant times n/sqrt(t), after lock overhead, while mean service is infinite. Two alternating modes with return probability 1/2 and entry doubling have rho(P)=1/2 and rho(G)=1. The theorem proves almost-sure completion for every finite worker population and admitted ordered resource assignment. This concretely uses the P/G separation instead of silently strengthening almost-sure progress to finite expected time.
+
+The actual categorical comparison
+
+The bridge now supplies actual factorization data. Fix a preparation, finite horizon, intervention word, and the same context. Let X contain original finite global paths, including hidden worker states, and H contain corresponding history-realized paths. Both retain context states and event marks. These carriers are countable; infinite hidden paths are not treated as a countable matrix object.
+
+A deterministic map q:X->H forgets hidden worker states and accumulates local interaction histories. The joint-prefix proof gives
+
+    q_* p_X^e = p_H^e,       b_H^s q = b_X^s,
+
+for every preparation experiment e and visible-prefix indicator test s, including the mass test. Consequently X and H realize one actual joint cylinder, and q is an arrow in its factorization category Fact(r). The joint law was derived from local kernels and the declared context, not postulated as an independent product of marginals.
+
+Applying the established source-changing normalization theorem to Jq, where J is the free-Isbell embedding, yields the corresponding commuting comparison-of-spans cell. The operational map is q; canonical Isbell apexes and comparison legs are not thereby stochastic implementations. This is a concrete asynchronous instance, not a universal concurrency contract.
+
+Rebracketing retains the SAME global scheduler, manager, and tick granularity. The path map commutes with that rebracketing and with prefix restriction. Nested round-robin generally defines a different context and is not licensed by categorical coherence.
+
+Position and limits
+
+Concurrency progress and progress-preserving refinement are established subjects. Hart and Sharir study fair probabilistic scheduling [1]; TaDA Live handles blocking through environmental liveness obligations [2]; RGSim-T establishes termination-preserving refinement congruent under parallel composition [3]; Lilo develops relational concurrent liveness reasoning [4]. Probabilistic termination theory already distinguishes bounded expected time from almost-sure and tail guarantees [5].
+
+The project-level result is the explicit reuse path through a richer interface and an actual joint-cylinder comparison. No publication-novelty claim is made. Arbitrary shared-data mutation, spawning, external arrivals, owner failures, unordered acquisition, and changed schedulers remain outside this core. General doctrine-level gluing, minimal interfaces, and efficient inference remain open rather than hidden inside an admission condition.
+
+Primary references
+
+[1] Hart and Sharir, Concurrent Probabilistic Programs, or How to Schedule if You Must, 1985.
+https://math.huji.ac.il/~hart/papers/sched.pdf
+
+[2] D'Osualdo, Farzan, Gardner and Sutherland, TaDA Live, 2021.
+https://arxiv.org/abs/1901.05750
+
+[3] Liang, Feng and Shao, Compositional Verification of Termination-Preserving Refinement of Concurrent Programs, 2014.
+https://flint.cs.yale.edu/flint/publications/rgsimt.html
+
+[4] Lee et al., Lilo A Higher-Order Relational Concurrent Separation Logic for Liveness, 2025.
+https://iris-project.org/pdfs/2025-oopsla-lilo.pdf
+
+[5] Chatterjee and Fu, Termination of Nondeterministic Recursive Probabilistic Programs, 2017.
+https://arxiv.org/abs/1701.02944

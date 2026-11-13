@@ -1,0 +1,260 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 1pt}
+\setlist{nosep,leftmargin=*}
+\newcommand{\sn}[1]{\textsuperscript{[#1]}}
+\newcommand{\sourcepath}[1]{{\small\path{#1}}}
+\title{Finding useful structure in an unfamiliar environment}
+\date{2 November 2026}
+\begin{document}
+\maketitle
+\vspace{-1.5em}
+
+Imagine a repair robot stranded with an unfamiliar workshop. It needs to make a replacement connector before its remaining power window closes. The controls work, but the manual is missing. Some commands interfere with one another. Some effects arrive late. Status messages do not always say which operation produced them.
+
+The robot does not need to reverse-engineer every circuit. It needs to discover a few dependable capabilities: \emph{these operations can run together; this signal predicts a later event; this assembly can be used as a tool if these conditions hold.} Once it has those capabilities, it can plan in terms of useful operations rather than treating every button press as a fresh mystery.
+
+That is the motivating purpose of typed decomposition: turning an unfamiliar environment into understandable, reusable pieces \emph{without inventing independence, predictability or reliability that the evidence does not support}. Here, ``semantics'' means operational meaning: what an operation can do, what information passes between pieces, and when a promised behavior survives connection to the rest of the world.
+
+The workshop is an imagined setting, not a demonstrated robot. The research contains smaller mathematical studies that isolate real parts of this challenge: learning a useful delayed response, discovering hidden resource sharing, acting despite anonymous observations, and reorganizing a learned controller without losing its guarantee. They are separate studies, not one proved robot platform. Together with the decomposition calculus, they show what a disciplined route from observations to reusable tools can look like.
+
+\section{Discovering a predictor rather than explaining the entire machine}
+
+In the workshop story, picture a two-way gate that must send the new connector through the correct finishing route. It must be set before the connector arrives: the wrong choice spoils the operation, while waiting misses the control window. A signal identifies the required route, but arrives too late for the actuator to respond. The robot would gain a new capability if it could predict that signal from earlier readings and position the gate in time. The mathematical study below represents this kind of challenge by a chosen control bit $p$ and a later load bit $d$, with a supplied success condition $p=d$; it does not assume a particular gate mechanism.
+
+The uncertain-coupling study provides a precise, simplified version of that problem. An agent can observe binary ports: each reports either zero or one. Some values are available early; another value, called the load, arrives later. The hidden sources, their overlaps and the exact delays are unknown. The agent has safe calibration access and a known rule describing which control value must match the later load. What it needs to learn is the relation that makes a timely control choice possible.\sn{15}
+
+Rather than measuring one enormous table of everything at once, it probes small groups of ports. A successful calibration reveals a sequence of local rules: the next register equals the previous register, toggled when a particular input bit is one. At the endpoint, another probe reveals that the last register agrees with the delayed load.
+
+For a two-stage instance, the learned rules can be written
+\[
+ r_1=r_0\mathbin{\mathrm{XOR}}z_1,\qquad
+ r_2=r_1\mathbin{\mathrm{XOR}}z_2,\qquad d=r_2.
+\]
+XOR simply means ``toggle for each one'': zero ones or two ones leave a bit unchanged; one one flips it. The agent combines the rules and obtains
+\[
+ d=r_0\mathbin{\mathrm{XOR}}z_1\mathbin{\mathrm{XOR}}z_2.
+\]
+It can now calculate the later value from early readings. If those readings are $1,1,0$, it predicts $d=0$. It need not wait for either intermediate register or the delayed load before computing its control value.
+
+The important point is that the chain equations were \emph{not handed to the learner}. It derives them from the allowed local observations, checks that they support the combined implication, and can also search the permitted observation slots for a useful delay. A delay is useful only if it leaves enough time to compute and deliver the control. Discovering a mathematical relation too late to use is not successful task completion.
+
+This produces a genuine new capability within the model: a previously uncertain part of the environment can be treated as a \emph{predictable delayed response}. The agent has found something tool-like. It can package the behavior as ``read these early ports, compute this value, and use it at this later slot,'' together with the evidence and timing conditions that justify the package.
+
+The result is conditional but not empty. The study assumes a stationary, bounded-memory binary-linear source class, suitable randomness, reliable permitted measurements, safe isolation and a supplied physical control rule. Within that class, finite sampling has an explicit error allowance, and the theorem charges calibration, computation and service time. The unknown local relations and useful delay are learned; the validity of the whole physical model is not. This is a concrete discovery result inside a declared class, rather than a claim that equations alone uncover arbitrary machinery.
+
+\section{A useful subsystem need not reveal its hidden mechanism}
+
+After finding that predictor, should the robot keep investigating until it knows where every signal originates? Not necessarily. If all remaining explanations agree on the behavior needed for the job, further identification may add cost without changing the action.
+
+The learned-response example makes this distinction unusually sharp. Two physical sources can give the same local probe laws and support the same successful prediction, while differing in a correlation among the early inputs. In one, two inputs are independent; in another, those inputs are always equal. The selected local tests do not resolve the difference. Nevertheless, the learned chain still predicts the delayed load in both sources.
+
+For the original task, the uncertainty is harmless. For a new task that asks whether those two early inputs differ, it matters immediately. The right conclusion is neither ``the environment has been completely understood'' nor ``nothing useful has been learned.'' It is: \emph{this interface is understood well enough for this family of uses.}\sn{15}
+
+That is why the mathematical account attaches an explicit collection of allowed preparations, observations and tests to an abstraction. A subsystem's meaning is not just a name or a compact state vector. It is the behavior that those tests can distinguish. In the associated comparison construction, different hidden realizations are shown to give the same specified external answers. The hidden realizations need not themselves be identical or recoverable.\sn{18}
+
+For the workshop robot, this is the difference between knowing how a tool works internally and knowing enough to use it correctly. A borrowed tool can be useful under a known load and timing contract even when its electronics are unfamiliar. But permission to use it in one way is not permission to expose a new port, combine two previously separate tests, or rely on a response that the contract did not cover.
+
+There is a second payoff. The theory can tell the agent when more of the \emph{same kind} of data will not solve its problem. In the uncertain-coupling study, two sources agree on every permitted two-coordinate calibration but require different zero-risk route choices. No amount of those permitted observations distinguishes them. The obstacle is not a lazy learner or an insufficiently large database. The observation language lacks the needed joint information.
+
+That changes a practical decision. Instead of repeating ineffective probes, the agent must obtain a richer permitted measurement, choose a task whose answer is already determined, or accept the stated limitation. More learning is useful when it eliminates a distinction that affects the goal, not merely when it produces more records.
+
+\section{What makes a discovered chunk into a reusable tool}
+
+Finding a pattern once is not the same as acquiring a reusable operation. The robot needs to know what inputs the operation accepts, which state must be present beforehand, which results it promises, and what surrounding activity can invalidate that promise.
+
+This is the role of \emph{types} and \emph{interfaces}. They make those boundaries explicit. Two pieces that look alike may require different incoming conditions or expose different outgoing information. Connecting them because their diagrams have the same shape is not enough. A typed connection must match the relevant interfaces.
+
+A \emph{decomposition witness} is the retained explanation of why the proposed pieces belong together as a description of this whole. In a graph model it records the whole and the actual ordered partition. In a relational model it retains compatible choices at the shared boundaries. In the learned-response example, the operational certificate records the measured relations and their dependencies, and the later controller uses actual sensor readings. A representative model of the hidden source is not silently substituted for the real source.\sn{1,2,15,19}
+
+Why retain that explanation? Consider a plausible shortcut: the robot stores only ``tool produces the right final bit.'' Later it changes one sensor route, moves an update to another processor, or combines the tool with another operation. That final-bit summary does not say whether the missing reading was essential, whether two stages relied on the same event, or whether the new implementation can deliver a result before the deadline.
+
+A witnessed description gives the robot something it can check and revise. It can ask which evidence justifies a local step, which input occurrence carries a needed value, and whether a changed interface still supports the same comparison. The result may be acceptance, a restricted condition of use, a demand for extra information, or rejection of the proposed tool.
+
+The distinction between a valid decomposition and an \emph{exact assembly} matters here. A valid decomposition can include uncertainty and hidden interaction. An exactness claim additionally says that the relevant compatible part-witnesses correspond uniquely to whole-witnesses, or satisfies a separately stated universal composition property. One must prove the particular guarantee being used, not infer it from the existence of a decomposition.\sn{5}
+
+Some foundational results earn their value indirectly. They prove that typing, substitution, declared equations and refinement records obey the intended laws. They do not discover a machine by themselves. Their purpose is to make the representation reliable enough that a later planner cannot silently change the meaning of a learned tool while manipulating its description.
+
+\section{Why pieces must share one possible explanation}
+
+Suppose two proposed subplans each look feasible. One works if a shared selector is in position zero; the other works if it is in position one. If the selector cannot occupy both positions at once, the combination is not a feasible plan. Individually plausible parts do not necessarily describe one possible world.
+
+A sound decomposition therefore retains \emph{joint} boundary information: one common assignment that makes all the relevant pieces work together. It does not replace that information with separate lists of possibilities for each port. This issue appears in the actual operational work, not only in abstract counterexamples.
+
+In the separate shared-priority study, four jobs have roles A, B, A, B. They use one exclusive server with a persistent but incompletely known priority order. Completion reports contain bits, but not their job identities. Calibration has established that job 0 precedes job 3 and job 1 precedes job 2. There are still six possible complete orders.
+
+Now the observed bit stream is $0011$. The required command for each role records whether that role has an odd number of one-bits. All six globally compatible orders give the same answer: $11$. The controller can certify that command without discovering the complete priority order.\sn{17}
+
+But suppose a summary discards the joint comparisons and retains only the separately possible ranks of each job. It then admits the order $(0,2,1,3)$. Each rank assignment looks locally allowed, but the combination violates ``1 precedes 2.'' Under that impossible order, the same stream would require $00$.
+
+The practical consequence is a lost capability. A sound controller using the weakened summary must now refuse a command that the full joint model could certify. It is not forced into an unsafe approval; it has become unnecessarily indecisive. Restoring the shared constraints recovers the useful certificate without another physical experiment.
+
+The typed Boolean-network construction represents all the local constraints using one shared assignment of ranks. Its coherent regroupings preserve that assignment. This is what makes the categorical representation useful in the example: it is an auditable way of keeping the correlations that the decision needs, rather than a second vocabulary for the same pictures.\sn{17,18}
+
+The coefficient cut models expose the same structural requirement. If descendants must satisfy $x_{ij}=a_i b_{ij}$, every descendant in group $i$ must use the \emph{same} parent $a_i$. The source-fixed lifting theorems characterize when an abstract compatible record has an actual compatible explanation at the prescribed concrete source. That is the mathematical counterpart of asking, ``Can this plan really be executed from the situation we have, rather than from a convenient alternative?''\sn{6,9}
+
+\section{Reorganizing a learned tool without breaking it}
+
+The workshop robot may learn a good serial procedure and then discover that its processor, communication bus or remaining power budget favors a different arrangement. Can it redistribute the work without learning the environmental behavior all over again?
+
+The crossing-interface study asks that question for the learned binary-response mission. In one arrangement, each local owner combines an incoming source value with an update. The connection between owners carries an intermediate parity bit. In another, one owner supplies source values and another performs the updates. That connection must carry the input bits instead.
+
+These are genuinely different ways of dividing the work, not just new names for the same nested tree. The theorem constructs actual controllers for both arrangements and proves that they compute the same actuator output on every permitted input stream, including unresolved correlations. The learned environmental relations then justify that output for the mission.\sn{19}
+
+This is a concrete reason to care about coherent changes of decomposition. The useful behavior can survive an architectural rearrangement because the proof tracks the same events, values, dependencies and order of use. Simply concatenating each owner's local event list would give the wrong order when the owners must interleave their work.
+
+The rearrangement does not make communication free. The two implementations require different bit deliveries. Equal final outputs do not imply equal memory needs, affordable messages or deadlines. In a specified restricted architecture, removing the only timely route for one required bit makes the old guarantee fail. Restoring an authorized timely route repairs that architecture only if its costs fit. An eventually arriving value can be useless for a decision already due.
+
+The intrinsic decomposition calculus has a parallel lesson about repeated occurrences. Two appearances of the same component type remain different places in a plan. Expanding or replacing the first must not also change the second. In the programme's six-vertex audit, two identical middle pieces receive opposite ordered refinements. A type-keyed lookup that applies one refinement to both gives the wrong final ordering, and the explicit tests reject it.\sn{2,3,7}
+
+This matters to reuse: a planner often wants a generic tool description and several distinct uses of that tool. It must retain which occurrence uses which local evidence, boundary values and refinement. The rules for composing forests and equations ensure that legitimate regroupings preserve those records. They do not erase all histories or pretend that different local insertions are the same because their final scalar happens to agree.\sn{4}
+
+The crossing operational theorem and the original planar cut theory have different scopes. Their common purpose is to preserve the relevant meaning while a description changes; one does not obtain arbitrary crossing rewiring merely by invoking associativity in the planar core.
+
+\section{Finding which controls can operate independently}
+
+Predictability is one desirable subsystem property. Independence of resource use is another. If the robot must finish two operations before its power window closes, it needs to know whether starting both together actually makes progress in parallel.
+
+The anonymous-FIFO study gives a constructive answer for an unknown partition of addressed operations into hidden servers. The agent can issue requests and observe report times and bits, but reports do not identify their origins. Safe solo and pair experiments can reveal which operations compete for the same server.\sn{16}
+
+For a simple zero-jitter illustration, suppose solo tests show that one operation takes two time units and another takes three. Start both together from a drained system. If they have independent servers, the last completion occurs at time three. If they share one nonpreemptive, continuously working server, the pair finishes at time five. The later report distinguishes the two arrangements without identifying which individual report came from which request.
+
+That discovery changes the plan. For a later production batch, after separately budgeted calibration, a four-unit service window admits parallel service in the first case but cannot fit both jobs in the second, even before adding readout and command overhead. The agent has learned an operational meaning of the controls: \emph{these share a bottleneck; those can progress separately}. It has not discovered the server's construction or every causal connection in the room.
+
+The general theorem uses duration intervals and known report-lag bounds, rather than assuming exact times. It proceeds only when the relevant timing bands separate, checks that the recovered relation is a consistent partition, and charges the probes and scheduling work. Fixed routing, repeatable service behavior, reliable report counts, a known FIFO model and safe drained testing are premises. A pair of unexplained timestamps alone does not establish independence in arbitrary machinery.
+
+There is another useful reduction in what must be learned. Even when individual report origins remain ambiguous, the required role output may be the same under every compatible job-to-report matching. Two same-role jobs can exchange reports without changing whether their combined one-count is odd. A certificate can therefore justify the task command without solving the stronger origin-identification problem.
+
+This is how subsystem discovery can pay off without becoming full reverse engineering: learn the contention structure and timing contract needed for scheduling, and resolve only the output ambiguity that affects the mission. The multiple-server FIFO model here is separate from the single shared-priority model in the preceding example.
+
+\section{Spending observations on the property that matters}
+
+Suppose the robot is deciding whether a proposed region is isolated enough to use as a tool. An internal map of each piece does not reveal every connection between pieces. A hidden bypass can defeat the intended boundary even when every local inspection looks correct.
+
+The programme contains an exact synthetic topology audit with six vertices and two identical middle components. Its supplied local reports are compatible with 8,192 possible arrangements of cross-component edges. Two particular arrangements differ only by a direct link from vertex 0 to vertex 5, declared forbidden by the audit's structural policy. The observed pieces are identical in both cases.\sn{1}
+
+The agent cannot conclude ``there is no bypass'' from those reports. But it does not necessarily need to reconstruct all 8,192 alternatives either. For the one question ``is the link 0--5 absent?'', one additional bit is necessary and sufficient: whether that edge exists. Exact reconstruction of the full topology requires thirteen cross-edge bits in this example.
+
+That is a practical distinction between \emph{finding a subsystem with a desired property} and \emph{learning the whole environment}. If the decision depends on one boundary connection, a targeted measurement can be enough. If the next task depends on a different connection, the observation requirement changes. The theorem identifies precisely what information the specified question lacks; it does not prescribe an empirically available sensor for every missing bit.
+
+Similar care is needed when a planner counts possible explanations. A quotient might collapse two different placements into one abstract split. It can still support a useful numerical calculation if the split carries the correct weight, but it has not retained the individual witnesses. Treating an unweighted abstract count as the number of physical possibilities would answer a different question. The incidence results separate witness preservation, weighted counting and the target's own counting convention.\sn{8}
+
+In the workshop story, the lesson is not ``retain everything forever.'' It is ``name the property you want, prove which distinctions affect it, and keep or acquire those distinctions.'' Sometimes this means one extra measurement. Sometimes it means a richer joint probe. Sometimes the currently allowed experiments cannot certify the property at all.
+
+\section{Making compact summaries trustworthy in future plans}
+
+A robot that discovers many useful chunks needs compact summaries. Replaying every raw observation and every internal step whenever it plans would be wasteful. The challenge is to discard detail without changing the answers to the questions that later planning is allowed to ask.
+
+The observation and repair results formalize that promise. A summary may be adequate when a subsystem is examined alone but fail after the subsystem is inserted into a larger construction. The larger context can expose a distinction that the original tests missed. The programme gives explicit families where two states agree under all the selected cut-only tests and all the selected graft-only tests, yet a graft followed by a cut distinguishes them.\sn{11}
+
+The point for learning is not that every familiar test is useless. It is that a proposed reusable tool needs tests of its permitted \emph{uses}, not only tests of its isolated output. A candidate abstraction may need to be split when a new use exposes different behavior. The mathematics calls this a repair: retain additional distinctions until the promised observations, compositions and interface changes agree.
+
+Doing the repairs in different orders can matter. Completing the isolated context checks first may appear to finish the job. Later cut questions can reveal new distinctions that require checking contexts again. The project proves this order dependence in a growing family and calculates its refinement stages. Generic fixed-point theory says such processes can be organized; the concrete results say what is lost and recovered in these witnessed models.
+
+The most instructive correction involved the simplest proposed plan: do nothing. An identity wire has no operation vertex. It is different from a one-input operation that happens to have a familiar output, and from an operation with no inputs. If an abstraction mistakes a nonidentity operation for the identity, it may admit a no-operation explanation that the concrete source cannot have.\sn{6,9}
+
+For intuition, imagine formal operations that rotate a dial by zero, one, two or three quarter-turns. A summary retaining only parity identifies zero turns with two turns. That is a lawful quotient for adding turn counts modulo four and then taking parity. It does not make a half-turn the actual do-nothing operation. The full-unital cut requirement catches exactly this sort of lost distinction. This is an explanatory group model, not a claim about the workshop's hardware.
+
+The corrected results do not respond by forbidding all compression. They show a useful, profile-sensitive alternative. In a two-channel group example, a unary record keeps its two four-valued labels exactly: sixteen states. At a branching record with two active inputs, the permitted observations need only the quotient classes: 256 label assignments compress to sixteen states. Empty positions and the original typed record remain exact.\sn{10}
+
+The practical message is that a summary policy may need to depend on \emph{where and how} a component is used. Applying one lossy encoding uniformly everywhere can fail, while a carefully typed encoding works. The minimum-information and decoder theorems establish the guarantee for their stated probe language and hypotheses. They do not promise to recover the labels deliberately discarded or to answer arbitrary future questions.
+
+\section{Knowing when a tool must be restricted or withdrawn}
+
+A useful abstraction can fail for three different reasons: its evidence is inadequate, its interface omits a dependency, or the environment has actually changed. The response should depend on which problem occurred.
+
+If two apparent tools share a selector, memory cell or hidden resource, the agent may need to enlarge their interface to expose it, restrict use to times when it is held fixed, or reject their proposed independence. The interface-transport results explain why merely renaming ports is different from merging them or forgetting a boundary value. Existence of some compatible connection, preservation of actual witnesses and unique reconstruction are different levels of assurance.\sn{5,9}
+
+Exact assembly is similarly stronger than a reassuring final output. A two-stage map can pass through a larger intermediate state space and return to a singleton, making the overall map bijective while neither stage is. If the intended guarantee concerns every retained stage, the programme's finite-table criterion checks each stage. If only an evaluated occurrence is retained, a different criterion checks that composite. This tells a verifier which evidence its claim of exact reconstruction of the retained witness records really requires.\sn{5}
+
+The learned-controller example also supplies a concrete withdrawal rule. Remove one learned local relation from the evidence and keep the rest. The enlarged class of compatible sources can now include a defect that inserts a fresh unpredictable bit. The old controller no longer has its old guarantee. Its certificate must be invalidated rather than left active because the previous demonstration looked convincing.\sn{19}
+
+If the physical system is still good and only the supporting evidence was lost, fresh, properly budgeted calibration can restore the relation. If the system has changed, recalibration reveals the stated defect and rejects the old certificate on its successful-learning event, with the new error allowance charged. Reacquiring evidence is not repairing broken physics. Additional tests also consume time and resources; a valid certificate obtained after the task deadline is not a successful repair of the mission.
+
+Modular abstraction adds another caution. Two locally adequate summaries can combine into a globally adequate summary without giving the smallest one. Conversely, a global operation that exchanges channels can expose information each local view was allowed to ignore. The project gives both positive gluing conditions and failures. It distinguishes synchronizing a shared witness from merely placing two local certificates side by side.\sn{12}
+
+This is where a decomposition becomes more than an explanation after the fact. It becomes a maintained contract for a usable capability: what supports it, what changes invalidate it, and which repair would restore the particular guarantee.
+
+\section{From a collection of observations to a library of usable capabilities}
+
+Return to the robot and the unfamiliar workshop. The intended progression is now concrete. It starts with safe access and a task. It proposes a useful behavior, learns relevant local relations, and checks that they imply the promised external response. It discovers which operations contend, retains shared constraints, and packages an eligible part of the environment as a typed capability. It can then refine, reorganize and reuse that capability while checking what the change preserves.
+
+The resulting library need not be a complete model of the workshop. One entry might be a predictable delayed response. Another might identify independent resource groups with timing bounds. Another might certify a role command despite anonymous reports. Each is useful because it supports a decision the agent could not previously justify.
+
+The mathematics also supplies principled reasons to decline an attractive shortcut. Separate observations may not determine a joint law. Two plausible subplans may have no common witness. A boundary change may destroy a lift. A no-operation case may invalidate a compressed model. A larger test language may require more retained information. These are not merely warnings; the selected models contain explicit criteria, positive constructions and counterexamples that locate the failure and, where possible, a repair.
+
+The relationship between the strands of work should remain clear. The operational studies supply particular learning and mission-completion results under their physical and statistical assumptions. The 36-obligation decomposition programme studies the underlying representation, refinement, interface, cut and abstraction questions. Explicit bridge results connect some operational models to the comparison machinery. Neither strand by itself proves a general robot that discovers arbitrary tools in an unrestricted world.
+
+Much of the general machinery is established: typed multicategories, coherent rewriting, virtual equipments, decomposition spaces, behavioural minimization and complete abstractions. The project-specific value lies in the exact selected-model comparisons, compatibility boundaries and worked integrations, not in counting thirty-six obligations as thirty-six discoveries. Prior-art comparisons already existed in the recovered work; the fresh audits sharpen that assessment without certifying historical originality.\sn{13}
+
+The corrected contract disposition accepts the obligations at their stated scopes, including permitted obstruction-and-repair outcomes. Written proofs, bounded formalization, finite tests and agent-managed nonauthor review provide different kinds of assurance; they are not interchangeable. The earlier operational applications retain their separate conditional status.\sn{14}
+
+The motivating payoff is nevertheless stronger than a taxonomy of parts. It is a route toward an agent being able to say: \emph{I do not know everything about this environment, but I have identified a part I can use, the conditions under which I can use it, and the evidence that would make me stop trusting it.} That is the kind of partial understanding from which practical capability can be built.
+
+\appendix
+\section{Guide to the technical sources}
+
+The numbered notes identify the relevant obligations and the separate operational studies. The imagined workshop motivates their use; it is not a proved combined platform. Notes 15--19 identify the actual discovery and mission examples, which must not be counted as automatic consequences of the 36-obligation calculus. Paths are relative to the delivered research workspace. ``Repair'' means \sourcepath{sources/full_unital_repair_20261101/}; ``Core'' means \sourcepath{formal_sources/core/witnessed_decompositions/}. Earlier source files retain their historical status statements; current status is determined by the final corrected disposition, not by replacing old text.
+
+\begin{enumerate}[label=\textbf{[\arabic*]},itemsep=7pt]
+\item \textbf{Pieces and reconstruction.} C1, C3, G1--G3. Core \sourcepath{research/workstream_C3/proof/C3_Separation_Theorem.md}, especially the anchored and unanchored witness-fibre classifications; \sourcepath{Results_Workstream_C3.txt}. The six-vertex structural audit in the main text is G3 section 5: fixed anchors, thirteen unknown cross-edge bits, and one declared forbidden-edge predicate. The stronger observation and decoding results are in \sourcepath{stage_sources/B4_C4_G1_G3_Source_Package/B4_C4_G1_G3_Source_Package/g/G1_G3_proof_and_evidence_crosswalk.txt}.
+
+\item \textbf{The typed core and occurrences.} A1--A3, B1--B2. Original contract sections 2.1--2.4, in \sourcepath{sources/contract_revision_20261028/final_artifacts/Original_Completion_Contract_v0.1_VERBATIM.md}; Core \sourcepath{WitnessedDecompositions/RawRefinement.lean} and \sourcepath{WitnessedDecompositions/SemanticRefinement.lean}, together with the corresponding workstream A and B proofs. The explanation does not identify an identity leaf with a primitive unary or nullary vertex.
+
+\item \textbf{Which refinement data can be recovered.} B4, G2. \sourcepath{stage_sources/B4_C4_G1_G3_Source_Package/B4_C4_G1_G3_Source_Package/b4/B4_Refinement_Invariants_and_Recovery.txt}, recovery tower R1--R4. Raw source--target recovery, unknown-source choices, chronological histories and semantic fibres are different statements.
+
+\item \textbf{Presentations and semantic arrows.} A4, B3, C4--C5. \sourcepath{sources/i1_amalgamation_20261031/dependencies/THEOREM.md} and \sourcepath{Completion_Comparison.md} in that same directory, especially sections 2--8 of the latter. O, MOut and MIn are the local ordinary and mixed relations. Core \sourcepath{Results_Integrated_A4_C5_B3.txt} preserves the earlier significance judgment; it is not the final whole-program disposition.
+
+\item \textbf{Transport and exact assembly.} D1--D3, E1--E5. \sourcepath{stage_sources/E5_exact_assemblies_transport_source/source/theorem.md}, sections 1--4, contains the exactness hierarchy, stagewise criterion, root counterexample and precise source imports. Its companions identify the E1--E4 constructions. The same-source graph obstruction does not say that all virtual equipments lack ordinary completions.
+
+\item \textbf{Shared parents and the zero-factor relation.} I1, I2, I5. Repair \sourcepath{lifting/01_full_unital_lifting_theorems.md}; \sourcepath{theory/Full_Unital_I5_Observation_Repair.txt}, sections 1--2 and 9. The shared-selector illustration motivates joint compatibility; the coefficient equations are those of the selected cut model, not a new workshop theorem. The successful empty tuple is distinguished from an empty set of successful records.
+
+\item \textbf{Cut recognition and interchange.} F1--F3, I4. \sourcepath{stage_sources/F1_F3_reviewed_closure_sources/f1_f3_recognition_20261031/recognition_theorem.md}, Theorems 1--2 and sections 3--7; \sourcepath{stage_sources/I4_cut_substitution_interchange_source/source/theorem.md}, especially the O/W/B/R criterion and the distinct semantic-tuple version W\_sem. The four regimes concern the declared ordered, uncoloured permutation-orbit class, not all graph quotients.
+
+\item \textbf{Witnesses and numbers.} F4, I3. \sourcepath{stage_sources/I3_Reproducible_Source_20261101/I3_Reproducible_Source_20261101/I3_Objective_and_Numerical_Incidence_Descent.txt}, sections 1--6; F1/F3 recognition theorem, lift-fibre analysis. The comparison is between weighted numerical descent, the prescribed target's native coefficients, and fixed-source witness lifting. No observational quotient is thereby declared multiplicity-preserving.
+
+\item \textbf{Corrected lifting boundary.} I1 and its I2/I5 dependencies. Repair \sourcepath{lifting/01_full_unital_lifting_theorems.md}, shared-parent condition SP, identity reflection IR, and the injective factor-closed branching theorem; \sourcepath{lifting/04_original_claim_repair_ledger.txt}. The branch theorem assumes the specified nonerasing geometry and realizable branching cuts. Uniform proper group quotients remain negative controls.
+
+\item \textbf{Actual compressed realization.} I2. Repair \sourcepath{lifting/02_exact_full_profile_realization.md}; \sourcepath{lifting/03_non_group_compression_boundary.md}; observation repair sections 7--8. The original-seed minimum requires the stated old-data or retraction hypotheses. A separate stronger-seed theorem covers arbitrary old grading. Rank-one exactness is per active occurrence, not a graph-size cutoff.
+
+\item \textbf{Mixed observations and exact repair hierarchy.} I2, I5. Repair \sourcepath{theory/Full_Unital_I5_Observation_Repair.txt}, sections 3--6; \sourcepath{lifting/06_replacement_I2_mixed_tests.md}. For the fixed elementary step adding the identity test and current joint binary signatures together, the exact strict-round count is $\max(3,\lceil\log_2(k-3)\rceil)$. Scalar $2k$ counts, elementary round counts and the all-profile simultaneous endpoint have different scopes. The unit test is coupled in the two-channel model, so no arbitrary product formula for cut repair is asserted.
+
+\item \textbf{Modular adequacy and optimality.} I1, I5. Repair \sourcepath{modular/full_unital_modular_repair.md}, sections 1--6. The local-unit-aware product theorem, two-state global meet-monoid example, branching channel-swap failure, and unary shared-factor failure are distinct. The last is not promoted to a branching example. Conservative presented amalgamation itself is in \sourcepath{sources/i1_amalgamation_20261031/conservative_amalgamation_theorem.md}.
+
+\item \textbf{Established mechanisms and contribution comparison.} C4, H1, H3. The programme's comparison is recorded in \sourcepath{sources/final_acceptance_review_20261101/scientific/public/Scientific_scope_and_contribution_review.txt}, sections 2--3, and updated in Repair \sourcepath{closure/scientific_update.txt}. Fresh targeted comparisons are in \sourcepath{audit/Prior_Art_and_Formal_Backbone_Assessment.md} and \sourcepath{audit/Categorical_Backbone_Source_Audit.md}; neither is an exhaustive priority search. The historical review's unit quarantine is superseded only by the explicit repaired results. Primary background includes Leinster on multicategories; G\'alvez-Carrillo, Kock and Tonks, Theorem 5.8, on restriction species; Walde, version 5, Corollary 4.3.6, on invertible operads and 2-Segal sets; Cruttwell and Shulman on virtual equipments; and Giacobazzi, Ranzato and Scozzari on complete abstractions. See the selected references below. Those general mechanisms receive background credit, not new-project credit.
+
+\item \textbf{Current disposition and evidence levels.} H1--H3. Repair \sourcepath{closure/Final_Post_Repair_Disposition.txt}; \sourcepath{closure/all_36_post_repair_acceptance_matrix.json}; \sourcepath{checks/VERIFICATION_NOTE.md}; and \sourcepath{review/03_integrated_correctness_and_floor_verdict.txt}. These distinguish written proofs, bounded formalization, finite computations, review and contract acceptance. They do not certify historical priority or empirical validity.
+\item \textbf{Learning the delayed response.} Earlier uncertain-coupling operational study, not an additional intrinsic obligation. \sourcepath{revision/examples/uncertain_coupling/Uncertain_coupling_mission_checkpoint.txt}; \sourcepath{revision/examples/uncertain_coupling/uncertain_coupling_mission_theorem.md}, sections 1--3 and 5--8. The local equations and useful lag are learned under a stationary finite-memory binary-linear source class with uniform innovations, a supplied memory bound, permitted cumulative probes and costed isolation. The support-correct event has failure allowance $\delta$. Distinct physical filters can share the selected local and mission laws while differing on another early-input query. Pair-probe impossibility concerns the specified cumulative coordinate-probe regime, not arbitrary measurements.
+
+\item \textbf{Discovering contention and certifying anonymous outputs.} Separate anonymous-FIFO operational study. \sourcepath{revision/examples/anonymous_fifo/REPORT.txt}, sections 1--4; \sourcepath{revision/examples/anonymous_fifo/safe_anonymous_completion_theorem.md}, sections 1--5; \sourcepath{revision/examples/anonymous_fifo/queue_acquisition_draft.md} and \sourcepath{revision/examples/anonymous_fifo/binding_certificate_draft.md}. The two-and-three-unit example specializes the stated timing argument at zero jitter and drained simultaneous admission. Marginal timing windows overapproximate physical possibilities: agreement across all matchings certifies an output; disagreement alone does not prove physical impossibility. No speed superiority over every alternative policy is claimed.
+
+\item \textbf{One common priority assignment.} \sourcepath{stage_sources/return_cylinder_bridge_source/return_cylinder_bridge/return_cylinder_bridge_report.txt}, sections 2--4 and the four-job example; \sourcepath{stage_sources/return_cylinder_bridge_source/return_cylinder_bridge/theory/cylinder_priority_bridge_20261031/bridge_theorem.md}. Roles are ABAB, the retained comparisons are $0<3$ and $1<2$, and the observed word is $0011$. All six compatible total orders give $11$. Independent rank ranges additionally admit $(0,2,1,3)$ and $00$. This is lost certification through a sound relaxation, not an unsafe-approval example. The single shared-priority model is not the multiple-FIFO-server model of note 16.
+
+\item \textbf{Task-relative meaning and actual interface comparison.} Uncertain-coupling proof, section 8, and its exact dependencies \sourcepath{revision/examples/uncertain_coupling/dependencies/compact_boundary_cfs_wiring.md} and \sourcepath{revision/examples/uncertain_coupling/dependencies/isbell_comparison_span_coherence.md}. The true source and the positive representative agree on the proved labelled preparation--test cylinder, not arbitrary full transcripts. The shared-priority bridge in note 17 separately supplies a Boolean joint-constraint realization. Possibility support is not a probability law, and a formal response predicate is not automatically an executable sensor.
+
+\item \textbf{Reorganizing and withdrawing the learned capability.} \sourcepath{revision/examples/crossing/Crossing_interfaces_and_mission_certificates.txt}; \sourcepath{revision/examples/crossing/crossing_certificate_transport.md}. Two crossing ownership charts support pointwise-equal actual controllers with separate communication budgets. The missing timely-bit and retracted-triple failures have restricted architecture/source hypotheses; neither establishes impossibility for every controller. Costed reacquisition restores evidence only when the corresponding good physical law still holds. This report is a separate operational contract bridge, not a substitute for E1--E5, F1--F4 or I1--I5.
+
+\end{enumerate}
+
+\section{Selected background references}
+
+These are references for the established frameworks, not claims that a single cited theorem contains every project-specific result.
+
+\begin{itemize}[itemsep=5pt]
+\item Tom Leinster, \emph{Higher Operads, Higher Categories}. \url{https://arxiv.org/abs/math/0305049}.
+\item Imma G\'alvez-Carrillo, Joachim Kock and Andrew Tonks, \emph{Decomposition spaces and restriction species}. \url{https://arxiv.org/abs/1708.02570}.
+\item Tashi Walde, \emph{2-Segal spaces as invertible infinity-operads}, version 5. \url{https://arxiv.org/abs/1709.09935v5}.
+\item G. S. H. Cruttwell and Michael A. Shulman, \emph{A unified framework for generalized multicategories}. \url{https://arxiv.org/abs/0907.2460v3}.
+\item Daniele Turi and Gordon Plotkin, \emph{Towards a mathematical operational semantics}. \url{https://homepages.inf.ed.ac.uk/gdp/publications/Math_Op_Sem.pdf}.
+\item Roberto Giacobazzi, Francesco Ranzato and Francesca Scozzari, \emph{Making abstract interpretations complete}. \url{https://www.sci.unich.it/~scozzari/paper/JACM00.pdf}.
+\end{itemize}
+
+\end{document}

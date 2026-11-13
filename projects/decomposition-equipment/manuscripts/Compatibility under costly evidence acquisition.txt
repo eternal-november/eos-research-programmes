@@ -1,0 +1,239 @@
+Compatibility under costly evidence acquisition
+
+Focused research problem brief
+30 October 2026
+
+Plain language abstract
+
+Can an agent complete its mission safely in every environment still consistent
+with its evidence, using only observations and resources it actually possesses?
+Learning can help, but sensing takes time, can introduce hazards, and can change
+which checks share the same underlying noise. More knowledge therefore need not
+leave a mission achievable. Separate statistical accuracy, freshness and physical
+safety guarantees do not settle their joint effect.
+
+This is a coherent problem, but its general formulation is not a new theorem.
+Existing work already provides observation-based control, learned abstractions,
+probabilistic refinement and compositional contracts. The defensible next target
+is narrower: determine whether a useful mission-specific joint interface can be
+certified from affordable evidence without identifying the entire mechanism.
+The candidate gap concerns their combination, not any ingredient by itself.
+No new theorem or literature-wide open problem is established here.
+
+The compatibility question
+
+Fix a mission, initial physical state, deadline, observation and intervention
+interface, and an implementable policy class. State explicit bounds on memory,
+computation, communication, energy and sensing. Let W be a nonempty set of
+remaining joint environment laws. Each law includes persistent uncertainty,
+source-sharing dependencies and the effects of interventions. A fixed unknown
+mechanism is selected once; it cannot silently change at each decision.
+
+For this brief, Bad means a physical hazard or failure to complete the mission
+by its deadline. Abort and timeout count as failure. With budget vector B and
+risk limit epsilon, define
+
+    Compat(W,B,epsilon) iff there exists pi in Pi_B such that
+    for every w in W, P_w^pi(Bad) <= epsilon.
+
+Pi_B contains only policies implementable through the declared observations and
+hard resource limits. One policy is chosen before the world quantifier. It may
+adapt to its observed history; it may not receive hidden state, choose a
+different program for each world, or obtain free computation through a proof
+witness. Randomization, if admitted, is world-independent and budgeted.
+
+Evidence acquisition is part of that policy and physical trajectory. Its time,
+exposure, energy, lost opportunities and altered source dependencies must be
+included. An empty evidence-compatible set is a modeling inconsistency, not a
+vacuous success. Statistical confidence failure delta is distinct from mission
+risk epsilon; any end-to-end combination needs an explicit coverage and hazard
+argument valid for the actual adaptive acquisition process.
+
+A finite worked scenario
+
+An agent must acquire two reports and execute once. Acquisition takes two time
+units and execution one. Before acquiring reports it chooses a polling mode
+r in {0,1}. The environment has a fixed hidden phase theta in {0,1}. Report
+payloads reveal neither phase nor faults. Only the optional diagnostic below
+provides information. There is no concurrency or cheaper substitute.
+
+After r is chosen, independent primitive faults U1,U2,U3 occur with probability
+0.02 each, independently of the diagnostic and policy randomization. Report A
+is invalid exactly when U1 or U2 occurs. Report B is invalid
+when U1 or U2 occurs if r=theta, and when U2 or U3 occurs otherwise. Both reports
+have the same age and the same marginal invalidity probability 0.0396 in either
+mode. A physical hazard occurs on execution exactly when either report is
+invalid; this is a toy hazard contract, not an inference from accuracy alone.
+
+Aligned polling gives joint risk
+
+    a = 1 - 0.98^2 = 0.0396.
+
+Misaligned polling gives
+
+    b = 1 - 0.98^3 = 0.058808.
+
+A safe deterministic diagnostic reveals theta but takes one additional time
+unit. With deadline four, diagnose and align is one observation-based policy
+that succeeds in both worlds at risk a. With deadline three, diagnosis cannot
+finish the mission. If a blind policy chooses r=0 with probability q, its two
+world risks are qa+(1-q)b and qb+(1-q)a. Their maximum is minimized at q=1/2,
+giving (a+b)/2=0.049204. Diagnosis, waiting or abort cannot improve this: a
+probability d of certain noncompletion gives average failure at least
+d+(1-d)(a+b)/2.
+
+Thus epsilon=0.045 is feasible at deadline four but infeasible at deadline
+three, although a phase-informed oracle succeeds in each world separately.
+At epsilon=0.06 and deadline three, skipping diagnosis is feasible while taking
+the informative diagnostic destroys completion. This is a framing witness, not
+a discovery algorithm: the revealing diagnostic and noise law were assumed.
+
+The toy already has a standard finite hidden-state model containing theta,
+elapsed time, polling mode and fault/report states. A common-source component
+generates the Ui; grouping the reports handles their dependence, while the
+diagnostic is an observation action costing one unit. Known-model planning
+therefore solves this toy without exposing its hidden state to the controller.
+
+The baseline law and its limits
+
+If W' is a nonempty subset of W and the dynamics, interfaces, policy class,
+mission and remaining resource state are unchanged, then
+
+    Compat(W,B,epsilon) implies Compat(W',B,epsilon).
+
+Proof: retain the same witnessing policy. Its universal guarantee over W also
+holds over W'. This elementary refinement law does not apply to an experiment
+that shrinks uncertainty while consuming time or changing the physical system.
+Extra observations are similarly harmless only when the old policy can ignore
+them without extra cost or changed behavior.
+
+For finite worlds, alphabets and horizon, an exact reference calculation can
+enumerate the declared deterministic observation-history policies and evaluate
+each complete joint path law. If mixtures are allowed, a single distribution
+q over those policies must satisfy, for every w,
+
+    sum_pi q_pi P_w^pi(Bad) <= epsilon.
+
+This is an expensive baseline, not a contribution. Belief support alone is not
+an exact substitute for chance constraints with persistent uncertain laws.
+
+A positive abstraction result requires an implementable, world-independent
+controller translation preserving the relevant joint path-risk bound and
+costs. Support inclusion alone does not preserve nonzero probability thresholds.
+Conversely, failure to find an abstract controller does not prove concrete
+incompatibility. That negative conclusion needs sufficient controller coverage,
+a reflection theorem, or a direct impossibility proof. Exact reconstruction,
+canonical representation and recovery of every physical subsystem are not
+automatic prerequisites for a positive mission-specific certificate.
+
+What existing results already cover
+
+The closest comparisons substantially constrain any novelty claim.
+
+* Schon and colleagues compose uncertain stochastic subsystem models and
+  data-derived parameter sets. Their network construction uses product kernels,
+  product uncertainty and conjunctions of local specifications. Shared report
+  noise cannot simply be inserted into that product construction. This is a
+  hypothesis mismatch, not evidence that no reformulation can handle it.
+  Verifying the Unknown, Definition 4 and Theorem 1:
+  https://arxiv.org/html/2309.01276v1
+
+* Schon, Haesaert and Soudjani already combine agent-environment contracts,
+  uncertain parameters, probabilistic surrogates and guarantee transfer. Their
+  controller sees both system states, and the situation is supplied by a
+  situational-awareness block. Safely acquiring that information within an
+  irreversible mission budget is not supplied by this setup.
+  Formal Control for Uncertain Systems, Sections 1 and 3.1:
+  https://arxiv.org/html/2506.16971v1
+
+* Nazeri and colleagues learn interval-MDP abstractions and controller
+  interfaces from state-input-next-state samples affected by process noise,
+  assuming available Lipschitz bounds and independent identically distributed
+  process noise. Learning a useful interface without knowing the dynamics is
+  therefore already covered in an important class; it is not the proposed
+  novelty.
+  Data-Driven Abstraction and Synthesis, Sections II and IV:
+  https://arxiv.org/html/2508.15543v2
+
+* Majumdar, Ozay and Schmuck give sound output-feedback abstraction and
+  controller refinement, including usable finite intermediate abstractions.
+  Thus partial observations and avoiding full identification are not by
+  themselves gaps. Reverse impossibility needs stronger conditions than
+  positive transfer. Corollary 3.4:
+  https://arxiv.org/html/2002.02687v1
+
+* Howard and colleagues give time-uniform confidence sequences under stated
+  filtration and supermartingale conditions. These can support adaptive
+  evidence collection; they do not establish the physical effect of polling
+  or infer a fresh conditional hazard bound from marginal coverage.
+  Uniform nonparametric non-asymptotic confidence sequences, Assumption 1:
+  https://arxiv.org/html/1810.08240v4
+
+* Haesaert and colleagues already use label-based stochastic simulation to
+  abstract POMDP belief models and transfer probabilistic temporal guarantees.
+  Adding partial observation to probability-sensitive refinement is not new.
+  Temporal Logic Control of POMDPs via Label-based Stochastic Simulation Relations:
+  https://authors.library.caltech.edu/records/8652e-1ns11
+
+Earlier programme evidence is consistent with this boundary. The finite robust
+mission study reported 42 wins, 34 cases with no uniform guarantee and 12
+unknowns among 88 cases. It showed that learning can help, not general discovery
+of useful decompositions. The heterogeneous-check example showed that equal
+marginal bounds and ages can hide risks 0.0396 and 0.058808. Neither result by
+itself supplies the missing joint-interface theorem.
+
+The residual target remains unproved
+
+The proposed input is a finite universe of bounded-memory local transition and
+source-use templates over finite alphabets and horizon; observation records
+with justified local parameter confidence sets; candidate shared-source and
+persistent-unknown constraints; and a proposed causal controller with named
+mission, hazard interpretation and resource budgets. The controller includes
+its acquisition-and-execution rule. Source labels distinguish reuse from fresh
+draws, and templates describe intervention-dependent source use.
+The universe bounds possibilities; it does not identify the actual architecture
+or coupling. Neither a full joint law nor a global history tree is supplied as
+input. Finite data alone cannot certify independence without structural premises.
+
+Seek a construction that checks which proposed sharing constraints are justified,
+retains one joint ambiguity set W, and constructs or checks the required joint
+semantics on demand. Its output is a finite checkable upper bound U satisfying
+sup_(w in W) P_w^pi(Bad)<=U, with an interface certificate, or an explicit
+UNRESOLVED obligation. Acceptance requires U<=epsilon and hard budgets respected;
+a failed upper-bound test is not an incompatibility verdict. The argument
+must preserve persistent worlds, account for acquisition and implementation
+costs, and cover the actual adaptive evidence-selection rule and its hazards.
+Construction and checking must also fit their declared computational budgets.
+Global reasoning or expansion is allowed, but its cost cannot be hidden.
+
+Soundness alone is insufficient: an always-UNRESOLVED checker is not success.
+Require at least one genuinely coupled bounded class and a witness where the
+acquisition is admissible end to end, identification remains incomplete, and
+the interface certificate decides a mission threshold that marginal summaries
+cannot decide. The output must retain a proper local interface rather than
+relabel the complete global history tree as one. This asks for a concrete
+input-to-certificate construction, not merely the implication that a valid
+certificate certifies its conclusion.
+
+This is a target specification, not a proved existence claim. The remaining
+selection question is whether an explicit local condition meets it beyond a
+direct application of existing probabilistic simulation or abstraction results.
+It is unresolved in this programme, not established as open in the literature.
+Reuse across other missions, negative reflection, unique mechanisms, exact
+canonical representations and efficiency superiority are separate claims,
+not entry requirements silently added here.
+
+Judgment and next decision
+
+Conditional go: keep this bounded compatibility problem and the explicit joint
+evidence gap. Before a theorem attempt, name one concrete local interface
+condition and map every assumption to the strongest applicable existing result.
+First check whether exposing a shared-noise component or augmenting state
+restores an existing compositional construction; correlation alone is no gap.
+If that mapping already gives the desired claim, record an application rather
+than manufacture novelty. If the condition cannot be justified from affordable
+admissible evidence, report the obstruction or revise the target.
+
+No-go: a new generic theorem merely saying to model learning, augment budgets,
+compose contracts and transfer a safe controller. No whole-contract adoption
+or broader proof result is claimed.

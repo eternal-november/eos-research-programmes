@@ -1,0 +1,72 @@
+Packaged source replay
+31 October 2026
+Python 3.12.14
+
+All seven scripts ran after local-import portability edits.
+The timings below are execution measurements for these finite tests, not
+hardware WCET guarantees.
+
+PASS: SHA-256 verification for 23 packaged files.
+
+=== test_binding_checker.py ===
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.652s
+
+OK
+
+=== reference_baseline.py ===
+reference_baseline self-tests: PASS (120 exhaustive-hull equivalence fixtures)
+
+=== reference_pipeline.py ===
+{
+  "trials": 12,
+  "all_fired": true,
+  "controls": {
+    "late_invocation_refuses": true,
+    "fractional_probe_bounds_grid_releases": true,
+    "fractional_probe_charged_cost": "27",
+    "persistent_busy_across_submissions": true,
+    "missed_deadline": "DEADLINE",
+    "ambiguous_acquisition": "AMBIGUOUS_PAIR_BANDS",
+    "invalid_bound": "INVALID_BOUND",
+    "perturbed_pair": "INCONSISTENT_PAIR",
+    "duplicate_report": "REPORT_COUNT",
+    "same_role_ambiguity": "CERTIFIED",
+    "cross_role_ambiguity": "UNRESOLVED",
+    "out_of_order_raw_reports": [
+      [
+        "6",
+        1
+      ],
+      [
+        "7",
+        0
+      ]
+    ],
+    "out_of_order_same_role": "CERTIFIED",
+    "input_signatures": {
+      "infer": "(ledger, n, caps)",
+      "plan": "(ledger, n, caps, roles, service_release, deadline)",
+      "propagate": "(bounds, groups, releases, J)",
+      "control": "(plan, reports, caps, deadline, now)"
+    },
+    "hidden_mutation_output_unchanged": true
+  },
+  "results": "./reference_pipeline_results.json"
+}
+
+=== audit_dynamic_binding.py ===
+PASS: 1000 exact-rational anonymous acquisition/schedule/binding fixtures, including heterogeneous durations and arbitrary report row order.
+
+=== audit_report_permutations.py ===
+PASS: 2000 independent report-row permutation invariance cases.
+
+=== audit_runtime_deadline.py ===
+PASS: insufficient reserve refuses; future packet refuses; exact reserve boundary accepts.
+
+=== deadline_obstruction_exactcheck.py ===
+PASS: Bayes lower bound 1/4; achievable worst-world risk 1/4.
+
+PASS: regenerated reference JSON is byte-identical.
+PASS: all seven replay scripts completed successfully.

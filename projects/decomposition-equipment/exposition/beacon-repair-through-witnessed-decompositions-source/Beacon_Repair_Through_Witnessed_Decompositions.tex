@@ -1,0 +1,493 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,amsmath,amssymb,amsthm,booktabs,array}
+\usepackage[hidelinks]{hyperref}
+\newcommand{\B}{\{0,1\}}
+\newcommand{\JG}{\mathcal J_G}
+\newcommand{\MG}{\mathcal M_G}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\ok}{\mathsf{ok}}
+\newcommand{\good}{\mathsf{good}}
+\newtheorem{proposition}{Proposition}
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{0pt}
+\title{Emergency Beacon Repair Through Witnessed Decompositions}
+\date{2 November 2026}
+\begin{document}
+\maketitle
+
+\section*{The repair decision}
+
+A robot finds two intact relay boards inside damaged equipment. Each passes its
+bench test: with the right control setting, it carries an alarm signal through.
+The robot joins them in series to restore an emergency beacon. Nothing gets
+through. The boards are not broken. One receives the shared mode switch through
+an inverter; the other receives it directly. Whenever one is enabled, the other
+is disabled.
+
+The useful subsystem crosses the equipment's two physical boxes. Opening those
+boxes, tracing the actual ports, and retaining the common mode exposes the
+problem. One added inverter at the \emph{second} board fixes this finite model.
+Putting the same inverter at the first board does not: the only transmitting
+mode then fails the eligibility check. Rewriting every occurrence of the shared
+board type also fails.
+
+This report makes that decision precise using actual graph/span assembly cells,
+occurrence-sensitive refinements, full intermediate witness maps, interface
+pullbacks, and a repaired observation that retains the shared mode. These
+structures record \emph{which evidence can be composed and reused}; an ordinary
+relational join already solves the finite constraints. No new general solver,
+physical beacon certification, or mathematical novelty is claimed.
+
+\section{The finite model and its evidence}
+
+All ports carry Boolean values, but their sorts are tagged: alarm data, control,
+mode, and eligibility are distinct interface types. The declared identity and
+complement maps convert mode to control. The complete component tables and
+wiring below are assumptions of the model, not laws inferred from a few physical
+tests. The model is combinational and has no timing, RF, reliability, feedback,
+or fault-tolerance claim. The two boards are a serial path, not redundant paths.
+
+The original whole $G$ has distinct occurrences $N,P,Q,S$. The boards $P,Q$ have
+the same relation
+\[
+ B=\{(d,c,b)\in\B^3:b=d\land c\};
+ \qquad N(g)=1-g,\qquad S(g)=1-g.
+\]
+Interpret $g=0$ as normal deployment mode and $g=1$ as bench or service mode.
+The supplied mission specification allows deployment only in mode $0$;
+$S$ records this eligibility rule, not a proved physical hazard or safety
+certification. A board can therefore pass an isolated service-mode test without
+being usable in the deployed assembly.
+The full port wiring is
+\[
+ g\longrightarrow N,Q,S,\qquad N.n\longrightarrow P.c,
+ \qquad a\longrightarrow P.d,\qquad P.p\longrightarrow Q.d,
+ \qquad Q.y\longrightarrow y,\quad S.\ok\longrightarrow\ok.
+\]
+Thus the complete run relation is
+\begin{equation}\label{eq:runs}
+ \JG=\{(a,g,n,p,y,\ok):
+ n=1-g,\ p=an,\ y=pg,\ \ok=1-g\}.
+\end{equation}
+Multiplication denotes Boolean conjunction. There is \emph{one} mode source
+$g$, not three independently selectable modes. The underlying ordered simple
+graph has vertex order $(N,P,Q,S)$ and internal edges $NP,PQ$; the directed,
+typed port incidences and shared external source above are retained in addition.
+They cannot be reconstructed from the isolated induced subgraphs.
+
+The actual span of the whole is
+\[
+ \B^2\xleftarrow{\ (a,g)\ }\JG
+       \xrightarrow{\ (y,\ok)\ }\B^2,
+\]
+with tagged endpoint sorts understood. There are four operational runs:
+\[
+\begin{array}{cc|cccc}
+ a&g&n&p&y&\ok\\\hline
+ 0&0&1&0&0&1\\
+ 1&0&1&1&0&1\\
+ 0&1&0&0&0&0\\
+ 1&1&0&0&0&0
+\end{array}
+\]
+The hardware relation is therefore nonempty. What fails is the mission:
+\emph{choose one fixed $g$ that transmits both possible alarm inputs and is
+eligible}. Its full certificate set is
+\begin{equation}\label{eq:mission}
+ \MG=\left\{(g,t_0,t_1):
+ t_a\in\JG,\quad \mathrm{in}(t_a)=(a,g),\quad
+ \mathrm{out}(t_a)=(a,1)\quad(a=0,1)\right\}.
+\end{equation}
+The quantifier order is $\exists g\,\forall a$, and both complete runs are kept.
+Equation~\eqref{eq:runs} gives $y=0$ in every run, so $\MG=\varnothing$.
+
+\section{Local success does not supply a joint witness}
+
+A board transmits every data input exactly when its control is $1$:
+\[
+ \{c:\forall d\in\B,\ B(d,c)=d\}=\{1\}.
+\]
+Pull this certificate back along the \emph{actual} control maps
+$f_P(g)=1-g$ and $f_Q(g)=g$. With $M=\B$ the shared mode interface,
+\begin{equation}\label{eq:good}
+ P_{\good}=f_P^{-1}\{1\}=\{0\},\qquad
+ Q_{\good}=f_Q^{-1}\{1\}=\{1\},\qquad
+ S_{\good}=\{0\}.
+\end{equation}
+Each inclusion into $M$ is part of the data. Their joint certificate space is
+\[
+ P_{\good}\times_M Q_{\good}\times_M S_{\good}
+ =\varnothing.
+\]
+This is not a counterexample to correct relational composition. It is exactly
+what the composition says. The invalid inference is
+``each has some suitable control, therefore there is one suitable shared mode.''
+
+For compactness, the good sets display the mode coordinate. No extra local
+witness choices are being suppressed: at each good mode the deterministic board
+has a unique pair of full identity-test records, one for $d=0$ and one for
+$d=1$. Restoring those records gives canonically bijective certificate sets.
+The joint test is also \emph{necessary}, not merely sufficient here: transmission
+at $a=1$ forces both serial controls to be $1$, while eligibility forces $g=0$.
+Consequently this pullback classifies exactly the mission witnesses
+in~\eqref{eq:mission}.
+
+\section{Two decompositions of the same whole}
+
+The physical cut is
+\[
+ \pi_{\mathrm{box}}=(X,Y)=(\{N,P\},\{Q,S\});
+\]
+the functional cut is
+\[
+ \pi_{\mathrm{fun}}=(C,D)=(\{N,S\},\{P,Q\}).
+\]
+The functional signal subsystem $D$ crosses the box boundary. It needs both
+controls $(n,g)$; the control and eligibility subsystem $C$ imposes
+$n=1-g$ and $\ok=1-g$. Treating $D$ as merely ``two good boards'' would discard
+the equation that makes the original assembly unusable.
+
+\subsection{Exact maps rather than equal final outputs}
+
+The physical block records are
+\[
+\begin{aligned}
+ X&=\{(a,g,n,p):n=1-g,\ p=an\},\\
+ Y&=\{(p,g,y,\ok):y=pg,\ \ok=1-g\}.
+\end{aligned}
+\]
+They form the composable span path
+\[
+ (a,g)\xleftarrow{}X\xrightarrow{}(p,g)
+       \xleftarrow{}Y\xrightarrow{}(y,\ok).
+\]
+Its apex is $X\times_{(p,g)}Y$, including the shared $g$ as well as $p$.
+The map $\Phi_{\mathrm{box}}$ merges equal labelled coordinates to produce
+$(a,g,n,p,y,\ok)$. Its inverse restricts that complete record to $X$ and $Y$.
+Both composites are identities. The apex, target and comparison each have four
+witnesses, but the actual inverse formulas, not equal cardinalities, prove
+exactness.
+
+The functional records without through-wires are
+\[
+\begin{aligned}
+ C&=\{(g,n,\ok):n=1-g,\ \ok=1-g\},\\
+ D&=\{(a,n,g,p,y):p=an,\ y=pg\}.
+\end{aligned}
+\]
+Their join is over $(n,g)$. To make them an actual sequential span path with
+the same exterior endpoints, carry $a$ through $C$ and $\ok$ through $D$:
+\[
+\begin{aligned}
+ \bar C&=\{(a,g,n,\ok):n=1-g,\ \ok=1-g\},\\
+ \bar D&=\{(a,n,g,\ok,p,y):p=an,\ y=pg\}.
+\end{aligned}
+\]
+Here $\ok$ is unconstrained in $\bar D$ and passed through unchanged. The path is
+\[
+ (a,g)\xleftarrow{}\bar C\xrightarrow{}(a,n,g,\ok)
+       \xleftarrow{}\bar D\xrightarrow{}(y,\ok).
+\]
+There are $4$ records in $\bar C$, $16$ in $\bar D$, and $4$ compatible pairs.
+Again merge and restriction give inverse endpoint-preserving maps
+$\Phi_{\mathrm{fun}}$ to $\JG$. This preserves $n$ and $p$, not only the output.
+
+\subsection{The actual graph and span cells}
+
+Use the existing full finite graph/span model with graph bound at least $6$
+and trivial scalar monoid $\{1\}$. All endpoint objects are the actual tagged
+tuple sets displayed above. For either cut, retain the same whole $G$, its
+induced source graphs, the ordered partition $\pi$, every span leg, and the
+actual map $\Phi$. The cell is precisely
+\[
+ (\pi,\Phi,1).
+\]
+If the source uses the boundary-marked path convention
+$P(p)=\{(a_0,e_1,a_1,\ldots,e_k,a_k)\}$, insert its forced endpoint coordinates
+before merging; the inverse recovers them from the leg maps. The E2
+reconstruction theorem represents this cell by its stated normal form
+\[
+ u_{(\id,\Phi,\id)}\,c_{\mathrm{flat}}(\pi;p),
+\]
+with scalar $1$. This is a concrete instance of the old presentation theorem,
+not an assumption that an unspecified component semantics is automatically
+represented.\footnote{E2 \S2.3, Theorem 2.1. Exact source locations and scope
+are recorded in the accompanying source ledger.}
+
+\subsection{Genuine refinement and the crossing boundary}
+
+Opening $X$ into its occurrences $(N,P)$ and $Y$ into $(Q,S)$ is an ordered
+graft of the physical tree. Its frontier is $(N,P,Q,S)$. Opening $C$ into
+$(N,S)$ and $D$ into $(P,Q)$ is an ordered graft of the functional tree, with
+frontier $(N,S,P,Q)$. These are same-whole refinements \emph{within each tree}.
+The repeated board type does not identify the $P$ and $Q$ positions. This is
+the occurrence-level distinction retained by B3's full semantic tuples.
+
+The two frontiers differ. The existing nonsymmetric planar calculus does not
+silently supply a permutation, so this crossing comparison is \emph{not} an
+instance of I4 planar cut rotation. Its legitimate bounded replacement is the
+explicit bijection
+\begin{equation}\label{eq:cross}
+ \Theta=\Phi_{\mathrm{fun}}^{-1}\Phi_{\mathrm{box}}.
+\end{equation}
+On intrinsic component records, containing only each component's own ports,
+it sends $(e_N,e_P,e_Q,e_S)$ to
+$(e_N,e_S,e_P,e_Q)$, and the inverse sends $(f_N,f_S,f_P,f_Q)$ to
+$(f_N,f_P,f_Q,f_S)$. It does not exchange the meanings of $P$ and $Q$; it
+reindexes labelled records. The contextual span apices have different
+through-wire fields, so their records are not literally permuted unchanged:
+merge the full run and restrict to the target schemas, transporting all carry
+coordinates, with the reverse operation as inverse.
+Both sides retain the same incidence equations.
+Thus it preserves every named port value and endpoint. This separately proved
+comparison of finite assignment sets claims no new symmetric calculus.
+
+\section{All intermediate assembly witnesses are retained}
+
+For a fully staged exactness claim, an inverse at the final output is not
+enough. Here is explicit atomic span data for the two trees. Each row denotes
+the set of complete input/output records satisfying the final column; repeated
+names on the two sides are equal through-wires. Every named coordinate in a
+row is retained in its apex.
+
+\begin{center}
+\small
+\begin{tabular}{llll}
+\toprule
+Tree&Occurrence&Input $\longrightarrow$ output&New equation\\
+\midrule
+Physical&$N$&$(a,g)\longrightarrow(a,g,n)$&$n=1-g$\\
+&$P$&$(a,g,n)\longrightarrow(p,g)$&$p=an$\\
+&$Q$&$(p,g)\longrightarrow(y,g)$&$y=pg$\\
+&$S$&$(y,g)\longrightarrow(y,\ok)$&$\ok=1-g$\\
+\midrule
+Functional&$N$&$(a,g)\longrightarrow(a,g,n)$&$n=1-g$\\
+&$S$&$(a,g,n)\longrightarrow(a,n,g,\ok)$&$\ok=1-g$\\
+&$P$&$(a,n,g,\ok)\longrightarrow(p,g,\ok)$&$p=an$\\
+&$Q$&$(p,g,\ok)\longrightarrow(y,\ok)$&$y=pg$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+These contextual spans are not falsely identified with the smaller isolated
+component tables: the extra coordinates are declared through-wires. At each
+named node $X,Y,\bar C,\bar D,G$, the local coefficient map merges the compatible
+child records and its inverse restricts the parent record. Every target record
+therefore has exactly one child tuple above it. Graph partitions induce the
+declared child graphs, the exterior sides are identities, and every local
+scalar is $1$. These verify the hypotheses of E5 Theorem 2.1 at \emph{each}
+named node, not just at the root.
+
+E5 Theorem 3.1 then permits exact grafting and contraction within either fixed
+typed tree. Its comparison equations use the supplied bijections, and its root
+equation is satisfied here pointwise by record merging. It does not turn
+Equation~\eqref{eq:cross} into a planar rotation, nor transport a certificate
+between different physical wholes. The exactness mark is normalized
+\emph{coefficient} exactness: the multi-component cuts have multiple nonempty
+graph entries and are not claimed to be opcartesian universal compositions.
+
+\section{The one replacement and why its location matters}
+
+Insert a declared inverter $J$ on \emph{$Q$'s control port}. The new whole $G_Q$
+has five occurrences, with new internal edge $JQ$, and retains
+\begin{equation}\label{eq:repaired}
+ n=1-g,\qquad j=1-g,\qquad p=an,\qquad y=pj,
+ \qquad\ok=1-g.
+\end{equation}
+Its full run record is $(a,g,n,j,p,y,\ok)$. There are still four operational
+runs, and exactly one mission certificate, containing the two runs at $g=0$.
+Replacing $Q$ by the macro $Q^-=(J,Q)$ changes $G$ to $G_Q$; it is \emph{not}
+a same-whole refinement of $G$. Once the new macro is specified, opening $Q^-$
+into $(J,Q)$ is a genuine refinement of that new whole.
+
+The local interface calculation is an actual pullback. Put
+\[
+ h(d,g)=(d,1-g),\qquad
+ h^*B=\{(d,g,y):(d,1-g,y)\in B\}.
+\]
+The map $h$ is a tagged-set isomorphism with the complementary conversion as
+inverse. Composing the graph of the complement with the board gives precisely
+$h^*B$, so $Q^-_{\good}=\{0\}$. Now
+\[
+ P_{\good}\times_M Q^-_{\good}\times_M S_{\good}=\{0\}.
+\]
+The unchanged $P$ and $S$ evidence can be reused. The old $Q$ predicate is
+replaced by its correctly transported predicate, and a \emph{new} global
+certificate is built. There was no old global mission certificate to transport.
+
+The repaired physical cut is $(\{N,P\},\{J,Q,S\})$; a repaired functional cut is
+$(\{N,J,S\},\{P,Q\})$. Both are cuts of the same $G_Q$. Their sequential spans
+are $X:(a,g)\to(p,g)$ as before and
+\[
+\begin{aligned}
+ Y_5 &: (p,g)\longrightarrow(y,\ok),\\
+ C_5 &: (a,g)\longrightarrow(a,n,j,g,\ok),\\
+ D_5 &: (a,n,j,g,\ok)\longrightarrow(y,\ok),
+\end{aligned}
+\]
+with complete apices
+\[
+\begin{aligned}
+ Y_5&=\{(p,g,j,y,\ok):j=1-g,\ y=pj,\ \ok=1-g\},\\
+ C_5&=\{(a,g,n,j,\ok):n=j=\ok=1-g\},\\
+ D_5&=\{(a,n,j,g,\ok,p,y):p=an,\ y=pj\}.
+\end{aligned}
+\]
+Their sizes are $4,4,32$. Matching $(p,g)$ in the physical path and the entire
+$(a,n,j,g,\ok)$ in the functional path gives four compatible witnesses each.
+Merging retains all seven coordinates in~\eqref{eq:repaired}; restriction to
+these exact schemas is the inverse. If the resulting maps are
+$\Phi_{5,\mathrm{box}}$ and $\Phi_{5,\mathrm{fun}}$, the supplied same-whole
+root comparison satisfies, pointwise,
+\[
+ \Theta_5=\Phi_{5,\mathrm{fun}}^{-1}\Phi_{5,\mathrm{box}},
+ \qquad
+ \Phi_{5,\mathrm{fun}}\Theta_5=\Phi_{5,\mathrm{box}}.
+\]
+
+Within $Y_5$, the named $Q^-$ module is followed by $S$. Its apex is
+$\{(p,g,j,y):j=1-g,\ y=pj\}$, with endpoints $(p,g)$ and $(y,g)$.
+Opening it uses
+\[
+ J:(p,g)\longrightarrow(p,g,j),\quad j=1-g;
+ \qquad Q:(p,g,j)\longrightarrow(y,g),\quad y=pj.
+\]
+Merge and restriction retain $j$ at this named stage too. Projection to the
+reduced external relation $h^*B$ is separately a bijection, whose unique lift
+is $j=1-g$; it is not used to erase the inverter occurrence. For the functional
+tree, open $C_5$ in order $(N,J,S)$, carrying the previously named coordinates,
+and $D_5$ as
+$P:(a,n,j,g,\ok)\to(p,j,g,\ok)$ followed by
+$Q:(p,j,g,\ok)\to(y,\ok)$. The equations are respectively $p=an$ and $y=pj$.
+Each local merge again has restriction as inverse. These are the retained
+staged witness maps, not merely equal input/output tables.
+
+By contrast, there is no identity-exterior comparison preserving the original
+and repaired roots: at $(a,g)=(1,0)$, the old output is $(0,1)$ and the new
+output is $(1,1)$. Local adapter transport cannot waive this root-square test.
+
+For a decisive negative control, let $\epsilon_P,\epsilon_Q$ say whether an
+extra inverter is placed at each board's control:
+\[
+ c_P=(1-g)\mathbin{\mathrm{XOR}}\epsilon_P,
+ \qquad c_Q=g\mathbin{\mathrm{XOR}}\epsilon_Q,
+ \qquad y=ac_Pc_Q,\quad\ok=1-g.
+\]
+\begin{center}
+\begin{tabular}{cccl}
+\toprule
+$\epsilon_P$&$\epsilon_Q$&Signal-good modes&Mission-good modes\\
+\midrule
+0&0&$\varnothing$&$\varnothing$\\
+0&1&$\{0\}$&$\{0\}$\\
+1&0&$\{1\}$&$\varnothing$\\
+1&1&$\varnothing$&$\varnothing$\\
+\bottomrule
+\end{tabular}
+\end{center}
+Only the $Q$ placement works. The last row tests an erroneous type-indexed
+rewrite of both identical boards; it is not an authorized two-replacement
+proposal. The $P$ placement transmits only in service mode, which the supplied
+deployment specification excludes. The bounded repair decision remains one
+added adapter.
+
+\section{A ghost certificate and a precisely scoped observation repair}
+
+In the \emph{atomic local mission-certificate diagram}
+$(P_{\good},Q_{\good},S_{\good})$, let $q:M\to\{*\}$ erase the shared mode before
+joining the local good sets.
+Each local image is nonempty, so
+\[
+ q(P_{\good})\times_{\{*\}}q(Q_{\good})
+          \times_{\{*\}}q(S_{\good})=\{*\},
+ \qquad
+ q(P_{\good}\times_M Q_{\good}\times_M S_{\good})=\varnothing.
+\]
+The canonical comparison is $\varnothing\to\{*\}$, not an isomorphism.
+The singleton is a ghost certificate: it combines incompatible choices of the
+same hidden mode. Retaining $g$ and its actual control maps restores the exact
+joint-witness test, before and after replacement.
+This does not assert that forgetting mode at every macro seam produces the
+same error: the physical right box, for example, already retains the internal
+$Q$--$S$ incompatibility if that joint constraint is not discarded.
+
+This is a direct finite calculation about \emph{images and pullbacks}.
+It is not the contravariant inverse-image restriction map in E5 Theorem 4.1
+or D2. Those theorems cannot be invoked in the opposite variance. Nor do these
+Boolean sets by themselves instantiate I1's coefficient-monoid pushout theorem
+or the whole I5 active-occurrence observation doctrine.
+
+There is a useful but limited minimality statement. Fix the test language
+containing $P_{\good},Q_{\good},S_{\good}$ and their conjunctions. Say an
+observation $r:M\to O$ is exact for that language when each test is the inverse
+image of a predicate on $O$. Since $P_{\good}=\{0\}$ separates the two modes,
+exactness forces $r(0)\ne r(1)$. Retaining the bit is therefore minimal, up to
+renaming its two image values, for \emph{that declared language}. It is not
+minimal for the lone original mission query, which is constantly false, and
+not a theorem about the smallest hidden physical realization.
+
+\section{What the machinery adds and what the example establishes}
+
+The decision can be computed by natural join: one variable $g$, the local
+component relations, and the wiring equalities suffice. Database lossless-join
+analysis is therefore a closer baseline than an unconstrained search
+algorithm~\cite{beeri}. Provenance methods also retain information beyond a
+Boolean answer~\cite{green}; witness retention alone is not novel. Interface
+compatibility and environment assumptions have established compositional
+verification treatments~\cite{interface,assumptions}. The categorical ambient
+organization is established as well~\cite{cruttwell}.
+
+The additional work here is the explicit correspondence to the existing
+decomposition theory. The physical and functional cuts are actual E2 cells;
+their complete maps and all proper stages satisfy E5's local fibre test;
+original occurrence positions remain distinct; interface pullbacks identify
+the admissible local replacement; and the observation failure is exposed
+without claiming a theorem in the wrong variance. Each item changes what can
+be reused or inferred: a type-only rewrite chooses the wrong target, an erased
+seam fabricates success, a root-only output omits intermediate evidence, and an
+unlicensed cut permutation claims an equality the planar theory does not give.
+
+\textbf{Established result.} In this finite typed model, the original mission
+certificate set is empty, the $Q$-control repair has one certificate, and the
+$P$-control alternative has none. Both cut presentations assemble the full
+operational relation exactly, with an explicit nonplanar labelled-coordinate
+bridge between them. Retaining the shared mode removes the ghost certificate
+and is minimal for the stated local-predicate language.
+
+\textbf{Evidence boundary.} The mathematical arguments are written finite
+proofs accompanied by executable enumeration and independent agent review in
+the companion files. This application adds no Lean formalization and does not
+alter any prior acceptance status or contract. The requested deliverable is
+uncompiled TeX; no PDF layout or physical hardware validation is asserted.
+
+\begin{thebibliography}{9}
+\bibitem{beeri}
+C.~Beeri, R.~Fagin, D.~Maier, and M.~Yannakakis.
+\emph{On the Desirability of Acyclic Database Schemes}. JACM, 1983.
+\href{https://research.ibm.com/publications/on-the-desirability-of-acyclic-database-schemes}{Author institution record}.
+The audit checked the abstract, not a numbered full-text theorem.
+
+\bibitem{green}
+T.~J.~Green, G.~Karvounarakis, and V.~Tannen.
+\emph{Provenance Semirings}. PODS, 2007, \S\S2--4.
+\href{https://www.cs.ucdavis.edu/~green/papers/pods07.pdf}{Primary paper}.
+
+\bibitem{interface}
+L.~de Alfaro and T.~A.~Henzinger.
+\emph{Interface Automata}. FSE, 2001.
+\href{https://web.cs.wpi.edu/~heineman/html/teaching_/CS562/p109-de_alfaro.pdf}{Primary paper}.
+
+\bibitem{assumptions}
+J.~M.~Cobleigh, D.~Giannakopoulou, and C.~S.~P\u{a}s\u{a}reanu.
+\emph{Learning Assumptions for Compositional Verification}.
+NASA report, November 2002; related conference publication 2003.
+\href{https://ntrs.nasa.gov/api/citations/20030017771/downloads/20030017771.pdf}{Primary report}.
+
+\bibitem{cruttwell}
+G.~S.~H.~Cruttwell and M.~Shulman.
+\emph{A Unified Framework for Generalized Multicategories}, \S\S5, 7.
+\href{https://arxiv.org/pdf/0907.2460v3}{Primary paper}.
+\end{thebibliography}
+\end{document}

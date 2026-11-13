@@ -1,0 +1,518 @@
+Physical stopping assurance from a discovered predictive model
+29 October 2026
+
+ABSTRACT
+
+The previous result discovered a reusable predictor from action and readout
+records. This result connects that predictor to a timed stopping controller
+and explains precisely when its certificate implies a physical guarantee.
+The controller must decide before it knows the future sensing delay, command
+delay, or braking strength. Its proof covers acceleration, waiting, brake
+engagement, and the complete stopping tail, rather than treating a stop
+command as instantaneous safety.
+
+The strongest implemented result uses learned memory to identify which
+physical outcomes remain possible. In a supplied favorable history, a
+controller can request 1,100 millimetres per second while stopping safely for
+all eight supported outcomes. A controller that forgets the relevant history
+can guarantee only 800 on the same speed grid and fixed motion protocol.
+This gain comes from contextual response and memory, not from assuming rare
+failures away. A separate example uses learned joint probabilities to admit
+1,000 instead of 900, but its approximately 9.17 percent risk bound is only an
+illustration, not a practical collision-safety target.
+
+The general theorem bounds collision by the first loss of a proved assurance
+condition, plus failure of the physical assumptions. It preserves joint
+uncertainty, charges unsafe coverage exits, and permits later controller
+selection without restarting the evidence budget. Integer C code reproduces
+the reference model. The physical interpretation of the old readouts,
+calibration, and hardware timing remain stipulated premises: no robot or
+actuator was validated. This is a constructive discovery-to-execution bridge,
+not completion of the broader research programme or a claim of new standard
+stopping mathematics.
+
+1 What has been established
+
+There are two positive results: a general conditional theorem and a concrete
+executable instance. The theorem specifies the additional obligations needed
+to turn the previously discovered controlled predictor into a physical
+assurance statement. The instance implements a finite-memory admission rule,
+a local timed executor, conservative stopping calculations, and negative
+tests that expose failures of shortcuts.
+
+The main implication is simple enough to state without predictive notation:
+
+  collision implies first assurance loss or physical-envelope failure.
+
+An assurance loss is a declared failure of a sufficient certificate, not
+necessarily a collision. This distinction allows the statistical model to
+predict an event that conservatively contains physical danger. A separate
+engineering argument must prove that successful certificates really imply
+collision-free motion. Fitting readout records cannot supply that argument.
+
+The most useful numerical finding is stronger than a small fitted failure
+frequency. Given the correctly identified response and the promised noise
+support, every possible outcome in the favorable context permits the
+1,100 mm/s maneuver. No empirical probability estimate is required for this
+claim. The physical risk bound then reduces to the externally justified
+probability that the physical premises fail. The executable example does not
+supply a measured value for that probability.
+
+The comparison is deliberately specific. It holds for a stationary protected
+boundary, the specified ramp and stopping schedule, the supplied observed
+history, and a seven-element speed grid. It is not an optimality theorem over
+all controllers. Braking earlier changes the protocol and can change the
+answer. Requested speed is not itself throughput, successful travel distance,
+or completion of a useful navigation task.
+
+The work reuses the released twelve-channel learned model and its evidence.
+There is no new training dataset and no new physical experiment. What is new
+in this milestone is the explicit physical contract, its mission-wide
+first-loss accounting, the compiled timed controller, and the check that the
+retained history changes a sound admission decision.
+
+2 What is learned and what is supplied
+
+The inherited predictor discovers response scopes, recursively maintained
+observable memory, and groups of shared stochastic innovations within its
+declared finite-memory model family. It supports feedback controllers chosen
+after learning, provided their histories and actions satisfy its coverage
+and interface requirements. It is one coherent joint predictor, not a
+collection of separately convenient local fits.
+
+The executable bridge uses the previously released joint innovation group
+with readout indices 0, 5, and 10. Their learned responses depend on current
+action ports 7, 3, and 5, and capped run memories on ports 1, 4, 6, 8, and 10.
+Those dependencies come from the response catalogue. The decision program
+updates memory from observed actions; it is not given the simulator's hidden
+physical mode. Twelve one-byte counters are retained for compatibility,
+although this task uses only five of them.
+
+The physical interpretation is supplied separately. The three readouts are
+mapped to sensing delay, command-network delay, and braking deceleration.
+That map is a synthetic calibration contract, not a discovery that the old
+records came from a real sensor or brake. It must apply to the actual system
+and to the simulator in the same way.
+
+The added speed command also needs an explicit compatibility premise. The
+old binary action/readout law must remain valid under the motion protocol;
+speed must not alter its response except through the declared input map.
+This is true by construction in the synthetic embedding. On a real vehicle,
+speed, load, surface, temperature, and battery condition could change braking
+or communication behavior. Their effects would need calibration, conditioning,
+or new acquisition. A guarantee for all feedback policies inside the old
+interface does not automatically cover a new physical intervention.
+
+A causal adapter formalizes this boundary. Physical commands map to permitted
+source actions using currently available information. Source outcomes map to
+physical timing/status records through the same justified transducer. Failure,
+missing-data, and termination labels must be certified outputs or sound
+adapter results. Merely inventing a label for a crashed execution does not
+inherit a probability certificate for crashes.
+
+The adapter preserves trajectory guarantees, but not every conditional bound
+after information is discarded. Two models can have different posterior
+mixtures over hidden source histories even when they produce the same coarse
+physical history. The proof therefore couples the augmented source history
+and adapter state. A controller may still use only its permitted projection;
+proof access to richer state never grants the deployed program that access.
+
+3 The physical witness and the first loss theorem
+
+For each delivered history h, the physical monitor maintains a conservative
+set U(h) of possible current states. A separate event G says that the stated
+sensor, geometry, dynamics, clock, and actuator premises hold throughout the
+mission. The external physical contract supplies a bound eta_phys on the
+probability of G failing, uniformly over the controllers covered by that
+contract. An exploration-only calibration rate cannot silently be reused
+under a different deployment policy.
+
+Every admitted segment has a post-outcome condition F. If F reports success,
+then, on G, the whole segment is collision-free and reaches the next certified
+state set or a safe terminal state. The controller selects its action before
+seeing the outcome. A segment may therefore be risk-qualified even though
+its certificate is evaluated retrospectively. If a collision occurs midway
+through a failed segment, it is charged to that segment; the record protocol
+must not discard the failed execution.
+
+For a stationary boundary, one familiar sufficient calculation starts at
+speed v, allows acceleration at most a until braking engages within delay d,
+and guarantees deceleration at least b afterwards. Maximum forward travel is
+
+  R(v,d,a,b) = v*d + a*d*d/2 + (v+a*d)*(v+a*d)/(2*b).
+
+The terms are travel before engagement and travel while braking. A range
+sample must be corrected for error and any travel since capture. The full
+delay must include the action lease, sensing and communication, computation,
+scheduling, clock allowance, and mechanical engagement. This standard bound
+is a sufficient physical witness, not a learned physical law.
+
+A backup region V has an independently justified local program that reaches
+a safe terminal state. It is stronger than merely having a current U(h).
+The theorem does not require every risk-qualified segment to remain in V;
+that would exclude the behavior the probabilistic branch is meant to assess.
+But an uncovered continuation is free of statistical risk only if the
+current U(h) is contained in V and that backup still applies.
+
+The monitor has three states: live, safe terminal, and assurance loss.
+The latter two are absorbing. A valid physical backup on coverage exit
+reaches safe terminal. An
+uncovered state without the required reserve or authority is assurance loss,
+even if the software issues a best-effort stop. Initial-state violations and
+an uncertified final braking tail are also losses.
+
+Induction over successful segments now proves the implication in Section 1.
+On G, a correctly initialized execution that never loses assurance remains
+collision-free until its safe terminal state. Therefore
+
+  P(collision) <= P(first assurance loss) + eta_phys.
+
+For this example, terminal safety means stopped at positive separation with
+no further motion authorized. It does not protect against an obstacle that
+continues moving into the stopped vehicle, and it is not an infinite-horizon
+collision-avoidance statement.
+
+4 Transferring the predictive certificate through the mission
+
+Let Q be the learned joint law and P the true law on the certified interface.
+On the inherited training-confidence event, the conditional joint-output
+error at each covered source history and action is at most epsilon(h,a) in
+total variation. Run the actual controller and the same first-loss monitor
+under Q. Define
+
+  alpha_Q = Q(first assurance loss),
+
+  Delta_Q = E_Q[sum of epsilon(h,a) over live covered decisions].
+
+The sum stops at first loss, safe termination, or coverage exit. It does not
+charge later outputs of a backup whose safety is independently proved. With
+a coarsening adapter, the exposure sum is evaluated on augmented source
+histories, even if the monitor uses a smaller observation.
+
+The resulting deployment bound is
+
+  P(collision) <= min(1, alpha_Q + min(1, Delta_Q) + eta_phys).
+
+The proof couples P and Q while their complete live prefixes agree. The
+chance of the next disagreement is bounded by the local joint error. The
+mass reaching an equal prefix is no greater than its Q marginal mass, giving
+the Q-weighted exposure sum. Without a disagreement, the two monitors reach
+the same loss or safe outcome. The physical implication then supplies the
+collision bound.
+
+This improves on charging the largest possible horizon when executions
+terminate early or visit low-error contexts. A uniform epsilon still gives
+the simpler Delta_Q <= H*epsilon. An independently justified stopped-trajectory
+TV or KL bound can be tighter; using it requires the same termination
+semantics and honest accounting of its confidence event. Taking the smaller
+of two bounds does not erase the confidence cost of establishing both.
+
+The inherited pointwise certificate is simultaneous over admissible feedback
+policies. Consequently selecting a controller after seeing the learning data
+does not require a fresh union bound over policies. This does not license
+changing structural parameters at every decision. Unresolved environmental
+alternatives remain persistent choices, and the controller must face the
+appropriate fixed-model supremum or a declared mixture.
+
+Training confidence and deployment risk are different quantities. Delta_Q is
+predictive discrepancy along execution. Alpha_Q is modeled first-loss risk.
+Eta_phys is physical-envelope failure. The training failure probability delta
+says how often the statistical certificate may be wrong across learning
+experiments. It is not automatically a per-maneuver collision probability.
+A Monte Carlo estimate of alpha_Q would add its own estimation requirement;
+the finite example instead computes the relevant probabilities exactly.
+
+The theorem also supplies finite certificate obligations for synthesis.
+A risk-to-go potential must dominate its expected successor value, with
+values one at loss and zero at safe termination. An exposure potential must
+cover the local epsilon plus expected future exposure. Such inequalities can
+be checked over finite states. They may be proved on a richer offline state,
+but the selected action must be identical whenever the deployed controller's
+actual observation and memory are identical.
+
+5 Exact support gives the stronger assurance branch
+
+The inherited additive specialization has a separate exact-response
+identification event. On that event the deterministic response m(h,a) is
+correct throughout the permitted domain, and its observer is correctly
+initialized and recursively updated. The implemented identification result
+relies on its declared integer-valued, bounded-degree response family and
+symmetric binary-noise universe. The model class promises residual support:
+each relevant residual coordinate belongs to {-1,+1}.
+
+If the physical witness succeeds for every supported residual outcome, no
+probability-estimation error is needed. The controller is safe against any
+distribution on that support. With safe coverage handling, the theorem gives
+
+  P(collision) <= eta_phys.
+
+This is not the invalid argument that no failures were observed, therefore
+their probability is zero. It is a finite universal check over all eight
+possible residual triples, conditional on exact response identification and
+a promised support alphabet. Outcomes absent from a finite sample cannot
+otherwise be declared impossible.
+
+This branch explains the strongest demonstrated benefit of discovery. A
+history-aware observer can establish a narrower valid physical envelope than
+a guardian that only knows global bounds. Learning which history matters can
+therefore permit more motion without introducing modeled first-loss risk.
+Correlations between the residuals do not create this advantage: independent
+residuals with the same support would give the same hard result.
+
+There remains a real distinction between model-side zero risk and real-world
+zero failure. The source class, physical adapter, timing bounds, and actuator
+authority must be correct. A statistical response-identification confidence
+statement does not by itself certify a physical reliability target such as
+one failure in ten thousand maneuvers. That target also needs an appropriate
+bound on eta_phys and a justified model applicability claim.
+
+6 The implemented motion and timing contract
+
+The test starts stationary facing a fixed protected boundary. A clearance
+packet reports 1,280 mm. Subtracting a 10 mm measurement-error allowance and
+a 10 mm protected reserve leaves 1,260 mm for motion. The packet must have
+the correct authority, valid timestamp, age no greater than 100 ms, and a
+separate justified certificate that the vehicle has remained at rest since
+capture. Being stationary only at the present instant would not suffice.
+Under rest since capture and a stationary boundary, packet age consumes no
+travel distance here. Moving-start cases need a different correction.
+
+The supplied readout calibration is
+
+  sensing delay = clip(150 + 50*Y0, 0, 1000) ms,
+  network delay = clip(150 + 50*Y5, 0, 1000) ms,
+  braking deceleration = clip(2500 + 500*Y10, 500, 5000) mm/s^2.
+
+For requested speed v in mm/s, the plant ramps from rest at 1,000 mm/s^2.
+The nominal ramp lasts v milliseconds. The nominal stop-sampling checkpoint
+is 100 ms after that endpoint. The sensor response takes its realized delay,
+computation receives a nominal 10 ms allowance, and the remote stop packet
+then incurs its network delay.
+
+Independently, the local watchdog becomes eligible to request braking at
+310 ms after the scheduled ramp endpoint. All additional overhead shares
+ONE 10 ms budget: sample-request dispatch lateness, acknowledgement dispatch
+lateness, watchdog scheduling lateness, and physical engagement delay must
+sum to at most 10 ms. These are not four independent allowances. Thus onset
+after ramp completion is bounded by
+
+  min(100 + sensing delay + 10 + network delay, 310) + 10 ms.
+
+A request is latched at or after its scheduled time, not emitted only if a
+sampled clock happens to equal one exact timestamp. Missing packets never
+renew the watchdog deadline. Wrong-authority or stale-sequence stop messages
+do not change the maneuver, and a valid stop or timeout latches braking. The
+source identifier is a trusted interface tag, not a cryptographic
+authentication implementation. Scheduler and actuator deadlines remain
+contract premises.
+
+The simulator uses 10 ms physical ticks and integer micrometres. Its final
+fractional braking tick conservatively overestimates travel relative to
+constant deceleration stopping within that tick. The C program uses a
+separately expressed integer closed form. Its field named collision records
+a conservative stopping-envelope violation; that can overapproximate actual
+collision. The displayed adverse 1,000 mm/s case has no rounding gap and does
+collide in the exact synthetic plant.
+
+One predictive step describes one complete maneuver, including its stopping
+tail. The source outcome is selected once and retained; it is not resampled
+every 10 ms or changed when braking becomes inconvenient. This is why the
+single-maneuver statistical certificate uses H=1. It is not permission to
+call an arbitrary many-tick stochastic physical process a one-step model.
+
+7 What the numerical comparisons show
+
+The speed grid is 0, 700, 800, 900, 1,000, 1,100, and 1,200 mm/s. With current
+actions all -1 and all retained runs zero, 900 mm/s is safe for every
+supported outcome at the 1,260 mm conservative clearance. Speed 1,000 is not.
+
+With the same current actions, a retained run length of two on action port 10
+and zero on the other ports, 1,100 mm/s is safe for all eight outcomes. Its
+worst supported stopping distance is 1,259.5 mm. This leaves only 0.5 mm of
+slack after the explicit 10 mm protected reserve; the example should not be
+read as a recommendation for such a tight hardware design. Speed 1,200 fails
+the support check.
+
+Across all 600 task-relevant memory contexts with those current actions,
+a history-blind guardian must allow weak braking and the watchdog deadline.
+Its worst stopping envelopes are 1,216 mm at 800 and 1,503 mm at 900, so
+it admits at most 800 mm/s on the grid. The learned contextual result therefore
+permits 1,100 rather than 800, a 37.5 percent requested-speed increase under
+the same fixed protocol. A supplied full model retaining the same history
+would obtain the same answer. The contribution is discovering and executing
+the relevant history interface, not outperforming identical information.
+
+The favorable history is a supplied observed context. The example does not
+prove a robot can safely execute a preparatory sequence to create it, nor
+that it can repeatedly enjoy this speed advantage over a mission.
+
+The separate nonzero-risk comparison uses the zero-run context. At 1,000 mm/s,
+one adverse residual triple, (+1,+1,-1), causes collision in the synthetic
+plant. Its learned joint mass is 10,277/131,072, approximately 0.0784073.
+Adding the outward-rounded inherited one-step TV allowance 0.013247 gives
+0.0916543, below the deliberately illustrative budget 0.1. The complete
+reused probabilistic certificate has training failure allowance at most
+0.0065 + 12/2^64, under its original assumptions.
+
+The physical-envelope allowance would still have to be added. Approximately
+nine percent modeled collision risk is not practical collision assurance.
+This branch demonstrates how an honestly priced joint-risk decision compiles
+into motion; it is not the principal safety result.
+
+Multiplying the learned marginal frequencies predicts adverse probability
+approximately 0.124706 and rejects 1,000. Dependence is beneficial in this
+particular example; it is not a case where independence underestimates the
+risk. A direct full three-readout joint table exactly matches the learned
+joint-risk decision. The decomposition supplies task scope, history, and a
+reusable common-source interface, not a special advantage over that table.
+
+Even a randomized worst-outcome guardian on the same grid has expected
+requested speed at most 930 at budget 0.1: one supported adverse row defeats
+every speed above 900, so at most one tenth of its probability can be assigned
+to those speeds, whose maximum is 1,200. This remains a restricted
+requested-speed comparison, not global controller optimality or throughput.
+
+8 Negative tests that matter to the conclusion
+
+History compression can change the answer incorrectly. Two histories of
+port 10, [-1,+1,+1,+1] and [+1,+1,+1,+1], share their latest three actions
+but have retained runs three and four. At 537 mm conservative clearance and
+700 mm/s, their modeled first-loss probabilities are approximately 0.249641
+and 0.078407. The illustrative 0.1-risk controller must reject the first and
+may admit the second. Replacing both by the more favorable memory state
+creates false assurance. The test reconstructs the states causally from
+issued actions, rather than supplying hidden regime labels.
+
+Ten milliseconds also matters. In the zero-run context, omitting the budgeted
+computation interval makes the adverse 1,000 mm/s outcome appear to stop at
+1,310 mm instead of 1,320 mm. At 1,315 mm clearance, the untimed calculation
+therefore accepts a trajectory the timed model rejects. Mechanical engagement
+lag is likewise charged after the brake request, including on the watchdog
+path; a software flag is not a physical brake.
+
+Packet loss illustrates why fallback is not a universal shield. The local
+watchdog still commands braking, but some weak-brake realizations of the
+risk-qualified 1,000 mm/s maneuver collide under timeout. If packet loss is
+outside the certified source family, its probability must be separately
+bounded or the admission must be safe for that possibility. Calling the
+late command a safe fallback cannot restore distance already consumed.
+In contrast, the favorable-history 1,100 mm/s branch remains safe under a
+lost acknowledgement: all calibrated braking outcomes stop by 1,259.5 mm
+even on the watchdog path. This requires loss not to invalidate braking
+authority; an uncalibrated weaker brake remains outside that guarantee.
+
+Unknown history and stale, invalid, or insufficiently justified initial
+clearance cause no launch. That is a legitimate safe rejection because the
+vehicle is initially stationary under the contract. The same rejection
+label cannot make a moving vehicle safe after commitment.
+
+Finally, two physical worlds could emit identical readouts while one has an
+unobserved nearer obstacle or degraded brake. No transcript predictor can
+distinguish those worlds from the records alone. They differ in the physical
+premises. The theorem exposes this obligation through G and eta_phys rather
+than hiding it inside a predictive confidence number.
+
+9 Implementation evidence and remaining engineering work
+
+The C file contains a bounded supervisor and timed executor plus a standard
+input/output test harness, not board firmware or device drivers. Serialized
+memory snapshots are harness inputs, not trusted physical observations; the
+controller has a separate causal initialization from observed actions. No
+actual device input/output was validated.
+
+The C admission path uses bounded integer arithmetic and at most 48 outcome
+evaluations: eight outcomes at each of six nonzero speeds. Probability tests
+use integer cross-multiplication and an outward rational TV allowance, not
+uncontrolled floating-point rounding. Inputs include explicit timestamp and
+distance ranges before arithmetic. Memory updates are causal, and future
+telemetry is never an admission input.
+
+The check suite compares all 600 relevant memory states, eight relevant
+current-action combinations, and three clearances: 14,400 decisions per
+budget. It repeats at risk budgets 0.1 and 0.0001, for 28,800 C/Python decision
+comparisons, and checks recursive updates. Executor tests cover nonzero
+speeds, sensing/network combinations, stale sequence, wrong authority,
+timeout, and latched braking. Host builds use warnings as errors and the
+undefined-behavior sanitizer.
+
+Independent rational checks exercise the transfer inequality on 104,976
+stopped depth-two configurations, alongside 15,625 kernel-pair checks from
+the theorem author. They include safe and unsafe exits. These are useful
+consistency tests, not substitutes for the general coupling proof. Independent
+context enumeration checks the hard-support comparison and conservative
+physical integration. A timing checker covers 24,024 integer allocations
+of the shared overhead, including 5,040 with positive lateness at every
+stage. The underlying inequality also holds for nonnegative real delays;
+the enumeration is a supplement, not a restriction to integer hardware.
+
+This establishes reproducible reference-code behavior, not a target
+processor's worst-case execution time or actuator performance. Before a
+physical deployment claim, the open obligations are concrete: validate the
+range and footprint interpretation; establish rest since capture; measure
+braking and tracking envelopes across the intended operating regime; verify
+clock, scheduler, communication, and brake-engagement bounds; and justify
+source-law invariance under actual speed commands. A hardware test plan would
+also need fault injection and a safe experimental setup. None was run here.
+
+For repeated operation, the next mathematical task is an end-to-end mission
+with safely reachable initialization, successive admissible states, complete
+coverage accounting, and an actual progress objective. The general theorem
+provides a framework for that task; the one-maneuver example does not already
+solve it. No new Lean proof, external human review, hardware-in-the-loop test,
+or field validation is claimed.
+
+10 Relationship to existing work and final assessment
+
+Stopping-distance calculations with response time and braking bounds are
+established, including the longitudinal RSS formulation. Runtime-assurance
+and Simplex architectures already emphasize timely recovery, while
+sampled-data control-barrier-function work explicitly handles intersample
+behavior, uncertainty, and input delay. Predictive safety filters already
+combine learned uncertain models with certified continuations. These are
+substantive baselines, not missing categories. Sources include
+
+  [On a Formal Model of Safe and Scalable Self-driving Cars]
+  (https://arxiv.org/html/1708.06374v6)
+
+  [Control Barrier Functions for Sampled-Data Systems with Input Delays]
+  (https://arxiv.org/html/2005.06418v1)
+
+  [A predictive safety filter for learning-based control of constrained
+  nonlinear dynamical systems](https://arxiv.org/html/1812.05506v3)
+
+The earlier internal work also already combined a physical hazard envelope,
+stopping distance, and predictive-risk transfer. Those ingredients are not
+new results of this milestone. The defensible additional deliverable is the
+explicit chain from discovered scopes and memory, through a lawful physical
+adapter and timed implementation, to a first-loss certificate with correct
+coverage and uncertainty accounting. No literature-wide novelty clearance
+has been established.
+
+The strongest conclusion is therefore positive and bounded. The released
+predictor now drives a checkable stopping controller. Its learned history
+can support a strictly less conservative all-outcomes admission than a
+history-blind guardian, and its joint probabilities can support a separately
+priced soft-risk admission. The proof specifies exactly why either conclusion
+survives prediction error and exactly where physical evidence is still needed.
+The broader research contract, including discovery beyond the promised model
+class and assurance on a validated physical system, remains open.
+
+SOURCE GUIDE
+
+The mathematical contract and proofs are in
+  theory/Timed_First_Loss_Assurance.md
+The executable specification, programs, and numerical results are in
+  examples/Executable_Physical_Bridge.md
+  examples/timed_controller.py
+  examples/controller.c
+  examples/timed_results.json
+  examples/c_check_results.json
+Independent challenges and checks are in
+  review/Independent_Physical_Contract_Challenge.md
+  review/contextual_support_checks.json
+The broader baseline comparison is in
+  prior_art/Physical_Assurance_Baselines.md
+The reused source candidate is the n12 release of
+  reusable_environment_discovery_20261029/examples/runs/n12/
+Its executable_candidate.json SHA256 is
+  c00be728d116c33f393570ef81816c359a82b32e94dc36931663cf84190657af

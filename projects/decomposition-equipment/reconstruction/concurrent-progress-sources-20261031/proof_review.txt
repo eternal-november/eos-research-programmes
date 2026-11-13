@@ -1,0 +1,133 @@
+Mathematical proof review: concurrent progress and reconstruction
+31 October 2026
+
+Disposition: PASS for the stated fixed-worker progress theorem and the qualified
+controlled-history reconstruction theorem with its actual joint-cylinder map.
+This is a mathematical reasoning review supported by exact finite regressions,
+not a machine-checked general proof or a certification of literature novelty.
+
+Reviewed sources
+
+ordered_lock_progress_theorem.md
+  SHA-256 ef0b8fa694d5eddaf611ea1c60d18b469f0d533b1e634d4328721f3765e2d315
+composition_challenge.md
+  SHA-256 49a66e98d53dec72cd02b7e13eac598b355a766da9bb21be7e1a03d93eef1664
+
+1. Fixed-worker progress
+
+The resource-manager invariant gives each mutex at most one owner, agrees with
+workers' held sets, permits releases only by owners, and clears ownership when a
+slot becomes terminal. Strictly increasing acquisition excludes a directed
+wait-for cycle. Hence every unfinished configuration has a runnable worker.
+If a complete W-tick scheduler cycle had no grant, its configuration would not
+change, so that runnable worker would have received a grant: contradiction.
+The result is global service, not individual service within every W ticks.
+
+At every actual episode entry, the autonomous local kernel supplies a latent
+intrinsic path. Resource contention only delays the revelation of its next
+successful step. If the actual episode completes, its successor equals the
+latent successor; otherwise its actual next-entry reward is zero. Nonnegative
+successor probabilities and potentials are therefore bounded by their latent
+counterparts without conditioning on completion. The entry induction counts
+unfinished episodes and sets absent-entry contributions to zero.
+
+On the good event of at most m entered episodes per worker and intrinsic length
+at most t for every one of them, total intrinsic work is at most W m t. The
+scheduler lemma gives T <= W^2 m t, rather than assuming completion to define
+the work. The entry-count and potential-weighted tail bounds give (C). Taking
+t to infinity first, then m to infinity, proves almost-sure completion under
+rho(P) < 1 without requiring rho(G) < 1 or finite local means. The separate
+expected-time statement requires the stated local mean bound and rho(G) < 1.
+
+2. Positive controlled-history reconstruction
+
+Controlled input words are interventions, not observational conditioning on a
+policy-generated input sequence. Causal consistency and normalization give
+K(o | h,u) = p(h,(u,o)) / p(h) on positive prefixes. Zero-prefix choices cannot
+affect any reachable experiment. Including the local preparation/entry label
+supports the declared family of initial experiments. Countable histories give
+a positive countable-state realization, not necessarily an effective sampler.
+
+Contextual substitution requires worker closure conditional on the retained
+interaction record AND the context's actual current operational state,
+including private persistent memory. It excludes unrevealed worker states and
+future private innovation tapes. The context's own transitions must follow its
+specified conditional kernels, without unmodeled worker-state dependence.
+Independent private worker and context innovations are sufficient; isolated
+marginals and visible-history-only closure are not sufficient.
+
+Induction on augmented context/output prefixes proves equality of the actual
+joint finite-path laws. Countable-alphabet finite cylinders determine the full
+sequence law, hence every measurable trace-defined completion or cost event.
+The theorem retains failing, starving and blocking behavior rather than creating
+progress. Absorbing padding is permitted only after a terminal/halted outcome
+declared by the same context. A blocked configuration retains any actual future
+release, cancellation, recovery or intervention behavior admitted by that context.
+
+The one-tick resource interface exposes the pending action, grant/busy reply,
+resource ownership, releases, completion, typed reentry and tick cost. Busy may
+enlarge a history-realization state; the required invariance is of the intrinsic
+successful-grant law after erasing busy visits, not literal history-state stasis.
+
+3. Actual joint-cylinder comparison and coherence
+
+For each preparation/intervention/horizon experiment, X contains tagged finite
+original paths and H contains the corresponding history-realized paths. Both
+retain the actual context record. The total deterministic map q:X -> H forgets
+hidden worker coordinates and accumulates local histories. Under the qualified
+closure condition, q_* p_X = p_H. Every retained visible indicator and unit test
+pulls back along q. These two identities make q an actual arrow in Fact(r) for
+one derived joint cylinder; no product-of-isolated-marginals assumption is used.
+
+The source-changing canonical comparison cell is the established normalization
+consequence of that realization arrow. Its formal legs and apex are not claimed
+to be stochastic kernels or executable physical implementations. The operational
+map is q on finite paths, not a claim that infinite hidden paths form a countable
+matrix object or that Isbell completion preserves infinite probabilistic limits.
+
+Rebracketing, prefix restriction and compatible history accumulation commute
+with q while transporting the SAME scheduler, manager and primitive tick rule.
+Nested round-robin is generally another context, not mere reassociation. No
+arbitrary concatenation lift, pullback preservation, general mixed-doctrine
+operational gluing or full physical reconstruction contract is established.
+
+4. Exact finite regression evidence
+
+The standard-library verifier uses fractions.Fraction throughout. Its output
+has status PASS; fresh execution from the extracted package reproduces the
+saved JSON and stdout byte for byte. Its finite checks include:
+
+* Identical isolated five-command duration/exit summaries, but ordered completion
+  in 13 ticks versus opposed-lock deadlock under the same companion scheduler.
+  The ordered worker's busy ticks 2, 4 and 6 refute a per-worker W-tick guarantee.
+* 682 ordered-lock program assignments, 31,365 reachable states and 90,738
+  initial-cursor W-tick windows, each with the asserted global service property.
+* Exact fixed-slot dynamic programming to 160 ticks, 28 geometric-service tail
+  inequalities (23 nontrivial) and 28 bounded-service inequalities (all nontrivial).
+  Unlike the companion's skipped-terminal fixture, terminal visits cost one tick
+  in this quantitative fixture, as required by theorem (C).
+* 264 actual-entry inequalities and statewise entries = completed + active,
+  preventing a completion-conditioned or completed-episodes-only calculation.
+* 728 ratio normalizations, 364 busy-prefix checks, two zero-prefix choices,
+  exact finite trace equality, 16 path-pushforward comparisons over 584 tagged
+  hidden paths, and 966 prefix/continuation history-accumulation identities.
+* Shared worker noise and retained-private-context negative regressions. The
+  latter preserves the first visible marginal while destroying a later visible
+  correlation, demonstrating why actual-private-context closure is necessary.
+* 81 product-state update/rebracketing checks with the unchanged flat scheduler,
+  plus a negative flat-versus-hierarchical schedule comparison.
+
+These are finite regression instances, not exhaustive tests of arbitrary
+countable programs or proofs of the general probability/CFS statements.
+
+5. Scope
+
+The progress theorem has finitely many fixed workers and resources, ordered
+locking, explicit cyclic polling, the declared unit tick, and autonomous local
+evolution with resource-mediated delay. Arbitrary shared-state mutation,
+external arrivals, owner failure, unordered locks and variable physical costs
+need additional interfaces or proofs. Spawning is not covered. The progress
+certificate and exact reconstruction must remain separate: the latter preserves
+an admitted context's behavior, while the former proves completion for a
+particular implemented context. This is a scoped domain of reuse, not a novelty
+claim or a theorem of all concurrent liveness.

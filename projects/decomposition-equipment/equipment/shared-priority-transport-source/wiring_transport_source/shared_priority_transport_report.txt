@@ -1,0 +1,712 @@
+Learned local certificates under shared priority arbitration
+Research report 31 October 2026
+
+RESULT
+
+There is a conditional local-to-shared transport construction for an
+explicit anonymous callback interface. Separately learned intrinsic work and
+FIFO facts remain usable when modules share one primitive arbiter, provided
+the wiring preserves their work law. Isolated wall-clock completion promises
+do not survive contention. The shared completion model must instead be
+derived from the arbiter's actual event rule and the retained joint
+evidence.
+
+For one all-ready productive job per module, a sound lower work bound
+greater than the callback-lag bound makes callback order equal service
+order. Learned priority comparisons then define a partial order. The main
+result is an exact O(n^3) test for whether every linear extension of that
+partial order assigns the observed bits to the same physical role-parity
+vector. It can certify the mission without identifying the full priority
+order or every report's origin. A four-job physical example is accepted by
+this test but not by the earlier all-perfect-matchings test, even when the
+matching graph uses exact marginal possible ranks. The gain comes from
+retaining joint precedence constraints, not from merely narrowing
+independent arrival windows.
+
+The result also includes a limitation and a repair. There are n!
+shared-priority worlds with identical complete local, drained observations
+and valid identical grant-conditional local certificates. Under the
+one-commit-per-tick protocol and its tight deadline, local information alone
+gives optimal worst-world missed-or-unsafe risk 1-(n+1)/2^n. With an empty start and exactly the
+required useful jobs in the production manifest, a hard-safe controller
+completes with probability at most 2^(1-n). Safe joint fast/slow timing
+probes distinguish the missing priority comparisons and restore the burst
+mission, with acquisition and resource costs charged. This is not an
+impossibility result for all safe probes: informative joint probing is the
+constructive repair.
+
+These are mathematical and executable-model results, not hardware safety
+certification. The fast/slow operation choice and atomic
+admission-before-dispatch primitive are explicit interface capabilities. The
+negative family further restricts the protocol to one atomic batch commit
+per legal tick; allowing repeated separately dispatched commits at the same
+tick defeats that sharp bound, including the two-module obstruction. A
+separate, weaker nonoptimal bound still gives a growing obstruction for n>=3
+under repeated same-tick commits. The positive poset theorem only requires
+its actual all-ready batch, not this additional restriction. Fast/slow
+choice is richer than the preceding anonymous FIFO interface; failure and
+repair use the same newly declared interface, not an unchanged predecessor.
+Positive certification permits arbitrary dependent binary payloads and
+bounded lags. The fair-bit assumption is used for the numerical
+negative-witness risks. No general composition calculus, literature novelty,
+generic polynomial joint scheduler solver, or one-mission end-to-end speedup
+is claimed.
+
+1  What is retained and what must be supplied
+
+Each addressed module exports a FIFO of jobs. A job j has a public admission
+time r_j, a known physical role rho(j), and intrinsic work d_j in a sound
+local work set. Intervals [L_j,U_j] are sufficient outer bounds. A unit-rate
+exclusive grant consumes one unit of work per unit time; no work is consumed
+while the job is ungranted. The FIFO head completes exactly when its demand
+is consumed. Every actual completion produces exactly one reliable callback
+with delivery lag in [0,J]. Payloads and lags may be dependent across jobs
+and modules.
+
+A callback exposes its timestamp, binary payload and stream occurrence, but
+no source, request identifier, grant record, or persistent source rank.
+Addressed admissions are public actions, not callback tags. The API has no
+priority-dependent immediate status or admission side channel. A distinct
+supplied physical bridge connects the fresh productive bit of each job to
+its actual role load and protected output requirement. For each role a, the
+command is
+
+    ell_a = XOR over required jobs j with rho(j)=a of x_j.
+
+Every required fresh job must actually run. Probe bits cannot replace useful
+work. A wrong command, refusal, omission or missed physical deadline is
+failed completion. Isolation, no-actuation diagnostic gates, retention
+through the entire execution and final tail, and command/actuation
+capabilities are independent premises. Queue mathematics does not establish
+the physical bridge.
+
+A singleton isolated callback at elapsed time a_j gives
+
+    L_j=max(0,a_j-J),  U_j=min(D_j,a_j),
+
+using an independently supplied work cap D_j. Strictly positive work makes a
+zero lower endpoint open. The measured interval has width at most J.
+
+The local work/FIFO contract is grant-conditional. Under uninterrupted
+isolated unit-rate service, it yields the familiar isolated timing law.
+After wiring, it preserves demand and order, not a promise to finish within
+the old elapsed time after admission. For example, a demand-Q job still
+needs Q granted time, but may wait for another module before receiving that
+grant.
+
+Isolated measurements can bound intrinsic work only because this service
+primitive is supplied. Finite timing tests cannot establish that contention,
+cache effects, memory traffic, or context-dependent code leave work
+unchanged. If wiring changes demand itself, the retained contract is invalid
+unless a new sound work set covers the change. Work invariance,
+calibration-to-production stability, FIFO, the hard lag bound, exactly-once
+delivery, clock semantics and a certified empty start or independently
+justified drain remain trusted or separately enforced properties.
+
+The concrete failure/repair interface has two existing addressed operations
+per module: fast P_i with demand Q and slow D_i with demand 2Q. Choosing the
+operation chooses its work demand, not its uncontrollable payload. Both are
+safe to exercise under the diagnostic gate. Productive jobs use P_i. This
+additional operation structure is necessary to the displayed separating
+probe; it is not inferred from anonymous callbacks or supplied secretly
+during repair.
+
+2  Deriving the shared model from the wiring
+
+Wire the local FIFO heads to one known unit-rate, work-conserving,
+nonpreemptive server. Its unknown strict module priority theta is persistent
+and belongs to a declared finite family. Arbitration depends on module
+labels and readiness, not hidden payloads. Each declared atomic batch is
+queued in full before its idle-resource selection. No external traffic or
+unexplained carry-in is allowed. Where several commits share a numerical
+timestamp, their public event order still matters; a batch barrier does not
+silently combine separate commits.
+
+For a request log whose same-time requests are jointly admitted before
+arbitration, let H_m contain the first unserved job of each nonempty module
+after m service completions, and let c_m be the preceding completion time,
+starting at the certified empty time c_0. The next event is determined by
+
+    s_(m+1) = max(c_m, min over j in H_m of r_j),
+    A_(m+1) = {j in H_m : r_j <= s_(m+1)},
+    j_(m+1) = head in A_(m+1) whose module has highest theta priority,
+    c_(m+1) = s_(m+1) + d_(j_(m+1)).
+
+A ready head prevents idle time; if none is ready, work conservation waits
+to the earliest head admission. Nonpreemption and unit service give
+completion. This recurrence changes cross-module order and latency while
+preserving every module's FIFO and intrinsic service facts. For other
+per-commit event orders, eligibility must follow that actual admission order
+rather than timestamps alone. One common theta is used throughout, not an
+independently favorable priority for each event.
+
+For a fixed feasible service permutation sigma, completion bounds propagate
+as
+
+    l_m = max(l_(m-1),r_(sigma(m))) + L_(sigma(m)),
+    u_m = max(u_(m-1),r_(sigma(m))) + U_(sigma(m)).
+
+Induction gives l_m <= c_m <= u_m. The readiness/priority guards must also
+hold for that same global trace. With uncertain work, readiness may change;
+using only a nominal permutation is unsound. An exact model retains every
+feasible parameter/work trace. A conservative model may retain all
+FIFO-preserving permutations and their windows, including impossible traces
+but not omitting truth. Generic trace enumeration can be factorial; the
+cubic theorem below uses a narrower batch structure and does not solve
+arbitrary shared scheduling.
+
+For a finite request log with r_j >= c_0, a coarse closed callback horizon
+is
+
+    max_j r_j + sum_j U_j + J.
+
+After the last release, all remaining work fits its total upper work under
+work conservation. Initialization, actual request counts, drain, callback
+handling and physical tails still require their own checks.
+
+Let E be the retained diagnostic record. Keep every parameter/work
+realization consistent with E under the same shared semantics and
+safe-diagnostic transfer law. Sound acquisition only removes inconsistent
+candidates, so the actual world remains. Running the recurrence on the
+retained candidates derives a joint production trace family containing the
+actual trace.
+
+One callback per job and a closed reliable horizon yield a single actual
+bijection between jobs and report occurrences. If W_j encloses all arrival
+times of j in that trace family, the graph with edge j--v when timestamp t_v
+lies in W_j contains every edge of that actual bijection. The imported
+all-matchings parity test is therefore sound on the newly derived graph. The
+old isolated graph is not transported unchanged. Graph disagreement means
+UNRESOLVED, not two physically feasible worlds or an all-policy
+impossibility.
+
+3  The batch specialization and its exact parity question
+
+There is exactly one prescribed productive job per module. All n jobs must
+be ready before the first arbitration. Atomic batch admission, or an
+equivalent admission-before-dispatch barrier, is a supplied and costed
+capability. Several sequential calls bearing the same numerical timestamp do
+not establish it: the first call might already start a lower-priority job
+nonpreemptively.
+
+Suppose L_j>J for every productive job. Consecutive completions differ by
+the next job's work, and consecutive callback arrivals differ by at least
+L_j-J>0. Thus raw callback order equals service order despite arbitrary
+dependent lags. This rank is derived for this batch; no stable source rank
+has been assumed. The lag convention is one-sided [0,J], not symmetric
+timestamp error; a different error model needs a different separation
+condition.
+
+Let P be the strict partial order of acquired priority comparisons, where
+x<y means that x has higher priority and is served before y in the all-ready
+batch. Reject cycles. Write LE(P) for all linear extensions, namely the
+total orders respecting every comparison. The actual persistent priority
+belongs to LE(P). If comparisons are the only retained restrictions on an
+otherwise unrestricted strict priority, every extension is an allowed
+priority too. Other diagnostic records may impose additional joint
+restrictions; ignoring those produces only a sound outer model, not an exact
+physical converse.
+
+Let b_1,...,b_n be the observed binary payloads in callback rank order. For
+sigma in LE(P), define
+
+    V_a(sigma) = XOR over ranks k with rho(sigma_k)=a of b_k.
+
+The question is whether V(sigma) is the same for all extensions. Exact
+production timestamp values can remove some extensions, so this is exact
+within the poset abstraction, generally only sufficient for the full timed
+physical record. It retains one common total order rather than independently
+choosing each job's possible rank.
+
+4  The exact cubic criterion and proof
+
+For two incomparable jobs x,y, let Pred and Succ denote strict transitive
+predecessors and successors. Define
+
+    D_xy = Pred(x) union Pred(y),
+    U_xy = Succ(x) union Succ(y),
+    a_xy = |D_xy|+1,
+    z_xy = n-|U_xy|-1.
+
+Use one-based ranks. The jobs x,y can occupy adjacent ranks k,k+1, in either
+order, in some extension exactly when a_xy <= k <= z_xy.
+
+Necessity follows because every predecessor of either job must precede the
+adjacent block, and every successor of either must follow it. For
+sufficiency, D_xy and A=jobs outside U_xy union {x,y} are order ideals, with
+D_xy contained in A. Topologically order D_xy and then A outside D_xy. Its
+prefixes extending D_xy give an ideal I of every size from |D_xy| through
+|A|. Choose |I|=k-1, append x,y in either order, and topologically order the
+remaining jobs. All predecessors of x,y are already in I, and neither job
+precedes the other. This constructs the two required complete extensions,
+including both interval endpoints.
+
+THEOREM  The role-parity vector V is constant on LE(P) if and only if every
+incomparable cross-role pair x,y satisfies
+
+    b_k = b_(k+1) for every integer k in [a_xy,z_xy].
+
+To prove it, swapping adjacent incomparable x,y at ranks k,k+1 changes V by
+
+    (b_k XOR b_(k+1)) times (e_rho(x) + e_rho(y)) over F_2,
+
+where e_a is the unit vector for role a. A violated condition therefore
+gives two explicit valid extensions with different vectors, using the
+construction above. Conversely, any two extensions are connected by adjacent
+incomparable swaps. Move the next desired job left toward its position in a
+target extension; every crossed job is incomparable, since a comparable pair
+has the same relative order in both extensions. Repeat after fixing each
+prefix. Under the criterion every swap preserves V, proving sufficiency.
+
+An implementation first computes transitive reachability in O(n^3) Boolean
+operations and rejects cycles. For each incomparable pair, counting the two
+set unions costs O(n), hence O(n^3) in total. An available optimization
+precomputes prefix sums of transition indicators t_k=[b_k differs from
+b_(k+1)]; each interval's no-transition test is then O(1). For fixed P,
+compile the intervals before production and test a new word with O(n^2)
+interval checks. The supplied checker instead directly scans feasible
+adjacent ranks; this is still O(n^3). These are algorithmic bounds, not
+measured runtime guarantees. One topological order gives the unique vector
+on acceptance. If a particular target vector was specified, that reference
+vector must also equal the target; invariance alone does not prove the right
+target. A failure returns the pair, rank and two topological orders with
+different directly recomputable vectors. Reachability storage is O(n^2) bits
+in the elementary model. Encoding, finite arithmetic and actual
+implementation costs must be charged; the graph-operation count is not a
+hardware WCET bound.
+
+For every possible payload word, the criterion holds exactly when every
+incomparable pair has the same role. Same-role swaps always preserve parity.
+A cross-role incomparable pair has a nonempty adjacent-rank interval; a word
+with a transition at one of those ranks violates the criterion.
+Consequently, uniform mission sufficiency may leave within-role priority
+entirely unknown. Fixed-payload sufficiency can be weaker still because
+equal neighboring bits can make some cross-role ambiguity harmless.
+
+Accepted vectors are physically correct by actual-priority inclusion and the
+batch-rank proof. A rejected poset certificate proves only nonconstancy over
+LE(P). Its two extensions become genuine same-record physical witnesses only
+if both reproduce the entire retained diagnostic record and production data.
+For the common-demand fixture below, every extension does so: all productive
+work is the same tau>J, jitter is zero, diagnostics retain exactly the
+declared pair comparisons, and rank payloads can be coupled to give the same
+word. A common tau merely lying in marginal work intervals is not by itself
+enough to establish this compatibility with earlier evidence.
+
+5  A strict improvement over exact marginal ranks
+
+Take jobs 0,1,2,3 with roles (A,B,A,B), priority comparisons 0<3 and 1<2,
+and observed rank bits (0,0,1,1). The six linear extensions are
+
+    (0,1,2,3), (0,1,3,2), (0,3,1,2),
+    (1,0,2,3), (1,0,3,2), (1,2,0,3).
+
+Every extension gives parity (A=1,B=1), so the poset certificate accepts.
+Jobs 0 and 1 each have exact possible ranks {1,2,3}; jobs 2 and 3 each have
+exact possible ranks {2,3,4}. The marginal-rank graph therefore admits
+(0,2,1,3), whose parity is (0,0). That order violates 1<2 and is not an
+extension. An all-perfect-matchings test on the exact marginal-rank graph
+correctly returns UNRESOLVED; the joint poset test certifies the same
+record.
+
+This is a physical six-world example, not only an abstract graph. Fast/slow
+pair probes test only (0,3) and (1,2) and yield those comparisons. Their raw
+timing records depend only on the tested comparisons, so all six priorities
+reproduce the full diagnostic history. Equal productive work tau and zero
+lag give the same timestamps tau,2tau,3tau,4tau under every priority. The
+rank word (0,0,1,1) is a permissible positive-probability realization of iid
+fair bits; coupled by rank, it is the same observation in all worlds. Each
+world has the same required parity (1,1). The impossible marginal matching
+is not presented as an additional physical world.
+
+6  Reusing evidence and refining the local contracts
+
+Local groups may already have internal comparison orders P_a, provided these
+were learned under the restriction of the same persistent global priority.
+Add new cross-group comparison evidence E, take the union and transitive
+closure, and reject any cycle. This reuses old chains rather than relearning
+every comparison. Comparisons from another arbiter or another priority
+regime need a separate transfer justification.
+
+If sound new evidence refines P to P', then LE(P') is contained in LE(P).
+Any old universal fixed-payload certificate remains sound for the same job
+set, roles and observed bit word; additional evidence may enable new
+acceptance. Adding jobs changes ranks and the batch itself, so recompute the
+model and certificate. There is no such monotonicity across changed
+missions.
+
+There is a corresponding operational refinement law. View a local contract
+as its allowed intrinsic work/output histories at the port. If C_i' permits
+only histories already allowed by C_i, with the same admission, role, FIFO
+and callback interface, then for the same global scheduler theta and
+physical bridge,
+
+    Traces(W_theta(C_1',...,C_q'))
+        is contained in Traces(W_theta(C_1,...,C_q)).
+
+For any refined execution, its concrete demands, outputs and delays are
+allowed by the larger contracts. Replaying its public actions and the same
+single theta reproduces each arbitration and completion by the recurrence.
+An adaptive controller also replays after coupling its private random seed,
+because identical public histories induce identical actions. If the older
+model used additional joint uncertainty constraints, the substituted tuple
+must preserve or refine those too; marginal local inclusion is insufficient.
+For the batch rank theorem, refined lower bounds must still exceed J.
+
+Grouping component or evidence records differently is coherent only while
+retaining the same single physical scheduler, global queue labels and shared
+parameter. Union and closure are independent of the grouping of evidence;
+flattening tuples merely renames records in the same event recurrence.
+Installing a scheduler per group, cloning capacity, or replacing global
+priority with hierarchical arbitration changes the plant. No reassociation
+or substitution statement covers those changes, a changed physical bridge,
+or new required jobs/deadlines.
+
+7  The local information obstruction on a growing family
+
+For every n>=2 use the fast/slow plant with Q>0, J=0, one shared arbiter,
+and unknown persistent priority pi among all n! permutations. Every
+operation produces an uncontrollable independent fair bit. The productive
+P_i bit is for physical role i, so all n roles are distinct.
+
+Every complete adaptive experiment that never has pending work in two
+modules at once is priority-blind. This includes unlimited singleton
+measurements, within-module FIFO tests, drained serial calibration and
+observation-dependent stopping. Timing depends only on the chosen demands;
+bits are iid fair. Couple bits by public callback occurrence to get
+identical full local histories in every priority world. All local
+intrinsic/FIFO certificates are correct, yet they contain no information
+about shared priority.
+
+The admission grid is R=nQ. The n productive jobs become freshly available
+at time zero. At most one atomic batch commit is permitted per legal grid
+tick, enforced across all callers, with capacity for all n requests. Its
+independently declared deadline is
+
+    H=nQ+gamma, with 0<gamma<Q.
+
+gamma pays a supplied bound for readout, checking, command delivery,
+actuation and final tail. It is not free computation. Hardware may be
+provisioned with that bound for the selected n, or Q may grow to cover the
+implementation cost.
+
+Every useful job must be admitted at zero: the next positive admission tick
+is nQ, and even one Q job admitted then finishes after H. The useful batch
+already occupies nQ service. Any diagnostic completed before that batch ends
+adds at least Q and misses H. The one-commit-per-tick rule forces all
+required jobs into the same batch before dispatch. Merely offering an
+optional batch call would not force this: separate same-tick singleton
+commits could start a controller-chosen job first, defeating even the n=2
+bound. Starting from certified empty queues, the burst is therefore forced.
+If residual calibration is allowed instead, reachable service endpoints are
+Q-grid points and any positive carry-in costs at least Q; it cannot help.
+Diagnostics queued after all useful work cannot reveal priority in time.
+Calibration still may have been arbitrarily extensive, but only its
+local/drained information is granted in this lower bound.
+
+For the productive-only execution, timestamps are Q,2Q,...,nQ in every
+priority world. For policies adding extra work, use this as a virtual
+extension on all worlds: each actual successful record equals its
+productive-only record, while counting additional virtual successes can only
+raise an upper bound. The argument never conditions on actual success and
+then asserts uniform priority. For a uniformly unknown pi, the observed rank
+word y is independent of pi. Given a word with k ones, the required role
+vector is uniform among binomial(n,k) vectors with k ones. Hence every
+local-information-only policy has
+
+    average_pi success
+        <= sum from k=0 to n of [binomial(n,k)/2^n]/binomial(n,k)
+         = (n+1)/2^n.
+
+Some fixed world therefore has missed-or-unsafe risk at least 1-(n+1)/2^n. A
+uniform random priority guess attains that risk in every world, so it is the
+minimax risk for this fixture. The guessing policy may issue a wrong
+physical command and is not hard-safe. With an empty start and exactly the
+required useful jobs in the production manifest, a policy required to have
+zero wrong-command probability in every world can complete only when all
+bits agree, with probability 2^(1-n); completing precisely those cases
+attains it. Refusal still fails the mission. For n=2 the exact minimax risk
+is 1/4 and, under that productive-only manifest, hard-safe completion is at
+most 1/2. A controller told pi, but not future payloads, completes the same
+jobs by H with zero risk.
+
+The obstruction concerns local information at this coarse admission grid,
+one-commit-per-tick protocol and tight deadline. It does not forbid safe
+joint calibration, arbitrary multiway timing probes, or serialization under
+a longer authorized deadline. It does not cover arbitrarily fine, zero-cost
+admission staggering or multiple independently dispatched commits at the
+same tick.
+
+7a  Allowing repeated commits at the same grid tick
+
+Keep the coarse grid, work, freshness and deadline, but allow arbitrarily
+many sequential atomic commits at zero, each dispatching immediately when
+idle. The preceding sharp constants no longer apply. In particular, two
+sequential singleton commits solve n=2 by forcing a known first job. The
+growing local-information obstruction nevertheless survives for n>=3.
+
+Condition on the priority-blind local history and private random seed. No
+fresh callback arrives before Q, so the first committed productive subset S
+is independent of priority. Its highest-priority member starts immediately;
+all remaining useful jobs must be admitted at zero during that service. On
+successful branches with no completed extra work, service order is the
+winner of S followed by the latent priority with that winner removed. For an
+upper bound, extend this productive-only order to unsuccessful worlds as
+well; ignoring extra-work failures can only strengthen the controller.
+
+If |S|=1, the first identity is known and the tail is uniformly permuted.
+Its exact optimal average success is n/2^(n-1). If |S|=s>=2, each service
+order has at most n-s+1 latent-priority preimages: reinsert its first winner
+before the earliest remaining S member. For a rank word with k ones, a
+proposed role vector is compatible with k!(n-k)! unrestricted service
+orders. Conditional success is therefore at most (n-s+1)/binomial(n,k), with
+the exact bound 1 at k=0,n. Averaging and combining the singleton and
+larger-subset cases yields
+
+    average_pi success <= max(2n,n^2-2n+3)/2^n.
+
+For n>=3 this is below one and tends to zero exponentially up to its
+polynomial factor. Some fixed world has missed-or-unsafe risk at least one
+minus this quantity. The bound is valid but not claimed optimal. It is not
+the exact minimax formula of the one-commit protocol.
+
+For an empty-start productive-only production manifest, the exact optimal
+hard-safe completion probability in the relaxed API is 2^(2-n). Force a
+known first singleton and complete precisely when all tail bits agree. For
+any fixed first identity, all tail permutations remain possible, so a
+nonconstant tail cannot be commanded hard-safely. If the first subset has
+multiple members, varying the winner also forces the first bit to match the
+tail, leaving only constant full words. Randomizing subsets cannot improve
+the singleton strategy's hard-safe bound for this manifest. Extra queued
+diagnostic jobs can filter priority worlds through delay even if no
+diagnostic finishes on successful runs. No exact hard-safe optimum is
+claimed for those larger production manifests; the combined-success upper
+bound still covers extra-work policies through its idealized comparator. All
+these results concern local information and a coarse grid, not all safe
+joint probes.
+
+8  Safe joint acquisition and mission-aware stopping
+
+From certified drained idle, atomically admit D_i with demand 2Q and P_j
+with demand Q, for i!=j. With zero lag, the relative callback times are
+
+    (2Q,3Q) if i has higher priority,
+    ( Q,3Q) if j has higher priority.
+
+The first anonymous arrival time alone gives the comparison. No callback
+tag, payload pilot, controlled bit or role-load sensor is used. The total
+service horizon is 3Q in both outcomes. The safe gate, probe tail, drained
+state and unchanged production arbitration law must cover the whole
+experiment.
+
+All binomial(n,2) comparisons suffice to recover pi. Ordinary adaptive
+sorting can instead use at most n ceil(log_2 n) such comparisons as a
+conservative bound. A binary-comparison decision tree distinguishing all n!
+priorities needs at least ceil(log_2(n!)) comparisons in its worst case.
+This lower bound is only for binary-comparison experiments: unrestricted
+multiway timing batches can yield more outcomes, and no optimum over all
+legal probes is claimed. More generally, there are n!/(product_a n_a!)
+possible role-by-rank words. A binary pair-probe tree guaranteeing uniform
+role sufficiency from no order evidence needs at least
+ceil(log_2(n!/(product_a n_a!))) probes on some branch. Existing evidence
+changes that count. The exact first-arrival rule displayed here is only for
+J=0; nonzero-lag acquisition needs its own certified separation test.
+
+Full priority need not be the acquisition goal. Start with sound
+comparisons, find any still-incomparable pair of different roles, perform
+the pair probe, and repeat until no such pair remains. Each probe removes at
+least its own cross-role incomparability; transitive closure may remove
+more. If role a contains n_a jobs, at most
+
+    sum over distinct role pairs a<b of n_a n_b
+
+probes suffice from an empty comparison record. The resulting partial order
+passes the uniform all-payload criterion while potentially retaining every
+within-role ambiguity. Reserve the worst-case probe allowance before
+observing outcomes; earlier stopping still leaves charged waiting to the
+independently fixed T0. For a single global parity role, no priority probe
+is needed. Existing sound group evidence can reduce the remaining queries.
+For a particular production word, the exact fixed-payload test may also
+accept before uniform role identification would have been sufficient. This
+is mission-relative certification, not an assertion of optimal acquisition.
+
+Ordinary drained serial production is a legal alternative: admit P_i alone
+at (i-1)R and bind its uniquely isolated callback at (i-1)R+Q. It completes
+by
+
+    H_serial=(n-1)R+Q+gamma.
+
+This repairs the task if that larger deadline is authorized and the same
+hardware already supplies the longer isolation/retention lease, storage and
+idle/tail resources. For n=2 it is 3Q+gamma rather than the burst's
+2Q+gamma. Joint commissioning can cost more than one useful mission, so the
+shorter post-release burst is not a one-mission end-to-end speedup. Repeated
+batches may amortize the acquisition, but no generic amortized advantage is
+asserted.
+
+9  Complete acquisition and production accounting
+
+Let C_init cover justified initial drain/setup, rho_probe the physical probe
+tail/drain, C_probe callback processing, exact comparisons, dispatch
+preparation and endpoint guards, and C_compile evidence validation and
+production readiness. For mission-aware acquisition, C_probe also covers
+selecting the next pair and updating closure, rather than deferring these
+operations for free. Before observations, supplied caps D_P>=Q and D_D>=2Q
+give H_pair=D_P+D_D. Exact already-acquired work facts, or publicly supplied
+exact fixture caps, permit H_pair=3Q; unlearned simulator truth does not.
+With grid R=nQ and a fixed worst-case comparison allowance m, reserve
+
+    S_init = R ceil(C_init/R),
+    S_pair = R ceil((H_pair+rho_probe+C_probe)/R),
+    S_compile = R ceil(C_compile/R),
+    A_joint = S_init + m S_pair + S_compile.
+
+For unpaid local learning, singleton fast and slow probes add
+
+    A_local = sum_i R ceil((D_P+rho_P+C_P)/R)
+            + sum_i R ceil((D_D+rho_D+C_D)/R)
+            + separately rounded local validation/setup.
+
+These are pre-observation reservations from public caps, not measured-demand
+horizons chosen with access to hidden work.
+
+There are 2n local invocations, 2m joint invocations, and n fresh useful
+invocations per production burst. No probe counts as required productive
+work. Fix a grid-aligned commissioning deadline T0 before observing probes
+and require A_local+A_joint<=T0, or explicitly identify the local learning
+cost as already paid. A favorable probe history cannot retroactively move
+T0.
+
+Charge all batch construction, buffer/port capacity, pre-tick submission,
+atomic-admission setup and dispatch guards. If a strictly positive physical
+guard is required, include it rather than hiding it at a half-open endpoint.
+Processing, tails, legal-grid waiting, compile time, command energy, storage
+and any retained comparison proof also consume their declared resources. The
+elementary parity checker uses O(n^2) reachability storage; a learned
+priority/inverse uses O(n log n) bits and a fresh payload word O(n) bits,
+apart from role encoding and algorithm working storage.
+
+For the zero-lag equal-work burst, callbacks finish by T0+nQ. The physical
+mission allowance gamma must cover all later work and final tail, and the
+retention lease must cover each role's full hold time. Runtime issuance must
+check the actual public current time and remaining allowance, not merely a
+planned timestamp. More generally, bounded lag belongs in the callback
+horizon and all post-read reservations must still fit the physical deadline.
+Declared model allowances are not measured Python worst-case execution
+times.
+
+10  Executable evidence and its limits
+
+The standard-library poset checker returns a positive invariant vector and
+reference order, a target-mismatch order, or two noninvariance orders. Its
+separate verifier imports no producer code. Failure verification checks the
+original precedence edges and direct parity sums. Positive verification uses
+independently computed reachability and the proved interval criterion; it is
+a theorem-based verifier, not a second proof of the theorem.
+
+The exact checker agrees with exhaustive linear-extension enumeration on
+376,292 binary-role/binary-payload cases over all 407 naturally labeled
+posets of sizes one through five. The poset counts are 1,2,7,40,357. Those
+checks validate 278,644 noninvariance witnesses, all 4,127 attainable
+adjacent-rank constructions, and 12,130 reverse-label cases with distinct
+roles and all payload words. Dedicated cases cover a supplied correct
+target, target mismatch and cyclic-input rejection. Naturally labeled means
+every relation points forward in one fixed topological labeling; every
+finite poset has such a labeling, but the finite tests do not separately
+enumerate every possible relabeling. The written proof supplies arbitrary n
+and labels.
+
+A separately written small-DAG script checks 16,928 fixed-payload fixtures
+through four vertices against full enumeration, as well as the uniform
+criterion and the n=2,3,4 success-bound summations. These are overlapping
+finite validation routes, not evidence of independent physical trials. An
+exact relaxed-admission enumeration covers every first-subset size for
+n=2,...,6 and all rank words, checking the preimage multiplicities, success
+upper bounds and productive-only hard-safe probabilities against exact
+permutation counts.
+
+The shared-arbiter reference pipeline passes 60 end-to-end fixtures at
+n=2,4,6,10, using identity, reverse and shuffled priorities with five seeded
+payload streams each. Every fixture pays local work calibration, adaptive
+comparison sorting, a predeclared commissioning deadline, anonymous
+production, exact certification and independent verification, then checks
+the command against simulator-only physical truth. Separate controls cover
+1,108 exhaustive productive bit words with known full priority, 24
+mission-aware acquisition fixtures, and the six actual worlds in the
+four-job joint-poset versus marginal-rank example. The all-same-role
+mission-aware cases use zero joint probes and block-role cases retain
+within-role ambiguity.
+
+An additional fixture has true fast work 75 under public upper cap 100,
+learns fast work 75 and slow work 150, and uses those measurements without
+changing its previously fixed T0=7200 and absolute deadline 7620. Controller
+reservations use public caps, not hidden true work. The decision code has no
+live empty-state oracle: initial emptiness is a supplied setup premise, and
+subsequent draining follows closed upper horizons and its own request log.
+Hidden priority, job identities, grant/service logs and true demands are
+used only by the validation oracle. Public callbacks remain time/bit pairs.
+Both commissioning and production deadlines are frozen before learning.
+
+The simulator retains persistent queues, running jobs and clock across
+probes. It enforces one commit per legal tick, even after an empty commit,
+and exercises admission exactly at a service-completion boundary. Controls
+also cover identical isolated histories under opposite priorities, a wrong
+naive origin command, no-learning refusal, useful same-role and
+payload-specific ambiguity, legal longer-deadline serialization, positive
+bounded lag, rejection when lag can reorder callbacks, cyclic evidence,
+extra/missing request manifests, lateness and insufficient actual remaining
+allowance. Productive manifests reject extras before invocation.
+
+For the main Q=100 fixtures, full-sort commissioning allowances T0 are
+2400,7200,19200,62000 for n=2,4,6,10, with mission deadlines
+2620,7620,19820,63020 respectively. Actual comparison counts are 1, 4--5,
+7--11 and 15--23; total actual invocation counts are 8, 20--22, 32--40 and
+60--76, including local learning and useful work. These are charged model
+costs, not Python benchmarks or proof of minimum acquisition. The runtime
+checks actual now+8+4<=deadline for supplied processing/command bound 8 and
+physical tail 4. Those constants require an appropriate implementation; full
+certify and verify calls are not a measured constant-time Python operation.
+
+Finite tests support the supplied implementation on tested cases; the
+mathematical arguments supply the general results. Independently written
+checks still share model assumptions and may have correlated errors. They
+are not external human peer review, proof-kernel verification, a measured
+WCET analysis, or hardware validation. The implementation does not establish
+physical noninterference, work invariance, exactly-once delivery, hard
+timing bounds, initial emptiness, stationary arbitration,
+diagnostic-to-production transfer, safe isolation, retention, or the
+payload-to-role-load hazard law. Those remain premises.
+
+Classical service-demand accounting, network calculus, scheduler contracts,
+trace refinement, finite-hypothesis learning and comparison sorting are
+relevant baselines, not claims of invention here. The bounded source
+comparison includes Le Boudec and Thiran's Network Calculus and Regehr's
+Composing Scheduling Policies. It does not establish a literature gap in
+anonymous assignment or a general new compositional assurance framework.
+
+The concrete result is narrower: preserve the correct grant-conditional
+local object, derive one explicit shared arbiter's joint behavior, learn
+missing cross-module comparisons with safe anonymous probes, and certify
+exactly the mission's parity within a sharply defined poset abstraction.
+Outside that scope, a failed certificate must not be promoted to physical
+impossibility, and a passing finite trace must not be promoted to an
+unconditional guarantee that arbitrary separately learned components
+compose.
+
+Primary source references
+
+Le Boudec and Thiran, Network Calculus, Theorem 6.2.1 and delay/composition
+results. Resource-service baselines, not anonymous role binding.
+https://leboudec.github.io/netcal/latex/netCalBook.pdf
+
+Regehr, Composing Scheduling Policies, Chapter 5. Conditional scheduler
+requirements and guarantees.
+https://users.cs.utah.edu/~regehr/papers/diss/doc-wwwch5.html
+
+Defant and Kravitz, Friends and strangers walking on graphs, Proposition 1.3.
+Standard connectivity of linear extensions under adjacent incomparable swaps
+and its use in proving independence of a chosen extension.
+https://escholarship.org/content/qt7299j21s/qt7299j21s.pdf
+
+The source package gives the bounded comparison in more detail. These
+references do not establish novelty of the compressed role-parity test.

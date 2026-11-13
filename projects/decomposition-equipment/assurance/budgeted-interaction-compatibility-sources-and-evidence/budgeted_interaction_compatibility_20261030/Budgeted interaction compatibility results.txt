@@ -1,0 +1,497 @@
+Budgeted interaction compatibility results
+Safe learning and programmable mission interfaces
+30 October 2026
+
+Lay summary
+
+An agent does not need to learn everything about its environment. It needs to
+learn enough, safely and soon enough, to complete its mission with the resources
+it has. Useful work can provide that information, but experiments can also use
+up the very opportunity they were meant to unlock. Knowing that every possible
+world has a successful fully informed plan does not establish that one agent can
+discover and execute the right plan before its deadline.
+
+We formalized this distinction and tested persistent multistage missions in an
+exact model with unknown connections, delayed observations, shared power and
+finite energy. The main experiment assesses robust learning and completion, not
+diagnosis of actual-world impossibility. A separate small example tests the
+stronger requirement to diagnose initial infeasibility without sacrificing
+completion in feasible worlds. Computer timeouts remain unknown, not negative
+answers.
+
+The interface payoff is programmability, not necessarily a speed advantage over
+other sound ways of representing experience. A program can branch on learned
+facts and compose operations whose contracts hide irrelevant mechanism details.
+We give a restricted substitution law: a verified program retains its guarantees
+when its implementation is replaced by one satisfying the same full interaction
+contracts. Public facts can be copied; doing so does not repeat an experiment or
+duplicate energy, time or an ongoing physical interaction.
+
+These contracts have explicit validity conditions. They may need rechecking when
+evidence or structural assumptions change, and silent physical changes are not
+automatically detected. The construction assumes a correct known class of
+possible connections and exact physics; it does not establish general
+computational discoverability. The experiment compares the same informed
+symbolic machinery fairly and makes no distinct decomposition-speed claim.
+
+Main result
+
+The completed 88-case run produced 42 certified wins, 34 certified failures of
+uniform guarantee and 12 unresolved cases. Seventeen configurations win with
+learning but provably fail when observations are discarded. The substantive
+result is that useful work supplies mission-relevant facts a program can use,
+not a distinct decomposition speedup. Independent execution and theory audits
+pass within their stated scopes.
+
+The strict mission-relevance witness and restricted exactness theorem pass their
+separate audit. Useful work can expose the facts a later program needs without
+first identifying the whole environment. The new programming interpretation
+states the conditions under which that program can be reused, rather than
+requiring interfaces to outperform every other phenomenological representation.
+
+1 What compatibility means
+
+Compatibility belongs to an environment-agent-mission interaction. It depends on
+the possible mechanisms, the observations and interventions available to the
+agent, the mission, safety interpretation and resource budget. It is not a
+property of the environment alone. Increasing observation delay can destroy
+compatibility without changing the physical mechanism; increasing a deadline can
+restore it without revealing any new physical law.
+
+Let theta be a persistent hidden mechanism from a declared finite class. Let s =
+(x, z, b) contain the observed physical memory, mission progress and remaining
+resources. K is the set of mechanisms consistent with all evidence so far. For a
+permitted action a, the exact mechanism produces a record
+
+    F_a(s, theta) = (observation, next physical state, cost,
+                     hazard, mission label).
+
+The record must include delayed obligations and physically interpreted hazards,
+not only visible outputs. Public predictive agreement alone does not establish
+equal safety. The agent chooses from public history; it cannot inspect theta.
+All-world safety is stricter than expected performance or an allowed failure
+probability, neither of which is substituted here.
+
+Three questions must remain separate. First, per-world oracle feasibility asks
+whether each theta has some successful plan for a controller already told theta.
+Second, uniform learn-and-complete feasibility asks whether one causal policy
+works across every theta in K. In quantifiers, the distinction is
+
+    for every theta there exists a successful policy for theta
+    versus
+    there exists one observation-based policy successful for every theta.
+
+The first does not imply the second. Third, a diagnosis policy may need to
+discover which worlds were individually feasible while preserving the ability to
+complete in those worlds. Define P0(theta) by oracle feasibility from the
+original state and budget, before diagnosis. Option-preserving diagnosis must
+complete whenever P0 is true and may report initial impossibility only on a
+remaining evidence set where P0 is false throughout. A policy cannot burn its
+time budget and then count its self-created failure as successful diagnosis.
+
+A supplementary three-world example makes the distinction concrete. The world is
+left-working, right-working or broken. A two-unit probe identifies it; a
+matching one-unit service succeeds in either working world. With three units,
+diagnosis plus service succeeds uniformly, although pure completion does not
+because broken remains possible. With two units, classification succeeds but
+option-preserving diagnosis fails: identifying a workable world too late is not
+completing it. The executable classification gate requires identifying the whole
+mechanism, a stronger condition with the same outcomes in this example. This is
+a semantic gate, not a scaling benchmark.
+
+2 Exact positive negative and unresolved answers
+
+An action is robustly legal only if its safety and resource requirements hold
+for every mechanism in K. After a visible result r, retain exactly
+
+    K_r = {theta in K : visible(F_a(s, theta)) = r}.
+
+Only nonempty K_r are possible observation branches. Every nonterminal action
+advances the physical clock, so the finite-horizon game is acyclic. Its winning
+predicate is the familiar backward recursion
+
+    W(s, K) = there exists a robustly legal action a such that
+              for every feasible result r, W(s_r, K_r).
+
+Safe terminal acceptance must include outstanding delayed effects. An accepted
+job list with an uncleared hazardous tail is not a completed safe mission. The
+exact recursion is standard information-state planning, not new machinery. Joint
+planning and model learning already appear in Bayes-adaptive POMDPs, although
+their Bayesian performance objectives differ from our uniform finite-budget
+guarantee. Ross and colleagues, JMLR 2011:
+https://jmlr.org/papers/volume12/ross11a/ross11a.pdf
+
+A WIN certificate is a finite policy graph: every selected action is legal,
+every feasible observation is covered, and every leaf safely accepts. A NO
+UNIFORM GUARANTEE certificate covers every permitted action. Each is refuted by
+a supported hazard/resource obstruction or a feasible continuation with its own
+refutation. This says no policy in the stated model guarantees completion; it
+does not say the actual world is individually impossible. UNKNOWN records an
+incomplete proof search, including a node or runtime cap.
+
+Negative branches must retain one persistent world. It is legitimate to use
+different worlds against different counterfactual policies. Along any selected
+branch, however, successive nonempty evidence sets are nested; a mechanism at
+the final leaf witnesses the whole failure history. Letting an adversary pick a
+fresh incompatible mechanism every step would solve a different, more
+pessimistic problem. For the same reason, hidden actual costs must be retained
+as uncertainty or explicitly replaced by a conservative worst-case debit.
+
+3 When local checking preserves the global answer
+
+The positive theorem starts with a validated relational cover. Bags of hidden
+variables form a running-intersection tree; the join of their relations equals
+the authoritative evidence relation K. Separator messages mark exactly those
+local assignments extendible to a complete evidence-consistent world. This
+extension property, not independence of the components, licenses local checks.
+Exact factored belief tracking and structure-sensitive planning have substantial
+precedents; these ingredients are credited rather than rebranded. Bonet and
+Geffner, IJCAI 2016: https://ijcai.org/proceedings/2016/432
+
+If an action's entire interpreted record depends on one supported bag, local
+record enumeration gives exactly the same safety tests, feasible observations
+and evidence updates as global enumeration. Induction through the mission game
+therefore preserves both winning policies and negative certificates. For
+simultaneous actions with several local records, rowwise safety may be checked
+locally, but their joint observation tuple is possible only if all its row
+constraints have a common global extension. A Cartesian product of marginally
+possible observations is not an exact substitute.
+
+The more application-specific result permits evidence-certified interface
+shrinking. For a candidate retained variable set D and an explicit public-state
+guard G, require conditional record sufficiency:
+
+    for all s in G and theta, theta' in K,
+    theta_D = theta'_D implies F_a(s, theta) = F_a(s, theta').
+
+This condition is necessary and sufficient for a well-defined reduced record
+map. It can be certified by searching a doubled relational tree for two globally
+extendible worlds that agree on D but disagree on the record. No such pair means
+that D is sufficient. Once valid, the map remains sound after new evidence
+restricts K, provided the public-state guard and semantics still hold. Evidence
+retraction, a changed mechanism model or leaving the guard requires
+revalidation. Finding a small candidate D need not be computationally easy.
+
+Crucially, this does not discover a valid physical universe from nothing. The
+theorem assumes a correct finite mechanism class, a valid structural envelope,
+exact deterministic records, and observed physical memory. The actual parent
+selectors can remain unknown. Nor does it establish a small optimal policy: with
+n bags, domain size d and bag width w, calibration has table work of order
+n*d^(w+1), but a certificate with N information nodes multiplies this cost. N
+and the number of joint observation branches can be exponential. Shared energy,
+deadlines and action exclusion continue to couple the global mission.
+
+A reduced action interface is not a license to delete the evidence archive.
+Facts and correlations irrelevant to this action may determine the next one. Any
+memory comparison must distinguish active interface size, authoritative
+evidence, caches, policy/refutation storage and the retained reproducibility
+archive. Proof construction and invalidation costs also count toward benefit.
+
+4 The strict test that learning actually matters
+
+The strict gate has two actuators A and B and three persistent possibilities: no
+edge, A to B or B to A. Reciprocal edges are forbidden. A job needs both
+actuators in either order in slots 2 and 3. Full work costs two energy units per
+stage; a diagnostic pulse costs one. Total energy is five and power is two. A
+full-power parent in the preceding slot makes its child unsafe for work;
+observations arrive after the current action has been chosen.
+
+Pulse A at 0, idle at 1, then use the observed presence or absence of A to B to
+select the safe order. Flush at 4. This wins using five energy units. Without
+informative pre-release interaction, either work order is unsafe in some world.
+Moving the first probe to slot 1 makes its evidence too late; energy four leaves
+no diagnostic allowance. Full-power pre-release experiments remain admitted but
+cannot fit the energy budget. Every world still has a safe oracle schedule.
+
+The independent theory audit checks these positives and negatives separately.
+This is an information-and-opportunity obstruction, not universal physical
+failure. Another exact obstruction shows why correlations matter: K={00,11} and
+K={01,10} have identical unary supports but require opposite safe final actions.
+Forgetting their shared relation changes the answer, as can forgetting the
+previous physical input.
+
+5 Persistent workloads and the fair comparison
+
+The main model is a two-row ladder. Each actuator has at most one unknown parent
+chosen from its known neighbors or none, with no reciprocal pair. These choices
+are fixed across the whole run. The supplied ladder is a prior superscope, not
+the true graph. Evidence narrows parent domains while the supplied
+no-reciprocity constraints preserve their joint meaning; neither that law nor
+the superscope is discovered. The load equation, represented exactly with
+doubled integers, is
+
+    x_i(t) = (u_i(t) + u_parent(i)(t-1))/2,   x_i(t) <= 3/2,
+    u_i(t) in {0, 1, 2}.
+
+One means a safe diagnostic pulse, two a productive activation. The agent
+chooses the entire vector before seeing that slot's measurements. Equal-valued
+parent inputs can leave parent identity ambiguous. Physical memory, evidence,
+energy and unfinished jobs persist between releases; a final idle slot clears
+the delayed tail. No simulator reset removes an inconvenient coupling.
+
+The frozen protocol offers 72 pair-route settings across 4, 6 and 8 actuators,
+two seeds, power limits 2 and 4, tight/roomy deadlines and three energy budgets.
+Each has three jobs released at slots 2, 4 and 6; a route is fixed when its
+first stage receives credit. A physical activation cannot count for two jobs. A
+separate 16-case family uses two three-stage jobs, three alternative routes per
+job, releases 2 and 5, and 4 or 6 actuators. These are richer persistent
+missions, but not evidence for arbitrary environments or unbounded workloads.
+
+Each main or frozen-evidence search uses a 5,000-node cap and a cooperative
+20-second target. Every offered case remains in the results, including UNKNOWN.
+The numerical protocol was frozen after four disclosed development preflights,
+not as an immutable-source preregistration. It specifies three checker
+repetitions, exhaustive world replay for certified positive main policies, and
+three deterministically sampled per-world oracle searches per setting. Sampled
+oracle success cannot establish oracle feasibility in every world. These are
+configurations, not independent hidden-world samples. Persistence is within each
+mission, not cross-case transfer.
+
+An initial implementation continued scanning siblings after UNKNOWN, failing to
+enforce the intended computation budget promptly. Its partial outputs and source
+were preserved; the repair propagates exhaustion immediately and checks after
+model calls. The unchanged 88-case protocol was rerun in full. This was a
+budget-enforcement defect, not a detected certificate-soundness defect. The
+repaired wall limit is still cooperative: a model call can overshoot, and
+certificate extraction, checking, replay and serialization are outside it.
+Lineage is recorded in example/CAP_REPAIR_MANIFEST.json. A later runtime
+interruption after 82 completed cases was resumed only for the six missing
+cases, without source, protocol or completed-result changes.
+
+The earlier TARGET_GATE.md made a distinct efficiency gain a success condition.
+The user subsequently clarified that programmable, possibly defeasible
+interfaces are the point, not superiority over other phenomenological methods.
+That clarification supersedes the interpretation of this criterion, without
+changing the frozen cases, measured comparisons or reported limitations.
+
+The principal comparator is not a dense world enumerator. One common exact
+symbolic planner produces the certificate, then local and smart-global checkers
+validate the same certificate with identical evidence, relational dynamic
+programming, caching and sparse row algebra. An unoptimized full-scope scanner
+is retained only as a diagnostic. These are paired verification comparisons, not
+independent end-to-end planner races or acquisition-policy comparisons.
+
+There is an important attribution trap. A row can already be constant under the
+initial prior because every possible parent carried the same previous input,
+particularly zero. That is action sparsity, not learning. The report therefore
+separates initially constant rows from additional evidence-enabled constants and
+from useful full-work safety enabled by evidence. An optimized global method is
+entitled to exploit the same reductions. A measured learned reduction
+establishes changed information, not exclusive decomposition benefit.
+
+6 Measured outcomes and independent execution checks
+
+The final frozen-protocol outcomes are:
+
+    Family       Offered    WIN    No uniform guarantee    UNKNOWN
+    Pair routes       72     36                     29          7
+    Rich routes       16      6                      5          5
+    Total             88     42                     34         12
+
+Seven UNKNOWN results hit the node cap and five the wall-time target. The
+largest main search took 24.485 seconds, illustrating the cooperative cap's
+overshoot; this is not a hard 20-second guarantee. Total main search elapsed
+time was 179.119 seconds, excluding downstream checking and artifact work.
+
+The important learning witness already occurs in the offered main family: four
+actuators, seed 731, power two, energy twelve and roomy deadlines. Three jobs
+require actuator pairs (0,1), (0,2) and (1,3), released at slots 2, 4 and 6 with
+deadlines 5, 7 and 9. Six productive activations consume all energy, so no pure
+diagnostic pulse fits. Useful work itself supplies the information.
+
+Start job 1 on actuator 1 at slot 2, idle at 3, complete it on 0 at 4, and start
+job 2 on 0 at 5. These actions reveal whether 1 to 3 and 0 to 2 exist. Their
+answers determine the safe interleaving and orientation of the remaining stages.
+For example, if 0 to 2 exists, do 3, 2, 1 in slots 6, 7, 8: knowing actuator 2's
+parent is 0 excludes a hazardous parent 3. Every branch finishes the jobs, then
+flushes, with exactly twelve energy units and no separate probe.
+
+A controller discarding observations cannot do this. Partition the candidate
+graph into {0,3} and {1,2}. Under the unchanged prior, every switch between
+these groups requires a non-work separator. Only two separators fit, but the
+releases and deadlines make every such two-switch schedule miss job 2's
+deadline. Independent direct replay verifies the constructive policy in all 47
+possible worlds. This is genuine learning-to-completion under shared
+constraints, not information acquired without mission consequence. It
+establishes no speedup over a symbolic planner that receives the same evidence.
+The full analytic argument is in design/Existing_Mission_Learning_Witness.md.
+
+All 42 winning policies were replayed in every initial world: 102,784
+world-policy executions, 1,028,502 simulated ticks and zero safety, resource or
+mission violations. These are exhaustive counterfactual replays within a finite
+model, not independent statistical trials. Every replay starts useful work
+before full identification; 101,513 finish without identifying all parents.
+Winning executions use 12-13 energy units and 9-11 ticks including the tail.
+Forty policies use no pure probe; two richer policies use one diagnostic pulse.
+None uses an uncredited full-power activation.
+
+A post-hoc check rules out an unused-actuator explanation: 95,511 of those
+102,784 executions finish with at least one ambiguous parent on an actually
+chosen work route. Equivalently, 5,813 of 8,751 terminal policy leaves retain
+such ambiguity. This is descriptive sufficiency, not proof of minimum learning.
+
+The frozen-evidence controller has 24 wins, 62 losses and two UNKNOWN cases.
+Seventeen matched learned-WIN/frozen-LOSE cases establish a strict learning
+benefit; another learned win faces a frozen UNKNOWN and proves no such contrast.
+The 264 sampled known-world oracle problems yield 246 wins and 18 losses. These
+samples do not establish feasibility in every world of each initial class.
+
+Evidence makes 185,359 additional row-record instances constant, beyond 394,257
+already constant from the prior/current inputs. These are repeated
+certificate-node rows, including terminal nodes, not unique discovered
+interfaces or trials. There are also 2,621 selected productive-row checks made
+safe by evidence.
+
+Across 76 certified main results, local and smart-global perform exactly the
+same 235,504 physical-row checks, 557,120 parent-value checks and 544,264
+relational pair tests. They share code, so this is an implementation identity,
+not independent algorithms converging. Sums of the three-repeat within-case
+median checker times are 42.412 and 42.066 seconds respectively. The weak
+full-scope scanner takes 50.107 seconds and checks 1,674,097 rows. No distinct
+local-interface speedup follows from either comparison.
+
+The serialized main certificate maps total 75.537 MB uncompressed; their saved
+compressed containers occupy 19.594 MB. Frozen-controller containers add 47.705
+MB, and preserved partial-run result directories add 15.268 MB (decimal MB).
+These are artifact storage figures, not live-memory measurements. Authoritative
+evidence is retained, and caches add working storage. Peak memory and an
+enforced representation bound were not measured; no total-memory saving or
+minimum-acquisition claim is justified.
+
+Independent execution audit: PASS. A separate dense interpreter importing none
+of the author's model, planner or validator checked 157,342 main certificate
+nodes and 103,367 frozen-controller nodes, including complete negative action
+coverage, actual supported hazard witnesses and all positive observation
+branches. It also reconstructed the world replays and independently matched all
+264 sampled oracle decisions. The strict gate, diagnosis gate, cap regressions
+and guarded programming theorem pass their separately stated checks.
+
+Simulated physical ticks and computer runtime are different quantities; the
+recorded computer durations are elapsed wall time, not CPU-time profiles. The
+benchmark charges actions to mission time, power and energy; it reports computer
+runtime separately. It does not show that planning finishes before a real
+machine's deadline. Such a deployment claim would require computation and
+communication to consume physical time, or certified worst-case bounds and an
+already-verified safe fallback. Neither a solver cap nor a fast checker supplies
+that missing premise.
+
+7 Programming against a learned interface
+
+An interface is more than a smaller table. It exposes typed operations,
+preconditions, possible full interaction records and a public state updater,
+under versioned assumptions and a validity guard. A finite client combines
+operation calls, ordinary deterministic calculations and branches. Each call
+passes its updated physical/resource state to the continuation; the client
+cannot inspect hidden parameters or future reports.
+
+The restricted substitution theorem says that such a verified client retains its
+positive guarantees under any replacement implementation satisfying the same
+contract. The implementation must accept and terminate permitted calls, match
+each concrete result to an allowed joint-record branch, preserve the state
+relation, and conservatively respect costs, hazards and terminal mission labels.
+Each later call must establish its own validity guard; initial validity alone is
+insufficient. The abstract successor must be computed from public data, not
+chosen by an inaccessible hidden-state witness. Induction on the finite client
+proves the result. This is standard forward-simulation reasoning applied to the
+evidence-indexed contracts, not a new general language theorem.
+
+Positive substitution permits conservative contracts. Negative transfer needs
+more: exact action and joint-successor correspondence. A spurious adverse
+abstract branch can prevent a guarantee even when the implementation is
+feasible.
+
+The learned edge flags in the preceding workload are ordinary Boolean values.
+The program can copy them into several branch conditions or derive NoLag facts
+using the one-parent and no-reciprocity assumptions. It need not expose the
+remaining parent identities. In a Markov category, deterministic maps preserve
+copying and form a cartesian subcategory; this supplies ordinary deterministic
+structure on values. Sampling once and copying the result is not two independent
+samples. The copy-preservation equation is
+
+    copy_Y o f = (f tensor f) o copy_X.
+
+See Fritz, Definition 10.1 and Remark 10.13:
+https://arxiv.org/html/1908.07021v8#S10
+
+Likewise, copying a report does not duplicate the live interaction, energy or
+time. Threading that resource state is an additional programming discipline, not
+a claim that category theory forbids copying every physical state.
+
+Defeasible contracts carry their evidence, mechanism-version and guard
+requirements. Restricting evidence preserves established universal facts;
+retraction or a changed premise requires rechecking affected uses. For example,
+Edge(0,2) excludes parent 3 only under the one-parent law. Allowing both parents
+makes the old work-3-then-work-2 program unsafe even though the edge flag
+remains true. Silent physical changes are not automatically detected, and
+refusal or stopping needs its own safe-fallback justification. The theorem
+supports conditional program reuse; no generic extractor, compiler or
+alternative-physics portability experiment was implemented.
+
+A small post-main interpreter, policy_interface.py, now makes one checked WIN
+certificate executable as a frozen instruction graph. Independent replay passes
+all 47 worlds and 470 ticks. Immutable report values are copyable; the API
+blocks copying its live handle, enforces issue/observe order and rejects
+wrong-sequence or out-of-contract reports. This is a concrete policy API, not a
+typed language, automatic contract extractor or Markov-category implementation.
+Sequence binding is not authentication: the host must supply fresh corresponding
+readouts and perform physical commands exactly once. Rejection after an
+assumption fails is not itself a safety guarantee. This supplemental test does
+not change the frozen 88-case outcomes.
+
+8 Relation to earlier work and remaining limits
+
+The broad ingredients are established. Amir's simultaneous deterministic-model
+learning and filtering already maintains coherent transition/state uncertainty
+and exploits exact factorization under restrictions. IJCAI 2005:
+https://ijcai.org/proceedings/2005/196
+
+Chang and Amir interleave planning, execution and transition-belief updates.
+Their principal goal-achievement result assumes the goal remains reachable from
+every reachable state, a precise contrast with irreversible opportunity loss
+here, not an unrestricted polynomial guarantee. ICAPS 2006:
+https://cdn.aaai.org/ICAPS/2006/ICAPS06-021.pdf
+
+Winning-region shields already preserve safety/reachability during learning.
+Almost-sure eventual progress differs from sure finite-deadline completion, but
+deadlines alone are not new: Carr and colleagues explicitly discuss
+finite-horizon/cost-bounded reach-avoid shields. Their reach-avoid transfer
+needs exact transition support; support overapproximation suffices for their
+avoid-only property. Junges, Jansen and Seshia, CAV 2021; Carr and colleagues,
+2022 preprint: https://arxiv.org/pdf/2007.00085 https://arxiv.org/pdf/2204.00755
+
+Hard energy constraints also predate this project. Budgets are a necessary
+modeling choice, not the advance. Brazdil and colleagues, AAMAS 2016:
+https://www.ifaamas.org/Proceedings/aamas2016/pdfs/p1465.pdf
+
+The contribution is a restricted, checkable integration: useful-work evidence,
+persistent-world certificates, initial-feasibility diagnosis distinguished from
+squandered opportunity, and guarded operation contracts supporting programs. It
+is not a new general game, factorization or substitution theorem. Cost matters
+for meeting a budget; outperforming another sound representation is unnecessary.
+
+The further categorical phenomenology results supplied on 29 October 2026 give a
+useful boundary: finite hidden generators can require infinitely many exact
+history-determined predictive states, and hiding intermediate outputs can force
+new belief states. We therefore use sufficient mission interfaces, not a claim
+that canonical minimal predictors commute with every composition. Bayesian
+filtering and observable realization must remain distinct; see Nathaniel Virgo,
+Unifilar Machines and the Adjoint Structure of Bayesian Filtering:
+https://arxiv.org/abs/2305.02826
+
+General computational discoverability remains open. A finite decision procedure
+does not guarantee finding a certificate under arbitrary computation or memory
+bounds. No result here covers noisy unknown physics, unrestricted hidden
+physical state, unknown delay bounds, arbitrary topology discovery or every
+symbolic representation. The ladder's parent-domain filtering is not a generic
+minimum-interface extractor. The next programmatic tests need explicit clients,
+alternative handlers, checked substitution and timely invalidation, rather than
+an assumed performance race.
+
+Evidence guide
+
+The bundle contains the execution contract, theory and programmable-interface
+notes, independent theory/execution audits, frozen protocol and cap-repair
+manifest, aggregate and per-case results, and compressed certificates. The
+design proposal is a specification, not evidence that every suggested tier was
+run. Use example/results/results.json for final case outcomes and the audit
+reports for the independently checked scope.

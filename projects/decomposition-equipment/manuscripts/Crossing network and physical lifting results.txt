@@ -1,0 +1,402 @@
+Crossing network and physical lifting results
+Research milestone for Sean
+26 October 2026
+
+Abstract
+
+Several locally correct decompositions of one system need not describe one
+component that a permitted device can actually implement. There are two separate
+questions: do the local descriptions identify the same underlying events, and
+can one device realize those events in every view? We now have a constructive
+answer for one shared component appearing in any finite family of witnessed
+crossing decompositions, with a fixed finite hardware specification.
+
+The procedure starts from the actual parent systems and their event matchings.
+It reconstructs possible common components, checks every required interface
+copy, and compiles one device with certified adapters. It preserves actual
+execution records, so reusing a measurement is not confused with measuring
+again. A hardware-derived bound also makes previously unbounded invisible
+event sectors finite. Success returns the component, its factorization maps,
+and implementation certificates; failure is relative to the declared hardware.
+
+Two active four-component examples distinguish structural incompatibility from
+implementation failure. A further positive result identifies exactly which
+interface changes support the usual equipment operations: both the forward
+map and its inverse-image choices must have exact circuit implementations.
+The underlying gluing, circuit-synthesis, and categorical mechanisms are
+standard. The result here integrates their obligations without assuming the
+compatible component or treating physical admissibility as an unexplained test.
+
+
+1  The question now answered
+
+The previous local problem asks whether two crossing decompositions of a whole
+have a common middle component. Write that component T, with surrounding
+components R, Q, and S. The two parent components are intended to factor as
+
+    P = R followed by T
+    N = T alongside an unchanged wire followed by S.
+
+The whole can then be described using the grouping {R,T}|{Q,S} or the crossing
+grouping {R,Q}|{T,S}. The supplied whole matching identifies actual executions
+of those two descriptions, not merely equal outputs.
+
+The new problem has many such charts. Each chart supplies parent systems,
+surrounding components, interface maps, and an actual whole matching. Different
+charts can expose different parts of the same fixed whole. One designated
+component occurrence is to be reconstructed jointly across them. The theorem
+does not require a graph-shaped chart family, a pairwise compatibility promise,
+or a preselected local solution.
+
+An event means one witness of a component execution. Two events can have equal
+input and output while remaining distinct executions. This matters for sensors
+with multiple actual measurement outcomes or modes. The mathematical model is
+a finite span: an event set with maps to its input and output sets.
+
+The main theorem is an exact equivalence. Under the finite hardware and
+snapshot assumptions below, a terminating procedure succeeds if and only if
+there is one permitted core implementation, with permitted exact chart
+adapters, realizing witnessed local factorizations of every supplied parent
+and whole matching. Success includes the actual event identifications and
+compiled circuit witnesses. It is not merely a yes or no compatibility oracle.
+
+
+2  Recovering the common events
+
+For a candidate local solution, let T_i be its event set, E_i its set of local
+input/output profiles, and p_i:E_i -> E its map to global profiles. Extracting
+the T_i coordinate of an actual observed whole event gives a local event.
+Whenever two charts observe that same whole event, those extracted coordinates
+must represent the same global event.
+
+Start with the disjoint union of all T_i, retaining chart tags. The shared
+actual events force an equivalence relation F. A candidate global component
+is obtained by an equivalence relation K extending F. The exact conditions are:
+
+    1. Every forced actual-event identification belongs to K.
+    2. Equivalent events have the same global boundary profile.
+    3. A class contains at most one event at each local boundary value.
+    4. At every local lift of its global profile, a class contains an event.
+
+Together the last two conditions say exactly one, not merely at most one.
+They are what makes each T_i the actual Cartesian restriction of the quotient
+T = (disjoint union of T_i)/K.
+
+For example, suppose two distinct local interface values z and z' both map to
+the same global profile e. Every global event at e needs one representative
+over z and another over z'. Those representatives are allowed to become the
+same global event. Demanding injectivity of the entire map T_i -> T would
+incorrectly reject this ordinary noninjective interface change. Conversely,
+leaving out the representative at z' would give only an embedding into the
+restriction, not the required exact restriction.
+
+These conditions construct the factorization maps as well as the carrier.
+Transporting each local factorization through its quotient identification
+preserves the original whole-matching equation. Every generated solution
+arises this way; generated means that every global event occurs in a chart.
+
+There are useful short negative certificates. A forced class containing two
+different events at one local boundary value is impossible. But a missing
+representative in F is not yet a contradiction: optional mergers can repair
+coverage. The procedure therefore tests admissible coarsenings rather than
+mistaking the least forced relation for the only possible reconstruction.
+
+If the model additionally specifies partial operations on these events or
+records, two further conditions are necessary and sufficient. Equivalent
+inputs with locally defined outputs must have equivalent outputs. Also, a
+global operation cannot become defined at a local event merely because some
+other chart can execute it, when the local boundary allows the operation but
+the local component does not. This second, domain-reflection condition
+preserves enabledness, not just operation values. It is optional structure:
+arbitrary span witnesses are not silently treated as transition states.
+
+
+3  Making the physical question explicit
+
+The device specification lists finite nominal types, permitted deterministic
+gates and constants, sensor primitives with actual execution records, and a
+finite grammar of bounded acquisition slots. Equal underlying sets do not
+grant permission to convert a protected wire into a readable input.
+
+The completeness theorem uses eager, nonadaptive acquisitions of one immutable
+snapshot X. Each installed acquisition executes once against its declared
+part of X. No computed value chooses a sensor, suppresses an invocation, or
+changes the world during the computation. An allocated acquisition still has
+its records if its returned value is subsequently unused. Aborting an execution
+is available only when explicitly included in the device convention.
+
+All acquisitions can therefore be moved before deterministic processing,
+without changing their identities, sharing, or event multiplicities. For each
+allocation a, construct its finite synchronized record set W_a. Start with the
+authorized input tables and repeatedly apply permitted gates. This finite
+table closure generates exactly the decoder functions available to that
+allocation, storing a circuit derivation for each one. Unlimited gate depth
+does not create infinitely many distinct tables on fixed finite inputs.
+
+Snapshot synchronization is substantive. Intermediate interfaces retain an
+opaque X wire alongside the readable payload. Serial composition matches
+records on the complete interface X times payload; parallel computations
+sharing the snapshot match on X. Otherwise one could spuriously pair a
+measurement from one world state with a measurement from another. The structural
+component boundaries must actually be aligned with these physical boundaries;
+matching cardinalities alone is not an alignment.
+
+An exact physical lift is a boundary-preserving bijection between reconstructed
+events and actual core records. Equal input/output supports are insufficient.
+A sensor with two genuine modes returning one visible value has two records.
+Copying its returned wire still has two; independently invoking the sensor
+twice has four. Those are different capabilities in this semantics.
+
+Each allowed chart wrapper has one marked invocation of the shared core.
+Its extra acquisitions and deterministic regions are explicitly bounded and
+compiled. Restricting an actual wrapper execution to that marked invocation
+computes its map rho_i to the core records. The test requires a bijection
+
+    wrapper records  ->  E_i times_over_E core records.
+
+Thus a wrapper must supply precisely the required interface copies of each
+core event. It cannot add hidden executions, omit inverse-image choices, or
+call a second core and label it the first. The record map is derived from the
+compiled wrapper, not accepted because somebody calls it an adapter.
+
+
+4  The integrated construction and its finite bound
+
+The bridge between structural reconstruction and synthesis is an exact common
+record comparison. Choose one quotient T, one allocation, one generated
+decoder, and one bijection phi from T to the core records. Write k_i for the
+chart-to-quotient map and phi_i for the identification of local events with
+compiled wrapper records. The exact requirement is
+
+    rho_i phi_i = phi k_i.
+
+There is one phi for the family, not a separate favorable physical relabeling
+in each chart. With the exact wrapper comparison, the local identifications
+are uniquely determined by phi and their boundary values.
+
+This also closes an otherwise infinite part of the problem. If no allocation
+is allowed, the answer is immediately no. Otherwise let
+
+    N = maximum number of synchronized records of an allowed core allocation
+    m_i = maximum number of local profile values mapping to one global profile.
+
+Exact event preservation and interface coverage imply
+
+    |T| <= N                 and                 |T_i| <= m_i N.
+
+The local all-fibres classification permits arbitrarily many events in sectors
+that surrounding components cannot observe. Here those sectors cannot exceed
+the hardware record bound. This is a derived cutoff, not an arbitrary search
+limit that might miss a larger implementation.
+
+The complete procedure generates core and wrapper capabilities; enumerates
+bounded local carriers and factorization maps; checks the actual local whole
+equations; derives whole-event and any required parent-event anchors; constructs
+admissible quotients; and performs the single compiled record comparison.
+Its output includes the factorization, compilation, and matching certificates.
+Failure excludes precisely the declared finite apparatus and wrapper grammar.
+No efficiency bound is claimed.
+
+There is an equivalent hardware-first construction. Start with one compiled
+core, form its exact local pullbacks, and search for the local factorization
+maps on those carriers. The proof identifies the accepted solutions of the
+two constructions, preserving their event identifications. This cross-check
+makes clear that the result is not independent local syntheses followed by an
+informal assertion that their devices can be shared.
+
+The classification also retains symmetries. Before fixing actual physical
+records, local automorphisms act on the admissible quotients; invisible sectors
+can have genuine stabilizers. Fixing named physical records can remove those
+symmetries. The resulting objects are semantic capabilities with compilation
+witnesses, not the infinitely many circuit layouts obtained by inserting
+redundant gates.
+
+
+5  Two failures that the theorem separates
+
+First consider structural incompatibility. Fix one whole with two actual
+events over each input a in {0,1,2}. The three charts see input subsets {0,1},
+{1,2}, and {2,0}. Every chart includes every event at its chosen inputs: these
+are genuine Cartesian endpoint restrictions, not selective event filtering.
+
+The first chart pairs equally labelled events between 0 and 1; the second
+pairs equally labelled events between 1 and 2; the third pairs opposite labels
+between 2 and 0. Each chart has a correct two-event middle component. Each
+pair can be reconstructed together. All three force one middle event to equal
+the other, contradicting a local distinction. The whole itself remains valid
+and has other global factorizations; none extends all the specified local ones.
+
+The active four-component realization uses a further bit x. R sends x to
+its complement, T complements that bit again and has the two event labels,
+Q complements an independent bit k, and S XORs the two branches. All four
+occurrences affect the behavior. P, R, Q, S, and their whole are globally
+fixed. The second parents N_i and whole matchings are local reconstruction
+data; a compatible global N and matching have not already been supplied.
+That distinction prevents the invalid claim that fully anchored copies of an
+already coherent global decomposition acquire contradictory loop identifications.
+
+The same construction works around a cycle of any length n, with one reversed
+pairing. Every proper subfamily has a reconstruction, but the full family does
+not. Thus no fixed bound on the number of charts jointly checked settles all
+instances. The theorem is not a cycle theorem; this familiar holonomy example
+tests one genuine failure mode of its general finite criterion.
+
+Second consider implementation failure with no structural inconsistency.
+Take deterministic components
+
+    R(a1,a2) = (NOT a1, NOT a2)
+    T(x,y)   = x AND y
+    Q(k)     = NOT k
+    S(c,l)   = c XOR l.
+
+The actual whole is ((NOT a1) AND (NOT a2)) XOR (NOT k). Its two parent
+decompositions have the same input-indexed executions. Since R is bijective,
+the supplied P factorization forces the coherent global T.
+
+Restrict the inputs to the four faces x=0, x=1, y=0, and y=1. The restricted
+T functions are respectively 0, y, 0, and x. With two public Boolean pins,
+constants, XOR, and NOT, every local component compiles; R, Q, and S compile
+too. All overlaps and actual event matchings agree. Nevertheless no common
+permitted circuit computes T. Every generated affine Boolean table satisfies
+
+    h(0,0) XOR h(0,1) XOR h(1,0) XOR h(1,1) = 0,
+
+whereas AND gives 1. Adding AND repairs the failure. Replacing the requested
+T by XOR repairs it without changing the permission policy. The negative
+case's global parents and whole are semantic specifications, not already
+implemented affine devices. This is a real separation of the theorem's
+structural and physical stages, not a paradox about an existing implementation.
+
+
+6  A positive equipment of permitted interfaces
+
+Arbitrary mathematical interface changes are not automatically physical.
+An output pullback along a two-to-one map needs two executions where the old
+component had one. A deterministic device cannot manufacture that multiplicity
+by merely renaming its output.
+
+There is nevertheless an exact positive answer. Let H be the endpointwise
+replete semantic image of the unbounded finite snapshot-circuit language:
+the circuit execution spans and all isomorphic event carriers with the same
+fixed nominal endpoints. Unbounded means no uniform slot cap across circuits,
+not infinitely many acquisitions in one circuit.
+
+Allow an interface function f precisely when both its graph span f_* and its
+converse span f^* have circuit certificates in H. The graph applies f. The
+converse produces exactly one execution per inverse-image choice, and none
+when there is no choice. Correct visible answers with additional hidden
+records do not qualify.
+
+These permitted maps form a category. Given a core E and permitted maps f,g,
+its Cartesian restriction is compiled by
+
+    forward f circuit ; E circuit ; converse g circuit.
+
+The resulting records are exactly triples (new input, E event, new output)
+with the required endpoint equations. With all ambient commuting event maps
+as semantic cells, these objects, maps, and horizontal spans form a span-style
+equipment. The cells certify semantic comparisons; the theorem does not say
+that every cell is an executable transformation between circuit layouts.
+
+This permitted vertical class is maximal for that same horizontal semantics
+and its ordinary Cartesian restrictions. Restricting an identity span along
+f on its two sides already demands f_* and f^*. Any larger class would demand
+a capability absent from H.
+
+A fixed-budget fragment need not be an equipment: composition can exceed its
+acquisition budget, and no such closure is claimed here. Nor does the finite
+synthesis theorem decide membership in unbounded H. The positive result locates
+the correct categorical setting without confusing closure under composition
+with feasibility on one apparatus.
+
+
+7  Whole assembly and exact limits
+
+Reconstructing the common component does not automatically reconstruct the
+entire surrounding whole. For that stronger conclusion, the local parents
+and contexts must be genuine endpoint restrictions covering the global ones.
+Unchanged context coordinates must agree on overlaps. Every shared parent
+event must supply its component anchor, even if an empty Q or S prevents it
+from extending to a visible whole event. Then the global factorization maps
+are constructed fibre by fibre; compatible covering whole matchings give the
+global equation.
+
+To obtain an implemented whole, rather than a semantic factorization, the
+other components and contexts also need compatible compiled implementations.
+Execution composition then transports the factorization equations to actual
+record bijections. Independent invocations retain separate acquisition records;
+charts referring to one occurrence retain the same records.
+
+Simultaneous mathematical base change transports the quotient and all actual
+exposure data coherently, including noninjective maps. It does not authorize
+arbitrary physical adapters. Physical transport requires the compilation and
+exact record conditions above. A duplicated interface can also have new local
+solutions that do not descend to one original solution.
+
+The established scope is one designated shared component, finite witnessed
+charts, finite hardware and wrapper grammars, and nonadaptive immutable-snapshot
+execution. Adaptive sensing, feedback, mutable-state circuits within a tick,
+arbitrary observation-boundary descent, and reconstructing every unknown
+component of an unrestricted network remain open. Completely unobserved
+global events are excluded by the generated version; adding them requires
+an explicit extension problem rather than silently deleting physical records.
+
+
+8  Evidence and relation to established work
+
+The proof package contains the structural construction, integrated theorem,
+circuit normalization and synthesis proofs, equipment result, examples, and
+executable checks. Independent bounded checks compared the quotient criterion
+with direct enumeration of global maps on 475 input instances. A separate
+comparison with explicit partial-operation tables passed 127 partition
+instances. These are exhaustive searches within sampled bounded instances,
+not a proof by testing every finite system. Additional fixtures check invisible
+symmetries, duplicated-interface transport, active crossing equations, the
+affine obstruction and repairs, shared versus fresh sensor records, agreement
+of structural-first and hardware-first identifications, and rejection of
+unjustified hidden wrapper multiplicity. An independent integration checker
+rejects the twisted active cover and accepts its untwisted control. It finds
+one structural AND-grid quotient but no affine common lift; adding AND produces
+an exact lift through all four compiled face wrappers. The mathematical claims
+have also undergone independent AI proof review; this is not external human
+review or Lean or other proof-assistant verification.
+
+Ordinary quotient amalgamation, cover gluing, permutation holonomy, finite
+term-function closure, and companion/conjoint equipment theory are established
+mechanisms. The specialized contribution is their exact integration for
+supplied crossing witnesses: deriving local candidates and anchors, preserving
+all interface fibres, bounding invisible sectors from actual hardware, and
+matching every chart to one compiled core with the same execution records.
+The negative examples discriminate stages of that theorem; their familiar
+obstruction mechanisms are not claimed as new general discoveries.
+
+Relevant primary-source baselines include the following. The audit compares
+their statements with this problem; the fact that the inspected sources do
+not directly state the complete integrated problem is not a priority claim.
+
+    Hazlewood, Raeburn, Sims, and Webster on reconstructing higher-rank
+    graphs from complete associative collections of commuting squares
+    https://arxiv.org/abs/1110.2269
+
+    Koenig and Wolter on effective Van Kampen gluing criteria
+    https://arxiv.org/abs/1710.09784
+
+    Karimadini and Lin on decomposition of deterministic task automata
+    among multiple agents
+    https://arxiv.org/abs/1101.2002
+
+    Spivak on wiring diagrams and compositional process semantics
+    https://arxiv.org/abs/1305.0297
+    https://arxiv.org/abs/1307.6894
+
+    Burris and Sankappanavar on universal algebra and term operations
+    https://www.math.uwaterloo.ca/~snburris/htdocs/ualg.html
+
+    Shulman on framed bicategories and the companion and conjoint
+    characterization underlying the permitted-interface equipment
+    https://arxiv.org/abs/0706.1286
+
+The milestone is therefore a constructive, bounded simultaneous-lifting
+theorem with exact execution semantics, together with its permitted-interface
+equipment. It is stronger than a local compatibility test, but deliberately
+narrower than unrestricted network reconstruction.

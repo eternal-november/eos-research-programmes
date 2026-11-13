@@ -1,0 +1,389 @@
+Anonymous FIFO acquisition and safe task completion
+Research report 31 October 2026
+
+RESULT
+
+There is a constructive, conditional answer for a specified anonymous FIFO
+interface. Safe timing probes can recover the unknown queue partition and
+usable service-duration bounds without identifying the individual callbacks
+from each paired probe. Those learned facts support a legal production
+schedule, and a polynomial matching certificate can establish the required
+role outputs even when individual callback origins remain unresolved.
+
+The result includes a growing favorable family with fully charged commissioning
+and service deadlines. It also includes a matched boundary: on a particular
+two-queue, independent-fair-payload instance, a tight deadline makes uniform
+zero-risk completion impossible. The minimax missed-or-unsafe risk is exactly
+1/4. Requiring zero hazard instead limits completion probability to 1/2. Adding
+one request-clock quantum to that deadline enables zero-risk completion on the
+same hardware, provided its already-supplied retention capability lasts through
+the repaired deadline and final physical tail.
+
+These are mathematical and executable-model results, not hardware safety
+certification. The positive result permits arbitrary dependent binary payloads
+and bounded delivery lags. The independent fair-bit law is used only for the
+particular negative witness. No universal discoverability, literature novelty,
+one-mission end-to-end speedup, or superiority to every alternative controller
+is claimed.
+
+The accompanying source ZIP contains the full proofs, checker, reference
+pipeline, comparator, all finite-check scripts, exact reference results,
+reproduction instructions, a mathematical review and SHA-256 manifests.
+This report explains the result; the proof files provide its full derivations.
+
+
+1  The selected interface and its trusted boundary
+
+There are n addressed operation types. A fixed, unknown partition assigns
+each type to an independent work-conserving, nonpreemptive FIFO server. Type i
+has a fixed duration tau_i in (0,D]. Routing and durations stay unchanged
+between commissioning and production. Payloads do not affect routing, service
+duration or queue priority. Every invocation produces exactly one
+reliable callback with delivery lag in [0,J].
+
+A callback exposes only its arrival timestamp, a binary payload, and its
+position in the current raw stream. It carries no address, channel, request
+identifier, capture/start/end fields, source identity, or stable anonymous
+rank across frames. Addressed submissions and their release times are public
+actions, not callback tags. The request grid constrains admissions; a separate
+specified capability permits asynchronous post-read computation and output.
+
+The construction trusts the clock and release API, hard D and J bounds, FIFO
+and repeatability, exactly-once delivery, safe commissioning isolation,
+certified initial quiescence or an independently bounded drain, and the
+declared physical and computational capabilities. It does not learn these
+properties from a passing timing trace. D alone cannot drain unknown backlog.
+
+The mission is independently specified. Each required fresh productive job i
+creates a bit x_i and has a known physical role rho(i). For each role a, the
+required command is
+
+    ell_a = XOR over jobs i with rho(i)=a of x_i.
+
+All required jobs must actually run. A correct vector must reach the protected
+actuator by the physical deadline, with the final tail and all resource
+obligations covered. Earlier probe bits cannot substitute for fresh work.
+Refusal, omission, lateness and wrong physical output count as failures.
+
+A supplied same-payload load/interlock relation connects these exact productive
+bits to physical role loads. Safe isolation and retention cover the entire
+proposed execution and tail. There is no direct role-load sensor and no
+informative role-dependent physical feedback through safe calibration. The
+queue mathematics does not establish that physical bridge.
+
+This is NOT the earlier platform with only tags deleted. The predecessor also
+had calibrated physical-reference and aligned-sample sensing capabilities;
+the selected callback-only interface does not preserve them. A timely direct
+role-load measurement or suitable physical calibration feedback could bypass
+the binding problem or invalidate the negative witness.
+
+
+2  Learning queue sharing from anonymous timing
+
+From idle, invoke each type i alone and record elapsed arrival time a_i. Set
+
+    L_i = max(0,a_i-J),       U_i = min(D,a_i).
+
+The true duration lies in this interval, whose width is at most J. A zero
+lower endpoint is open because durations are strictly positive.
+
+For every unordered pair i,j, define
+
+    S_ij = max(U_i,U_j)+J,   C_ij = L_i+L_j.
+
+If S_ij<C_ij, submit the pair simultaneously from idle and use only the larger
+anonymous arrival time m_ij. Separate queues imply m_ij<=S_ij; a shared queue
+implies m_ij>=C_ij. Any threshold strictly between the two bands identifies the
+relation. No assignment of either individual callback is required. The final
+pair relation must be a consistent partition.
+
+The full proof shows tau_i>3J for every type is sufficient for every pair gap
+to pass under every allowed commissioning jitter trace. The 3J boundary is
+sharp for this particular pre-certified band test, not an impossibility
+threshold for all acquisition methods. Without a gap this construction may
+return UNRESOLVED.
+
+The all-pairs procedure uses n^2 actual invocations. Its raw waiting sum is
+
+    A_raw = n(D+J) + binom(n,2)(2D+J).
+
+That expression is not the full implementation budget. For request quantum
+epsilon, physical drain/tail allowance rho and per-probe allowance C_probe,
+reserve
+
+    R1 = epsilon ceil((D+J+rho+C_probe)/epsilon),
+    R2 = epsilon ceil((2D+J+rho+C_probe)/epsilon),
+    A_tot = R_init + n R1 + binom(n,2) R2 + R_compile.
+
+Initialization, final validation/compilation, endpoint guards, waiting to legal
+release times, storage and other resources must also fit their declared
+budgets. The commissioning deadline T0 is fixed before probing. Successful
+observations do not retroactively create a convenient mission-release time.
+
+
+3  Certifying the task without reconstructing every origin
+
+For a legal production schedule, propagate completion bounds along each known
+queue using the same max-plus recurrence as the plant:
+
+    l_k = max(r_k,l_(k-1)) + L_k,
+    u_k = max(r_k,u_(k-1)) + U_k.
+
+Its actual callback lies in [l_k,u_k+J]. Induction proves this containment even
+with correlated uncertainty. Reliability, exactly one callback per required
+job, and a closed observation horizon give one actual global bijection between
+jobs and callback occurrences.
+
+Create a bipartite graph with an edge from job i to callback v exactly when
+the callback timestamp belongs to that job's conservative window. The actual
+bijection is a perfect matching of this graph. For each graph matching compute
+the role-parity vector. If every matching gives the same vector, it equals the
+actual physical vector and can be used under the supplied bridge.
+
+The graph is an OVERAPPROXIMATION, not necessarily an exact joint physical
+model. Marginal windows may allow matchings that cannot coexist under any
+single physical world. Agreement therefore suffices; disagreement is
+UNRESOLVED, not a physical impossibility certificate. No perfect matching
+means model/evidence inconsistency, not vacuous success.
+
+The checker does not enumerate all matchings. Given a baseline matching m,
+put an arc i->j when report m(i) is compatible with job j, with vector weight
+
+    w(i,j) = b_m(i) (e_rho(i) + e_rho(j)) over F_2.
+
+Every matching differs from m by disjoint permutation cycles; conversely each
+directed cycle can be flipped into a graph matching. The role vector is
+constant exactly when every directed cycle has zero XOR weight. Within each
+strongly connected component this is equivalent to potentials satisfying
+w(i,j)=p_i+p_j on every internal arc. Cross-component edges impose no such
+constraint because they cannot participate in an alternative matching.
+
+Positive witnesses include the matching, vector, components and potentials;
+the separate verifier recomputes the relevant structure. A failed check is
+turned into an actual nonzero simple cycle and two graph matchings with
+different vectors. These remain graph witnesses, not automatically feasible
+physical worlds.
+
+For m_G edges and g represented roles, a conservative graph bound is
+
+    O(n(n+m_G) + (n^2+m_G)g).
+
+Building the graph adds n^2 exact endpoint comparisons. Rational bit lengths,
+role encodings, interval construction and all learning costs must be charged;
+polynomial graph work is not a measured hardware timing guarantee.
+
+This is genuinely weaker than identifying every callback. Two same-role
+jobs may exchange reports while their XOR remains fixed. Equal payloads can
+also make some cross-role ambiguity harmless. The package includes both
+physically realizable ambiguity examples and broader graph-only examples,
+without confusing the two.
+
+
+4  A schedule with a nonempty growing completeness class
+
+Let the learned partition contain q queues with at most h productive jobs per
+queue. Define the enclosing bounds L=min_i L_i, U=max_i U_i and W=U-L. These
+are a global enclosing range, not an intersection and not an assumption of
+equal durations. Choose the smallest positive request-grid multiple
+
+    Delta = epsilon (floor((hW+J)/epsilon)+1)
+
+and check
+
+    Delta > hW+J,
+    L > (q-1)Delta+hW+J,
+    (h-1)epsilon < L.
+
+Queue r receives its first real job at r Delta and subsequent jobs at offsets
+(k-1)epsilon, subject to the actual dispatch capability. Every queue is then
+continuously busy through its batch. Stage-k arrival windows are
+
+    [r Delta+kL, r Delta+kU+J].
+
+The inequalities separate windows within stages and across adjacent stages.
+Consequently the graph has a unique perfect matching and the general checker
+accepts. This association order is derived from acquisition and scheduling;
+it is not a hidden stable-rank observation.
+
+All callbacks arrive by T_arr=(q-1)Delta+hU+J. The real service budget adds
+readout, checking, command delivery, actuation and final tail. All bursts must
+be properly drained and the full calendar, including idle waiting, charged.
+
+The pointwise theorem says a complete trace satisfying the supplied physical
+assumptions and passing all acquisition, scheduling and resource checks safely
+completes its prescribed missions. It does NOT say one passing commissioning trace guarantees that
+every future commissioning trace in the same world would pass.
+
+The uniform corollary uses a favorable physical class whose truth-level
+inequalities guarantee every allowed commissioning trace passes. For example,
+actual equal durations tau, unknown to the algorithm, give L>=tau-J,
+U<=tau+J and W<=2J. Sufficient numeric conditions include
+
+    tau > q(2h+1)J+(q-1)epsilon+J,
+    tau > 3J,  tau <= D,
+
+together with all declared dispatch, storage, timing and physical envelopes.
+The same controller then completes every allowed payload/jitter realization
+in that class. Choosing q,h>=2 and one job of each of h roles in every true
+queue makes each required role parity combine fresh work across q queues.
+That fixture arrangement is not supplied to the learner.
+
+
+5  The tight-deadline obstruction and its repair
+
+The negative witness has two independent queues with tau=Q, zero lag, and
+request releases restricted to Q times integers. Equal-time callbacks have
+an unknown persistent priority pi, either (1,2) or (2,1). Every invocation
+samples an uncontrollable independent fair bit. Two fresh productive jobs,
+one for each of two distinct physical roles, become available only at time zero. The API offers no pilots, payload prefetch or
+reread, origin acknowledgment, direct load readout, preemption, or informative
+role-dependent calibration outcome.
+
+Arbitrary executable adaptive calibration, serialization, stopping, policy
+randomization and residual backlog are allowed and charged. Under either pi,
+a singleton callback is fair and a tied ordered pair is iid fair. Coupling
+bits by their public report positions gives identical complete observable
+interaction laws under both worlds, including adaptive decisions. Calibration
+therefore cannot identify pi in this particular subclass.
+
+Set the deadline to Q+gamma with 0<=gamma<Q, where the separate output
+capability is sufficient within gamma. Starting from an empty grid state,
+all queue starts and completions stay on the Q-grid. Any positive work ahead
+of a fresh job delays its start by at least Q. Thus a successful policy must
+start both jobs at zero; backlog, late releases and refusal cannot evade the
+required work. Both callbacks arrive at Q.
+
+For the observed ordered bits (X,Y), the required vectors are (X,Y) and (Y,X)
+in the two worlds. They agree with probability 1/2. When they differ, one
+chosen vector cannot succeed in both worlds. Even granting the full transcript
+through the deadline, the sum of the two success probabilities is at most
+3/2. Hence every uninformed policy has average failure at least 1/4 and at
+least one world's failure at least 1/4. Fairly guessing pi attains risk 1/4 in
+each world, so the minimax combined missed-or-unsafe risk is exactly 1/4.
+This comparator can issue a wrong physical command; it is NOT hard-safe.
+
+A policy required to have zero wrong-command probability in both worlds
+must refuse when X differs from Y. Its completion probability is at most
+1/2 in each world, attained by completing only on equal bits. Refusal still
+counts as failed work. A controller told pi completes the same actual jobs
+with zero risk on the same deadline; it is not told future bits.
+
+Now change only the mission deadline to 2Q+gamma. The ORIGINAL hardware is
+assumed already to retain and isolate the first load through that time and
+the final tail. Release the jobs at zero and Q; callbacks arrive at Q and
+2Q and bind uniquely by timestamp. Store the first bit, then deliver the
+correct vector within gamma. This gives zero risk for every payload pair,
+without tags or learning pi. One extra quantum suffices; it is not claimed
+to be the minimum real-valued slack when computation may be faster than
+gamma. Every deadline strictly below 2Q retains the grid-start obstruction.
+
+
+6  Executable evidence and reproduction
+
+The standard-library Python package contains these replayable checks:
+
+  - 12 complete pipeline fixtures at (q,h)=(2,2),(2,3),(3,3),(4,4), each with
+    seeds 0,1,7. All complete with verified physical role outputs.
+  - 32,768 exhaustive matching instances: all 512 three-by-three graphs,
+    eight binary role assignments and eight binary payload assignments.
+    Checker outcomes agree with exhaustive matching enumeration.
+  - 400 seeded matching instances of sizes four through seven, plus explicit
+    edge cases, exact tied timestamps, positive-witness verification and
+    tampered-witness rejection.
+  - 1,000 separately written exact-rational acquisition/schedule/binding
+    cases, including heterogeneous durations and arbitrary report row order.
+  - 2,000 separately written report-row permutation checks.
+  - 120 exhaustive-partition versus scalable-hull comparator checks.
+  - An exact enumeration of all 625 deterministic rules on the four possible
+    ordered report pairs (four output vectors or refusal per pair), supporting
+    the reduced negative-witness risk calculation.
+  - Three additional actual-clock checks: insufficient remaining allowance
+    refuses, future-dated reports refuse, and the exact reserve boundary
+    accepts.
+
+The pipeline also checks persistent busy state, request-grid rounding with
+fractional durations, impossible pair data, ambiguous acquisition, invalid
+bounds, surplus reports, missed deadlines, actual reversed-arrival ambiguity,
+and separation between private simulator truth and controller inputs.
+
+The runtime reads the actual public current clock. It fires only if the
+matching is certified, the plan fits, and
+
+    max(now,last_arrival)+compute+status+tail <= deadline.
+
+Planning time is explicitly reserved. Compute, status and planning allowances
+are declared capabilities, not measured Python worst-case execution times.
+
+Illustrative seed-zero costs in fixture time units are:
+
+    Jobs   Commissioning finish   Post-release bound   Total finish
+       4                  1830                  214           2051
+       6                  5547                  437           5991
+       9                 17325                623.5        17955.5
+      16                 90552               1400.5        91959.5
+
+Total finish includes commissioning, the charged planning/release wait and
+service plus its declared tail. These are model costs, not wall-clock Python
+benchmarks. The solo probes alone cost at least the equal-duration serial
+service time of one real batch. Faster post-release service is therefore not
+a one-batch end-to-end speedup.
+
+Run python3 reproduce.py from the extracted source directory. It checks the
+packaged SHA-256 manifest, executes every replay in an isolated temporary copy
+using relative local imports, and compares regenerated reference JSON with
+the included exact results. No network, external package or private workspace
+path is required. The original proof mathematics is preserved; portability
+and publication-reference changes are disclosed in PORTABILITY_NOTES.txt.
+
+
+7  Comparison and interpretation
+
+The controlled tagged comparator is the SAME selected new interface, task,
+physical bridge and budgets with callback origins added. It is not the whole
+older telemetry platform. Earlier work already learned queue/capture/source
+structure and allowed task-sufficient partial identification, persistent
+aliases, and exhaustive finite-signature discovery.
+
+The package evaluates partition-free global staggering and serial/drained
+service. Tight staggering fails a sufficient disjoint-window check on these
+fixtures, but slower global staggering succeeds on every fixture. This is
+not evidence that every partition-free policy fails or that learning the
+partition is necessary. Marginal window hulls are conservative. The auxiliary
+serial comparator permits physical-tail/delivery overlap, while the pipeline
+uses a more conservative tail reservation; their elapsed costs are not
+identical accounting conventions.
+
+Known-map unlabeled sensing, homomorphic sensing, callback typestate learning,
+active automata learning, task-direct aggregate prediction and finite-world
+enumeration remain meaningful baselines where their observation and query
+premises apply. The bounded literature comparison supplied in the package
+does not establish a new literature gap. Its historical construction-status
+remarks are superseded by the accompanying completed conditional theorem.
+
+The narrow gain is explicit: acquire usable structure from raw anonymous
+timing; prove inclusion of the actual joint assignment; certify just the
+required task vector; and exhibit both costed completion and a matched
+deadline limitation under an independently stated physical mission.
+
+
+8  What remains unvalidated
+
+The proofs are conditional on the specified API and physical/resource bounds.
+The reference implementation does not quantitatively enforce memory, energy
+or finite global dispatch-port capacity. It does not establish FIFO behavior,
+hard timing bounds, initial emptiness, safe isolation, exactly-once delivery,
+calibration-to-production stability, physical retention or the role-load
+hazard law. Anonymous counts cannot detect every equal-count replacement or
+duplicate callback.
+
+Mathematical reviews and separately written finite checks used the same
+underlying model assumptions. These automated reviews can have correlated
+errors; they do not constitute independent external human peer review,
+proof-kernel verification, measured WCET analysis, or hardware validation.
+Finite tests support the implementation on the tested cases; the written
+proofs supply the general mathematical statements.
+
+Within those limits, the acquisition, graph certificate, favorable-family
+completion and matched deadline boundary are fully specified and replayable.
+Beyond them, an unresolved certificate or a failed schedule must not be
+upgraded into an all-policy impossibility claim or a claim of physical safety.

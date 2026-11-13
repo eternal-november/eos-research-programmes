@@ -1,0 +1,361 @@
+F4 Edge Forgetting Closure Report
+Original obligation and bounded closure submission
+31 October 2026
+
+The designated edge-forgetting map is CULF in every degree even though it
+loses the underlying graph. Once a source whole is fixed, a prescribed
+edge-free cut has exactly one lift: restore that whole's edge set and keep
+the prescribed partition and actual interface-arrow path. Without the
+fixed whole, the same observation has 2^(v(v-1)/2) graph preimages on v
+ordered vertices. This report summarizes the proof and a genuine
+simplicial duplicated-witness control that fails lifting. The all-degree
+proof, finite tests, and non-author correctness and scope review now pass
+for the original F4 locally. The broader dependencies and program are not
+thereby accepted.
+
+1  Submission status and evidence boundary
+
+This submits F4 locally, not the wider program or a contract revision.
+Section 2 preserves the historical OPEN clause verbatim; the current
+submission assessment is separate:
+
+  P  All-degree mathematical proof: supplied in
+     proof/F4_Edge_Forgetting_Theorem.md.
+  X  Whole nonidentifiability and separate failing-lift controls: supplied
+     in that proof, with finite regressions in evidence/verify_f4.py.
+  C  Finite executable evidence: PASS on the final frozen source.
+     Fresh extracted-ZIP replay reproduces the deterministic result bytes.
+  Review  Mathematical correctness: PASS. Original-F4 minimum floor:
+     PASS locally. See review/F4_Scoped_Review.md for separate verdicts.
+  Combined F4-local P+C+X verdict: PASS.
+
+The non-author automated reviewer inspected the proof and code, replayed
+the earlier full checker, and independently tested every final added
+mathematical check and the optimization guard. The final guarded source
+also passed a full author run and the fresh-package replay. This is not
+external human review: the reviewer shares the same system/team context,
+so correlated-model and shared-context limitations remain.
+
+P is proof, C finite verification, and X an explicit separating example;
+one does not discharge the others. C3 and F2 dependencies are not certified
+here. Neither F3 recognition, I3 incidence descent, nor the coherent-cuts
+bundle is completed. No Lean or kernel verification is claimed.
+
+2  Preserved original F4 clause
+
+The following block is unchanged source text, not a newly issued status
+or a proposed replacement. Source: the complete original v0.1 contract in
+sources/Original_Completion_Contract_v0.1_VERBATIM.md. SHA-256 of that
+complete source file, not merely of the extracted block:
+47c53465b745aaa0397d8972cdc760de7da1f9c86bcab0e3bbeecf0aaf6a165e
+
+BEGIN VERBATIM ORIGINAL F4 CLAUSE
+
+### F4 CULF and nonidentifiability
+
+**Class and claim:** M. State and test the appropriate unique-lifting condition for a simplicial map, and prove that it does not imply recovery of the underlying whole or witness from its image.
+
+**Inputs:** F2 and the map forgetting graph edges while retaining the underlying ordered vertex set, partition, and interface data.
+
+**Artifact:** An all-degree proof that the designated forgetful map is CULF, formulated by the relevant cartesian naturality squares, together with an explicit noninjective map on whole objects. State the direction of every map. Explain that the lift is unique after fixing the source whole; it does not identify that whole from its image.
+
+**Discharge:** P and C; X for the nonidentifiability example. Separately test a map that fails unique lifting. The report may not use CULF as a synonym for faithfulness, injectivity, reconstruction, or observational identifiability.
+
+**Tests:** Two graphs with the same ordered vertices and different edges; a fixed graph and a prescribed partition having a unique lifted cut; and a deliberately duplicated cut-witness model that violates the lifting condition.
+
+**Dependencies:** C3, F2. **Status:** OPEN.
+
+**Minimum passing floor:** Prove the actual all-degree lifting condition, nonidentifiability, and a failing-lift control on the selected witness maps. A discrete two-point-to-point example is only a regression check, not the CULF/quotient analysis required by F3/I3.
+END VERBATIM ORIGINAL F4 CLAUSE
+
+3  The actual source target and direction
+
+The primary object is the original M=1 discrete typed graph-cut
+simplicial set, not a refinement nerve or the full span groupoid.
+C1 and CUT supply its all-degree simplicial and unital 2-Segal structure.
+
+The original finite family uses a three-object category and size bound
+N>=6. The direct discrete proof permits any small K and bounded or
+unbounded graph size, without thinness or unique arrow factorization.
+CUT's faithful finite-span embedding is invoked only for the original
+finite K with its faithful tagged finite-set functor, not arbitrary K.
+
+An n-simplex of X is
+
+  (G, (U_1,...,U_n), (A_0 --h_1--> A_1 --...--h_n--> A_n)).
+
+G is a simple ordered graph on [v]; disjoint U_i cover [v]; h_i are actual
+composable K-arrows. Empty blocks and their positions remain data. Blocks
+need NOT be contiguous in vertex order: a simplicial interval selects a
+union of whole blocks. Restrictions use increasing vertex enumeration.
+
+Y has the same records except for the edge set. The map F:X -> Y erases
+only graph edges. In degree one its direction is
+
+  F_1:(G,h) -> ([v],h).
+
+It retains the entire actual arrow path in higher degrees, not merely
+interface endpoints. For a nonthin K, two arrows with the same endpoints
+can differ, so endpoint-only forgetting is a different map. That different
+map is not covered by the positive theorem.
+
+Wholes are X_1, not X_0. Degree zero forces v=0 and X_0=Ob(K).
+An empty graph with a nonidentity K-arrow is not a degenerate unit.
+
+For a monotone alpha:[m] -> [n], the simplicial direction is X_n -> X_m.
+Select the union of U_r for alpha(0)<r<=alpha(m), restrict the graph to
+that subset, merge blocks over each interval
+alpha(j-1)<r<=alpha(j), and compose the arrows over the same interval.
+An empty interval gives an identity arrow. Y uses exactly the same rule
+without adjacency. Edge erasure commutes with restriction, so
+
+  F_m X(alpha) = Y(alpha) F_n.
+
+C1's increasing-enumeration identities and category associativity give
+all simplicial identities, including outer faces and degeneracies.
+CULF is derived, not assumed as an equivalent defining hypothesis.
+
+4  All active lifting squares and the explicit inverse
+
+A monotone alpha:[m] -> [n] is active when alpha(0)=0 and alpha(m)=n.
+The theorem is that every naturality square
+
+       X_n  --F_n-->  Y_n
+        |             |
+     X(alpha)      Y(alpha)
+        |             |
+        v             v
+       X_m  --F_m-->  Y_m
+
+is a pullback of sets. Equivalently, the comparison
+
+  c_alpha:X_n -> X_m x_(Y_m) Y_n,
+  x |-> (X(alpha)x,F_n x)
+
+is bijective. This specifies the direction of every map and the precise
+meaning of unique lifting.
+
+Proof sketch. A pullback element is a pair (a,b), where a is a source
+m-simplex, b is a target n-simplex, and
+
+  F_m(a) = Y(alpha)(b).
+
+Because alpha is active, its interval selects all the vertices of b.
+Consequently b's ambient ordered vertex set is exactly that of the whole
+graph G_a retained in a. Define
+
+  L_alpha(a,b) = (G_a, blocks(b), arrow_string(b)).
+
+This is a valid fine source simplex. Its edge-erased image is b. Its
+alpha-restriction has the entire graph G_a, and the equality defining the
+pullback makes its merged blocks and composite arrows exactly those of a.
+It therefore restricts to a. Conversely any lift must have b's blocks and
+actual arrows; activity forces its whole graph to be G_a. Every field is
+forced, so this is the unique lift. Both inverse identities follow by
+literal field equality.
+
+The proof includes empty graphs, empty and noncontiguous blocks, parallel
+arrows, nontrivial composites, and degree zero. Every constant [m] -> [0]
+is active; no [0] -> [n] with n>0 is active. These cases are not omitted.
+
+CULF means cartesian on active maps. This includes degeneracy squares
+and conservativity: a target-inserted empty block and identity arrow
+can be deleted uniquely. Inner faces have unique factorization lifting.
+The fine target supplies its arrow string; no unique factorization of
+a K-composite on its own is assumed.
+
+General outer-face squares need not be cartesian. An outer restriction
+can discard vertices and their incident edges, so the missing graph data
+need not be recovered. CULF is not a claim about those squares.
+
+5  What is lost and what remains uniquely liftable
+
+For noninjectivity assume K has at least one object and the allowed size
+range includes v=2. The original three-object, N>=6 family satisfies both
+conditions. Fix an actual arrow h, which may be an identity. On the same
+two ordered vertices take G_0 with no edge and G_1 with the single edge.
+Then (G_0,h) and (G_1,h) are distinct elements of X_1 with equal F_1 image.
+This is a noninjective map on whole components in the actual model.
+
+More generally, above a fixed ordered [v] and actual arrow h, every
+unordered pair of vertices can independently be an edge or not. Hence
+
+  |F_1^(-1)([v],h)| = 2^(v(v-1)/2).
+
+This formula includes v=0 and v=1, when the fibre is a singleton.
+Noninjectivity requires v>=2; it is not asserted for an empty category
+or a family restricted to at most one vertex.
+
+Choose the partition ({0},{1}) and the same composable two-arrow path for
+the two graphs. Their individual input components are identical edgeless
+singletons, and their target cuts are equal, but their wholes and retained
+cut witnesses differ. Each separately fixed whole has exactly one lift of
+that prescribed target cut. The two examples are not two lifts of a
+single pullback datum: their source-whole coordinates differ.
+
+The distinction is therefore exact. A large observation fibre may
+contain many possible wholes, while the active-lifting fibre is a
+singleton after one such whole is supplied. CULF does not mean injective,
+faithful, reconstructive, or observationally identifiable. It does not
+recover the whole or all witness provenance from an observation alone.
+The proof also describes the original six-vertex mixed-interface graph
+and its cross-edge variation as a larger mathematical example.
+
+6  A duplicated cut witness that genuinely fails lifting
+
+The negative control is defined in every degree on the same cuts. Let
+C2 be the additive two-element group. Form D_n by adjoining to each
+X_n-record a bit a_ijk for each 0<=i<=j<=k<=n, subject to
+
+  a_iik = a_ikk = 0,
+  a_ijk + a_ikl = a_jkl + a_ijl  in C2
+  for every i<=j<=k<=l.
+
+The bits are retained discrete witness data, not labels identified by a
+gauge equivalence. For any monotone alpha, pull back the indices. The
+normalization and four-index equation are preserved, including repeated
+indices, and successive index restriction composes literally. Thus D is
+a fully defined all-degree simplicial set, and the forgetful map
+P:D -> X is simplicial. This is not an arbitrary doubling of degree two
+with no higher faces or degeneracies.
+
+There is no extra label in degree one, so D_1=X_1. In degree two the single
+free label a_012 is either 0 or 1. Consequently the very same whole,
+input components, ordered partition, and actual two-arrow path admit two
+distinct cut witnesses in D_2 with the same image in X_2. Both restrict to
+the same fixed whole. For the active long-edge map [1] -> [2], 0 |-> 0 and
+1 |-> 2, the lifting comparison has a two-element fibre. P is not ULF and
+not CULF; F composed with P fails at the same square.
+
+This is a duplicated-cut-witness control with actual simplicial structure,
+not a bare two-point-to-point map. It separates erased witness decorations
+from erased whole edges.
+
+D is NOT asserted to be 2-Segal. Its scalar labels in degree three have
+8 possibilities, whereas a triangulation sees two triangle bits and only
+4 possibilities. The scalar comparison is therefore not bijective.
+F4 requires a separately tested failing-lift map; it does not require this
+negative source to remain 2-Segal. No F3 or I3 conclusion is drawn from it.
+
+A distinct supplementary control keeps a 2-Segal source: take
+B=X x N(C2), with n bits decorating its n factors. Faces add adjacent
+bits or discard an outer bit, and degeneracies insert zero. The ordinary
+nerve N(C2) is Segal and unital 2-Segal; the product retains those
+comparisons. Projection Q:B -> X nevertheless has two lifts of a binary
+cut over a fixed whole bit g, with factor bits (0,g) and (1,g+1).
+This control duplicates factor decorations, not two witnesses with
+identical decorated inputs. It supplements, and does not replace, D.
+
+7  Optional full CUT homotopy extension
+
+The optional full CUT extension erases edges but retains all interval
+spans, comparison bijections, and morphisms. Its active squares are
+homotopy cartesian, not merely set pullbacks of representatives.
+For homotopy data (a,b,theta), put a's graph on b's fine coefficient
+record. The coarse isomorphism theta then lifts, giving essential
+surjectivity; compatible morphisms determine a unique fine span family,
+giving full faithfulness. Thus the comparison is an equivalence.
+Lifts form a contractible groupoid for specified homotopy data; counting
+representatives while ignoring automorphisms is insufficient. This
+separate argument does not replace the primary discrete set theorem.
+
+8  Finite verification and exact coverage
+
+The checker and domain explanation are evidence/verify_f4.py and
+evidence/verification_readme.md. Final evidence/results.json and
+run.log record PASS for the frozen guarded source. Selected exact counts
+are 23,531 graph/partition records, 4,989,903 graph actions, 1,160,763 active
+geometry fibres, 5,022,870 category-path composition checks, and 2,904,611
+cocycle composition checks. These are distinct loop counts, not executed
+full-product counts; they must not be added or multiplied into one.
+
+The domain includes every ordered graph on 0 to 4 vertices, every
+ordered partition in degrees 0 to 4, and every monotone [m] -> [n] with
+m,n<=4. Empty/noncontiguous blocks are included; degree zero forces v=0.
+Paths use the nonthin C2 x [1] category with two objects and six actual
+arrows, retaining bits. The original three-object 0->1->1->1->2 path is
+also tested on its mandatory six-vertex mixed-interface fixture. Adding its cross-edge 05 changes the whole but
+not its four component graphs. For each of those two separately fixed
+wholes, all 32,768 six-vertex edge sets are searched and exactly one lifts
+the prescribed cut. This checks two specific fibres, not all six-vertex
+partitions.
+
+Coverage is documented and factorized. The complete graph-times-path
+Cartesian product is NOT enumerated. The all-parameter proof shows the
+simplicial action is coordinatewise, F retains the full path coordinate,
+and the active inverse has no graph/path interaction. Geometry
+composition is checked on every per-vertex block-label lineage for all
+bounded composable monotone-map pairs. Increasing-order preservation and
+induced-edge restriction extend that equality to every graph. Each full
+bounded graph/partition action is also compared with an independent
+literal block-set and edge-lookup implementation. Actual category paths
+and their composition laws are checked separately.
+
+For active geometry fibres, candidates are independently enumerated and
+grouped by their computed coarse record. Every possible coarse whole
+edge set is tested for exactly the explicitly proposed inverse. This is
+an existence-and-uniqueness test, not merely re-evaluation of the proposed
+lift. The cocycle control is enumerated through degree four, including
+pullback closure and composition, and its two-cut fibre must have size
+two. Mutation-sensitive checks distinguish loss of coarse edges and
+loss of actual arrow bits; endpoint-only data produce a two-lift failure.
+
+The four-vertex, degree-four bounds and six-vertex fixtures are dependency
+regressions associated with F2, not numerical text inserted into F4's
+original clause. Finite support is not an all-degree proof. This checker
+does not by itself verify every triangulation or all other F2 claims,
+accept C3, or complete any broader recognition or incidence obligation.
+It is standard-library Python evidence with assertions, not a kernel
+certificate. Its trust base includes Python and the execution environment.
+
+9  How to navigate and reproduce the source ZIP
+
+Start with this report for the claim and limits, then read the exact
+all-degree theorem. The clean bundle uses these destinations:
+
+  proof/    F4_Edge_Forgetting_Theorem.md contains definitions, the
+            all-active inverse, nonidentifiability, both negative
+            controls, and the separate full CUT homotopy argument.
+  evidence/ verify_f4.py and verification_readme.md define the exact
+            finite domain, factorization, and executable checks;
+            results.json and run.log record the frozen run.
+  sources/  The unchanged original contract, C1_Model_Theorem.md, and
+            Global_Cut_Repair.md supply the carriers and inherited
+            construction. F4_Obligation_Map.md gives the clean mapping.
+  review/   F4_Scoped_Review.md records the final non-author review,
+            corrections if any, and its explicitly bounded verdict.
+
+README.txt explains the portable replay.py entry point. MANIFEST.json
+records packaged source identities. Original sources are preserved, with
+historical context intact; the scope index identifies applicable sections
+and does not adopt larger source-package claims. The contract digest above
+identifies the entire original, not only F4. No private path is needed.
+
+From the extracted bundle root, run:
+
+  python3 replay.py
+
+The wrapper checks all manifest digests, copies the checker to a temporary
+location, and compares exact result bytes without overwriting evidence.
+Python 3 and its standard library suffice. Do NOT use python -O: assertions
+are the checks. Optimized execution is explicitly rejected, and replay
+checks that guard before the ordinary run. Read README.txt and the log;
+inspect positive, negative, empty, noncontiguous, and mixed cases. A finite replay PASS does not replace
+the all-degree proof or its review.
+
+10  Baseline and closing assessment
+
+The edge-forgetting restriction-species mechanism is standard reused
+infrastructure, not a new recognition theorem. The proof cites
+Galvez-Carrillo, Kock, and Tonks, Decomposition spaces and restriction
+species, arXiv:1708.02570, for that baseline and strict versus homotopy
+pullbacks. This submission explicitly instantiates the designated typed
+map, inverse, limits, and coherent failing-witness control. It claims no
+novelty for the general mechanism.
+
+Forgetting edges has unique active lifts but loses the graph and retained
+witness provenance. Arbitrary witness erasure need not have those lifts.
+The original F4-local P+C+X deliverable and its original minimum passing
+floor now pass. Formal dependency and program acceptance remain separate.
+This package stops at F4; it does not turn an infrastructure result into
+F3 recognition, I3 descent, or completion of the coherent-cuts bundle.

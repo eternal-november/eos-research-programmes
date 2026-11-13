@@ -1,0 +1,18 @@
+import WitnessedDecompositions.FreeAdjunction
+#print axioms WitnessedDecompositions.Tree.extend
+#print axioms WitnessedDecompositions.Tree.interpretFiber_substituteOperation
+#print axioms WitnessedDecompositions.Tree.homEquiv
+#print axioms WitnessedDecompositions.Tree.extend_unique
+#print axioms WitnessedDecompositions.Signature.totalizedGeneratorEquiv
+#print axioms WitnessedDecompositions.Signature.assignmentCollectionEquiv
+#print axioms WitnessedDecompositions.Signature.Hom.ofGeneratorMap_generatorMap
+#print axioms WitnessedDecompositions.Free.homEquiv
+#print axioms WitnessedDecompositions.Free.restrict_natural_source
+#print axioms WitnessedDecompositions.Free.extend_natural_target
+#print axioms WitnessedDecompositions.Free.extend_natural
+#print axioms WitnessedDecompositions.Free.map_id
+#print axioms WitnessedDecompositions.Free.map_comp
+#print axioms WitnessedDecompositions.Free.triangle_free
+#print axioms WitnessedDecompositions.Free.triangle_forget
+#print axioms WitnessedDecompositions.Free.rawToProfiled_profiledToRaw
+#print axioms WitnessedDecompositions.Free.profiledToRaw_rawToProfiled

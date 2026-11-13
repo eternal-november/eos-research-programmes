@@ -1,0 +1,12 @@
+import WitnessedDecompositions.PresentationExamples
+#print axioms WitnessedDecompositions.Presentation.derives_parallel
+#print axioms WitnessedDecompositions.Presentation.congruence
+#print axioms WitnessedDecompositions.Presentation.derives_least
+#print axioms WitnessedDecompositions.Presentation.sound
+#print axioms WitnessedDecompositions.Tree.weight_profileGraft
+#print axioms WitnessedDecompositions.Tree.weight_substituteOperation
+#print axioms WitnessedDecompositions.Tree.weightCongruence
+#print axioms WitnessedDecompositions.Presentation.derives_weight
+#print axioms WitnessedDecompositions.PresentationExamples.Mixed.undeclared_not_derivable
+#print axioms WitnessedDecompositions.PresentationExamples.Mixed.declared_in_red_context
+#print axioms WitnessedDecompositions.PresentationExamples.Nullary.noEquations_derives_eq

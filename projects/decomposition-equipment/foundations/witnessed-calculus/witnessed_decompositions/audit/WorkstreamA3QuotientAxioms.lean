@@ -1,0 +1,19 @@
+import WitnessedDecompositions.PresentationExamples
+-- Standard choice is disclosed: Quotient.out selects representatives, not normal forms.
+#print axioms WitnessedDecompositions.ParallelCongruence.quotientSubstitute_project
+#print axioms WitnessedDecompositions.ParallelCongruence.quotient
+#print axioms WitnessedDecompositions.ParallelCongruence.projection
+#print axioms WitnessedDecompositions.ParallelCongruence.quotient_eq_iff
+#print axioms WitnessedDecompositions.ParallelCongruence.factor
+#print axioms WitnessedDecompositions.ParallelCongruence.projection_factor
+#print axioms WitnessedDecompositions.ParallelCongruence.factor_unique
+#print axioms WitnessedDecompositions.ParallelCongruence.homEquiv
+#print axioms WitnessedDecompositions.Presentation.homEquiv
+#print axioms WitnessedDecompositions.Presentation.extend_natural
+#print axioms WitnessedDecompositions.Presentation.derives_iff_all_models
+#print axioms WitnessedDecompositions.Presentation.quotient_eq_iff_all_models
+#print axioms WitnessedDecompositions.PresentationExamples.Mixed.declared_quotient_equal
+#print axioms WitnessedDecompositions.PresentationExamples.Mixed.undeclared_quotient_distinct
+#print axioms WitnessedDecompositions.PresentationExamples.Mixed.statistic_satisfies
+#print axioms WitnessedDecompositions.PresentationExamples.Mixed.statistic_separates
+#print axioms WitnessedDecompositions.PresentationExamples.Nullary.quotient_preserves_nullary_insertion

@@ -1,0 +1,15 @@
+import JointQuotientDecoder
+#print axioms JointQuotientDecoder.exact_iff_sound_and_sourceFixedLift
+#print axioms JointQuotientDecoder.quotient_exact_iff_stable
+#print axioms JointQuotientDecoder.exists_exact_iff_stable
+#print axioms JointQuotientDecoder.exact_decoder_unique
+#print axioms JointQuotientDecoder.joint_test_preserved
+#print axioms JointQuotientDecoder.descends_iff_kernelCompatible
+#print axioms JointQuotientDecoder.graft_descends_iff
+#print axioms JointQuotientDecoder.exact_compose_records
+#print axioms JointQuotientDecoder.generated_tests_preserved
+#print axioms JointQuotientDecoder.equal_marginals
+#print axioms JointQuotientDecoder.unequal_joint_records
+#print axioms JointQuotientDecoder.nullary_feasibility_distinguished
+#print axioms JointQuotientDecoder.no_decoder_for_merged_nullary_feasibility
+#print axioms JointQuotientDecoder.cut_exact_but_swap_does_not_descend

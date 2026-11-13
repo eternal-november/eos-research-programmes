@@ -1,0 +1,13 @@
+import ActiveRankSensitiveCompression
+#print axioms RankSensitiveCompression.graft_congr
+#print axioms RankSensitiveCompression.root_lift
+#print axioms RankSensitiveCompression.all_tree_lift
+#print axioms RankSensitiveCompression.exact_tree_decoder
+#print axioms RankSensitiveCompression.edge_fromEdge
+#print axioms RankSensitiveCompression.fromEdge_edge
+#print axioms RankSensitiveCompression.evaluate_eq_path
+#print axioms RankSensitiveCompression.branching_proper_compression
+#print axioms RankSensitiveCompression.active_evaluate_congr
+#print axioms RankSensitiveCompression.active_all_tree_lift
+#print axioms RankSensitiveCompression.active_exact_tree_decoder
+#print axioms RankSensitiveCompression.active_quotient_exact

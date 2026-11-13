@@ -1,0 +1,363 @@
+Typed calculus and controller environment integration results
+Research milestone for Sean
+27 October 2026
+
+Abstract
+
+A gripper that cannot rotate an object alone can recruit a corner as its pivot.
+The controller seats the object, learns which way to push, remembers the answer,
+pushes, and releases the quarterturned object. This works only if sensing and
+mechanics concern the same contact and that contact survives the push.
+Separately plausible descriptions of each part are not enough.
+
+The earlier work could analyze finite machines, but had not shown that it
+respected the original decomposition language's rules. We now supply that
+link. Replacing a particular piece by its own decomposition has the same
+meaning in the original language and in the machine model. Only some
+decompositions allow the whole to be reconstructed from compatible pieces;
+that stronger property is tested separately and survives the specified
+refinements and passage through time.
+
+The gripper, fixture, object and sensor are specified locally before their
+combined behavior is calculated. The controller is also decomposed, with one
+memory owner and a clear distinction between choosing an action and receiving
+its reply. Together these pieces support safe completion in three actions.
+Counterexamples isolate missing retention, missing memory and incorrectly
+duplicated contacts. This closes the integration gap under stated finite
+modeling assumptions. It neither certifies a physical robot nor
+completes the original equipment and reconstruction program.
+
+
+1  The concrete gap now closed
+
+The previous milestone supplied finite dynamic decomposition, discovery and
+control results, but ended with a specific missing link: those results had not
+been interpreted through the actual original presented calculus. A convincing
+example also needed to start with local capabilities, rather than assume a
+correct whole and then project out its parts.
+
+Both requirements are addressed here. The original ordered types, tree
+substitution, declared equations and occurrence-indexed refinement arrows are
+retained. The fixture example supplies local primitive tables, derives the open
+plant, checks its decomposition, and only then plugs in a controller. The
+resulting chain is:
+
+    original typed presentation
+      -> interpretation in staged finite systems
+      -> exact local execution comparisons
+      -> a controller and environment guarantee.
+
+The example makes the last link tangible. The gripper has translation commands
+and release, but no free-space rotation primitive. A left- or right-handed
+corner can convert an appropriate lateral drive into a positive turning pulse.
+The hand is initially hidden. Seating returns it after the approach action;
+later sensing reports only whether contact is engaged. The controller must
+therefore retain the earlier answer, and the mechanical pivot must still be
+the contact that supplied it.
+
+The fixture has either HOLD or TOUCH grade. HOLD promises retention through the
+next admitted drive. TOUCH permits a slip during that drive. These are different
+capabilities even when both report contact now. Under HOLD, every possible
+seating choice completes safely. Under TOUCH, the controller refuses the task;
+refusal is not counted as successful completion.
+
+
+2  What the interpretation theorem says
+
+A component is modeled by a finite directed graph: states and actual event
+records, with each record's source and target. Parallel records remain distinct
+even when their endpoints and visible responses coincide. An interface is
+another such graph, and a component's two boundary maps describe how its states
+and records appear at its endpoints.
+
+For an original ordered profile of components, form the graph of compatible
+tuples. Adjacent components must agree on the shared boundary state and event.
+A decomposition witness is a graph map in the backward direction:
+
+    whole -> compatible tuples of pieces.
+
+It says how each actual whole state and execution determines its pieces. It
+does not say that every compatible tuple occurs, or that a tuple uniquely
+recovers the whole. Different maps remain different witnesses even if their
+images, counts or visible traces agree.
+
+These operations form a target satisfying the original Calc laws. Substitution
+applies a replacement witness at each particular component occurrence, then
+flattens the resulting ordered tuple. Repeated component types retain separate
+positions. Both unit laws and associativity hold as equalities of operations,
+not merely as equalities of profiles.
+
+Empty profiles require care. The compatible-tuple object for an empty path at
+an interface is that interface itself, not an indiscriminate one-point object.
+A nullary witness is possible only for a loop component whose two boundary maps
+agree. When substitution removes every component, it retains the common
+interface value. This prevents a hidden change to the original nullary syntax.
+
+The resulting interpretation uses the existing source APIs directly:
+
+* Tree.extend gives the unique strict interpretation of free typed trees once
+  their primitive generators have been assigned valid witness maps.
+* Presentation.extend passes to the original presented quotient when every
+  declared parallel equation has equal interpreted maps.
+* SemanticRefinement.functor carries the original refinement arrows to the
+  target, retaining the entire family of occurrence-wise replacements.
+
+The second condition is substantive. Equal outcomes or event counts do not
+validate an equation. In the finite instance, both sides are evaluated on every
+state and actual event. The worked presentation declares one regrouping equation:
+first group gripper with fixture and then expand, or first group fixture with
+object and then expand. Both trees return exactly the ordered triple of local
+records. This is a genuine small presented instance, not a quotient by every
+coincidence observed in the model.
+
+A negative control exchanges the fixture's two seating pads. This is an exact
+map preserving the structural interface labels, but inserting it in only one
+grouping branch changes 288 whole event records. The proposed equation is
+correctly rejected. The general theory also rejects swapping distinct records
+with identical visible responses and endpoints: equality must concern the
+actual maps, not merely their observed behavior.
+
+Mark a witness exact when it is bijective on states and events. This is precisely
+a graph isomorphism. Exact identities and exact replacements compose to an
+exact witness, including nullary replacements. Nonexact witnesses remain valid
+operations. Conversely, an exact composite need not make its constituent maps
+exact: a nonbijective inclusion followed by a nonbijective collapse can compose
+to an identity.
+
+Interpretation also need not recover the syntax. Distinct generators may have
+the same semantic map, and different replacement families can have the same
+aggregate composite. Faithfulness requires additional injectivity; it does not
+follow from the existence of this interpretation. Keeping the refinement forest
+is essential even when only the composite happens to be observable.
+
+
+3  Deriving the plant and its guarantee
+
+The example has three independently specified local mechanisms. The gripper
+owns held or released state and converts an external action into a command.
+The fixture owns hand, grade, contact mode and seating pad. It consumes the
+command, updates contact and emits a wrench class plus a returned reply. The
+object owns its orientation and reacts only to that wrench. It cannot inspect
+hand, controller memory or the external command.
+
+There are two possible seating pads. They give the same macroscopic pivot but
+are different fixture states and different actual seating executions. Zero
+wrench preserves orientation; a positive pulse turns a flat object through one
+quarterturn. A wrong-direction pulse, lost support, unsupported drive or another
+positive pulse on an already turned object produces a conservative damaged
+state. This response table specifies a bounded operating envelope; it is not a
+rigid-body calculation.
+
+The whole is generated by enumerating the local records: a gripper command, a
+matching fixture response, and an object response to that response's wrench.
+Their next local states determine the whole next state. This produces 72 open
+states and 396 action records. All five actions remain available in the open
+specification before control: approach, push left, push right, withdraw and wait.
+Unsupported actions and damaged states are not removed to make matching easier.
+
+The structural interface records contact before and after, action, command,
+wrench and reply. Filtering the local component tables against its independently
+declared full alphabet reproduces exactly the generated whole records. Every
+matching triple has one whole execution, and every whole execution yields one
+triple. The comparison is therefore exact, rather than an agreement only on
+successful runs.
+
+That structural transcript is not a bundle of sensors available to every
+component. The physical dependency order is explicit: acquire current contact,
+choose the action, issue the gripper command, obtain the fixture response, update
+the object, and commit state and controller memory. Command goes to the fixture;
+wrench goes to the object; the reply returns to the controller after the action.
+No primitive reads the entire transcript. Pre-action acquisition has its own
+exact comparison and is not inferred from the later event factorization.
+
+The controller uses six named memory values: start, left, right, withdraw, done
+and reject. A request initializer sets start. Approach is chosen without knowing
+hand. A returned HOLD contact reply stores left or right; another reply causes
+rejection. The stored hand selects the next push, then memory advances to
+withdraw and finally done. This is a concrete finite implementation, not a claim
+that six memory states are globally minimal.
+
+The controller itself also has an explicit ordered decomposition, rather than
+being supplied only as a correct policy. Its profile is Select, Decode, Commit.
+Select determines the action from old memory and the permitted pre-observation.
+Decode uses the actual post-action reply to compute a write instruction. Commit
+performs that write. There is one memory owner, not three independent copies.
+The matching local records reconstruct exactly the controller's complete tick
+records, and grouping Decode with Commit then refining that occurrence gives
+the same witness. A separate check confirms that changing the future reply or
+future memory cannot change Select's action.
+
+A common protocol carries controller memory, contact, the action and reply,
+and the write instruction. Explicit passive extensions put controller and plant
+at the same boundary type in the original calculus. The coupled whole first
+decomposes into those two pieces; refining them yields the ordered profile
+Select, Decode, Commit, gripper, fixture, object. Expanding either side first
+gives the same six actual records. The independently checked comparison retains
+all 468 coupled records, including unreachable and adverse states, not just
+the successful protocol.
+
+In this model, hiding memory from boundary matching separately for each
+mechanism introduces extra combinations. The actual local record identities
+are retained: three valid records can appear compatible although their old
+memories disagree, so that particular tuple has no one-owner execution. Their
+public values alone can still have a different, consistent lift. The failure
+concerns exact reconstruction of retained records, not automatically safety.
+The driver lesson is to assemble its mechanisms consistently before hiding
+their shared memory.
+
+For the two initial HOLD states, differing only in hidden hand, all executions
+obey the following argument. Approach seats on either pad and leaves the object
+flat. The returned hand is the actual hand of that contact. The next push uses
+the retained answer. HOLD excludes slipping, so every matching fixture response
+has positive wrench and the object turns. Withdraw releases the gripper, clears
+contact and preserves the turned orientation.
+
+Thus the controller is nonblocking, never reaches damaged state, and reaches
+the released quarterturned goal in at most three actions. The rank 3, 2, 1, 0
+decreases along every reachable nonterminal step. All environment choices are
+included; no fairness assumption is needed. Exhaustive checking finds 12
+reachable state-memory pairs, 12 closed-loop edges and two terminal states.
+
+The assumptions remain explicit: sufficient geometry and clearance, an admitted
+force class, the stated object response, a truthful configuration grade, contact
+retention, and no unmodeled between-tick contact change. Numerical friction,
+load and torque bounds are not supplied. Those are validation obligations for
+an eventual apparatus, not consequences of the categorical interpretation.
+
+
+4  Four failures that the integration distinguishes
+
+Without the fixture, the specified gripper and object have no positive-wrench
+execution. Every action sequence leaves a flat object flat or damaged; none
+reaches the turned state. The controller genuinely recruits an environmental
+capability absent from the fixture-free candidate.
+
+Without retained handedness, later contact sensing cannot select the push.
+Both hands give the same engaged observation but require opposite directions.
+Waiting cannot guarantee completion, approaching again faults, and releasing
+early loses the ability to finish. All 25 deterministic memoryless action maps
+on the two current contact observations fail. Even granting protocol phase for
+free does not supply the missing hand bit. Sequencing and remembering the
+contact's hand are separate resources.
+
+Without retention, correct direction is insufficient. TOUCH permits a slip
+during the push, leading to damage. A wrapper that reports only contact and
+hand can conceal the difference between TOUCH and HOLD. The error is promoting
+an earlier observation to a future mechanical guarantee. This defeats that
+retained-contact contract; it does not prove that every interface forgetting
+grade is structurally invalid.
+
+Without one shared contact witness, sensing and mechanics can each be locally
+correct yet disagree. If the sensed contact has one hand and the mechanical
+pivot has the other, the selected drive damages the object. Two of the four
+independent hand pairs fail. Even equal hands do not justify duplicating a
+physical invocation: one two-pad seating record gives only aligned pairs
+(0,0) and (1,1), whereas two independent invocations give four pairs. The extra
+off-diagonal pairs violate exact record matching. That multiplicity defect is
+not, by itself, claimed to cause damage.
+
+
+5  What persists through time and interface changes
+
+For every execution length, a path of compatible component tuples is the same
+data as compatible component paths. Transposing the time and component indices
+gives a canonical bijection. Interpreting an original tree before forming paths
+or afterward therefore gives the same result, as does interpreting its
+occurrence-wise refinement arrows. The comparisons respect truncation and
+concatenation. Exactness on states and one-step event records supplies exactness
+at every finite length; separate horizon-by-horizon choices are unnecessary.
+
+The staged version retains acquisition and action phases. It can transport a
+fixed controller's guarantee through an exact refinement when observations,
+actions, initialization and task predicates are also preserved. An arbitrary
+refinement, or an isomorphism only of collapsed transitions, does not meet those
+conditions automatically.
+
+Interface changes have different answers. Forgetting boundary distinctions
+always preserves a valid witness map, but may destroy exactness by allowing new
+combinations of existing component records. With two labels, matching pairs
+(0,0) and (1,1) become four pairs when the labels are forgotten. The old whole
+still has only two records. For a nonempty profile, exactness survives precisely
+when no newly compatible state or event tuple appears. For an empty profile,
+the comparison is the interface map itself and must be an isomorphism.
+
+Independently lifting both endpoints of every component is more demanding.
+Internal cuts require compatible lifted boundary values. Missing values can
+prevent transport; several values can prevent exact transport; independently
+chosen state and event lifts can fail to preserve incidence. The theorem gives
+the comparison map whose incidence-preserving lift must be supplied. When the
+old witness is exact, exact transport exists precisely when that comparison is an
+isomorphism, in which case it is unique. Arbitrary endpoint changes are not
+silently treated as universally available restrictions.
+
+By contrast, changing one common interface and giving all components the same
+lift preserves exactness. Reflecting the result back requires enough coverage
+of original states and events. Removing troublesome records can make a
+restricted system pass without proving the unrestricted one passes.
+
+The model and comodel language remains interface-relative. A finite
+request-response runner can implement an upper operation using lower requests
+and internal state; that operational role can be represented by the staged
+model. Calling it a comodel of a specified algebraic theory additionally
+requires checking that theory's equations. Not every graph span is thereby a
+comodel. Assertions about possible or necessary behavior can be read from the
+executions afterward; they are a derived modal view, not a new language or a
+replacement for the retained witnesses.
+
+
+6  Evidence and the original contract
+
+The source bridge checks include 578 grouping and occurrence instances, 2,184
+nontrivial path comparisons, 225 nonempty-interface coarsening cases and 31
+nullary diagonal cases. Negative controls cover false event equations,
+nonexact cancellation, loss of refinement information, and a surjective graph
+map with no graph section. The fixture checker separately verifies the full
+open record set, acquisition matching, regrouping, all reachable controller
+executions, the decreasing rank and the four failure constructions.
+
+These are reproducible finite checks supporting mathematical proofs, not
+exhaustive verification of all finite systems. The new dynamic interpretation
+has not been formalized in Lean. The existing Lean declarations supplying free
+extension, presentation descent and refinement functoriality are identified
+directly; using their API in a mathematical argument is not a new kernel check.
+Independent AI reviewers inspected the arguments and reran finite checks
+against the final sources, accepting this bounded integration result. That
+review retains the limitations of AI-based review; no external human review
+or empirical robot trial is claimed.
+
+The underlying mechanisms are standard: free and presented typed calculi,
+compatible products of graphs, finite-state control, and decreasing-rank
+reachability arguments. The useful result here is their explicit integration
+with actual occurrence and execution records, including the conditions that
+block invalid inferences. No priority claim is made for those mechanisms.
+
+Relative to the original contract, this instantiates the accepted algebraic
+core rather than replacing it. It adds a concrete presentation and refinement
+comparison, proved boundaries for specified interface changes, exact assembly
+under tree substitution, and a synthetic controller-environment application.
+These progress the corresponding B, D, E and G obligations. They do not discharge
+their stronger statements merely by using similar terminology.
+
+In particular, the new fixture presentation does not dynamically interpret all
+generators or equations of the historical graph-cut family. The target calculus
+does not construct the universal virtual equipment required by E2. Finite path
+compatibility is not the original all-tree cut interchange or 2-Segal recovery
+theory. The bounded application is not full discharge of G3 or of the general
+recovery, amalgamation and observational-repair program.
+
+The active integration gap is nevertheless closed at its stated scale: the
+original source calculus has a precise dynamic interpretation; a separately
+marked exact fragment supports refinement and time comparisons; and one plant
+derived from local primitives supports a causal, adversary-safe controller
+guarantee. The larger residuals remain identified obligations, not additional
+branches opened by this milestone.
+
+Technical sources and reproduction
+
+The accompanying theory note, Original_Calculus_Dynamic_Interpretation.md,
+contains the target construction, interpretation proofs, interface criteria
+and source declaration mapping. Fixture_Assisted_Quarterturn.md contains the
+local tables, staged implementation and guarantee. The accompanying bundle's
+run_checks.py runs all four included checkers, including the independent
+reproduction scripts, with Python's standard library. The original source
+archive and its completion contract remain unchanged.

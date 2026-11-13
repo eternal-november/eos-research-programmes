@@ -1,0 +1,113 @@
+Integrated positive interface and mission completion checkpoint
+
+30 October 2026
+
+Result and limits
+
+A scoped end-to-end result is now available: permitted safe experiments produce one jointly consistent positive stochastic interface; a separate capability check implements its observation-based program; the same source, program, delays and physical semantics yield a finite-budget completion guarantee. The main example needs only two observable pairs of a three-bit source. It leaves a genuine route correlation unidentified while preserving every admitted mission context.
+
+This is an integration theorem using classical probability, positive realization, concentration and existing two-sided comparison machinery. It is not a novelty claim or completion of the whole retained research contract. Known source boundaries, noninvasive queries, calibration-to-production transport, gate physics and safe draining are primitive assumptions—not discoveries made from the samples.
+
+What the experiments identify
+
+Each activation draws one finite source block, fresh conditional on previous history. Its coordinates coexist and have known release times. Repeated polling and delayed consumers use that same sampled block; copying a report never creates independent noise. Allowed query sets constrain the cumulative observations and physical tests from one activation, not individual calls. Mutually exclusive intervention outcomes cannot be treated as jointly observed coordinates.
+
+Exact calibration marginals define the set of globally compatible probability laws. A finite linear feasibility problem tests positivity, normalization and all overlaps simultaneously. Choose one compatible law Q. Its normalized stochastic realization samples once per activation and retains that value through every use. This is a predictive/certification model, not a replacement of the physical plant: the deployed controller acts on actual observations from unknown P, using the same policy in every supported world. Conditional probabilities of each allowed next query are determined by the covered marginals. Induction therefore preserves complete adaptive transcript, resource and terminal-loss laws, including interleaved live sources. Physical hazards must be covered too: matching public observations alone does not identify an unseen collision law.
+
+The partially observed route family
+
+Each event creates three coexisting bits: immediate warning W and route loads F,S released L ticks later. The hardware can calibrate (W,F) or (W,S), selected before a fresh activation, but cannot read both loads from that activation. Production observes W and enables route F for W=0 or route S for W=1. Only the enabled route can violate safety. Gate latency is certified below L and included in fast duration f and slow duration b>f, with f>=L. Jobs are sequential. Noncompletion at service deadline T is failure; the controller stops and drains all pending effects within another L ticks. Each safe calibration disables both gates, observes its selected pair, and drains. Its certified cost c_cal>=L includes setup, sensing, logging and counter updates.
+
+Exact pair laws p_F,p_S share their warning marginal p_W. They admit the normalized positive extension
+
+  Q(w,f,s) = p_F(w,f)p_S(w,s)/p_W(w), if p_W(w)>0,
+             0 otherwise.
+
+Conditional independence here is a realization choice, not a discovered physical fact. Every compatible triple law agrees on all admitted route-selection contexts. No current mission jointly uses both loads. For n required jobs, define a=P(W=0,F=0), c=P(W=1,S=0), and
+
+  k = min(n, floor((T-nf)/(b-f))),
+  s_n(P;T) = sum from j=0 to k of binom(n,j) a^(n-j)c^j.
+
+Set s_n=0 when T<nf. This is exactly safe timely completion probability: j slow jobs fit precisely when j<=k.
+
+Take m fresh safe calibrations per route, costing at most 2m*c_cal. Choose a rational radius
+
+  epsilon >= sqrt(log(16/delta)/(2m)),
+
+and form ONE confidence polytope C of normalized triple laws whose eight pair-cell probabilities lie within epsilon of their empirical values. Separately fitted warning marginals need not agree and must not be naively glued. Empty C means refusal, not vacuous safety. Otherwise choose any Q in C and set
+
+  lower = max(0, s_n(Q;T)-4n epsilon).
+
+Accept only when lower>=1-alpha; otherwise count a missed mission.
+
+On one event of probability at least 1-delta, the true P lies in C. For any P',Q in C, each relevant success mass differs by at most 2epsilon. Their collapsed one-job laws—safe fast, safe slow, failure—differ in total variation by at most 4epsilon. One coupling per source then gives |s_n(P';T)-s_n(Q;T)|<=4n epsilon, uniformly over C.
+
+Consequently, true success at least 1-alpha+eta and
+
+  m >= 32 n^2 eta^(-2) log(16/delta),
+  B >= 2m*c_cal+c_check+T+L,
+  epsilon <= eta/(8n)
+
+with matched capabilities and certified physical envelopes force acceptance with probability at least 1-delta and bound total missed completion or physical violation by delta+alpha. Here 0<alpha,delta<1, eta>0 and 1-alpha+eta<=1. For rational eta the sample bound permits epsilon=eta/(8n); round conservatively and use the SAME radius throughout. Calibration, certified checking time c_check, deadline cutoff and final tails are included. These fixed-sample bounds do not authorize optional stopping without simultaneous-in-count confidence bounds.
+
+The unidentified distinction is real. Let W be independent Bernoulli(0.1), and both loads have marginal failure r, with 0<r<=1/2. One world has (F,S)=(0,0) with mass 1-r and (1,1) with mass r. Another has masses 1-2r,r,r on (0,0),(1,0),(0,1). Both permitted pair experiments are identical. Every current mission has success (1-r)^n times the probability of at most k slow branches in n Bernoulli(0.1) trials. But a new both-route context has load-failure probability r versus 2r. Its guarantee needs new evidence or assumptions.
+
+The four cell warning and load family
+
+An activation yields warning X immediately and load Y after L ticks, with arbitrary four-cell law p. A certified gate decision takes less than L; disabling the gate makes the load safe without changing its law. Calibration disables the gate, observes the actual pair and drains within c_cal ticks.
+
+The same n-job program chooses the enabled fast branch for X=0 and a gate-disabled safe bypass for X=1. With the same timing rules, its success polynomial is s_n above with a=p_00 and c=p_10+p_11, where p_xy=P(X=x,Y=y).
+
+After m safe paired calibrations, use the empirical four-cell law phat as the positive interface. For risk alpha, confidence delta and margin eta>0, set
+
+  epsilon >= sqrt(log(8/delta)/(2m)), chosen rational,
+  lower = max(0, s_n(phat;T)-2n epsilon).
+
+Accept only when lower>=1-alpha. If the true success is at least 1-alpha+eta, with 1-alpha+eta<=1, then
+
+  m >= 8 n^2 eta^(-2) log(8/delta),
+  B >= m*c_cal+c_check+T+L,
+  epsilon <= eta/(4n)
+
+suffice for acceptance with probability at least 1-delta and total failure probability at most delta+alpha, assuming the capability and physical-cost premises. Refusal counts as a missed mission; this is not merely an accepted-run safety statement.
+
+Indeed, four Hoeffding bounds give total variation TV(p,phat)<=2epsilon on one confidence event. Coupling each fresh source once gives success error at most 2n epsilon. The declared radius makes 4n epsilon<=eta, forcing acceptance on every good record. Bad records, including false refusal, cost at most delta.
+
+Dependence matters. With n=10 and k=3, laws (p_00,p_01,p_10,p_11)=(0.9,0,0,0.1) and (0.8,0.1,0.1,0) have identical warning and load marginals but success probabilities approximately 0.987205 and 0.342255. Separate fresh marginal tests cannot distinguish them; actual paired calibration can.
+
+Matching and honest resource accounting
+
+Capability matching checks warning/calibration sensors, gate actions, clocks, one live-source slot, source registers, O(log n) production-counter bits, O(log m) bits per calibration counter, and rational-arithmetic workspace. A syntax induction verifies the branch-and-loop implementation and its worst-case envelope. This is primitive inclusion plus resource inequalities, not a hidden-state planning game. The identical source interface and policy support both the probability calculation and implementation certificate.
+
+The confidence polytope has eight unknowns. A finite exact solver can enumerate candidate vertices, then evaluate the success polynomial using rational arithmetic. The supplied c_check must bound feasibility solving, evaluation, checking and compilation on the matched hardware. Finiteness alone provides no hardware-speed guarantee; computation is not free. Any other constrained resource needs its corresponding worst-case envelope. The example assumes zero calibration hazard; a justified nonzero calibration-failure allowance must enter the total risk bound. An exhausted budget or absent matching witness is not a proof of universal impossibility.
+
+Positive realization need not lift back to raw states
+
+A complementary finite-instrument theorem starts with a KNOWN carrier and known nonnegative action-output matrices. Close the mission-test row space under each action-output matrix, map the state simplex into that predictive space, and use its extreme vertices as abstract states. Positive decompositions of vertex images construct normalized abstract instruments preserving every admitted adaptive word probability. Partial evidence can determine the predictive state without determining the original state law. This does not learn the carrier, transitions or their physical adequacy.
+
+No equivariant raw section is required. Identify a1,a2 as A and b as B. Commands T,U fix a1,a2 but send b to a1 and a2 respectively. The positive two-state quotient sends B to A under either command. A commuting section would have to choose both delta_a1 and delta_a2 for A, an impossibility. The quotient still works.
+
+Universal finite-horizon causal response trees supply a standard global positive representation, potentially enormous. They do not discover local architecture, independent sources, transport or decentralized implementability.
+
+What the categorical comparison adds
+
+The executable causal circuit first supplies actual normalized preparation/test probabilities. Under the existing comparison hypotheses, its honest realization receives the M-left/E-right comparison to the canonical free-Isbell middle. Exact compatible laws have the same restricted external admitted cylinder—not the full latent-source cylinder or arbitrary tests of private state—although their raw carriers differ. At finite confidence the cylinders generally differ: retain a supported family and probability bounds, not an invented exact isomorphism. Formal existence alone makes no apex finite, positive or executable; algebraic compact feedback does not license instantaneous physical feedback.
+
+Established baselines and remaining gap
+
+Safe learning and abstraction-based planning already coexist [1]; safe reusable exploration already has finite-sample results under supplied baseline and feasibility assumptions [2]. Time-uniform inference is available machinery [3]. Categorical compositional abstraction [4] and dependence-sensitive signal comparison [5] are also established. The remaining challenge is to derive operational source boundaries and admissible contexts from attainable evidence under weaker structural assumptions, rather than supplying them. Unknown architecture, unrestricted feedback, crossing, equipment and repair obligations remain open here.
+
+[1] Jiang, Zhao and Coogan, Safe Learning for Uncertainty-Aware Planning via Interval MDP Abstraction.
+https://arxiv.org/html/2202.01358
+
+[2] Huang, Yang and Liang, Safe Exploration Incurs Nearly No Additional Sample Complexity for Reward-free RL.
+https://arxiv.org/html/2206.14057
+
+[3] Howard, Ramdas, McAuliffe and Sekhon, Time-uniform, nonparametric, nonasymptotic confidence sequences.
+https://arxiv.org/abs/1810.08240
+
+[4] Lorenz and Tull, Causal and Compositional Abstraction.
+https://arxiv.org/pdf/2602.16612
+
+[5] Brooks, Frankel and Kamenica, Comparisons of Signals.
+https://benjaminbrooks.net/downloads/bfk_comparisons.pdf

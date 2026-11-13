@@ -1,0 +1,585 @@
+Refinement guided discovery for delayed resource missions
+
+Research results for 29 October 2026
+
+ABSTRACT
+
+When several jobs share a machine, a command can consume capacity several
+moments later. Learning those delayed effects may let a controller finish
+work that an initially cautious model cannot approve. This study gives a safe
+learning procedure for a restricted mathematical model and tests it on
+overlapping jobs with ordered stages, alternative actuator choices and
+deadlines. Every experiment, useful action and delayed tail consumes the
+declared simulated budget.
+
+The column-learning methods completed 58 of 72 task batches. A planner that
+retained the initial uncertainty completed none, while a reference given the
+true machine completed 62. Independent checks distinguish safe refusal from
+useful completion. A corrected method that safely rehearses candidate
+schedules and reuses its observations completed 53 batches. It won some
+individual comparisons, so the results do not establish universal superiority
+of column probing.
+
+The explanation has two parts. Better evidence cannot invalidate an existing
+guarantee at the same physical state. A separate constructed example proves
+that forgetting which effects are delayed can prevent a mission guarantee.
+Safe measurements then identify relevant unknown inputs, with at most one new
+column probe per input. That bound does not promise that any requested
+mission remains feasible after learning.
+
+Important negative results remain. Dense and sparse column methods tied
+exactly; cached equations saved no probes; column methods eventually learned
+every input; and no strict investment-payback crossover was observed. This is
+synthetic simulation, not hardware or validated thermal dynamics. It
+establishes a restricted acquisition-to-mission connection, not a general
+feedback controller, a novelty claim or completion of the original research
+contract.
+
+1 Why the mission problem changed
+
+The preceding study did not distinguish the two representations on its main
+mission test. Both certified the same 12 of 48 starting situations at the
+same minimum completion cost. Inspecting the saved policies revealed
+identical winning trees, all using all-off commands and minimum preparation.
+The task still involved travel, but its best policies did not need the
+response relationships that the comparison was intended to test. Moreover,
+the coarse baseline inherited local domains already narrowed by acquisition.
+The result therefore concerned the remaining relationships, not the full
+value of learning. It remains a nondiscriminating negative comparison, not
+evidence that relational distinctions cannot help missions. The present study
+does not replace it with a favorable reinterpretation.
+
+The new target was chosen prospectively after the user approved another
+pursuit on 29 October. Useful work now requires positive, sustained commands.
+Several jobs compete for shared actuators and power, while a command can load
+a resource several ticks later. Jobs have ordered stages, alternative
+actuator choices, release times and deadlines. A plan that appears safe now
+can create a capacity overload after it stops issuing commands. Learning
+which inputs contribute to which resources, at what delays and with what
+strengths can therefore change which combinations can be certified.
+
+There are three distinct questions. Better evidence can remove possible
+physical explanations and allow a previously uncertifiable task. A different
+representation of exactly the same explanations can reduce computation
+without changing capability. A genuinely more informative sensor or memory
+interface can enable a controller that a poorer interface cannot implement.
+The study keeps these questions separate. In particular, a dense method
+allowed the same records may reconstruct every distinction used by a sparse
+method. It is a serious comparator, not a controller that must be prevented
+from learning.
+
+The resulting contribution is an explicit connection from safe physical
+measurements to delayed response interfaces, task-directed refinement and
+checked positive workloads. The theoretical witness tests whether a specific
+forgotten temporal distinction matters at all. The larger randomized family
+tests acquisition, useful execution and reuse with costs exposed. Success in
+the first does not predetermine the second.
+
+2 The model and the useful objective
+
+There are n nonnegative command inputs and m sensed resource outputs. An
+unknown operator G is selected once and persists through acquisition and all
+missions. Its nominal load is
+
+    F_G[u]_i(t) = sum over j and l of G[i,j,l] u_j(t-l).
+
+Lags run from zero through a supplied bound L. Each resource row has at most
+s positive input-lag coefficients, drawn from a supplied grid with spacing
+Delta and maximum g_max. Actual dependencies, delays, coefficients and zeros
+are unknown. The learner receives the class, not a list of whole
+environments.
+
+Physical constrained load is x_i(t) = F_G[u]_i(t) + d_i(t). Sensor readout is
+z_i(t) = x_i(t) + nu_i(t). Physical uncertainty d and sensor error nu have
+different roles: both affect inference, but sensor error does not itself add
+physical load. Safety requires x_i(t) <= c_i throughout execution, including
+every delayed contribution after the final command. The identification bound
+eta covers the combined uncertainty in a readout after any justified baseline
+correction. Unbounded drift or omitted dynamics would invalidate this
+contract.
+
+Useful missions require positive service, ordered stages, releases, deadlines
+and shared power. Waiting safely is not completion. State includes actual
+pending commands and the remaining resource ledger, as well as knowledge. The
+finite lag is exact here. An application with an infinite decay tail would
+need a separately certified residual bound in both safety and inference.
+
+3 What refinement guarantees
+
+Fix the controller class, observation permissions, initial physical history,
+workload, disturbances and resource accounting. Let W(K) contain policies
+that remain safe and complete for every persistent operator in K. If the fine
+set K_f is contained in the coarse set K_c, then
+
+    W(K_c) is contained in W(K_f).
+
+The proof restricts a universal quantifier. The same policy remains a
+function of permitted observation histories; it does not gain access to
+hidden G. Adaptive observation branches are included. Optimal worst-case
+completion cost cannot increase when uncertainty shrinks under this otherwise
+fixed comparison.
+
+This is monotonicity, not strict improvement. Representing the same coherent
+set differently preserves certified capability exactly, although computation
+or storage may change. Moreover, a physical experiment changes time, energy
+and command history. A better-informed controller can therefore have fewer
+remaining completion opportunities. End-to-end comparisons must charge the
+experiment rather than importing the fixed-state monotonicity conclusion.
+
+4 A temporal distinction that a mission needs
+
+The strictness witness has 2q indivisible unit-service jobs, two command
+slots and power for q jobs per slot. Resource edges form a connected path.
+Each edge has one current endpoint and one endpoint delayed by one slot, with
+capacity one. The fine interface knows these roles. The coarse interface
+retains the unordered endpoints but allows both fixed role assignments.
+Initial pending input is zero, and the terminal tail in slot two remains
+constrained.
+
+Direct an edge from its current endpoint to its delayed endpoint. Every path
+orientation is acyclic. Serve a topological prefix of q vertices in slot zero
+and the remainder in slot one. Contributions from endpoints in the same batch
+arrive in different slots. Across batches, the current endpoint is earlier,
+so its contribution arrives in slot zero and the delayed contribution in slot
+two. All jobs receive service without exceeding any capacity.
+
+A coarse policy guaranteeing completion must select exactly q jobs initially.
+Connectivity supplies an edge across that cut. Fix a coarse-compatible world
+in which the first-batch endpoint is delayed and the second-batch endpoint is
+current. Their contributions collide in slot one. Runtime sensing can justify
+aborting, but cannot recover completion by the deadline. This establishes
+that every coarse policy has a defeating fixed world. It never switches the
+operator during execution or requires one world to defeat every policy.
+
+Randomization does not restore probability-one robust completion. There are
+finitely many possible first batches, so some batch has positive probability;
+a single fixed orientation spoils that batch. The witness concerns precisely
+the declared summary. A controller retaining raw commissioning records might
+reconstruct the roles and escape it. Extra diagnostic substeps, fractional
+service or a longer deadline also require a different proof. This is a
+post-commissioning certificate separation, not an end-to-end cost comparison
+or the substantive workload benchmark.
+
+5 Safe measurements of unknown dependencies
+
+Acquisition starts from a physically justified history. An all-off flush is
+an executed sequence, not an assignment that erases memory. Its pending load
+must already be safe: delayed contributions can rise while current inputs are
+zero. Every subsequent probe includes its complete tail.
+
+An isolated singleton probe commands input j at amplitude epsilon for one
+tick, then commands zero for L ticks. At lag l, each output measures
+approximately epsilon G[i,j,l]. Unique grid rounding identifies the whole
+column, including zeros, provided
+
+    epsilon Delta > 2 eta.
+
+Equality is insufficient because adjacent coefficients can produce the same
+readout under opposite endpoint errors. The executable amplitude must also
+respect the command alphabet, shared power and
+
+    epsilon g_max + physical upper allowance <= each capacity.
+
+The singleton peak uses g_max, not s g_max: different taps on the same input
+arrive at different timestamps. A probe costs L+1 ticks plus any actual
+sensing, switching or cooldown overhead. If no amplitude satisfies both
+safety and resolution, acquisition is unavailable under this protocol.
+
+A verified s-disjunct binary test matrix also supports multi-input probes.
+For every input j and set of at most s other inputs, such a matrix contains a
+row including j while excluding that set. At each output and lag, threshold
+tests exclude absent coefficients; isolating tests then recover each present
+coefficient by grid rounding. The same strict signal gap applies. For maximum
+test population w, sufficient bounds are epsilon s g_max plus physical
+allowance within capacity and epsilon w within shared power. R isolated tests
+cost R(L+1) ticks plus startup and physical overhead. Code construction and
+verification are additional costs. The identity matrix gives the reliable R=n
+singleton fallback; sparsity alone does not reduce that probe count. The main
+experiment uses singleton probes, not the more general coded design.
+
+6 Exact robust checking and retained evidence
+
+Let J be the exactly identified columns. In row i, subtract their
+positive-tap count from s to obtain remaining allowance k_i. For a fixed
+nonnegative schedule, form Z_i(t), the command values u_j(t-l) at all
+unknown-column input-lag positions. The exact worst load for the
+column-summary class is
+
+    known convolution at i,t
+      + g_max times the sum of the k_i largest values in Z_i(t).
+
+Pad missing entries with zero. The maximum is attained by assigning g_max to
+those positions and zero elsewhere. Independent row constraints permit
+completion to a persistent full operator. Universal schedule safety checks
+every operator at every time; these quantifiers commute. Different timewise
+maximizers therefore do not invalidate the test. A failed inequality needs
+only one persistent witness, not an operator that changes during a trace.
+
+Exactness depends on the information class. Runtime observations may impose
+joint equations beyond identified columns. With such evidence retained, the
+column-summary class overapproximates the full evidence-consistent class. Its
+envelope remains safe but may reject unnecessarily, and its maximizing
+operator need not fit all recorded equations. Records must not be discarded
+silently or that witness called evidence-compatible. Cached methods instead
+reuse equations and compute evidence-constrained bounds. Their row-mass
+relaxation, sum(G) <= 4s in integer coefficient units, is sound but not the
+exact sparse version space. Independently checked dual bounds and integer
+rounding can improve certification without making a loose bound a proof that
+another physical query is necessary.
+
+7 Acquisition directed by a rejected schedule
+
+The column-directed method proposes an open-loop schedule using known
+coefficients and setting unknown ones to zero. Nonnegativity makes this an
+optimistic capacity relaxation. All other obligations, including actual
+history, remaining deadline and terminal tail, remain unchanged. Exact
+infeasibility rules out schedules in that finite grammar, not arbitrary
+feedback policies.
+
+If the robust envelope accepts the proposal, it can be executed safely for
+every retained operator. If an optimistic-feasible proposal fails the exact
+column envelope, a positive unknown contribution occurs in the violating
+inequality. Safely probing an involved unmeasured column decreases n minus
+|J|. At most n new columns can be resolved across the persistent mission
+stream. Intermediate success may leave irrelevant columns unknown.
+
+This counterexample-guided inductive synthesis loop is deliberately narrower
+than general adaptive policy synthesis. The bound concerns distinct column
+acquisitions, not total planner calls, replanning steps or arbitrary
+refinement iterations. A failure under already known coefficients requires
+replanning rather than another application of the column-progress argument.
+Complete finite search is needed for a mathematical infeasibility conclusion.
+Acquisition also needs a safe executable reserve and can consume the
+remaining mission opportunity. The valid outcomes are a checked completing
+schedule or safe abstention with its reason, not inevitable mission success.
+
+8 The frozen workload and common execution contract
+
+The main family uses (n,L,s) equal to (6,2,3), (10,3,4) and (14,4,5), with
+m=n. Each generated row has multiple inputs and lags; learners receive only
+the at-most-s promise. Physical coefficients are integer quarters from zero
+to one. Physical uncertainty and sensor error are each bounded by 1/256, so
+eta=1/128. A quarter-amplitude pulse has coefficient-grid response spacing
+1/16. Capacity is 6/4+1/256, permitting nominal integer load at most six.
+
+The two frozen seeds are 202610292300 and 202610292301. Every world receives
+six sequential batches in roomy and tight deadline regimes. Each batch has
+max(2, floor(n/3)) jobs. For total stage-duration work W, the service
+allowance is 2W+L+6 ticks in the roomy regime and W+L+4 in the tight regime.
+Public job deadlines subtract offsets from zero to three ticks, subject to
+the declared minimum window. Jobs have two or three ordered stages, lasting
+one to three ticks, with alternative single-actuator or paired-actuator
+modes. Releases, useful work and mode choices are generated independently of
+hidden coefficients. Shared power is floor(n/3), at least two; concurrent
+stages cannot share an actuator. Future workloads remain hidden until arrival
+while knowledge persists.
+
+Diagnostic mode is unloaded and does not perform useful stage service.
+Service requires uninterrupted unit effort with the work fixture loaded. This
+is a supplied service contract; diagnostics are not denied fractional credit
+merely to favor a method. Mode switching takes zero time in this synthetic
+model. Startup flushes, acquisition, rehearsal, service and complete tails
+share the batch clock. The first batch receives public commissioning
+allowance L+n(L+1); later batches do not. There are no free resets.
+
+All methods use the same finite mode/start-time MILP grammar, ten-second
+proposal limit and at most 2n+12 proposals per batch. Floating-point solver
+outputs are proposals. Accepted schedules require independent integer checks
+of service, precedence, occupancy, deadlines, power, full-tail capacities and
+resource accounting. Timeout, backend infeasibility, rejected proposal and
+safe refusal have distinct meanings. None alone establishes impossibility
+outside the grammar.
+
+9 What the comparisons can and cannot establish
+
+The dense column reference uses the same measured columns, query decisions
+and scheduling grammar as the local method. Their attainable certified
+capability should agree. This comparison checks that sparse and dense
+arithmetic implement the same knowledge, rather than testing a claimed
+information advantage. The local checker sums known nonzero terms, but its
+common planner also constructs a dense coefficient tensor. Sparse certificate
+term counts therefore do not establish a reduction in resident memory or
+total planning cost.
+
+The cached methods may use every decoded raw observation, including useful
+service traces, to infer responses or identify additional coefficients. Exact
+rational row-space calculations recover responses determined by the recorded
+linear equations. When that is insufficient, a linear program proposes a
+bound whose rational dual certificate is checked independently. The bound
+keeps nonnegativity, coefficient limits, all represented equations and the
+valid row mass limit. It relaxes the exact count of nonzero coefficients.
+Consequently a loose bound can cause an unnecessary experiment; it is not
+proof that every same-data method needs one. The experiment does not compare
+against an optimal hybrid strategy choosing freely among all safe diagnostic
+actions.
+
+The cached rehearsal method may test a proposed whole schedule at one quarter
+of service amplitude. This can reveal many coefficients or certify a useful
+response without first identifying them individually. Unsafe predicted
+unit-scale patterns produce sound exclusions because all coefficients are
+nonnegative. A successful diagnostic is followed by a new deadline check
+before unit-scale service. Its full duration and trailing zero-command ticks
+are paid. There is no prohibition on reusing rehearsal records. A method
+restricted to rehearsing every task afresh would be weaker than the cached
+comparator here.
+
+The known-kernel reference receives the true operator but uses the same
+finite job grammar and solver limits. It exposes acquisition overhead and the
+remaining scheduling difficulty. It is not an unconstrained optimal feedback
+controller. The no-discovery reference instead plans against the full prior
+class. It may select modes and starting times intelligently, but cannot
+replace its uncertainty with learned coefficients. Its failure would show the
+cost of that no-refinement information restriction, not inability of every
+controller that can sense and learn.
+
+10 Observed mission outcomes
+
+The frozen suite contains six worlds, from three dimension triples and two
+seeds, each evaluated in two deadline regimes. Each of the resulting twelve
+streams contains six batches. All six methods therefore faced 72 batches and
+216 jobs each. All prescribed cases remain in the results; no unsuccessful
+seed was discarded. Dimensions, lag and sparsity increase together, so this
+small suite does not isolate their separate scaling effects. These are six
+generated kernels, not 72 independent random environments. The two regimes
+and six sequential batches reuse each kernel; six methods yield 432 batch
+records. No statistical significance or population confidence estimate is
+claimed from these correlated counts. Bounded-noise certificate validation is
+distinct from empirical generalization beyond this suite.
+
+A baseline implementation defect was corrected transparently after the first
+run. Twelve safe scaled replays had tested schedules that cached exact
+equations already proved unsafe; two additional candidates stopped for budget
+instead of being excluded directly. The corrected method makes an exclusion
+cut without replay in that situation. Only rehearsal was rerun, with the same
+worlds, deadlines, solver limits and query strategy. Original sources and
+outcomes remain in the package. The correction improved rehearsal from 49 to
+53 completed batches, reduced its physical ticks from 1397 to 1379, and
+replaced avoidable measurements with 24 direct exact cuts across the
+corrected trajectories. The table uses this stronger corrected comparator.
+
+The main totals are as follows. Ticks include commissioning, unsuccessful
+acquisition and the complete delayed tails, not just useful service.
+
+    Method                  Batches   Jobs   Ticks   Capacity violations
+    No discovery                0        0      36       0
+    Local columns              58      170    1250       0
+    Dense columns              58      170    1250       0
+    Cached columns             58      170    1250       0
+    Cached rehearsal           53      159    1379       0
+    Known kernel               62      184     802       0
+
+The comparison now reaches a genuine mission-relevant distinction. Every
+frozen batch contains a mandatory stage lasting at least two consecutive
+ticks. For each selected mode of that stage, choose an input it commands. The
+initial at-most-s class admits weight-four taps on that input at lags zero
+and one in the same row. The second consecutive command then causes nominal
+integer load eight, above the limit six. This explicit compatible operator
+rules out an initially robust fixed schedule for that batch; the conclusion
+does not rely on a numerical solver saying infeasible. It explains the
+no-discovery baseline's zero completions. It does not rule out a controller
+that performs diagnostics or changes its knowledge before service.
+
+The information-equivalent comparison is a complete tie. Local, dense and
+cached column methods completed the same batches with the same physical
+acquisition and execution costs. Cached equations did not save a singleton
+probe in this suite. The local method did complete eight batches before all
+columns were known. For example, the first six-input batch in seed
+202610292300 was completed after identifying three of six columns. This shows
+that the algorithm need not identify everything before performing useful
+work. Nevertheless, all twelve streams eventually identified every column,
+using 120 distinct singleton probes in total. The data do not establish a
+lower evidence cost than full identification over the complete workload
+stream.
+
+The known-kernel reference completed four more batches than the column
+methods. Their remaining 14 refusals comprised twelve backend-infeasible
+statuses and two exhausted stage windows. The known-kernel reference had ten
+backend-infeasible statuses. These statuses are reported as solver outcomes,
+not exact proofs that no completing policy exists. No timeout or
+proposal-limit outcome occurred in the column runs.
+
+Cached rehearsal has both losses and wins. It completed fewer batches in
+three streams, the same batches in seven, and more in two. In the
+fourteen-input roomy stream with seed 202610292301, it completed four batches
+versus three for the column methods, while spending 146 versus 117 ticks. In
+that world's tight regime it completed three versus two, spending 132 versus
+104 ticks. In the six-input tight stream with that seed, both completed the
+same five batches, but rehearsal used 68 ticks versus 74. A cheaper run that
+completes fewer jobs is not counted as a cost victory. Rehearsal's 19
+refusals comprised ten failures of the remaining rehearsal-plus-service
+budget, eight backend-infeasible statuses and one timeout without an
+incumbent schedule. The timeout occurred in the first fourteen-input,
+second-seed tight batch and remains in the results.
+
+11 Acquisition costs and the absence of a payback crossover
+
+Each column method spent 36 startup ticks, 512 singleton-probe ticks and 702
+service-segment ticks. The probe total contains 392 tail ticks. Service
+segments contain 170 terminal-tail ticks plus 37 other all-off ticks; these
+are included, not added again to the total. Diagnostic effort was 30
+normalized effort-ticks. This is the sum of commanded amplitudes over time,
+not measured electrical energy in joules.
+
+Cached rehearsal spent the same 36 startup ticks, 688 rehearsal ticks and 655
+service-segment ticks. Its 62 rehearsals included 209 terminal-tail ticks;
+service included 159 terminal-tail ticks and 35 other all-off ticks.
+Diagnostic effort was 333.25 normalized effort-ticks. The known-kernel
+reference used 36 startup ticks and 766 service-segment ticks, including 184
+terminal-tail ticks. All transition histories were cleared by executed
+actions rather than resets.
+
+On first batches, columns completed 8 of 12, rehearsal 7 of 12 and the
+known-kernel reference 8 of 12. On the subsequent batches they completed 50
+of 60, 46 of 60 and 54 of 60 respectively. These later tasks reuse retained
+knowledge, but are different workloads; the counts alone do not isolate a
+causal reuse effect. On the 51 batches both columns and rehearsal completed,
+their batch elapsed totals were 938 and 1054 ticks. Their earlier acquisition
+histories differ, so even this matched-task comparison is descriptive.
+
+Reuse is visible, but a late amortization crossover is not. In the seven
+streams where columns and rehearsal completed the identical batch set,
+columns were cheaper in six and rehearsal in one. Neither method began
+strictly more expensive and later became cheaper at a batch boundary in those
+matched histories. For the six-input first-seed roomy stream, cumulative
+column ticks were 21, 38, 45, 52, 68 and 78; rehearsal ticks were 29, 51, 58,
+65, 81 and 91. Columns were already cheaper at the first batch. In the
+second-seed tight counterpart, rehearsal was already cheaper and retained its
+six-tick lead. In the fourteen-input first-seed roomy stream, both used 75
+ticks through batch one; columns then used 90 through batch two versus 106
+for rehearsal. That is a tie becoming a strict saving, not repayment of a
+larger initial investment. These are measured strategy differences, not a
+demonstrated initial investment that later pays back. Comparing only
+aggregate ticks across unequal completed workloads would conceal this
+distinction.
+
+All 120 cached-column probes and all 62 corrected physical rehearsals
+followed failed relaxed LP certification, not independently established
+necessary measurements. Those upper bounds were insufficient to accept; they
+did not produce a compatible sparse violating model. The number a stronger
+exact inference method could avoid is unknown.
+
+The cache eventually reached full feature rank 18, 40 or 70 in every
+cached-column stream and eleven rehearsal streams. The exceptional ten-input
+second-seed tight rehearsal stream ended at rank 32 of 40 with no fully
+identified columns, yet had completed one batch. Individual responses can
+therefore be certifiable without recovering every coefficient. This does not
+mean the relaxation found the best possible use of its partial information.
+
+Numerical scheduling dominated the separately timed checks. Summed solver
+wall times were approximately 51.16 seconds for local columns, 50.70 for
+dense columns, 47.16 for cached columns, 89.81 for rehearsal and 15.74 for
+the known-kernel reference. Corresponding certificate-check times were 0.14,
+0.13, 5.10, 27.21 and 0.06 seconds. These are single-run measurements, not
+evidence of an asymptotic speed advantage. Local sparse checking did not beat
+dense checking on this measure. The shared planner stores dense coefficient
+arrays: 108, 400 and 980 entries at the three dimensions, despite true
+supports of 18, 40 and 70 taps. Raw record sizes and cache ranks remain in
+the machine-readable ledger; scalar-entry counts are not resident-memory
+measurements.
+
+The simulation charges physical actions to its mission clocks. Computation is
+reported separately rather than converted into physical ticks. Row-space
+assimilation and coefficient-promotion work are not separately timed by
+method; they are included in the roughly 253-second original-suite wall time
+and 119-second corrected-rehearsal rerun, together with simulation and
+serialization. The result is therefore not a real-time mission completion
+guarantee or a complete per-method processor-cost decomposition.
+
+12 Independent checks and evidence status
+
+The final corrected execution audit passed. Independent integer and rational
+replay checked all 72 streams and 432 batch records, including 5967 executed
+ticks, 289 accepted schedules, 4791 proposal certificate timestamps and 2306
+rational LP certificates. It found no physical-capacity, delayed-tail, power,
+command-history or deadline violation. All 72 initial-interface obstruction
+witnesses and all 24 corrected exact-unsafe cuts passed. All twelve
+local/dense pairs had identical physical traces, raw equations, queries,
+schedules and outcomes. Aggregate and matched summaries were checked
+separately.
+
+The independent theoretical audit passed the restricted target. Its separate
+standard-library checker covered all eight orientations and six balanced cuts
+of a four-job path, 22272 exact top-k comparisons, bounded-error grid
+recovery and a delayed post-service violation. The author's separate checks
+include 38400 envelope equalities and 2005 positive-unknown contribution
+cases. These are proof regressions, not additional mission samples or
+performance evidence.
+
+Execution checking is separate from scheduling. It reconstructs causal
+command histories and physical loads, validates bounded-error decoding,
+checks stage assignments and complete tails, and verifies cached row-space
+and rational dual certificates against evidence available before the
+decision. Hidden truth is used by the simulator and the explicitly informed
+reference, not by the learning methods. The audit also tests source isolation
+and the independent world and workload generators. The final composite was
+checked against its per-method source results. The original version also
+passed a separate safety replay; its weaker rehearsal comparison is
+superseded, not erased. These checks concern the recorded executions and
+declared certificates, not every possible observation history of an
+unrestricted controller.
+
+13 Scope and interpretation
+
+All runs concern a synthetic nonnegative finite impulse response model. A
+thermal system is a possible motivation, not the validated apparatus. Real
+thermal resistance-capacitance dynamics generally have an indefinitely
+decaying tail. Applying the result there would require a justified residual
+bound, calibration, safe startup and switching conditions, and evidence that
+the model and error envelopes hold in the relevant regime. None of those
+hardware claims is established here.
+
+The coefficient alphabet, lag ceiling, sparsity ceiling, output meaning and
+error limits are supplied. Learning identifies functional input scopes,
+nonzero delays and weights inside that class. It does not discover arbitrary
+physics, unknown sensor semantics, nonlinear signed effects, drifting
+coefficients or unconstrained hidden state. Persistence of the same operator
+is essential to reuse across the six batches.
+
+Safe experiments do not guarantee useful completion. They can exhaust a
+budget, and the true plant may not support a requested task even when fully
+known. A refusal is retained as a refusal. Floating solver infeasibility,
+timeouts and proposal limits are operational statuses, not mathematical
+impossibility results. The general finite-diagnosis proposition assumes an
+exact complete solver when it draws an infeasibility conclusion; the
+implementation does not silently acquire that stronger guarantee.
+
+The measurements also do not establish literature-wide novelty. Safe linear
+identification, counterexample-guided planning, abstraction refinement,
+set-membership inference, sparse convolution and constrained scheduling are
+established methods. The proposed value is their auditable integration under
+one acquisition and mission ledger. No universal sample advantage, asymptotic
+computational separation or superiority over all dense and rehearsal methods
+follows. The original categorical integration and broader research completion
+contract remain undischarged by this restricted construction.
+
+Sources and reproducibility
+
+All internal paths below are relative to the accompanying source-package
+root. The main mathematical argument is theory/Refinement_Guided_Target.md;
+independent qualifications and exact checks are in
+review/Independent_Theory_Audit.md and review/Independent_Exact_Checks.json.
+The target-selection record is review/Prospective_Target_Gate.md. The frozen
+numerical contract is example/FROZEN_PROTOCOL.md, with machine-readable
+settings in example/FROZEN_CONFIGURATION.json.
+
+Use example/final_results.json for the final comparison. It combines the five
+unchanged original methods with corrected_rehearsal_results.json and retains
+per-method source hashes. Original source and outcome records remain in
+example/v1. example/cost_summary.json and example/matched_analysis.json
+contain aggregate and matched-prefix accounting. The final audit is
+review/Independent_Execution_Audit.md, supported by
+review/Independent_Execution_Replay.json. The preserved defect and correction
+are documented in example/CORRECTION_HISTORY.txt. Reproducibility commands
+and package hashes are supplied with the source archive; the report is a
+reading document, not a substitute for those records.
+
+The prospective prior-art audit gives primary-source pointers for the known
+mechanisms, including Counterexample-guided Planning by Chatterjee and
+colleagues, Abstraction Refinement for Games with Incomplete Information by
+Dimitrova and Finkbeiner, and Safe Exploration for Identifying Linear Systems
+via Robust Optimization by Lu and colleagues. These comparisons delimit the
+claim; they are not a full literature-wide novelty clearance.
+
+https://goto.ucsd.edu/~rjhala/papers/counterexample-guided_planning.html
+https://finkbeiner.groups.cispa.de/publications/2008-abstraction-refinement-for-games-with-incomplete-information/
+https://arxiv.org/abs/1711.11165

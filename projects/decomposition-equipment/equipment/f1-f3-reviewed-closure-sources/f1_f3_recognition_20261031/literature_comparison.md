@@ -1,0 +1,54 @@
+# F1/F3 bounded primary-source comparison
+
+31 October 2026. Literature check, not a novelty or acceptance certificate. This compares `partition_erasure_boundary.md` and the obligations in `source_obligation_map.md`; an occupancy/cluster repair is not yet reviewed here. No historical ledger is modified.
+
+## Immediate conclusion
+
+Neither discrete 2-Segal recognition by invertible nonsymmetric operads, nor the existence of layered graph-cut decomposition spaces, is a new contribution. The potentially useful derived application is the **specific partition-erasure criterion, presented by equations in original C5, together with its independently presented B3 occurrence-refinement comparison**. Its mathematical validity and scientific sufficiency require their own review. Decorating an established equivalence with interface grades does not establish novelty.
+
+## 1. Exact operadic baseline (verified v5, not obsolete numbering)
+
+[Tashi Walde, *2-Segal spaces as invertible ∞-operads*, arXiv:1709.09935v5, 1 March 2021](https://arxiv.org/pdf/1709.09935v5), Definition 2.1.1, equations (2.1)–(2.3), Definition 4.3.1, Remarks 4.3.2–4.3.3, Corollary 4.3.6: colored nonsymmetric operads have associative unital substitution; invertibility requires bijective unit and substitution maps. Equivalently require the unit map and every single-interval insertion map (2.3), with **0≤i≤j≤n** and coproduct over the intermediate color. Unary operations are only identities. Corollary 4.3.6 is an equivalence of full categories of simplicial 2-Segal sets and invertible operads, not merely objects or isomorphism classes. Thus ordinary simplicial maps correspond to ordinary operad morphisms, including color maps. Proposition 4.3.4 states a fixed-color form. Corollary 4.4.2 is the separate infinity-categorical result. The frequently found older PDF's Corollary 4.2.5 is not v5 numbering.
+
+**Application inference:** F1's proper nonempty interval tests alone are not literally the cited hypothesis. Empty intervals, whole intervals, and the bijective unary unit map must be supplied or derived. In the proposed homogeneous quotient these are intended to follow from the explicit empty/id insertions and identities; that check belongs to the candidate proof. “Unique factorization” means uniqueness in the **whole coproduct of factor pairs**, not uniqueness after choosing the intermediate color.
+
+## 2. Multivalued-category baseline and coherence
+
+[Dyckerhoff–Kapranov, *Higher Segal spaces I*, arXiv:1212.3563 PDF](https://arxiv.org/pdf/1212.3563), Definition 3.3.3 and Theorem 3.3.6: a multivalued category is a weak category object in spans of sets. It includes object/arrow sets, a composition span, an invertible associator, unit map and unit isomorphisms, pentagon and unit coherence. Composition witnesses may be multiple or absent (Remark 3.3.2). Theorem 3.3.6 gives equivalences between 2-Segal semi-simplicial sets and multivalued semicategories, and between unital 2-Segal simplicial sets and multivalued categories. The functors immediately before the theorem preserve source/target, units, composition witnesses and coherence. Proposition 3.3.9 supplies the pentagon from triangulations. In this fetched version Definition 3.6.7 and Theorem 3.6.8 give the operadic discussion, the latter printed with X0=point and fixed X1=B. Do not silently quote that formulation as the unrestricted v5 Walde theorem.
+
+**Application inference:** replacing the witness span by its Boolean support relation is a further quotient, not this equivalence. Likewise a relationally associative operation with no selected coherent witness bijections is not the stated multivalued category. The candidate must retain the full factors used in its actual cut comparison, even when operation fibres become singletons.
+
+## 3. Restriction species and symmetry baseline
+
+[Gálvez-Carrillo–Kock–Tonks, *Decomposition spaces and restriction species*, arXiv:1708.02570](https://arxiv.org/pdf/1708.02570), §§5.3–5.7, Theorem 5.8: a restriction species is a locally finite groupoid-valued presheaf on finite sets and injections, with (pseudo-)natural transformations. Finite graphs with induced restriction are Example 5.5(1). The layered-object construction gives a simplicial groupoid decomposition space; species morphisms induce CULF maps. Proposition 5.11 gives the relevant finiteness properties, and Proposition 5.13 identifies the incidence coalgebra by homotopy cardinality; its proof counts the discrete fibre over a retained structure. The directed version uses finite posets and convex inclusions (§7.1, Theorem 7.5). This is a groupoid/homotopy-pullback theorem, not a blanket assertion that arbitrary orbit sets or support quotients are discrete 2-Segal sets.
+
+**Elementary caution, independently checked:** π0 does not preserve homotopy pullbacks in general. For a nontrivial finite group G, the homotopy pullback of point→BG←point is the discrete set G. Its π0 has |G| elements; the pullback of the three π0 sets is a singleton. Thus passing from groupoids to orbit/isomorphism sets needs a separate strict-pullback argument. It is not licensed by Theorem 5.8. Conversely, this example does not prove every particular orbit construction fails.
+
+A finite ordered graph has no nontrivial order-preserving automorphisms. An intended nontrivial graph-symmetry orbit quotient must therefore specify whether it forgets vertex order, uses non-order-preserving graph automorphisms only to identify parallel original operations, or changes the carrier. These are different constructions. Retaining orbit representatives without stabilizers is not retaining the action groupoid.
+
+## 4. What the current C5/B3 candidate adds—and must establish
+
+The following statements are from the proposed local manuscript, **not results attributed to the cited literature**:
+
+1. For the particular congruence forgetting actual partition placements while retaining the whole and full ordered input profile, bijectivity of all proper interval factorization maps is equivalent to every permitted graph being complete or edgeless. The negative witness uses the same all-singleton profile with an edge versus a nonedge in one two-position interval, hence distinct retained intermediate components. The positive proof uses forced intermediate type by cardinality.
+2. The local binary cut canonicalization schema L must present exactly that congruence in original syntax, without changing external occurrences. A separate termination/confluence proof is required. “The quotient is an invertible operad” would not establish this presentation claim.
+3. B3 requires actual graft/equation arrows and independently specified critical-path, disjoint/variable, MOut and MIn relations. The claimed equivalence to Ref(C5/P) must retain each original slot and each inserted profile (including length zero), not merely the eventual composite target. A semantic quotient on objects would not establish it.
+4. The operation/simplex comparison, all simplicial operators and restricted morphism comparison are a derived application of established recognition once the above hypotheses are proved. Restricting maps to preserve graph/size and carry a graph-independent grade map is legitimate only as a declared subcategory, not a claim to classify all simplicial maps of the resulting objects.
+
+An occupancy/cluster repair must supply its **own** congruence, hereditary restriction/descent, strict factorization proof and local C5/B3 presentation. The restriction-species theorem supplies motivation and the groupoid baseline, not these set-level conclusions. If richer orbit data are retained, state exactly which placements remain distinguishable and whether quotient substitution is well defined.
+
+## 5. Finiteness and disposition
+
+No finiteness assumption is needed for the bare set-level recognition equivalence above. For this project finite N and finite interface category can give finite sets in each fixed degree, while degeneracies and empty blocks leave arbitrarily high degrees. Degreewise finite is not a finite total simplicial set and is not bounded verification of all degrees. Passing to unbounded N is a declared family/colimit issue, not an automatic finite-instance theorem.
+
+**Disposition:** established equivalence acknowledged; no novelty claim. The candidate's possible increment is a sharply specified quotient/rewrite/refinement classification, conditional on independent proof review. This bounded check does not certify absence of that classification elsewhere in the literature, does not establish the original scientific floor, and does not discharge the mandated F2 exhaustive certificate. No access blocker; all cited theorem/section numbers above were checked against primary PDFs.
+
+## Addendum: cluster/occupancy manuscript now available
+
+`partition_quotient_candidate.md` was read after the first comparison. It explicitly uses within-clique vertex permutations to identify **parallel original ordered operations**, not automorphisms in the category of ordered graphs; its condition R requires literal equality of the resulting standardized input graphs. This addresses the ordered-automorphism distinction above without adding colors.
+
+Its proposed R/E criterion has a materially more specific target than the classical correspondence: R is hereditary restriction of the chosen permutation groups (including literal graph-profile preservation), E is extension of every local permutation by identity. The proof uses all-singleton occurrence probes for necessity and representative-independent substitution/cutting for sufficiency. This is a candidate derived quotient criterion, not a restatement that “the quotient must be invertible.” The claimed binary L rewrite normal forms and mixed B3 relations are separate syntactic content.
+
+The manuscript also distinguishes intrinsic invertibility of the occupancy calculus from the quotient map being CULF. Its displayed multinomial fibre counts concern actual fine labelled partitions over a fixed coarse labelled partition and a compatible fine occupancy matrix. The K2 split has two lifts, so the quotient map can fail CULF even when both source and target satisfy unique internal cuts. This is the correct distinction to preserve in comparison with the species theorem, which gives CULF maps for species natural transformations over the same underlying-set base—not every symmetry-erasing map one can define.
+
+This addendum is a literature-scope comparison, not an independent proof acceptance of R/E necessity, rewriting, or B3. The bounded primary-source search did not locate that exact R/E-plus-C5/B3 theorem, but nonlocation is not evidence of research novelty. The manuscript itself correctly leaves the independently specified morphism-level F3 recognition class to the assembled result.

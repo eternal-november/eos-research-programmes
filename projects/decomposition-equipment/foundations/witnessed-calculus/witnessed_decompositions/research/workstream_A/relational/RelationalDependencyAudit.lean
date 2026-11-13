@@ -1,0 +1,15 @@
+import WitnessedDecompositions.Calculus
+
+#print axioms WitnessedDecompositions.Path.slotExpand
+#print axioms WitnessedDecompositions.Path.componentAt_slotExpand_symm
+#print axioms WitnessedDecompositions.Path.slotExpand_assoc
+#print axioms WitnessedDecompositions.Path.expandFamily_assoc
+#print axioms WitnessedDecompositions.Path.expandFamily_edges
+#print axioms WitnessedDecompositions.Path.expandFamily_edge
+#print axioms WitnessedDecompositions.Collection.fiberTotalizeEquiv
+#print axioms WitnessedDecompositions.Collection.totalizeFiberEquiv
+#print axioms WitnessedDecompositions.Collection.fiberFamilyEquiv
+#print axioms WitnessedDecompositions.Calc.substitute_identity
+#print axioms WitnessedDecompositions.Calc.identityOperation_substitute
+#print axioms WitnessedDecompositions.Calc.substitute_assoc
+#print axioms WitnessedDecompositions.Calc.Hom.onOperation_substitute
