@@ -9,7 +9,7 @@ How observations warrant structure, and how that structure is realized, compared
 - [Fixed-budget optimization](realizations/fixed-budget/report.tex) and [interface change](realizations/interface-change/report.tex).
 - [Gate A](observation/gate-a/Phenomenology_Gate_A.tex), [observations warranting structure](observation/warranted-structure/Observation_and_Structure.tex), and [predictive incidence](observation/predictive-incidence/Predictive_Incidence_Bridge.tex).
 
-The [proposal](contracts/proposal/proposal.tex), [revised contract](contracts/revised/contract.tex), and [parametric amendment](contracts/parametric-amendment/contract.tex) specify distinct formulations and their boundaries. The relationship to [contextad](../contextad/) is a bridge to test, not a requirement that all phenomenology reduce to that framework.
+The [proposal](contracts/proposal/proposal.tex), [revised contract](contracts/revised/contract.tex), and [parametric amendment](contracts/parametric-amendment/contract.tex) specify distinct formulations and their boundaries. The relationship to [Contextual Composition](../contextual-composition/) is a bridge to test, not a requirement that all phenomenology reduce to that framework.
 
 ## Checks and scope
 

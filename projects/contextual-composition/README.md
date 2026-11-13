@@ -1,4 +1,4 @@
-# contextad
+# Contextual Composition
 
 A category-valued relative construction for independently specified context and content, with dependent protocols and comparison semantics.
 

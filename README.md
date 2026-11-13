@@ -2,7 +2,7 @@
 
 Research manuscripts and reproducible developments.
 
-- [contextad](projects/contextad/): relative computation, dependent protocols, and controlled recovery.
+- [Contextual Composition](projects/contextual-composition/): relative computation, dependent protocols, and controlled recovery.
 
 - [Categorical phenomenology](projects/categorical-phenomenology/): observations, warranted structure, and realizations.
 
