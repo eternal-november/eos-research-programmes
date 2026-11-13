@@ -1,6 +1,6 @@
 # QBS internal languages and higher-order boundaries
 
-> Status: Background exposition of established QBS probability and its limitations, not a new theorem or completion claim. Literature attributions have not received a fresh independent audit. Contextad conclusions remain governed by the relevant manuscripts.
+> Status: Unverified background discussion of QBS probability and its limitations, not a new theorem or completion claim. Its mathematical claims and literature attributions have not received an independent audit and may contain errors. Contextad conclusions remain governed by the relevant manuscripts.
 
 ## Probability presentation
 
