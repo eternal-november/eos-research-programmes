@@ -1,0 +1,414 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{array,booktabs,longtable,tabularx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlist[itemize]{leftmargin=1.5em,itemsep=2pt,topsep=3pt}
+\newcommand{\List}{\operatorname{List}}
+\newcommand{\Prob}{\mathbf{Prob}_{+}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\title{Harder tests of compositional semantic structure}
+\author{}
+\date{1 November 2026}
+\begin{document}
+\maketitle
+\vspace{-1.5em}
+
+\textbf{Results.} The harder tests concern uniform open composition and retained
+comparison maps, not larger closed simulations. An existing nominal operational
+model supports a worked all-client replacement argument for a reentrant callback
+service; its interpretation into a particular contextad is still unconstructed.
+A separate dependent probability--List construction passes the stated
+presentation-level structural test, including noninvertible cells and coherence.
+A nearby label-local sharing recipe fails two actual structural laws. None of
+these results establishes a need for a new generalized contextad.
+
+The earlier dynamic-state, shared-randomness and recovery examples were useful
+controls, but supplied complete closed semantics and tailored encodings. Passing
+them could not establish the stronger claims below. They are not counted as
+harder-test evidence. This report does not amend the research contract or adopt
+a new theorem package; it records the constructions, proof arguments and limits
+actually established.
+
+\section{Requirements that make the tests harder}
+
+\textbf{Open components.} Fix one abstract interface and one translation of
+open syntax before choosing a closing client. Require replacement to preserve
+interaction observations for every well-typed client, arbitrary fresh allocation
+and every finite observation depth. The comparison must survive stored closures,
+aliases, reentrant callbacks and plugging independently compiled components.
+Agreement only after linking one chosen program is insufficient. Rich global
+state and established possible-world semantics remain allowed.
+
+\textbf{Dependent mixed composition.} Fix the indexed probability families,
+List content and their actual comparison maps. Define composition once for all
+families and all base maps. Require identities, both one-sided compositions,
+pure-middle balancing, horizontal cell functoriality, natural associators,
+pentagon and triangle, including noninjective base maps and parallel
+noninvertible fibre maps. Matching output distributions while forgetting these
+maps does not meet this deliberately stronger presentation-level requirement.
+
+These are different acceptance levels. A model passing the first operational
+replacement theorem need not already supply its categorical interpretation.
+The second test has genuinely nonthin context fibres and mixed hom-categories,
+but its List content has singleton grade fibres. It is not a test of arbitrary
+two-sided nonthin content categories.
+
+\section{Open higher order clients with one shot callback tickets}
+
+\subsection{Interface and observations}
+
+A separately replaceable service exposes an opaque type \(\mathsf{Ticket}\)
+and operations
+\[
+ \mathsf{new}:1\to\mathsf{Ticket},\quad
+ \mathsf{same}:\mathsf{Ticket}^2\to\mathsf{Bool},\quad
+ \mathsf{run}:\mathsf{Ticket}\times(1\to1)
+       \to\{\mathsf{Done},\mathsf{Spent}\}.
+\]
+New tickets are fresh and live. A live \(\mathsf{run}(h,k)\) irreversibly
+marks \(h\) spent \emph{before} entering \(k\), and returns Done only when
+the callback returns. A spent run returns Spent without calling its callback.
+If the callback diverges, the ticket remains spent.
+
+Clients are sequential call-by-value programs with functions, recursion,
+products, sums, Booleans and mutable client references, including stored tickets
+and callbacks. They may copy and compare tickets, allocate inside callbacks,
+and reenter through any possessed ticket. They cannot construct ticket values,
+inspect private addresses or stores, observe timing, or use threads or
+first-class continuations. Exceptions are omitted, not assumed to roll back.
+Allocation is unbounded and does not exhaust. These restrictions define the
+abstract interface rather than removing the adversarial behavior under test.
+
+Observe finite prefixes of public calls and returns, callback entries and
+returns, and client Boolean emissions, modulo a consistent renaming of public
+ticket identities. Termination is an additional marker. Internal addresses and
+administrative reductions are hidden. Prefixes may end during a callback; a
+silently diverging callback need not yield longer visible prefixes.
+
+\subsection{A uniform representation changing argument}
+
+Implementation A stores a private Boolean cell in each opaque ticket object.
+Implementation B stores opaque numeric IDs in a private issued/spent table.
+Both consume before transferring control. The centralized implementation is
+fully admissible: this is not a test designed to exclude global state.
+
+Relate configurations using a finite partial bijection \(W\) from allocated
+A identities to issued B identities, preserving live/spent status. Relate client
+references by another allocation bijection. Client code is the same source code
+under the respective fixed API-wrapper translations. Captured environments,
+reference contents and stacks correspond under these maps, including suspended
+\(\mathsf{ReturnDone}(h)\) frames. A graph relation on heaps and environments
+handles cycles without recursively unfolding stored closures. The world is
+proof data, not an oracle exposed to clients.
+
+The simulation cases are explicit. Ordinary client reductions and reference
+updates preserve the graph relation. New ticket and client-reference allocation
+extend the corresponding bijections. Injectivity preserves \(\mathsf{same}\).
+Spent calls agree without entering callbacks. Live calls update paired statuses
+and push corresponding frames \emph{before} yielding, so the invariant already
+holds when arbitrary client code regains control. Callback return pops paired
+frames and produces Done. Reentrancy invokes these same cases; no harmlessness
+assumption about callbacks is needed.
+
+Thus the empty initial world extends to matching observations for every closing
+client and every finite prefix. Matched client small steps, together with finite
+implementation-only administrative work, also reflect termination and divergence.
+Visible-event matching alone would not justify that last claim. At-most-once
+callback entry follows independently: the only rule that enters a callback
+changes live to spent, and no rule restores live status. This holds across all
+aliases, clients and allocation sizes in the specified language.
+
+\subsection{Plugging and the exact remaining obligation}
+
+Define the translation on open syntax homomorphically, with fixed wrappers for
+the three operations. Capture-avoiding substitution gives
+\[
+ \operatorname{compile}_i(C[M])
+ =\operatorname{compile}_i(C)[\operatorname{compile}_i(M)],
+ \qquad i\in\{A,B\},
+\]
+by induction on typed context syntax. The operational comparison uses the same
+world, heap and suspended-stack transport on both sides; worlds are extended,
+not reset at a component boundary. This is a syntactic plugging lemma plus a
+worked operational replacement argument, not an implemented compiler or a
+full-abstraction theorem for an arbitrary target language.
+
+To pass the \emph{categorical} version, a proposed encoding must still give one
+semantic interface object, an interpretation of these open components and
+composition, and coherent comparison cells preserving fresh-world extension,
+stored closures, suspended callbacks and private-name opacity. No such
+contextad interpretation functor is constructed here. That obligation is
+untested, not a failure of existing contextads.
+
+The strongest relevant precedent is state-dependent representation independence:
+Ahmed--Dreyer--Rossberg treat generative abstract types and explicitly discuss
+reentrant callbacks \cite{ADR}. Their contextual-approximation soundness result
+is not cited as a verbatim proof of this service's richer event observations.
+The present monotone spent-status invariant is simpler than their locking
+example. Generativity and reentrancy alone are therefore not a new semantic gap.
+
+\textbf{Sanity discriminator.} A rival that marks spent only \emph{after} its
+callback returns is distinguished by a callback that runs the same ticket again
+and emits true inside that inner callback. A/B return Spent on the inner call;
+the rival emits true. Both may end with the same spent status and outer Done.
+This refutes an endpoint-only quotient and exposes a programming error, not an
+impossibility theorem against stateful semantics.
+
+\section{A dependent probability crossing with List}
+
+\subsection{Objects and actual comparison maps}
+
+Work over \(\Set\) in a fixed universe, not \(\mathbf{FinSet}\):
+\(\List(B)\) need not be finite. Let \(\Prob\) contain nonempty finite
+full-support normalized real probability spaces and deterministic
+measure-preserving maps. Put \(\mathcal K_A=\Prob^A\), reindexed by
+precomposition, with extension \(e_A(P)=\sum_{a\in A}P_a\).
+Dependent accumulation has samples \((x,y)\) of weight
+\(p_a(x)q_{a,x}(y)\). Its unit is the singleton family. This reuses the
+previously checked probability-family construction, with contextad understood
+in the sense of Capucci--Myers Definition 3.26 \cite{CM}; the source is not
+claimed to state this exact example verbatim.
+
+Use the ordinary List monad as a singleton-grade contentad. A mixed arrow is
+\(F=(P,f):A\rightsquigarrow B\), where
+\(f:e_A(P)\to\List(B)\). Lists retain order and multiplicity and may
+have sample-dependent lengths. A square over \(u:A\to A'\),
+\(v:B\to B'\) is an actual probability-map family
+\(\alpha_a:P_a\to P'_{u(a)}\) satisfying
+\[
+ f'(u(a),\alpha_a x)=\List(v)(f(a,x)).                 \tag{1}
+\]
+Parallel maps are not identified merely because they give the same output law.
+
+\subsection{The crossing and its two multiplication laws}
+
+For \(Q\in\mathcal K_B\), define
+\[
+ C(Q)_{[b_1,\ldots,b_n]}=\prod_{i=1}^n Q_{b_i},
+ \qquad \Pr(y_1,\ldots,y_n)=\prod_iq_{b_i}(y_i),
+\]
+and the crossing
+\[
+ \chi_Q([b_i],(y_i))=[(b_i,y_i)].                    \tag{2}
+\]
+The empty product is a singleton. Products run over \emph{occurrences}:
+equal labels at different positions receive independent fresh samples. This
+is the declared interaction, not a claim that all repeated observations must
+resample. Persistent shared randomness may instead be explicitly retained.
+Here \(\prod\) means the independent probability tensor on an underlying
+Cartesian product, not a categorical product in \(\Prob\). Separate marginals
+do not imply independence; the displayed weights specify it.
+
+For a family map \(\theta_b:Q_b\to Q'_{v(b)}\), the crossing acts
+coordinatewise. Its pushforward weight at a target tuple is
+\[
+ \sum_{\theta_{b_i}(y_i)=y'_i}\prod_iq_{b_i}(y_i)
+ =\prod_i\sum_{\theta_{b_i}(y_i)=y'_i}q_{b_i}(y_i)
+ =\prod_iq'_{v(b_i)}(y'_i).                         \tag{3}
+\]
+Thus even noninvertible probability maps act, and the square for (2) commutes
+literally. Noninjective \(v\) merges labels, never positions.
+
+The List unit uses a one-position product; the context unit inserts unique
+singleton samples. List multiplication uses the weight-preserving tuple
+bijection \(\prod_i\prod_jQ_{b_{ij}}\cong\prod_{(i,j)}Q_{b_{ij}}\),
+with the same ordered flattening on outputs, including empty blocks.
+Context multiplication uses the explicit dependent bijection
+\[
+ \prod_i\left(\sum_{x_i\in P_{b_i}}Q_{b_i,x_i}\right)
+ \cong
+ \sum_{(x_i)\in\prod_iP_{b_i}}\prod_iQ_{b_i,x_i}.    \tag{4}
+\]
+Both sides have weight \(\prod_ip_{b_i}(x_i)q_{b_i,x_i}(y_i)\).
+The map separates the \(x\) and \(y\) coordinates; its inverse pairs them.
+Applying simultaneous noninvertible maps to either route gives the same
+coordinates. An invertible interchange condition has therefore been proved
+for this family, not assumed as the missing conclusion.
+
+\subsection{Composition retains the cells}
+
+For \(F=(P,f)\), \(G=(Q,g)\), write \(f(a,x)=[b_1,\ldots,b_n]\).
+The composite has context and output
+\[
+ (G\circ F)_a=\sum_{x\in P_a}\prod_iQ_{b_i},\qquad
+ (x,(y_i))\longmapsto\operatorname{concat}_i g(b_i,y_i),       \tag{5}
+\]
+with weight \(p_a(x)\prod_iq_{b_i}(y_i)\). Each fibre is finite,
+positive and normalized even if the base sets are infinite.
+
+For a third arrow, if \(g(b_i,y_i)=[c_{i1},\ldots,c_{im_i}]\),
+the associator sends
+\[
+ ((x,(y_i)),(z_{ij})_{i,j})
+ \longmapsto (x,((y_i,(z_{ij})_j))_i).              \tag{6}
+\]
+The previous \(y_i\) determines every variable block length, so the inverse
+can recover the boundaries. Both sides have weight
+\(p_a(x)\prod_iq_{b_i}(y_i)\prod_{i,j}r_{c_{ij}}(z_{ij})\)
+and the same concatenated output.
+
+Horizontally composable squares \(\alpha,\beta\) induce
+\[
+ (x,(y_i))\longmapsto
+       (\alpha_a x,(\beta_{b_i}y_i)_i).            \tag{7}
+\]
+Equation (1) fixes the same ordered target list for every preimage of a target
+outer sample. Consequently the target product weight from (3) is independent
+of that preimage; summing its outer weights gives the target outer weight.
+This proves measure preservation of (7), including noninjective middle base
+maps. Output compatibility follows because List maps preserve concatenation.
+Identity, vertical composition and interchange are coordinatewise.
+
+Index each eventual sample by its finite occurrence address and ancestral
+dependent samples. Every associator, unitor and comparison route retains those
+coordinates and changes only parentheses. The same final address-labelled
+tuple and weight prove associator naturality, pentagon and triangle as equality
+of maps, not merely equality of distributions. This gives the stated coherent
+mixed bicategory and endpoint-square composition directly.
+
+Singleton output lists recover the original context-only dependent-pair
+composition; singleton sample fibres recover List Kleisli substitution.
+Pure base maps use both singletons. Base reindexing substitutes into (5).
+Pure-middle balancing compares \(\List(v)f\) with sampling from \(v^*Q\);
+both use exactly the same position-indexed product. This checks the condition
+that failed in the earlier finite quotient/domain normalization, rather than
+assuming it because the formula is well typed.
+
+\subsection{Nonthinness and the established law baseline}
+
+Take a fair three-bit sample \((u,v,w)\) with output empty when \(u=0\),
+and \([b_0,b_1,b_0]\) when \(u=1\). The maps
+\((u,v,w)\mapsto(u,v)\) and \((u,v,w)\mapsto(u,w)\) to a fair
+two-bit presentation are distinct parallel noninvertible cells. Flipping the
+second target bit is a nonidentity automorphism. Coordinatewise crossing and
+the tested nonempty whiskering retain the distinction. Empty-list whiskering
+can erase unused samples, so global faithfulness of every whiskering is not
+claimed.
+
+Forgetting presentations gives the finite output law
+\[
+ E(P,f)(a)=\sum_{x\in P_a}p_a(x)\,\delta_{f(a,x)}.
+\]
+Its target is the familiar composite distribution--List semantics
+\(D\circ\List\), using \(\List D\to D\List\) by independent
+product. To obtain that transformation from (2), index the family by \(D(B)\),
+give \(\mu\) its weighted support as fibre, and forget the distribution labels
+after crossing. This preserves execution laws but forgets the distinct parallel maps;
+it is not faithful on the retained hom-categories. The traversal literature's
+Kleisli-composition result requires a \emph{commutative} monad \cite{JR}.
+Arbitrary monad traversal is not automatically this distributive law, and no
+idempotent powerset/nondeterminism analogue is claimed.
+
+The local \(\Cat\)-coend comparison retains these morphisms: splitting
+\(f:e_AP\to\List B\) at \(e_AP\) gives the inverse to composing a
+context-only and a content-only representative, with balancing on actual
+probability maps. Passing only to isomorphism classes also gives the ordinary
+promonad/distributive-law description \cite{Roman}. The explicit local
+comparison and concrete coherence above do not establish a general equivalence
+of all weak indexed mixed structures with a chosen pseudoambient formalism.
+That recognition problem remains separate.
+
+\section{A local sharing recipe fails structural laws}
+
+Consider drawing once for each distinct label in the \emph{current} list,
+then reusing that draw at its repeated occurrences. This is not the strong
+independent-product construction, nor a model of a persistent explicit cache.
+It fails the specified uniform requirements in two exact ways.
+
+First take \(v:\{a,b\}\to\{x\}\) merging both labels and pull back a
+fair-bit family. Sampling \([a,b]\) by the recipe gives independent bits,
+whose disagreement probability is \(1/2\); mapping labels by \(v\) preserves
+that law. Sampling \([x,x]\) directly instead copies one bit, with disagreement
+probability zero. Thus noninjective base naturality fails. No output-preserving
+measure-preserving map in either direction can repair the unequal laws of the
+existing sample spaces.
+
+Second, applying the recipe separately to \([[b],[b]]\) samples independently
+across the two singleton blocks. Flattening first to \([b,b]\) shares one
+draw. Again disagreement is \(1/2\) versus zero, so the List multiplication
+law fails. This is a failed coherence square, not just a disappointing final
+statistic. A persistent cache, explicit alias identities, or restricted base
+maps can define a different valid interface; none is ruled out. The independent
+crossing is not claimed to be the unique possible interaction.
+
+\section{Preservation and proof status}
+
+\small
+\begin{longtable}{@{}p{0.23\linewidth}p{0.35\linewidth}p{0.36\linewidth}@{}}
+\toprule
+Requirement & Open callback family & Probability--List family \\
+\midrule
+\endhead
+Uniformity & Every typed client and finite observation prefix; fresh worlds grow & Every Set-indexed finite probability family and admitted square \\
+Observable information & Calls, returns, callbacks, emissions and termination & Ordered list laws plus actual sample witnesses and comparison maps \\
+Resources and dependence & One-shot status survives aliases and control transfer & Dependent fibres; independent choice per occurrence, not inferred sharing \\
+Composition & Fixed syntax plugging and operational invariant & Both one-sided inclusions, pure balancing, horizontal cells and coherent associator \\
+Comparison class & Growing representation relation on names, heaps and stacks & All deterministic measure-preserving fibre maps satisfying (1), over all base maps \\
+Established result & Worked operational contextual replacement argument & Direct presentation-level mixed construction and laws \\
+Not established & A contextad interpretation functor or full abstraction & Arbitrary two-sided nonthin content or general weak-ambient recognition \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+The proof notes contain the complete calculations and assumptions. Independent
+review checked the arguments, including silent divergence, closure translation,
+noninjective horizontal maps and variable-length associators. The executable
+checks use explicit exceptions, exact data and rational probabilities, and
+produce identical outputs in normal and optimized Python. They are regression
+evidence, not substitutes for the structural arguments:
+\begin{itemize}
+\item The open service has 200 positive trace comparisons and 99 late-consumption
+distinguishing cases. Fresh-ticket callbacks genuinely nest; the checker does
+not enumerate all clients, enforce abstract opacity for arbitrary Python code,
+or prove the language-level theorem.
+\item The dependent fixture records 105,701 individual checks, including repeated
+bookkeeping checks; 13,133 associator-naturality cases, 40 product flattenings
+and five noninvertible product checks are among them. Its largest three-stage
+fibre has 12,939 samples. This does not enumerate all families or real weights.
+\end{itemize}
+
+No proof-assistant certification is claimed. The probability-family contextad,
+local coend lemma and relevant literature are reused baselines; the retained-map
+List specialization, open-service comparison and new checks are the work here.
+The source archive contains linked references rather than primary-source copies.
+The TeX has been structurally checked but not compiled or visually rendered.
+
+\textbf{Conclusion.} The stronger questions yield more informative distinctions:
+an actual dependent mixed construction passes with retained nonthin maps; a
+specific implicit-sharing recipe fails naturality and multiplication; and open
+contextual replacement has a sound existing operational route while its desired
+categorical interpretation remains to be built. This does not show that
+generalization is pointless. A uniform derivation of interfaces, comparisons or
+recognition criteria may be valuable without an expressivity or speed advantage.
+Such a contribution must state its structural increment precisely, rather than
+claim that existing semantics cannot represent these examples.
+
+\begin{thebibliography}{9}
+\bibitem{ADR} Amal Ahmed, Derek Dreyer and Andreas Rossberg.
+\emph{State-Dependent Representation Independence}. POPL 2009,
+Theorems 4.2 and 4.3, Section 5.6.
+\url{https://home.ttic.edu/~amal/papers/sdri/main.pdf}.
+\bibitem{JR} Mauro Jaskelioff and Ondrej Rypacek.
+\emph{An Investigation of the Laws of Traversals}. EPTCS 76, 2012,
+pp.\ 40--49, Theorem 3.7 and Lemma 4.1.
+\url{https://arxiv.org/abs/1202.2919}.
+\bibitem{CM} Matteo Capucci and David Jaz Myers.
+\emph{Contextads as Wreaths; Kleisli, Para, and Span Constructions as Wreath Products}.
+arXiv:2410.21889v1, Definition 3.26.
+\url{https://arxiv.org/abs/2410.21889v1}.
+\bibitem{Roman} Mario Rom\'an.
+\emph{Promonads and String Diagrams for Effectful Categories}.
+arXiv:2205.07664v4, Theorem 3.9 and Theorem B.2.
+\url{https://arxiv.org/abs/2205.07664v4}.
+\end{thebibliography}
+\end{document}

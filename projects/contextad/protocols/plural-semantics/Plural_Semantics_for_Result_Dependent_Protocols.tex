@@ -1,0 +1,1376 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=25mm]{geometry}
+\usepackage{booktabs,longtable,array,enumitem,microtype}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlist{leftmargin=1.7em,itemsep=3pt,topsep=4pt}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\FinSet}{\mathbf{FinSet}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\QBS}{\mathbf{QBS}}
+\newcommand{\Det}{\operatorname{Det}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\List}{\operatorname{List}}
+\newcommand{\Aug}{\operatorname{AugFam}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\leaf}{\operatorname{leaf}}
+\newcommand{\Cost}{\mathsf{Cost}}
+\newcommand{\Hist}{\mathsf{Hist}}
+\newcommand{\Law}{\mathsf{Law}}
+\newcommand{\Run}{\mathsf{Run}}
+\newcommand{\AllBudget}{\operatorname{AllBudget}}
+\newcommand{\ASBudget}{\operatorname{ASBudget}}
+\title{Plural Semantics for Result Dependent Protocols\\[5pt]
+\large Retained histories operational executions and QBS laws}
+\author{}
+\date{1 November 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A finite acyclic language of capability-typed protocols has three actual
+interpretations: retained stochastic histories in the O1 mixed construction,
+a typed operational machine, and QBS probability laws. A response can change
+the types, capability contexts and number of the next independently executed
+occurrences. The common observation records a causal event tree, its ordered
+typed results and cumulative cost. A uniform comparison theorem preserves
+this joint law and occurrence composition, but forgets raw sample witnesses
+and zero-weight paths. Cost-exact native cells preserve exact laws; the
+larger cost-lowering cell class gives monotone couplings instead.
+
+The QBS model uses normalized probability and a capability-aware interface
+functor into its deterministic subcategory. We prove the required finite
+interpretation, exhibit a continuous dependent extension, and distinguish
+existing quasi-Borel-family results from unproved conditioning or
+higher-order claims. The typed common fragment is frozen here to close an
+outstanding O0 prerequisite; it was not already frozen by the earlier
+fixtures. This is an O3 acceptance candidate at its stated scope, not O4
+language metatheory, O5 contextual adequacy, or the full research programme.
+\end{abstract}
+
+\tableofcontents
+
+\section{Result scope and provenance}\label{sec:scope}
+The expanded contract's O3~\cite{Contract} requires three meaningful semantic
+families, at least two interpretations of the same frozen nontrivial language,
+a composition-compatible observation comparison, and a serious QBS benchmark.
+The earlier O1 dossier~\cite{O1} supplied terminating protocol fixtures, but
+not the complete typed syntax and observations that O3 needs. The O1
+feasibility note~\cite{Feasibility} expressly left that freeze open, and O2~\cite{O2} left O3
+and the later language obligations open. We close this particular O0
+prerequisite \emph{now}, at O3 entry, as CF-0.1. This is not a retrospective
+claim that O0 or O4 was completed, and no earlier artifact is changed.
+
+The freeze is uniform over arbitrary admitted finite interfaces and primitive
+tables; it is not defined by the six-path numerical example. It is held
+fixed for all three interpretations. All principal proofs below use the
+same public post-configurations, disjoint capability declarations, raw
+sample tables and observation maps. Continuous and higher-order discussions
+are separately named extensions or boundaries, not replacements for the
+compared terms.
+
+\begin{theorem}[The common finite comparison]\label{thm:main}
+For every CF-0.1 signature and every finite well-typed command:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item the joint probability--cost rig and the causal-tree polynomial content
+satisfy the stated O1 entry hypotheses and give its retained mixed
+interpretation;
+\item a separately defined typed machine has raw completed runs in canonical
+bijection with the retained witnesses of that command, preserving weight,
+causal observation, typed results and cumulative cost;
+\item the normalized finite law of those observations is a QBS probability
+morphism, and the comparison preserves pure maps, independent batches and
+result-dependent occurrence composition;
+\item cost-exact native cells yield equality of these laws, while the full
+body-preserving cost-lowering native cells yield compositional monotone
+couplings;
+\item exact laws cannot reconstruct raw zero-weight paths or all-path budget
+certificates. A positive-weight restriction or a retained raw-path component
+repairs the stated loss at its precise scope.
+\end{enumerate}
+\end{theorem}
+The proofs are in Sections~\ref{sec:integration}--\ref{sec:qbs}.
+The claims concern denotations and the explicitly defined mathematical
+machine. They do not certify physical execution, discovery of capability
+permissions, arbitrary concurrency or replacement in all open contexts.
+The source is intentionally uncompiled, as authorized; source checks and
+finite regressions do not constitute proof-assistant or layout verification.
+
+\subsection{A trace issue resolved before freezing}
+The trace convention is substantive. A chronological word accumulated by
+``prefix then children'' does not in general compose associatively with
+variable-length independent List substitution. A prefix producing two
+occurrences, followed by events $q_1,q_2$ and then $r_1,r_2$, can produce
+\[
+ q_1q_2r_1r_2\quad\hbox{versus}\quad q_1r_1q_2r_2
+\]
+under two stagewise evaluation schedules. Equal multisets do not make these
+words equal. CF-0.1 instead retains a finite open causal tree and composes
+by grafting. Both schedules above have the same causal tree, while their
+chronological order remains available only as a richer machine diagnostic.
+This repair is made before the shared comparison, not hidden inside a
+purported preservation proof. The ordered output list is its arity shadow;
+we do not reduce the language to the identity-content case.
+
+\section{The frozen common fragment}\label{sec:freeze}
+
+\subsection{Interfaces and the capability discipline}
+Fix capability kinds, a finite pool of token identities and a finite set
+$R$ of numerical cost coordinates. A capability context $\Delta$ is a
+subset of that pool with a kind map. Equal kinds do not identify token addresses.
+An interface is a finite family
+\[
+ E=(S,(X_s)_{s\in S},(\Delta_s)_{s\in S}),\qquad
+ |E|=\coprod_{s\in S}X_s,
+\]
+with finite $S$ and finite data sets $X_s$. A configuration $a=(s,x)$ carries
+exactly the declared context $\Delta_s$.
+A pure interface map is a function $f:|E|\to|F|$ together with, at each
+input, preservation of the actual token identities and their kinds. A
+bijection may compare presentations or orderings of that same context,
+but is identity on actual token names. Composition composes the data maps
+and these presentation bijections.
+These form $C_{\mathrm{cap}}$.
+
+Ordinary data may be computed, copied or forgotten. A pure map cannot create,
+merge, copy or silently dispose of a token. Consumption, transfer, kind
+change and disposal must be declared primitive transitions. Output-token
+sets must be disjoint subsets of the input-token set. Creation and active
+renaming of token identities are excluded. A batch uses an explicit
+disjoint context split; it does not derive a token diagonal from the fact
+that $|E|$ is a set. Fresh-name creation would require a later, genuinely
+substitution-stable extension, not a presumed freshness certificate. Numerical cost is a separate demand annotation; no
+remaining-resource equation or budget bound is silently part of $|E|$.
+
+\subsection{Causal event content}
+For the general Set construction, fix a finitary event signature
+$(\mathcal E_n)_{n\ge0}$. For CF-0.1 and its QBS interpretation we take
+the alphabet generated by the finitely many public labels in the finite
+effect signature, together with the countable family of structural
+$\mathsf{Fork}_n$ labels. This chosen alphabet and its finite-tree shapes
+are countable. The Set lemma below also holds for larger alphabets, but
+no larger-alphabet QBS claim is needed here. Let $T(X)$ be the
+set of finite planar open trees with a label in $\mathcal E_n$ at each
+$n$-ary internal node and an element of $X$ at each open hole. The unit
+$\eta_X(x)$ is the single hole. Multiplication grafts a tree into every
+hole of an outer tree. A nullary event is a closed tree, not a pure hole.
+Write $\leaf(\theta)=(b_1,\ldots,b_n)$ for the planar list of hole values
+and $\theta[\theta_1,\ldots,\theta_n]$ for grafting.
+
+\begin{lemma}[The content monad]\label{lem:tree}
+$T$ is a finitary cartesian polynomial monad. The map
+$\nu_X:T(X)\to\List(X)$ taking the planar hole list is a cartesian monad
+map.
+\end{lemma}
+\begin{proof}
+If $\mathcal S$ is the set of unlabelled-at-holes event-tree shapes and
+$H_s$ their finite ordered hole sets, then
+$T(X)=\coprod_{s\in\mathcal S}X^{H_s}$. This polynomial description
+preserves pullbacks. Substitution is associative because both ways of
+successive grafting replace the same holes by the same subtrees, and a
+single hole is a unit. The holes of a grafted shape are canonically the
+pairs of outer holes and holes of their inserted shapes. Thus each
+multiplication naturality square is a pullback: fixing a nested shape and
+its mapped hole labels uniquely lifts the labels on its flattened holes.
+For the unit square the unique shape is one hole. This proves cartesianness
+of unit and multiplication. Taking hole lists preserves units and grafting
+as ordered flattening. For a fixed source tree shape it induces the
+bijection between that shape's holes and its list positions, proving the
+cartesian naturality square for $\nu$.
+\end{proof}
+The content is genuinely nontrivial even at terminal grades: different
+causal shapes and variable hole arities remain actual semantic data.
+An event-bag map is a further optional observation; it is not the primary
+content.
+
+\subsection{Primitive signatures and finite commands}
+A finite effect signature $\Sigma$ declares its admissible operation
+instances $(e,u)$ at each configuration $a$. Each instance supplies:
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item a finite public response set $B_e(a,u)$ and, for every $b$, a finite
+ordered post-list $[d_1,\ldots,d_n]$ of typed configurations;
+\item a capability-transition certificate for consumption, transfer or kind
+change, with disjoint output-token subsets of the input-token set;
+\item a finite raw sample set $W_e(a,u)$, real weights $p_e(w)\ge0$ with
+$\sum_wp_e(w)=1$, and a public-response map $\rho_e:W_e(a,u)\to B_e(a,u)$;
+\item for each raw witness, an event label $\ell_e(w)\in\mathcal E_n$
+at its actual post-list arity, and a cost $c_e(w)\in\mathbb N^R$.
+\end{enumerate}
+The post-contexts are pairwise disjoint, including branches of weight zero.
+An operation's availability and capability transition are not inferred from
+its probability table. Trace and cost may be externally recorded without
+being program-readable. A child continuation sees only its own declared
+post-configuration $d_i$. Any public response information needed there must
+be included as ordinary data in $d_i$; the child cannot inspect hidden $w$
+or an undeclared sibling. This restriction is used in the composition proof.
+
+For a current configuration $a$ and target $F$, the finite commands are:
+\begin{description}
+\item[Pure return.] An admitted pure map returns the hole $\eta(f(a))$.
+It has one raw witness, probability one and zero cost.
+\item[Operation and continuation.] Execute an available $(e,u)$. A public
+response selects $[d_1,\ldots,d_n]$. At each actual address $i$ execute the
+specified command $t_{d_i}$ independently, then place its returned tree in
+the corresponding child of the event node $\ell_e(w)$. All capability
+certificates must typecheck at those actual configurations.
+\item[Addressed independent batch.] Supply a finite ordered set of addresses,
+a disjoint capability split and child commands at those inputs. A declared
+deterministic zero-cost node $\mathsf{Fork}_n\in\mathcal E_n$ returns the
+child configurations and the children execute independently in its slots.
+Any carried reserve is explicitly returned in a typed slot; it cannot vanish.
+The fork records causal structure, not a physical chronological event.
+\end{description}
+A command $t:E\to F$ is such a finite family at every $a\in|E|$, with an
+explicit finite derivation. At all returned holes the final capability
+contexts are pairwise disjoint. Reusing child syntax at two addresses is
+two independently declared executions, not two aliases of one capability
+or one sample. A nullary event is permitted only with its declared token
+disposal or empty input context; it denotes successful closed content,
+not deadlock or a missing execution.
+
+An explicit raw syntax node $\mathsf{Bind}(t,u)$ records occurrence bind
+$t;u:E\to G$, for $t:E\to F$ and $u:F\to G$, executes
+$u_{b_i}$ independently at every actual hole $b_i$ and grafts its tree into
+that hole. It is ordinary dependent bind when there is one hole. In general
+both the number of required contexts and their types depend on the produced
+tree. Its denotation is the O1 mixed occurrence operation, not an untyped fold
+of an already returned list. The operational machine retains this Bind
+node and evaluates its left phase before its child continuations; it does
+not preprocess it away to a depth-first traversal of the final tree. In particular, Boolean OR of final hole values below
+is an \emph{observation}, not an implicitly available whole-list command.
+
+No recursion, general feedback, posterior conditioning, unrestricted
+higher-order procedure object or arbitrary physical interleaving is admitted.
+The finite derivation requirement excludes an infinite family of deeper
+continuations disguised as one command. This bounded syntax is sufficiently
+strong for the mandatory adaptive test and sufficiently explicit to support
+O3's semantic induction; full O4 typing, substitution and equality metatheory
+remain separate.
+
+\subsection{Observations and signature extension}
+The frozen joint external observation is
+\begin{equation}\label{eq:observation}
+ (c,\theta)\in\mathbb N^R\times T|F|.
+\end{equation}
+It contains a labelled causal tree, ordered result configurations and their
+capability contexts, and cumulative cost. It excludes latent raw samples
+and sibling scheduling chronology. An output-only observation is a named
+map $q:\List|F|\to D$, possibly also erasing interface tags; its law is
+obtained by applying $q\nu$ and forgetting cost and tree structure.
+No output-only comparison is called history- or resource-preserving.
+
+For $b\in\mathbb N^R$, $\AllBudget_b(t,a)$ quantifies over \emph{every}
+raw completed history, including zeros, whereas $\ASBudget_b(t,a)$ means
+probability one of cost at most $b$. The unbudgeted language contains both
+safe and excessive-demand branches. Numerical bounds do not grant tokens,
+and token well-typedness does not prove a numerical budget.
+
+A conservative signature inclusion preserves all old operations, raw
+weights, responses, post-configurations, capability certificates, public
+event labels and costs, and may add operations. It induces the syntax map
+by renaming old operation nodes. If new event labels are added, the induced
+map $T_\Sigma\to T_{\Sigma'}$ preserves holes and grafting. Changing an old
+operation's behavior is a model comparison, not a conservative inclusion.
+Theorem~\ref{thm:extension} proves preservation for this precise notion.
+
+\section{The retained O1 interpretation}\label{sec:integration}
+
+\subsection{One joint probability and cost input}
+Let $\Cost=(\mathbb N\cup\{\infty\})^R$ with an arrow $c\to d$ iff
+$c\ge d$ coordinatewise. Its additive operation is componentwise minimum,
+with additive zero $\infty$; multiplication is vector addition, with unit
+$0$ and absorbing $\infty$. The operations are monotone, and addition
+distributes over minimum, so this is a thin coherent symmetric rig.
+Take its product with the discrete nonnegative-real semiring category:
+\begin{equation}\label{eq:rig}
+ \mathcal V=(\mathbb R_{\ge0})_{\mathrm{disc}}\times\Cost,
+ \quad(p,c)\oplus(q,d)=(p+q,\min(c,d)),
+ \quad(p,c)\otimes(q,d)=(pq,c+d).
+\end{equation}
+The units are $(0,\infty)$ and $(1,0)$. Product coherence makes this one
+valid O1 input, not two unrelated models placed side by side.
+
+An augmented family $(\Omega,(p_\omega,c_\omega),\epsilon)$ has the
+single global augmentation
+\[
+ (\textstyle\sum_\omega p_\omega,\min_\omega c_\omega)
+           \longrightarrow(1,0).
+\]
+It exists exactly when the probabilities sum to one; nonnegative costs
+supply the unique inequality component. It does \emph{not} assert that
+minimum cost is a sufficient budget. Empty normalized families do not
+exist. Closed nullary effect trees can nevertheless have one normalized
+witness and no result holes.
+
+A native context map $r:\Omega\to\Omega'$ is precisely
+\begin{equation}\label{eq:native}
+ p'_y=\sum_{r\omega=y}p_\omega,
+ \qquad c'_y\le\min_{r\omega=y}c_\omega,
+ \quad\min\varnothing=\infty.
+\end{equation}
+Thus $c'_{r\omega}\le c_\omega$, but a zero-weight target with no preimage
+can have arbitrary cost. Call such a cell \emph{cost-exact} when additionally
+$c'_{r\omega}=c_\omega$ for every source witness. Even this condition does
+not require surjectivity onto zero-weight targets.
+
+\subsection{Exact connection to the mixed construction}
+Use $\mathcal J=$ all set maps and the terminal-grade contentad
+$d_B(*)=TB$ with unit and multiplication $\eta^T,\mu^T$.
+Its occurrence display is $\id_T$; its relative display squares,
+cartesian grade transport and Beck--Chevalley conditions are trivial in
+terminal fibres. Its bodies are the genuine monad unit and grafting, not
+assumed invertible. Lemma~\ref{lem:tree} verifies the remaining polynomial
+hypothesis. These are exactly the terminal-grade content inputs verified
+in O1~\cite{O1}, not a newly assumed mixed law.
+
+The inherited O1 theorem therefore constructs the category-valued relative
+pseudopromonad with
+\[
+ H(A,B)=(e_A\downarrow TB),
+\]
+meaning that its objects are indexed augmented contexts $P$ together with
+bodies $\theta:e_AP\to TB$. Here the left entry is the extension functor $e_A$, so this is the
+category of all such $P$ and their comma cells. For a native
+fixed-endpoint cell, $T$-bodies obey $\theta=\theta'r$ as well as
+\eqref{eq:native}. For endpoint maps $u:A\to A'$ and $v:B\to B'$, the
+body equation is
+\begin{equation}\label{eq:endpoint}
+ Tv\,\theta_a=\theta'_{u(a)}r_a.
+\end{equation}
+All these native arrows and changing-endpoint squares remain in the source.
+The later law comparison classifies their images; it does not delete them.
+
+Restrict the pure endpoint maps to $C_{\mathrm{cap}}$ and the computations
+to the certified, well-typed image of CF-0.1. The underlying O1 construction
+still exists over all sets. Thus capability discipline is a restriction on
+admitted syntax/interfaces, not an unsupported theorem that arbitrary Set
+maps or arbitrary native cells are physical capability transformations.
+
+For a raw computation at $a$, write
+\[
+ (\Omega_t(a),p_t(a,-),c_t(a,-),\theta_t(a,-)).
+\]
+Return and primitives use their declared data. If $t$ yields a history
+$h$ with $\leaf(\theta_t(h))=(b_1,\ldots,b_n)$, the composite has
+\begin{align}\label{eq:raw-composition}
+ \Omega_{t;u}(a)
+ &=\coprod_{h\in\Omega_t(a)}\prod_{i=1}^{n(h)}\Omega_u(b_i),\notag\\
+ p_{t;u}(h,\mathbf k)&=p_t(h)\prod_i p_u(b_i,k_i),\notag\\
+ c_{t;u}(h,\mathbf k)&=c_t(h)+\sum_i c_u(b_i,k_i),\\
+ \theta_{t;u}(h,\mathbf k)
+ &=\theta_t(h)[\theta_u(b_1,k_1),\ldots,\theta_u(b_n,k_n)].\notag
+\end{align}
+The empty product is a singleton of weight one, and the empty sum is zero.
+For a separated batch, witnesses are the product of child witnesses,
+weights multiply, costs add, and the trees are grafted under the declared
+$\mathsf{Fork}$ node. These are literally O1 dependent accumulation,
+addressed occurrence tensor and content multiplication for~\eqref{eq:rig}.
+
+\begin{proposition}[Uniform retained interpretation]\label{prop:retained}
+Every CF-0.1 command has a finite normalized retained interpretation with
+exactly the declared raw branches, including zeros. The raw operation
+\eqref{eq:raw-composition} has the inherited associative and unital
+comparisons preserving causal bodies, cost and each addressed sample.
+\end{proposition}
+\begin{proof}
+Induct on the finite derivation. The only normalization calculation beyond
+the primitive premise is
+\[
+ \sum_h p_t(h)\prod_i\Bigl(\sum_{k_i}p_u(b_i,k_i)\Bigr)
+ =\sum_h p_t(h)=1.
+\]
+It includes nullary outputs and zero weights. Finite products and sums
+remain finite. For capability separation, pure returns preserve actual
+tokens, primitive outputs are declared disjoint subsets, and a child
+continuation can only return subsets of its own input set by induction.
+Subsets of disjoint child sets remain disjoint, under either bind
+parenthesization. Batch uses the same argument from its disjoint split.
+This includes zero branches and proves the bounded separation property,
+without a fresh-name coherence assumption. All accumulated costs
+are finite sums in $\mathbb N^R$. For a triple composite, both bracketings
+choose the same prefix history, the same histories at its actual holes,
+and the same histories at their holes. Rebracketing these dependent tuples
+is a bijection. Products of weights and sums of costs agree, and tree
+bodies agree by associative grafting. Pure holes give the unit bijections.
+This is the addressed normal form of the inherited O1 comparisons; it
+also proves directly that the chosen syntax uses that construction.
+\end{proof}
+
+\subsection{O2 compatibility and controlled projections}
+For an ordinary data frame $Z$, hold $z$ fixed and relabel every output
+hole $b$ by $(z,b)$ while leaving the causal shape and costs unchanged.
+This is the polynomial strength
+\[
+ \operatorname{st}_Z:Z\times TB\longrightarrow T(Z\times B).
+\]
+It commutes with grafting because both routes label every final hole by
+the same fixed $z$. Terminal-grade transport from the empty interface is an equivalence
+between terminal categories. Thus the O2 criterion supplies the full
+ordinary-data Set action on this ambient fixed-polynomial branch; the
+frozen finite core uses finite $Z$. This is the positive
+fixed-polynomial action of O2~\cite{O2}. Its frame is ordinary data, not
+an unaccounted duplicated executable token. Taking $Z=\{0,1\}$ acting on
+the adaptive probe below is a nonunit, effectful example. A closed nullary
+tree has no hole from which to recover $z$; preservation of framing does
+not claim that framing is information-reflecting in that case.
+
+The arity shadow $\nu$ is a strong content comparison to the corresponding
+List mixed model; its native witness maps, weights and costs are unchanged.
+Its computation-level law is independent per-position List substitution,
+not a single-output Markov kernel. Erasing causal labels or further
+forgetting cost is a declared additional observation quotient. We neither
+reintroduce retained receipt provenance into this terminal-grade instance
+nor assert that the stronger frame action on this instance solves the
+receipt-presentation obstruction of O2. That obstruction and its exact
+scope remain unchanged.
+
+\section{The operational interpretation}\label{sec:operational}
+The second target is a weighted operational run relation on the raw AST,
+not a distribution obtained by renaming the first interpretation. Write
+\[
+ a\vdash t\Downarrow^{\rho}_{p,c,w}\theta
+\]
+for a completed derivation with raw record $\rho$, weight $p$, cost $c$,
+chronological event word $w$ and returned causal tree $\theta$.
+Words concatenate in the displayed order; $\varepsilon$ is empty.
+Raw records retain the rule constructor, every chosen primitive witness and
+every actual addressed child derivation. Distinct zero-weight derivations
+are not identified. The defining rules are
+\[
+ \frac{}{a\vdash\mathsf{return}(f)
+   \Downarrow^{\mathsf{ret}}_{1,0,\varepsilon}\eta(f(a))},
+ \qquad
+ \frac{z\in W_e(a,u)}
+ {a\vdash\mathsf{op}(e,u)\Downarrow^{(e,z)}_{p_e(z),c_e(z),[\ell_e(z)]}
+       \ell_e(z)(\eta d_1,\ldots,\eta d_n)}.
+\]
+The post-configurations $d_i$ are those selected by $\rho_e(z)$; the
+primitive premise includes its declared token transition. For occurrence
+bind the exact rule is
+\begin{equation}\label{eq:run-bind}
+ \frac{a\vdash t\Downarrow^{\rho}_{p,c,w}\theta
+       \quad \leaf(\theta)=(b_1,\ldots,b_n)
+       \quad (b_i\vdash u_{b_i}\Downarrow^{\rho_i}_{p_i,c_i,w_i}\theta_i)_{i=1}^n}
+ {a\vdash\mathsf{Bind}(t,u)
+       \Downarrow^{(\rho,(\rho_i)_i)}_{p\prod_i p_i,\ c+\sum_i c_i,\ ww_1\cdots w_n}
+       \theta[\theta_1,\ldots,\theta_n]}.
+\end{equation}
+For batch, given the explicit input split $a\mapsto(a_1,\ldots,a_n)$,
+\begin{equation}\label{eq:run-batch}
+ \frac{(a_i\vdash t_i\Downarrow^{\rho_i}_{p_i,c_i,w_i}\theta_i)_{i=1}^n}
+ {a\vdash\mathsf{batch}(t_i)_i
+       \Downarrow^{\mathsf{batch}((\rho_i)_i)}_{\prod_i p_i,\ \sum_i c_i,\ w_1\cdots w_n}
+       \mathsf{Fork}_n(\theta_1,\ldots,\theta_n)}.
+\end{equation}
+The fork is structural and is omitted from the physical-event word; a
+reserve is an explicitly returned child. Operation followed by continuation
+is the corresponding Bind rule. For nullary output the child premises are
+empty, the product is one and the sum is zero. These rules give a precise
+phase-Bind evaluator: evaluate the whole left phase, then its child runs
+in hole order. They can be implemented by a stack and finite queue, but
+no separate unproved small-step equivalence is needed here.
+
+\begin{lemma}[Finite evaluation and bounded token separation]\label{lem:machine}
+Every declared choice in a fixed finite CF-0.1 command has a completed run.
+There are finitely many such derivations, each finite. Every returned token
+occurs at most once and belongs to the initial pool, with its kind justified
+by the declared transitions.
+\end{lemma}
+\begin{proof}
+Induct on the finite command derivation. Return is unique and primitive
+choices form a finite normalized, hence nonempty, set. Bind has finitely
+many left derivations, finitely many holes in each and finitely many child
+derivations by induction. Every selected tuple supplies the rule's
+conclusion, and all derivations arise this way. Batch is a finite product.
+The token claim is the subset argument in Proposition~\ref{prop:retained}:
+children start with disjoint subsets and return only subsets of them.
+Pure maps preserve identities, and primitive kind changes are declared.
+\end{proof}
+These are statements about the mathematical evaluator, not empirical
+promises that an external device or service completes an operation.
+
+\begin{theorem}[Per-command raw run correspondence]\label{thm:runs}
+For each fixed raw command $t$ and input $a$, there is a canonical bijection
+\[
+ \Omega_t(a)\cong\Run(t,a)
+\]
+preserving every addressed primitive sample choice, probability, cumulative
+cost, typed result configurations and causal tree. Consequently all-path
+budget validity agrees in these two interpretations.
+\end{theorem}
+\begin{proof}
+Return has one derivation. Primitive derivations are indexed exactly by
+their selected witnesses. Every Bind derivation has a unique left premise
+and one child premise for each of that premise's actual result holes. Its type tag fixes the continuation; induction gives exactly the
+dependent tuple in~\eqref{eq:raw-composition}. Conversely that tuple
+reconstructs the unique rule instance and its selected premises. Batch
+decomposes uniquely into its ordered child premises.
+These encodings and decodings are inverse. Probability products and cost
+sums are the same; the recorder's tree is exactly the prescribed graft.
+No positivity or support deletion enters the argument, so the last assertion
+also covers zero-weight runs.
+\end{proof}
+
+The theorem is per \emph{raw syntactic command}. It does not identify the
+machine's full chronological observations across the O1 associator.
+For the explicit phase-Bind policy, the two bracketings in
+Section~\ref{sec:scope} can have different chronological logs while their
+causal record agrees. A different machine that first elaborates binds to
+a grafted tree and then uses depth-first evaluation would not have that
+particular phase distinction. We have specified which machine is compared.
+Thus the richer operational family retains schedules and transitions, while
+its projection to the common causal observations is compositional.
+This is a bounded evaluator correspondence, not O5's universal contextual
+adequacy or a physical schedule-independence theorem.
+
+\section{Joint laws and their compositional comparison}\label{sec:comparison}
+Let $\mathcal D_{\mathrm{fin}}X$ denote normalized finite-support real
+probability laws on $X$. At interfaces $A,B$, define the law target by
+\[
+ \mathsf K(A,B)=\Set(A,\mathcal D_{\mathrm{fin}}(\mathbb N^R\times TB)).
+\]
+Throughout the law and cell comparisons, the source is the full
+subcategory of O1 histories whose actual witness costs all lie in
+$\mathbb N^R$. It contains every CF-0.1 interpretation and every native
+arrow between those finite-cost objects. Ambient coefficients of actual
+cost $\infty$ are outside this comparison target; $\infty$ is still
+needed for the rig additive zero and empty-fibre minima. The finite-cost
+subcategory is closed under the finite occurrence operations.
+The typed commands occupy the support-respecting subcollection verified
+above. For a raw history object put
+\begin{equation}\label{eq:law}
+ L(t)(a)=\sum_{h\in\Omega_t(a)}p_t(h)
+                  \delta_{(c_t(h),\theta_t(h))}.
+\end{equation}
+Different raw witnesses can contribute to the same atom. All zero witnesses
+remain on the source, although their terms contribute zero to this law.
+
+If $k\in\mathsf K(A,B)$, $\ell\in\mathsf K(B,D)$ and
+$\leaf(\theta)=(b_1,\ldots,b_n)$, put
+\begin{equation}\label{eq:tree-law}
+ (\ell\star k)(a)=
+ \sum_{(c,\theta)}k(a)(c,\theta)\,
+ \bigl[(c_i,\theta_i)_i\mapsto
+ (c+\textstyle\sum_i c_i,\theta[\theta_1,\ldots,\theta_n])\bigr]_*
+ \left(\bigotimes_{i=1}^n\ell(b_i)\right).
+\end{equation}
+Only finitely many outer and inner atoms occur. Empty leaf lists use the
+unique law on the empty tuple. The unit at $a$ is
+$\delta_{(0,\eta(a))}$. A batch is independent product followed by the
+map summing costs and forming the $\mathsf{Fork}$ tree.
+
+\begin{lemma}[The occurrence law category]\label{lem:law-category}
+Formula~\eqref{eq:tree-law} defines normalized laws and associative unital
+composition. It preserves the typed capability restriction.
+\end{lemma}
+\begin{proof}
+For each outer atom the product has mass one, and outer masses sum to one.
+For three composable laws, enumerate an outer atom, one child atom at every
+actual hole and one grandchild atom at every actual child hole. Both
+bracketings assign to such a choice the product of the same probabilities,
+the sum of the same costs and the same grafted tree. Finite distributivity
+allows regrouping; commutativity of vector addition allows regrouping across
+independent branches. The hole bijection of Lemma~\ref{lem:tree} identifies
+the indexing sets. A Dirac pure hole inserts a singleton choice, establishing
+the unit equations. Disjoint subsets of disjoint input contexts remain
+disjoint under grafting, proving the typing restriction.
+\end{proof}
+This may be viewed as the finite-support computation monad
+$X\mapsto\mathcal D_{\mathrm{fin}}(\mathbb N^R\times TX)$ with the stated
+independent-occurrence multiplication. It is not asserted to be affine or
+Markov; costs and event trees are effects even when the final data object
+is a singleton.
+
+\begin{theorem}[Uniform joint-law preservation]\label{thm:comparison}
+The map $L$ preserves pure units, occurrence composition, separated batch,
+and admitted pure endpoint actions. For every bounded function
+$\varphi:\mathbb N^R\times T|F|\to\mathbb R$,
+\begin{equation}\label{eq:expectation}
+ \int\varphi\,dL(t)(a)
+ =\sum_{h\in\Omega_t(a)}p_t(h)
+                    \varphi(c_t(h),\theta_t(h)).
+\end{equation}
+It is therefore an exact comparison for the joint causal, typed-result and
+cost observation, not merely a terminal-output comparison. On cost-exact
+native cells it maps to equality of laws, and on cost-exact endpoint squares
+it gives the corresponding deterministic pushforward equality.
+\end{theorem}
+\begin{proof}
+Expand the law of~\eqref{eq:raw-composition}. Group the outer histories by
+$(c,\theta)$, and then each child history by its $(c_i,\theta_i)$. Each
+child law is fixed by its actual leaf configuration $b_i$, not by a hidden
+outer witness. Thus the groupings do not change a continuation; finite
+distributivity gives exactly~\eqref{eq:tree-law}. This is the step that
+would fail if a continuation could inspect an erased latent witness.
+Batch is the analogous product regrouping. Return gives the Dirac unit.
+The common triple-choice calculation of Lemma~\ref{lem:law-category}
+proves coherence of these equalities.
+
+For a native cost-exact map $r$, its body equation and exact cost imply
+\[
+ \sum_h p_h\varphi(c_h,\theta_h)
+ =\sum_y\left(\sum_{rh=y}p_h\right)
+                 \varphi(c'_y,\theta'_y)
+ =\sum_y p'_y\varphi(c'_y,\theta'_y).
+\]
+An empty target fibre has probability zero, so causes no problem. For an
+endpoint square use~\eqref{eq:endpoint} to replace the tree by $Tv\theta$;
+the equation becomes
+$(\id\times Tv)_*L(t)(a)=L(t')(u(a))$. Identity and composite endpoint
+maps agree by pushforward functoriality. Equation~\eqref{eq:expectation}
+is the definition of a finite pushforward law, and indicator functions give
+all event probabilities. Framing by fixed ordinary data relabels the same
+leaves, so commutes with these comparisons and their compositions.
+\end{proof}
+The exact-cell statement is a strong comparison on the stated cost-exact
+subcategory, not a claim that every native cost-lowering cell has identical
+cost observations. The source remains category-valued. Passing to a locally
+discrete exact-law target deliberately forgets parallel witness maps and
+noninvertible merges.
+
+\begin{theorem}[Conservative effect extension]\label{thm:extension}
+A conservative signature inclusion commutes with all three interpretations
+on old CF-0.1 commands, up to the stated inclusion of event labels and
+interface presentations.
+\end{theorem}
+\begin{proof}
+At an old primitive all raw witnesses, weights, costs, responses and
+capability transitions agree by the inclusion hypothesis. Return is
+unchanged. Induction on Bind uses the same outer choices and the same
+actual leaf-indexed continuation choices; the tree inclusion commutes with
+grafting. Batch uses the same split, fork and product. These equalities
+prove the retained assertion. The machine has the same transitions under
+renaming, proving the operational assertion. Finite pushforward then proves
+the law and QBS assertions. Adding a continuous primitive does not change
+this induction for old finite terms, even when its new interpretation does
+not belong to the finite raw-history target.
+\end{proof}
+
+\section{The image of the full native cell class}\label{sec:cells}
+For laws $k,k'$ on $\mathbb N^R\times TB$, write $k\succeq k'$ if they
+have a finite coupling $\gamma$ supported on pairs
+\[
+ ((c,\theta),(c',\theta')),
+ \qquad\theta=\theta',\quad c\ge c'.
+\]
+Equal causal trees include equal typed leaves. This relation compares cost
+refinement under the retained public state, not arbitrary hidden-state or
+trace-changing simulations.
+
+\begin{theorem}[Native monotone-coupling comparison]\label{thm:coupling}
+Every body-preserving native joint-rig cell between finite-cost objects
+determines $L(t)\succeq L(t')$.
+The relation is a preorder, and occurrence composition and separated batch
+are monotone for it. Thus the full native cell class between finite-cost source objects has
+a comparison to the locally preordered law target. A bounded function monotone in cost with the
+tree held fixed has target expectation at most source expectation.
+In particular
+\[
+ \Pr_{L(t')}[c\le b]\ \ge\ \Pr_{L(t)}[c\le b].
+\]
+\end{theorem}
+\begin{proof}
+For a native map $r$ take the graph coupling
+\begin{equation}\label{eq:graph-coupling}
+ \gamma=\sum_h p_h\,
+ \delta_{((c_h,\theta_h),(c'_{rh},\theta'_{rh}))}.
+\end{equation}
+Its source marginal is immediate; its target marginal is the pushforward
+weight condition~\eqref{eq:native}. The body equation and cost inequality
+give its support condition, including all source choices.
+
+Reflexivity uses the diagonal coupling. Given couplings $\gamma$ from
+$k$ to $k'$ and $\delta$ from $k'$ to $k''$, form the three-variable law
+\[
+ \lambda(x,y,z)=
+ \begin{cases}
+ \gamma(x,y)\delta(y,z)/k'(y),&k'(y)>0,\\
+ 0,&k'(y)=0.
+ \end{cases}
+\]
+Zero middle mass forces both relevant marginals to be zero. Summing over
+the middle point gives a coupling from $k$ to $k''$; equality of trees and
+transitivity of coordinatewise cost order prove its support condition.
+This proves transitivity without a chosen disintegration.
+
+For composition, coupled prefix atoms have the same tree and hence the
+same ordered list $b_i$ of continuation-visible inputs. Choose a continuation
+coupling at each common $b_i$ and multiply these finite couplings with the
+prefix coupling. Graft equal paired trees and add the paired costs.
+The resulting marginal laws are~\eqref{eq:tree-law}, by finite Fubini,
+and addition preserves the inequalities. For a finite-support prefix only
+finitely many such couplings need be selected. Batch is the same argument
+with a product over its fixed addresses. Integration of the pointwise
+monotone inequality proves the observation claim. The budget indicator is
+antitone in cost, giving the stated reverse inequality.
+\end{proof}
+This coupling result is for the finite-support core only. It does not
+assert existence of a measurable family of couplings for arbitrary QBS
+kernels from merely pointwise coupling existence.
+For endpoint squares the same construction uses the relation
+$Tv\theta=\theta'$ and source reindexing by $u$; composed endpoint maps
+compose these transported equalities. No comparison that changes or hides
+continuation-visible state is covered without an additional compatibility
+hypothesis.
+
+A one-witness family of probability one and cost $2$ maps natively to the
+same body with cost $1$. The exact joint laws are different Dirac laws.
+Consequently there is no extension of the exact-cost law assignment sending
+\emph{all} native cells to equalities in a locally discrete exact-law target.
+Both costs can be supplied by valid operations with the same event and
+post-configuration, since cost is an external annotation, not an unmentioned
+remaining-budget field. If a richer signature exposes exact remaining budget
+and enforces conservation, body equality can instead force equal cost; that
+is an additional restriction, not a contradiction of this example.
+
+\begin{proposition}[All-path transport needs raw coverage]
+\label{prop:coverage}
+If a native carrier map is surjective, an all-path upper budget for its
+source is an all-path upper budget for its target. If it is also cost-exact,
+the two all-path budget properties are equivalent. Raw-surjective native
+maps remain so under occurrence composition. Without raw coverage,
+Theorem~\ref{thm:coupling} guarantees the almost-sure comparison only.
+\end{proposition}
+\begin{proof}
+Lift each target witness to a source witness and use its nonincreasing
+cost. In the cost-exact case every source cost is a target cost as well,
+giving the reverse implication. For a target composite witness, lift its
+outer witness, then each actual addressed child witness; the body equation
+identifies the necessary leaf inputs. This constructs a source preimage.
+A positive target mass forces at least one source preimage by
+\eqref{eq:native}, but zero target masses need not. Thus probability
+marginals alone do not supply the missing raw coverage.
+\end{proof}
+These are mathematical comparison results. They are not O5 contextual
+replacement for clients that inspect hidden histories, change the event
+interface, share resources or add undeclared callbacks.
+
+\section{The QBS Markov interpretation}\label{sec:qbs}
+
+\subsection{Objects probability and admitted stochastic maps}
+Fix nested universes and take small quasi-Borel spaces in the chosen universe.
+A quasi-Borel space is a set $X$ equipped with random elements
+$M_X\subseteq\Set(\mathbb R,X)$ containing constants and closed under Borel
+precomposition and countable Borel pasting. A QBS map preserves these random
+elements. We use the normalized probability construction $P$ and the
+Kleisli category
+\[
+ \mathcal M_Q=\operatorname{Kl}(P),\qquad
+ \mathcal M_Q(X,Y)=\QBS(X,PY).
+\]
+The imported baseline is the strong commutative probability monad of
+Heunen--Kammar--Staton--Yang~\cite{QBS2017}, Theorem 21 and Proposition 22.
+Its probabilities are laws of random elements, with equality determined by
+integration; on standard-Borel objects it recovers ordinary probability
+kernels. The QBS structure on $PX$ is part of that construction, not an
+arbitrarily assigned measurable structure. In particular we do not admit
+every set function assigning measures on the induced sigma algebra.
+
+\begin{proposition}[The selected normalized category is Markov]
+\label{prop:markov}
+Independent product of probabilities gives the tensor on $\mathcal M_Q$.
+The pure diagonal and terminal maps supply a Markov category structure.
+\end{proposition}
+\begin{proof}
+Strong commutativity makes the Kleisli tensor associative and symmetric,
+with coherent unit, and makes tensor composition bifunctorial. A normalized
+probability on $1$ is unique, so $P1\cong1$ and $1$ is terminal in the Kleisli
+category. Therefore discard is natural. Write $J_Qf=\eta f$. The comonoid
+laws for $J_Q\Delta_X$ and $J_Q!_X$ are the images of the cartesian diagonal
+and terminal-map laws in QBS; the pure functor preserves composition and
+these product structural maps. These are precisely the required compatible
+commutative comonoids with natural discard. No positivity, causality,
+conditioning or disintegration was used.
+\end{proof}
+Replacing normalized $P$ by an unnormalized scoring or general measure
+construction changes this argument: total mass need not be $1$, and discard
+need not be natural. Such an extension is not silently included in
+$\mathcal M_Q$.
+
+\subsection{Deterministic interfaces without capability copying}
+For every QBS map $f:X\to Y$,
+\begin{equation}\label{eq:deterministic}
+ \Delta_Y J_Qf=(J_Qf\otimes J_Qf)\Delta_X,
+ \qquad !_YJ_Qf=!_X.
+\end{equation}
+Indeed both sides of the first equation at $x$ are
+$\delta_{(f(x),f(x))}$, and the second is the unique law on $1$.
+Thus $J_Q$ factors through $\Det(\mathcal M_Q)$.
+Our \emph{actual} open-system interface functor is
+\begin{equation}\label{eq:interface-functor}
+ C_{\mathrm{cap}}\xrightarrow{U}\FinSet
+ \longrightarrow\mathbf{SB}\longrightarrow\QBS
+ \xrightarrow{J_Q}\Det(\mathcal M_Q).
+\end{equation}
+Here $C_{\mathrm{cap}}$ is the restricted capability-aware category frozen in
+Section~\ref{sec:freeze}. The functor $U$ forgets the capability-transport
+certificate, not the typing conditions on the source. Only its admitted
+maps are interface maps. The target's deterministic diagonal on the
+underlying set of configurations does \emph{not} add a source-level diagonal
+on an executable capability context. Copying a description, copying ordinary
+data, and possessing two independently usable tokens are different claims.
+
+\begin{proposition}[Auxiliary standard-Borel identification]
+\label{prop:sb-det}
+For standard-Borel $X,Y$, every copy-preserving kernel $K:X\to PY$ is
+$J_Qf$ for a unique measurable $f:X\to Y$. Thus the ambient standard-Borel
+pure category identifies with the deterministic arrows between these objects.
+This does not make~\eqref{eq:interface-functor} full.
+\end{proposition}
+\begin{proof}
+For every Borel $A\subseteq Y$, equality of the two copying laws on
+$A\times A$ gives $K_x(A)=K_x(A)^2$. Thus $K_x$ is a zero--one probability
+measure. Choose a countable separating family of Borel subsets of $Y$.
+For each set choose its full-measure side. Their countable intersection has
+measure one and contains at most one point, hence exactly one point $f(x)$.
+Therefore $K_x=\delta_{f(x)}$. For every Borel $A$,
+\[
+ f^{-1}(A)=\{x:K_x(A)=1\}
+\]
+is measurable, so $f$ is measurable. Separation also proves uniqueness.
+For empty objects both categories have the same vacuous or nonexistent
+arrows. Restricted capability maps may exclude many such measurable $f$,
+and no fullness of this restricted inclusion is inferred.
+\end{proof}
+
+This identification is deliberately not asserted on all QBS. It is possible
+for distinct pure maps to become equal under $J_Q$. For example give a
+two-point set $Z$ every set map $\mathbb R\to Z$ as a random element.
+A subset of $Z$ is measurable only if every such inverse image is Borel;
+thus its induced sigma algebra is indiscrete. All represented probabilities
+on $Z$ are equal, so the two different maps $1\to Z$ have the same Dirac
+image. Calling $J_Q$ an embedding without a qualification would be false.
+For a later higher-order pure universe, point-separated QBS are a useful
+restriction: products and coproducts are separated, and functions into a
+separated codomain are separated by evaluation at a point followed by a
+separating observable. This gives faithfulness on the generated separated
+pure universe, but not an identification with all deterministic arrows.
+
+\subsection{Actual interpretation of the frozen fragment}
+Finite tagged interface carriers have their discrete QBS structure. The
+finite or countable event alphabet and finite trees make $T|F|$ countable
+in the common core; $\mathbb N^R\times T|F|$ is therefore standard Borel.
+All frozen primitive tables define QBS maps. The actual interpretation is
+\[
+ K_t:|E|\longrightarrow P(\mathbb N^R\times T|F|),\qquad
+ K_t(a)=\sum_{\omega\in\Omega_t(a)}
+       p_t(a,\omega)\delta_{(c_t(a,\omega),\theta_t(a,\omega))}.
+\]
+A tree includes its ordered typed result leaves. This is a probability of
+\emph{joint} causal observations and costs, not an output-only marginal.
+
+There is an important typing distinction. These computations are not
+ordinary arrows $|E|\to P|F|$ composed by a single ordinary Kleisli bind.
+If $\theta$ has leaves $b_1,\ldots,b_n$, first traverse those actual leaves
+with independent kernels $K_u(b_i)$, then graft the returned trees into
+$\theta$ and add their costs to the prefix cost. This uses normalized $P$,
+its independent product and deterministic grafting inside $\mathcal M_Q$.
+The resulting occurrence-computation category has the composition
+\eqref{eq:tree-law}; its identity is a Dirac law at the zero-cost one-hole
+tree. It is not asserted that this \emph{effect-enriched computation
+category} is itself the ambient Markov category. For example, retaining
+event trees after returning to a singleton does not give a terminal tensor
+unit. The deterministic-interface requirement concerns $\mathcal M_Q$ and
+the functor~\eqref{eq:interface-functor}.
+
+For completeness, the selected construction extends from finite laws to
+a genuine QBS computation monad, rather than merely an analogy. Put
+$C=\mathbb N^R$ with its discrete QBS structure and commutative addition,
+and $U(X)=C\times TX$. Its unit is $(0,\eta x)$; multiplication adds
+all root and inserted-tree costs and grafts the trees. The addressed hole
+bijection and commutative addition prove its monad equations. With the
+fixed discrete event signature, $T$ is a countable coproduct of finite
+powers for the common signature; the same construction is a QBS functor.
+
+\begin{proposition}[The selected QBS execution monad]\label{prop:qbs-execution}
+Independent sampling at the actual holes defines a distributive law
+$\lambda:UP\Rightarrow PU$ and hence a monad $K=PU$ on QBS. Its Kleisli
+composition is exactly independent traversal, grafting and cost addition.
+Its finite-support restriction is~\eqref{eq:tree-law}.
+\end{proposition}
+\begin{proof}
+For a fixed tree shape with $n$ holes, strength and commutativity of $P$
+give the QBS map $(PX)^n\to P(X^n)$ of independent product. Push this
+law into that fixed shape, preserving its cost coordinate. Coproduct
+elimination over shapes defines $\lambda_X:U(PX)\to P(UX)$.
+Naturality is naturality of product and deterministic pushforward.
+
+For the two unit equations, a pure one-hole tree gives the same sampled
+value with zero cost, while a tree of Dirac holes gives a Dirac tree.
+For compatibility with $U$ multiplication, the holes of the substituted
+tree are the addressed outer/inner hole pairs. Taking their joint
+independent product in one step is the iterated finite independent product;
+the grafted tree and accumulated costs are equal. For compatibility with
+$P$ multiplication, independently integrating a mixture at each of finitely
+many holes agrees with integrating the product of these mixtures. This is
+the commutative-monad Fubini equation, iterated finitely, with the empty
+case the unit law. These are the four distributive-law equations. They
+yield the monad $PU$ and the claimed multiplication. Thus the selected
+interaction is derived from the known probability monad and the explicit
+polynomial holes; an arbitrary effect-interaction law was not assumed.
+\end{proof}
+The pure capability functor also has a separate execution image
+$f\mapsto[a\mapsto\delta_{(0,\eta(f(a)))}]$ in $\operatorname{Kl}(K)$.
+It is distinct from its image $J_Qf$ in the deterministic subcategory of
+$\mathcal M_Q=\operatorname{Kl}(P)$. In particular $K1$ has different
+costs and causal shapes, so $\operatorname{Kl}(K)$ is generally not Markov
+with this tensor unit. Affineness of $P$ does not imply affineness of $K$.
+
+The indexed representation must distinguish source assembly from target
+forgetting. For a finite source family $A=\coprod_s A_s$, kernels
+$A\to PY$ and families $A_s\to PY$ correspond inversely by coproduct
+assembly and restriction along the source injections. If the target is a
+response-indexed family $D_{s,b}$, perform the same construction with the
+\emph{explicitly tagged} total target $\coprod_bD_{s,b}$, retaining its
+chosen factorization. A primitive's typed specification supplies such a
+lift. Its map into $T|F|$ packages the response as its event and hole
+configurations, and this map need not be injective: two distinct responses
+can have the same causal tree and post-configurations.
+
+Accordingly the inverse representation statement is for the explicitly
+tagged kernels, or for a kernel \emph{together with its specified lift},
+not for a bare law merely supported on the image of a post-family. Pushing
+that lift into $T|F|$ may forget a redundant response tag. It cannot recover
+that tag, raw witnesses or zero-weight branches. The latter remain checked
+witness by witness in the source. Occurrence composition is preserved
+because each continuation uses precisely its actual typed hole
+configuration; any response information it needs has already been
+included there. Thus an $L$ hole is never passed to an $H$ continuation,
+without claiming that a forgotten factorization can be reconstructed from
+an output distribution or an almost-sure support condition.
+
+\subsection{Dependent probability beyond finite tags}
+The relevant strongest dependent baseline is already available.
+Ahman--Kammar--M\o gelberg~\cite{QBF2026} construct quasi-Borel families with
+a split fibration equivalent to the QBS codomain fibration (Theorem 13),
+full comprehension (Corollary 14), dependent sums and products, and
+commutative fibred probability and distribution monads (Theorem 33).
+Their random-section structure across fibres is essential; a naive subspace
+of probabilities on the total space concentrated on a fibre is not the
+stated fibred construction. Their conditional-expectation theorem
+(Theorem 41) has separability hypotheses. These are existing results,
+not contributions claimed by this dossier. We use the final LICS 2026
+article 4 and its numbering, not the earlier manuscript's article 63 label.
+
+Here is a direct conservative continuous extension with its own proof.
+Let $t\in(0,1]$ and $I_t=[0,t]$. Put
+\[
+ E=\{(t,y):0<t\le1,\ 0\le y\le t\},\qquad
+ F(t,u)=(t,tu),\quad u\in[0,1].
+\]
+The subset $E\subseteq\mathbb R^2$ is standard Borel, and $F$ is Borel.
+Hence $t\mapsto F(t,-)_*\operatorname{Unif}[0,1]$ is a kernel into $E$,
+concentrated in the fibre $I_t$. For example, for Borel $A\subseteq E$,
+its probability is $\int_0^1\mathbf1_A(t,tu)\,du$, a measurable function
+of $t$. Sampling $t$ first and binding this kernel generates $(t,y)$
+without a posterior or a chosen conditional distribution. A declared
+unary event wraps $(t,y)$ in one typed hole, with zero cost and unchanged
+(or explicitly consumed) input tokens, giving an actual $K$-primitive.
+The available next type really is $I_t$, not simply $\mathbb R$ with a
+changed parameter. The same construction is a probability-family section
+in the cited QBF setting.
+
+A second explicit extension changes dimension, capability kind and actual
+hole arity. A Borel test $t<1/2$ selects one real sample and emits a unary
+$L$ event with one hole carrying the pre-existing token $\alpha$.
+Otherwise it independently samples two real coordinates and emits a binary
+$H$ event with ordered holes carrying respectively $\beta$ and $\gamma$.
+The unused tokens from the fixed input pool are explicitly disposed of,
+and each required kind change is declared. The real coordinates can have
+uniform or Gaussian laws. The total ordinary value family is
+$\mathbb R+\mathbb R^2$, but the actual $K$ result packages the first
+summand as one hole and the second as two holes, not a single vector hole
+with an unexamined two-token context. The piecewise sampling and event
+packaging are Borel; the continuation at each actual hole has its specified
+data and capability type. Thus Proposition~\ref{prop:qbs-execution}
+composes this extension with its typed occurrence continuations.
+
+\begin{proposition}[Exact boundary of the finite history target]
+\label{prop:atomless}
+The continuous uniform primitive above is not interpretable by the frozen
+finite raw-history target with exact output-law preservation.
+\end{proposition}
+\begin{proof}
+A finite witness carrier has a finite image $S$ under any output map, and
+its normalized law assigns probability one to $S$. A nondegenerate uniform
+law assigns zero to every finite set. These laws cannot agree.
+\end{proof}
+The monotone-coupling theorem above remains a finite-core theorem. In an
+arbitrary continuous extension, pointwise existence of couplings is not
+a measurable coupling family; such a family must be supplied or separately
+constructed before a continuous analogue is asserted. No measurable
+selection or disintegration follows from finite gluing.
+
+This is a proved boundary of this \emph{finite} target, not a claim that all
+history semantics fail continuously. A measure-bearing history extension
+would require different context data and an additional bridge to O1.
+The continuous operations are a named signature extension, not part of the
+largest three-way common fragment.
+
+\subsection{Observing values is not conditioning}
+The frozen primitive returns an actually sampled result, after which its
+typed continuation executes. It does not infer a posterior by conditioning
+on an event. A posterior operation would need a separate type, chosen
+normalization and hypotheses, and cannot be introduced merely by calling
+forward bind ``observation.'' No disintegration is assumed here, and the
+conditional-expectation theorem just cited does not supply every arbitrary
+null-event conditional kernel.
+
+The ambient QBS model also distinguishes the objects
+\[
+ P(Y^X),\qquad(PY)^X,\qquad P((PY)^X).
+\]
+Respectively they describe a sampled reusable function, a kernel and a
+sampled kernel. A randomization existence or quotient statement is not a
+chosen inverse identifying their repeated-call behavior. As a finite
+sanity check, sample a fair bit once and evaluate the resulting constant
+function twice: the outputs agree with probability one. Two fresh fair
+kernel calls agree with probability $1/2$. Their single-call marginal is
+the same. These calculations are an extension discriminator, not a claim
+that CF-0.1 has already supplied O4's higher-order language, callback rules,
+or open-service equivalence theorem.
+
+Finally, the full QBS Kleisli model is neither positive nor causal in the
+information-flow sense proved in~\cite{Dilations}, Proposition 3.3 and
+Corollary 3.4. The higher-order random-singleton phenomenon prevents importing
+deterministic-marginal independence without its hypotheses. This does not
+mean negative numerical probabilities, failure of the Markov axioms, or
+failure of the finite adaptive semantics. The standard-Borel restriction
+avoids that particular pathology. Our positive O3 comparison uses none of
+those extra information-flow axioms.
+
+\section{Shared adaptive tests and exact losses}\label{sec:tests}
+
+\subsection{A genuinely mixed adaptive allocation}
+The input context has exactly the three token identities
+$\{\alpha,\beta,\gamma\}$. An allocation primitive has two positive raw
+branches. It either retains $\alpha$ as an $L$ read capability and explicitly
+disposes of $\beta,\gamma$, or retains $\beta,\gamma$ as two separated $H$
+read capabilities and disposes of $\alpha$. Any kind changes are declared
+by this primitive. No new identity is created. The model table is
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Operation&Post-configuration holes&Probability&Cost\\
+\midrule
+Allocate $L$&$[L_\alpha]$&$1/3$&$(1,0)$\\
+Allocate $H$&$[H_{1,\beta},H_{2,\gamma}]$&$2/3$&$(1,0)$\\
+Read $L_\alpha$&$[\mathsf{Bool}(b)]$&$\Pr(b=1)=3/4$&$(1,0)$\\
+Read $H_{1,\beta}$&$[\mathsf{Bool}(b)]$&$\Pr(b=1)=1/2$&$(0,1)$\\
+Read $H_{2,\gamma}$&$[\mathsf{Bool}(b)]$&$\Pr(b=1)=2/3$&$(0,1)$\\
+\bottomrule
+\end{tabular}
+\end{center}
+Each read consumes exactly its own token; Boolean result configurations
+have empty capability contexts. The two allocation event labels have
+arities one and two. Read labels have arity one. The single continuation
+family on the tagged post-interface chooses the correct read at each
+actual hole; the $H$ branch invokes two independent reads at separate
+addresses. This is not a fixed context with a changed numeric parameter.
+
+Let $A$ be allocation and $R$ this continuation family. The common term
+$A;R$ has the six histories below in \emph{each} interpretation, not six
+separately chosen model examples.
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Raw history&Probability&Cost&Ordered final data\\
+\midrule
+$L0$&$1/12$&$(2,0)$&$[0]$\\
+$L1$&$1/4$&$(2,0)$&$[1]$\\
+$H00$&$1/9$&$(1,2)$&$[0,0]$\\
+$H01$&$2/9$&$(1,2)$&$[0,1]$\\
+$H10$&$1/9$&$(1,2)$&$[1,0]$\\
+$H11$&$2/9$&$(1,2)$&$[1,1]$\\
+\bottomrule
+\end{tabular}
+\end{center}
+The causal bodies are
+\[
+ a_L(r_L(\eta b)),\qquad
+ a_H(r_{H_1}(\eta b_1),r_{H_2}(\eta b_2)).
+\]
+Both the context fibre and the number of continuation occurrences change.
+A raw witness includes its selected branch and child samples; the operational
+run applies the declared token transitions; the QBS target assigns exactly
+these masses to the same causal/cost atoms.
+
+For the \emph{observation} $q=$ OR of the final bit list,
+\[
+ \Pr[q=1]=1-\frac1{12}-\frac19=\frac{29}{36}.
+\]
+This does not insert an unsupported whole-list consumer into the language.
+All paths satisfy budget $(2,2)$, but the probability of cost at most $(2,1)$
+is only $1/3$. The expected cost is $(4/3,4/3)$; an expectation is not a
+worst-case bound. Neither a pure data diagonal nor a stochastic forecast
+can manufacture the separated $\beta,\gamma$ capabilities from
+$\alpha$.
+
+\subsection{Independent occurrences and stored data}
+With empty capability contexts, a fair-bit primitive and a separated
+$\mathsf{Fork}_2$ batch of two calls produce each output pair with
+probability $1/4$, hence equal outputs with probability $1/2$.
+A different CF-0.1 term first samples one bit and then supplies that ordinary
+data value to both empty-context children of a deterministic fork. It
+returns $00$ or $11$ with probability $1/2$ each, so equality has probability
+one. The children copy data, not a capability or a sampler invocation.
+Their one-output marginals agree but their pair laws do not. This finite
+shared-versus-rerun test needs no higher-order type and does not discharge
+O4's additional reusable-function, kernel and service typing obligations.
+
+\subsection{Nonfaithfulness and deliberate observation quotients}
+Two raw witnesses of weight $1/2$ with the same event tree, cost and result
+have the same joint law as one witness of weight one. Their merge is native
+and cost-exact but not invertible. On the two-witness object the identity
+and swap are distinct native endomorphisms with equal law images. A native
+map from the one-witness object to the two-half object cannot split its
+unit mass, even though the target equality law has an identity arrow.
+Thus the exact-law comparison is not locally faithful, locally full, or
+invertibility-reflecting. We do not infer a retained-category equivalence
+from equality of observations.
+
+Two operations can also have the same final ordinary data distribution but
+different event labels, costs or final capability tags. Their full joint
+laws differ; an output-only observation deliberately forgetting those fields
+can identify them. QBS is not intrinsically blind to traces or resources:
+the chosen codomain and observation map determine what is retained.
+
+Taking $\nu:T\to\List$ forgets causal structure but preserves ordered
+leaves, and hence mixed occurrence composition. Collecting event labels
+as a multiset and retaining the leaf list gives a finer optional shadow
+into $\operatorname{Bag}(\mathcal E)\times\List$. Grafting unions these
+commutative bags and flattens the lists. These comparisons are valid for
+the frozen client discipline: continuations inspect only leaf data.
+If cost, past event information or latent state has explicitly been returned
+\emph{as leaf data}, an allegedly compatible projection must retain that
+data or restrict its clients. Arbitrary marginalization is not an
+open-system equivalence.
+
+\subsection{Zero paths and the exact repair}
+Choose two primitive implementations with the same unary public event
+$e_1$, the same typed output hole $\mathsf{ok}$, and empty input/output
+capability contexts. Implementation $P$ has one raw witness of weight one
+and cost $1$. Implementation $Q$ has that witness and an additional witness
+of weight zero and cost $100$, with the same public tree
+$e_1(\eta\mathsf{ok})$. These can be distinct operation names in one finite
+signature. Each model interprets each operation with the \emph{same}
+respective table; the comparison does not change a primitive's meaning
+between targets. Both are well-formed unbudgeted commands.
+
+\begin{theorem}[All-path information cannot be recovered from the law]
+\label{thm:zero-loss}
+The full joint causal/cost laws of $P,Q$ agree, but
+$\AllBudget_1(P)$ holds and $\AllBudget_1(Q)$ fails. Consequently no predicate
+of that probability law alone both preserves and reflects all-path budget
+validity on CF-0.1. Almost-sure budget validity is preserved and reflected
+by $L$; all-path validity implies it but is not reflected.
+\end{theorem}
+\begin{proof}
+The extra summand in~\eqref{eq:law} is zero, so both laws are the unit mass
+at $(1,e_1(\eta\mathsf{ok}))$. The zero-weight witness of $Q$ nevertheless
+has cost $100$, violating the all-path bound. Any predicate of the equal
+laws has the same truth value and therefore cannot characterize these two
+different all-path answers. Almost-sure validity is exactly the equation
+$L(t)(\{(c,\theta):c\le b\})=1$, which is unaffected by the comparison.
+\end{proof}
+The inclusion of $P$'s raw carrier into $Q$'s is a non-surjective cost-exact
+native arrow: the new target fibre has mass zero and its empty-source
+minimum is $\infty\ge100$. This also witnesses the necessity of the coverage
+qualification in Proposition~\ref{prop:coverage}.
+
+There are three precise repairs, not one undocumented change of meaning.
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item Require strictly positive weight on \emph{every raw primitive witness}.
+Every finite run then has positive product weight, so a violating raw path
+has positive probability. Thus all-path and almost-sure budget validity
+coincide in this restricted finite fragment, including nullary products.
+Merely discarding zeros after interpretation changes the raw model and is
+not the same restriction.
+\item Retain a raw path component alongside the probability law and evaluate
+the universal budget predicate on it. This preserves the distinction rather
+than pretending to reconstruct it.
+\item Explicitly choose almost-sure safety as the requested property. That
+is weaker than the original all-path statement and must be named as such.
+\end{enumerate}
+
+For general retained costs the native certificate has a direct form.
+On a fixed witness carrier with its fixed probabilities, replace each cost
+by a constant vector $b$. The identity-carrier map from this constant-budget
+family to the actual family exists iff $b\ge c_h$ for all $h$.
+The least finite budget is the coordinatewise maximum, not the tropical
+minimum. In occurrence bind, a prefix bound plus the sum of the bounds at
+its actual continuation holes is sufficient; a uniform bound takes the
+coordinatewise maximum over all prefix histories. Child bounds must be
+valid uniformly over latent histories giving the same continuation-visible
+input. Independent batch adds child bounds and still requires the separate
+token split.
+
+\section{Candidate comparison and acceptance boundary}\label{sec:acceptance}
+
+\begin{longtable}{@{}p{.20\linewidth}p{.25\linewidth}p{.25\linewidth}p{.22\linewidth}@{}}
+\toprule
+Candidate&Actual interpretation&Retained distinctions&Exact limitation\\
+\midrule\endhead
+O1 retained histories&Joint augmented probability/cost families with
+causal-tree bodies; occurrence crossing and grafting.&Raw witnesses,
+zero branches, native cells, costs and typed causal trees.&Finite histories;
+no atomless law in this target, and no physical-execution inference.\\
+Typed operational runs&Weighted return/primitive/Bind/batch derivations on
+raw commands, with actual token transitions.&All declared paths,
+chronological diagnostics, causal record and resource demands.&Raw chronology
+does not descend through mixed associativity; the common observation is
+its causal projection.\\
+QBS probability&Normalized $P$ with explicit independent leaf traversal and
+grafting; finite core plus stated continuous extension.&Joint laws of
+causal trees, typed leaves and costs; selected higher-order objects exist
+in the ambient theory.&Loses raw multiplicity and zero paths; full native
+cost cells give couplings, not exact-law equality.\\
+\bottomrule
+\end{longtable}
+The first two are extensionally matched at the common causal observation by
+a proved run correspondence. They are not artificially advertised as
+incomparable expressive universes. The operational relation supplies the
+execution, token and universal-path discipline; the retained categorical
+model supplies native cells and compositional mixed structure; QBS supplies
+an extensional law target and a genuine continuous extension. Their explicit
+losses and bridges, rather than a ranking, are the comparison.
+
+\begin{longtable}{@{}p{.34\linewidth}p{.60\linewidth}@{}}
+\toprule
+O3 acceptance item&Evidence and precise status\\
+\midrule\endhead
+Same frozen effectful language&Section~\ref{sec:freeze} fixes CF-0.1 before
+comparison, including operation signatures, result-dependent tree holes,
+capability rules and observations. This newly closes only the relevant O0
+prerequisite.\\
+At least two actual interpretations&Proposition~\ref{prop:retained},
+Theorem~\ref{thm:runs} and Section~\ref{sec:qbs} construct three on the same
+arbitrary admitted finite signature, not just a pure fragment.\\
+Nontrivial adaptive benchmark&Section~\ref{sec:tests} changes from one $L$
+hole to two separated $H$ holes, executes the matching continuations and
+computes exact weights, costs and observation probability $29/36$.\\
+Composition and controlled loss&Theorem~\ref{thm:comparison} proves joint
+law preservation; Theorem~\ref{thm:coupling} treats all native cost cells;
+Theorem~\ref{thm:zero-loss} proves the raw-path obstruction and repairs.\\
+Deterministic QBS interfaces&Propositions~\ref{prop:markov} and
+\ref{prop:sb-det}, and~\eqref{eq:interface-functor}, separate normalized
+Markov structure, ambient deterministic maps and admitted capability maps.\\
+Dependent QBS feasibility&Explicit finite tagged interpretation and the
+continuous interval/dimension extensions; the final 2026 QBF construction
+is credited with its actual dependent and conditional-expectation scope.\\
+Effect extensions&Theorem~\ref{thm:extension} proves old-term preservation;
+Proposition~\ref{prop:atomless} proves why the continuous extension is not
+silently claimed by the finite history target.\\
+Integration with O1 and O2&The joint rig and tree content are verified O1
+inputs. Full ordinary-data framing on this terminal-grade branch and its
+law compatibility are stated without enlarging receipt-specific claims.\\
+\bottomrule
+\end{longtable}
+
+This is a positive O3 package offered for acceptance at the stated finite
+core and extension boundaries. It does not complete the expanded contract.
+In particular:
+\begin{itemize}
+\item O4 still requires its full typing/substitution and semantic-soundness
+metatheory, admitted higher-order interfaces and evaluation rules, and the
+controlled procedure/kernel/service discriminator. Its extensions must
+embed CF-0.1 conservatively rather than change these tested terms.
+\item O5 still requires the contracted contextual replacement/refinement
+result at a named observation level. Our finite coupling theorem and raw
+run correspondence do not quantify over arbitrary open clients.
+\item O6 still requires full application sheets and interpretations. The
+allocation fixture is mathematical evidence, not a claim of laboratory,
+robotic or software deployment safety. No recovery operation is used or
+required by the numerical-cost control.
+\item General recursion, unbounded concurrency, feedback, arbitrary
+conditioning, fresh capability generation and a universal kernel-to-random-
+function inverse remain outside this dossier. Any enlargement must state
+its own typing, existence and coherence hypotheses.
+\end{itemize}
+The construction uses established finite probability, free polynomial
+monads and QBS machinery. Its project-specific increment is the exact
+shared typed interpretation and the preservation/loss ledger inside the
+contracted O1/O2 spine. No historical novelty or priority claim follows
+from the source review or the regression counts.
+
+\appendix
+\section{Checks and reproducibility}\label{app:checks}
+The source-and-check bundle contains the standalone TeX source, standard-
+library scripts, their recorded results, a README and a checksum manifest.
+It excludes private working notes, superseded syntax drafts and source
+PDFs. No TeX engine was run; no compiled PDF or visual-layout review is
+claimed.
+
+\texttt{check\_o3\_shared\_models.py} computes the adaptive six-history
+fixture with exact rational arithmetic, checks mixed tree associativity
+on finite generated instances including raw zeros, exercises nullary and
+binary Fork batches, distinguishes the two chronological phase schedules,
+and checks the zero-path obstruction and native-cost coupling marginals
+and composition. These are finite regressions, not proofs for arbitrary
+signatures, real weights, QBS objects or capability type systems.
+
+\texttt{check\_tex\_source.py} checks source groups and environments,
+unique labels, resolved internal references and bibliography keys,
+mathematical delimiter counts and required scope safeguards. This catches
+transcription errors, not mathematical gaps or TeX layout defects.
+The universal statements rest on the displayed proofs and the cited
+imported hypotheses. The user's permission for uncompiled TeX is respected.
+
+\begin{thebibliography}{99}
+\bibitem{Contract}
+\emph{Expanded Research Contract Version 0.1}. Project source,
+1 November 2026, O0 and O3--O6.
+\texttt{Expanded\_Research\_Contract\_v0\_1.tex}.
+
+\bibitem{Feasibility}
+\emph{O1 Feasibility and Scope Decision}. Project source,
+1 November 2026. Explicit non-freeze of language, observations and semantics.
+\texttt{O1\_Feasibility\_and\_Scope\_Decision.tex}.
+
+\bibitem{O1}
+\emph{General Independent Interaction Criterion}. Project proof dossier,
+1 November 2026. Augmented rig families, occurrence displays, terminal-grade
+polynomial content, retained cells and operational fixtures.
+\texttt{General\_Independent\_Interaction\_Criterion.tex}.
+
+\bibitem{O2}
+\emph{External Framing and Representation Comparison}. Project proof dossier,
+1 November 2026. Terminal-grade and constant-polynomial framing, arity shadows,
+finite law comparisons and receipt-specific limitations.
+\texttt{External\_Framing\_and\_Representation\_Comparison.tex}.
+
+\bibitem{QBS2017}
+C. Heunen, O. Kammar, S. Staton and H. Yang.
+\emph{A Convenient Category for Higher-Order Probability Theory}.
+LICS 2017, pp. 1--12. Definitions 7 and 10--11, Theorem 21,
+Proposition 22 and the scoped randomization result Theorem 26.
+\url{https://www.cs.ox.ac.uk/people/samuel.staton/papers/lics2017-qbs.pdf}.
+
+\bibitem{QBF2026}
+D. Ahman, O. Kammar and R. E. M\o gelberg.
+\emph{A Convenient Fibration for Dependently-Typed Probability Theory}.
+LIPIcs 380, LICS 2026, article 4, pp. 4:1--4:27, published 9 July 2026.
+Theorem 13, Corollary 14, Theorem 33 and Theorem 41 in the final version.
+\url{https://doi.org/10.4230/LIPIcs.LICS.2026.4}.
+
+\bibitem{Dilations}
+T. Fritz, T. Gonda, N. G. Houghton-Larsen, A. Lorenzin,
+P. Perrone and D. Stein.
+\emph{Dilations and Information Flow Axioms in Categorical Probability}.
+arXiv:2211.02507v4, 16 October 2025, Section 3, Proposition 3.3 and
+Corollary 3.4.
+\url{https://arxiv.org/html/2211.02507v4}.
+\end{thebibliography}
+\end{document}

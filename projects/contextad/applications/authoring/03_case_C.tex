@@ -1,0 +1,312 @@
+\section{Case C Eager and lazy consistent random functions}\label{sec:caseC}
+
+\subsection{Parameters and the exact call only interface}
+Fix nonempty finite sets $A,B$, write $n=|A|$, $m=|B|$, and fix
+$N\in\mathbb N$, including zero. There is one existing owned identity
+$r:\mathsf{Uninitialized}$. Initialization retypes it to
+$r:\mathsf{Ready}_N$. For $j>0$ the only service operation is
+\[
+\mathsf{call}_j:(a:A;r:\mathsf{Ready}_j)
+\Rightarrow(b:B;r:\mathsf{Ready}_{j-1}).
+\]
+There is no call at kind $\mathsf{Ready}_0$. A client may stop with any
+remaining kind; returning that owner is enough. If the common surrounding
+signature admits disposal, both sides may dispose identically. No fresh
+token is created by initialization or cache growth.
+
+The eager reference $E$ has private carrier $B^A$ at each ready kind.
+The lazy candidate $L$ has private carrier
+$\coprod_{D\subseteq A}B^D$, of size $(m+1)^n$. Reachable caches after
+$q$ calls have $|D|\leq q$; unused finite carrier states need not be
+reachable. The uninitialized private carrier is a singleton. The complete
+implementation tables are as follows.
+\begin{itemize}
+\item Eager initialization has witnesses $f\in B^A$, weight $m^{-n}$,
+  stores $f$, and pays sample-work cost $n$. Its call at $a$ returns
+  $f(a)$, keeps $f$, and pays zero additional sample work.
+\item Lazy initialization stores the empty cache with one witness and
+  cost zero. On a cache hit it returns $c(a)$ with one witness and cost
+  zero. On a miss it has witnesses $b\in B$ of weight $1/m$, returns
+  $b$, stores $c[a:=b]$, and pays one sample-work unit.
+\end{itemize}
+Every call also pays the same overhead. It is convenient to retain vector
+cost $(\text{sample work},\text{number of calls},\text{client work})$.
+The scalar $\text{sample work}+\kappa\cdot\text{calls}+\text{client
+work}$ is also valid for $\kappa\in\mathbb N$. This is declared sample
+accounting, not a runtime, entropy or dictionary-complexity theorem.
+
+Initialization is inside the compared program and its cost is retained.
+The eager initializer can equivalently be expanded, in a fixed order on
+$A$, into $n$ independent uniform draws; both forms give the displayed
+weights and cost. Initialization management, cache updates and individual
+sample nodes are predeclared private unary events. Every call emits the
+same public unary event $\mathsf{call}(a,b)$. One may also retain an
+identical public initialization marker. The normalization $\phi_i$
+deletes only the private unary nodes, preserves every public node,
+$\mathsf{Fork}$ and leaf, commutes with grafting and does not erase cost.
+The original private-event trees are not asserted equal.
+
+The interface permits no table/cache inspection, implementation-specific
+code tag, sample-count oracle, shared random-generator state, or branch
+on external accounting cost. Public arguments, replies, remaining token
+kinds, ordinary client data and public causal trees remain visible.
+This is not the freely inspectable function-table type $B^A$ as public
+data; giving clients that stronger interface changes the theorem.
+
+\subsection{The whole admitted client class}
+Use every finite acyclic ranked O4 client at this signature, with its
+pure finite data, independent random client primitives, dependent cases
+and binds, separated batches and fixed finite code library. Calls through
+any number of aliases in a finite term are allowed, but every invocation
+requiring $r$ receives its one current owner. Captures contain ordinary
+data and lower-ranked code, not hidden owned tokens. The call counter
+bounds actual calls by $N$, independently of how many aliases the term
+stores. Queries, repetitions and stopping may depend on previous replies.
+
+Other owned client stores and draws use the same client kernels on both
+sides. They may depend on earlier public answers, but cannot inspect
+unqueried service coordinates; fresh service initialization is independent
+of initial auxiliary client data. These are enforced by the declared
+opaque signature and independent primitive draws, not by selecting only
+clients satisfying the desired posterior. A batch can give $r$ to at most
+one child; the other children may run arbitrary admitted finite behavior.
+Thus there is one owner path for $r$, not concurrent duplicate access.
+The fixed atomic call-only service signature excludes unknown
+server-initiated reentry; rank and finite syntax supply the separate
+termination bound.
+
+For a fixed term, every raw execution space is finite. Use the fixed O3
+phase evaluator to order the conditioning argument; its output projects
+to the causal tree. No claim identifies chronological words under arbitrary
+bind reassociation. The comparison uses the same client syntax on both
+sides and quantifies over all such terms, not merely an enumerated test set.
+
+\subsection{The conditional uniform invariant}\label{sec:C-posterior}
+For a consistent finite call history $h$, let $D_h\subseteq A$ be its
+distinct queried keys and $c_h:D_h\to B$ the observed answer map. Put
+\[
+\operatorname{Ext}(c)=\{f\in B^A:f|_{\dom(c)}=c\},\qquad
+|\operatorname{Ext}(c)|=m^{n-|\dom(c)|}.
+\]
+
+\begin{lemma}[Conditional unexposed coordinates]
+At every reachable positive-probability execution prefix, conditional on
+its public observations together with retained client random choices
+and private client execution information, the eager table $F$ is uniform
+on $\operatorname{Ext}(c_h)$. Its unqueried coordinates are therefore
+conditionally independent uniform $B$ values. Conditioning only on the
+public call history/cache gives the same distribution. No claim is made
+for conditioning events of probability zero.
+\end{lemma}
+\begin{proof}
+Initially the newly sampled $F$ is uniform and independent of client
+information. At an ordinary client step, its raw choice probability
+depends only on retained client information and already delivered replies.
+It multiplies the weight of every remaining extension by the same factor.
+Deterministic evaluation, branching, alias selection and stopping are
+special cases of this observation.
+
+At a service call, conditioning on current client information fixes the
+chosen key. A previously queried key has the known answer $c_h(a)$ and
+leaves the extension set unchanged. For a fresh key, exactly
+$m^{n-|D_h|-1}$ extensions give each $b\in B$, so the conditional answer
+probability is $1/m$ and the posterior is uniform on
+$\operatorname{Ext}(c_h[a:=b])$. In a separated batch, other branches
+supply their independent raw-choice factors without inspecting $F$;
+the unique owner child uses the same query argument calculation.
+Induction on the finite execution and decreasing procedure rank proves
+the invariant for every constructor. Finally, conditioning only on the
+public history mixes over retained client information. Every compatible
+component has the same uniform law on $\operatorname{Ext}(c_h)$, so
+the mixture has that law too.
+\end{proof}
+Fixing a particular full table and then calling an unqueried coordinate
+random would be false. The invariant is about a distribution over hidden
+tables, not a pointwise relation between fixed states.
+
+\subsection{Whole experiment coupling and exact cost}\label{sec:C-theorem}
+\begin{theorem}[Adaptive lazy sampling with whole-run domination]
+For every admitted client, with initialization inside the comparison,
+there is a finite coupling of its eager and lazy executions with equal
+normalized public causal trees, public outputs and actual capabilities.
+If $q\leq N$ calls occur and $d$ distinct keys are queried, then
+\begin{equation}\label{eq:C-cost}
+C_E=(n,q,u),\qquad C_L=(d,q,u),\qquad
+0\leq d\leq\min(n,q),
+\end{equation}
+where $u$ is the common client-work vector. Consequently
+$\Obs(C[L])\sqsubseteq\Obs(C[E])$. Public laws agree after dropping
+cost, but their joint exact-cost laws need not agree.
+\end{theorem}
+\begin{proof}
+On the joint proof space sample one uniform $F\in B^A$ at initialization
+and use the same raw client choices on both sides. Return $F(a)$ at
+every call. On a lazy first visit use this coordinate as its fresh draw;
+on a repeated visit read the already stored value. The preceding lemma
+shows that each first visit has exactly the actual lazy fresh-uniform
+conditional kernel. Thus this joint construction has both actual
+implementation marginals. Sampling earlier on the proof space is not a
+claim that the executable lazy implementation sampled earlier.
+
+Replies coincide, so public selectors, values, tags, aliases, transfers,
+client kernels and early-stop decisions coincide. The lazy cache is
+always the restriction of $F$ to visited keys. The same syntax, including
+other batch branches, gives equal normalized public trees. Exactly $d$
+misses occur, eager initialization pays exactly $n$, and other calls and
+client work match, giving~\eqref{eq:C-cost}. All executions are finite,
+so no limiting or optional-stopping theorem is used.
+\end{proof}
+The credit $n-d$ starts at $n$, falls by one exactly on a new key, and
+never becomes negative. It is proof accounting, not a refund or a
+negative-cost operation. A single lazy miss costs more than the matched
+eager call; whole-run domination does not assert per-method domination.
+For $N=0$, lazy saves all $n$ units. For $m=1$, laws are deterministic
+but the chosen accounting still charges each declared fresh draw. When
+all keys are visited the sample costs match; otherwise lazy is strictly
+cheaper on that run. Early stopping requires no completion of unused
+calls. Increasing external-cost tail events have no larger probability
+for lazy, also when restricted to a common public outcome event; this
+does not license client branching on the external cost.
+
+\subsection{A concrete retained carrier and categorical endpoints}\label{sec:C-span}
+A lazy raw history $\ell$ records its first-visit answers and every other
+client primitive witness, including retained zero-weight choices. Let
+$w(\ell)$ be the product of client-choice weights, $d(\ell)$ its number
+of fresh keys and $c_\ell$ its visited-key map. Retain that map in history
+even if the final owner is disposed. Then
+\[
+p_L(\ell)=m^{-d(\ell)}w(\ell).
+\]
+For every $f\in\operatorname{Ext}(c_\ell)$ there is exactly one eager
+history with that initializer table and those client witnesses. Conversely
+every eager history projects to a unique lazy history by discarding
+unqueried table coordinates and inserting the corresponding miss witnesses.
+Call this projection $\pi$. Fixed replies and client witnesses fix every
+adaptive query, branch and stopping decision, so no additional multiplicity
+arises. Hence
+\begin{equation}\label{eq:C-fibre}
+|\pi^{-1}(\ell)|=m^{n-d(\ell)},\qquad
+\sum_{\pi(e)=\ell}p_E(e)
+=m^{n-d(\ell)}m^{-n}w(\ell)=p_L(\ell).
+\end{equation}
+This proves the marginal equation directly even for real client weights
+and zero-probability raw choices. Since $B\ne\varnothing$, $\pi$ is
+surjective onto retained zero histories as well. The resulting all-raw-run
+cost statement is separately proved by this formula and
+\eqref{eq:C-cost}; it is not inferred from a positive-support coupling.
+
+For fixed public starting input, let $S_{\rm in}$ pair the two identical
+uninitialized stores and identical auxiliary client stores. The fresh
+$F$ is sampled inside the arrow, not supplied by a free initial coupling.
+For each final public configuration and actual bundle, let $S_{\rm out}$
+pair full stores with equal auxiliary entries and, if $r$ survives, a
+cache $c$ satisfying $c\subseteq f$. If it is disposed there is no
+service-store entry to pair. Both endpoint projections retain exactly
+the same public data, token identities and kinds. They are mathematical
+Set maps, not executable projections exposing private stores.
+
+Construct $W:S_{\rm in}\Rightarrow S_{\rm out}$ with eager histories
+as witnesses, weights $p_E$, and cost $c_W=c_E$. Its body pairs the
+matching leaves of the two normalized trees. The owner $r$ occurs in at
+most one such leaf by separation; auxiliary paired entries occur at their
+actual owners. Reference and candidate witness maps are $\id$ and $\pi$.
+The genuine native endpoint squares are
+\[
+\phi_LH_L\ \longleftarrow\ W\ \longrightarrow\ \phi_EH_E,
+\]
+and satisfy all three equations of~\eqref{eq:native-square}:
+\begin{enumerate}
+\item reference probability transport is identity and candidate transport
+is~\eqref{eq:C-fibre};
+\item reference cost is exactly $c_W$, while
+$c_L(\pi e)\leq c_W(e)$ for every witness and hence is at most the
+minimum in every candidate fibre;
+\item the paired-tree body's endpoint projections are respectively
+$\phi_E\theta_E(e)$ and $\phi_L\theta_L(\pi e)$.
+\end{enumerate}
+The common augmentation exists because total mass is one and costs are
+nonnegative. These are native history cells retaining cost and bodies,
+not merely scalar probability matrices. A direct square from the eager
+to the lazy expanded endpoint need not exist: a final $f$ alone does
+not determine which keys were queried; the history does.
+
+Pushing the constructed coupling to full normalized outcomes gives $G$.
+O5's finite raw-lift formula~\eqref{eq:raw-lift} gives a second valid
+positive-support native span with the same cost orientation. It can
+rematch raw witnesses with identical full outcomes and need not be the
+graph-supported carrier above. Both are legitimate; only the direct graph
+construction automatically supplies the zero-history coverage just proved.
+Neither application of the raw-lift lemma invokes O5's local contextual
+simulation theorem.
+
+\subsection{The precise failure of the pointwise sufficient test}
+Suppose $m>1$, $j>0$, and a proposed fixed-full-state relation pairs an
+eager $f$ with a cache $c$ missing $a$. The eager answer marginal is
+$\delta_{f(a)}$, the lazy marginal is uniform on $B$. An equality-supported
+coupling would force those marginals to agree, which they do not since
+the uniform mass at $f(a)$ is $1/m<1$. Independently, a lazy miss has one
+more sample-work unit than the eager call, violating uncredited local
+cost lowering. Every initialization coupling pairs some full eager table
+with the empty cache; when $N\geq1$, a client may immediately call any
+fixed key. Excluding all these pairs defeats initialization rather than
+solving the method criterion.
+
+This identifies incompleteness of this particular O5 sufficient
+criterion, not contextual inequivalence or a limitation of all relational
+logics. When $m=1$ the answer obstruction disappears but the uncredited
+cost obstruction remains; for $N=0$ there is no method obligation.
+The independently proved whole-experiment theorem remains valid.
+
+\subsection{Complete instance sheet and worked adaptive client}
+The ambient base and independent context/content inputs are exactly
+Section~\ref{sec:core-input}; the normalized primitive tables above are
+finite, and their costs lie in the inherited natural-number rig.
+The mixed arrows are the primitive tables and their actual dependent
+occurrence composites; Section~\ref{sec:C-span} supplies the endpoint
+squares. Although calls are unary, arbitrary admitted client causal
+branching and $\mathsf{Fork}$ nodes remain retained, not replaced by a
+List-only law. Constant grades give the full O2 ordinary-data action;
+$\pi$ changes neither a framed value nor its leaf position, so the span
+commutes with it. O3's raw/evaluator, joint-law and finite-discrete QBS
+interpretations use the same products and grafting. O4 typing is the
+explicit initialization retyping and call-counter decrease; all aliases
+and higher-ranked clients obey ownership, rank and substitution. O5's
+local certificate is not asserted; its finite history bridge is used
+only after the additional distributional and accumulated-cost proof.
+This is the full frozen C obligation, not a focused fallback.
+
+For $A=B=\{0,1\}$ and $N=2$, query key zero; after reply zero query key
+one, otherwise query zero again. The reply words and sample costs are
+\begin{center}
+\begin{tabular}{@{}ccccc@{}}
+\toprule Replies&Probability&Distinct keys&Eager samples&Lazy samples\\\midrule
+00&$1/4$&2&2&2\\
+01&$1/4$&2&2&2\\
+11&$1/2$&1&2&1\\
+\bottomrule
+\end{tabular}
+\end{center}
+Both sides make two calls and return $\mathsf{Ready}_0$. Expected sample
+work is two versus $3/2$. The first two lazy histories have one eager
+extension each; the repeated-key history has two. If the client instead
+stops after first reply one, that probability-$1/2$ branch has one call
+and returns the same $\mathsf{Ready}_1$ on both sides, with sample costs
+two versus one. Immediate stopping returns $\mathsf{Ready}_2$, with
+sample costs two versus zero. Unlike the inherited stored-same-table
+example, the lazy implementation never samples the missing coordinates.
+
+\subsection{Direct baseline and exact contribution}
+Gregersen, Aguirre, Haselwarter, Tassarotti and Birkedal's
+Clutch work~\cite{Clutch}, Section 6.3 and Figure 11, proves eager/lazy
+hash-function contextual equivalence in a richer higher-order language
+with state, with Coq formalization. Its asynchronous-sampling discussion
+also directly addresses the difficulty of synchronized pointwise reasoning.
+This is the direct stronger baseline, not merely adjacent background.
+The present case supplies the explicit bounded owned-interface model,
+additional declared whole-cost accounting and concrete native-span
+integration required here. It claims no discovery of lazy sampling,
+deferred decisions or eager/lazy equivalence, and no publication novelty
+from that integration alone. The theorem is finite and
+information-theoretic, not cryptographic security or an infinite random
+oracle result.
+

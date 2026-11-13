@@ -1,0 +1,1274 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=25mm]{geometry}
+\usepackage{booktabs,longtable,array,enumitem,microtype}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlist{leftmargin=1.7em,itemsep=3pt,topsep=4pt}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\FinSet}{\mathbf{FinSet}}
+\newcommand{\QBS}{\mathbf{QBS}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\leaf}{\operatorname{leaf}}
+\newcommand{\Cost}{\mathsf{Cost}}
+\newcommand{\Law}{\mathsf{Law}}
+\newcommand{\Run}{\mathsf{Run}}
+\newcommand{\Fun}{\mathsf{Fun}}
+\newcommand{\Proc}{\mathsf{Proc}}
+\newcommand{\Kernel}{\mathsf{Kernel}}
+\newcommand{\Rand}{\mathsf{Rand}}
+\newcommand{\Service}{\mathsf{Service}}
+\newcommand{\Call}{\mathsf{Call}}
+\newcommand{\Store}{\operatorname{Store}}
+\newcommand{\Ev}{\mathsf{Ev}}
+\newcommand{\Cmd}{\mathsf{Cmd}}
+\newcommand{\Ret}{\mathsf{ret}}
+\newcommand{\Bind}{\mathsf{Bind}}
+\newcommand{\Op}{\mathsf{op}}
+\newcommand{\Batch}{\mathsf{batch}}
+\newcommand{\Code}{\mathsf{Code}}
+\newcommand{\AllBudget}{\operatorname{AllBudget}}
+\newcommand{\ASBudget}{\operatorname{ASBudget}}
+\newcommand{\den}[1]{\llbracket #1\rrbracket}
+\title{Typed Protocols and Bounded Higher Order Interaction\\[5pt]
+\large Data evidence capabilities and result dependent execution}
+\author{}
+\date{1 November 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This dossier gives a bounded typed language over the frozen O3 finite
+protocol fragment. Finite public data and explicit evidence are separated
+from a linear context of existing capability tokens. Result-dependent
+occurrence binding carries each continuation into its declared data and
+resource fibre. Data substitution and open procedure plugging are proved,
+followed by soundness for causal raw-isomorphism and exact joint-law
+equalities. Neither equality is silently promoted to equality of the
+phase evaluator's chronological event word.
+
+A finite higher-order extension admits function tables, ranked procedure
+codes, fresh sampler codes, finite random selection of functions or kernels,
+and bounded stateful services. A storing service implements a sampled
+function for every bounded adaptive client at an explicit matched call
+interface. Two-call tests distinguish that sharing from a once-selected
+random kernel and from fresh execution. The construction gives a language
+metatheory and narrow expressivity result in the existing retained,
+operational and QBS models; it does not claim unrestricted higher-order
+probability, completeness, full abstraction or O5 contextual refinement.
+\end{abstract}
+
+\tableofcontents
+
+\section{Scope and inherited commitments}\label{sec:scope}
+The O4 contract~\cite{Contract} asks for a language, not a new notation for
+a semantic hom-object. We retain CF-0.1 and its three interpretations from
+O3~\cite{O3}: finite acyclic raw syntax, fixed token identities, explicit
+disjoint occurrence splits, causal-tree polynomial content and the joint
+probability--tropical-cost source. O3 is a frozen input; no operation,
+observation or earlier conclusion is repaired by this dossier.
+
+The language below is finite in the sense that every admitted term has a
+finite derivation and all its data fibres, sample tables and code menus
+are finite. Finite signatures may have arbitrary real probability weights;
+the executable examples use rational weights. The finite syntax is not
+claimed to enumerate every QBS morphism. There is no recursion, dynamic
+fresh-token allocation, unrestricted dependent function space of
+procedures, general feedback, posterior conditioning or physical
+interleaving rule.
+
+Ordinary data describe. Evidence supports a declared predicate on data.
+A procedure code describes executable syntax with a specified input
+interface. A capability token is the separate permission/resource required
+by an operation. A transition's mathematical model does not manufacture
+that token or guarantee an external device's physical execution. A latent
+sample witness used to define a model or prove a theorem is not thereby an
+observation accessible to the program. In this language, knowledge means
+supplied public evidence and observations with typed uses, not a universal
+epistemic logic or automatic discovery of the world's semantics.
+
+\begin{theorem}[The bounded O4 language result]\label{thm:main}
+For the finite typed language and declared extensions below:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item data/evidence substitution and capture-avoiding open-command plugging
+preserve typing, reindex the dependent result and capability families,
+and commute with denotation;
+\item the operational evaluator has finite completed runs and preserves
+the fixed-token ownership invariant; its causal/cost projection is the
+retained O3 interpretation and its law is the O3 QBS execution law;
+\item the stated raw-isomorphism and joint-law equality derivations are
+sound and stable under the admitted language constructors and substitutions;
+\item the O3 adaptive allocation protocol and an open two-call
+resource-sensitive client translate without changing their declared
+observations;
+\item every admitted bounded higher-order sort has a positive model,
+the shared-versus-fresh tests distinguish their protocols, and the two
+sampled-function implementations agree at the bounded adaptive call view.
+\end{enumerate}
+\end{theorem}
+The individual proofs and their limitations are explicit below. The
+source is intentionally uncompiled, as authorized. Source checks and
+exact finite regression tests are not proof-assistant verification or a
+rendered-layout check.
+\section{Finite public data evidence and interfaces}\label{sec:data}
+
+\subsection{The pure syntax}
+Fix explicitly enumerated finite base sorts and declared finite function
+tables. Types and pure terms are generated by
+\[
+\begin{split}
+ A,B &::= D\mid 0\mid 1\mid A+B\mid A\times B
+       \mid\Sigma(x:A).B(x)\mid\Pi(x:A).B(x)\mid\Ev_\varphi(v),\\
+ v,w &::= x\mid d\mid\mathsf{table}_f(\vec v)\mid *
+       \mid(v,w)\mid\pi_i v\mid\mathsf{in}_i(v)
+       \mid\mathsf{case}(v;\vec w)\\
+     &\hspace{1.5em}\mid\mathsf{dpair}(v,w)\mid\mathsf{dsplit}(v;x,y.w)
+       \mid\lambda x.w\mid v\,w\mid\mathsf{evidence}_\varphi(v;\pi).
+\end{split}
+\]
+Every dependent family here has an explicit finite table of its fibres.
+A telescope $\Gamma=x_1:A_1,\ldots,x_m:A_m(x_{<m})$ therefore has a finite
+valuation set $|\Gamma|$. The typing judgment is $\Gamma\vdash v:A$.
+The usual finite sum/product rules are interpreted by their constructors,
+projections and case distinction. The two dependent introduction rules are
+\[
+ \frac{\Gamma\vdash v:A\quad\Gamma\vdash w:B[v/x]}
+ {\Gamma\vdash\mathsf{dpair}(v,w):\Sigma(x:A).B(x)},
+ \qquad
+ \frac{\Gamma,x:A\vdash w:B(x)}
+ {\Gamma\vdash\lambda x.w:\Pi(x:A).B(x)}.
+\]
+Dependent-pair elimination substitutes both components in the result
+family; application substitutes its argument in $B$. Evaluation of a
+lambda is its finite table, and evaluation of application is lookup.
+Only pure terms occur in pure lambda bodies. These explicitly constructed
+finite products do not assume arbitrary dependent products of effectful
+procedures in a semantic category.
+
+For a declared decidable predicate $\varphi$ on public data,
+$\Ev_\varphi(v)$ has one inhabitant if $\varphi(v)$ is true and none
+otherwise. The certificate $\pi$ verifies this condition at the admitted
+public valuations; a complete finite verification table suffices.
+Evidence elimination uses only the declared predicate. Evidence may be
+copied, stored or discarded; there is no elimination from evidence to a
+capability, from an almost-sure assertion to supplied evidence, or from a
+latent operational witness to a public variable. A primitive may explicitly
+return an observation as ordinary data, but that changes its declared
+interface rather than revealing all its raw witnesses.
+
+The finite-table constructor ensures that every old CF-0.1 pure map is
+representable. Pure syntax is independently specified; we are not defining
+terms to be all elements of a semantic hom-object. Pure equations are
+$\alpha$-conversion, the pure $\beta/\eta$ equations, finite constructor/case
+reductions and supplied pointwise table equations at their dependent types.
+
+\subsection{Capability ownership and public configurations}
+Retain the O3 finite pool of actual token identities. A capability context
+$\Delta$ assigns kinds to a subset of that pool. A copied ordinary reference
+to a token name is not a second ownership judgment. Identity names cannot
+be actively renamed, generated or merged by a pure term.
+
+An interface $E$ over $\Gamma$ is a finite family
+\[
+ E(\gamma)=\bigl(S_\gamma,(X_{\gamma,s})_{s\in S_\gamma},
+                         (\Delta_{\gamma,s})_{s\in S_\gamma}\bigr),
+ \qquad |E(\gamma)|=\coprod_sX_{\gamma,s}.
+\]
+A public configuration $a=(s,x)$ owns exactly
+$\Delta_E(\gamma,a)=\Delta_{\gamma,s}$. A pure interface term
+$f:E\to F$ is a pure finite table on $(\gamma,a)$ together with the
+pointwise certificate
+\begin{equation}\label{eq:pure-tokens}
+ \Delta_F(\gamma,f(\gamma,a))=\Delta_E(\gamma,a)
+\end{equation}
+on actual identities and kinds. Presentation permutations do not rename
+identities. Ordinary data can be contracted or forgotten. Tokens can be
+consumed, transferred, explicitly disposed of or retyped only by declared
+primitive transitions. Every primitive's output token sets are disjoint
+subsets of its input set, even on zero-weight branches.
+
+Interfaces may depend on public data in $\Gamma$, so substitution must
+reindex their capability families as well as their data. Numerical cost
+is a distinct annotation, not an undeclared remaining-budget coordinate;
+a cost bound does not grant ownership, and ownership does not prove a
+numerical budget bound.
+
+\section{Commands operations and typing}\label{sec:commands}
+
+\subsection{Open commands and primitive declarations}
+A declaration in the finite context $\Xi$ has the form
+\[
+ X:(\Gamma_X;E_X\Rightarrow F_X;\varepsilon_X).
+\]
+Its own telescope $\Gamma_X$ describes its public parameters. It denotes
+open procedure code with an explicit resource interface, not a closure
+owning hidden tokens. These self-contained declarations do not depend on
+the caller's ambient $\Gamma$; caller substitution changes their actual
+arguments, not their declaration. The command judgment is
+\[
+ \Xi;\Gamma\vdash t:E\Rightarrow F\;!\;\varepsilon,
+\]
+where $\varepsilon$ is a finite upper bound on primitive operation names.
+It is not a cost bound or an execution permission. Nor does
+$\varepsilon=\varnothing$ mean semantic purity: a structural fork can
+produce a nontrivial causal tree and several outputs without calling a
+primitive. Capability-free likewise does not mean pure. A larger effect upper
+bound is allowed by weakening.
+
+At an interface $E$, the current public input is an explicit pure binder
+$a:|E(\gamma)|$. Primitive parameters, case selectors and invoked code
+expressions are checked in $\Gamma,a:|E|$; pure interface maps already
+mean tables in these variables. This distinguished current-input binder
+is not automatically persistent after an effect. By contrast, the actual
+parameter substitution in $X[\sigma]$ is restricted to persistent
+$\Gamma$; its dynamic input is supplied separately through $E_X[\sigma]$.
+Information from $a$ that is needed as retained lexical data must be
+explicitly framed as below.
+
+The primitive signature is exactly the CF-0.1 signature, with permitted
+finite extensions specified separately. At every admitted input and pure
+parameter it declares a finite response set, a finite ordered typed
+post-list $[d_1,\ldots,d_n]$, and a token-transition certificate; a finite
+raw sample set $W_e$ with $p_e(w)\ge0$ and $\sum_wp_e(w)=1$; a response
+map $\rho_e$; an event label $\ell_e(w)$ of arity $n$; and a cost
+$c_e(w)\in\mathbb N^R$. A continuation sees its own declared post-configuration,
+not $w$ or an undeclared sibling. Public response information needed by it
+must be in that configuration.
+
+The command constructors are
+\[
+ t,u ::= \Ret(f)\mid\Op_e(v)\mid\Bind(t,x.u_x)
+       \mid\mathsf{case}(v;\vec t)
+       \mid\Batch_\chi(t_1,\ldots,t_n)\mid X[\sigma].
+\]
+This is raw syntax: $\Bind$ is retained in the AST, not normalized to a
+depth-first event tree. Every interface command is a finite input-indexed
+family. Restricting a derivation to a singleton admitted input is an
+admissible rule by structural induction: keep the same selected primitive
+and pure tables, restrict the left input of bind and preserve all its
+actual result continuations. This changes no token transition. We use
+that restriction when an interface command is applied at an actual hole.
+The main typing rules are
+\[
+ \frac{\Gamma\vdash f:E\to F\text{ satisfying }\eqref{eq:pure-tokens}}
+ {\Xi;\Gamma\vdash\Ret(f):E\Rightarrow F\;!\;\varnothing},
+\]
+\[
+ \frac{\Gamma,a:|E|\vdash v\text{ an admitted parameter for }e\text{ at }E
+       \quad e:E\leadsto F_e\text{ has its declared transition}}
+ {\Xi;\Gamma\vdash\Op_e(v):E\Rightarrow F_e\;!\;\{e\}},
+\]
+\[
+ \frac{\Xi;\Gamma\vdash t:E\Rightarrow F\;!\;\varepsilon
+ \quad(\Xi;\Gamma,b\in|F|\vdash
+       u_b:\langle b\rangle_{\Delta_F(b)}\Rightarrow G\;!\;\varepsilon')}
+ {\Xi;\Gamma\vdash\Bind(t,b.u_b):E\Rightarrow G
+          \;!\;\varepsilon\cup\varepsilon'},
+\]
+\[
+ \frac{X:(\Gamma_X;E_X\Rightarrow F_X;\varepsilon_X)\in\Xi
+          \quad\Gamma\vdash\sigma:\Gamma_X}
+ {\Xi;\Gamma\vdash X[\sigma]:E_X[\sigma]\Rightarrow F_X[\sigma]
+          \;!\;\varepsilon_X}.
+\]
+Here $\langle b\rangle_{\Delta_F(b)}$ is the singleton public input
+interface with exactly the actual post-capability context. Here $G$ is an
+interface over $\Gamma$, pulled back to $\Gamma,b\in|F|$ in the
+continuation premise. If the elaboration retains a local binder $b$ as an
+extra environment tag, its token-preserving ordinary-data projection
+removes that extra tag before assembly in $G$, unless $G$ explicitly
+records it. The bind premise
+is an explicit finite family of derivations, not an untyped command that
+receives the whole output list. Every actual hole gets its corresponding
+independent execution. Its number and capability kind may depend on the
+response. If the desired final interface is itself $G_b$, form the explicitly
+tagged sum $G=\coprod_bG_b$ and use its token-preserving injections in the
+continuations. No fixed context is substituted for that dependence.
+
+The case rule evaluates its pure selector in $\Gamma,a:|E|$, checks each branch in its
+restricted/reindexed public context and requires a common declared target
+interface (or an explicit tagged sum). Its effect bound is the union of
+branch bounds. It adds no event for inspecting stored data. The batch rule
+requires an explicit pure-data split and a pointwise token partition
+$\chi:E\to(E_1,\ldots,E_n)$ with pairwise disjoint child contexts and union
+the input context. It checks $t_i:E_i\Rightarrow F$, forms the ordered
+$\mathsf{Fork}_n$ node and takes the union of child effect bounds. A reserve
+must be an explicit child, for example a pure return; it never vanishes.
+Distinct child targets may be embedded in a declared tagged target sum.
+Nullary execution is legal only with the corresponding empty/disposed
+context, not as an untyped deletion operation.
+
+\subsection{Lexical data are carried through the actual interfaces}
+The persistent public $\Gamma$ in these rules has an explicit elaboration.
+At a fixed valuation, use ordinary-data framing to replace input $a$ by
+$(\gamma,a)$ and every actual result hole $b$ by $(\gamma,b)$. Framing
+copies only public data, leaving each token subset unchanged. Operation
+and fork results carry that same $\gamma$ in each child. Thus a continuation
+reads $\Gamma$ from its declared post-configuration, not from hidden source
+history. If the source input $a$ is also needed later, it must likewise be
+explicitly framed as ordinary data; it is not a silent lexical resource
+reserve. Pure maps may drop unneeded public data. No frame carries $w$,
+chronology, sibling results or the original input $\Delta$ as duplicable data.
+This is the ordinary-data frame already admitted by O3 and O2, and its
+leafwise relabeling commutes with grafting. More explicitly, if
+$\iota_\gamma(b)=(\gamma,b)$, totalized output is
+$T\iota_\gamma(\theta)$. A substitution $\sigma:\Gamma'\to\Gamma$
+induces the endpoint map $(\gamma',b)\mapsto(\den\sigma(\gamma'),b)$;
+the substitution comparison on totalized interfaces is this endpoint
+square, while its fixed-fibre form is the isomorphism below.
+
+\subsection{Finite code construction and invocation}
+For first-class procedure values fix a finite library of templates
+$s_i$ with rank $r_i$, a finite capture telescope $C_i$, and explicit
+interfaces $E_i,F_i$ over that telescope. A value constructor
+$\mathsf{code}_i(v)$ requires $\Gamma\vdash v:C_i$ and the checked endpoint
+equalities $E_i[v]=E$, $F_i[v]=F$ at the advertised type $\Proc(E,F)$.
+The code value is the finite tagged pair $(i,\den v)$; it captures no
+capability. Write $\Proc_{\le s}(E,F)$ for the menu whose maximum template rank is
+$s$, and fix a finite ceiling $R$ at top level. Within a rank-$r$ template,
+the invocation rule is
+\[
+ \frac{\Gamma,a:|E|\vdash p:\Proc_{\le s}(E,F)
+       \quad s<r\quad\varepsilon\text{ bounds all menu bodies}}
+ {\Xi;\Gamma\vdash\mathsf{invoke}(p):E\Rightarrow F\;!\;\varepsilon}.
+\]
+At top level the side condition is $s\le R$ instead. When a rank is
+omitted from $\Proc(E,F)$ it is the already fixed applicable finite menu,
+not an unbounded code universe. Evaluation first evaluates the pure code
+expression to $(i,\eta)$, then
+executes $s_i[\eta]$ with the current explicit input ownership. A template
+may invoke only smaller-ranked templates, and a code-valued capture must
+range over an already constructed lower-rank finite code menu. A dynamically
+invoked callback therefore also has rank below its enclosing template.
+These level-indexed menus exclude recursive closure environments even when
+a captured field is unused. This is finite case dispatch
+and data substitution, not arbitrary syntax quotation or recursive
+self-application. An open parameter call is similarly administrative; it
+inserts no extra causal event. A wrapper that is meant to charge or record
+a call must declare that primitive explicitly.
+
+The finite $\Kernel(A,B)$ menu is also ordinary inspectable code data at
+its native interface. Its invocation rule dispatches on the chosen code
+and input to the declared unary sampler table, drawing a new raw witness
+each time. The opaque bounded call adapter of Section~\ref{sec:call}
+restricts its clients from inspecting that stored code; opacity is not
+silently imposed on all old pure maps. Service calls are the explicitly
+typed primitives of Section~\ref{sec:stores}.
+
+\subsection{Complete freely available operations and exclusions}
+Freely available syntax consists of the listed pure constructors and finite
+tables; copying, forgetting and storing public data/evidence/code; pure
+interface maps satisfying~\eqref{eq:pure-tokens}; case; the explicit
+return/bind/batch constructors; and administrative calls with their exact
+input interfaces. Effect operations are available only when declared by
+the finite signature and when their data/evidence/capability premises hold.
+Copying code does not copy a dynamic execution or a token. Ordinary aliases
+of a name cannot be used to derive two disjoint owners.
+
+A finite $\mathsf{ModelCode}$ sort and forecast table may be declared as
+ordinary data. A separately declared capability-free simulation sampler
+may use such a model. Neither produces an actuator permission: the physical
+actuator operation still has its separate capability premise and declared
+transition. No hidden rule converts model accuracy, an evidence term, a
+probability table or a native-cell proof witness into that permission.
+
+There are no additional implicit sampling, posterior-conditioning,
+disintegration, process-rerun, raw-witness inspection, service-store
+inspection, token-creation, token-disposal, effect-exchange or
+resource-capturing closure operations. Sampling a command, inspecting its
+stored return value and executing that command again are different
+constructors or evaluation events. All command and library derivations
+are finite; a family of arbitrarily deeper callbacks is not one admitted
+finite derivation.
+
+\section{Operational runs and denotations}\label{sec:semantics}
+For a closed command at public valuation $\gamma$ and actual input $a$,
+write
+\[
+ a\vdash_\gamma t\Downarrow^{h}_{p,c,w}\theta
+\]
+for its completed run, retaining raw derivation $h$, weight $p$, cumulative
+cost $c$, chronological word $w$ and returned causal tree $\theta$.
+Return has one run $(1,0,\epsilon,\eta f(a))$. A primitive has one run for
+each $z\in W_e$, of weight $p_e(z)$, cost $c_e(z)$, word
+$[\ell_e(z)]$ and tree $\ell_e(z)(\eta d_1,\ldots,\eta d_n)$.
+The raw bind rule is
+\begin{equation}\label{eq:eval-bind}
+ \frac{a\vdash_\gamma t\Downarrow^h_{p,c,w}\theta
+ \quad\leaf(\theta)=(b_1,\ldots,b_n)
+ \quad(b_i\vdash_\gamma u_{b_i}
+       \Downarrow^{h_i}_{p_i,c_i,w_i}\theta_i)_i}
+ {a\vdash_\gamma\Bind(t,b.u_b)
+  \Downarrow^{(h,(h_i)_i)}_{p\prod_ip_i,\ c+\sum_ic_i,\ ww_1\cdots w_n}
+       \theta[\theta_1,\ldots,\theta_n]}.
+\end{equation}
+Batch multiplies child weights, sums costs, concatenates their words in
+address order and returns $\mathsf{Fork}_n(\theta_1,\ldots,\theta_n)$;
+the structural fork is not inserted in the physical-event word. Case
+selects its pure branch. A parameter call evaluates its supplied body,
+and ranked invocation evaluates its selected instantiated template. These
+administrative steps add neither event nor cost.
+
+\begin{lemma}[Finite execution and ownership]\label{lem:execution}
+Every admitted raw choice has a finite completed run. There are finitely
+many runs, their weights sum to one, and every output token occurs at most
+once and comes from the initial pool with its kind justified by a declared
+transition. Public pure evaluation does not inspect raw witnesses or a
+private service store.
+\end{lemma}
+\begin{proof}
+Induct jointly on template rank and the finite command derivation. Pure
+evaluation is total at each inhabited input. A primitive has a finite
+normalized nonempty witness set. Bind chooses one left run and one run at
+each actual hole, hence a finite dependent product; summing its product
+weights gives one by finite distributivity. Batch is the corresponding
+finite product. Case and invocation reduce to the selected smaller
+derivation. The token invariant follows because disjoint subsets of
+disjoint input subsets remain disjoint; pure maps preserve identities,
+and only primitive certificates change kinds or consume tokens. The
+noninspection assertion is a separate pure-term induction: every variable,
+table, predicate and eliminator has only public arguments. The private
+store does not belong to that grammar.
+\end{proof}
+
+For each $(\gamma,a)$ define the retained object by the actual finite
+run choices
+\[
+ H(t)(\gamma,a)=
+ \bigl(\Omega_t(\gamma,a),(p_t(h),c_t(h)),\theta_t(h)\bigr).
+\]
+Its coefficients lie in the same joint rig
+$(\mathbb R_{\ge0})_{\mathrm{disc}}\times\Cost$ as O3, with
+$(p,c)\otimes(q,d)=(pq,c+d)$ and
+$(p,c)\oplus(q,d)=(p+q,\min(c,d))$. Its bodies lie in the unchanged
+polynomial monad $T$ of planar causal event trees. For bind,
+\[
+ \Omega_{\Bind(t,u)}(a)=
+ \coprod_{h\in\Omega_t(a)}\prod_{i\in\mathrm{holes}(\theta_t(h))}
+                   \Omega_{u_{b_i}}(b_i).
+\]
+This is exactly O1 mixed occurrence composition, with every addressed
+occurrence and zero-weight path retained. The formulas give a canonical
+bijection with the operational runs by induction on their last rule.
+Chronological words are additional operational diagnostics, not part of
+this retained-body equality.
+
+The full joint external law is
+\begin{equation}\label{eq:law}
+ L(t)(\gamma,a)=\sum_{h\in\Omega_t(\gamma,a)}p_t(h)
+                         \delta_{(c_t(h),\theta_t(h))}.
+\end{equation}
+It retains cost, causal events and all typed result configurations. On
+store-bearing interfaces it includes the store in the semantic leaves
+until a named closing projection erases it. The O3 law-composition rule is
+\begin{equation}\label{eq:law-compose}
+ (\ell\star k)(a)=\sum_{(c,\theta)}k(a)(c,\theta)
+ \bigl[(c_i,\theta_i)_i\mapsto
+       (c+\textstyle\sum_ic_i,\theta[\theta_1,\ldots,\theta_n])\bigr]_*
+           \bigotimes_{i=1}^n\ell(b_i),
+\end{equation}
+where $\leaf(\theta)=(b_1,\ldots,b_n)$. Finite regrouping proves
+$L(\Bind(t,u))=L(u)\star L(t)$: each continuation depends only on its
+actual configuration, so grouping histories by the recorded atom does
+not alter its choice. Batch is analogous. Finite discrete QBS carriers
+and these finite normalized laws supply the positive QBS interpretation;
+the execution monad is the O3 $P(\mathbb N^R\times T(-))$, with its
+specified independent-occurrence multiplication, not just $P$.
+
+\section{Dependent substitution and open plugging}\label{sec:substitution}
+A data substitution $\sigma:\Gamma'\to\Gamma$ is a list of pure terms,
+whose $i$th entry has type $A_i[\sigma_{<i}]$. Define substitution on terms,
+families, interfaces and certificates by capture-avoiding structural
+recursion. In particular
+\[
+ E[\sigma](\gamma')=E(\den\sigma(\gamma')),
+ \quad
+ \Delta_{E[\sigma]}(\gamma',a)=
+           \Delta_E(\den\sigma(\gamma'),a).
+\]
+The notation reindexes the actual resource interface; it does not rename
+its token identities.
+
+\begin{lemma}[Pure dependent substitution]\label{lem:pure-substitution}
+If $\Gamma\vdash v:A$ and $\sigma:\Gamma'\to\Gamma$, then
+$\Gamma'\vdash v[\sigma]:A[\sigma]$ and
+\[
+ \den{v[\sigma]}(\gamma')
+      =\den v(\den\sigma(\gamma')).
+\]
+Identity and composition of substitutions hold up to bound-variable
+renaming, including their action on the later telescope fibres.
+\end{lemma}
+\begin{proof}
+Induct on the pure typing derivation. Variables use the corresponding
+entry of $\sigma$; constants and tables evaluate at the same substituted
+arguments. Products, sums and finite case preserve the selected constructor.
+For a dependent pair, first substitute its first component and then its
+second-component fibre. For a lambda extend the substitution by the new
+bound variable and apply induction pointwise at each finite argument;
+application follows by lookup. Evidence certificates are checked at the
+same public valuation after substitution. The simultaneous telescope
+induction proves the well-formedness of every later substituted fibre.
+Structural recursion also proves the identity/composition equations.
+\end{proof}
+
+An implementation assignment $\Psi$ for $\Xi$ gives each declared $X$
+a finite body
+\[
+ \Xi';\Gamma_X\vdash s_X:E_X\Rightarrow F_X\;!\;\varepsilon'_X,
+ \qquad\varepsilon'_X\subseteq\varepsilon_X,
+\]
+with only its declared data captures and no captured ownership. Replace
+$X[\tau]$ by $s_X[\tau]$ capture-avoidably. Finite assignments may use
+remaining parameters in $\Xi'$, but a closing/ranked assignment cannot
+create a recursion cycle.
+
+\begin{theorem}[Typed substitution and plugging]\label{thm:substitution}
+If $\Xi;\Gamma\vdash t:E\Rightarrow F\;!\;\varepsilon$, then:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item $\Xi;\Gamma'\vdash t[\sigma]:E[\sigma]\Rightarrow F[\sigma]
+!\varepsilon$ for every pure $\sigma:\Gamma'\to\Gamma$;
+\item $\Xi';\Gamma\vdash t[\Psi]:E\Rightarrow F!\varepsilon$ for
+an implementation assignment as above;
+\item there are canonical cost-exact raw isomorphisms
+\[
+ H(t[\sigma])(\gamma',a)\cong H(t)(\den\sigma(\gamma'),a),
+ \qquad
+ H(t[\Psi])\cong H(t)[H(s_X)/X].
+\]
+They preserve all addressed primitive choices, weights, typed leaves and
+causal trees. The corresponding operational statement holds after ignoring
+administrative call markers, and the joint-law/QBS equations follow.
+\end{enumerate}
+These substitutions are unital and associative and commute with one
+another under simultaneous substitution of actual data arguments.
+\end{theorem}
+\begin{proof}
+For (i), induct on the command typing derivation. For expressions at a current input, lift the substitution to
+$(\gamma',a)\mapsto(\den\sigma(\gamma'),a)$; the distinguished
+input itself is not replaced by a persistent lexical variable. Return uses
+Lemma~\ref{lem:pure-substitution} and evaluates its token certificate at
+the same valuation. A primitive selects exactly the same declared
+operation instance and entire witness/post-context table, including zeros.
+In a case the same public branch is selected. In bind, the substituted
+post-family is exactly $F[\sigma]$; extend $\sigma$ by its actual result
+variable and apply induction to each continuation with precisely
+$\Delta_{F[\sigma]}$. The explicit $\Gamma$ frame supplies the same public
+environment to every hole. In batch the split certificate is reindexed
+pointwise, so its partition and disjointness remain true. At $X[\tau]$
+compose $\tau$ with $\sigma$. At ranked invocation apply pure substitution
+to the selected tagged capture and induction to its smaller-ranked body.
+All cases preserve the declared effect upper bound.
+
+For (ii), induct on $t$. At $X[\tau]$, part (i) applied to $s_X$ gives
+exactly the call site's input $E_X[\tau]$ and output $F_X[\tau]$.
+Every following result-dependent continuation is therefore well typed.
+Other constructors use the induction hypotheses and unchanged interface
+certificates. Each repeated occurrence of $X$ still needs its current
+input ownership; a code substitution supplies no new split or restored token.
+
+For (iii), use the same inductions on raw runs. A substituted primitive
+has the identical selected witness table. A bind reindexes the same left
+witness and the same dependent tuple of addressed child witnesses; batch
+reindexes the same ordered product. Pure return adds no choice. At a call,
+part (i) identifies its instantiated body; ranked invocation is finite
+case dispatch followed by this substitution. Thus the maps and their
+inverses preserve the specified observations and coefficients. Pushforward
+along~\eqref{eq:law} proves the law/QBS assertions. The call case reduces
+associativity and interchange of substitutions to pure substitution;
+structural induction proves them for the remaining syntax.
+\end{proof}
+A typed open command context is precisely such a term with declared
+parameters. The theorem supplies its actual plugging semantics. It does
+not admit an arbitrary untyped client or authorize inspection of a private
+witness simply because a metatheoretic implementation assignment mentions it.
+
+\section{Two generated equalities and their soundness}\label{sec:equality}
+We distinguish proof cells from law equality. Both judgments compare the
+same typed interface, and neither is defined by declaring all semantic
+equalities to be axioms. For an open judgment the claim is quantified over
+a common well-typed implementation assignment for its procedure parameters.
+Congruence is for the command constructors and pure equality of actual
+finite code values. It does not identify distinct inspectable procedure
+or kernel tags merely because their invoked bodies have equal laws.
+A code constructor names a fixed library body; there is no body-law
+congruence that changes its tag or capture value invisibly. Thus a client
+that inspects native code data cannot exploit a hidden code quotient.
+
+\subsection{Checked primitive cells}
+A supplied primitive comparison consists, at every admitted input, of a
+finite carrier map $r:W\to W'$ with exact certificates
+\begin{equation}\label{eq:native}
+ p'_y=\sum_{r(w)=y}p_w,
+ \qquad c'_y\le\min_{r(w)=y}c_w,
+ \qquad\theta'(r(w))=\theta(w).
+\end{equation}
+The empty minimum is $\infty$. It is cost-exact if additionally
+$c'_{r(w)}=c_w$ for every source witness. It is a native isomorphism when
+$r$ is bijective and its inverse is also such a cell. These are the O3
+cells in the joint probability/cost source, with equality of all typed
+leaves, not only terminal ordinary data. For arbitrary real weights,
+``checked'' means a supplied valid exact certificate; it does not assert
+an algorithm deciding equality of arbitrary real presentations. Rational
+finite tables permit the executable checks used in the examples.
+
+\subsection{Causal raw isomorphism}
+Generate $t\cong_R u$ by reflexivity, symmetry and transitivity; the checked
+pure equations; bind left/right unit and associativity at matching
+interfaces; constructor congruence; pure substitution and well-typed
+plugging; and supplied cost-exact native \emph{isomorphisms} of primitives.
+The unit equations use the identity interface map, and association reindexes
+the result-dependent continuation families using their actual holes.
+No general exchange law for effectful operations is included.
+
+\subsection{Exact joint law equality}
+Generate $t\simeq_L u$ from the raw-isomorphism generators and also every
+supplied cost-exact native primitive map, with symmetry, transitivity and
+the same well-typed congruence/substitution rules. This permits zigzags of
+noninvertible maps. Reversing such an equality derivation does not assert
+that the reversed primitive map exists in O1 or is an inverse source cell.
+
+\begin{theorem}[Soundness at the two observation levels]\label{thm:soundness}
+At every public input, and every actual private-store input for an
+extended interface:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item a derivation of $t\cong_R u$ induces a cost-exact invertible cell
+$H(t)\cong H(u)$ preserving raw choices up to its stated witness
+bijection, probability, causal tree and typed leaves; hence all-path
+budget predicates and full joint laws agree;
+\item a derivation of $t\simeq_L u$ implies $L(t)=L(u)$ for the full
+O3 joint observation. It need not preserve raw witness structure or
+all-path budget predicates.
+\end{enumerate}
+Neither conclusion asserts equality of the phase evaluator's chronological
+word. No completeness or full-abstraction converse is claimed.
+\end{theorem}
+\begin{proof}
+Induct on the equality derivation. A pure equation evaluates identically.
+Bind units insert or remove the singleton pure witness. Bind associativity
+reindexes a witness as one outer choice, its addressed child choices and
+their addressed grandchild choices. The two bracketings have the same
+probability product, sum of costs and grafted tree, with inverse reindexing;
+the inherited O1 coherence diagrams commute because they flatten the same
+addressed tuple. A supplied primitive isomorphism has the stated inverse.
+Constructor congruence applies pointwise maps in case and addressed products
+of maps in bind/batch, using their equal typed leaves. Substitution and
+plugging use Theorem~\ref{thm:substitution}. Composition and inversion of
+these actual cells prove (i); they preserve even zero-weight raw costs.
+Coherence does not say that all unrelated derivations of one equation
+produce the same source cell.
+
+For the added primitive step of (ii), body and cost exactness give
+\[
+ \sum_wp_w\delta_{(c_w,\theta_w)}
+ =\sum_y\left(\sum_{r(w)=y}p_w\right)
+                        \delta_{(c'_y,\theta'_y)}.
+\]
+A target with no preimage has weight zero. Hence this is the target law.
+Symmetry and transitivity now act on equal laws, not inverse source maps.
+Bind and batch congruence follow from~\eqref{eq:law-compose} and their
+independent products. Crucially a continuation depends only on the actual
+recorded leaf; it cannot choose a different computation using an erased raw
+witness. Private stores remain in those leaves across composition. This
+proves the full joint-law claim by induction.
+\end{proof}
+
+The distinction is strict. A primitive with one weight-one, cost-zero
+witness can map cost-exactly to one with that same witness plus an extra
+weight-zero witness of cost $M>0$, with identical body. Its law is unchanged,
+but its all-path budget $0$ fails. A surjectivity hypothesis would repair
+raw coverage, as O3 proves; law equality alone does not supply it. Likewise
+a native cost-lowering map from cost $2$ to cost $1$ is not a generator of
+$\simeq_L$. Its separately named O3 monotone-coupling comparison is not
+exact equality and is not the whole O5 contextual-refinement theorem.
+
+The phase-Bind chronology distinction is equally concrete: two branch
+stages can emit $q_1q_2r_1r_2$ under one association and
+$q_1r_1q_2r_2$ under the other. Their grafted causal tree and joint law in
+this theorem agree. No equality generator erases that operational fact.
+\section{Bounded higher order values and executable code}\label{sec:higher}
+The higher-order discriminator is a finite conservative extension, not an
+unrestricted higher-order type theory. Fix finite types $A,B$, a finite
+ranked library of procedure templates and finite data environments for their
+captures. Code-valued captures must come from already constructed lower-ranked menus,
+and every invoked callback has lower rank than its current template.
+A template can invoke only lower-ranked templates. A call is
+therefore evaluated by a finite unfolding; it is not a fixpoint rule.
+The admitted sorts and their elimination rules are as follows.
+
+\begin{description}
+\item[Pure function tables.] $\Fun(A,B)=B^A$ is the finite set of tables.
+A pure lambda is tabulated on the finite domain, and application is
+lookup. A table and its ordinary data captures may be copied, forgotten
+or inspected. They cannot contain a capability token. Applying a pure
+table is not an effectful call and has no implicit sampling step.
+\item[Procedures.] $\Proc(E,F)$ is a selected finite set of ranked command
+templates with data-only captures and an explicit input/output resource
+interface. Invocation supplies the actual input capability context and
+runs the chosen template afresh. A procedure code may be copied; its
+required capability argument is not copied by this operation.
+\item[Sampler codes.] $\Kernel(A,B)$ is a finite inspectable menu
+$\mathcal K_{A,B}$ of unary, capability-free sampler codes. For each
+$k,a$ the signature supplies a finite raw sample table with output in $B$.
+Every invocation draws a fresh raw witness. Write
+$q_k(a)\in\mathcal D_{\mathrm{fin}}B$ for its extensional output law.
+This code menu is not the set of all stochastic matrices and has no
+conversion from an arbitrary semantic kernel. Its native code tag may be inspected as ordinary finite data; this does
+not expose a future draw or the actual private witness of an invocation.
+\item[Random functions.] $\Rand(\Fun(A,B))$ is notation for an admitted
+sampling \emph{command} returning a function table, not a duplicable
+computation value. After one execution, its returned table is reusable
+ordinary data. Copying or inspecting that table does not repeat the
+sampling command.
+\item[Random kernels.] $\Rand(\Kernel(A,B))$ is admitted as an explicitly
+declared finite command returning one code. Calling that chosen code
+repeatedly draws independently conditional on the selected code.
+Executing the code-selection command again is a different computation.
+\item[Services.] $\Service^j_R(A,B)$ is an abstract method interface owned
+by a preexisting linear token $r$, with finite hidden state $R$ and $j$
+remaining calls. It is not a freely duplicable element of the public data
+context. Initialization changes $\mathsf{Uninitialized}(r)$ to
+$\mathsf{Ready}_N(r)$; a call changes $\mathsf{Ready}_j(r)$ to
+$\mathsf{Ready}_{j-1}(r)$ and returns one $B$ value. There is no call rule
+for $j=0$. A separate declared disposal operation is needed to remove the
+token. Initialization never generates a new token identity.
+\end{description}
+No closure type captures a capability, and no implicit conversion identifies
+these sorts. A service method may take a handle as an explicit linear
+argument, returning its updated kind or consuming it by an explicit
+primitive. An arbitrary resource-capturing closure would need a separate
+linear closure rule; it is not disguised as a pure function here.
+
+\subsection{Private stores and actual model interpretations}\label{sec:stores}
+To interpret services, use an expanded finite semantic configuration space
+\[
+ \widehat E=\coprod_{a\in|E|}\Store(\Delta_a).
+\]
+The store has one private entry for each owned service token and records
+its hidden state. The counter is part of the public protocol kind. A
+client's $\Gamma$ does not contain the store, and its pure maps cannot
+project, test or branch on it. A pure client map acts on public data and
+carries every unchanged token's private entry identically. Declared service
+methods alone read or update their entries. If a primitive separates the
+capabilities among child occurrences, the store is restricted to the
+same disjoint token subsets. A hidden state can therefore follow its one
+owner, not two independent aliases.
+
+For a service transition table
+\[
+ S:R\times A\longrightarrow\mathcal D_{\mathrm{fin}}(R\times B),
+\]
+the declared raw implementation is a finite CF-0.1 table on the expanded
+configurations. Its event node is unary, its output includes the updated
+private store and its token transition is the declared counter decrement.
+Thus composition retains state \emph{before} any observation projects it
+away. This gives an actual O1 mixed interpretation over $\widehat E$, not
+merely a public one-step kernel incorrectly reused as a state-free model.
+On old interfaces the store is empty. Old pure maps and old operations
+are unchanged; opacity on the new store does not restrict the old
+CF-0.1 pure-map class.
+
+\begin{proposition}[Finite higher order interpretation]\label{prop:higher-models}
+Every admitted finite function table, ranked procedure, sampler code,
+random-function command, random-kernel command and bounded service has
+retained, operational and QBS interpretations. The inherited occurrence
+composition comparison applies on the expanded store-bearing interfaces.
+\end{proposition}
+\begin{proof}
+The function-table and code-menu carriers are finite. Table lookup is a
+pure map. Each sampler or selector uses its declared finite normalized raw
+table. Induction on template rank unfolds procedure invocation into a
+finite typed command; induction on its typing derivation applies the
+interpretation of Section~\ref{sec:semantics}. A finite service method is
+likewise a primitive on $\widehat E$. Splitting a store by disjoint token
+ownership gives exactly the separation premise of occurrence composition.
+Consequently the frozen O3 finite interpretation applies to every unfolded
+term. Finite discrete sets are QBS objects, all these finite tables are QBS
+maps, and their finite laws are normalized QBS probabilities. No inversion
+of a kernel quotient or disintegration is used.
+\end{proof}
+After forgetting execution cost and causal events and taking the returned
+value marginal, the QBS meanings include maps
+\[
+ \Fun(A,B)\longrightarrow B^A,
+ \qquad \mathcal K_{A,B}\longrightarrow(PB)^A,
+\]
+and the induced maps on random selections to $P(B^A)$ and $P((PB)^A)$.
+These are explicitly forgetful output shadows, not identifications of a
+code menu with all QBS morphisms. A procedure code instead maps to
+$(K F)^E$ at its decorated execution interface, where
+$KX=P(\Cost\times TX)$; a function-selection command has actual
+execution type $K\Fun(A,B)$, whose returned-value marginal is in
+$P(B^A)$. The procedure execution model remains
+$P(\Cost\times T(-))$ with the O3 occurrence multiplication; the ambient
+Markov Kleisli category $\operatorname{Kl}(P)$ does not by itself retain
+these causal and cost observations. The existing QBS randomization theorem
+is not a chosen executable inverse preserving repeated-call correlations
+\cite{QBS2017}.
+
+\section{Adaptive call observations and sharing tests}\label{sec:call}
+
+\subsection{The bounded comparison interface}
+A freely inspectable sampled function table and an opaque linear service
+handle have different native interfaces. We compare their implementations
+only after giving both the same adapter $\Call_N(A,B)$. Its client makes
+at most $N$ sequential calls, may choose the next query or stop decision
+from the previous answers and its own declared independent randomness,
+and returns finite ordinary data. When it stops with $j$ calls remaining,
+its final interface also returns the same owned token
+$r:\mathsf{Ready}_j$; it cannot silently discard the handle. Matched
+explicit disposal would be a separate declared operation. The client
+cannot inspect the adapter's
+stored table, selected code or private service state. It supplies the same
+preexisting token to either adapter; both use the kinds
+$\mathsf{Uninitialized},\mathsf{Ready}_N,\ldots,\mathsf{Ready}_0$.
+For the following theorem the declared initialization cost is zero and
+each call costs one. Each adapter call is an explicitly declared unary
+method table on the owned $\mathsf{Ready}_j$ token: it computes $f(a)$
+or samples $q_k(a)$, returns the same identity with kind
+$\mathsf{Ready}_{j-1}$ and result $b$, and emits the public call node.
+The selected kernel fixtures have zero-cost internal samplers. This is
+not an implicit capability frame around a capability-free command, and
+no generic such frame for multi-hole procedures is assumed.
+These are matched interface data, not a claim that
+all real implementations have identical costs.
+
+A call with query $a$ and answer $b$ emits the same unary public label
+$\mathsf{call}(a,b)$ in both adapters. Private initialization and management
+labels in this comparison are unary. Define a tree map $q_T$ recursively:
+it preserves public nodes and their ordered children, preserves holes,
+and sends a private unary node $h(\theta)$ to $q_T(\theta)$. It follows by
+induction on trees that
+\[
+ q_T(\theta[\theta_1,\ldots,\theta_n])
+ =q_T(\theta)[q_T(\theta_1),\ldots,q_T(\theta_n)].
+\]
+The assertion uses unary erasure; deleting an arbitrary branching event
+would not in general be a hole-preserving tree-monad map.
+We additionally erase the final private store only as a closing
+observation, after the whole client has executed. This leaf projection
+is generally not compatible with further service composition and does
+not define a memoryless quotient functor. The resulting
+\emph{call-view observation} records the public query/response transcript,
+ordinary return value, remaining counter and cumulative matched cost.
+The theorem below is not equality of the full unprojected O3 observations:
+setup events and private stores can differ there. Nor is store erasure a
+claim that sequential public kernels may be composed without their state.
+
+\subsection{Sampled functions implemented by services}
+Let $\mu$ be a finite law on $F=B^A$. The sampled-function adapter draws
+$f\sim\mu$ once, retains it privately and answers $a$ with $f(a)$. The
+service adapter initializes $R=F$ with the same law and uses
+\[
+ S(f,a)=\delta_{(f,f(a))}.
+\]
+Both adapters thread the same counter token and use the same public call
+labels and costs.
+
+\begin{theorem}[Bounded adaptive implementation equivalence]\label{thm:service}
+For every finite $\Call_N(A,B)$ client, these two adapters have equal
+joint call-view laws, including adaptively chosen queries and stopping,
+final ordinary return value, remaining counter and cumulative matched cost.
+\end{theorem}
+\begin{proof}
+Draw one common $f\sim\mu$ for the two initializations and couple the
+client's declared independent random choices identically. Initially the
+visible client states and counters agree. If they agree before a call or
+stop decision, the client chooses the same query or decision in both runs.
+At query $a$ both implementations return $f(a)$, decrement the same counter,
+add cost one and emit the same public label. Their retained function is
+still $f$. Induction on the at-most-$N$ calls gives equal complete
+call-view observations in this coupling. Summing its masses proves equality
+of the joint laws. Private raw initialization records need not be in
+bijection; they are outside the observation claimed here.
+\end{proof}
+For a deterministic client making exactly $m\le N$ calls with adaptive
+queries $a_i(b_{<i})$, the theorem is the explicit identity
+\[
+ \Pr(b_1,\ldots,b_m)
+ =\sum_f\mu(f)\prod_{i=1}^m
+     [f(a_i(b_{<i}))=b_i].
+\]
+Finite randomized clients are finite mixtures of adaptive decisions, and
+the coupling already covers them. The result is a bounded interface
+implementation theorem, not full abstraction or O5 replacement in every
+possible future context.
+
+For a genuinely adaptive instance, take $A=B=\{0,1\}$ and choose $f$
+uniformly among the four tables. Query $0$ first. If the answer is $0$,
+query $1$; if it is $1$, query $0$ again. The response-pair law is
+\[
+ (00,01,10,11)\longmapsto(1/4,1/4,0,1/2).
+\]
+The storing service has the same law. A fresh fair kernel on every call
+instead gives $(1/4,1/4,1/4,1/4)$. In particular the client is not restricted
+to predetermined query lists.
+
+\subsection{Three protocols with identical one call marginals}\label{sec:three-tests}
+Take $A=1$, $B=\{0,1\}$, two call credits and the same matched call
+observation. Each protocol below has a fair one-call marginal.
+\begin{center}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Protocol&$00$&$01$&$10$&$11$&Agreement\\
+\midrule
+One reusable sampled constant table&$1/2$&$0$&$0$&$1/2$&$1$\\
+One selected kernel with fresh draws&$5/16$&$3/16$&$3/16$&$5/16$&$5/8$\\
+Fresh fair kernel or reselected choice&$1/4$&$1/4$&$1/4$&$1/4$&$1/2$\\
+\bottomrule
+\end{tabular}
+\end{center}
+The first row samples $Z\sim\mathsf{Bernoulli}(1/2)$ once and reuses the
+table $f(*)=Z$. In the second, choose one sampler code with parameter
+$1/4$ or $3/4$, each with probability $1/2$, then invoke it twice with
+fresh conditional draws. Thus
+$\Pr(11)=\tfrac12(\tfrac14)^2+\tfrac12(\tfrac34)^2=5/16$.
+The third uses a fixed fair sampler, or independently repeats the
+parameter-selection command before each invocation.
+
+More generally, choosing $k\sim\mu$ once gives the adaptive law
+\[
+ \sum_k\mu(k)\prod_iq_k(a_i(b_{<i}))(b_i),
+\]
+whereas flattening to the one-call kernel
+$\bar q(a)=\sum_k\mu(k)q_k(a)$ gives
+\[
+ \prod_i\sum_k\mu(k)q_k(a_i(b_{<i}))(b_i).
+\]
+The formulas agree for one call and need not agree for two. The numerical
+rows are a finite counterexample to treating that flattening as an
+equivalence of open repeated-call services. Fresh draws from a fixed
+selected kernel share the selection, even though they do not share each
+call's sample.
+\section{Conservative expressivity and open resource clients}\label{sec:expressivity}
+
+\begin{proposition}[The old adaptive core is preserved]\label{prop:conservative}
+Every closed CF-0.1 command translates to this language with empty public
+and procedure contexts, preserving its raw histories, token transitions,
+causal trees, costs and weights. Conversely, a closed finite first-order
+term with implementations plugged in elaborates into CF-0.1 over its
+explicitly totalized interfaces, without changing those observations.
+Ranked code and service extensions elaborate in the same way after their
+declared finite operations and store-bearing interfaces are added.
+\end{proposition}
+\begin{proof}
+Translate old pure maps by their finite tables, retain every primitive and
+raw $\Bind$ node, and retain each addressed split and fork. Induction gives
+the identity choices at primitives and the same dependent products at bind.
+For the converse, finite public valuations evaluate table/case selection
+pointwise. Theorem~\ref{thm:substitution} expands open calls with their
+actual interfaces; rank induction expands first-class code invocation.
+Explicit $\Gamma$ framing gives the totalized CF interface. A service is
+an admitted finite primitive on the expanded store-bearing configuration.
+Every step preserves the actual run-choice tuple, rather than only a
+terminal output simulation. No associativity normalization is needed, so
+the raw phase-Bind policy is not silently changed.
+\end{proof}
+
+The genuine dependent benchmark is the unchanged O3 allocation/read term.
+Its input owns $\{\alpha,\beta,\gamma\}$. An allocation selects a unary
+$L_\alpha$ interface with probability $1/3$, retyping $\alpha$ to its
+$L$-read kind and explicitly disposing of $\beta,\gamma$; or a binary
+$[H_{1,\beta},H_{2,\gamma}]$ interface with probability $2/3$, retyping
+$\beta,\gamma$ to their $H$-read kinds and disposing of $\alpha$. The
+actual continuation family is
+\[
+ u_{L_\alpha}=\mathsf{read}_L,
+ \quad u_{H_{1,\beta}}=\mathsf{read}_{H_1},
+ \quad u_{H_{2,\gamma}}=\mathsf{read}_{H_2}.
+\]
+The reads consume exactly their owned token and return a Boolean with
+empty capability context. Their success probabilities are $3/4$, $1/2$
+and $2/3$, respectively. Allocation costs $(1,0)$; the $L$ read costs
+$(1,0)$ and each $H$ read costs $(0,1)$. Bind therefore has six raw
+histories, not a fixed resource fibre with a changed scalar parameter:
+\begin{center}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+History&$L0$&$L1$&$H00$&$H01$&$H10$&$H11$\\
+\midrule
+Probability&$1/12$&$1/4$&$1/9$&$2/9$&$1/9$&$2/9$\\
+Cost&$(2,0)$&$(2,0)$&$(1,2)$&$(1,2)$&$(1,2)$&$(1,2)$\\
+\bottomrule
+\end{tabular}
+\end{center}
+The external observation OR of the final Boolean list has probability
+$29/36$. It remains an observation, not a new whole-list join command.
+The changed number, types and ownership of child occurrences are exactly
+the bind rule's actual post-interface. No construction duplicates $\alpha$
+to synthesize $\beta$ and $\gamma$.
+
+\subsection{Evidence used by an open resource client}
+Take public $y:\mathsf{Bool}$ and $\varphi(y)\equiv(y=1)$. Declare an open
+parameter $\mathsf{check}$ whose input owns $\alpha:\mathsf{Probe}$ and
+whose output interface is the tagged sum
+\[
+ \begin{array}{ll}
+ \mathsf{Pass}(y',e),\ e:\Ev_\varphi(y')
+       &\text{with }\alpha:\mathsf{Approved},\\
+ \mathsf{Fail}(y')&\text{with }\alpha:\mathsf{Rejected}.
+ \end{array}
+\]
+The implementation's primitive transition, not the evidence term, retypes
+the same identity $\alpha$. Declare $\mathsf{commit}(y',e)$ to require
+$\alpha:\mathsf{Approved}$ and consume it, and $\mathsf{release}(y')$ to
+require $\alpha:\mathsf{Rejected}$ and consume it. Both return ordinary
+acknowledgements with empty ownership. The open client is
+\[
+ \Bind(\mathsf{check},z.
+ \mathsf{case}\ z\ \mathsf{of}\
+ \{\mathsf{Pass}(y',e)\mapsto\mathsf{commit}(y',e),\
+   \mathsf{Fail}(y')\mapsto\mathsf{release}(y')\}).
+\]
+It has a concrete implementation: a declared check table may choose
+$\mathsf{Pass}(1,*)$ and $\mathsf{Fail}(0)$ with probability $1/2$ each,
+emitting their unary public labels, costing one and applying the displayed
+token transitions. Deterministic commit/release tables complete it.
+Thus the open interface is inhabited, not just an assumed code type.
+
+Every implementation with the same declared interface and effect bound
+plugs into this client by Theorem~\ref{thm:substitution}. A tokenless Boolean
+predictor is not a replacement for $\mathsf{check}$: it does not supply the
+returned ownership and kind. Even a valid $\Ev_\varphi(1)$ with empty
+$\Delta$ cannot type $\mathsf{commit}$, whose ownership premise is absent.
+A batch using $\alpha$ twice fails disjointness; another check after
+consumption/retyping fails its input-kind premise unless a separate
+restoring transition has been declared. This is the explicit gap between
+prediction, evidence and executable capability.
+
+\subsection{The open two call client}
+Declare a method parameter $m$ with a finite index $j\in\{1,2\}$ and
+query $a:A$, input token $r:\mathsf{Ready}_j$, and unary output
+$(b:B,r:\mathsf{Ready}_{j-1})$. An open client $\mathsf{twice}_m$ first
+invokes $m$ at $j=2,a=a_1$, then invokes it at $j=1,a=a_2(b_1)$ and
+returns $(b_1,b_2)$ with $r:\mathsf{Ready}_0$:
+\[
+ b_1\leftarrow m[2,a_1];\qquad
+ b_2\leftarrow m[1,a_2(b_1)];\qquad
+ \Ret(b_1,b_2).
+\]
+The displayed notation abbreviates unary $\Bind$ and explicit ordinary-data
+framing of $b_1$ into the second call's post-interface. The same token is
+threaded sequentially, not kept as a duplicable lexical variable. No third
+call types because there is no $j=0$ call instance, and the two calls cannot
+be batched on one $r$ because their proposed split is not disjoint.
+
+The bounded call adapters of Section~\ref{sec:call} are valid implementations
+for $m$. Plugging the two sampled-function implementations gives the equal
+adaptive call-view law of Theorem~\ref{thm:service}; plugging fresh sampling
+gives its distinguishing law. This expresses the resource-sensitive open
+higher-order test in the same command language as the multiple-hole
+allocation benchmark. The method code can be used repeatedly only because
+it captures no owned token; each invocation still proves its separate
+current resource premise.
+
+\section{Rewrite counterexamples and unavailable principles}\label{sec:rewrites}
+\begin{description}
+\item[Copying a result is not rerunning its computation.]
+With empty ownership, executing a fair flip once and returning $(b,b)$
+has equal output bits with probability one. Executing a flip twice and
+returning the two results has equality probability $1/2$. A pure
+$\beta$ rule never substitutes an effectful command for a pure value.
+The causal trees and costs can distinguish these programs even sooner.
+\item[One call laws do not determine repeated calls.]
+The table in Section~\ref{sec:three-tests} refutes both replacing a sampled
+reusable function by a fresh fair kernel and replacing a once-selected
+random kernel by its flattened one-call marginal. The comparisons hold
+under matched permissions and costs, so they are correlation differences,
+not artifacts of unequal resource availability.
+\item[Effect exchange is not full causal equality.]
+Let deterministic, zero-cost unary primitives $e$ and $f$ return the same
+public unit and preserve the same ownership. The trees
+$e(f(\eta *))$ and $f(e(\eta *))$ are different. Thus exchanging sequential
+effects is not a $\simeq_L$ equation even if the terminal data laws agree.
+A separately specified quotient could forget these events, but that is
+not the full O3 observation. Exchanging independent batch addresses also
+needs a stated endpoint/address comparison, not an implicit contraction.
+\item[Raw isomorphism is not chronology equality.]
+The phase-association example in Section~\ref{sec:equality} rejects any
+claim that the raw causal associator preserves the chronological word.
+\item[Joint laws do not certify every raw path.]
+The added zero-probability expensive witness in Section~\ref{sec:equality}
+refutes recovery of all-path budget validity from $\simeq_L$ alone.
+\item[Evidence does not grant permissions.]
+The open check/commit example has an explicit missing capability premise
+for a predictor or an evidence-only substitute. There is no equality
+rule that changes that premise. Numerical forecasts or a high probability
+of success do not create a token either.
+\item[Inspecting an observation is not conditioning.]
+Pure case on a previously returned value selects a continuation and does
+not renormalize a distribution. For a fair bit, keeping only the event
+$b=1$ and renormalizing would change its law to $\delta_1$; it is not
+inspection of the original command. The frozen signature contains no
+posterior-conditioning operation, including on null events. Such an
+extension would need its own type, hypotheses and soundness theorem.
+\item[Implementation views must be named.]
+The service theorem hides only the stipulated private unary management
+events and private store, at matched costs. It is not an equation between
+unrestricted function-table and handle values, and it does not erase
+unequal setup costs or arbitrarily branching causal nodes by default.
+\end{description}
+\section{Existing theory and the precise increment}\label{sec:prior}
+The general separation of linear and unrestricted assumptions has an
+established categorical and typed-calculus baseline in Benton~\cite{Benton}.
+Parameterized computation already treats type-changing state and separated
+effects with typed calculi, as in Atkey~\cite{Atkey}. Dependent effect
+elimination is not a free consequence of ordinary monadic bind: V\'{a}k\'{a}r
+explicitly distinguishes the calculus without a general dependent Kleisli
+extension from a stronger calculus with that additional principle
+\cite{Vakar}. Dependent operations and fibred computational effects are
+also established subjects~\cite{Ahman}. We do not claim novelty for these
+general ideas, or derive their unrestricted type-theoretic principles from
+our finite family construction.
+
+QBS already provides a cartesian closed setting for higher-order
+probability~\cite{QBS2017}. The 2026 quasi-Borel-family construction provides
+a substantially stronger dependent-probability baseline than finite tagged
+families alone~\cite{QBF2026}; O3 records its scope. The bounded code-menu
+interpretation here does not replace that theory or assert that every
+kernel has a chosen executable random-function representation. Our
+finite discriminator directly shows why a one-call marginal does not
+specify a reusable multi-call implementation.
+
+The project-specific increment is the explicit conservative syntax,
+resource/dependence substitution and checked observation comparisons in
+the contracted O1/O3 mixed construction~\cite{O1,O3}. The result gives no
+publication-novelty conclusion. Its service theorem is deliberately scoped
+to the stated finite call interface; arbitrary callback contexts,
+unbounded services and a contextual refinement theorem remain distinct
+O5 obligations.
+
+\section{Acceptance ledger and remaining boundaries}\label{sec:acceptance}
+\begin{longtable}{@{}p{0.31\textwidth}p{0.64\textwidth}@{}}
+\toprule
+O4 obligation&Result and scope\\
+\midrule
+\endhead
+Explicit grammar and typed effects&Sections~\ref{sec:data} and
+\ref{sec:commands}; finite public telescopes, separate capability contexts,
+primitive tables, result-dependent bind, addressed batch and open calls.\\
+Data evidence and permissions&Evidence is a declared public predicate;
+no constructor or substitution manufactures a capability or exposes a raw
+witness. Procedure values are data-only code.\\
+Operational and denotational meaning&Section~\ref{sec:semantics}; the raw
+phase-Bind evaluator is projected to the unchanged O3 causal/cost
+observation, with retained and QBS interpretations.\\
+Substitution and plugging&Theorem~\ref{thm:substitution}; dependent
+families and actual resource interfaces are reindexed, and plugging is
+finite and capture-avoiding.\\
+Equality soundness&Theorem~\ref{thm:soundness}; explicit generators,
+causal raw isomorphisms and full joint-law equality have different
+information guarantees. No chronology or all-path recovery is inferred
+from an exact law.\\
+Dependent and open examples&Section~\ref{sec:expressivity}; old adaptive
+allocation and a two-call token-threading open client live in the same core
+with declared finite extensions.\\
+Positive higher order model&Proposition~\ref{prop:higher-models}; finite
+tables and ranked code menus are modeled in all inherited targets, with
+private service state kept until final observation.\\
+Sharing discriminator&Section~\ref{sec:three-tests}; two-call agreement is
+$1$, $5/8$ or $1/2$, despite identical one-call marginals.\\
+Implementation equivalence&Theorem~\ref{thm:service}; all bounded adaptive
+call-only clients, with matched tokens, costs and public events. Not
+native table-handle equivalence.\\
+Invalid rewrites&Section~\ref{sec:rewrites}; effect exchange, resampling,
+capability copying and conditioning-as-observation are either distinguished
+or explicitly unavailable.\\
+\bottomrule
+\end{longtable}
+
+The finite bound is a scope declaration, not an unfinished substitute for
+an unbounded result. Every admitted sort is interpreted and every stated
+metatheorem has the indicated proof. Outside scope are arbitrary
+resource-capturing closures, all stochastic kernels as executable codes,
+unrestricted distributions on higher-order types, general dependent
+cartesian closedness, automatic posterior conditioning, fresh token
+creation, quantitative resource inference, completeness and full
+abstraction. No later O5 replacement theorem is imported into O4's
+soundness statement.
+
+\section{Reproducibility and verification status}\label{sec:checks}
+The companion source-and-checks archive contains this TeX source,
+two standard-library exact-rational test programs, their recorded outputs, a
+source-only checker, a reproducible archive builder, a README and checksums.
+The finite tests enumerate the two-call laws and adaptive Boolean-query
+law, test the token-counter discipline and check private-unary-tree erasure
+on finite examples. They are regressions for the worked calculations and
+scope restrictions. The additional finite AST fixtures test public table
+substitution, dependent input-kind reindexing, open plugging and selected
+rejected resource uses, including zero-weight branches. They cover neither
+all pure lambda/evidence constructors nor all signature instances. These
+regressions are not substitutes for the structural and rank-induction
+proofs or exhaustive tests of arbitrary real-weight signatures.
+
+The source checker verifies balanced groups and environments, resolved
+internal references and bibliography keys, required principal statements
+and absence of drafting markers. The archive checker verifies its explicit
+file inventory and checksums. No TeX engine is invoked. Consequently no
+compiled PDF, page count, visual-layout approval, mechanized proof or
+physical execution result is claimed.
+
+\begin{thebibliography}{99}
+\bibitem{Contract}
+\emph{Expanded Research Contract Version 0.1}. Project source,
+1 November 2026, O4 and its O0--O3 prerequisites.
+\texttt{Expanded\_Research\_Contract\_v0\_1.tex}.
+
+\bibitem{O1}
+\emph{General Independent Interaction Criterion}. Project proof dossier,
+1 November 2026. Augmented rig families, occurrence displays, polynomial
+content and retained cells.
+\texttt{General\_Independent\_Interaction\_Criterion.tex}.
+
+\bibitem{O3}
+\emph{Plural Semantics for Result Dependent Protocols}. Frozen project
+proof dossier, 1 November 2026. CF-0.1, the retained and operational models,
+joint causal/cost laws, native-cell comparison and QBS interpretation.
+\texttt{Plural\_Semantics\_for\_Result\_Dependent\_Protocols.tex}.
+
+\bibitem{Benton}
+N. Benton. \emph{A Mixed Linear and Non-Linear Logic: Proofs, Terms and
+Models}. University of Cambridge Computer Laboratory Technical Report 352,
+1994. \url{https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-352.html}.
+
+\bibitem{Atkey}
+R. Atkey. \emph{Parameterised notions of computation}.
+Journal of Functional Programming 19(3--4), 335--376, 2009.
+DOI: 10.1017/S095679680900728X.
+\url{https://strathprints.strath.ac.uk/34572/}.
+
+\bibitem{Vakar}
+M. V\'{a}k\'{a}r. \emph{A Framework for Dependent Types and Effects}.
+arXiv:1512.08009v2, 2016. \url{https://arxiv.org/abs/1512.08009}.
+
+\bibitem{Ahman}
+D. Ahman. \emph{Handling Fibred Algebraic Effects}.
+Proceedings of the ACM on Programming Languages 2, POPL, article 7, 2018.
+Primary author publication page and paper links:
+\url{https://danel.ahman.ee/}.
+
+\bibitem{QBS2017}
+C. Heunen, O. Kammar, S. Staton and H. Yang.
+\emph{A Convenient Category for Higher-Order Probability Theory}.
+LICS 2017, pp. 1--12. QBS exponentials, normalized probability and the
+scoped randomization result, Theorem 26.
+\url{https://www.cs.ox.ac.uk/people/samuel.staton/papers/lics2017-qbs.pdf}.
+
+\bibitem{QBF2026}
+D. Ahman, O. Kammar and R. E. M\o gelberg.
+\emph{A Convenient Fibration for Dependently-Typed Probability Theory}.
+LIPIcs 380, LICS 2026, article 4, pp. 4:1--4:27.
+\url{https://doi.org/10.4230/LIPIcs.LICS.2026.4}.
+\end{thebibliography}
+\end{document}

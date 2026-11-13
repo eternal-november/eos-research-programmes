@@ -1,0 +1,391 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,array,booktabs,longtable,enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{microtype}
+\setlist{itemsep=3pt,topsep=5pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\setlength{\emergencystretch}{3em}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Prof}{\mathbf{Prof}}
+\newcommand{\Ctx}{\operatorname{Ctx}}
+\newcommand{\Cnt}{\operatorname{Cnt}}
+\newcommand{\Kl}{\operatorname{Kl}}
+\newcommand{\coKl}{\operatorname{coKl}}
+\newcommand{\List}{\operatorname{List}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\comp}{\mathbin{\circ}}
+\newcommand{\ext}{\mathbin{\odot}}
+\newcommand{\cext}{\mathbin{\triangleright}}
+\newcommand{\comb}{\operatorname{combine}}
+\newcommand{\status}[1]{\textbf{#1.}}
+\title{Understanding Contextads and Their Categorical Neighbours}
+\author{Theory orientation and reading guide}
+\date{1 November 2026}
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\section*{Start here}
+A contextad organizes computations whose bodies use an extended input, together with a chosen input context. A contentad organizes arrows that act and produce output content. Their value is not that they replace categories, monads or dependent type theory. They arrange familiar constructions---coKleisli arrows, parameterized maps and display spans on one side, Kleisli-like output production on the other---in a common higher-categorical language.
+
+The central picture is an ordinary body with a structured boundary:
+\[
+\underbrace{A\ext P}_{\text{input extended by context}}
+\xrightarrow{\ f\ }
+\underbrace{Q\cext B}_{\text{output extended by content}}.
+\]
+The labels $P$ and $Q$ may depend on their base objects. Consequently, understanding this picture means understanding the fibres where they live, how those fibres change along maps, and how successive contexts or contents combine. The arrows alone do not determine the interaction of both sides.
+
+\textbf{The useful starting conclusion is positive.} There is already a substantial theory to learn and organize. Contextads have explicit composition formulas and a wreath interpretation. Mixed distributive laws, mixed opwreaths, two-sided Kleisli bicategories, promonads and factorization theorems provide established neighbouring frameworks. The first task is to recognize which framework answers which question, and what information a comparison preserves.
+
+Read in four layers: ordinary arrow shapes; indexed context and content; interaction laws and their ambient categories; then comparison theorems and proof status. Keep three questions beside every formula: \emph{Where does each object live? What composes with what? Which cells or observations are retained?} These questions organize the material more reliably than treating every unfamiliar construction as a new foundation.
+
+\textbf{Scope.} This is a self-contained orientation guide, not a textbook or a new theorem proposal. Small reader, writer and list calculations clarify the theory. Operational applications and the earlier higher-order benchmarks are deferred. The previous provisional theorem contract remains a historical draft: this guide neither adopts nor replaces it. Source locators and qualified theorem statuses appear below; the compact source bundle supplies the companion map and evidence index without redistributing primary PDFs.
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{The theory map}
+\label{sec:map}
+The four layers below are a learning order, not a ladder of increasing generality. Three independent questions run through all of them: arrow shape, dependence and composition, and which cells or quotients a comparison retains.
+
+\subsection{Layer one is the shape of an arrow}
+Start with a category $\mathcal C$ of ordinary objects and maps. An ordinary arrow is $A\to B$. For a comonad $G$, a coKleisli arrow is $GA\to B$; the extra input is duplicated by the comultiplication when arrows compose. For a monad $T$, a Kleisli arrow is $A\to TB$; output effects are flattened by the multiplication. An ordinary mixed arrow $GA\to TB$ uses both structures and a compatible transformation $GT\Rightarrow TG$.
+
+A contextad replaces the one prescribed extension $GA$ by a category of possible extensions $A\ext P$. The choice of $P$ is part of the arrow, and the next choice can depend on the already extended input. A contentad is the covariant counterpart. This is the right conceptual enlargement to remember before reading its full coherence diagrams.
+
+\subsection{Layer two is dependence and transport}
+An indexed category (in general a pseudofunctor) $\mathcal M:\mathcal C^{op}\to\Cat$ supplies a category $\mathcal M_A$ of contexts over each $A$. A map $u:A\to B$ induces reindexing $u^*:\mathcal M_B\to\mathcal M_A$. Equivalently, a cloven fibration packages these fibres into one total category; strict functorial indexing corresponds to split choices. Coherent comparison isomorphisms are understood when choices are not split. The variance is substantive: an input requirement over $B$ can be pulled back along an actual map into $B$.
+
+An indexed category $\mathcal N:\mathcal C\to\Cat$ supplies content fibres and covariant transport $u_!:\mathcal N_A\to\mathcal N_B$, represented by an opfibration. Comprehension categories, display maps, dependent sums and Grothendieck constructions belong at this layer. They explain how an indexed family becomes an extended object and how iterated dependence can be represented. Capucci--Myers' display-span and strong-dependent-sum examples are particularly useful entry points \cite[Examples 3.20--3.21]{CM}.
+
+\subsection{Layer three is coherent composition}
+A double category separates ordinary \emph{tight} arrows from structured \emph{loose} arrows, with squares relating them. A square records a change of input, output and chosen context or content compatible with the body. Thus the theory can remember actual maps between witnesses, not merely equality of final results. In a pseudo double category the relevant composition is associative and unital through coherent isomorphisms. Restricting to identity tight boundaries gives a bicategorical view of loose arrows and globular cells; it does not describe all endpoint squares.
+
+Contextads organize this composition in displayed-span machinery; their wreath interpretation explains why many familiar constructions recur together \cite[Sections 3--4]{CM}. Distributive laws and their higher versions organize interactions between structures. Wreaths and opwreaths allow more general structural data than a bare pair of an ordinary monad and comonad. They are neighbouring levels of generality, not competing names for the same input data.
+
+\subsection{Layer four is comparison and recognition}
+A comparison may preserve objects and arrows but forget cells. It may apply only to representable indexed objects, only to strict structures, or only after taking isomorphism classes. Those restrictions are part of the theorem, not defects in it. At this layer ask whether a result is an isomorphism, equivalence, biequivalence, lifting correspondence, or a construction under explicit hypotheses.
+
+Promonads explain identity-on-objects extensions of an ordinary category. Factorization explains how two kinds of arrows can have coherent normal forms. Parameterised effects organize changing pre/post indices. Dependent Kleisli extension addresses a stronger transport problem over effectful values. These frameworks answer different questions and can coexist in one semantic account.
+
+Syntax and observation are another independent distinction. Context or telescope syntax describes admissible expressions and substitution; a semantic model interprets that structure. Deciding which observations identify two implementations is a further choice. Any resulting observational quotient must respect composition before it supplies a quotient semantics. A map that forgets presentation witnesses is therefore not automatically an equivalence of their original syntax or cell-rich semantics.
+
+\section{The notation and arrow shapes}
+\label{sec:notation}
+Throughout, $g\comp f$ means first $f$, then $g$. Symbols for the contextad, contentad and fixed monad/comonad are kept distinct. We write $\otimes$ only for context accumulation, and use an ordered operation $\comb$ for content accumulation. This avoids a tensor-order ambiguity in the prose surrounding the contentad formulas in the primary paper.
+
+\begin{longtable}{@{}p{0.23\textwidth}p{0.42\textwidth}p{0.29\textwidth}@{}}
+\toprule
+Structure & Exact type or arrow & What the notation records \\
+\midrule
+\endhead
+Ordinary arrow & $f:A\to B$ & A map in $\mathcal C$. \\
+CoKleisli arrow & $f:GA\to B$ & $G$ is a specified comonad. \\
+Kleisli arrow & $f:A\to TB$ & $T$ is a specified monad. \\
+Fixed mixed arrow & $f:GA\to TB$ & Needs compatible mixed structure for composition. \\
+Context fibre & $P\in\mathcal M_A$; $u^*:\mathcal M_B\to\mathcal M_A$ & $u:A\to B$; contravariant transport. \\
+Contextual arrow & $(P,f):A\Rightarrow B$, $f:A\ext P\to B$ & Choice of input extension and its body. \\
+Context accumulation & $P\otimes Q\in\mathcal M_A$, $Q\in\mathcal M_{A\ext P}$ & The second context lives over the first extension. \\
+Content fibre & $Q\in\mathcal N_B$; $u_!:\mathcal N_A\to\mathcal N_B$ & Covariant transport along $u:A\to B$. \\
+Contentful arrow & $(Q,f):A\Rightarrow B$, $f:A\to Q\cext B$ & Body and chosen output extension. \\
+Content accumulation & $\comb_C(Q,P)\in\mathcal N_C$, $P\in\mathcal N_{Q\cext C}$ & Outer $P$, inner $Q$; see \eqref{eq:contentstructure}. \\
+Dependent mixed body & $f:A\ext P\to Q\cext B$, $P\in\mathcal M_A$, $Q\in\mathcal N_B$ & A typed candidate body, not by itself a composition law. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Contextad composition with every base visible}
+A contextad has unit contexts $I_A\in\mathcal M_A$, an extension functor on the total category, and structural maps
+\begin{equation}\label{eq:contextstructure}
+\epsilon_A:A\ext I_A\to A,\qquad
+\delta_{P,Q}:A\ext(P\otimes Q)\to(A\ext P)\ext Q.
+\end{equation}
+The unit and accumulation are cartesian in the stipulated sense, and the grade unitors and associator are invertible and coherent. The displayed maps $\epsilon$ and $\delta$ themselves need \emph{not} be invertible in an ordinary contextad. Treating their noninvertibility as an extra new weakening would misread the definition \cite[Definitions 3.15 and 3.26]{CM}.
+
+Given $f:A\ext P\to B$ and $g:B\ext Q\to C$, first reindex $Q$ along the actual body $f$. Then
+\[
+ f^*Q\in\mathcal M_{A\ext P},\qquad P\otimes f^*Q\in\mathcal M_A.
+\]
+If $\overline f_Q:(A\ext P)\ext f^*Q\to B\ext Q$ denotes the extended cartesian lift, the composite body is
+\begin{equation}\label{eq:ctxcomp}
+A\ext(P\otimes f^*Q)
+ \xrightarrow{\delta} (A\ext P)\ext f^*Q
+ \xrightarrow{\overline f_Q} B\ext Q
+ \xrightarrow{g} C.
+\end{equation}
+The identity body is $\epsilon_A$. This formula says exactly how the second requirement depends on the first computation's result. Replacing $f^*Q$ by an untyped tensor of $P$ and $Q$ would erase that dependence.
+
+For a typical square from $(P,f):A\Rightarrow B$ to $(P',f'):A'\Rightarrow B'$ over $u:A\to A'$ and $v:B\to B'$, the fibre map is $\alpha:P\to u^*P'$. If $\widehat{u,\alpha}:A\ext P\to A'\ext P'$ is the resulting extension map, its body equation is $v\comp f=f'\comp\widehat{u,\alpha}$. This identifies what a retained cell actually contains.
+
+\subsection{Contentad composition with ordered accumulation}
+Dually there are $J_A\in\mathcal N_A$ and maps
+\begin{equation}\label{eq:contentstructure}
+\eta_A:A\to J_A\cext A,\qquad
+\mu_{Q,P}:P\cext(Q\cext C)\to\comb_C(Q,P)\cext C,
+\end{equation}
+where $Q\in\mathcal N_C$ and $P\in\mathcal N_{Q\cext C}$. Our notation explicitly names the base and the order of the two grades.
+
+For $f:A\to P\cext B$ and $g:B\to Q\cext C$, covariant transport gives $g_!P\in\mathcal N_{Q\cext C}$. The composite is
+\begin{equation}\label{eq:cntcomp}
+A\xrightarrow{f}P\cext B
+ \xrightarrow{\widehat g_P}(g_!P)\cext(Q\cext C)
+ \xrightarrow{\mu_{Q,g_!P}}\comb_C(Q,g_!P)\cext C.
+\end{equation}
+The identity body is $\eta_A$. This is the typed organization of the construction in \cite[Definitions 6.1--6.3 and equation (6.1.8)]{CM}; $\comb$ is our disambiguating notation, not a new operation added to the source.
+
+\subsection{Why the mixed arrow needs a crossing}
+For $f:A\ext P\to Q\cext B$ and a later context $R\in\mathcal M_B$, the expression $f^*R$ is not typed: $f$ lands in $Q\cext B$, not in $B$. A mixed theory supplies a compatible way to handle the content $Q$ before the requirement $R$. This is the role of a crossing, lifting or equivalent interaction datum. The point is not that the surrounding theory is missing, but that a particular pair of indexed structures must be placed in its correct hypotheses.
+
+One possible typed signature for that comparison chooses
+\[
+\widehat R\in\mathcal M_{Q\cext B},\qquad
+\widehat Q\in\mathcal N_{B\ext R},\qquad
+\chi:(Q\cext B)\ext\widehat R\to\widehat Q\cext(B\ext R).
+\]
+If the second body is $g:B\ext R\to S\cext C$, the candidate composite grades are $P\otimes f^*\widehat R$ and $\comb_C(S,g_!\widehat Q)$. This displays where both transports occur. Naturality, units, accumulation laws and coherent dependence on choices remain necessary. The signature is a way to read a proposed comparison, not a claim that every pair admits it.
+
+\subsection{Monoidal parameters recover the Para pattern}
+For a right action of a monoidal category $\mathcal V$ on $\mathcal C$, parameterized arrows have shape $(P,f:A\ext P\to B)$ with $P\in\mathcal V$. With constant parameter fibres, reindexing leaves $Q$ unchanged and the composite parameter is $P\otimes Q$. The action comparison supplies $A\ext(P\otimes Q)\to(A\ext P)\ext Q$, followed by the two bodies. Parameter maps supply cells. This recovers the Para pattern as a contextad instance; the tensor is not assumed to be a categorical product. Contextads then allow the parameter category itself, and the second parameter choice, to depend on the current base \cite[Section 3]{CM}.
+
+\subsection{Display spans realize pullback composition}
+Assume a class of display maps contains identities and is stable under pullback and composition. A context over $A$ is a display $p:X\to A$, and $A\ext p=X$. Thus a contextful arrow is the span $A\xleftarrow{p}X\xrightarrow{f}B$. For a second span $B\xleftarrow{q}Y\xrightarrow{g}C$, reindexing gives $f^*q:X\times_B Y\to X$ and accumulation composes that display with $p$. The resulting body is
+\[
+A\xleftarrow{\ p\comp\pi_X\ }X\times_B Y
+ \xrightarrow{\ g\comp\pi_Y\ }C.
+\]
+This is precisely the familiar pullback composite, now read as $p\otimes f^*q$ rather than as an unrelated special recipe \cite[Example 3.21]{CM}.
+
+\section{Four canonical calculations}
+\label{sec:examples}
+\subsection{Reader as a fixed input context}
+In $\Set$, fix a set $E$ and take $GX=E\times X$. Its counit forgets $E$, and its comultiplication sends $(e,x)$ to $(e,(e,x))$. A coKleisli arrow $f:E\times A\to B$ reads one environment. For $g:E\times B\to C$, composition is
+\[
+(g\star f)(e,a)=g(e,f(e,a)).
+\]
+The same $e$ is used twice because the comultiplication duplicates it. Currying gives $\Set(E\times A,B)\cong\Set(A,B^E)$. With the reader monad structure on $(-)^E$, its multiplication uses the same environment twice, so this is an identity-on-objects isomorphism of ordinary coKleisli and Kleisli categories. The two endofunctors are not being identified. This is a simple constant-choice case of input context, not an illustration of all indexed dependence. In a dependent contextad, the next fibre can vary with the entire extended input and the returned value, as \eqref{eq:ctxcomp} shows.
+
+\subsection{Writer as output content}
+Fix a monoid $(W,1,\cdot)$ and let $TX=W\times X$. The unit inserts $1$ and multiplication combines adjacent records. If $f(a)=(w,b)$ and $g(b)=(v,c)$, their Kleisli composite is
+\[
+(g\star f)(a)=(w\cdot v,c).
+\]
+No commutativity of $W$ is required. The order reflects execution order. A singleton-fibre contentad gives this monadic output pattern. Comparing reader and writer makes the two directions memorable: input context is available before the body; output content is accumulated after it. It does not imply that every contextad is a fixed reader or every contentad a fixed writer.
+
+There is also a concrete change of presentation: $f:A\to W\times B$ is a pair $(w:A\to W,b:A\to B)$. Regard $w$ as an $A$-indexed grade whose extension leaves $A$ unchanged. The next grade $v:B\to W$ reindexes to $v\comp b$, and the composite grade is $a\mapsto w(a)\cdot v(b(a))$. The body composes ordinarily. This gives the writer category a dependent-grade presentation without invoking the unproved general transposition statement.
+
+\subsection{A reader and writer together}
+The transformation
+\[
+\lambda_X:E\times(W\times X)\longrightarrow W\times(E\times X),
+\qquad(e,(w,x))\longmapsto(w,(e,x))
+\]
+interchanges the fixed reader environment and writer output. For $f:E\times A\to W\times B$ and $g:E\times B\to W\times C$, the same environment is reused and the records multiply in order. The counit and unit equations reduce to forgetting $E$ and inserting $1$; the other equations reduce to duplicating $e$ and associating the product in $W$. This is an elementary instance of the fixed mixed-law formula below, not a newly claimed theorem.
+
+\subsection{Lists distinguish positions from labels}
+A list $[b_1,\ldots,b_n]$ has $n$ \emph{positions}, even if some labels coincide. For a family of finite probability spaces $R_b$, the familiar independent traversal uses
+\[
+C(R)_{[b_1,\ldots,b_n]}=\prod_{i=1}^{n}R_{b_i},
+\qquad
+([b_i],(r_i))\longmapsto[(b_i,r_i)].
+\]
+The empty product is a singleton. Repeated labels still occupy separate positions. The probability tensor here is the independent product on Cartesian carriers, not a categorical-product assertion about measure-preserving maps.
+
+At the distribution level this yields $\List(DX)\to D(\List X)$ for finite normalized distributions $D$. Flattening lists corresponds to flattening position-indexed tuples; compatibility with distribution multiplication is a finite product-of-sums identity. Traversal theory explains the general pattern: finitary containers are traversable, and the cited Kleisli-composition result requires a commutative monad \cite[Theorem 3.7 and Lemma 4.1]{JR}. The earlier project calculation additionally retained maps between probability presentations. That extra presentation-level proof should not be attributed verbatim to the traversal paper. Here the example's purpose is only to make naturality, units and the two multiplications concrete.
+
+\section{The established frameworks for interaction}
+\label{sec:interaction}
+\subsection{The ordinary mixed distributive law}
+Let $(G,\Delta,\varepsilon)$ be a comonad and $(T,\mu,\eta)$ a monad on the \emph{same} category. A mixed distributive law in the orientation relevant here is $\lambda:GT\Rightarrow TG$. Its four equations say that the crossing respects the monad unit and multiplication and the comonad counit and comultiplication. With these hypotheses, $f:GA\to TB$ and $g:GB\to TC$ compose by
+\begin{equation}\label{eq:mixedcomp}
+GA\xrightarrow{\Delta_A}GGA
+ \xrightarrow{Gf}GTB
+ \xrightarrow{\lambda_B}TGB
+ \xrightarrow{Tg}TTC
+ \xrightarrow{\mu_C}TC,
+\end{equation}
+with identity $\eta_A\comp\varepsilon_A$. The crossing is precisely what makes the middle segment type correctly. Its equations do more than ensure a plausible output: they make the two parenthesizations agree and make the displayed identity behave as one.
+
+In the bicategorical version, a pseudomonad and pseudocomonad have coherent structural isomorphisms, and the law has compatible invertible coherence modifications. Garner's two-sided Kleisli construction has hom categories $\mathcal B(GA,TB)$ with the corresponding form of \eqref{eq:mixedcomp} \cite[Definition 14]{Garner}. The source uses different letters. It describes the associativity and unit constraints as constructed from the supplied structures rather than displaying them all. Its later polycategory construction also derives a substantive mixed law, with the coherence verification in Proposition 38 and Corollary 39. Thus both higher mixed packaging and concrete constructions of such laws already have important exemplars.
+
+\subsection{Mixed opwreaths allow the context structure to be effectful}
+Street works in a strict 2-category with a monad $T$ on an object. A mixed \emph{opwreath} is a comonad in the appropriate Kleisli completion (KL). Its underlying endomorphism $G$ comes with
+\[
+\zeta:GT\Rightarrow TG,\qquad
+\delta^{w}:G\Rightarrow TGG,\qquad
+\epsilon^{w}:G\Rightarrow T,
+\]
+subject to seven axioms \cite[Definition 5 and Proposition 7]{Street}. In $\Cat$ the resulting arrows again have shape $GA\to TB$. Now context duplication and discharge may themselves produce monadic effects. There need not be a separate ordinary comonad on $G$.
+
+The ordinary mixed law is recovered by taking
+$\delta^{w}=\eta_{GG}\comp\Delta$ and
+$\epsilon^{w}=\eta\comp\varepsilon$.
+The resulting composite reduces to \eqref{eq:mixedcomp} by the monad unit laws. This is a useful relation between frameworks: the opwreath contains the fixed ordinary control as a specialization. Street's mixed \emph{wreath}, on the Eilenberg--Moore (EM) side, uses the opposite crossing orientation $TG\Rightarrow GT$. The words ``mixed law'' alone do not settle this choice.
+
+\subsection{Law and lifting presentations organize the same compatibility}
+Walker identifies equivalent presentations of pseudodistributive laws between two pseudomonads: among them compatible Kleisli extensions, pseudoalgebra descriptions and no-iteration formulations \cite[Theorems 4.1.8 and 5.0.1]{Walker}. Gambino--Lobbia formulate a corresponding lifting theory in a Gray-category, including lifting one pseudomonad to the other's pseudoalgebras and the dual module formulation \cite[Theorems 3.4 and 4.5, Corollary 4.6]{GL}.
+
+These results are useful because one presentation may be far easier to construct or verify than another. They do not assert that any two structures interact. Compatibility and coherence remain part of the input; Walker's morphism and opmorphism data require the additional compatibility condition W5. Nor should a theorem for two pseudomonads be applied to an indexed context/content pair merely by renaming symbols. First identify the common ambient and the relevant dualities. The source results include proofs with some routine coherence verifications abbreviated; they are not thereby the same status as an explicitly unproved theorem statement.
+
+\subsection{Where contextads sit in this map}
+In Capucci--Myers, contextads are pseudomonads in a tricategory of left-fibrant spans with the stipulated colax maps. Their Theorems 4.18--4.19 connect this to the Kleisli-side wreath construction. Contentads use the right-opfibrant counterpart and the opposite structural orientation \cite[Definition 3.15, Theorems 4.18--4.19, Section 6]{CM}. This explains their family resemblance to the mixed frameworks while preserving the difference in input data.
+
+The local isomorphism in Theorem 4.12 should also be distinguished from the higher wreath-product formula that Remark 4.20 takes for granted by analogy, and from the explicitly conjectural full universal-property identification in Section 4.4.
+
+A concrete comparison should therefore name the ambient category or higher category, specify the images of the fibres and extension functors, and say how tight maps, loose maps and squares are transported. In some cases the standard framework already supplies the answer after this translation. In others the translation has not been verified by us. That latter status is a statement about the present comparison, not a claim that the literature lacks a foundation.
+
+\section{How the main bridges help organize the theory}
+\label{sec:bridges}
+\subsection{Promonads package ordinary effectful extensions}
+For a small category $\mathcal C$, a promonad is a monad on $\mathcal C$ in the bicategory $\Prof$. Its unit maps ordinary arrows into the chosen effectful category and its multiplication composes the new arrows. Equivalently, it is an identity-on-objects functor $\mathcal C\to\mathcal D$ \cite[Theorem 3.9 and Appendix B.2]{Roman}. Thus, once a one-sided construction has an ordinary category of arrows and a specified identity-on-objects pure functor, there is a standard profunctorial organization available. That functor need not be faithful; a faithful embedding is an additional property. Here ``pure'' means designated by the base functor, not automatically ``deterministic'' in a Markov-category sense.
+
+This statement does not itself retain noninvertible globular cells. Passing from a hom category to isomorphism classes of its objects identifies only isomorphic presentations; it is not the same as identifying all objects connected by arbitrary morphisms. Either passage loses the morphisms as independent data. An ordinary promonad comparison must state exactly which passage was used and why composition descends.
+
+At a local retained-cell level there is another useful bridge. For small categories $\mathcal K,\mathcal L,\mathcal C$ and functors $e:\mathcal K\to\mathcal C$, $d:\mathcal L\to\mathcal C$, the earlier reduction dossier established the strict $\Cat$-coend comparison
+\begin{equation}\label{eq:coend}
+\int^{Z\in\mathcal C}(e\downarrow Z)\times(Z\downarrow d)
+ \;\cong\;(e\downarrow d).
+\end{equation}
+The right side has objects $(P,Q,f:eP\to dQ)$ and morphisms $(\alpha,\beta)$ satisfying $d\beta\comp f=f'\comp e\alpha$. The comparison composes the two body maps through $Z$; its inverse splits a body at $Z=eP$. Balancing along a pure middle map makes these descriptions agree, also on morphisms. This is a local strict comparison from the project notes, not a theorem here asserting a global pseudoambient equivalence for every dependent mixed structure.
+
+\subsection{Factorization explains a source of crossing laws}
+Suppose arrows admit unique factorizations through two wide subcategories. Refactorizing a composite in the opposite order constructs a crossing. Uniqueness then proves the multiplication equations: two proposed normal forms factor the same composite and hence agree. Rosebrugh--Wood make this correspondence precise for strict factorization, and treat chosen classical factorizations with the required isomorphism-relative adjustments \cite[Section 3, Theorem 3.8, Sections 5.7--5.9]{RW}. Literal unique factorization should not be confused with ordinary orthogonal factorization, whose uniqueness is usually only up to unique isomorphism.
+
+Lack supplies related PRO/PROP recognition results and pullback/pushout constructions of distributive laws \cite[Theorems 3.8 and 4.6, Sections 5.3--5.4]{Lack}. For retained double structure, \v{S}t\v{e}p\'an proves recognition theorems for codomain-discrete double categories and for factorization double categories, with exact filler and flatness-related hypotheses \cite[Theorems 3.3.7 and 3.3.33]{Stepan}. These are positive tools for recognizing a suitable example. A factorization theorem supplies its own specified crossing; it does not automatically supply an additional pullback/pushout interchange for every proposed normalization. They are not automatically theorems about arbitrary non-flat dependent context/content doubles.
+
+\subsection{Parameterised and dependent effects ask different questions}
+Atkey's parameterised monad uses $T:S^{op}\times S\times\mathcal C\to\mathcal C$. An arrow from $(A,s)$ to $(B,s')$ is $A\to T(s,s',B)$; composition matches the middle index. Strength and the relevant closure hypotheses connect this with parameterised Freyd categories \cite[Definition 1, Propositions 1--3, Theorem 1]{Atkey}. This is a clear framework for changing typed state indices.
+
+An indexed contextad can additionally make later context choices depend on a realized value through $f^*Q$. A still different requirement is extending arbitrary dependent sections across the monad unit $A\to TA$, allowing a predicate to inspect the entire effectful value. V\'ak\'ar's dependent Kleisli extension addresses that stronger requirement; it is extra structure, not supplied by every indexed monad \cite[Definition 5.3.2 and Sections 5.3.3.1--5.3.3.3]{Vakar}. These distinctions prevent three uses of ``dependent'' from being conflated. They do not establish an expressivity separation: sums, indexing and changes of representation may relate particular models, and such comparisons must be shown.
+
+\subsection{Telescope and Grothendieck constructions organize iterated dependence}
+The telescope viewpoint treats a sequence of dependent extensions as one iterated object. Kamiya's manuscript gives a concrete Grothendieck-extension construction and transport results under explicit display/comprehension hypotheses \cite[Proposition 3.2, Proposition 3.5, Theorem 4.2]{Kamiya}. Its strict telescope-algebra result concerns strict contextads in the specified strict span subcategory, not every ordinary contextad. Its main transport construction begins with a display contextad and a fibrewise comprehension equivalence.
+
+The Kleisli comparison in Proposition 3.6 is \emph{on representables}. It identifies the relevant arrows and cells there; it does not identify an entire Kleisli bicategory on all indexed categories with a construction having only the original base objects. This is a useful secondary reading route after the basic composition formula, especially for understanding why dependent tuples and Grothendieck constructions naturally occur together. The manuscript is recent; the prior audit inspected these arguments but did not certify all dependencies or formalize them.
+
+\section{What is proved and what each status means}
+\label{sec:status}
+Three labels must remain separate. \emph{Proved within assumptions} means the source supplies a theorem and argument under named hypotheses; it does not mean every proof has been independently formalized here. \emph{Source explicitly unproved} records the source's own omission or conjectural status. \emph{Mapping unverified by us} means we have not established a particular application or equivalence; it is not a research-gap declaration.
+
+\begin{longtable}{@{}p{0.22\textwidth}p{0.42\textwidth}p{0.30\textwidth}@{}}
+\toprule
+Result & Scope and hypotheses & Status for this guide \\
+\midrule
+\endhead
+Contextad composition and wreath organization & Displayed-span contextad data and their coherence; indexed formula in Definition 3.26; local and wreath results in Theorems 4.12 and 4.18--4.19 \cite{CM}. & Source constructions and theorem arguments inspected in the prior audit. The stronger universal-property claim is separate. \\
+Full KL universal-property identification & The stronger reduced tricocompletion identification discussed in Section 4.4 and footnote 17 \cite{CM}. & Conjectural at the level explicitly isolated in the source. Do not infer that all explicit contextad formulas are conjectural. \\
+Polynomial and parametric right adjoint (PRA) transposition & Polynomial/container monad in Theorem A.4; broader PRA theorem in the 2025 slides \cite{CM,Slides}. & Remark A.5 explicitly leaves A.4 unproved there. Slides state the broader result without a full proof. \\
+Two-sided Kleisli bicategory & Pseudomonad, pseudocomonad and mixed pseudo-distributive law on a common bicategory \cite[Definition 14]{Garner}. & Established construction; generic constraints not all displayed. Concrete polycategory-law coherence is proved later in the source. \\
+Mixed opwreath Kleisli construction & Monad and mixed opwreath data with seven axioms in a strict 2-category \cite[Definition 5, Proposition 7]{Street}. & Source theorem/construction, within those assumptions. \\
+Law and lifting correspondences & Two pseudomonads and compatible coherent data in the stated 2/Gray-categorical setting \cite{Walker,GL}. & Proved correspondences with abbreviated routine checks. Arbitrary context/content instantiation unverified by us. \\
+Factorization recognition & Strict or orthogonal factorization with the respective double-category hypotheses \cite{RW,Stepan}. & Proved within assumptions; not a universal recognition of arbitrary non-flat doubles. \\
+Telescope transport & Specified strict or display/comprehension setting; representables for the Kleisli comparison \cite{Kamiya}. & Source arguments inspected in the prior audit within their restrictions; not a general contextad-recognition theorem. \\
+Local mixed coend & Small categories and strict ordinary $\Cat$-coend in \eqref{eq:coend}. & Established in prior project reduction notes; full weak global bridge not established there. \\
+\bottomrule
+\end{longtable}
+
+The transposition statement is worth understanding even with its proof-status qualification. On $\Set$, a polynomial functor has a shape/position form
+\[
+TX=\sum_{s\in S}X^{E_s}.
+\]
+A map $f:A\to TB$ chooses a shape $s(a)$ and a body $\sum_{a\in A}E_{s(a)}\to B$. This gives the transparent arrow-level correspondence behind the proposed transposition. Verifying the contextad structure and its compatibility with monad units, multiplication and cells is additional work. It is accurate to learn the correspondence now while retaining the source's explicit status for the full theorem \cite[Appendix A]{CM}.
+
+\section{A prioritized reading path}
+\label{sec:reading}
+\textbf{Pass one: make composition concrete.} Read Capucci--Myers Definition 3.17 alongside the indexed Definition 3.26, using \eqref{eq:ctxcomp} as a type-checking guide. Then read Examples 3.20--3.21. Ask: where does the second context live, why is it pulled back along the body rather than an endpoint map, and which maps may be noninvertible? Work the reader example by hand. The stopping condition is being able to reconstruct a two-arrow composite without consulting the notation table.
+
+\textbf{Pass two: understand the dual, then one mixed example.} Read Section 6 with the ordered $\comb$ notation from \eqref{eq:cntcomp}. Work writer composition, then reader--writer composition. Read Street Definition 5 and Proposition 7, or Garner Definition 14 if the bicategorical formulation is already comfortable. Ask: what data make the middle composite type correctly, and which equations handle each unit and multiplication? The aim is recognition of the mechanism, not memorization of every coherence diagram.
+
+\textbf{Pass three: learn why the packaging exists.} Read Capucci--Myers' local comparison in Theorem 4.12 and the wreath results in Theorems 4.18--4.19, keeping Section 4.4's stronger universal-property caveat separate. Then read Rom\'an Section 3 and the local coend discussion above. Ask: what are the objects, arrows and cells of each side, and what does the comparison forget? This is the point at which the language of wreaths and promonads becomes explanatory rather than decorative.
+
+\textbf{Pass four: choose the relevant neighbouring theorem.} For a compatibility problem, read Walker Theorem 5.0.1 and Gambino--Lobbia Theorem 4.5 to choose a convenient presentation. For normal forms, read Rosebrugh--Wood Section 3 and the relevant \v{S}t\v{e}p\'an recognition theorem. For typed state changes, read Atkey Definition 1 and Proposition 1; for dependence across an effectful value, read V\'ak\'ar Definition 5.3.2 before the counterexamples. For iterated display dependence, read Kamiya Sections 3--4 with the representable restriction visible. These are branches, not a requirement to read every source in order.
+
+\textbf{Pass five: return to a specific comparison.} Write one paragraph stating its hypotheses, arrow map, cell map, composition comparison and exact equivalence level. Label any unverified part as such. For example, do not replace ``isomorphism classes of presentations'' with ``all cells retained,'' or ``on representables'' with ``on every indexed category.'' At this stage a small list calculation can test understanding of naturality; an operational benchmark is not yet needed.
+
+A useful personal summary is a single page with the arrow-shape table, \eqref{eq:ctxcomp}, \eqref{eq:cntcomp} and \eqref{eq:mixedcomp}, plus one sentence naming the information preserved by each comparison currently in use. Once those distinctions are stable, applications can be selected to illuminate the theory rather than to decide prematurely that new foundations are required.
+
+\section*{Evidence and delivery note}
+\addcontentsline{toc}{section}{Evidence and delivery note}
+This guide synthesizes the primary-source audit and the subsequent reduction and harder-test dossiers from 1 November 2026. It does not claim an exhaustive literature survey, independently reproved universal coherence, or a newly adopted theorem programme. The source bundle contains this self-contained TeX, companion conceptual and notation notes, a compact theorem-status ledger and a source manifest. It contains no primary-source PDFs. The requested deliverable is source; static checks are recorded separately, and no compiled page layout is certified.
+
+\begin{thebibliography}{99}
+\bibitem{CM} Matteo Capucci and David Jaz Myers.
+\emph{Contextads as Wreaths; Kleisli, Para, and Span Constructions as Wreath Products}.
+arXiv:2410.21889v1, 2024.
+\url{https://arxiv.org/abs/2410.21889v1}.
+
+\bibitem{Slides} Matteo Capucci.
+\emph{Contextads abridged}. PSSL110 slides, May 2025.
+Slides 11 and 14; PDF overlay pages 32 and 39--41.
+\url{https://matteocapucci.eu/assets/2025/05/pssl-110.pdf}.
+
+\bibitem{Street} Ross Street.
+\emph{Wreaths, mixed wreaths and twisted coactions}.
+arXiv:1610.07281v1.
+\url{https://arxiv.org/abs/1610.07281v1}.
+
+\bibitem{Garner} Richard Garner.
+\emph{Polycategories via pseudo-distributive laws}.
+arXiv:math/0606735v2.
+\url{https://arxiv.org/abs/math/0606735v2}.
+
+\bibitem{Walker} Charles Walker.
+\emph{Presentations of pseudodistributive laws}.
+arXiv:2102.12468v4.
+\url{https://arxiv.org/abs/2102.12468v4}.
+
+\bibitem{GL} Nicola Gambino and Gabriele Lobbia.
+\emph{On the formal theory of pseudomonads and pseudodistributive laws}.
+Theory and Applications of Categories 37(2), 2021, 14--56.
+\url{https://www.tac.mta.ca/tac/volumes/37/2/37-02.pdf}.
+
+\bibitem{Roman} Mario Rom\'an.
+\emph{Promonads and String Diagrams for Effectful Categories}.
+arXiv:2205.07664v4, 2024.
+\url{https://arxiv.org/abs/2205.07664v4}.
+
+\bibitem{RW} Robert Rosebrugh and R. J. Wood.
+\emph{Distributive Laws and Factorization}.
+Journal of Pure and Applied Algebra 175, 2002, 327--353.
+\url{https://mta.ca/~rrosebru/articles/fac.pdf}.
+
+\bibitem{Lack} Stephen Lack.
+\emph{Composing PROPs}.
+Theory and Applications of Categories 13(9), 2004, 147--163.
+Inspected journal PDF revised 2021.
+\url{https://tac.mta.ca/tac/volumes/13/9/13-09.pdf}.
+
+\bibitem{Stepan} Miloslav \v{S}t\v{e}p\'an.
+\emph{Lax structures in 2-category theory}.
+Doctoral thesis, arXiv:2504.04467v1, 2025, Chapter 3.
+This chapter incorporates \emph{Factorization systems and double categories},
+Theory and Applications of Categories 41(18), 2024, 551--592.
+\url{https://arxiv.org/abs/2504.04467v1}.
+
+\bibitem{Atkey} Robert Atkey.
+\emph{Parameterised Notions of Computation}.
+Journal of Functional Programming 19(3--4), 2009, 335--376.
+\url{https://bentnib.org/paramnotions-jfp.pdf}.
+
+\bibitem{Vakar} Matthijs V\'ak\'ar.
+\emph{In Search of Effectful Dependent Types}.
+Doctoral thesis, 2017, Chapter 5.
+\url{https://www.cs.ox.ac.uk/people/aleks.kissinger/theses/vakar-thesis.pdf}.
+
+\bibitem{Kamiya} Kotaro Kamiya.
+\emph{The Grothendieck construction between the telescope monad and contextads}.
+Hexagon 2610.00302v1, 17 October 2026.
+\url{https://hexagonmath.org/2610.00302v1}.
+
+\bibitem{JR} Mauro Jaskelioff and Ondrej Rypacek.
+\emph{An Investigation of the Laws of Traversals}.
+Electronic Proceedings in Theoretical Computer Science 76, 2012.
+arXiv:1202.2919.
+\url{https://arxiv.org/abs/1202.2919}.
+\end{thebibliography}
+\end{document}

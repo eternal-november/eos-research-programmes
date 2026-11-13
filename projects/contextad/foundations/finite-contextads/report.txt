@@ -1,0 +1,678 @@
+Generalizing contextads
+A finite stochastic baseline and one recovery application
+1 November 2026
+Scope corrected following the clarification of 1 November 2026
+
+1 Main finding
+
+The research programme is to generalize contextads, pursuing theoretical
+targets and a range of applications. This report studies one finite stochastic
+baseline and one application area: discovered transaction semantics and partial
+recovery. Neither defines or exhausts the programme. The narrow obstruction
+in the supplied material is valid: deterministic writer grades cannot simply
+be paired with extensional probability laws while preserving both intended
+compositions. A different representation using dependent families of finite
+probability spaces already forms an ordinary contextad. Its experiments retain
+sample histories; evaluation forgets them and yields finite stochastic maps.
+The exact comparison is a local reflection, with a canonical sampler section
+that is lax, not history-preserving, under sequential composition.
+
+Within this application area, a further question is which information later
+resource choices and recovery claims require, which of that information is
+actually observable, and when those requirements survive composition,
+abstraction, and revision of the semantic model. This is one source of
+requirements for the theory, not the definition of its next general target.
+
+Direction 6 is the generalization of contextads. Transaction-like robotic
+changes in environments whose semantics are discovered and whose changes may
+support only partial recovery are one challenging example application. The
+programme also includes theoretical targets and other applications, which are
+not selected or delimited by this finite study. The recovery question proposed
+below is an application-specific candidate, not an adopted programme target
+or final research contract. This report makes no novelty or general-solution
+claim. Its mathematical results and examples are unchanged by this correction.
+
+2 The idea in ordinary language
+
+A robot can return a parcel to its old location without repairing its broken
+seal, refunding its energy, or retracting a notification someone has already
+seen. It may also need to learn which return command is safe. A mathematical
+model should distinguish those facts rather than call every return an inverse.
+
+There are three levels to keep apart:
+
+  Omega -- observations and receipts --> H -- output interface --> B.
+
+Here Omega is latent execution or sample state, H is the visible journal,
+and B is the external output.
+
+Omega can contain a persistent hidden mode theta, actual physical state, and
+fresh random samples. H contains what the controller has actually observed or
+been permitted to record. B is the declared externally visible result. An
+admissible program or compensator may use H and authorized resources, not a
+hidden coordinate of Omega merely because the proof mentions it.
+
+A proof may retain a richer execution witness than the controller receives.
+That helps verify correlations and recovery claims, but it is not an extra
+sensor. Pure computation is also not every deterministic transition: a motor
+command can be deterministic yet change the world and consume resources.
+Copying a capability description does not duplicate that physical capability.
+Conversely, throwing away information is harmless only if no allowed
+continuation needs it. A receipt saying only "parcel returned" might suffice
+for location reporting but not for a later seal audit or a safe return-tool
+selection.
+
+The finite construction makes this distinction between an experiment and its
+output law precise. It does not itself enforce the observation boundary or
+provide physical abilities. In particular, its canonical sampler J(k) is a
+semantic representative of a known mathematical kernel k. It is not an
+executable replacement for an opaque physical action, a learned kernel with
+uncertain validity, or an unavailable reset or conditioning operation.
+
+3 Scope of the supplied suggestions
+
+The selected programme is to generalize contextads, with theoretical targets
+and more than one motivating application. The robot example motivates a hard
+case; it is not a definition of the programme. Likewise, the stochastic
+compatibility question in one transcript is a concrete theoretical lead, not
+an instruction to restrict all future work to stochastic contexts.
+
+The supplied AI conversations contain candidate constructions and applications,
+not adopted definitions, completed proofs, or user instructions to prioritize
+every suggested topic. The AI conversation's own numbered item 6 is unrelated
+to the numbering of the current agenda. The correction to this report does
+not select a new formalism or replace one narrow target with another.
+
+The finite study below asks how a sample-retaining contextad compares with
+its stochastic output semantics, then uses learned actions and partial
+recovery to test what those comparisons may forget. That is a worked baseline
+and application branch within the broader programme. It supplies evidence for
+choosing theoretical targets; it does not already choose them. Other examples
+should test different requirements rather than merely restate robot recovery.
+The finite known-hypothesis examples do not show that arbitrary unknown
+physical semantics can be learned safely.
+
+Within this worked application branch, the results separate four questions:
+
+  - Representation: what data describe a witnessed execution?
+  - Observation: what information can an admissible continuation use?
+  - Recovery: what relation to an earlier or counterfactual state is promised?
+  - Revision: which claims survive a justified change of semantic description?
+
+A richer state space can encode much of this operationally. The challenge in this application
+is to identify and prove the structural interaction, not merely to rename
+those coordinates. The broader generalization problem is not exhausted by it.
+
+4 An exact finite obstruction
+
+Let W = {0,1}, with addition given by XOR. The deterministic writer contextad
+over finite sets has grades w:A->W, extension A odot w = A, zero unit grade,
+and pointwise XOR combination. Its pure arrows compose by
+
+  (v,g) after (w,f) = (a |-> w(a) XOR v(f(a)), g after f).
+
+Now insist that the stochastic arrows remain exactly
+
+  T(A,B) = { (w,k) : w:A->W, k:A->Dist(B) },
+
+where Dist means total normalized finite probability, and equality compares
+the actual grade w and the extensional output law k. Require composition to
+preserve both specified inclusions:
+
+  pure writer:        (w,f) |-> (w,delta_f),
+  ordinary kernels:   k     |-> (0,k).
+
+These inclusions agree on grade-zero deterministic maps. There is no
+associative composition with these properties. A separate unit assumption is
+not needed for the contradiction.
+
+Proof. Let r:1->2 be a fair bit at grade zero; let s:2->2 flip that bit at grade
+zero; let g:2->1 write its input bit; and let u:1->1 write 1. Preservation of
+stochastic composition gives s r = r. Preservation of pure writer composition
+gives g s = u g. For h = g r, associativity would give
+
+  h = g(s r) = (g s)r = (u g)r = u(g r) = u h.
+
+But Dist(1) has exactly one element, so every arrow of T(1,1) is already a pure
+writer arrow with one fixed bit w. The grade of u h is 1 XOR w, never w. This
+contradicts h = u h.
+
+The grade fibres here are discrete, so replacing equality by a coherent grade
+isomorphism does not remove this contradiction. The result is specific to
+this representation and these preservation requirements. It does not rule
+out random grades, explicit sample presentations, dependent contexts, or
+stochastic contextads generally. Nor does this proof immediately apply to
+subprobability, for which Dist_sub(1) is not a singleton. Intensional samplers
+can also distinguish flip-after-sampling from the original sampler even when
+their output laws agree.
+
+A standard repair is to use A->Dist(W x B). Sample (w,b), then (v,c), and return
+(w XOR v,c). In the counterexample, h is now a fair distribution on the two
+grades and is invariant under toggling. Bind and XOR associativity give the
+composition laws. The XOR operation remains deterministic; the realized grade
+is random. This solves the writer instance. It does not supply a probability
+construction on an arbitrary category-valued context fibre.
+
+5 A dependent finite probability family contextad
+
+This is a concrete construction satisfying the ordinary contextad definition,
+not a proposed weakening of that definition. All sets and probability spaces
+in this section are finite. Prob+ has strictly positive probability weights
+on every point and deterministic measure-preserving functions as morphisms.
+Normalized spaces are nonempty. Zero-weight points are removed from supports.
+
+Over a finite set A, take the fibre Prob+^A. Its objects are families
+P = (P_a,p_a), one probability space per input. A map over u:A->A' consists of
+functions phi_a:P_a->P'_(u(a)) satisfying
+
+  sum_{x: phi_a(x)=x'} p_a(x) = p'_(u(a))(x').
+
+Reindexing is precomposition with u. The context extension is
+
+  A odot P = { (a,x) : a in A, x in P_a }.
+
+On a total-category map (u,phi), its action is
+
+  (a,x) |-> (u(a),phi_a(x)).
+
+The unit I_A is the singleton probability space at each a. If Q is a family
+over A odot P, define the dependent tensor by
+
+  (P tensor Q)_a = { (x,y) : x in P_a, y in Q_(a,x) },
+  weight_a(x,y)  = p_a(x) q_(a,x)(y).
+
+The weights sum to one. The counit removes the singleton coordinate. The
+coassociator sends (a,(x,y)) to ((a,x),y). Unit and associativity comparisons
+are the corresponding tuple bijections, preserving weights because products
+associate.
+
+There is a real functoriality check, not just a tuple analogy. Given maps phi
+and psi preserving the first and conditional second measures, the combined
+map sends (x,y) to (phi_a(x),psi_(a,x)(y)). For a target pair (x',y'), its
+mass is
+
+  sum_{x:phi(x)=x'} p_a(x)
+      sum_{y:psi_(a,x)(y)=y'} q_(a,x)(y)
+    = sum_{x:phi(x)=x'} p_a(x) q'_(u(a),x')(y')
+    = p'_(u(a))(x') q'_(u(a),x')(y').
+
+Thus tensor is functorial. Cartesian arrows in the family fibration have
+fibrewise probability-space isomorphisms; their dependent-pair maps are again
+isomorphisms. Reindexing by ordinary functions commutes with the displayed
+dependent sums. This supplies cartesianness of the unit and tensor. Triangle,
+pentagon, and action-compatibility diagrams commute because both routes are
+the same coordinate maps with the same weights. These checks meet the indexed
+contextad requirements, including the reindexing of later dependent families.
+
+The construction is genuinely dependent: both the size and distribution of
+P_a can vary with a. It is not one fixed probability space acting by product.
+The probabilities are supplied data. Nothing here chooses a distribution on
+an arbitrary resource set, grants a permission, or acquires a physical tool.
+
+The relevant existing definition is Capucci and Myers, Definition 3.26,
+pp.29-30: https://arxiv.org/pdf/2410.21889#page=29 . The construction and checks
+above are presented explicitly rather than attributed as a theorem in that
+paper.
+
+6 Experiments and their output laws
+
+Write HistProb for the horizontal bicategory of this contextad. An experiment
+(P,F):A=>B consists of a probability family P and a deterministic function
+
+  F:A odot P->B.
+
+A morphism (P,F)->(P',F') in a fixed hom-category is a fibrewise measure-
+preserving map phi with F'(a,phi_a(x)) = F(a,x). These maps may forget sample
+distinctions, but must preserve the output.
+
+For (Q,G):B=>C, composition retains (x,y), with
+
+  y in Q_(F(a,x)),
+  probability p_a(x) q_(F(a,x))(y),
+  output G(F(a,x),y).
+
+The second probability context is therefore selected after the first sample.
+Threefold composition is associative up to the canonical reassociation of
+sample tuples. No disintegration is used.
+
+Let FinStoch have finite sets as objects and normalized finite kernels as
+arrows, with each hom-set regarded as a discrete category. Evaluation is
+
+  E(P,F)(a,b) = sum_{x:F(a,x)=b} p_a(x).
+
+Finite summation gives
+
+  E((Q,G) after (P,F))(a,c)
+    = sum_b E(P,F)(a,b) E(Q,G)(b,c).
+
+E also preserves units. Thus it respects horizontal composition at the law
+level and sends the structural sample isomorphisms to equalities of kernels.
+
+Every kernel k has a canonical support experiment J(k):
+
+  P_a = support(k(a,-)),   p_a(b) = k(a,b),   F(a,b) = b.
+
+For each pair A,B, there is a local adjunction
+
+  E_(A,B) left adjoint to J_(A,B),       E J = identity.
+
+Indeed, a morphism (P,F)->J(k) must send x to F(a,x), since the target output
+is its support element itself. This unique possible map is measure preserving
+exactly when E(P,F)=k. Consequently both sides of the adjunction hom-set
+bijection are singletons when that equality holds and empty otherwise. J is
+fully faithful on each hom-category; J(k) is terminal in the component of
+experiments with law k. The unit is the canonical outcome-forgetting map.
+
+Two experiments have the same law precisely when they are connected by a
+zigzag of output-preserving measure-preserving sample maps: each maps to the
+same J(k), and every such map preserves law. Taking connected components of
+the hom-categories therefore yields FinStoch. This is an output-law quotient,
+not faithful retention of execution histories.
+
+7 The canonical section is globally lax
+
+The local adjunction does not make J a history-preserving functor, and it is
+not a claimed global bicategorical adjunction with a pseudofunctor J. For
+kernels f:A->Dist(B) and g:B->Dist(C), the composition comparison is
+
+  m_(g,f): J(g) after J(f) -> J(g after f),
+  (b,c) |-> c.
+
+Its source has weight f(a,b)g(b,c); its pushforward has weight
+sum_b f(a,b)g(b,c), exactly the target law. The comparison usually forgets
+information. A fair bit followed by a constant map has two sample atoms in
+the composite but only one in the canonical support of its final law.
+
+The direction of the comparison matters: retained history maps to the
+marginal representative, not conversely. The unit comparison identifies the
+trivial singleton context with the singleton support of a deterministic
+identity. For three kernels, both lax coherence routes, after tuple
+reassociation, send (b,c,d) to d. The unit diagrams remove the same
+deterministic singleton; higher reassociations likewise discard the same
+intermediate coordinates. This proves the lax coherence directly. Deterministic
+kernels have singleton supports, so their comparisons with pure FinSet arrows
+are invertible and compatible with deterministic composition.
+
+Accordingly J is a locally fully faithful lax section of E. For general
+kernels it is not a pseudofunctor or a strict embedding into raw sample
+histories. No contradiction with the writer obstruction arises: the
+representation and the equalities retained before quotienting have changed.
+
+For operational use, add a receipt map r:Omega->H and output map b:H->B,
+with F = b after r, keeping the initial input implicit. HistProb can use Omega
+as a mathematical witness, including samples unavailable to the controller.
+Allowed continuations must be separately restricted to those adapted to H and
+the authorized resource interface. The bare contextad does not enforce this.
+
+Likewise, replacing a physical operation by J of its modeled law is not an
+operational theorem. It may erase causal dependence, hidden persistent state,
+resource consumption, or evidence needed later. Forward finite sequencing
+needs no conditional sampling oracle. A Bayesian refactorization of a joint
+law may nevertheless demand physically unavailable conditioning, observation,
+intervention, or reset operations if one tries to execute the factors in a
+different order. Equality of mathematical laws does not authorize that change.
+
+8 Why a direct mixture transport is not yet the desired generalization
+
+A tempting transport of a probability family Q over B along a kernel f is
+
+  (T_f Q)_a = { (b,r) : b in support f(a,-), r in Q_b },
+  weight_a(b,r) = f(a,b) q_b(r).
+
+For g:B->Dist(C), iterated transport retains (b,c,r), whereas direct transport
+along g after f retains (c,r). The canonical natural comparison is
+
+  T_f(T_g R) -> T_(g after f) R,
+  (b,c,r) |-> (c,r).
+
+It preserves measure and its associativity diagrams commute by forgetting the
+same coordinates. It is generally not invertible. For example, let f be a
+fair bit, g(0)=delta_s, and g(1)=(delta_s+delta_t)/2. Let R_s have one point a
+and R_t have points b,c of weights 1/3,2/3. The retained atoms are
+
+  (0,s,a)  1/2       (1,s,a)  1/4
+  (1,t,b)  1/12      (1,t,c)  1/6.
+
+After forgetting the first coordinate, they become
+
+  (s,a)    3/4       (t,b)    1/12       (t,c)    1/6.
+
+There are four atoms before and three after. No probability-space isomorphism
+can supply an invertible compositor here.
+
+A separate unit-context problem remains. Transporting a singleton family I_B
+along f gives support(f(a,-)), not a singleton. For a fair bit, the available
+discard comparison is T_f I_B -> I_A. There is no deterministic measure-
+preserving map from a singleton into a non-Dirac probability space in the
+reverse direction. Merely declaring the old unit-context comparison lax,
+without fixing its direction and the other compatibility diagrams, is not a
+construction.
+
+Section 7 of Capucci and Myers permits coherent transport without a cartesian
+lifting universal property, but still requires invertible structural
+comparisons. The displayed transport fails its composition and unit-context
+requirements: Definition 7.9, pp.70-71,
+https://arxiv.org/pdf/2410.21889#page=70 . This is a failure of this transport
+on this extensional base, not a no-go theorem for every Section 7 approach.
+It also does not invalidate the ordinary contextad on FinSet constructed above.
+
+9 What may safely be forgotten
+
+There are two different restrictions. First, a controller must already factor
+through the visible interface Omega->H; access to a hidden sample is not made
+legitimate by retaining it in a proof. Second, a proposed compression
+pi:H->Hbar must preserve the visible information required by the allowed
+continuations. The following exact finite tests address the second question.
+Assume pi is surjective on the relevant positive-probability support.
+
+For a deterministic observable or command rho:H->D, there is a unique
+rhobar:Hbar->D with rho = rhobar after pi if and only if rho is constant on
+each pi-fibre. This applies to a command, an admissibility decision, or a
+recorded residual label when it is a function of the visible history.
+
+For finite unweighted resource families R_h, descent up to fibrewise
+isomorphism requires a family Rbar_z and specified compatible bijections
+R_h ~= Rbar_(pi(h)). For bare finite sets, existence is equivalent to equal
+cardinalities inside each pi-fibre. Labeled, typed, or permission-bearing
+resources need corresponding structure-preserving identifications. A chosen
+policy and recovery evaluator must respect them. Equal counts alone are not
+a resource-transport theorem.
+
+For conditional recovery kernels K_h on a common output space, exact
+factorization requires K_h = K_h' whenever pi(h)=pi(h'). Varying output types
+first require declared identifications. Averaging nonconstant K_h over the
+forgotten histories can reproduce an averaged marginal in this finite
+setting. It need not preserve actual resource availability, correlations with
+latent state, a robust modelwise guarantee, or the same recovery witness.
+
+A pathwise correctness predicate may legitimately refer to hidden actual
+state in its verification; the command that establishes it still must be
+observation-adapted. Preserving only the command distribution does not by
+itself preserve that predicate or its coupling with the actual initial state.
+The complete guarantee needs its own sound transport condition.
+
+These factorization tests are not necessary for every accidentally preserved
+scalar success probability. They are the right tests for descending the
+specified function or conditional kernel itself. The intended claim must say
+whether it preserves a final marginal, a joint visible law, implementability,
+or a pathwise or modelwise recovery guarantee.
+
+Two further boundaries matter:
+
+  - A reached empty resource fibre has no normalized probability law. Restrict
+    the successful domain, retain an explicit abort record, or use declared
+    subprobability semantics. A usable branch of probability 3/4 and an empty
+    branch of probability 1/4 have success mass 3/4, not normalized success.
+  - A whole state-based policy sampled once can reuse a persistent random
+    choice; a fresh kernel samples again on each visit. With probabilities
+    1/3 and 2/3, repeated persistent choices disagree with probability zero,
+    whereas two fresh choices disagree with probability 4/9. This does not
+    rule out pre-sampling separate seeds indexed by full finite histories.
+
+An indiscriminate global-policy recipe is not a universal repair either.
+Replacing a realized later fibre Q_b by product_{b in B} Q_b can demand a
+resource at an unreachable branch. If Q_0 is a singleton, Q_1 is empty, and
+the first action always returns 0, valid dependent sequencing is possible but
+the global product is empty. Coherent history-sensitive policy constructions
+need their own analysis; this counterexample does not exclude them.
+
+10 Three finite tests within the recovery application
+
+Example 1 A miswired latch
+
+The actual state is (theta,position), with persistent hidden bit theta and
+position home, extended, or jammed. The sensor reveals only position. The
+forward action takes home to extended for either theta. Return commands obey
+
+  U0(0,extended) = (0,home),    U0(1,extended) = (1,jammed),
+  U1(0,extended) = (0,jammed),  U1(1,extended) = (1,home).
+
+Jammed is absorbing under the available controls. Both commands are authorized
+and resourced, but their safety is unknown. After the forward action the
+visible history H is identical in both models. For each theta, a model-specific
+inverse exists on the initial subsystem domain. No common H-adapted policy
+can guarantee restoration in both models. A policy choosing U0 with
+probability p succeeds with probabilities p and 1-p, so the optimal worst-model
+success is 1/2. Trying both can jam on the first attempt; refusing to act does
+not restore home.
+
+A certified harmless diagnostic exposing theta would change the result, but
+that diagnostic is an additional capability, not a consequence of treating
+the environment as discoverable. This example distinguishes "for every model
+there exists an undo" from "there exists one executable policy working in
+every compatible model." Ordinary hidden-state semantics already expresses
+it; it does not alone prove a need for a new kind of contextad.
+
+Example 2 Calibration and an outcome dependent return context
+
+A fixture has a persistent hidden bit theta. Calibration returns c=theta
+without changing the modeled physical state, under an explicitly assumed safe
+calibration permission. Routing then samples a fresh independent fair bit z,
+moves a parcel from home to tray z, breaks its seal, and reports
+
+  o = theta XOR z.
+
+The controller receives c and o, not z directly. Its one deterministic policy
+selects the return context P_(c XOR o), comprising the matching tool, return
+permission, and token. Tools may be selected after the observation. Return
+restores location and spends the selected token; it does not restore the seal.
+Missing permission or token means unavailable recovery or an explicit abort.
+
+For a fair prior on theta, the joint table is
+
+  theta   z   c   o   selected tray   probability
+    0     0   0   0         0             1/4
+    0     1   0   1         1             1/4
+    1     0   1   1         0             1/4
+    1     1   1   0         1             1/4.
+
+Because z=c XOR o, the selected context always matches the actual tray.
+Recovery of location succeeds with probability one, leaving the stated seal
+and token residuals. The policy is deterministic on H; its realized context
+is random because the observed route is random. A fixed preselected tool
+succeeds only half the time.
+
+Every pairwise marginal of c,o,z is independent and fair, yet the triple obeys
+the XOR constraint. Replacing the joint law by independent marginals reduces
+success to 1/2. Independently re-sampling theta between calibration and routing
+also reduces success to 1/2: uncertainty about a persistent mode is not fresh
+noise. Both bracketings of calibration, routing, and adapted return agree when
+the same joint dependence is retained. This is no failure of ordinary kernel
+associativity; it is a test that the proposed abstraction has not discarded
+information needed by the continuation.
+
+Example 3 Returning the parcel does not retract its history
+
+The displayed subsystem is (location,n), with location home or away and an
+irreversible notification bit n. A persistent mode theta is quiet=0 or
+notifying=1. Initially the subsystem is (home,0), and
+
+  F_theta(home,n) = (away,n OR theta),
+  U(away,n)       = (home,n).
+
+A routine observation q sees only location. An optional authorized audit sees
+n. Both models satisfy q(U F_theta(home,0)) = home. In the notifying model,
+however, the actual result is (home,1), not (home,0). The available controls
+cannot erase the notification. If possible notification is outside allowed
+effects, a robust admissibility check must block the forward action until
+resolved; mathematical representability is not permission to try it.
+
+The audit distinguishes the compensated state from the original state.
+Equality under q is therefore not a congruence for a language allowing that
+audit. A coarse model can correctly claim restoration of location; adding n
+to the semantic description does not promote this to exact recovery. If the
+old model instead asserted that no notification could occur, an observed
+notification corrects a false model rather than coherently preserving its
+claim.
+
+These examples separate exact undo on a declared subsystem, compensation
+relative to an accepted relation, restoration under named observations, and
+irreversibility under the available controls. Even equality of final
+stochastic output laws is weaker than restoration relative to the actual
+initial state and actual sample. The latter requires the relevant coupling.
+
+11 Existing overlap and limits of the literature check
+
+Dependence, partial domains, state and writer effects, and noninvertible
+extension maps already occur in contextad theory. Its probability example
+relates sample presentations to laws, and its future directions include mixed
+contextad and contentad interaction. Those ingredients are not new claims
+here. See Capucci and Myers, pp.25-33, 65, and 76-77:
+https://arxiv.org/pdf/2410.21889#page=25
+https://arxiv.org/pdf/2410.21889#page=65
+https://arxiv.org/pdf/2410.21889#page=76
+
+Sagas already separates compensation from restoring the original global
+database state, with interleaving and recovery failures relevant to its
+execution model. It presupposes designed compensators and a recovery
+substrate, not discovery of arbitrary physical meanings. See Garcia-Molina
+and Salem, Sagas, SIGMOD 1987, pp.250 and 253-255:
+https://www.cs.cornell.edu/courses/cs530/2005sp/papers/sagas.pdf#page=2
+
+Korth, Levy, and Silberschatz already formalize relation-relative recovery,
+retain indirect residual effects, and require semantic recovery information.
+Their guarantees have specified semantic and algebraic assumptions. Therefore
+neither a residual relation nor a semantic log alone is a new contribution.
+See A Formal Approach to Recovery by Compensating Transactions, VLDB 1990,
+pp.102-105, especially Definition 4:
+https://www.vldb.org/conf/1990/P095.PDF#page=8
+
+Restriction categories describe partial domains; restricted inverses impose
+specific equations on those domains. An arbitrary compensator satisfying a
+weaker residual condition is not thereby a restricted inverse. See Cockett
+and Lack, Restriction categories I, 2002, pp.226-227 and 238-239:
+https://pages.cpsc.ucalgary.ca/~robin/FMCS/FMCS_06/RestrictionsI.pdf#page=16
+
+A targeted source check is not an exhaustive search of categorical probability,
+probabilistic programming, control, or transaction-recovery literature. The
+finite construction is consistent with known sample-space semantics. No
+claim is made that its local reflection or the proposed interaction target
+has not appeared elsewhere.
+
+A source-status caution matters: Section 4.4 leaves the full tricocompletion
+universal-property claim conjectural, and Remark A.5 leaves Theorem A.4
+unproved in v1. May 2025 slides present broader PRA transposition as a theorem
+without a proof. Neither absence of progress nor a fully checked general proof
+follows from these materials. Primary update:
+https://matteocapucci.eu/assets/2025/05/pssl-110.pdf#page=39
+
+12 One application specific theorem candidate and its open obligations
+
+One candidate theorem for the recovery application is a finite interface-
+preservation and comparison result for observation-adaptive contextful actions.
+It would start with a declared operational class and characterize when its
+history interface can be compressed or changed without invalidating later
+contexts and recovery claims. This is an application-specific suggestion, not
+the selected next target of the whole contextad generalization programme, an
+adopted axiom system, or a proved general theorem. The theoretical programme
+and its other applications remain broader than these obligations.
+
+The initial data should include:
+
+  - Finite latent states and execution witnesses, with persistent parameters
+    distinguished from fresh conditional samples.
+  - A declared observation or receipt interface H. Controllers choose only
+    from H and authorized resource records, never directly from hidden state.
+  - Typed continuation contexts and resource transformations, including
+    explicit unavailable or abort outcomes where appropriate.
+  - A declared recovery criterion: its domain, comparison relation, residual,
+    model assumptions, and whether the guarantee is marginal, joint, pathwise,
+    or robust across compatible models.
+  - Proposed compressions or semantic comparisons, with witnesses that they
+    respect the transitions, receipts, resources, and claims being transported.
+
+The desired conclusion is closure under identity and sequential composition,
+including three-stage reassociation, with sound transport of the declared
+recovery claim. Pure no-effect cases should recover the intended contextad
+operations. Trivial-context cases should recover ordinary finite stochastic
+sequencing at the declared observation quotient. A successful characterization
+should explain why the calibrated router passes while the latch blocks a
+uniform recovery policy and the notification example blocks exact undo.
+
+Several obligations remain genuinely open in this package:
+
+  1. Choose the operational arrow class. Bare HistProb permits computations on
+     its full sample space. Define a restriction or additional interface
+     structure that enforces observation-adaptedness, and prove it is closed
+     under composition rather than assuming access to the proof witness.
+
+  2. Define the dependent context and effect interaction. Later contexts live
+     over the realized receipt and resource state. Identify the required
+     dependent sums, transports, or strengths. Prove their unit, composition,
+     context-combination, and cartesian compatibility where claimed. The lax
+     section J alone is not a generalized lax contextad construction.
+
+  3. Characterize stable sufficient interfaces. The finite factorization tests
+     in Section 9 handle a specified compression and continuation. The next
+     result must establish stability for a declared continuation language or
+     class of resource and recovery interfaces, including sequential closure.
+     Keeping all history is a baseline, not a minimality theorem.
+
+  4. Prove recovery transport at the right strength. Carry the actual coupling
+     when a pathwise statement needs it. Prove resource availability and
+     permission soundness on the stated domain. Do not replace these by
+     equality of averaged outputs or by a model-specific existential witness.
+
+  5. Specify sound semantic comparison. One candidate finite benchmark requires
+     a comparison intertwining the relevant transition kernels and receipt
+     maps, preserving the authorized resource structure, and transporting
+     the chosen recovery relation. Prove how such comparisons compose and
+     act on continuation contexts indexed by resulting histories. Discovery
+     may instead reveal a false premise and invalidate a claim; not every
+     update is a sound refinement preserving all old results.
+
+  6. Separate semantic existence from executability. If conditioning, resetting,
+     resampling, or reversing a Bayesian factorization is used, state the
+     necessary operation and its physical availability. Forward sampling
+     does not supply those operations. Known finite hypotheses are only the
+     first benchmark, not a general algorithm for learning action meanings.
+
+If this application-specific line is pursued, one constructive step would be
+to formalize the router as a finite operational model with an explicit receipt
+restriction, then prove composition and sound interface transport for a chosen
+class containing it. A sharp obstruction to its proposed preservation
+properties would also be useful. The resulting evidence could help distinguish
+a richer ordinary contextad, a Section 7 construction, and a genuinely weaker
+structure for that application. It would not by itself settle which theoretical
+generalizations or other applications the broader programme should pursue.
+
+13 Verification and boundaries
+
+The writer contradiction and the probability-family, law-evaluation, local
+adjunction, lax-coherence, and finite descent arguments have explicit symbolic
+proofs in the accompanying mathematical notes. The probability-family and
+local-adjunction arguments also received an independent mathematical check.
+Exact rational checks cover the dependent mixture, forget-middle coherence,
+writer symmetry, persistent versus fresh choices, and missing-resource mass.
+The three application examples were checked by finite enumeration. Such
+checks support the arguments; they do not prove a universal generalization.
+
+No physical actions were performed. The example action meanings, observation
+interfaces, permissions, and recovery properties are stipulated finite test
+data, not empirically established claims about a robot. Nothing here supplies
+a universal mixed contextad and contentad law, a probability operation on
+arbitrary category-valued fibres, a general semantic-discovery algorithm, or
+a complete partial-undo calculus.
+
+Primary source details
+
+Matteo Capucci and David Jaz Myers. Contextads as Wreaths; Kleisli, Para, and
+Span Constructions as Wreath Products. arXiv:2410.21889v1, 29 October 2024.
+https://arxiv.org/abs/2410.21889
+https://arxiv.org/pdf/2410.21889
+
+Matteo Capucci. Contextads abridged. PSSL110 slides, May 2025.
+https://matteocapucci.eu/assets/2025/05/pssl-110.pdf
+
+Hector Garcia-Molina and Kenneth Salem. Sagas. SIGMOD 1987, pp.249-259.
+https://www.cs.cornell.edu/courses/cs530/2005sp/papers/sagas.pdf
+
+Henry F. Korth, Eliezer Levy, and Abraham Silberschatz. A Formal Approach to
+Recovery by Compensating Transactions. VLDB 1990, pp.95-106.
+https://www.vldb.org/conf/1990/P095.PDF
+
+J. R. B. Cockett and Stephen Lack. Restriction categories I categories of
+partial maps. Theoretical Computer Science 270, 2002, pp.223-259.
+https://pages.cpsc.ucalgary.ca/~robin/FMCS/FMCS_06/RestrictionsI.pdf
+
+End of report
