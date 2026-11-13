@@ -1,0 +1,119 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,hyperref,booktabs}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\title{Contextual Composition: Retry Capabilities and Deduplication\\\large A finite protocol family with a sharp memory boundary}
+\author{}
+\date{13 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+A lost acknowledgement is not evidence that an external action did not occur. We model a bounded retry service with result-dependent Pending and Done capabilities, persistent deduplication state, and opaque non-idempotent external effects. The model has pathwise at-most-once safety, an exact contextual simulation to an atomic specification, and a sharp $2^m$ server-state lower bound for $m$ independently replayable keys. Forgetting a record is safe only relative to an interface that excludes its future use; weakening the interface to ordered prefix requests reduces the sufficient state count to $m+1$. We also expose the atomic effect/logging assumption rather than deriving it from categorical composition. These are elementary protocol and distinguishability arguments instantiated in the existing framework, not a new general categorical theorem or a novelty claim.
+\end{abstract}
+
+\section{Why this example and what is already available}
+This develops catalogue items 38--39 (external API calls and retries), rather than another instance of marginal-law equality. The existing O6 casebook already treats adaptive diagnostics, reserved deployment, eager/lazy random functions, fresh allocation and callback timing. Its finite interface machinery, ownership discipline, causal-tree content and local simulation theorem are reused, not reproved or renamed. The additional case isolates a precise interface-dependent resource boundary: a server cannot safely forget arbitrarily many replayable request identities merely because its current acknowledgement interface reveals no difference.
+
+Duplicate suppression using call identifiers and retained server state is classical RPC practice; see Birrell--Nelson \cite{BN}. Our novelty is not the discovery of idempotency keys. The contribution here is a complete finite example connecting admission, typed capabilities, contextual replacement and the amount of retained history, with assumptions that make its guarantees falsifiable.
+
+\section{Finite model and capability interfaces}
+Fix a finite set $K=\{1,\ldots,m\}$ of distinct request keys. Each key denotes one fixed operation and payload throughout this experiment. No key reuse for different payloads is allowed. Fix a finite attempt budget $B$. The world has an externally auditable effect-count vector $n\in\{0,\ldots,B\}^K$; executing request $k$ increments $n_k$. This counter is mathematical observation of a non-idempotent effect, not a deduplication oracle available to the server. The server cannot read the effect counters. There is no overlapping execution, delayed queued delivery or malicious key forgery in this model.
+
+The fixed owned inventory contains one coordinator token $s$ and a token $r_k$ for each active key. At a public configuration, $r_k$ has kind $\mathsf{Pending}(k)$ or $\mathsf{Done}(k)$. Every attempt receives and returns the coordinator and the entire inventory. This deliberately serializes the service and avoids treating a shared deduplication table as a freely duplicable data frame. The key printed in ordinary data is not an ownership capability. A client may call $\mathsf{attempt}(k)$ only while it owns $r_k:\mathsf{Pending}(k)$. A returned acknowledgement retypes that token to $\mathsf{Done}(k)$; a timeout leaves it Pending. Clients may choose subsequent pending keys adaptively from public results, subject to the finite budget. They cannot inspect the deduplication store or effect counters.
+
+The server stores $S\subseteq K$, initially empty. For one attempt, nature chooses one of three finite witnesses:
+\[
+\omega=0:\text{request lost},\quad
+\omega=1:\text{request delivered, acknowledgement lost},\quad
+\omega=2:\text{request and acknowledgement delivered}.
+\]
+If $\omega=0$, $S,n$ remain unchanged. If $\omega\ne0$ and $k\notin S$, the server atomically performs
+\[
+(S,n)\longmapsto(S\cup\{k\},n+e_k).
+\]
+If $k\in S$, it leaves both unchanged. Witnesses 0 and 1 emit the public event $\mathsf{Timeout}(k)$ and retain Pending; witness 2 emits $\mathsf{Ack}(k)$ and returns Done. The reply payload is a fixed acknowledgement; caching arbitrary data-returning operations needs additional state and is not covered by the memory optimum below. A failed type/budget check can be given a deterministic reject row, unchanged on both implementations.
+
+The atomic transition is an explicit service assumption. It is not obtained merely by assigning linear capabilities. Crash recovery is allowed only as a deterministic transition preserving $S$ and the external effects. Recovery that loses $S$ is a different implementation analyzed below.
+
+The theorem is pathwise for every allowed witness sequence. For a stochastic instance, supply any normalized rational three-point kernels depending on the full current state and public history, provided the reference and implementation use the same kernel on related states. Independence or stationarity is not needed for safety. The elementary probability calculation later makes additional independent-loss assumptions explicitly.
+
+\section{Native construction and contextual correctness}
+Use the same independent O1 inputs as the O6 shared construction: finite augmented probability/cost contexts and terminal-grade planar causal-tree content. The rig is
+\[
+(\mathbb R_{\ge0})_{\rm disc}\times(\mathbb N\cup\{\infty\}),
+\qquad(p,c)\otimes(q,d)=(pq,c+d),
+\quad(p,c)\oplus(q,d)=(p+q,\min(c,d)).
+\]
+Each primitive has witness carrier $\{0,1,2\}$, the supplied rational coefficients, unit attempt cost and one output leaf. Its body sends the witness to the unary timeout/ack event and actual successor state. The output leaf carries the actual returned inventory, including its retyped request token. Disallowed rows reject identically. Context normalization is the kernel sum one; content transport and occurrence display are the already established terminal-grade tree construction, independent of the proposed comparison.
+
+Composition retains a prefix witness and chooses a continuation witness conditional on its actual successor endpoint. Thus the history carrier is a dependent sum of continuation carriers, weights multiply and bodies graft. Public case selects retries only on the Pending branch. This is a special unary-tree instance of the existing mixed law; it neither requires a new distributive law nor establishes concurrent shared-state composition.
+
+For the atomic specification, use a private mathematical set $C$ of committed keys and execute a delivered request exactly when $k\notin C$. It has the same public interface and loss witnesses. The implementation differs by making $S$ a concrete bit-vector representation of $C$. Take relation
+\[
+\mathcal R:\quad S=C,\qquad n_k=\mathbf 1_{k\in C},
+\qquad\text{equal public configurations and owned identities}.
+\]
+If private state uses a redundant finite carrier, its projection is also permitted, but is unnecessary to this example. The witness map is identity and endpoint map decodes the bit vector. All probability fibre sums, equal-cost inequalities and tree-body equations of the native square hold literally. It is not claimed to be a noninvertible compression of the specification's information.
+
+\begin{theorem}[All admitted finite clients]
+From related initial states, implementation and atomic specification have a pathwise coupling preserving public causal trees, final capability kinds, external effect counts, and attempt costs for every admitted finite adaptive client. For each key,
+\[
+n_k=\mathbf 1\{\text{at least one delivered attempt for }k\}.
+\]
+Consequently effects are at most once, and a Done token certifies that exactly one effect occurred. Timeout alone certifies neither nonexecution nor execution.
+\end{theorem}
+\begin{proof}
+The displayed invariant holds initially. A lost request changes neither side. A delivered unseen key updates its seen bit and count once; a delivered seen key changes neither. Both sides expose the same result and kind. Hence the invariant and local native square hold on every related reachable input. Couple witnesses identically at every step, retaining the actual full paired state. Public branching therefore chooses the same continuation; induction on the finite client term proves equality of complete traces and endpoints. The same argument covers state-dependent kernels because their rows agree on related states. Acknowledgement implies a delivered request and thus count one; the two timeout witnesses respectively permit count zero or one.\end{proof}
+
+This is an integration/certificate theorem for a declared model, not an exactly-once delivery theorem. A client that stops after a timeout may have no effect or an unacknowledged effect. With independent request-delivery probability $d$ and conditional acknowledgement probability $a$, after at most $b$ retries of one key (stopping on acknowledgement),
+\[
+\Pr(n_k=1)=1-(1-d)^b,\qquad
+\Pr(\mathsf{Done}(k))=1-(1-da)^b.
+\]
+The formulas differ because completing the effect and learning its completion are distinct events. An infinite-retry eventuality requires a separate fairness/probability premise, and lies outside the bounded theorem.
+
+\section{A sharp information boundary}
+For the next statement, all $m$ keys can remain Pending, and a delivered request may lose its acknowledgement. The client can therefore present any subset of the keys successfully to the server while retaining exactly the same public Pending interface. Allow the server no side channel to the old world effects, no changed request payload and no external source of remembered seen keys. Count its entire retained decision state, not just a designated cache field.
+
+\begin{theorem}[Exact state cost of independent replayability]
+Assume $B\ge m+1$. A deterministic server that executes every first delivered key and suppresses every subsequent delivered occurrence, for every admitted request/loss word of length at most $B$, needs at least $2^m$ distinct decision states. The seen-subset implementation attains this bound. Equivalently it requires at least $m$ bits of decision information in this finite model.
+\end{theorem}
+\begin{proof}
+For every subset $A\subseteq K$, deliver exactly its members, losing all acknowledgements, and call the resulting server state $q_A$. Pad each history to exactly $m$ attempts with lost requests, so every public trace consists of $m$ timeouts and the same budget remains; key-labelled traces differ but are not an extra server input or oracle. Every request token is still Pending. Suppose $A\ne D$ but $q_A=q_D$. Choose $k\in A\triangle D$. The next delivered call has identical key, payload and owned public interface in both cases. The server must suppress it in the history containing $k$ and execute it in the other history, which is impossible from the same decision state. Thus the $2^m$ subsets require different states. Storing $S$ gives the upper bound.\end{proof}
+
+This lower bound is not a claim about all RPC protocols. Monotone sequence numbers with one outstanding call can rule out arbitrary subsets. If the admitted seen histories are only prefixes $\{1,\ldots,h\}$ and future calls are restricted to old keys or the next key $h+1$, a high-water mark $h\in\{0,\ldots,m\}$ is sufficient. The general bound concerns independent replayability, not arbitrary implementation overhead or message length. If randomness, a world-query oracle, immutable effect identifiers, a trusted client log or a persistent external database is supplied, its retained information must be accounted for separately; the deterministic isolated-server theorem is not silently extended to those models.
+
+\section{When forgetting is a legal change of realization}
+Define cache forgetting $F_k(S)=S\setminus\{k\}$. Following a delivered call with lost acknowledgement, the full and forgotten states have the same public Pending interface and the same current effect count. A continuation retrying $k$ distinguishes them: the full cache keeps $n_k=1$, while the forgotten cache produces $n_k=2$. Thus equality of the current public state is not a contextual equivalence. The lost record is not disposable implementation junk under that interface.
+
+\begin{proposition}[Retirement boundary]
+In this serialized model, forgetting records for $R\subseteq K$ preserves every future public result and effect increment along identical loss-witness sequences for all continuations whose request keys avoid $R$. This gives equality of stochastic public-trace and effect-increment laws provided the loss kernels agree on the related full and forgotten states at each common public history (for example, when losses are exogenous and independent of the seen set). If continuations may retry a forgotten previously executed key, forgetting is not universally safe.
+\end{proposition}
+\begin{proof}
+For keys outside $R$, the two seen sets agree initially and after every future step, so the same coupled loss witnesses give the same changes and results. Equality of kernels on these related states makes the identical-witness coupling valid, so finite adaptive-client induction gives equality of the stated laws. Without that hypothesis, the pathwise comparison alone gives no equality of probabilities. Conversely the single delivered retry after a lost acknowledgement is the counterexample above.\end{proof}
+
+Some restriction on the kernels is essential for a general stochastic-preservation claim even when no retired key is used again; equality on related states is sufficient, not necessary for equality of observable pushforwards. Take $K=\{r,k\}$, $R=\{r\}$, and related seen sets $\{r\}$ and $\varnothing$, with equal effect counts and public inventory. Let the loss kernel deliver with acknowledgement with probability one exactly when $r\in S$, and otherwise lose the request with probability one. A single call to $k$ then acknowledges and executes in the full state, but times out without execution in the forgotten state. The call avoids $R$; only its loss distribution changed. Thus retirement of a capability does not by itself establish stochastic contextual equivalence under arbitrary private-state-dependent kernels.
+
+One typed implementation of the positive premise consumes a Done token into a Retired token and removes its request method from the continuation interface. In our no-in-flight model this is pathwise safe after acknowledgement; stochastic preservation follows under the sufficient kernel-agreement assumption just stated. It cannot justify eviction of a Pending token merely on a timer. A real network with delayed duplicates also needs a guarantee that no old packet can subsequently be delivered; client-side retirement alone does not supply that premise. Nor may key reuse be implemented as a pure relabeling: a generation tag or a fresh fixed-pool identity must be part of the declared request and server semantics.
+
+\section{Atomicity is a genuine boundary, not a consequence of typing}
+Consider a variant where external execution and persistent recording are separate steps and a crash may occur between them. Assume recovery sees only the durable record, cannot query the world, and cannot atomically combine the two steps.
+\begin{proposition}[Two-step crash obstruction]
+Neither ``effect then record'' nor ``record then effect'' guarantees both no duplicates and execution of every eventually delivered/retried request under the stated crash model.
+\end{proposition}
+\begin{proof}
+For effect-then-record, crash after effect but before record leaves an empty record; retry can execute twice. For record-then-effect, crash after record but before effect leaves a seen key with no effect; suppression on retry loses the operation. More generally, the first intermediate state is recovery-indistinguishable from a fresh request, and the second from a completed one, without additional durable state or world observation.\end{proof}
+The last sentence concerns these specified recoveries, not a universal impossibility of transactional implementation. Atomic transactions, genuinely idempotent effects, or recoverable operation identifiers can change the model. The contextual construction composes the given correct primitive tables; it does not manufacture their distributed atomicity.
+
+\section{Checks, significance, and next obligation}
+The accompanying pure-Python check uses exact integers and rational arithmetic. It enumerates 76,125 loss/request schedules for $m\le3$ and length at most five, checks 10,795 pairwise state distinguishers for $m\le7$, validates cache-loss and pathwise retirement examples, tests equal-kernel stochastic retirement and its private-state-dependent-kernel counterexample, checks the ordered-prefix control, and verifies the displayed probability formulas for five budgets. These are finite regressions; the proofs above establish the parameterized claims. No Lean formalization, fresh audit of O1--O5, network experiment, or empirical performance claim is made.
+
+The useful interaction is that the \emph{future permitted continuations} determine which past information may be forgotten. Keeping the same public return value is insufficient. The capability interface provides a precise way to change that continuation class, while the state-count argument prices the unreduced class. The next substantive extension would treat in-flight packets and concurrent ownership without smuggling a shared deduplication store into independent batch composition. It requires an explicit scheduler and interference discipline, not just a larger finite simulation.
+
+\begin{thebibliography}{9}
+\bibitem{O6} \emph{Applications and Boundaries of Result-Dependent Interaction}, existing programme casebook, shared construction and cases A--C, 1 November 2026. Repository programme: \url{https://github.com/eternal-november/eos-research-programmes/tree/main/projects/contextual-composition}.
+\bibitem{O1} \emph{General Independent Interaction Criterion}, existing programme source, 1 November 2026. Used at its stated relative occurrence/rig scope.
+\bibitem{BN} A. D. Birrell and B. J. Nelson, \emph{Implementing Remote Procedure Calls}, ACM Transactions on Computer Systems 2(1), 39--59 (1984). \url{https://doi.org/10.1145/2080.357392}. Classical call-identifier and duplicate-suppression baseline, not a novelty claim for this note.
+\end{thebibliography}
+\end{document}
