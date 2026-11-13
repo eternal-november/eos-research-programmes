@@ -1,0 +1,122 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,geometry,hyperref}
+\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\newcommand{\R}{\mathbb R}
+\title{Moving parameter fibres: compositional reverse differentiation and a transport obstruction}
+\author{}\date{13 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+A worked example for the differential-contextad direction in the contextual-composition catalogue. Legal parameters lie in a smoothly varying linear subspace, rather than a fixed product parameter space. We derive an intrinsic reverse rule with its necessary cross term, prove its composition law, and compute an exact spherical holonomy witness against path-independent parameter transport. This is a scoped smooth-bundle example and obstruction, not a construction of a general differential contextad or a novelty claim for differential geometry.
+\end{abstract}
+\section{Why this example belongs here}
+The catalogue asks for input-dependent legal parameter spaces and differentiation compatible with reindexing. A fixed parameter object in an ordinary parameterized map does not express such a constraint without extra encoding. Here an input $x$ determines its admissible parameters $E_x$, and a changing input changes which perturbations remain legal. This is useful, for example, for a controller whose admissible correction is tangent to a changing unit direction. It is not a physical robot transaction example: no atomic execution or safety guarantee is asserted.
+
+The existing programme's relative construction has context/content normal forms $(P,Q,e_AP\to d_BQ)$; mixed composition additionally requires a coherent crossing. We use only the dependent-context aspect: a display $\pi:E\to X$ and maps respecting displays. We do not identify arbitrary smooth bundles with all that contextad structure, or silently manufacture a crossing. The contribution here is an explicit test case that any proposed differential enrichment must handle, and a compositional rule in a precisely defined category of smooth displays.
+
+Parameterized lenses and reverse differentiation already have categorical treatments; see Cruttwell et al., \emph{Categorical Foundations of Gradient-Based Learning}, \url{https://arxiv.org/abs/2103.01931}. The present example does not claim to replace that theory. Its additional bookkeeping is the moving admissibility constraint and a specified horizontal splitting. Prior programme sources consulted are \emph{One relative construction for context content and effects} (1 November 2026), the integrated acceptance dossier, and the constructions/enrichments catalogue. This is not a comprehensive novelty search.
+
+\section{Legal tangent vectors and the reverse rule}
+Let $X\subseteq\R^d$ be open, $A:X\to\R^{r\times n}$ smooth and of full row rank everywhere, and
+\[
+ E=\{(x,p):A(x)p=0\},\quad A^\dagger=A^T(AA^T)^{-1},\quad P=I-A^\dagger A.
+\]
+The constant-rank hypothesis makes $E\to X$ a rank $n-r$ smooth vector bundle. $P$ is its fibrewise orthogonal projector. The formulas also work in local coordinates on a smooth base.
+\begin{theorem}[Constrained splitting and adjoint]
+At $(x,p)\in E$, every tangent vector has a unique form
+\[
+ (v,\delta p)=(v,-A^\dagger(dA[v])p+z),\qquad z\in E_x.
+\]
+For any smooth ambient extension of $L:E\to\R$, write its derivatives as $\ell_x\in(\R^d)^*$ and $\ell_p\in\R^n$, using the Euclidean pairing. Then the differential in this splitting is
+\[
+ dL(v,z)=b(v)+\langle g,z\rangle,
+\quad g=P\ell_p,
+\quad b(v)=\ell_x(v)-\langle\ell_p,A^\dagger(dA[v])p\rangle.
+\]
+Both $b$ and $g$ are independent of the chosen ambient extension. They do depend on the specified horizontal splitting/metric.
+\end{theorem}
+\begin{proof}
+Differentiating $A(x)p=0$ gives $A\delta p+(dA[v])p=0$. Since $AA^\dagger=I$, the displayed horizontal vector solves this equation. Its difference from any solution lies in $\ker A$; it lies in $(\ker A)^\perp$, so the decomposition is unique. Substitution into $\ell_x(v)+\langle\ell_p,\delta p\rangle$ yields the formula and $\langle\ell_p,z\rangle=\langle P\ell_p,z\rangle$. Two extensions have equal differentials on $TE$; evaluating on the horizontal and vertical summands proves independence.
+\end{proof}
+For implementation, solve $AA^Tq=A\ell_p$, so
+\[
+ b(v)=\ell_x(v)-\langle q,(dA[v])p\rangle.
+\]
+This avoids forming a pseudoinverse. Singular-value deterioration of $A$ can make this ill-conditioned; constant rank is not a uniform conditioning bound.
+
+\section{The composition law and the missing term}
+Objects are smooth vector bundles with chosen linear connections. Morphisms are smooth maps $F:E\to E'$ covering a smooth base map $f:X\to Y$, not necessarily linear in the fibre. They form a category under ordinary composition. Each connection splits $T_{(x,p)}E$ as $T_xX\oplus E_x$; denote the horizontal lift by $H$ and vertical projection by $\nu$. At each point define
+\[
+ V_Fz=\nu' dF(0,z),\qquad K_Fv=\nu'dF(Hv).
+\]
+The base component of $dF$ is $df(v)$ and does not depend on $z$, because $\pi'F=f\pi$.
+\begin{theorem}[Connection-aware reverse composition]
+In these splittings,
+\[
+ dF=\begin{pmatrix}df&0\\K_F&V_F\end{pmatrix},\qquad
+ dF^*(\beta,\eta)=(df^*\beta+K_F^*\eta,V_F^*\eta).
+\]
+For composable $F,G$,
+\[
+ V_{GF}=V_GV_F,\qquad K_{GF}=K_Gdf+V_GK_F,
+\quad d(GF)^*=dF^*dG^*.
+\]
+Consequently deleting the cross term $K_F^*\eta$ is valid for every output covector if and only if $F$ preserves the chosen horizontal distributions.
+\end{theorem}
+\begin{proof}
+The displayed form follows from the base identity and definitions of $K,V$. Dualizing gives the reverse rule. Multiplication of the two triangular block matrices proves both composition formulas and their dual identity. All output covectors annihilate $K_Fv$ if and only if $K_Fv=0$, since the fibre is finite dimensional. This is precisely horizontality preservation. Identity maps have $K=0,V=I$, so the rules include units and arbitrary finite composites.
+\end{proof}
+This describes cotangent pullback, not a canonical conversion of covectors into gradients: gradients additionally require metrics. It also does not assert that this category is a Cartesian reverse derivative category; cotangent bundles and their dependent bases are retained.
+
+\paragraph{Reindexing.}
+A smooth $f:X\to Y$ pulls $E'\to Y$ back to $f^*E'\to X$. With the pullback connection, the canonical map $f^*E'\to E'$ over $f$ has $K=0$. Indeed its horizontal lift maps to the original horizontal lift along $df(v)$ by definition of the pullback connection. Thus reverse transport commutes with this reindexing. An unrelated chosen connection on the same pulled-back bundle need not have this property; its $K$ measures the failure rather than concealing it.
+
+\section{A coordinate trap, exactly computed}
+Take $X=(-1/2,1/2)$, $A(x)=(-x,1)$, and parameterize its kernel by $p=B(x)\theta$, $B(x)=(1,x)^T$. Let $L(x,p)=p_1+p_2$. The equally valid frame $\widetilde B(x)=(1+x)B(x)$ uses $\widetilde\theta=\theta/(1+x)$ for the same point. At $x=0$, the derivative of $L$ holding $\theta$ fixed is $\theta$; holding $\widetilde\theta$ fixed gives $\theta+\theta=2\theta$. Both are correct derivatives of different lifted curves. Neither is a chart-independent prescription for holding a moving parameter fixed.
+
+For the projection connection the horizontal lift is
+\[
+ \delta p=\frac{(-x,1)^T}{1+x^2}\,p_1v.
+\]
+At $x=0$ its derivative of $L$ is $p_1v$. In the second frame the horizontal curve must have $\dot{\widetilde\theta}=-\theta v$ there, cancelling the extra term. The invariant object is $dL$ on a specified legal tangent, not an unqualified partial derivative. More generally $dp=B\,d\theta+(dB[v])\theta$; discarding the second term is the underlying error.
+
+\section{Spherical context: curvature and exact holonomy}
+Let $X=S^2\subset\R^3$ and $E_x=x^\perp$. These are admissible corrections perpendicular to a unit direction. Here $P_x=I-xx^T$, and the projection connection is $\nabla p=P\,dp$. Its parallel equation along $x(t)$ is
+\[
+ \dot p=-(\dot x\cdot p)x.
+\]
+It preserves $x\cdot p=0$ and $\|p\|$, as follows by differentiating both expressions. For $L(x,p)=c\cdot p$, the horizontal covector is $b(v)=-(c\cdot x)(v\cdot p)$ and the vertical one is $Pc$. Thus even a loss with no explicit ambient $x$-dependence can have a nonzero legal base derivative.
+\begin{proposition}[Curvature witness]
+With convention $R(u,v)=\nabla_u\nabla_v-\nabla_v\nabla_u-\nabla_{[u,v]}$,
+\[
+ R_x(u,v)p=u(v\cdot p)-v(u\cdot p)
+\]
+for $u,v,p\perp x$. In particular this connection is not flat.
+\end{proposition}
+\begin{proof}
+For a projected connection the curvature is $P(dP\wedge dP)P$: expand $P\,d(P\,dp)$ and use $P^2=P$ and $P(dP)P=0$. Now $dP[u]=-ux^T-xu^T$, hence $dP[u]dP[v]p=u(v\cdot p)$; antisymmetrizing proves the formula. At $x=e_1,u=e_2,v=e_3,p=e_3$, the result is $e_2\ne0$.
+\end{proof}
+There is also an exact finite witness. Follow the three quarter great-circle arcs
+$e_1\to e_2\to e_3\to e_1$. For an arc from orthogonal unit $a$ to $b$, write $x(t)=\cos t\,a+\sin t\,b$. If $p(0)=\alpha b+w$, $w\perp a,b$, then
+\[
+ p(t)=\alpha(-\sin t\,a+\cos t\,b)+w
+\]
+solves the parallel equation. Starting with $p=e_2$, the three transports yield $-e_1,-e_1,e_3$. The base returns to $e_1$, but the parameter changes from $e_2$ to $e_3$.
+
+Therefore no transport depending only on endpoints can reproduce this connection's parallel transport on all paths (the constant path at $e_1$ is the identity). This does not rule out other connections or transport structures. It rules out an endpoint-only semantics for this chosen, natural metric-compatible transport. Path information or an appropriate comparison of paths must be kept if this is the intended operational semantics.
+
+\section{A compositional constrained controller}
+Fix a matrix $M\in\R^{3\times3}$ and consider $F(x,p)=(x,P_xMp)$ on the tangent bundle. It is a legal fibre-linear layer. Direct differentiation and projection give
+\[
+ V_Fz=P_xMz,\qquad
+ K_Fv=-v(x\cdot Mp)-P_xMx\,(v\cdot p).
+\]
+Indeed $P\,dP[v]Mp=-v(x\cdot Mp)$ and $PM\dot p=-PMx(v\cdot p)$ for horizontal input. Pairing with tangent output covector $\eta$ gives
+\[
+ \boxed{K_F^*\eta=-(x\cdot Mp)\eta-(\eta\cdot PMx)p,\qquad V_F^*\eta=PM^T\eta.}
+\]
+All these vectors are tangent. Two layers $M,N$ compose to $P_xNP_xMp$, not generally $P_xNMp$. Their reverse rules compose by the theorem, including both $K$ terms. This is a nontrivial admissibility effect even though each layer is linear within a fibre. Removing intermediate projection changes the model, and dropping $K$ changes its derivative.
+
+\section{Checks and boundaries}
+The accompanying Python script uses only the standard library and exact rational arithmetic. It checks the tangent decomposition and adjoint on rational moving-line data; the two-frame mismatch; the three exact spherical transports; the curvature witness; and the two-layer block/adjoint identity on a rational spherical point, tangent vectors and two noncommuting matrices. These are finite regression checks, not substitutes for the proofs. No Lean formalization, full differential-contextad axioms, numerical optimization performance, or global flatness classification is claimed. The differential catalogue entry is developed as a worked example, not closed in full generality.
+\end{document}
