@@ -1,0 +1,56 @@
+# Source-grounded comparison of semantic framings
+
+Status: derived directional connections and executed probes, independently checked at this bounded scope. The bounded disposition is restricted use of explicit judgment connections and conditional epistemic projections as interface/diagnostic tools. No additional proof reduction over the existing shared-execution account is established. The complete RP0 admission work and RP5 positive global-reuse gates remain open. [PRIOR-ART](PRIOR-ART.md) gives the inspected semantic sources and import limits; [framing_probe.py](framing_probe.py) reproduces the new component/age tests.
+
+## Common comparison and prospective discriminator
+
+Both routes receive the final PORT-SOURCE at `95f4a0938c689dcb9d1ff13af2d077d70a21bbf0`, its one resource account at `e666c823a55be7486888cb3b581722ec797d48e8`, the source-bound assembly at `712112c12f350daf7ed2acfeda50c9753af79fc8`, and the same local-policy, information, raw-window and resource imports. The consumed chain runs from actual receipts through local alternatives and factual permission to actual intervention, old-effect retirement, useful return and shared time/resource/service. The evidence standard is a written source argument plus selected proof kernels and bound executable/arithmetic checks; logical satisfaction alone is not a physical realization or repository acceptance.
+
+The existing 491/509 primary-frame witness and WORLD(59,59)/WORLD(60,60) command difference are retrospective baseline evidence. The new variation was declared before executing it: change a consumed incidence so one acquired domain reaches two origin slots, retaining the actual program, thirteen slot interfaces, target plant and factual rule. The expected discriminator was whether an abstraction that keeps only the six-domain count incorrectly keeps the six-slot certificate. A second prospective check keeps the sampled load predicate while enlarging its consumed effect age. These tests can disqualify a proposed information-only interface without pretending to be independent held-out RP6 challenges.
+
+## Worked judgment connections
+
+Let S denote complete admitted source prefixes/continuations, with code/private state, physical targets, receipts, timers, incident history, stocks and pending effects retained. Let I carry a selected interval/alternative-set judgment and O the actual operation/factual-rule judgment. The useful directions are:
+
+    source primitive + realized support/age laws => sound local alternative/interval certificate;
+    robust guard + source operation/continuation realization => permission throughout the effect interval.
+
+Neither arrow supplies ready donors, successful return or delivered service. Those conclusions consume additional actual progress, retirement, stock and plant laws on the same source. Model coverage means every admitted source prefix satisfying the stated local-execution antecedent maps to the information account; the reverse map is not assumed. A negative abstract certificate does not reflect source impossibility.
+
+For the actual load consumer, the final source proves ell(t) <= (3/2)*ell(s) + (273/4194304)*(t-s). LOAD500 with raw error .01 and complete horizon A gives the sufficient bound (3/2)*(.5+.01)+(273/4194304)*A <= 1. This is a worked directional connection, not merely matching vocabulary. The interval kernel forgets detailed trajectories, fault identities and unconsumed raw implementation state; it preserves this universal guard only under its actual support and continuation premises. Blame, other interventions, affordability, retained authority and recurrence are outside its query and remain in the source/other accounts.
+
+An institutional presentation can organize those implications and their model-coverage obligations. The direct route already has the same implications. Its comparison is not denied existing reusable lemmas to make a new notation appear to save work. No complete multi-logic development, Hets installation or universal interpretation theorem is claimed or needed for this bounded disposition.
+
+## Changed dependency: executed component obstruction
+
+Six token footprints {0,6}, {1}, {2}, {3}, {4}, {5} reach seven slots. This cannot instantiate the baseline one-affected-slot-per-token premise. The literal policy image is `4291d6a9ec6ebef999589f4b01aba710b056b28b5d2efb896f36c22c2da36ca6`. At the existing high-load/full-clearance permission fixture, genuine load words are 1100 and forged low words are 0. With code unchanged, it refuses at zero or six false-low slots and permits at seven; the respective executed instruction counts are 782, 776 and 778.
+
+This is an exact local-interface countermodel to preserving the old guarantee after forgetting changed incidence, plus a typed failure of the old adapter premise. The test does not prove simultaneous reachability of those six tokens in an initialized maximal run of the complete modified hybrid source. An upper cover is not evidence that every covered token remains harmful simultaneously. Therefore no whole-source losing theorem or universal control impossibility is inferred. Both correctly constructed semantic routes reject the unchanged projection certificate.
+
+The new edge is a changed source premise; the original source does not secretly admit it. The comparison holds both methods to that same changed source. A future positive repair must construct a different supported bundle/guard and pay the changed information, timing, work, exposure and return liabilities. Merely renaming the incidence does not repair it.
+
+## Changed age: exact sufficient-bound obstruction
+
+At the actual A0=133004488461/67108864, the force bound is 6290964563337621/7036874417766400 < 1. Its critical age is A*=24641536/6825. At A1=A*+1 the same sampled predicate yields 4194577/4194304 > 1. All arithmetic is exact and bound to the final source, not older nine-slot component constants.
+
+Thus a projection retaining the sampled predicate but discarding consumed age cannot preserve this permission certificate. This is a failure of the sufficient bound; the original expiry/scheduling implementation does not automatically admit A1. A slower replacement requires its own actual update, deadline, work, stale-effect and exposure analysis. The calculation alone is not a demonstrated physical violation or impossibility result.
+
+## Epistemic account and actual updates
+
+Use full admitted source prefixes as worlds. For actor j let mu_j(h) be its actual available finite local information at the decision point, including relevant obtained receipts and computed result; define h~j h' by equality of mu_j. This is not the analyst's pooled history or a hypothetical unbounded replay memory. Selected factual atoms refer to the actual target and time interval.
+
+Let Intact_j(h) mean the relevant local routine executes faithfully, Accept_j(h) that its actual guard accepts, and Prem_j(h) the realized source support/age assumptions consumed by the guard theorem. The checked guard supports the conditional epistemic judgment K_j((Intact_j and Accept_j and Prem_j) => Permitted_A). Applying it to an actual action still needs that action's Intact/Accept/Prem facts. It does not assert unconditional knowledge of permission at every rejected or unexamined history and gives the participant no correctness oracle. Shared-frame corruption is not a reason to falsify Intact_j. Faulty and recovered histories remain in the model; deleting them would break the renewal consumer.
+
+For an actual source event, take every admitted successor, including private receipt, stuttering, delay, failure, surviving old authority and physical changes, then recompute mu and the selected facts. Projecting this source transition and forming that relational update agree by construction for those queries. This is an exact full-source semantic correspondence; it is not a finite executable state estimator and earns no algorithmic saving. A smaller finite representation must supply its own sound approximation and work bounds.
+
+A received low-load assertion cannot be a public announcement deleting high-load worlds. The seven-slot component execution keeps such a world with intact code. Universal permission over a sound outer set licenses the actual action when source inclusion holds; a failed search over an overapproximation does not prove the source has no admissible action. Equal selected epistemic facts also fail to determine operation availability when relevant stock, current stage or retained effect state is omitted. PORT-SOURCE retains wait/reject/partial outcomes at insufficient funding; the epistemic account cannot make them disappear.
+
+## Obligation comparison and disposition
+
+For changed incidence, both methods reopen all affected recipient projections, actual source identities, whole-window supports and guard/decoder premises. If the repair adds paths or redundancy, its age, work, support, access and return dependencies reopen too. For changed age, both reopen expiry, continuation bounds, effect interval, timing resources and H-dependent exposure. The global mission is still a common-history conjunction; independently satisfiable shadows can spend the same stock or disagree about fault history.
+
+The framed route adds maintained carriers, kernels, translations, source coverage and update correspondence. The direct route already has the source laws and their factorization. No repeated global argument was demonstrably removed by introducing institution/epistemic terminology in this probe. The supported gain is diagnosis and explicit dependency control, not measured labor saving or RP5 proof reduction. Setup and repeated source-map work remain costs.
+
+Disposition: use explicit typed source-to-judgment maps and conditional epistemic queries at this restricted scope; do not rely on an unproved logical bridge or adopt Hets/DEL as a compulsory implementation. This is a bounded method-choice result, not a claim that either framing is universally useless. Reopen the comparison if a consequential second-family or frozen-transfer change keeps an implemented information/update interface unchanged while the same-source ledger identifies an actual argument removed after counting translation and maintenance. A full positive RP program may proceed through the direct shared-source method regardless of this framing verdict.
+
+The author checks are first-pass evidence; a separate read-only reviewer inspected the actual conditional connection, update semantics, comparator and source-bound executions. Review found an omitted executable-helper dependency; the repaired hash binding was independently recomputed and the final check reproduced. No remaining material objection was found within that scope. The saved record binds this text, the executable probe and constructor implementation to the immutable baseline records and hashes the current comparison helper loaded to compile/run the image. A helper change therefore invalidates the binding even if its reported result stays the same. The bounded framing item is independently checked; its result is restricted method use with no demonstrated additional proof savings. Neither these probes nor the full historical baseline reproduction completes the new Goal.
