@@ -1,0 +1,2 @@
+# Verified neural control and moving safety fibres
+A scoped mathematical example for Contextual Composition. Read the [manuscript](Verified_Neural_Control_and_Moving_Safety_Fibres.tex) for assumptions, proofs, primary references and caveats. Run `python3 checks.py` using the Python standard library. Tests are exact rational finite regressions, not formal proofs. No full differential-contextad construction, physical deployment guarantee, empirical learning result or novelty claim is made.
