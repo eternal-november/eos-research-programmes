@@ -1,0 +1,86 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\usepackage[margin=1in]{geometry}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Finite stochastic feedback with retained termination and cost\\A scoped contextual-composition example}
+\author{Research working note}\date{13 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+We develop the catalogue's proposed feedback enrichment in a finite-state probabilistic setting. Unbounded iteration is admitted semantically, not silently identified with the programme's finite-history syntax. Reachable-state transience gives an exact admissibility test, rational elimination algorithm, compositional expected cost, and certified finite unrollings. Nested elimination agrees with simultaneous elimination. A counterexample shows why conditioning away divergence is not compatible with random contextual choice. The underlying absorption mathematics is classical; this note is an explicit integration example, not a new general contextad theorem.
+\end{abstract}
+\section{Question and relationship to existing work}
+A state transition $X\times S\to Y\times S$ merely threads state. Feedback requires a rule saying when control returns internally and when it exits. We instead use a finite stochastic transition from $X\sqcup S$ to $Y\sqcup S$, written in row convention
+\[P=\begin{pmatrix}A&B\\C&Q\end{pmatrix}.
+\]
+All entries are nonnegative and each row sums to one. $X$ are entry ports, $Y$ observable exits, and $S$ internal control states. Failures that matter observationally must be explicit exits in $Y$, not erased mass. Returning to $S$ repeats the transition. This is coproduct control-flow feedback, not a construction of a cartesian trace on arbitrary stochastic maps.
+
+The earlier \emph{One relative construction for context, content, and effects} probability/List fixture and the integrated acceptance dossier retain finite witnesses and compose dependent finite histories. Here every bounded unrolling has finitely many paths, with products of transition probabilities and concatenated path witnesses; ordinary finite kernel composition gives its law. The unbounded limit below has countably many finite exit histories and potentially infinite divergent runs. It is an additional semantic closure. We do not assert that this closure has already been supplied as a native grade, or that the dossier's finite-language contextual-replacement statements extend to it.
+
+A finite external context parameter $p$ can select $P_p$ and costs $g_p$. All results hold fibrewise; a finite family of admissible fibres has a common geometric tail bound. No bound uniform over an arbitrary infinite parameter family is implied. Adaptive choices must be included in the finite internal state and transition kernel, rather than treated as an unchanged parameter.
+
+\section{Exit semantics and its exact boundary}
+Let $R\subseteq S$ consist of states reachable by a positive-weight path starting with an entry-to-internal edge in $B$. Restrict $B,C,Q$ to $R$ whenever computing an inverse. An inaccessible closed loop must not disqualify an entry behaviour.
+
+An exit path has either no internal visit, or the form $x,s_0,\ldots,s_n,y$. Summing its product weight yields
+\[T=A+\sum_{n\geq0}BQ^nC.\tag{1}\]
+Partial sums are increasing and their row sums are at most one, since the associated exit events are disjoint. Thus the series converges entrywise even when $I-Q$ is singular. Its missing row mass is precisely probability of never exiting. The internal exit kernel $H=\sum_{n\geq0}Q^nC$ is the least nonnegative solution of $H=C+QH$: iteration from zero gives the partial sums, and every nonnegative solution dominates them.
+
+\begin{theorem}[Finite admissibility boundary]
+For nonempty $R$, the following are equivalent: (i) every entry exits almost surely; (ii) every state of $R$ has a positive-weight path to $Y$; (iii) $Q_R^n\to0$; (iv) $N=(I-Q_R)^{-1}$ exists and equals $\sum_{n\geq0}Q_R^n$. Under these conditions $T=A+B_RNC_R$ is stochastic. For rational transition probabilities it is computed exactly by finite graph search and rational linear algebra. The case $R=\varnothing$ has $T=A$.
+\end{theorem}
+\begin{proof}
+If a reachable state has no exit path, reaching it has positive probability and thereafter exit is impossible, contradicting (i). Under (ii), choose for each state a simple internal path followed by an exit. With $m=|R|$, each has at most $m$ transitions. The minimum $\epsilon>0$ of their product weights bounds below the probability of exit within $m$ transitions from any state. Thus
+\[\|Q_R^n\|_\infty\leq(1-\epsilon)^{\lfloor n/m\rfloor}.
+\]
+This proves (iii), convergence of the series, and the inverse identity by telescoping. Conversely (iv), including its nonnegative series identity, implies convergence of the nonnegative scalar row sums, hence $Q_R^n\to0$. Finally (iii) says the probability of remaining internal tends to zero, giving (i). The graph test checks which states can reach an exit and whether all reachable states are among them. Rational Gaussian elimination then computes $N$. Existence of an inverse alone, without the series condition, is not used as a general stochastic criterion.
+\end{proof}
+For $T_k=A+\sum_{n=0}^{k-1}B_RQ_R^nC_R$, the omitted mass per row is at most $(B_RQ_R^k\mathbf1)_x$, hence at most $(1-\epsilon)^{\lfloor k/m\rfloor}$. In the almost-surely terminating case this mass is exactly the eventual-exit tail. This supplies a finite unrolling with an explicit error certificate.
+
+\section{Costs and contextual assembly}
+Let $g_X,g_R$ be finite nonnegative expected costs incurred on the next transition from an entry or internal state respectively. Costs may correlate with the selected transition: only their conditional means at each state are needed for the total expected cost. The state must contain all history on which those means or transitions depend. Under transience, Tonelli's theorem (or monotone sums of nonnegative finite path costs) gives
+\[E=g_X+B_RNg_R.\tag{2}\]
+Indeed the probability of being at an internal state on its $(n+1)$st internal transition is the corresponding entry of $BQ^n$; multiply by its expected immediate cost and sum. This is \emph{unconditional} total attempted cost, not cost conditioned on a selected exit. An exit-indexed cost law would need additional data.
+
+For sequential composition of terminating components with exit kernel $T_1,T_2$ and cost columns $E_1,E_2$, where the exits of the first are entries of the second, the summary is
+\[(T_1,E_1);(T_2,E_2)=(T_1T_2,E_1+T_1E_2).
+\]
+The tower property proves the formula, with independence of fresh component randomness conditional on the interface state. Matrix multiplication proves associativity. Hidden history affecting the second component must be retained in the interface; otherwise this assumption is false. A stochastic input context $L$ transforms $(T,E)$ to $(LT,LE)$; a cost-free output channel $K$ transforms it to $(TK,E)$. Neither operation renormalizes termination mass.
+
+Positive divergence does not itself force infinite expected cost: a zero-cost closed loop is a counterexample. If every internal transition costs at least $c>0$, positive divergence implies infinite expected cost by monotone convergence. Almost-sure termination in this finite model with bounded immediate costs implies finite expected cost, but no uniform bound over varying kernels follows. A one-state loop exits with probability $p>0$ on each attempt and costs one per attempt. Its output is always $y$, whereas its expected number of attempts is $1/p$. At $p=0$ it diverges. Output equality alone therefore suppresses an arbitrarily large resource difference.
+
+\section{Nested feedback and elimination order}
+Now assume every internal state is transient (or first restrict to $R$), and partition $R=U\sqcup V$. Write $N_V=(I-Q_{VV})^{-1}$ and define
+\begin{align*}
+ A'&=A+B_VN_VC_V,& B'&=B_U+B_VN_VQ_{VU},\\
+ C'&=C_U+Q_{UV}N_VC_V,& Q'&=Q_{UU}+Q_{UV}N_VQ_{VU},\\
+ g'_X&=g_X+B_VN_Vg_V,&g'_U&=g_U+Q_{UV}N_Vg_V.
+\end{align*}
+\begin{theorem}[Nested elimination]
+$N_V$ exists, $Q'$ is transient, and eliminating $V$ and then $U$ gives exactly the simultaneous exit and expected-cost summaries:
+\[A'+B'(I-Q')^{-1}C'=A+B(I-Q)^{-1}C,\]
+\[g'_X+B'(I-Q')^{-1}g'_U=g_X+B(I-Q)^{-1}g.
+\]
+\end{theorem}
+\begin{proof}
+A run that remains in $V$ for $n$ steps is a subset of runs remaining in $R$, so $Q_{VV}^n$ tends to zero with a geometric bound. Each finite exit path decomposes uniquely into maximal $V$ excursions separated by visits to $U$. Summing the $V$ excursions gives exactly $A',B',C',Q'$. These effective transitions exhaust the next exit or next $U$ visit, since infinite $V$ excursions have zero probability. A run with infinitely many effective $U$ visits would produce an infinite original internal run, which has probability zero. Thus $Q'$ is transient by the preceding finite-state criterion. Nonnegative path summation can be regrouped, proving the exit identity. The same decomposition partitions every transition cost among its entry or $U$ step and following $V$ excursion. Conditional expectations of those blocks are precisely $g'_X,g'_U$; summing them proves the cost identity. Empty parts reduce to doing nothing.
+\end{proof}
+This is the elimination-order law needed for assembling finite retrying subcontrollers. It is not a proof of all abstract trace axioms for a contextual-composition construction; in particular dinaturality for arbitrary effectful reindexings and compatibility with all native grade maps are not claimed.
+
+\section{An obstruction to forgetting divergence}
+Consider an input $a$ which exits at $0$ surely and an input $b$ which exits at $1$ with probability $1/2$ and enters a closed self-loop with probability $1/2$. The raw exit kernel is
+\[T_P=\begin{pmatrix}1&0\\0&1/2\end{pmatrix}.
+\]
+Let $T_Q=I_2$. Conditioning each input row on eventual exit identifies these kernels. But a hidden context choosing $a,b$ equiprobably gives output masses $(1/2,1/4)$ for $P$ and $(1/2,1/2)$ for $Q$. Conditioning \emph{after} this context gives $(2/3,1/3)$ versus $(1/2,1/2)$. Consequently inputwise success-normalized equality is not a congruence for stochastic input contexts. All inputwise success probabilities here are positive; the failure is not undefined division by zero. One must retain success mass or restrict admissible contexts/equivalences. This is a standard selection-bias mechanism, not a claim of a newly discovered impossibility theorem.
+
+\section{Concrete check and scope}
+The supplied exact-rational checker uses
+\[Q=\begin{pmatrix}1/4&1/2\\1/3&1/3\end{pmatrix},\quad C=\begin{pmatrix}1/4&0\\0&1/3\end{pmatrix},\quad B=(1/2,1/2),\quad A=(0,0),
+\]
+with costs $g_X=2$ and $g=(3,5)^t$. It compares direct and nested elimination of either internal state, exact finite-tail identities, and one hundred seeded rational three-state models with immediate positive exit probability. It also checks an inaccessible trap, the normalization obstruction, and the $1/p$ cost family. The machine tests supplement, not replace, the proofs; there is no Lean formalization or claim of physical deployment.
+
+The useful advance for this programme is a precise proposed boundary for the feedback example: retain divergence and cost, certify reachable transience, and eliminate nested finite control regions without changing their summary. The absorption formula, fundamental matrix, and expected visit interpretation are classical (Grinstead--Snell, Chapter 11, Theorems 11.4--11.6). Abstract traces have a separate axiomatic theory (Joyal--Street--Verity). No novelty claim is made for those ingredients or the block elimination identity. A general feedback enrichment for dependent grades, non-finite state, adversarial control, or history-sensitive effects remains open here.
+\begin{thebibliography}{9}
+\bibitem{gs} C. Grinstead and J. L. Snell, \emph{Introduction to Probability}, Chapter 11. \url{https://www.stat.yale.edu/~jtc5/251/readings/ProbabilityBook_GrinsteadSnell.pdf}.
+\bibitem{jsv} A. Joyal, R. Street and D. Verity, Traced monoidal categories, \emph{Math. Proc. Cambridge Philos. Soc.} 119 (1996), 447--468. \url{https://doi.org/10.1017/S0305004100074338}.
+\end{thebibliography}
+\end{document}

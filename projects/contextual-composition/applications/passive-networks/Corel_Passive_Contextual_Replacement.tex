@@ -1,0 +1,102 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}[theorem]{Proposition}
+\title{Connectivity is not electrical equivalence:\\an exact contextual replacement test for passive networks}
+\author{Contextual composition programme: worked example, review draft}
+\date{13 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+This worked example addresses the catalogue's Cospan, Rel and Corel directions. It distinguishes three abstractions: an internal implementation, its boundary response, and its boundary connectivity. We give explicit proofs of exact gluing with floating internal components, a necessary and sufficient replacement criterion using a fixed grounded load, and a quantitative version. A finite rational star--mesh example has different implementations but identical responses; connected networks can nevertheless be distinguished by a load. These are applications of established passive-network mathematics, not a new black-boxing theorem or a general contextad enrichment theorem.
+\end{abstract}
+\section{Scope and source of the question}
+The programme's \texttt{constructions-enrichments-and-applications.md} distinguishes cospan wiring from physical dynamics and proposes relation/corelation integration. Our test case asks precisely what may be forgotten when a network is to be substituted into another network. Bare connectivity suffices for connectivity questions, but not for electrical behavior.
+
+The established categorical framework is Baez and Fong's passive-linear-network black-boxing construction \cite{BF}, which uses decorated cospans and Lagrangian relations. Their discussion also identifies the absence of identities in a naive category of Dirichlet forms. We use only real, finite, positive-resistor networks and supply the elementary calculations needed here. We do not claim novelty for the electrical facts. The programme-level contribution is a scoped example, an explicit observational criterion and an executable rational comparison.
+
+\section{Model and the floating-component issue}
+Let $V$ be a finite vertex set, $B\subseteq V$ a labeled boundary, and let every edge $ij$ have positive rational conductance $c_{ij}$. Parallel edges are allowed and their conductances add; loops can be discarded. For $v\in\mathbb R^V$ define
+\[E(v)=\tfrac12\sum_{ij}c_{ij}(v_i-v_j)^2=\tfrac12v^TLv.\]
+Our convention is that $(Lv)_b$ is current injected into the network at $b$. At internal vertices it vanishes. There are no independent sources within the component, nonlinear elements, inductors, or capacitors. Boundary labels denote distinct vertices in this initial model.
+
+\begin{theorem}[Boundary reduction]
+For every $u\in\mathbb R^B$, $F(u)=\min_{v|_B=u}E(v)$ exists and equals $\frac12u^T\Lambda u$, with $\Lambda$ a rational symmetric positive semidefinite matrix. Every minimizer has the same boundary current $\Lambda u$. Components not meeting $B$ may have nonunique constant potentials but do not affect $F$ or its current.
+\end{theorem}
+\begin{proof}
+Discard components disjoint from $B$; their minimum energy is zero, achieved by any constant potential on each component. Let $I$ be the remaining internal vertices. The matrix $L_{II}$ is positive definite: extend a vector on $I$ by zero on $B$; zero energy forces it constant on every remaining connected component, hence zero because each component meets $B$. Thus
+\[v_I=-L_{II}^{-1}L_{IB}u,\qquad
+\Lambda=L_{BB}-L_{BI}L_{II}^{-1}L_{IB}.\]
+If $I$ is empty the correction is zero. Substitution proves the formula and rationality. Nonnegativity follows from the energy; differentiation or substitution into $Lv$ gives the current formula. Discarded components have no edges to the retained vertices, so all asserted independence follows.
+\end{proof}
+Naively inverting the full internal block is incorrect when a floating component exists. A Moore--Penrose formula is possible, but is unnecessary for this exact rational computation.
+
+\section{Gluing, currents, and replacement}
+Take networks $N$ on boundary $A\sqcup S$ and $M$ on $S\sqcup C$, with otherwise disjoint vertices. Glue corresponding $S$ vertices and regard them as internal. For potentials $a,c$,
+\[ F_{M\circ N}(a,c)=\min_{s\in\mathbb R^S}\bigl(F_N(a,s)+F_M(s,c)\bigr).\tag{1}\]
+\begin{proposition}
+Equation (1) is exact, even when gluing creates a component with no external boundary. It is associative under successive gluing. The stationary condition at $S$ says that the two injected currents sum to zero.
+\end{proposition}
+\begin{proof}
+A potential on the glued vertex set is precisely a pair of potentials agreeing at $S$. Its energy is the sum of component energies. Minimizing first over the two disjoint original interiors and then over $s$ is the same minimization over all glued interiors. Existence follows from the preceding theorem on the glued finite graph; invisible components may be assigned constant potentials. For three components either parenthesization minimizes the same sum over both interfaces and all interiors. Differentiation in $s$ gives the sum of currents equal to zero.
+\end{proof}
+Consequently equal boundary matrices permit substitution into any finite passive network context formed by this gluing and parallel union, with any subsequent boundary potential/current observation that is well posed. This includes repeated uses of the component: replace one occurrence at a time. Equality of energy minima implies equality of external boundary currents. It does not assert that internal voltages, power on individual edges, or hidden faults are preserved.
+
+\begin{theorem}[A complete fixed-load test]
+Fix $g>0$. At each of the $n$ boundary ports attach a conductance-$g$ resistor to a common externally held ground. Inject $j\in\mathbb R^n$ and measure port voltages. The measured linear operator is
+\[T_g(\Lambda)=(\Lambda+gI)^{-1}.\]
+For two networks with the same labeled boundary, the following are equivalent:
+(a) $\Lambda=\Lambda'$;
+(b) they are indistinguishable under all the passive gluing contexts and boundary tests just specified;
+(c) the fixed loaded test has equal voltages for $j=e_k$, $1\leq k\leq n$.
+If $\Lambda\ne\Lambda'$, at least one such basis excitation distinguishes them. Rational conductances and rational $g$ give a rational distinguishing experiment.
+\end{theorem}
+\begin{proof}
+The load contributes current $gu$, so Kirchhoff's law gives $(\Lambda+gI)u=j$. Positive definiteness makes the solution unique. Equality of the $n$ responses is equality of the inverse matrices, hence equality of their inverses and of $\Lambda$. Conversely equal $\Lambda$ passes every test by (1). The fixed-load experiment is an allowed passive attached context with external current excitation and a voltage reference, so (b) implies (c). Rational matrix inversion proves the last assertion.
+\end{proof}
+Ground and controlled current excitation are explicit observation resources. This is not a theorem about purely ungrounded experiments with unspecified gauge, nor about a single scalar voltage measurement. For $n=0$ it is vacuous, as it should be.
+
+\begin{proposition}[Stability and the scale required for inversion]
+In Euclidean operator norm,
+\[\|T_g(\Lambda)-T_g(\Lambda')\|\leq g^{-2}\|\Lambda-\Lambda'\|.\]
+If additionally $\|\Lambda\|,\|\Lambda'\|\leq K$, then
+\[\|\Lambda-\Lambda'\|\leq(K+g)^2\|T_g(\Lambda)-T_g(\Lambda')\|.\]
+There is no uniform inverse bound without a conductance/response scale bound.
+\end{proposition}
+\begin{proof}
+Use $A^{-1}-D^{-1}=A^{-1}(D-A)D^{-1}$ with $A=\Lambda+gI$, $D=\Lambda'+gI$, and $\|A^{-1}\|,\|D^{-1}\|\leq1/g$. Conversely $D-A=A(A^{-1}-D^{-1})D$, giving the stated bound. For the last claim take two-port responses $cH$ and $(c+1)H$, $H=\left(\begin{smallmatrix}1&-1\\-1&1\end{smallmatrix}\right)$. Their difference has norm $2$, but their loaded inverse difference has norm $2/((g+2c)(g+2c+2))$, tending to zero.
+\end{proof}
+Thus exact completeness does not make a finite-precision experiment uniformly discriminating.
+
+\section{Exactly what connectivity retains}
+\begin{theorem}
+The kernel of $\Lambda$ consists of the boundary potentials constant on each connected component of the network. In particular it determines exactly the partition of $B$ induced by connectivity, but generally does not determine $\Lambda$.
+\end{theorem}
+\begin{proof}
+Positive semidefiniteness gives $u\in\ker\Lambda$ iff $F(u)=0$. The sum of positive edge terms vanishes iff every edge has equal endpoint potentials. A zero-energy extension exists exactly when the prescribed boundary values are constant within each component. Conversely the partition is reconstructed by declaring $b\sim b'$ iff $u_b=u_{b'}$ for all $u\in\ker\Lambda$: distinct blocks are separated by their indicator potentials.
+\end{proof}
+Connectivity of glued graphs is obtained by taking the equivalence relation generated by the two component partitions, then restricting to surviving external ports. This is the topological corelation calculation. For resistor graphs it is an additional abstraction: the cospan apex alone does not encode paths along edges unless those paths are deliberately collapsed. In particular a resistor does not impose equality of its endpoint potentials; a perfectly conducting ideal wire does.
+
+The two matrices $H$ and $2H$ have identical kernel and connected boundary partition. For $g=1$, injection $e_1$ gives respectively $(2/3,1/3)$ and $(3/5,2/5)$. Their topological equivalence therefore does not authorize electrical replacement.
+
+A less trivial positive example is a star with three boundary conductances $a,b,c$ incident to one internal vertex. Eliminating that vertex gives a triangle with conductances
+\[c_{12}=ab/(a+b+c),\quad c_{13}=ac/(a+b+c),\quad c_{23}=bc/(a+b+c).\]
+For $(a,b,c)=(2,3,5)$ these are $(3/5,1,3/2)$, and both implementations have response
+\[\begin{pmatrix}8/5&-3/5&-1\\-3/5&21/10&-3/2\\-1&-3/2&5/2\end{pmatrix}.\]
+They can be substituted in every declared context, although their internal geometry and individual edge currents differ. The check script verifies this equality and substitution after attaching an asymmetric two-vertex network, not just the isolated boundary comparison.
+
+\section{Why relations are needed for identities}
+The boundary behavior of the positive-resistor model is the relation $\{(u,i):i=\Lambda u\}$. Gluing existentially quantifies shared voltages and cancels the shared injected currents. With input/output signs adjusted, this is ordinary relational composition on port voltage/current pairs.
+
+But an ideal identity wire between two ports has behavior
+\[u_1=u_2,\qquad i_1+i_2=0,\]
+with unrestricted transmitted current. It is not the graph of a matrix defined on all $(u_1,u_2)$. No finite positive resistor is an identity: putting conductance $k$ in series with $c$ gives $kc/(k+c)\ne c$. The initial injectively labeled resistor model therefore supports the gluing calculation but is not by itself a unital category of all wiring. Allowing boundary identifications and using linear relations restores the appropriate wire semantics. We rely on the established framework \cite{BF} for that categorical completion, rather than claiming the matrix calculation supplies it.
+
+\section{Programme assessment and checks}
+This supplies a concrete boundary between the catalogue's proposed abstractions. Forgetting internal witnesses is safe at the response-relation level. Forgetting further to connectivity is safe only for topological observations, not the electrical contexts used here. The fixed-load theorem makes that distinction experimentally explicit; the stability example warns against confusing an exact invariant with robust recoverability.
+
+It does not construct a distributive law for arbitrary contextads, prove recognition, solve nonlinear circuit equivalence, or establish a new Corel theorem. The main value is a precise application and a reusable regression test for any proposed integration. It should count as one coupled Rel/Corel/wiring example, not three independently completed enrichments.
+
+The supplied Python script uses exact SymPy rationals for star--mesh reduction, floating-component invariance, asymmetric contextual substitution, two-port separation, and staged versus joint elimination. These checks support the formulas; the written arguments establish the general assertions. No Lean formalization or independent proof audit is claimed.
+\begin{thebibliography}{9}
+\bibitem{BF} J. C. Baez and B. Fong, \emph{A Compositional Framework for Passive Linear Networks}, Theory and Applications of Categories 33 (2018), 1158--1222. \url{https://arxiv.org/abs/1504.05625}. In particular the Dirichlet and black-boxing constructions; see also section 3.3 on identities.
+\end{thebibliography}
+\end{document}
