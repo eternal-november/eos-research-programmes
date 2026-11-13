@@ -1,0 +1,366 @@
+Finite examples for learned transaction semantics
+
+Purpose and status
+
+These are proposed finite test cases for one application of generalized
+contextads: learned transaction semantics and partial recovery. They do not
+define agenda item 6, which is the broader generalization of contextads with
+theoretical targets and multiple applications. They are not a novelty claim.
+The difficulty in this application is not
+adding an uncertainty annotation or a compensator label to known state maps.
+It is composing actions whose usable subsequent contexts and recovery policies
+depend on observations, while the semantic description of those actions is
+itself being established or revised. Exact finite checks below were performed
+by enumeration on 2026-11-01. No physical action was performed.
+
+The three cases isolate different requirements:
+  1. Modelwise inverses need not yield an implementable common recovery policy.
+  2. Learning a persistent mode, fresh sampling, dependent context selection,
+     and compensation must preserve the relevant joint history.
+  3. Restoring a coarse observation need not survive richer observations or
+     subsequent actions; semantic refinement can invalidate stronger claims.
+
+All restoration claims name a modeled subsystem or comparison relation.
+Restoring a parcel's location is not erasing the fact that it moved. If an
+irreversible log, spent resource, or external recipient's memory is included in
+the compared state, an otherwise exact subsystem inverse is no longer an exact
+inverse of that larger state. Retaining a mathematical execution witness does
+not require pretending that the physical past can be undone.
+
+Five layers to keep distinct
+
+S is actual environmental state, including any persistent hidden mode. E is
+the available evidence or model hypotheses, not another copy of S. R records
+permissions and resources: a physically possible operation need not be
+authorized or resourced. H is the retained joint observation/action history,
+with its correlations. Delta records the residual against the chosen recovery
+criterion, rather than a fictitious negative effect that cancels everything.
+
+A controller may select actions using H and available R; it may not read a
+hidden coordinate of S merely because that coordinate occurs in the semantics.
+One can package these layers into a large state space for an operational model,
+but this does not remove the need to distinguish them when defining abstraction,
+evidence updates, admissibility, or recovery claims.
+
+Deterministic is not synonymous with pure. Computing a candidate inverse,
+updating a finite model, or copying an observation record may be pure internal
+computation. A deterministic motor command can still change the world, consume
+a resource, and require permission. Copying the description of a key or a
+recovery capability does not supply another key or duplicate the capability.
+Likewise copying a record of theta does not reinstantiate or resample the
+physical mechanism whose mode it records.
+
+Example 1 A miswired latch
+
+Actual state is S = {0,1} x {home,extended,jammed}. The bit theta is a persistent
+wiring mode. Initially the latch is home and theta is unknown. Observations
+reveal only the second coordinate. The forward action is
+
+  F(theta,home) = (theta,extended).
+
+There are two available return commands, U0 and U1. Their relevant maps are
+
+  U0(0,extended) = (0,home)       U0(1,extended) = (1,jammed)
+  U1(0,extended) = (0,jammed)     U1(1,extended) = (1,home).
+
+Jammed is absorbing for the available controls. Other preconditions can be
+represented by partial domains; the wrong return command is explicitly an
+executed damaging transition, not a conveniently undefined event.
+
+E initially contains both wiring hypotheses. After F the visible history is
+the same in both: home, F, extended. R supplies authorization and both keys;
+having a key or permission does not certify that its use is safe. H retains
+that common observation history. A correct return has no residual on the
+idealized subsystem S; a wrong return has the permanent residual jammed. Keys
+are not consumed in this idealization. History and elapsed time are not included
+in the subsystem on which exact equality is claimed.
+
+For each theta there exists a command U_theta with U_theta F = identity on
+the initial domain. But there is no single observation-based recovery policy
+guaranteed to work for both hypotheses. If a randomized policy selects U0 with
+probability p, its success probabilities in the two models are p and 1-p.
+Its best worst-model success probability is 1/2, not 1. Refusing to act avoids
+the jam but does not restore home. Trying both is not a remedy: the wrong first
+trial jams the latch. Thus
+
+  for every compatible model there exists an undo
+
+does not imply
+
+  there exists one available-history-based policy that restores in every
+  compatible model.
+
+What can be tested? In this version there is no separate diagnostic. Observing
+extended again supplies no information. A return attempt is informative only
+through its potentially irreversible consequence. A second version may add a
+certified harmless test D(theta,x) = ((theta,x), theta), with a distinct fixture
+permission. That is an additional environmental capability, not a consequence
+of calling the environment discoverable. If it exists, D followed by U_theta
+works; if it does not, the impossibility remains.
+
+What is already expressible? Once theta and the action meanings are fixed,
+ordinary deterministic state maps and partial domains encode this example.
+Even a larger known hidden-state model encodes it. The useful demand on a new
+framework is to keep model-indexed existential witnesses distinct from a common
+observation-adapted policy, including the possibility that no such policy exists.
+This example alone is not an argument that existing contextads lack expressive
+power.
+
+Example 2 A calibrated router with outcome-dependent return contexts
+
+This is a finite idealized robot handling fixture. It explicitly assumes a
+safe calibration interface; it is not a proposal for safely learning arbitrary
+unknown physics. The finite hypothesis family is known to the modeler. This
+is a first bench test, not a complete account of semantic discovery.
+
+Actual state has a persistent bit theta, parcel location L in
+{home,tray0,tray1}, and seal status B in {intact,broken}. R contains a calibration
+permit, both conditional return permissions, and one return token for each tray.
+Only a return from the actual tray with its matching token is valid. The fixture
+allows the appropriate tool to be selected after the routing observation; if
+the apparatus instead forces one tool to be committed in advance, the sure
+recovery claim below does not apply.
+
+Calibration C observes c = theta without changing the modeled physical state.
+E is updated from {0,1} to {c}. The output c is retained in H. The routing action
+F starts at home, samples a fresh independent fair bit z, moves the parcel to
+tray z, breaks its seal, and returns the sensor code
+
+  o = theta XOR z.
+
+The meaning of the code is learned through c. The controller does not directly
+observe z. After observing o, the policy chooses the return context
+
+  kappa(c,o) = P_(c XOR o),
+
+where P_i comprises tool i, return-lane permission i, and return token i.
+The return action U_i maps tray i to home and spends token i; it leaves the
+seal broken. It is not a universal inverse. The selected compensation restores
+location, while Delta records the broken seal and consumed token. If the
+required permission or token is absent, the policy must report unavailable
+recovery rather than silently manufacturing a context.
+An explicit abort outcome can retain the history and unfulfilled obligation;
+alternatively a subprobabilistic semantics can represent missing success mass.
+One cannot put a normalized distribution on an empty reached resource fibre.
+
+For a fair prior on theta, the complete relevant joint table is
+
+  theta  z  c  o  selected i  probability
+    0    0  0  0      0          1/4
+    0    1  0  1      1          1/4
+    1    0  1  1      0          1/4
+    1    1  1  0      1          1/4.
+
+Thus z = c XOR o on every execution and recovery succeeds with probability 1.
+The policy kappa is one deterministic map on histories. Its realized context
+P_i is random because its input history depends on the fresh sample z. A fixed
+preselected context P0 or P1 would succeed only half the time. Calling kappa
+a context without distinguishing the family from its realized member conceals
+precisely the dependent choice that must be composed.
+
+A randomized policy chosen once at initialization would be a different object:
+it chooses an entire contingent plan, retaining any common random seed across
+visits. It is not automatically equivalent to choosing a fresh random context
+at each visit. The present policy is deterministic, so its random realized
+context is due to the environment's sampled route, not policy randomization.
+A sufficiently rich prechosen policy can encode fresh draws by presampling
+separate seeds indexed by full finite histories. The distinction is therefore
+about which plan, seed, and dependence are retained, not an impossibility of
+representing adaptive finite behavior using any initial policy object.
+
+There are two useful counterchecks.
+
+First, every pairwise marginal of the three bits c,o,z is a pair of independent
+fair bits. Nevertheless their triple joint law obeys z = c XOR o. Replacing
+that joint law by the product of its one-bit marginals gives probability 1/2
+for the chosen return context to match z. The same distributions of individual
+outputs or resources are therefore not enough to justify recovery. A retained
+equivalent sufficient statistic is fine; the demand is not to store every raw
+event forever, but to preserve what this policy and its guarantee require.
+
+Second, if theta is incorrectly resampled independently between calibration
+and routing, then c = theta0 and o = theta1 XOR z. The same policy matches the
+tray exactly when theta0 = theta1, again with probability 1/2. A persistent
+unknown environmental mode is not fresh execution noise. Uncertainty about a
+mode can be updated by evidence; it must not be re-drawn at every composition
+boundary merely because both are represented probabilistically.
+
+Composition test: compare the two bracketings of C, F, and the observation-based
+U_kappa, retaining the same full joint trace or a proven sufficient interface.
+Ordinary finite kernel sequencing is associative and yields the same result.
+There is no counterexample to kernel associativity here. A construction fails
+the test if one bracketing illegitimately marginalizes c or breaks its coupling
+with o and z before selecting the continuation. Post-observation contexts and
+their recovery witnesses must be transported using the same execution witness,
+not independently sampled marginals.
+
+No global disintegration is needed for this finite test. The unnormalized joint
+weight on compatible theta,z,c,o rows can be composed by finite sums. An actual
+nonzero-probability observation may be normalized if wanted. An impossible
+history gives no license to invent a posterior or recovery policy. In a more
+general semantic setting, conditioning existence must be stated where used.
+
+What is already expressible? A conventional controlled hidden-state model or
+kernel on sufficiently rich history state can represent this process. Given
+the meanings, stateful contextads can encode the deterministic infrastructure.
+The research demand is not merely to re-encode the process, but to give a
+structural account of adaptive contexts, retained effect dependence, recovery
+witnesses, and comparison of semantic descriptions that recovers those familiar
+cases conservatively.
+
+Example 3 Returning a parcel does not retract its observed history
+
+The displayed physical and external subsystem is S = {home,away} x {0,1};
+the full actual state additionally includes persistent mode theta. The bit n means
+that an external notification or irreversible tamper event has occurred. Its
+meaning is fixed for the example: available actions can never change 1 back
+to 0. The hidden semantic mode theta is quiet=0 or notifying=1. Initially
+S0 = (home,0). The maps are
+
+  F_theta(home,n) = (away, n OR theta)
+  U(away,n)       = (home,n).
+
+The routine sensor q observes only location. An optional audit a observes n.
+E initially contains both hypotheses; the q-history after F then U is identical
+under both. H retains the action history and later audit evidence, when any.
+R supplies relocation and return permissions but no capability to erase n.
+If possible notification is outside the allowed effects, a sound robust
+admissibility check must block F until resolved; the mathematical existence of
+this map is not authority to try it on an actual environment.
+
+Both models satisfy q(U F_theta(S0)) = q(S0). In the notifying model,
+U F_1(S0) = (home,1), not S0. A compensation objective that permits the notice
+to remain may accept this residual. Exact recovery of S cannot. Under the
+available controls n is monotone, so no alternative wiring or more optimistic
+posterior produces an exact recovery operation.
+
+The audit is a finite continuation separating the compensated state from the
+original one: a(home,1)=1 and a(home,0)=0. Equality after q is not a congruence
+for a language that permits this audit. One must specify the permitted tests
+or require a suitable continuation-stability property before calling two
+states observationally interchangeable. A relation indexed by an observation
+interface can be useful, but that indexing must be accounted for under change.
+
+This also tests semantic refinement. A coarse model that records only location
+may correctly prove restoration of its recorded state. A richer model adds n
+and the audit, with forgetful map r(location,n)=location. The old claim remains
+true after applying r; it does not lift to exact recovery in the richer model.
+If the old model instead claimed that no external effect existed, audit=1 is
+counterevidence, not a new coherence cell that makes the old claim sound.
+
+Choosing among a known pair of modes is only a finite surrogate for discovery.
+Real semantic revision may add state variables, change an action's domain,
+withdraw a transport witness, or expose dependence that the old model denied.
+Such a revision need not preserve every old theorem or be monotone refinement.
+The desired comparison machinery must distinguish sound abstraction, genuine
+strengthening, and correction of a false model.
+
+Four different recovery claims
+
+Exact undo is an equation U F = identity on a specified domain of a specified
+subsystem. Compensation is a policy establishing an explicitly accepted
+relation to the initial or counterfactual state, with residual effects stated.
+Observation-relative restoration is equality under named observations or tests;
+it need not be stable under all continuations. An irreversible side effect is
+one that the available controls cannot return to its earlier value, whether
+or not the chosen observations notice it. These notions may overlap, but none
+of their weaker versions should silently be promoted to a stronger one.
+
+For stochastic actions, equality of final observable distributions is also
+weaker than a pathwise restoration guarantee relative to the actual initial
+state and actual sample. A comparison must say which is claimed and retain
+any coupling required for the stronger claim.
+
+What established compensation work already addresses
+
+Garcia-Molina and Salem's Sagas supplies a primary baseline for compensating
+an incomplete long-lived sequence; it is not an assumption of literal physical
+rollback. Source: https://www.cs.princeton.edu/research/techreps/598
+
+Korth, Levy, and Silberschatz explicitly allow semantic compensation whose
+result differs from the no-transaction state (1990, p96). Their reservation
+example retains an indirect rejection effect after cancellation (p102).
+Definition 4 (p103) compares compensated and dependent-only histories through
+a reflexive relation R; Section 7 discusses semantic logging (p105). Thus
+relation-relative compensation, residual indirect effects, and recovery logs
+are not by themselves the proposed novelty. Source:
+https://www.vldb.org/conf/1990/P095.PDF
+
+These comparisons do not establish that no prior work has the full desired
+interaction. In particular, broad saga, probabilistic-programming, control,
+and categorical literature claims require a separate search. Existing
+contextad coverage of state, partial maps, and coherent chosen transports is
+summarized in references/existing_work.txt.
+
+One candidate target within the recovery application
+
+As one application-specific line, develop a compositional account of
+observation-adaptive contextful actions
+whose usable interfaces and recovery policies are justified by an evolving
+semantic description of the environment. Determine what structure is actually
+needed to compose such actions, retain the dependence that later choices use,
+and compare semantic descriptions without promoting modelwise recovery to a
+common executable policy or promoting coarse restoration to exact undo.
+
+The first convincing result would be a nontrivial finite construction or a
+sharp obstruction, not a declaration that a universal generalized contextad
+has already been specified. It should handle Example 2 genuinely, explain why
+Examples 1 and 3 block stronger claims, and make clear what remains beyond the
+finite known-hypothesis case.
+
+Candidate missing interaction to investigate, not an asserted theorem:
+
+  Can dependent continuation-context selection, effect sequencing, and
+  evidence/semantic comparison be composed coherently using the same retained
+  execution witness, while transporting admissibility and residual-recovery
+  claims only along comparisons that actually justify them?
+
+There are at least two inseparable checks. First, the deterministic context
+unit and associator must interact with effect sequencing when the second
+context is selected only after a first outcome, rather than from the input
+alone. Second, changing the semantic description before composing should agree
+with composing and then comparing whenever the chosen semantic comparison
+really respects the transition, observation, and resource interfaces. The
+comparison after the first action is generally indexed by the resulting
+history; it is not automatically one fixed global functor or law. A corrected
+model may instead invalidate a recovery claim, which must be expressible.
+
+A finite operational benchmark can maintain an unnormalized joint weight on
+(persistent model, actual state, available resources, retained observations),
+and compose history-adapted action choices by ordinary finite sums. This makes
+the probabilistic sequencing check concrete without requiring universal
+disintegration. It does not yet supply the intrinsic contextad-level structure
+or a minimality theorem. Begin with this benchmark, then ask which data can be
+abstracted and which comparison laws remain sound.
+
+Useful success criteria for this investigation, not a premature axiom list:
+
+  - Deterministic/no-effect cases recover the intended contextad behavior;
+    trivial-context cases recover ordinary effect/Kleisli sequencing. State
+    precisely whether each embedding is faithful and which equalities survive.
+  - The implementation distinguishes a history policy from its realized random
+    context, and a common policy from a family of model-specific witnesses.
+  - Three-stage reassociation and units preserve the same joint continuation
+    dependencies; they do not require a hidden global independence assumption.
+  - Recovery statements name their relation, resource domain, model/evidence
+    assumptions, and residual; unavailable recovery is a valid outcome.
+  - Sound semantic comparison explains what a recovery statement preserves,
+    forgets, or fails to transport. Merely fitting observations to date is not
+    proof that a comparison respects every future action.
+  - Any strength, dependent-sum operation, selected conditioning, or
+    distributive-law-like compatibility used by the construction is isolated
+    and motivated. Neither a global distributive law nor global disintegration
+    is smuggled in as something the research problem has already supplied.
+
+The potentially new contribution is a precise interaction/comparison law and
+its weakest justified setting, or a convincing obstruction to such a law, not
+the general fact that partial, stochastic, or compensating actions exist.
+
+Verification and boundaries
+
+Exact enumeration verified the latch success table, all four router rows,
+the independence of every pairwise marginal in the router, success 1 versus
+1/2 under the two invalid substitutions, and the audit counterexample.
+Primary compensation pointers were read in their source documents or official
+repository abstract. No claim of complete literature coverage is made.
+No physical experiment is represented by these finite model checks.

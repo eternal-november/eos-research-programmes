@@ -1,0 +1,1250 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+\usepackage{microtype}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Biprof}{\mathbf{Biprof}}
+\newcommand{\Ps}{\operatorname{PsNat}}
+\newcommand{\disc}{\operatorname{disc}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Ob}{\operatorname{Ob}}
+\newcommand{\Kl}{\operatorname{Kl}}
+\newcommand{\Ctx}{\operatorname{Ctx}}
+\newcommand{\Cnt}{\operatorname{Cnt}}
+\newcommand{\Prob}{\mathbf{Prob}^{+}_{\mathrm{fin}}}
+\newcommand{\List}{\operatorname{List}}
+\newcommand{\Psh}{\operatorname{Psh}}
+\newcommand{\Copsh}{\operatorname{Copsh}}
+\newcommand{\Tel}{\operatorname{Tel}}
+\newcommand{\coend}[1]{\int_{\mathrm{ps}}^{#1}}
+\newcommand{\Qrel}{\mathbb Q}
+\newcommand{\then}{\mathbin{;}}
+\title{One relative construction for context content and effects}
+\author{}
+\date{1 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+A single construction is given, rather than a list of related theories. Its
+algebra object is a category-valued relative pseudopromonad in the existing
+tricategory of biprofunctors. Its realization has the original computation
+categories as hom categories and a designated interpretation of pure maps.
+Companion bending recovers every changing-endpoint square. Context and content
+presentations determine such objects; their relative tensor is proved globally
+equivalent to the category of triples $(P,Q,eP\to dQ)$, using an explicit
+pseudocoend normalization that does not invert grade maps. A supplied coherent
+crossing makes this tensor one combined pseudopromonad, with a displayed unit
+and multiplication. Dependent finite probability presentations and lists give
+a fully worked nonthin instance with locally fully faithful one-sided maps.
+Grothendieck extension and telescopes are internal or base-changing constructors
+of the same system. Marked presentations recover the original fibres and
+extensions; unmarked operational data are not claimed to recognize them
+intrinsically. Crossings remain explicit compatibility data; a bicyclic obstruction rules
+out universally conservative amalgamation.
+The ambient, realization and composition machinery are established mathematics;
+no historical novelty is claimed for that framework.
+\end{abstract}
+
+\section{The single structure and its scope}
+
+The common structure is not the statement that everything is a bicategory.
+It consists of a specified pure base $C$, one category-valued module $H$ over
+that base, a relative unit and multiplication, and, when presentation-level
+recovery is required, marked generic arrows. Composition is constructed in a
+relative tensor product, so its dependence on pure maps and on intermediate
+factorizations is part of the algebra. Noninvertible comparison cells are
+morphisms of the hom categories, not relations subsequently quotiented away.
+
+Write tensors in execution order: $M\odot_C N$ means first $M$, then $N$.
+Ordinary composition of arrows remains right-to-left. A context followed by
+content therefore has normal form
+\begin{equation}\label{eq:normalform}
+ H(A,B)=(e_A\downarrow d_B),\qquad
+ h=(P,Q,f:e_AP\longrightarrow d_BQ).
+\end{equation}
+For two such arrows, the middle content and context must interact. A crossing
+is the precise additional datum which makes these normal forms closed under
+composition. Without it the tensor is a category of factorizations, not a
+category of composable mixed computations.
+
+\begin{theorem}[Unified construction]\label{thm:main}
+Let $C$ be a small ordinary category. Let a contextad presentation $(K,e)$ and
+a contentad presentation $(L,d)$ have their usual invertible associativity
+and unit constraints, while retaining arbitrary forward grade morphisms.
+Then the following constructions and recovery statements hold.
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item Their comma modules $M(A,B)=(e_A\downarrow B)$ and
+$N(A,B)=(A\downarrow d_B)$ are pseudomonads on $C$ in $\Biprof$.
+\item There is an explicit pseudonatural equivalence
+$M\odot_C N\simeq H$, with $H$ as in \eqref{eq:normalform}, including all
+noninvertible grade cells and all endpoint transports.
+\item A pseudodistributive law $\tau:N\odot_C M\Rightarrow M\odot_C N$
+constructs a composite pseudomonad on $M\odot_C N$, hence on $H$ by transport.
+Its realization is a bicategory $B_H$ with designated pure pseudofunctor
+$J:C\to B_H$, and its relative quintet double category retains the full
+endpoint-square data.
+\item The original one-sided constructions are recovered by specializing
+the other effect to the identity. In a fixed mixed object, the unit-induced
+one-sided comparisons are not automatically fully faithful. They are locally
+fully faithful in the probability/list instance of Section~\ref{sec:prob}.
+\item Marking the generic expansion and contraction arrows in the native
+one-sided realizations, their factorizations and chosen lifts recovers the
+supplied context and content presentations. The structured input retains
+these one-sided marked presentations and their mixed comparison maps. Merely
+marking their images in a nonfaithful mixed output cannot recover lost data;
+no such claim, or intrinsic recognition from unmarked $(B_H,J)$, is made.
+\end{enumerate}
+\end{theorem}
+
+The subsequent sections define every part of this statement and prove the
+newly needed comparison and concrete instance. Established pseudomonad
+composition is used at exactly the point indicated in (iii). The construction
+contains ordinary monadic and comonadic computations, forward-parameterized
+arrows, display spans and their content duals as specializations of its comma
+modules. Mixed opwreaths enter as further algebra objects, not necessarily as
+products of two independently existing effects. Factorization recognition is
+a property of marked substructures inside it. No claim is made that arbitrary
+higher noncartesian structures have a canonical presentation of this form.
+
+Fix universes $\mathcal U\in\mathcal V\in\mathcal W$. Initially $C$ and the
+fibres are $\mathcal U$-small. Presheaves valued in $\Cat_{\mathcal U}$ form
+a $\mathcal V$-small bicategory, and the corresponding biprofunctor ambient is
+formed one level higher when needed. In the set-based example use
+$\Set_{\mathcal U}$ as a $\mathcal V$-small base, with the associated increase
+of the other levels. There is no category of all sets asserted to be small.
+
+\section{Relative pseudopromonads and their realization}\label{sec:ambient}
+
+Lawler's category-valued profunctor tricategory $\Biprof$ has small
+bicategories as objects, pseudofunctors as its profunctor 1-cells,
+pseudonatural transformations as 2-cells and modifications as 3-cells
+\cite[Section 4.1.1]{Lawler}. We first restrict the objects to ordinary
+categories. With our variance convention a 1-cell $C\rightsquigarrow D$ is
+\[
+ X:C^{\mathrm{op}}\times D\longrightarrow\Cat,
+ \qquad
+ (X\odot_D Y)(a,c)=\coend{b\in D}X(a,b)\times Y(b,c).
+\]
+Our 1-cell direction is the reverse of Lawler's: his $D\rightsquigarrow C$
+is the displayed $C^{\mathrm{op}}\times D$ pseudofunctor. Our $X\odot Y$
+is his $X\circ Y$. We use his concrete hom realization, not an unqualified
+transport of a Kleisli universal property through this reversal. The unit is $I_C(a,b)=\disc C(a,b)$.
+
+The subscript on the coend is essential. Its objects have representatives
+$[b;x,y]$. Its morphisms include product-category arrows and invertible
+balance arrows between
+\[
+ [b';X(1,u)x,y']\quad\hbox{and}\quad[b;x,Y(u,1)y']
+ \qquad (u:b\to b').
+\]
+They satisfy naturality, unit and composition relations, with the action
+constraints inserted when actions are weak. These balance arrows are
+invertible; the original arrows in $X(a,b)$ or $Y(b,c)$ need not be.
+A functor out of this category is exactly a pseudobalanced cocone. Finite
+paths in its small generating graph and the stated relations produce a small
+category. Iterated tensors represent cocones balanced in all middle variables.
+Their rebracketing equivalences and higher coherence are induced from that
+common flattened presentation. The unit equivalences evaluate pure actions.
+This is the coend realization of the established tricategory, not a proposal
+to declare a family of categories coherent by fiat.
+
+\begin{definition}\label{def:relative}
+A relative category-valued pseudopromonad on $C$ is a pseudomonad in
+$\Biprof$ on the object $C$: a module $H$, transformations
+\[
+ m:H\odot_C H\longrightarrow H,\qquad j:I_C\longrightarrow H,
+\]
+and invertible associativity and left/right unit modifications satisfying
+the pseudomonad coherence axioms. Equivalently it is a pseudomonoid in the
+endomorphism monoidal bicategory. Invertibility of these structural
+modifications imposes no invertibility condition on morphisms inside
+$H(a,b)$.
+\end{definition}
+
+\begin{proposition}[Concrete realization]\label{prop:realization}
+A relative pseudopromonad determines a bicategory $B_H$ and an
+identity-on-objects pseudofunctor $J:C\to B_H$, with
+\[
+ B_H(a,b)=H(a,b),\quad g\circ f=m([f,g]),\quad
+ 1_a=j(\id_a),\quad J(u)=j(u).
+\]
+Conversely, such a pair $(B,J)$ determines a relative pseudopromonad. These
+constructions recover the hom categories unchanged and recover composition
+and pure action up to their specified coherent constraints.
+\end{proposition}
+\begin{proof}
+Composition on 2-cells is $m$ applied to the pair of morphisms. The
+associativity and unit modifications evaluated on $[f,g,h]$ and pure identity
+representatives give the bicategory associator and unitors. Their equations
+are precisely the required pentagon and triangle. Evaluating compatibility
+with $j$ on pure maps supplies the compositor and unitor of $J$.
+
+In the converse direction put $H(a,b)=B(a,b)$ and
+\[
+ H(u,v)(f)=J(v)\circ f\circ J(u)
+ \quad (u:a'\to a,\ v:b\to b'),
+\]
+with a fixed bracketing. Action coherence is assembled from the associator of
+$B$ and the constraints of $J$. Send $[f,g]$ to $g\circ f$. For a middle
+pure map the required balance is the associator between
+$g\circ(J(u)\circ f)$ and $(g\circ J(u))\circ f$. Naturality follows from
+whiskering functoriality, and balance composition from the associator and
+pseudofunctor axioms. The monoid equations are the same bicategory equations.
+The unit sends $u$ to $J(u)$.
+
+Realizing this last module returns the given hom categories and composition
+with coherent bracketings. Starting instead from $H$, its original pure action
+is equivalent to composition with $j$ by the unit modifications and
+pseudonaturality of $m$. The hom comparison functors are identities. This is
+the concrete hom-category construction underlying
+\cite[Theorem 4.1.3 and Definition 4.1.8]{Lawler} used here.
+\end{proof}
+
+One can display the same realization as a category-valued matrix
+pseudomonad. On $\Ob C$ use
+\[
+ (X\star Y)(a,c)=\coprod_bX(a,b)\times Y(b,c),\qquad
+ \Delta(a,b)=\begin{cases}1&a=b,\\0&a\ne b.\end{cases}
+\]
+The maps $H\star H\to H\odot_C H\xrightarrow{m}H$ and
+$\Delta\to I_C\xrightarrow{j}H$ are the realized composition and identities.
+The pure functor remains marked; forgetting it would forget what the tensor
+was relative to.
+
+For clarity, the comparison notion needed here is explicit. Over a functor
+$F:C\to D$, a strong operational comparison is a pseudofunctor
+$T:B\to B'$ with $T(a)=F(a)$ and an invertible icon
+\[
+ \theta:TJ\Longrightarrow J'F.
+\]
+Its components $\theta_u:T(Ju)\Rightarrow J'(Fu)$ are 2-cells with identity
+object components, compatible with pure composition and units. For fixed
+$F$, a comparison cell can be an icon $\rho:T\Rightarrow T'$ satisfying
+$\theta'_u\rho_{Ju}=\theta_u$. These icons need not be invertible. This is a
+specified usable class of comparisons; it is not asserted to exhaust all
+lax, oplax, pseudo or double transformations in the cited theories.
+
+The same data can be stated in modules. Pull back $H'$ to
+$F^*H'(a,b)=H'(Fa,Fb)$. Pure maps act through $F$, and composition is induced
+from $m'$ by the map of factorization categories which sends the middle
+object $b$ to $Fb$. Together with $I_C\to F^*I_D$, this gives a relative
+pseudopromonad. A pure-compatible multiplicative transformation
+$H\to F^*H'$, with invertible structural comparison modifications, realizes
+the displayed $T,\theta$. Thus varying the base is part of the construction,
+not something ruled out by an identity-on-objects convention within a single
+instance.
+
+\section{All endpoint squares are retained}\label{sec:squares}
+
+\begin{definition}
+For $(B,J)$ over an ordinary category $C$, its relative quintet double
+category $\Qrel_C(B,J)$ has objects and vertical arrows those of $C$,
+horizontal arrows those of $B$, and squares over $u:a\to a'$ and $v:b\to b'$
+given by arbitrary 2-cells
+\begin{equation}\label{eq:square}
+ \alpha:J(v)\circ h\Longrightarrow h'\circ J(u).
+\end{equation}
+\end{definition}
+
+Globular squares are canonically identified with $B$-cells using the unit
+constraints of $J$ and $B$. They are not literally the same displayed
+2-cells if $J$ is nonnormal. One may normalize $J$ or use those canonical
+identifications; no normality is silently assumed.
+
+For adjacent squares $\alpha:h\to h'$ over $(u,v)$ and
+$\beta:k\to k'$ over $(v,w)$, horizontal composition is
+\[
+ J(w)kh\xRightarrow{\beta*h}k'J(v)h
+       \xRightarrow{k'*\alpha}k'h'J(u),
+\]
+with the structural reassociations inserted. For a square $\gamma:h'\to h''$
+over $(u',v')$, vertical composition is
+\[
+ J(v'v)h\cong J(v')J(v)h
+ \xRightarrow{J(v')*\alpha}J(v')h'J(u)
+ \xRightarrow{\gamma*J(u)}h''J(u')J(u)
+ \cong h''J(u'u).
+\]
+Interchange is whiskering functoriality; vertical associativity uses the
+compositor axiom for $J$, and horizontal associativity that of $B$. The
+binding squares of the companion $J(u)$ are identities of $J(u)$ with the
+unit constraints inserted. They satisfy the two companion equations.
+
+\begin{theorem}[Companion bending recovery]\label{thm:bend}
+Let $\mathbb D$ be a pseudo double category with vertical category $C$ and a
+chosen companion $\widehat u$ for every vertical map. The horizontal
+bicategory $B=H(\mathbb D)$ has a canonical pure pseudofunctor $J(u)=\widehat u$.
+There is a comparison
+$\mathbb D\to\Qrel_C(B,J)$ which is identity on objects and both kinds of
+arrows and is a bijection on squares with each fixed boundary. It preserves
+pasting up to the canonical structural constraints. No conjoint is required.
+\end{theorem}
+\begin{proof}
+Write $\eta_u$ for the binding square with top $1_a$, bottom $\widehat u$,
+left $\id_a$, right $u$, and $\epsilon_u$ for that with top $\widehat u$,
+bottom $1_{a'}$, left $u$, right $\id_{a'}$. For a square $\alpha$ with
+boundary $(h,h',u,v)$, horizontally paste $\eta_u$, $\alpha$, $\epsilon_v$.
+The result, after unit constraints, is the globular cell
+$J(v)h\Rightarrow h'J(u)$.
+
+Conversely, begin with that globular cell. Vertically paste the square
+$h\Rightarrow J(v)h$ obtained by whiskering $\eta_v$ with $h$, then the
+cell, then $h'J(u)\Rightarrow h'$ obtained from $\epsilon_u$ and $h'$.
+The resulting boundary is $(u,v)$. In either composite of these operations,
+the extra adjacent binding squares cancel by the companion equations. The
+operations are therefore mutually inverse without an invertibility
+assumption on $\alpha$. The same cancellation at internal boundaries proves
+pasting preservation. Constraints between chosen companions of composites
+are canonical, and their uniqueness proves the remaining coherence.
+\end{proof}
+
+A comparison $(F,T,\theta)$ sends \eqref{eq:square} to the pasting
+\[
+ J'(Fv)T(h)\cong T(Jv)T(h)\cong T(Jv\circ h)
+ \xRightarrow{T\alpha}T(h'\circ Ju)
+ \cong T(h')T(Ju)\cong T(h')J'(Fu).
+\]
+Thus it carries noninvertible endpoint squares as well as globular cells.
+Local faithfulness and local fullness are properties of the actual hom
+functors $T_{a,b}$, not automatic consequences of having such a comparison.
+A local equivalence with a coherently pure-compatible inverse gives the
+corresponding double equivalence. These concrete facts do not assert a
+blanket triequivalence between every possible notion of presentation map,
+double functor and pseudomonad map.
+
+\section{Context and content as presentations of the algebra}\label{sec:presentations}
+
+Let $K:C^{\mathrm{op}}\to\Cat$ be the context indexing pseudofunctor with
+extension $e:\int K\to C$. Write $e_AP$ for the extension of grade $P\in K_A$.
+For $u:A'\to A$, the chosen cartesian lift has extension
+\[
+ e_u(P):e_{A'}(u^*P)\longrightarrow e_AP.
+\]
+A contextad has unit grade $I_A$, discharge $\varepsilon_A:e_AI_A\to A$,
+and accumulation $P\otimes R\in K_A$ for $R\in K_{e_AP}$, with comparison
+\[
+ \delta_{P,R}:e_A(P\otimes R)\longrightarrow e_{e_AP}R.
+\]
+These maps need not be isomorphisms. The contextad coherence supplies
+invertible horizontal associativity and unit constraints.
+
+Dually let $L:C\to\Cat$, with extension $d:\int L\to C$ and cocartesian
+lift maps $d_v(Q):d_BQ\to d_{B'}(v_!Q)$. Its contentad unit is $U_B$ with
+$\eta_B:B\to d_BU_B$. For $Q\in L_B$ and $S\in L_{d_BQ}$ write its ordered
+accumulation as $Q\diamond S$ and its comparison as
+\[
+ \mu_{Q,S}:d_{d_BQ}S\longrightarrow d_B(Q\diamond S).
+\]
+The choice $U$ avoids confusing a content unit grade with the pure functor
+$J$. Both grade categories retain all their given morphisms.
+
+Define
+\begin{align*}
+ M(A,B)&=(e_A\downarrow B),&
+ M(u,v)(P,f)&=(u^*P,vf e_u(P)),\\
+ N(A,B)&=(A\downarrow d_B),&
+ N(u,v)(Q,g)&=(v_!Q,d_v(Q)gu).
+\end{align*}
+A morphism of $M$ is $\alpha:P\to P'$ with $f=f'e_A\alpha$.
+A morphism of $N$ is $\beta:Q\to Q'$ with $d_B\beta\,g=g'$.
+The endpoint actions on cells are $u^*\alpha$ and $v_!\beta$.
+Naturality of lift maps verifies these equations after transport. The action
+compositors are the cleavage isomorphisms, whose pentagon and unit equations
+are those of the indexed pseudofunctors. Neither action is presumed strict.
+
+The context multiplication sends $(P,f):A\Rightarrow B$ and
+$(R,g):B\Rightarrow D$ to grade $P\otimes f^*R$ and body
+\begin{equation}\label{eq:ctxcomp}
+ e_A(P\otimes f^*R)\xrightarrow{\delta}e_{e_AP}(f^*R)
+ \xrightarrow{e_f(R)}e_BR\xrightarrow{g}D.
+\end{equation}
+Its unit is $(I_A,\varepsilon_A)$; pure $u$ is $(I_A,u\varepsilon_A)$.
+The content multiplication sends $(Q,f):A\Rightarrow B$ and
+$(S,g):B\Rightarrow D$ to grade $S\diamond g_!Q$ and body
+\begin{equation}\label{eq:cntcomp}
+ A\xrightarrow{f}d_BQ\xrightarrow{d_g(Q)}d_{d_DS}(g_!Q)
+ \xrightarrow{\mu}d_D(S\diamond g_!Q).
+\end{equation}
+Its unit is $(U_A,\eta_A)$; pure $u$ is $(U_B,\eta_Bu)$.
+Composition with a pure middle map agrees with endpoint transport through the
+unit constraints. Hence these multiplication functors are pseudobalanced
+and descend to the relative tensors. Their associativity and unit
+modifications are the native ones. This proves part (i) of
+Theorem~\ref{thm:main}, including its global module assertion.
+
+Native context squares over $(u:A\to A',v:B\to B')$ are
+\[
+ \alpha:P\to u^*P',\qquad vf=f'e_u(P')e_A\alpha.
+\]
+Native content squares are
+\[
+ \beta:v_!Q\to Q',\qquad d_{B'}\beta\,d_v(Q)f=f'u.
+\]
+The pure companions for contextads are supplied in
+\cite[Theorem 4.24]{CapucciMyers}. For contentads one checks directly: the
+first binding square for $(U_B,\eta_Bu)$ uses the unit transport isomorphism
+$u_!U_A\cong U_B$ and naturality of $\eta$; the second uses $\id_{U_B}$.
+Their companion equations are the unit and transport equations. Equivalently,
+composing a content arrow with a pure output map has grade $v_!Q$, whereas
+precomposing its target with a pure input map leaves grade $Q'$, so the bent
+cell is exactly the displayed $\beta$. Theorem~\ref{thm:bend} therefore
+recovers every native square on both sides with its original cell direction.
+
+\begin{proposition}[Marked presentation recovery]\label{prop:marked}
+Mark the context generic arrows
+$\kappa_P=(P,\id_{e_AP}):A\Rightarrow e_AP$ with their native squares and
+factorizations. Their category, allowing both endpoints to vary, recovers
+$\int K$, its source projection and extension. Marking cartesian lifts
+recovers its chosen cleavage; marking unit and accumulation factorizations
+recovers the remaining supplied contextad structure. The dual statement
+holds for the content arrows
+$\gamma_Q=(Q,\id_{d_BQ}):d_BQ\Rightarrow B$.
+\end{proposition}
+\begin{proof}
+A square $\kappa_P\to\kappa_{P'}$ over $(u,v)$ is
+$\alpha:P\to u^*P'$ and its body equation forces
+$v=e_u(P')e_A\alpha$. Its data are therefore exactly a morphism in $\int K$;
+the endpoint projections are the projection to $C$ and $e$. Chosen
+cartesian squares specify the original cleavage. Every context arrow
+$(P,f)$ factors as $\kappa_P$ then $J(f)$ through the unit comparison.
+The composite $\kappa_R\circ\kappa_P$ is $(P\otimes R,\delta_{P,R})$,
+not generally $\kappa_{P\otimes R}$. Its marked factorization through that
+expansion followed by $J(\delta_{P,R})$ retains the comparison $\delta$.
+Marking the unit factorization similarly retains $\varepsilon$.
+
+For content, a square $\gamma_Q\to\gamma_{Q'}$ over $(r,v)$ is
+$\beta:v_!Q\to Q'$ with $r=d_{B'}\beta\,d_v(Q)$, exactly a morphism in
+$\int L$. Its projections recover $d$ and the opfibration. General arrows
+factor as $J(f)$ then $\gamma_Q$, and marked generic composites retain
+$\mu$ and $\eta$. No unique choice of these markings is inferred from an
+unmarked operational object.
+\end{proof}
+
+\section{The weak relative tensor is the mixed comma category}\label{sec:bridge}
+
+The main technical bridge must be proved for a pseudocoend: an ordinary
+Cat-coend calculation alone would not justify weak endpoint actions.
+
+\begin{theorem}[Pseudocoend normalization]\label{thm:coend}
+For functors $e:K\to C$ and $d:L\to C$ there is an equivalence
+\[
+ \Phi:\coend{Z\in C}(e\downarrow Z)\times(Z\downarrow d)
+       \simeq(e\downarrow d).
+\]
+For the indexed extensions above these equivalences are pseudonatural in
+both endpoints, giving $M\odot_C N\simeq H$ as modules, where
+\[
+ H(u,v)(P,Q,f)=(u^*P,v_!Q,d_v(Q)f e_u(P)).
+\]
+They retain arbitrary morphisms of $K$ and $L$.
+\end{theorem}
+\begin{proof}
+Present the pseudocoend $T$ by objects
+$t=[Z;P,x:eP\to Z;Q,y:Z\to dQ]$, product arrows $(\alpha,\beta)$ with
+$x=x'e\alpha$ and $y'=d\beta\,y$, and invertible balance generators
+\[
+ b_u:[Z;P,x;Q,y'u]\longrightarrow[Z';P,ux;Q,y']
+ \qquad(u:Z\to Z').
+\]
+Impose product functoriality, naturality of $b$, $b_{\id}=\id$ and
+$b_{vu}=b_vb_u$ with the evident arguments. This is the universal
+pseudobalanced-cocone presentation. No grade arrow is declared invertible.
+
+Define $\Phi(t)=(P,Q,yx)$, $\Phi(\alpha,\beta)=(\alpha,\beta)$, and
+$\Phi(b_u)=\id$. All relations hold by composition in $C$. Define an inverse
+normalization on objects by
+\[
+ \Psi(P,Q,f)=[eP;P,\id;Q,f].
+\]
+For a comma morphism $(\alpha,\beta)$ satisfying
+$d\beta\,f=f'e\alpha$, use the composite
+\begin{align*}
+ [eP;P,\id;Q,f]&\xrightarrow{\beta}
+ [eP;P,\id;Q',d\beta f]\\
+ &\xrightarrow{b_{e\alpha}}
+ [eP';P,e\alpha;Q',f']
+ \xrightarrow{\alpha}[eP';P',\id;Q',f'].
+\end{align*}
+Identities use $b_{\id}$. For two successive comma morphisms, balancing
+naturality moves the second output-grade update past the first balance;
+input and output updates commute in the product category; and the two
+balances compose to $b_{e(\alpha_2\alpha_1)}$. This proves functoriality of
+$\Psi$ rather than merely defining it on objects.
+
+Now $\Phi\Psi=\id$ on objects and arrows. At $t$ the generator
+\[
+ b_x:\Psi\Phi(t)=[eP;P,\id;Q,yx]\longrightarrow t
+\]
+is invertible. Its naturality for a balance generator is
+$b_{ux}=b_ub_x$. For a product arrow it follows from
+$x=x'e\alpha$, $b_x=b_{x'}b_{e\alpha}$, and naturality in both grade
+variables. These generators cover every arrow of $T$, so $b_x$ defines a
+natural isomorphism $\Psi\Phi\Rightarrow\id$. This proves the equivalence
+without either identifying balance arrows literally or discarding grade
+arrows.
+
+Apply this at $e_A,d_B$. The endpoint functor on $H$ is the one in the
+statement, and on morphisms is $(u^*\alpha,v_!\beta)$. Naturality of lifts
+proves its body equation. Both routes through $\Phi$ have composite body
+$d_v(Q)yx e_u(P)$, with exactly the cleavage constraints for weak choices.
+For $\Psi$, source transport changes the normal splitting object from
+$e_AP$ to $e_{A'}u^*P$. The comparison is the specific generator
+$b_{e_u(P)}$, not an arbitrary choice of representative equivalence.
+Output transport keeps the splitting object and uses the content cleavage
+constraint. Iterated source transports satisfy their comparison equation
+because lift composition and $b_{vu}=b_vb_u$ do; mixed source/output
+transports commute by balance naturality. Thus the equivalence is global
+and pseudonatural.
+\end{proof}
+
+If balances are imposed as equalities instead, the corresponding ordinary
+strict Cat-coend is isomorphic to the comma category by the same
+normalization. This does not identify arbitrary strict and pseudo coends;
+the equivalence just proved uses the special factorization through $eP$.
+
+In coordinates a mixed square from $(P,Q,f):A\Rightarrow B$ to
+$(P',Q',f'):A'\Rightarrow B'$ over $(u,v)$ is
+\begin{equation}\label{eq:mixedsquare}
+ \alpha:P\to u^*P',\quad \beta:v_!Q\to Q',\qquad
+ d_{B'}\beta\,d_v(Q)f=f'e_u(P')e_A\alpha.
+\end{equation}
+It is a morphism $H(1,v)(h)\to H(u,1)(h')$ in $H(A,B')$.
+Once multiplication is installed, the unit constraints identify these
+actions with pure whiskering, so \eqref{eq:mixedsquare} is precisely the
+relative-quintet square. Its vertical composition uses the actual endpoint
+functors. Its horizontal composition comes from multiplication, without an
+isomorphism-class quotient.
+
+\section{One mixed multiplication from a coherent crossing}\label{sec:mixed}
+
+\begin{definition}\label{def:law}
+An interaction between $M$ and $N$ is a pseudodistributive law
+$\tau:N\odot_C M\Rightarrow M\odot_C N$. Its crossing need not be
+invertible. It has invertible modifications, suppressing brackets,
+\begin{align*}
+ \tau(j_NM)&\cong Mj_N,& \tau(Nj_M)&\cong j_MN,\\
+ \tau(\mu_NM)&\cong(M\mu_N)(\tau N)(N\tau),&
+ \tau(N\mu_M)&\cong(\mu_MN)(M\tau)(\tau M),
+\end{align*}
+subject to the complete pseudodistributive-law coherence conditions, not just
+these four comparison boundaries. Precisely, we use the Gray-category
+definition of \cite[Section 4]{Marmolejo}, with its nine coherence equations,
+transported through a Gray presentation of $\Biprof$. The equivalent modern
+formulation is \cite[Definition 4.1]{GambinoLobbia}, including its axioms
+\textup{(C1)--(C8)}. The associators and interchangers of the ambient are
+included in these equations.
+\end{definition}
+
+The reference to the full standard law is an input hypothesis: no generic
+algorithm below produces it from arbitrary $K,L$. In the main example all
+its coherence equations are verified by an address-preserving construction,
+so they are not an untested assumption there.
+
+\begin{theorem}[Mixed algebra]\label{thm:mixed}
+Given such an interaction, $M\odot_C N$ carries the unit and multiplication
+\begin{align}
+ j_{MN}&:I_C\simeq I_C\odot_C I_C
+       \xrightarrow{j_M\odot j_N}M\odot_C N,\label{eq:unitMN}\\
+ \mu_{MN}&:MNMN\xrightarrow{M\tau N}MMNN
+            \xrightarrow{\mu_M\mu_N}MN.\label{eq:multMN}
+\end{align}
+Transport along Theorem~\ref{thm:coend} makes $H(A,B)=(e_A\downarrow d_B)$
+a relative pseudopromonad. Its realization and relative quintets give a
+single mixed structure with the endpoint squares \eqref{eq:mixedsquare}.
+\end{theorem}
+\begin{proof}
+The composite-pseudomonad theorem is
+\cite[Theorem 5.1, pp.\ 101--102]{Marmolejo}. Its construction is explicitly
+$DUDU\to DDUU\to DU$, with unit and associator pastings supplied there; its
+hypothesis allows an arbitrary crossing 2-cell with invertible structural
+3-cells. Every tricategory has a Gray presentation, so the theorem applies
+there and transports back to $\Biprof$. The tensor $MN$ is identified with
+the concrete pseudocoend tensor by coherent equivalence; it is not replaced
+by an unspecified new carrier. Theorem~\ref{thm:coend} then transports the
+unit, multiplication and coherence along the explicitly given equivalence
+$MN\simeq H$. Evaluating these operations realizes the bicategory, and
+Section~\ref{sec:squares} supplies its squares.
+
+Concretely the associativity comparison evaluates the two normalization
+routes for $MNMNMN$. The two multiplication modifications of $\tau$ and
+the input associators compare the routes; their full law coherence gives
+the pentagon, while the unit modifications give the triangle. Thus
+associativity on $H$ is inherited from the law, not separately imposed after
+an arbitrary crossing has been chosen. The lifting theorem
+\cite[Theorem 4.5]{GambinoLobbia} alone is not the composition theorem being
+used here.
+\end{proof}
+
+The formula can be evaluated directly on grades. At the generic pair
+\[
+ (Q,\id):d_BQ\Rightarrow B,\qquad(R,\id):B\Rightarrow e_BR,
+\]
+normalize the value of $\tau$ to obtain
+\[
+ \widehat R\in K_{d_BQ},\qquad \widehat Q\in L_{e_BR},\qquad
+ \chi:e_{d_BQ}\widehat R\longrightarrow d_{e_BR}\widehat Q.
+\]
+For $h=(P,Q,f):A\Rightarrow B$ and $k=(R,S,g):B\Rightarrow D$, the composite
+has grades
+\begin{equation}\label{eq:mixedgrades}
+ P\otimes f^*\widehat R,\qquad S\diamond g_!\widehat Q
+\end{equation}
+and body
+\begin{align}\label{eq:mixedbody}
+ e_A(P\otimes f^*\widehat R)
+ &\xrightarrow{\delta}e_{e_AP}(f^*\widehat R)
+ \xrightarrow{e_f(\widehat R)}e_{d_BQ}\widehat R
+ \xrightarrow{\chi}d_{e_BR}\widehat Q\notag\\
+ &\xrightarrow{d_g(\widehat Q)}d_{d_DS}(g_!\widehat Q)
+ \xrightarrow{\mu}d_D(S\diamond g_!\widehat Q).
+\end{align}
+Every displayed arrow is typed. Functoriality on cells comes from $\tau$,
+cartesian/cocartesian transport and the input multiplications. The pure arrow
+$u:A\to B$ is represented by
+\[
+ (I_A,U_B,\eta_Bu\varepsilon_A).
+\]
+With the other side specialized to $I_C$, pseudoco-Yoneda gives $M\odot I_C
+\simeq M$ or $I_C\odot N\simeq N$. In a fixed mixed object the unit-induced
+maps are
+\begin{equation}\label{eq:onesided}
+ (P,f)\longmapsto(P,U_B,\eta_Bf),\qquad
+ (Q,g)\longmapsto(I_A,Q,g\varepsilon_A).
+\end{equation}
+The law's unit equations make these pure-compatible strong comparisons.
+Their hom functors may identify bodies or introduce additional cells. For
+example a nonmonic $\eta_B$ can identify distinct context bodies; with the
+terminal monad on $\Set$ every such body is identified. Full recovery in a
+fixed mixed object requires a separate hom-category argument.
+
+A candidate interaction must first descend through pure-middle balance.
+For example the previously tested finite image/pushout recipe gives, for two
+balanced representatives, enabled domains with two elements and one element
+respectively. Those domains are not isomorphic over the source. Consequently
+that recipe is not a functor from the pseudo-balanced tensor into a target
+retaining those domains, even before its associativity is considered. The
+relative tensor makes this obstruction visible at the correct stage.
+
+\section{Dependent probability and lists in one nonthin object}\label{sec:prob}
+
+Let $\Prob$ have finite nonempty probability spaces with strictly positive
+weights and deterministic measure-preserving maps. A morphism $a:P\to Q$
+satisfies $q(z)=\sum_{x:a(x)=z}p(x)$. This category has noninvertible maps and
+distinct parallel maps; it is not replaced by its groupoid core. Work over
+$C=\Set_{\mathcal U}$ at the universe level specified above. Set
+\[
+ K_A=\Prob^A,\qquad e_AP=\coprod_{a\in A}P_a.
+\]
+Reindexing is substitution along functions. The unit grade is the singleton
+family. Accumulation of $P$ and $R$ has fibre
+$\sum_{x\in P_a}R_{(a,x)}$, with weight $p_a(x)r_{a,x}(y)$; its extension
+comparison is the corresponding tuple reassociation. For content take
+terminal grade fibres and $d_B(*)=\List B$, with singleton insertion and
+concatenation. The resulting mixed hom category is
+\[
+ H(A,B)=\{(P,f:\textstyle\coprod_aP_a\to\List B)\},
+\]
+with a morphism $\alpha:(P,f)\to(P',f')$ precisely a family of
+measure-preserving maps satisfying $f'(a,\alpha_a x)=f(a,x)$.
+Endpoint squares over $(u,v)$ have
+\begin{equation}\label{eq:probsquare}
+ \alpha_a:P_a\to P'_{u(a)},\qquad
+ f'(u(a),\alpha_ax)=\List(v)(f(a,x)).
+\end{equation}
+There is no output-distribution quotient in this definition.
+
+For a list $\ell=[b_1,\ldots,b_n]$ and grade family $R\in K_B$, define
+\begin{equation}\label{eq:probchi}
+ \widehat R_\ell=\prod_{i=1}^nR_{b_i},\qquad
+ \widehat r_\ell(r_1,\ldots,r_n)=\prod_{i=1}^nr_{b_i}(r_i),\qquad
+ \chi(\ell,(r_i))=[(b_i,r_i)]_{i=1}^n.
+\end{equation}
+The notation for weights is understood as the weight function in the
+corresponding fibre. Every \emph{occurrence} has its own coordinate, even
+when labels repeat. The empty product is a singleton. This is independent
+probability tensor, not a claim that this carrier product is the categorical
+product in $\Prob$.
+
+\begin{theorem}[The probability and list law]\label{thm:problaw}
+The crossing \eqref{eq:probchi} defines a pseudodistributive law for the
+probability-context pseudomonad and list-content pseudomonad. Its mixed
+composition is the following explicit operation. If
+$h=(P,f):A\Rightarrow B$, $k=(R,g):B\Rightarrow D$, and
+$f(a,x)=[b_1,\ldots,b_n]$, then
+\begin{align}
+ (k\circ h).\mathrm{grade}_a
+   &=\sum_{x\in P_a}\prod_{i=1}^nR_{b_i},\label{eq:probgrade}\\
+ \mathrm{weight}(x,(r_i))&=p_a(x)\prod_i r_{b_i}(r_i),\notag\\
+ (k\circ h)(a,x,(r_i))&=\mathop{\mathrm{concat}}_i g(b_i,r_i).
+ \label{eq:proboutput}
+\end{align}
+All native grade maps and endpoint squares remain present. Both maps in
+\eqref{eq:onesided} are locally fully faithful in this instance.
+\end{theorem}
+\begin{proof}
+First, all fibres in \eqref{eq:probgrade} are finite nonempty full-support
+probability spaces. Positivity is immediate. Summing the weights gives
+$\sum_xp_a(x)\prod_i\sum_{r_i}r_{b_i}(r_i)=1$, including empty lists.
+For grade maps $\beta_b:R_b\to R'_b$ the product map preserves probability:
+its mass over $(r'_i)$ is
+\[
+ \sum_{(r_i):\,\beta_{b_i}r_i=r'_i}\prod_i r_{b_i}(r_i)
+ =\prod_i\sum_{r_i:\,\beta_{b_i}r_i=r'_i}r_{b_i}(r_i)
+ =\prod_i r'_{b_i}(r'_i).
+\]
+It preserves the list output coordinatewise. Under pure $v:B\to B'$ a
+position labelled $b_i$ becomes the position labelled $v(b_i)$; positions
+are not merged. Thus the crossing respects pure balance even for
+noninjective $v$. These statements define the crossing on all cells and its
+pseudobalanced descent, not only its action on isomorphism classes.
+
+For parallel mixed cells $\alpha,\beta$, horizontal composition sends
+\[
+ (x,(r_i))\longmapsto(\alpha_a x,(\beta_{b_i}r_i)).
+\]
+Their output equation ensures the target has the same occurrence positions.
+For each target point, sum first over the product preimage of the $r'_i$,
+then over the $\alpha$-preimage of $x'$. The preceding product identity and
+measure preservation of $\alpha$ give exactly the target weight. The same
+calculation with \eqref{eq:probsquare} proves compatibility with arbitrary
+endpoint squares.
+
+The two multiplication modifications of the law have concrete carriers.
+For list multiplication, product over a concatenated list is identified
+with nested products over its ordered blocks. For context multiplication,
+the comparison is the bijection
+\begin{equation}\label{eq:probdistrib}
+ \prod_i\left(\sum_{y_i\in R_i}S_{i,y_i}\right)
+ \longleftrightarrow
+ \sum_{(y_i)\in\prod_iR_i}\prod_iS_{i,y_i}.
+\end{equation}
+Both sides assign weight $\prod_i r_i(y_i)s_{i,y_i}(z_i)$ to the same
+coordinates. Unit comparisons insert or delete singleton factors; empty
+list products remain singleton spaces. Every comparison is therefore an
+invertible, measure-preserving grade map, natural in noninvertible grade
+maps as well.
+
+To check the full law coherence, label a coordinate by its finite sequence
+of list positions and context stages. Each structural comparison just
+changes bracketing or grouping of that finite addressed family. It leaves
+both the value at every address and its factor in the product weight
+unchanged. Every composite in each law-coherence diagram is therefore the
+same function between the same addressed carriers. A diagram involving a
+unit deletes only a forced singleton coordinate; the statement remains
+true when a list block is empty. This verifies all coherence diagrams of
+Definition~\ref{def:law}, not merely the four object-level boundaries.
+
+For completeness the resulting associator for three computations has the
+particularly transparent form
+\begin{equation}\label{eq:probassoc}
+ ((x,(y_i)),(z_{ij})_{\mathrm{flattened}})
+ \longleftrightarrow
+ (x,((y_i,(z_{ij})_j))_i).
+\end{equation}
+The output of the second computation specifies the length of each block,
+so variable list lengths do not cause an ambiguous splitting. The map
+preserves every addressed sample and the product weight. All pentagon
+routes for four computations preserve the same addresses, hence coincide;
+triangles delete singleton samples. This also proves the operational
+coherence directly.
+
+Finally the context inclusion uses singleton output lists. Its mixed
+cell equation is $[f'(a,\alpha x)]=[f(a,x)]$, exactly the native context
+cell equation. Thus it is full and faithful on each hom category.
+The content inclusion uses singleton sample families. There is exactly one
+map between any two such families, and it satisfies the mixed equation
+exactly when the two list functions agree. Its hom category is therefore
+the discrete list-Kleisli hom category. The unit/associator tuple maps agree
+with the native horizontal structures. Endpoint recovery follows either
+from these same equations or Theorem~\ref{thm:bend}.
+\end{proof}
+
+This instance is genuinely nonthin. For a constant list output, both
+permutations of an equally weighted two-element sample space are distinct
+parallel cells, and the map from that sample space to a singleton is a
+noninvertible cell. All three survive in $H$. Pushing presentations forward
+to distributions on lists forgets them and is a further semantics map, not
+the mixed construction itself. Finite regression tests can check examples,
+but the proofs above hold for every finite family, including repeated
+labels, zero-length lists and changing endpoints.
+
+\section{Internal constructors and familiar specializations}\label{sec:constructors}
+
+The comma presentations are flexible because they retain a grade category
+rather than demanding a single representing endofunctor. Nevertheless the
+familiar fixed-effect forms are literal specializations. A monad $T$ gives
+terminal content fibres and $d_B(*)=TB$, hence
+\[
+ H_T(A,B)=\disc C(A,TB),\qquad g\circ f=\mu_D T(g)f,
+ \qquad J(u)=\eta_Bu.
+\]
+Its endpoint equation is $T(v)f=f'u$. A comonad $G$ gives terminal context
+fibres and $e_A(*)=GA$, hence
+\[
+ H_G(A,B)=\disc C(GA,B),\qquad g\circ f=gG(f)\delta_A,
+ \qquad J(u)=u\varepsilon_A,
+\]
+with endpoint equation $vf=f'G(u)$. These are literal operational and square
+recoveries; their discreteness is native to an ordinary base, not a loss of
+higher input data. Singleton grade fibres do not make the structural maps
+$\eta,\mu,\varepsilon,\delta$ invertible.
+
+For a separate mixed law $\lambda:GT\Rightarrow TG$ the same factory is
+\begin{equation}\label{eq:fixedmixed}
+ H(A,B)=\disc C(GA,TB),\quad
+ g\circ f=\mu_D T(g)\lambda_B G(f)\delta_A,\quad
+ J(u)=\eta_Bu\varepsilon_A.
+\end{equation}
+The endpoint equation is $T(v)f=f'G(u)$. The comparison maps are $f\mapsto
+\eta f$ and $g\mapsto g\varepsilon$, with exactly the possible failures of
+faithfulness described above.
+
+For a right monoidal action of $V$ on $C$, use $K_A=V$ with constant
+reindexing and $e_AP=A\mathbin{\odot}P$. The resulting hom objects are
+$(P,f:A\odot P\to B)$, and their cells satisfy
+$f=f'(1_A\odot\alpha)$. Composition has parameter $P\otimes Q$ and body
+\[
+ A\odot(P\otimes Q)\cong(A\odot P)\odot Q
+ \xrightarrow{f\odot1}B\odot Q\xrightarrow{g}D.
+\]
+Endpoint squares are $vf=f'(u\odot\alpha)$. This is the
+forward-reparameterization convention for Para. A source using the opposite
+cell convention must be opposited accordingly. No copying operation on a
+general monoidal parameter has been introduced.
+
+If $\mathcal D$ is a pullback-stable class of maps containing identities and
+closed under composition, choose $K_A=\mathcal D/A$, extension the domain,
+and reindexing by chosen pullbacks. The same comma hom is the category of
+spans $A\xleftarrow{p}X\xrightarrow{f}B$ with $p\in\mathcal D$ and all
+commuting apex maps. Composition has apex $X\times_BY$. Endpoint squares are
+apex maps $a:X\to X'$ satisfying $p'a=up$ and $f'a=vf$. Thus both apex maps
+and changing-endpoint squares survive. Chosen pullback coherence is
+canonical, not assumed strict. Pushout-stable codisplays give the dual
+content/cospan instance. Having both does not supply a mixed crossing.
+
+Reader and writer transpositions provide controls on what an exact recovery
+can mean. For $GA=E\times A$, currying identifies coKleisli arrows with
+$A\to B^E$, and both compositions use the same environment twice. The
+endpoint equations coincide, giving a pure-square double-category
+isomorphism when the requisite exponentials exist. For a monoid $W$ the
+writer monad $TA=W\times A$ can alternatively be presented by the discrete
+context fibre of functions $w:A\to W$, extension $A$, and composition
+\[
+ (w,f)\then(v,g)=\bigl(a\mapsto w(a)v(f(a)),\,gf\bigr).
+\]
+Its grade condition over $u$ is $w=w'u$, exactly the writer endpoint
+equation together with the body equation. This is a concrete double
+isomorphism, not an asserted equivalence of arbitrary nonthin Para with
+reader or writer. The fixed reader/writer law is simply
+$(e,(w,x))\mapsto(w,(e,x))$.
+
+\subsection{Grothendieck extension is a base changing constructor}
+
+Assume the split indexed presentation and coherence hypotheses used by the
+Grothendieck extension construction. On the 2-category of category-valued
+presheaves define
+\begin{equation}\label{eq:groth}
+ (\mathcal P_KY)(A)=\int_{P\in K_A}Y(e_AP).
+\end{equation}
+Here the integral is the contravariant Grothendieck construction: a morphism
+$(P,y)\to(P',y')$ is
+\[
+ (\alpha:P\to P',\;\gamma:y\to Y(e_A\alpha)(y')).
+\]
+Reindex along $u:A\to B$ by
+$(P,y)\mapsto(u^*P,Y(e_u(P))y)$. The unit and multiplication are
+\begin{equation}\label{eq:grothmonad}
+ y\longmapsto(I_A,Y(\varepsilon_A)y),\qquad
+ (P,(R,y))\longmapsto(P\otimes R,Y(\delta_{P,R})y).
+\end{equation}
+These are well typed without invertibility of $\varepsilon$ or $\delta$.
+Their action on arrows is induced by the Grothendieck construction and the
+native naturality maps. The contextad coherence gives a pseudomonad.
+Structurally, the extension is the monoidal pseudofunctor of
+\cite[Construction 3.1 and Proposition 3.2]{Kamiya}. This construction is
+available before the extra comprehension-equivalence assumption of that
+paper's Section 3.2.
+
+\begin{proposition}[Representable realization]\label{prop:groth}
+The restriction of $\Kl(\mathcal P_K)$ to representable presheaves recovers
+the context operational bicategory and its endpoint squares by a local
+equivalence compatible with composition. The entire presheaf Kleisli
+bicategory is a further algebra object at its larger bicategorical base,
+not an equivalent replacement for that restriction.
+\end{proposition}
+\begin{proof}
+Write $yA=C(-,A)$ as a discrete-valued representable. Pseudonatural Yoneda
+and \eqref{eq:groth} give
+\[
+ \Ps(yA,\mathcal P_KyB)\simeq(\mathcal P_KyB)(A)
+                 =(e_A\downarrow B)=M(A,B).
+\]
+On morphisms, the component $\gamma$ in the discrete representable exists
+exactly when $f=f'e_A\alpha$, so this equivalence retains grade maps rather
+than only objects. Evaluating Kleisli multiplication using
+\eqref{eq:grothmonad} produces exactly \eqref{eq:ctxcomp}; unit evaluation
+produces discharge. Yoneda on pure maps supplies the base-changing pure
+comparison, hence the endpoint squares are the same ones under bending.
+Arbitrary presheaves are additional objects of the full Kleisli bicategory.
+Their presence does not imply they are equivalent to representables.
+
+That full construction uses Lawler's full bicategorical-base ambient:
+$\Psh(C)$ is a 2-category, not an ordinary pure category. If $S$ is its
+pseudomonad, the corresponding module has hom category
+$\Psh(C)(X,SY)$ and Kleisli composition. The ordinary-base quintet result
+used elsewhere is the representable restriction, or a separately specified
+ordinary tight subcategory. This explicitly separates the two base levels.
+\end{proof}
+
+For content use the covariant construction on $\Copsh(C)=[C,\Cat]$,
+\[
+ (\mathcal Q_LY)(B)=\int_{Q\in L_B}Y(d_BQ),\qquad
+ (\beta,\gamma):(Q,y)\to(Q',y'),\quad
+ \gamma:Y(d_B\beta)y\to y'.
+\]
+Insertion and multiplication use $Y\eta$ and $Y\mu$. For
+$y^A=C(A,-)$ one gets
+\[
+ \Ps(y^B,\mathcal Q_Ly^A)\simeq(\mathcal Q_Ly^A)(B)
+                        =(A\downarrow d_B).
+\]
+Because $A\mapsto y^A$ is contravariant, content is recovered from the
+\emph{1-cell-opposite} of the corepresentable Kleisli restriction. Morphisms
+inside the hom categories are not reversed. This is the explicit covariant
+dual construction, not an attribution of an unprinted formula to Kamiya.
+
+\subsection{Telescopes evaluate inside the same constructor}
+
+For a split left-fibrant span $V$ in the setting of the extension theorem,
+let $V^{\ltimes n}$ be its $n$-fold sequential product. Define
+\[
+ \Tel(V)=\coprod_{n\geq0}V^{\ltimes n}.
+\]
+The telescope-monad unit inserts a length-one string, and multiplication
+flattens strings of strings. Each fibre is a category of \emph{dependent}
+finite chains: the next grade lies over the extension by previous grades,
+not in one constant fibre. Monoidality and coproduct preservation give
+\begin{equation}\label{eq:telescope}
+ \mathcal P_{\Tel(V)}\simeq\coprod_{n\geq0}\mathcal P_V^n.
+\end{equation}
+The right side is the free-monad construction in the applicable
+coproduct-preserving endofunctor setting. Here the free monad's unit is the
+length-zero summand, distinct from the telescope-monad unit at $V$ just
+described. A contextad multiplication evaluates finite chains by iterated
+accumulation, and its coherence makes evaluation compatible with flattening.
+Strict telescope algebras recover strict contextads under the specified
+normal-cleavage and strict-map assumptions
+\cite[Corollary 2.20]{Kamiya}; weak or transported variants require their
+coherent analogues. Identifying arbitrary indexed data with a prescribed
+display class is stronger and still requires the comprehension equivalence.
+
+\subsection{Opwreaths and factorization are internal structures}
+
+A mixed opwreath need not split into a separate comonad and monad. Street's
+input is a monad $T$, an endofunctor $G$, and
+\[
+ \zeta:GT\Rightarrow TG,\qquad d:G\Rightarrow TGG,\qquad e:G\Rightarrow T
+\]
+satisfying the opwreath axioms \cite[Definition 5 and Proposition 7]{Street}.
+It gives the same-shaped hom sets $C(GA,TB)$ with unit $e_A$ and composite
+\[
+ GA\xrightarrow{d}TGGA\xrightarrow{TGf}TGTB
+ \xrightarrow{T\zeta_B}TTGB\xrightarrow{TTg}TTTD
+ \xrightarrow{\mu^{(3)}}TD.
+\]
+Naturality gives pure maps $J(u)=T(u)e_A=e_BG(u)$, so this is directly an
+object of the relative construction. Its theorem supplies associativity;
+it need not be the mixed product of a pre-existing coKleisli category, since
+$G$ need not be a comonad. Higher two-sided Kleisli versions require their
+specified bicategorical input and coherence \cite{Garner}; they are not
+claimed to follow from Set-indexed formulas without those data.
+
+Factorization recognition instead marks classes or subbicategories inside
+$(B,J)$ and asks whether their composition has the stated universal
+factorization property. In strict discrete examples unique factorization
+gives a normal form and hence a distributive crossing; with cells the
+appropriate datum is an equivalence of factorization categories with
+coherence. Rosebrugh--Wood and Lack develop such reconstruction under their
+factorization hypotheses \cite{RosebrughWood,LackProps}. The double-category
+recognition results of \v{S}t\v{e}p\'an concern particular filling,
+bicartesian and uniqueness conditions
+\cite[Theorems 3.3.7 and 3.3.33]{Stepan}. They identify structures already
+expressible here, not an extra universal effect that automatically commutes
+with the others. For a precise envelope, let $A$ be ordinary with wide subcategories
+$\mathcal E,\mathcal M$. Regard $A$ as locally discrete and form
+$\Qrel_{\mathcal E}(A,J_{\mathcal E})$ with tight arrows $\mathcal E$.
+Mark and restrict its horizontal arrows to $\mathcal M$. Its squares are
+exactly commuting squares $vf=gu$, which recovers the ordinary
+factorization double category literally. The $\mathcal E$-companions exist
+in the envelope but need not belong to the restricted $\mathcal M$ part.
+Thus a factorization double need not itself have companions. Under the
+cited recognition hypotheses one first reconstructs $A,\mathcal E,\mathcal M$
+and then applies this envelope; arbitrary nonflat or companionless double
+categories are not thereby automatically covered. A factorization theorem
+can supply a crossing; a quotient that destroys factorization witnesses can
+also destroy its hypotheses.
+
+\section{Comparison maps and controlled forgetting}\label{sec:comparisons}
+
+The construction operates on compatible packages, not only on objects.
+Over a fixed base, let $F:M\to M'$ and $G:N\to N'$ be strong relative
+pseudomonad maps. Suppose an invertible modification identifies
+\[
+ (F\odot G)\tau\quad\hbox{with}\quad\tau'(G\odot F),
+\]
+compatibly with the four law modifications and all their coherence.
+Then $F\odot G:MN\to M'N'$ preserves the mixed units and multiplication
+through the specified constraints. Indeed, substituting the displayed
+modification into $M\tau N$ and then the multiplicative comparisons of
+$F,G$ produces the composite multiplication comparison; its associativity
+and unit equations are the assumed law-map equations. Transporting through
+the comma equivalences gives the corresponding map on mixed presentations.
+This is one precise class of factory maps, not a claim that all competing
+transformation conventions coincide.
+
+There is also a useful, explicitly separate lax comparison class. Specify a
+lax double functor directly between the relative quintets: a functor on the
+vertical bases, assignments on horizontal arrows and \emph{all} squares,
+and natural comparisons
+\[
+ T(k)\circ T(h)\Longrightarrow T(k\circ h),\qquad
+ 1_{T(a)}\Longrightarrow T(1_a),
+\]
+with the double-functor unit, associativity and square-pasting conditions.
+These comparisons need not be invertible. Merely replacing a pseudofunctor
+by a lax functor in Section~\ref{sec:squares} is insufficient: the square
+transport there uses the inverse compositor at $(h',J(u))$. One must
+supply the square action directly or prove the required mixed-pure
+compositors invertible. This enlarged comparison class is not identified
+with ordinary 3-cells of $\Biprof$.
+
+For example, over $\mathbf{FinSet}$ let $\mathrm{HistProb}(A,B)$ be the
+probability-context hom category with deterministic output $h_a:P_a\to B$.
+Composition keeps both samples. Let $\mathrm{FinStoch}(A,B)$ be the
+discrete category of finite stochastic kernels. The map
+\begin{equation}\label{eq:historyE}
+ (Eh)_a(b)=\sum_{x:h_a(x)=b}p_a(x)
+\end{equation}
+is a strong double comparison. Finite summation proves preservation of
+convolution; every history square over $(u,v)$ gives the kernel square
+$v_*Eh=(Eh')u$.
+
+A converse support-sampler assignment $S$ sends a kernel $k$ to sample space
+$\operatorname{supp}(k_a)$ with weight $k_a$ and output its inclusion into
+$B$. For a kernel square $v_*k=k'u$, its history-square map is
+\[
+ \operatorname{supp}(k_a)\longrightarrow
+ \operatorname{supp}(k'_{u(a)}),\qquad b\longmapsto v(b).
+\]
+It is well-defined because positive mass stays positive in pushforward;
+the kernel equation says exactly that this map preserves probability.
+It preserves vertical square composition. The horizontal comparison
+$S\ell\circ Sk\Rightarrow S(\ell\circ k)$ sends a retained pair $(b,c)$
+to $c$. Convolution proves measure preservation; both associativity paths
+send $(b,c,d)$ to $d$; unit paths delete singleton coordinates. Naturality
+against an arbitrary endpoint square sends $(b,c)$ to $(v(b),w(c))$, and
+both routes then give $w(c)$. Thus $S$ is a direct lax double comparison,
+not merely an object-level sampling recipe.
+
+\begin{proposition}[A local reflection, not an equivalence]
+At every pair of endpoints, $E$ is left adjoint to $S$, with $ES=\id$.
+The lax comparison of $S$ need not be invertible.
+\end{proposition}
+\begin{proof}
+A history morphism $h\to Sk$ must send every sample $x$ to its output
+$h_a(x)$. It is therefore unique if $Eh=k$, and nonexistent otherwise,
+which is exactly the hom set from $Eh$ to $k$ in the discrete kernel
+category. The unit is the output map on samples and the counit is identity.
+A fair two-point kernel followed by a constant kernel has two retained
+samples in $S\ell\circ Sk$, whereas $S(\ell\circ k)$ has one. The
+comparison collapses two points and is not invertible.
+\end{proof}
+
+This illustrates why retaining noninvertible cells and permitting controlled
+forgetting are distinct. The common construction can express both, with the
+correct comparison strength, without presenting stochastic semantics as
+an equivalence of history presentations. For base-changing strong double
+comparisons, vertical transformations may likewise be retained directly:
+a natural transformation $t:F\Rightarrow G$ of base functors together with
+squares $J'(t_b)T(h)\Rightarrow T'(h)J'(t_a)$, natural against every source
+square and compatible with unit and composition comparisons. Their cells
+need not be invertible; no blanket identification with all pseudomonad
+transformation notions is required.
+
+\section{The exact obstruction to universal conservative assembly}\label{sec:obstruction}
+
+Three assertions must remain distinct. A common ambient holds two algebra
+objects. A common computation object has maps from both sides agreeing on
+the pure interface. A conservative mixed normal form additionally has a
+specified short factorization category, lawful multiplication and recovery
+properties for those maps. The first assertion implies neither the second
+with faithful maps nor the third. Even faithful pure interfaces do not
+remove the obstruction.
+
+\begin{theorem}[Bicyclic obstruction]\label{thm:bicyclic}
+There are faithful functors from a common ordinary category $C$ into
+categories $M,N$ such that no category receiving both, with their pure maps
+identified and their equations preserved, can receive both faithfully.
+For locally discrete bicategories the analogous common target cannot make
+both inclusions locally fully faithful, even if pure agreement is only
+specified up to coherent isomorphism.
+\end{theorem}
+\begin{proof}
+Use one-object categories, writing multiplication as ordinary function
+composition. Let
+\[
+ C=\langle a\rangle,\qquad
+ M=\langle a,b\mid ab=1\rangle,\qquad
+ N=\langle a,c\mid ca=1\rangle.
+\]
+The pure functors are faithful. For $M$, represent $a(n)=\max(n-1,0)$ and
+$b(n)=n+1$ on natural numbers. Distinct powers of $a$ are distinct functions,
+$ab=1$, and $ba\ne1$ since $ba(0)=1$. For $N$, use $a(n)=n+1$ and
+$c(n)=\max(n-1,0)$; again powers of $a$ are distinct, $ca=1$ and $ac\ne1$.
+In any common ordinary target,
+\[
+ c=c(ab)=(ca)b=b,
+ \qquad ba=ca=1.
+\]
+Thus $M$ cannot map faithfully there; symmetrically $ac$ is collapsed in
+$N$. In fact the ordinary pushout is the infinite cyclic group, though this
+identification is unnecessary for the obstruction.
+
+For bicategorical targets, transport along the coherent comparison of the
+two pure images. The image of $a$ has both a right inverse $b$ and a left
+inverse $c$ up to invertible 2-cells. The same calculation, with associators
+inserted, gives $b\cong c$ and $ba\cong1$. But the discrete source hom
+category of $M$ has no morphism $ba\to1$, so its image cannot be locally
+fully faithful. This is a failure of full recovery, not a claim of failure
+of local faithfulness on 2-cells, which would be vacuous in a discrete hom
+category.
+\end{proof}
+
+The example is an obstruction to a generic common-base assembly theorem;
+it does not assert that these particular monoids arise from the specific
+dependent presentations used above. It also does not prohibit a
+nonconservative mixed output. That is why Theorem~\ref{thm:mixed} separates
+existence of law data from full faithfulness of its unit-induced maps.
+
+If one instead wants universal alternating syntax, a safe strict
+construction is available. For small strict 2-categories and strict functors
+from a common strict 2-category, take the object pushout, generate 1- and
+2-cells from both sides with shared generators identified, impose each
+side's identity/composition equations, and close under strict 2-category
+composition and interchange. A strict map out is exactly a compatible pair
+of strict maps from the two sides, proving the strict pushout universal
+property. Smallness bounds the term construction. No embedding theorem is
+part of that proof.
+
+This does not automatically give a pushout for arbitrary pseudofunctors.
+A weak syntax must explicitly include invertible unit/compositor generators,
+pure-agreement cells and their equations, and must state whether its
+mapping property uses icons, pseudonatural cocones or another chosen
+transformation notion. Separate strictifications of the sides need not
+strictify their shared diagram compatibly; see the distinction discussed in
+\cite{LackCompanion}. Similarly, an evaluation from unrestricted words to
+law-governed short normal forms need not be faithful.
+
+A retraction gives a useful but weaker condition. In the strict setting, if
+$R:N\to M$ satisfies $RJ_N=J_M$, the pushout universal property supplies
+$r:P\to M$ with $ri_M=\id_M$. Thus $i_M$ is faithful and reflects
+isomorphisms. For strict 2-categories the same argument gives local
+faithfulness and reflection of invertible 2-cells, not local fullness.
+A true full-recovery theorem requires every target cell between old arrows
+to come from a unique old cell, as was proved directly for
+probability/list. A semantic retraction alone does not establish that.
+
+\section{What has been assembled}
+
+The deliverable is the relative algebra $H$ with its designated pure base,
+unit, multiplication, hom-category cells and recovered endpoint squares.
+For context/content input, its mixed carrier and weak global comparison are
+explicit; the law turns that carrier into one compositional object. The
+probability/list theorem constructs the law and proves conservative
+one-sided recovery in a nonthin example. Grothendieck extension and
+telescopes act within, or change the base of, this same algebraic setup.
+Fixed effects, Para, displays and opwreaths enter through specified
+operations rather than being declared related by an unnamed common label.
+
+The general claims have three different strengths: native operational
+recovery with every square; marked recovery of supplied presentation data;
+and mixed interaction conditional on a fully coherent law, with
+conservativity checked separately. The bicyclic example prevents replacing
+these distinctions by a universal faithful merger. Lax structural maps are
+allowed in the explicitly given lax-double comparison class, not silently
+substituted for pseudoinvertible algebra coherences. These are boundaries
+of the mathematical construction, not missing object-level formulas.
+
+\begin{thebibliography}{99}
+\bibitem{Lawler}
+F. Lawler, \emph{Fibrations of Predicates and Bicategories of Relations},
+2015. Section 4.1.1, Theorem 4.1.3 and Definition 4.1.8.
+\url{https://arxiv.org/abs/1502.08017}.
+
+\bibitem{CapucciMyers}
+M. Capucci and D. J. Myers, \emph{Contextads as Wreaths; Kleisli, Para, and
+Span Constructions as Wreath Products}, arXiv:2410.21889v1, 2024.
+Definition 3.17, Example 3.21, Theorem 4.24 and Section 6.
+\url{https://arxiv.org/abs/2410.21889}.
+
+\bibitem{Marmolejo}
+F. Marmolejo, \emph{Distributive laws for pseudomonads}, Theory and
+Applications of Categories 5(5), 1999, 91--147. Section 4 and Theorem 5.1.
+\url{https://tac.mta.ca/tac/volumes/1999/n5/5-05abs.html}.
+
+\bibitem{GambinoLobbia}
+N. Gambino and G. Lobbia, \emph{On the formal theory of pseudomonads and
+pseudodistributive laws}, Theory and Applications of Categories 37(2), 2021.
+Definition 4.1 and Theorem 4.5, the latter used only as a lifting reference.
+\url{https://eprints.whiterose.ac.uk/id/eprint/170302/1/pseudomonads-tac.pdf}.
+
+\bibitem{Kamiya}
+K. Kamiya, \emph{The Grothendieck construction between the telescope monad
+and contextads}, Hexagon 2610.00302v1, 17 October 2026.
+Construction 3.1, Proposition 3.2, Corollary 2.20 and Section 3.2.
+\url{https://hexagonmath.org/2610.00302v1}.
+
+\bibitem{Street}
+R. Street, \emph{Wreaths, mixed wreaths and twisted coactions},
+arXiv:1610.07281, archived version used for Definition 5 and Proposition 7.
+\url{https://arxiv.org/abs/1610.07281}.
+
+\bibitem{Garner}
+R. Garner, \emph{Polycategories via pseudo-distributive laws},
+arXiv:math/0606735v2. Higher two-sided Kleisli construction.
+\url{https://arxiv.org/abs/math/0606735}.
+
+\bibitem{RosebrughWood}
+R. Rosebrugh and R. J. Wood, \emph{Distributive laws and factorization},
+Journal of Pure and Applied Algebra 175, 2002, 327--353.
+\url{https://mta.ca/~rrosebru/articles/fac.pdf}.
+
+\bibitem{LackProps}
+S. Lack, \emph{Composing PROPs}, Theory and Applications of Categories
+13(9), 2004, 147--163.
+\url{https://tac.mta.ca/tac/volumes/13/9/13-09.pdf}.
+
+\bibitem{Stepan}
+M. \v{S}t\v{e}p\'an, \emph{Lax structures in 2-category theory},
+arXiv:2504.04467v1, 2025. Theorems 3.3.7 and 3.3.33.
+\url{https://arxiv.org/abs/2504.04467}.
+
+\bibitem{LackCompanion}
+S. Lack, \emph{A 2-categories companion}, 2010.
+Discussion of strict 2-functors, pseudofunctors and strict 2-category colimits.
+\url{https://www.math.uchicago.edu/~may/IMA/Incoming/Lack/companion.pdf}.
+\end{thebibliography}
+\end{document}

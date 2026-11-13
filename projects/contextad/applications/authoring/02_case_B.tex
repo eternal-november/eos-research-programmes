@@ -1,0 +1,296 @@
+\section{Case B Reserved deployment and schema migration}\label{sec:caseB}
+
+\subsection{Parameter family and exact owned interfaces}
+Fix a finite dependency DAG $(V,\prec)$, finite reservation slots $R$,
+a distinct coordinator token $q$, capacity $K\in\mathbb N$ and
+nonnegative demands $w:V\to\mathbb N$. Fix $m\geq2$ and the data set
+$D=\{0,1\}^m$. Choose a permutation $\pi$ of $\{0,\ldots,m-1\}$ and
+mask $b\in D$, and define the bijective schema transformation
+\[
+h(x)_j=x_{\pi(j)}\mathbin{\mathsf{xor}}b_j.
+\]
+Its inverse applies the inverse permutation and the corresponding mask.
+The two schema versions store physical record $y=x$ at version zero
+and $y=h(x)$ at version one.
+
+A registry is an injective partial map $\alpha:V\rightharpoonup R$,
+with $L=\dom\alpha$ and version map $s:L\to\{0,1\}$. Legal public
+registry tags have predecessor-closed $L$ and
+$\sum_{v\in L}w(v)\leq K$. The finite public configuration contains
+$\alpha,s$ and any explicitly returned ordinary response. The owned
+bundle contains $q:\mathsf{Coordinator}$ and every $r\in R$:
+unused slots have kind $\mathsf{Reserved}$ and $r=\alpha(v)$ has kind
+$\mathsf{Live}(v,s(v))$. The coordinator has a private registry copy;
+a reserved slot has singleton private state; each live slot has a private
+payload. Public/private registry agreement and payload validity form the
+reachable-state invariant.
+
+Every method takes the \emph{entire} bundle $\{q\}\cup R$ and explicitly
+returns all its entries. Unmodified entries are part of the table, not
+an implicit linear frame. No identity disappears in this family.
+Unrelated resources can be split off only by the ordinary explicit
+ownership discipline. This is a serialized finite model, not a scheduler
+or concurrency theorem. All registry/version tags and payloads are finite,
+so these are genuine O4 dependent interfaces. There is no rollback or
+recovery premise.
+
+\subsection{Two genuine physical representations}
+Call the record reference implementation $\mathsf{Rec}$ and the packed
+candidate $\mathsf{Pack}$. The latter stores
+\begin{equation}\label{eq:B-codec}
+C(y)=(n(y),p(y)),\quad n(y)=\sum_{j=0}^{m-1}2^jy_j,\quad
+p(y)=\sum_jy_j\pmod2.
+\end{equation}
+Its carrier is the valid subset
+\[
+P_m=\{(n,p):0\leq n<2^m,\ p=\operatorname{popcount}(n)\pmod2\}.
+\]
+Define $U(n,p)_j=\lfloor n/2^j\rfloor\pmod2$. Binary expansion gives
+$UC=\id_D$ and, on precisely $P_m$, $CU=\id_{P_m}$. An $m$-field record
+has become a packed coordinate with a checked redundant bit, not a
+renaming of a domain label. Invalid parity states are excluded explicitly.
+Logical decoding is $d_0(y)=y$, $d_1(y)=h^{-1}(y)$ for records, and
+$d_s(U(z))$ for packed payloads.
+
+Let $F$ map each full record endpoint to its packed endpoint by applying
+$C$ at each live slot and leaving public configuration, versions,
+coordinator, logical responses and actual token identities/kinds fixed.
+Its inverse applies $U$. This is an actual isomorphism between different
+expanded endpoint sets. It is not an executable public operation exposing
+private store or retyping a capability. At a separately chosen raw-export
+presentation, ordinary exported payload endpoints would instead be
+transported by $C,U$; those observations are not silently included in the
+common hidden-state client interface below.
+
+\subsection{Complete deterministic primitive tables}
+Every primitive has one witness of probability one and one output hole.
+Public unary events are $\mathsf{Alloc}(v,r)$, $\mathsf{Read}(v)$,
+$\mathsf{Write}(v)$, $\mathsf{Migrate}(v)$ and $\mathsf{Reject}(op)$.
+Payload is public only when explicitly returned. All operations first check that the private coordinator registry equals
+the public registry and that the declared consistency conditions hold.
+A failed invariant check emits $\mathsf{RejectInvariant}$ at unit cost,
+returns an error flag and preserves the entire store and bundle on both
+sides. Otherwise they use the tables below. A failed ordinary enabling
+predicate likewise emits its rejection, returns an error flag and preserves
+the full store and bundle.
+\begin{itemize}
+\item $\mathsf{alloc}(v,r,x)$ requires $v\notin L$, unused $r$, all
+  predecessors of $v$ in $L$, and
+  $\sum_{u\in L}w(u)+w(v)\leq K$. It sets $\alpha(v)=r$, $s(v)=0$,
+  retypes that existing slot to $\mathsf{Live}(v,0)$, installs $x$ or
+  $C(x)$, updates the coordinator registry and returns success.
+\item $\mathsf{read}(v)$ requires $v\in L$. It returns
+  $d_{s(v)}(y)$ or $d_{s(v)}(U(z))$ without changing any entry or kind.
+\item $\mathsf{write}(v,x)$ requires $v\in L$. It installs
+  $h^{s(v)}(x)$ or $C(h^{s(v)}(x))$, leaving registry and kinds unchanged.
+\item $\mathsf{migrate}(v)$ requires $v\in L$ and $s(v)=0$.
+  It changes $y\mapsto h(y)$ or $z\mapsto C(h(U(z)))$, sets $s(v)=1$,
+  updates the coordinator and retypes the slot to $\mathsf{Live}(v,1)$.
+  The logical payload is preserved because $h^{-1}h=\id$.
+\end{itemize}
+All other entries pass through explicitly. The ordinary enabling guards are finite public
+predicates, so enabled forms can use O4's singleton/empty evidence, while
+the checked forms define arbitrary admitted clients on failed requests.
+The success theorem below does not relabel rejection as success. Migration
+is a declared effectful state transition with event and positive cost;
+purely calculating $h(y)$ cannot retype an owned capability. There is no
+release or hidden reuse of slots.
+
+A concrete scalar cost assignment is
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule Method&Record reference&Packed candidate\\\midrule
+Allocation&3&2\\
+Read&2&1\\
+Write&3&2\\
+Migration&$m+2$&$m+1$\\
+Rejection&1&1\\
+\bottomrule
+\end{tabular}
+\end{center}
+More generally choose any finite nonnegative vector annotations satisfying
+$c_{\mathsf{Pack}}(Fz,M)\leq c_{\mathsf{Rec}}(z,M)$ at conjugate inputs,
+including equality. They are supplied model costs, not measured hardware
+speed. If cost becomes ordinary client-visible data, equality of that
+public datum would additionally be required.
+
+\subsection{Local conjugacy and substantive endpoint squares}
+For each method $M$ with its finite public argument, denote its full
+state/output map by $M_{\mathsf{Rec}}$ or $M_{\mathsf{Pack}}$.
+\begin{proposition}[Schema and representation conjugacy]\label{prop:B-conjugacy}
+At every enabled or rejected related input,
+\[
+F_GM_{\mathsf{Rec}}=M_{\mathsf{Pack}}F_E,
+\qquad
+M_{\mathsf{Pack}}=F_GM_{\mathsf{Rec}}F_E^{-1},
+\]
+where the actual source and target endpoint maps apply $C$ on the slots
+specified by their registry/version tags. Public responses and capability
+kinds are included in the equation.
+\end{proposition}
+\begin{proof}
+Allocation installs $C(x)$ in the packed carrier. Read uses $UC=\id$;
+write uses $C$ after the same version encoder. Migration is the exact
+identity $Ch=(ChU)C$. The invariant guard agrees because $F$ preserves the private coordinator
+copy and public registry. If it fails, both sides preserve their related
+full states and emit the same rejection. Otherwise ordinary guards depend
+only on public registry, versions, capacity, demands and identities fixed
+by $F$, so ordinary rejection also agrees.
+Every other entry passes through, and both coordinator updates use the
+same new public registry. Valid packed carriers and reachable registry
+agreement are preserved in each case.
+\end{proof}
+The endpoint maps are defined tagwise on finite coproducts, coordinatewise
+on owned stores, compose as codecs, and have the displayed inverse.
+Ordinary public substitution commutes with them because the fixed private
+codec ignores the public substitution environment. They also commute with
+products on explicitly disjoint bundles. This supplies substantive
+morphism-of-examples data, not merely agreement of example names.
+
+Each method has the actual mixed body
+$\theta_i(z)=\mathsf{event}_M(\leaf M_i(z))$.
+Conjugacy gives $TF_G\theta_{\mathsf{Rec}}=
+\theta_{\mathsf{Pack}}F_E$. The singleton witness map, probability one
+and declared cost inequality therefore give a genuine native endpoint
+square by~\eqref{eq:native-square}. It is cost-exact for equal annotations
+and a noninvertible cost-lowering cell for strict annotations. The
+schema transition and the representation endpoint square are distinct:
+the former is an operation, the latter is mathematical transport of its
+whole interpretation.
+
+\subsection{Full O1 through O5 interpretation}
+This case uses precisely the independently verified base, joint rig,
+terminal causal-tree content and mixed occurrence construction of
+Section~\ref{sec:core}. It selects singleton probability-one witnesses.
+That deterministic computation subfragment is closed under the relevant
+finite compositions; it is \emph{not} a rig embedding $c\mapsto(1,c)$,
+which would fail additive preservation because $1+1\ne1$.
+No stochastic assumption or recovery premise is needed for the deployment
+or conjugacy theorem.
+
+The O2 action is ordinary-data framing, with
+$F_Z=\id_Z\times F$ commuting with the framed body at every leaf.
+It does not frame the owned bundle as freely duplicable data. All O4
+primitive output sets equal the input identity set at their one leaf,
+so the disjoint-subset certificate holds literally. Nested bind, case,
+explicit disjoint batch and decreasing-rank invocation provide the
+language interpretation. If a topological ordering is $v_1,\ldots,v_k$
+and distinct reserve choices are $r_1,\ldots,r_k$, its deployment term
+is the finite nested bind of
+$\mathsf{alloc}(v_i,r_i,x_i)$, with finite success/error cases and a final
+return. Feasibility below proves its success branches are selected when
+the stated assumptions hold. Reads, writes and migrations can be appended
+as finite typed terms.
+
+Translate method symbols from record to packed while preserving public
+pure tables, code tags, captures and constructors. Induction on syntax,
+with decreasing-rank induction at invocation, transports the full tree
+and lowers accumulated cost: at bind the actual related leaves are
+substituted and $TF$ commutes with grafting; at batch use the disjoint
+partition; at case equal public data choose the same branch. O3 therefore
+gives equal transported joint laws for equal costs and monotone
+couplings for optimized costs. Deterministic clients have Dirac laws;
+the finite-discrete QBS embedding preserves these comparisons.
+
+For O5, use the full tokenwise relation rather than restricting it by a
+cross-token reachable-state condition. The invariant-check completion
+above handles all equal private coordinator copies, including copies
+that disagree with the public registry. On those inputs both sides reject
+identically and preserve their related states. On invariant inputs the
+conjugacy calculation applies; payload carriers remain the valid carriers
+for their actual kinds. Hence the local certificate applies to every
+related full input. Public/private agreement is a separately initialized
+and preserved reachable invariant used for deployment safety, not an
+unproved extra restriction on O5's relation.
+
+At the common logical interface, use equal coordinator registries,
+$*\sim*$ on reserves, and $y\sim C(y)$ at each live kind. All local
+method matrices have one entry of mass one on the conjugate outputs,
+with equal public node, related private leaves and candidate cost no
+larger. The initial empty-registry stores are related. Other fixed client
+primitives must preserve this relation, as required by O5; identical
+names alone do not establish that premise. Consequently
+\begin{equation}\label{eq:B-contextual}
+\Obs(C[\mathsf{Pack}])\sqsubseteq\Obs(C[\mathsf{Rec}])
+\end{equation}
+for every admitted bounded typed client, including adaptive public
+choices, repeated calls, permitted ranked callbacks and certified
+probabilistic client primitives. This does not quantify over physical
+private-store inspection, arbitrary reentry, unbounded recursion or
+observable timing. For a physical-export interface instead, the client
+must be transported along the actual endpoint codec; different public
+observations cannot be identified without that transport.
+
+The causal content is also substantive within this full family. On a
+live slot, one read followed by ordinary reply disposal and two reads
+followed by reply disposal have the same final store and one final leaf,
+but bodies $\mathsf{Read}(v)(\leaf)$ and
+$\mathsf{Read}(v)(\mathsf{Read}(v)(\leaf))$. Their List arity shadows
+coincide while the public causal histories do not. Native cost reduction
+compares matched trees; it does not justify deleting any computation
+with the same final payload.
+
+\begin{theorem}[Exact reserved deployment feasibility]\label{thm:B-capacity}
+Every successful prefix preserves registry injectivity, predecessor closure,
+the initial actual identities and capacity. Starting with empty registry,
+a workflow deploying every vertex exists exactly when
+\[
+|V|\leq|R|\qquad\hbox{and}\qquad\sum_{v\in V}w(v)\leq K.
+\]
+Enabled finite reads, writes and migrations preserve feasibility and the
+schema/representation invariants.
+\end{theorem}
+\begin{proof}
+Induct on primitive steps. Allocation adds an absent vertex and unused
+slot only after checking predecessors and new demand. Other methods and
+rejections do not change the live set or demand, and the preceding
+conjugacy calculation proves their payload invariant. Necessity follows
+from the final injection and capacity. For sufficiency choose a
+topological ordering and distinct reserve slots. At each step all
+predecessors are already live; nonnegative demands make every prefix
+sum no larger than the total, so every check succeeds. The empty graph
+also works, including with no slots. Migration changes neither demand
+nor logical data, and enabled reads/writes preserve the registry.
+\end{proof}
+For the chain $a\prec b\prec c$ with unit demands, three slots and
+$K=2$, the third allocation is rejected. More slots cannot solve that
+capacity failure. With two slots and $K=3$, total demand fits but the
+third distinct slot is missing. An out-of-order allocation is rejected
+even with enough capacity and slots. The theorem concerns the finite
+DAG/no-release model, not cyclic dependencies or arbitrary release/reuse
+scheduling.
+
+\subsection{Worked schema calculation and a lossy boundary}
+Choose $m=3$, $\pi(j)=j+1\pmod3$, $b=(1,0,0)$, edges
+$a\prec c$, $b\prec c$, three slots, demands $(1,2,1)$ and capacity
+four. Deploy all three vertices with logical $x=(1,0,1)$.
+Then
+\[
+C(x)=(5,0),\qquad h(x)=(1,1,1),\qquad C(h(x))=(7,1).
+\]
+Migration changes the physical representation but logical read still
+returns $(1,0,1)$. Writing $(0,1,0)$ in version one stores
+$h(0,1,0)=(0,0,0)$ and packed value $(0,0)$; logical read returns
+$(0,1,0)$. Three allocations, one migration and one read cost
+$3\cdot3+5+2=16$ for records and $3\cdot2+4+1=11$ for packing.
+Nodes, logical results and token kinds agree under the codec; physical
+payloads are not literally equal.
+
+A lossy map $L(y)=(y_0,\ldots,y_{m-2})$ cannot replace $C$ at this
+interface. Two version-zero states differing only in the last bit have
+the same image under $L$ but different permitted read results. A target
+read $g$ satisfying $gL=\mathsf{readLast}$ would have to return both
+bits from one state. Thus neither this conjugacy nor equal-public-output
+O5 certification is available. Restricting the observation language
+would be a new boundary, not a proof of the present claim.
+
+\texttt{check\_case\_B\_F.py} checks 124 codec payload states for
+$m=2,\ldots,6$, both versions, 10,912 write squares, 320,152 finite
+DAG/slot/capacity instances, the worked transitions, the lossy collision and 1,984 off-invariant
+method rows for the common $\mathsf{RejectInvariant}$ completion.
+These finite checks corroborate the symbolic inverse, tablewise
+conjugacy and feasibility proofs; they do not prove a general theorem
+by enumeration. All costs, whole-bundle serialization, valid-payload
+restrictions, finite/ranked syntax and permitted observations are explicit
+model assumptions, not guarantees about an external deployment system.
+

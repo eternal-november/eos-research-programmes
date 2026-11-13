@@ -1,0 +1,1253 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=25mm]{geometry}
+\usepackage{booktabs,longtable,array,enumitem,microtype}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlist{leftmargin=1.7em,itemsep=3pt,topsep=4pt}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Store}{\operatorname{Store}}
+\newcommand{\Obs}{\operatorname{Obs}}
+\newcommand{\Law}{\operatorname{Law}}
+\newcommand{\leaf}{\operatorname{leaf}}
+\newcommand{\Cost}{\mathsf{Cost}}
+\newcommand{\Ret}{\mathsf{ret}}
+\newcommand{\Bind}{\mathsf{Bind}}
+\newcommand{\Batch}{\mathsf{batch}}
+\newcommand{\Op}{\mathsf{op}}
+\newcommand{\Invoke}{\mathsf{invoke}}
+\newcommand{\Code}{\mathsf{Code}}
+\newcommand{\Ready}{\mathsf{Ready}}
+\newcommand{\Uninit}{\mathsf{Uninitialized}}
+\newcommand{\Dfin}{\mathcal D_{\mathrm{fin}}}
+\newcommand{\den}[1]{\llbracket #1\rrbracket}
+\title{Contextual Refinement and Controlled Recovery\\[5pt]
+\large Finite stateful replacement through retained probabilistic cells}
+\author{}
+\date{1 November 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A finite family of local probabilistic simulation matrices is sufficient
+for replacement in every well-typed closing context of the frozen O4
+language, including stored code aliases, repeated interaction with private
+random state, adaptive resource changes, disjoint batches and ranked
+callbacks. The observation retains public causal trees, public leaf data,
+actual capability identities and kinds, and an externally ordered cost
+vector. Private stores remain in the semantics throughout composition.
+
+The proof is constructive. Coupled method laws lift to paired raw
+histories and genuine O1 native endpoint squares over a state relation.
+The common history object carries the reference cost; its reference leg
+is cost-exact and its candidate leg is cost-lowering. O1 occurrence
+products and tree grafting then implement the context induction. This
+construction also passes through the frozen O3 finite-law and QBS
+representations. It does not assert a new strict algebra of chosen
+coupling witnesses, full abstraction, or all-path guarantees from
+probability laws.
+
+A bounded migration example proves a separate residual recovery theorem.
+Authorized rollback restores the functional interface without replenishing
+spent request credits, consumes recovery authority, and retains a durable
+audit effect. All functional continuations agree after explicit disposal
+of unused baseline authority; an audit-authorized observer distinguishes
+the residual states. The recovery prefix itself remains observable and
+costly. The source is intentionally uncompiled, as authorized.
+\end{abstract}
+\tableofcontents
+
+\section{The result and its frozen dependencies}\label{sec:scope}
+The O5 contract~\cite{Contract} requires open replacement, not agreement
+for selected closed tests. We keep the finite CF-0.1 model of O3~\cite{O3}
+and the typed syntax, private-store extension and ranked code discipline
+of O4~\cite{O4}. In particular, an ordinary code value has a public tag
+and public data captures; it does not secretly own a capability. Copies
+of a token name are aliases, not new owners. Procedures need their actual
+input resources at every invocation.
+
+Write $P\preceq Q$ with the \emph{candidate first}: the candidate $P$
+preserves public behavior and is no more costly than the reference $Q$.
+The order on costs is ordinary coordinatewise $\le$. This is the reverse
+of the direction of a cost-lowering native arrow's source-to-target
+cost inequality when one writes the source as the reference. The
+construction below fixes this orientation explicitly.
+
+\begin{theorem}[The O5 result]\label{thm:main}
+Fix the interface and observation regime of Section~\ref{sec:regime}.
+Suppose two finite method implementations have the local relational
+certificates of Section~\ref{sec:criterion}. Then:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item every finite open O4 term preserves the lifted private-state
+relation and the candidate-to-reference cost order;
+\item every admitted closing context satisfies
+$\Obs(C[P])\sqsubseteq\Obs(C[Q])$;
+\item each certificate has a realization as a common paired-history
+object with native endpoint-square legs in the normalized-content O1
+model, and these witnesses compose by O1 occurrence accumulation;
+\item the constructed finite certificates induce the corresponding
+couplings in the O3 finite-law and QBS execution models;
+\item the controlled recovery protocol in Section~\ref{sec:recovery}
+satisfies the stated universally quantified residual guarantee, but not
+unrestricted audit equivalence or equality with a no-operation prefix.
+\end{enumerate}
+\end{theorem}
+These are sufficient soundness results. No complete characterization of
+contextual refinement, mechanized proof, physical recovery guarantee,
+unbounded recursion theorem or general concurrent scheduler theorem is
+claimed. The current broader literature already proves higher-order
+probabilistic contextual refinement in much richer languages; the precise
+project-specific increment is explained in Section~\ref{sec:prior}.
+
+\section{Interfaces contexts and observations}\label{sec:regime}
+
+\subsection{The experiment fixed before comparison}
+Fix finite public data sorts and tables, a finite pool of actual token
+identities, public token kinds, a finite method signature $\mathcal I$,
+and a finite common library of ranked procedure templates with ceiling
+$R$. Each template captures only finite public data, including already
+constructed lower-ranked code values, and invokes only smaller-ranked
+templates. Fix all client primitives and their typed resource transitions.
+Replacement occurs through declared abstract method/command slots, not
+by giving the client different inspectable procedure tags or quoted
+bodies. Supplied bodies satisfy $\varepsilon_{\mathrm{impl}}\subseteq
+\varepsilon_{\mathrm{decl}}$ and O4's finite acyclic plugging and rank
+conditions, including the absence of a template-to-slot-to-same-template
+cycle.
+A method implementation may be a primitive finite table or a finite
+unfolded O4 body at this interface. A body accepting a callback ranges
+over the fixed public finite code menu; its certificate must be proved
+at every admitted public argument, including that code value. It cannot
+assume a theorem about all future clients.
+
+At a public configuration $a$ of interface $E$, ownership is the actual
+bundle $\Delta_E(a)$. An outcome may have several ordered leaf
+occurrences, with a different public configuration and capability kind
+at each. Output token sets must be disjoint subsets of the input token
+set, even on zero-weight raw branches. Bind runs the corresponding
+continuation at each actual occurrence. Batch starts from an explicit
+partition of input ownership; a reserve is an explicit child. These are
+the frozen resource rules, not additional restrictions selected to make
+this refinement true.
+
+For implementation $i\in\{P,Q\}$, a state-bearing interface is
+\begin{equation}\label{eq:expanded}
+ \widehat E_i=\coprod_{a\in|E|}\Store_i(\Delta_E(a)),
+ \qquad
+ \Store_i(\Delta)=\prod_{r\in\operatorname{dom}\Delta}
+                         H^i_{r,\Delta(r)}.
+\end{equation}
+Non-stateful tokens have a one-element private carrier. The public client
+can inspect the public configuration $a$, not its $H$ entries. Pure maps carry entries with their
+unchanged owned tokens; only declared operations can inspect or change
+those entries. A primitive that accesses several entries must own the
+corresponding tokens. There is no unrepresented mutable global state
+shared behind two disjoint owners.
+
+\subsection{Public content normalization}
+Fix, as part of the signature, a common alphabet of public event
+constructors and a set of private unary management constructors. Each
+implementation's tree map
+\[
+ \phi_i:T_iX\longrightarrow TX
+\]
+preserves leaves and public nodes with their ordered children and sends
+a private unary node $h(\theta)$ to $\phi_i(\theta)$. Public structural
+$\mathsf{Fork}_n$ nodes are preserved. No public event is relabelled
+private after seeing the proposed pair. One may choose all events public,
+in which case this map is the identity.
+
+\begin{lemma}[The fixed content comparison]\label{lem:normalization}
+The maps $\phi_i$ are cartesian natural, leaf-preserving tree-monad morphisms.
+In particular,
+\[
+ \phi_i(\theta[\theta_1,\ldots,\theta_n])
+ =\phi_i(\theta)[\phi_i(\theta_1),\ldots,\phi_i(\theta_n)].
+\]
+\end{lemma}
+\begin{proof}
+Induct on $\theta$. A leaf selects the corresponding inserted tree.
+A public node preserves its constructor and applies the induction
+hypothesis independently to its ordered children. A private unary node
+is removed, leaving exactly the child's induction equation. This also
+shows that the ordered leaf positions are preserved. Relabeling leaves
+commutes with these three clauses, proving naturality; the leaf clause
+preserves the unit and the displayed equation preserves multiplication.
+For cartesianness, given a leaf map $f:X\to Y$, an original tree
+$\rho\in T_iY$ and $\tau\in TX$ with
+$Tf(\tau)=\phi_i(\rho)$, the preserved ordered leaf bijection assigns
+uniquely to each leaf of $\rho$ the corresponding $X$ label of $\tau$.
+This is the unique lift in $T_iX$; hence the naturality square is a
+pullback. Deleting an arbitrary branching node has no such proof and is
+not an admitted erasure here.
+\end{proof}
+Costs are not erased by $\phi_i$. Neither is the private store erased at
+this stage. The latter is a final observation projection, not a
+state-free interpretation of an intermediate operation.
+
+\subsection{The full admitted context class}\label{sec:contexts}
+Let $\mathcal C_{\mathcal I,\mathfrak R}$ consist of \emph{all} finite
+well-typed closing O4 command contexts with the above fixed interface,
+signature, code library and observation regime $\mathfrak R$. An open
+method parameter can occur repeatedly. Closing instantiates its declared
+public arguments, supplies the actual owned input resources, plugs finite
+acyclic implementations, and supplies an admitted initial state law.
+An initial law describes the boundary state with accumulated execution
+cost zero there. If initialization is part of the observed experiment,
+its factory is a declared operation subject to the same local criterion,
+with its own events and costs; L1 does not erase that prefix.
+The client syntax includes
+\[
+ \Ret(f),\quad\Op_e(v),\quad\Bind(t,b.u_b),\quad
+ \mathsf{case}(v;\vec t),\quad\Batch_\chi(\vec t),\quad
+ X[\sigma],\quad\Invoke(p).
+\]
+All O4 pure data/evidence operations, dependent reindexing, public code
+inspection, data framing, and stored aliases remain available. The class
+is not a finite list of test clients. At fixed rank its finite derivations
+can still be arbitrarily large. A particular service counter further
+bounds its effective calls; the general theorem also permits finite
+straight-line uses of operations without such counters.
+
+The class permits adaptive queries, adaptive stopping with the remaining
+owned token returned, branches with different continuation resources,
+repeated calls through stored code aliases, and every lower-ranked
+callback typed by O4. It does not admit self-recursive reentry, fresh
+token creation, implicit disposal, raw-witness inspection, private-store
+projection or effect exchanges absent from O4. A returned native code
+tag remains publicly distinguishable. No blanket code opacity is used.
+
+\subsection{Observation and its order}\label{sec:observations}
+For a completed run $h$ of a closed term, retain cost
+$c_i(h)\in\mathbb N^d$ and its tree $\theta_i(h)$ with full semantic
+leaf configurations. Let $\operatorname{pub}_F:\widehat F_i\to|F|$
+forget private entries but retain all public data, token identities and
+kinds. The closing observation is the finite law
+\begin{equation}\label{eq:observation}
+ \Obs(t)=\sum_hp_i(h)\,
+ \delta_{\left(c_i(h),T\operatorname{pub}_F\phi_i(\theta_i(h))\right)}.
+\end{equation}
+It retains public causal order and ordered leaf positions, not merely the
+terminal value marginal. If a public intermediate response must appear
+in this external observation, its method's declared event label includes
+that response; otherwise it is available to its continuation without
+being automatically added to the event label. Either convention is fixed
+by the signature. The examples below explicitly use response-labelled
+events.
+
+For finite laws $\mu,\nu$ on $\mathbb N^d\times T|F|$, set
+\begin{equation}\label{eq:obsorder}
+ \mu\sqsubseteq\nu
+ \quad\Longleftrightarrow\quad
+ \exists\gamma\in\Dfin((\mathbb N^d\times T|F|)^2):
+ \begin{cases}
+  (\pi_1)_*\gamma=\mu,\quad(\pi_2)_*\gamma=\nu,\\
+  \gamma((c,t),(c',t'))>0\ \Longrightarrow\ t=t',\ c\le c'.
+ \end{cases}
+\end{equation}
+The equality regime strengthens $c\le c'$ to $c=c'$. An exact-cost
+coupling then yields equality of the joint observations. In the ordered
+regime the public marginal is equal and, for any bounded increasing cost
+function $g$ with the public tree fixed,
+$\mathbb E_\mu g\le\mathbb E_\nu g$. In particular
+$\Pr_\mu[c\le b]\ge\Pr_\nu[c\le b]$.
+
+Cost is external in this order. If a client can read a reported clock or
+budget as ordinary data, that value must match \emph{exactly} in the
+public relation; lower accumulated cost alone cannot justify a different
+branch decision. The law makes no all-raw-path assertion about zero
+probabilities. Every admitted command mathematically terminates by its
+finite syntax and rank bound; there is no divergent behavior, scheduling
+choice or fairness hypothesis in the theorem. The causal tree is not the
+O4 phase evaluator's chronological word, and no equality of those words
+is inferred.
+
+\section{A finite local simulation criterion}\label{sec:criterion}
+
+\subsection{State relations and their tree lifting}
+For each actual token and kind choose a finite relation
+$S_{r,k}\subseteq H^P_{r,k}\times H^Q_{r,k}$. Define
+\begin{equation}\label{eq:state-relation}
+ S_E=\{((a,s),(a,t)):\forall r\in\operatorname{dom}\Delta_E(a),
+                     \ (s(r),t(r))\in S_{r,\Delta_E(a)(r)}\}.
+\end{equation}
+This is a product-shaped \emph{predicate}, not a product probability law.
+An initial coupling $\lambda$ can correlate every token's private state
+with the others and with public data, as long as it is supported on $S_E$.
+The relation restricts to disjoint sub-bundles and reassembles on their
+union. A more general relation can replace this sufficient choice only
+if those restriction and reassembly properties are separately proved.
+
+Two normalized outcomes $z=(c,\theta)$ and $z'=(c',\theta')$ are
+$\mathcal L(S_F)$-related if $c\le c'$ and there is a paired-leaf tree
+$\vartheta\in T(S_F)$ with
+\begin{equation}\label{eq:tree-lifting}
+ T\pi_P(\vartheta)=\theta,\qquad T\pi_Q(\vartheta)=\theta'.
+\end{equation}
+Equivalently they have the same public constructor shape and their
+corresponding actual leaves have the same public configuration and
+$S_F$-related private stores. For planar trees this paired tree is unique
+once its two projections are fixed. Nullary trees and arbitrary finite
+numbers of leaves are included. Related public indices entail equal
+result-dependent capability bundles at every matched occurrence.
+
+For each full semantic input $x$ write
+\[
+ K_i(t)(x)=\sum_{h\in\Omega_i(t,x)}p_i(h)
+                 \delta_{(c_i(h),\phi_i\theta_i(h))}.
+\]
+This retains private leaves. A command certificate
+$t_P\preceq_{S_E,S_F}t_Q$ is a finite outcome coupling supported on
+$\mathcal L(S_F)$ for \emph{every} pair in $S_E$. Empty relation fibres
+have no obligation. No closing observation is taken within this judgment.
+
+\subsection{The independently checkable premises}\label{sec:local}
+The local method criterion is the following finite data.
+\begin{enumerate}[label=\textup{L\arabic*.}]
+\item The intended initial laws $\alpha_P,\alpha_Q$ have a joint coupling
+$\lambda$ supported on $S_E$.
+\item For every imported method $m$, every admitted common public
+argument $v$, and every related full input pair $x\,S_{E_m}\,y$, provide
+a nonnegative matrix $G_{m,v,x,y}(z,z')$ with
+\begin{equation}\label{eq:local-matrix}
+ \sum_{z'}G(z,z')=K_P(m[v])(x)(z),\qquad
+ \sum_zG(z,z')=K_Q(m[v])(y)(z'),
+ \qquad G(z,z')>0\Rightarrow z\,\mathcal L(S_{F_m})\,z'.
+\end{equation}
+The target fibre and all resource transitions are the declared ones.
+\item Every fixed client primitive has the same property. Identical
+primitive names are not sufficient: the actual transition must preserve
+$S$. A usual sufficient case uses the same fresh random witness, performs
+the same public action, and carries untouched related private entries.
+An audit primitive that reveals a forgotten entry must be checked and
+may fail.
+\item The common pure syntax acts only on public data and carries
+unchanged private entries with their owners; the common code library has
+identical public tags, captures and templates on both sides. Its bodies
+may contain the imported method parameters.
+\end{enumerate}
+These premises mention method tables, related input states and public
+arguments, not arbitrary clients or continuation programs. Fix each
+chosen matrix as a function of its actual method/command and related
+input pair; the compositional construction does not give it undeclared
+access to earlier hidden history. If a method
+is a finite compound body, its table can be obtained by the O4 finite
+unfolding or by the compositional rules proved below. All sets in a
+particular certificate are finite. With rational probabilities, existence
+of $G$ is a finite linear feasibility problem after the forbidden pairs
+have been set to zero. With arbitrary real weights this is a mathematical
+certificate condition, not a claimed decision procedure.
+
+The criterion is stronger than equality of public one-call marginals.
+The related private output must still support the next interaction. It
+also permits different private carrier cardinalities and nonfunctional
+couplings, so it is not merely raw isomorphism in another notation.
+
+\section{The open replacement theorem}\label{sec:replacement}
+
+\begin{theorem}[Open contextual soundness]\label{thm:replacement}
+Under L1--L4, for every finite O4 derivation
+$\Xi;\Gamma\vdash t:E\Rightarrow F!\varepsilon$, every common public
+valuation, and every pair $x\,S_E\,y$, the two interpretations obtained
+by plugging $P$ and $Q$ admit a coupling
+\[
+ K_P(t)(x)\ \mathcal L(S_F)^\dagger\ K_Q(t)(y).
+\]
+Here the dagger means existence of a finite coupling with the indicated
+support, not an additional language operation. Consequently, for every
+$C\in\mathcal C_{\mathcal I,\mathfrak R}$ with an L1 initialization,
+\begin{equation}\label{eq:replacement}
+ \Obs(C[P])\sqsubseteq\Obs(C[Q]).
+\end{equation}
+If every local comparison is cost-exact, the joint observation laws are
+equal. Pure dependent substitution and finite acyclic implementation
+plugging preserve these conclusions.
+\end{theorem}
+\begin{proof}
+We prove the stronger open related-input claim simultaneously by template
+rank and by the finite typing derivation. At top level use structural
+induction; an invocation appeals to a strictly smaller template rank.
+All couplings below depend on the actual paired full input, not only on
+its public projection.
+
+\emph{Return and pure evaluation.} Equal public valuations evaluate the
+same finite pure term to the same data, evidence and code tag/captures.
+The pure interface map preserves actual ownership and carries each
+private entry unchanged. Its paired result lies in $S_F$. The single
+paired leaf with probability one and equal zero cost is the certificate.
+The same argument proves preservation under public data framing,
+projections, dependent-pair operations and pure reindexing.
+
+\emph{Primitive and imported method.} Use L2 or L3 at the common public
+argument and the actual related input pair. Full resulting private
+stores remain in the outcomes. This is the implementation-specific base
+case, not an appeal to a desired contextual conclusion.
+
+\emph{Case.} The selector is a pure public value and agrees on the two
+sides. Both select the same typed branch. Restrict to its actual
+public/dependent fibre and use the induction hypothesis. No selector can
+inspect a private entry in the frozen pure grammar.
+
+\emph{Bind.} Let $G_0(z,z')$ couple the prefixes. For every positive
+pair, write $z=(c,\theta)$ and $z'=(c',\theta')$. Their normalized
+public shapes agree and their leaves are paired at the same ordered
+occurrence addresses. At matched address $j$, let $x_j\,S_F\,y_j$ be
+the full leaf pair. Its public component chooses the same continuation
+$u_j$, with exactly the same dependent index and resource bundle. By
+induction choose a coupling once for each continuation and actual paired
+leaf input, writing $G_j^{z,z'}=G_{u_j,x_j,y_j}$. Its arguments include
+any public lexical frame explicitly carried at that leaf; it has no
+extra dependence on erased prefix history. Define the finite conditional
+product
+\begin{equation}\label{eq:bind-coupling}
+ G_0(z,z')\prod_{j\in\leaf(\theta)}G_j^{z,z'}(w_j,w'_j),
+\end{equation}
+and push it forward by grafting both trees and adding their respective
+costs. Empty products have mass one and add zero cost.
+
+To verify the $P$ marginal, first sum each $w'_j$. Its coupling marginal
+is exactly $K_P(u_j)(x_j)$ and depends only on that left input. The paired coupling itself
+is indexed only by its actual paired leaf input. Summing $z'$
+then gives the prefix law $K_P(t)(x)$. These are precisely the frozen
+O3 occurrence-composition probabilities. The $Q$ marginal is symmetric.
+Finite Fubini justifies the reorderings. Prefix and child cost inequalities
+add. The paired tree is obtained by grafting the $T(S)$ child trees into
+the paired prefix tree, so its leaves remain related. Lemma
+\ref{lem:normalization} commutes this graft with the fixed content map.
+
+This calculation conditions on the \emph{entire paired prefix outcome}.
+Correlations already carried among its private entries or leaves remain
+in that mixing distribution; they are not replaced by independent
+marginals. Only fresh continuation runs at distinct actual occurrences
+are independent conditional on those inputs, exactly as in O3. Equal
+leaf values at different positions do not identify the positions or their
+new draws. O4's explicit data frame and actual leaf projection handle
+persistent lexical values without duplicating the original ownership.
+
+\emph{Batch.} At a fixed related global input pair, the common public
+splitter $\chi$ yields equal disjoint child token bundles. Restrict the
+paired stores and $S$ to those bundles. The product of the child
+inductive couplings, including any reserve child, has the correct
+conditional marginals. Graft under the common public $\mathsf{Fork}$
+and sum costs. Reassembly of the tokenwise relation proves the leaf
+condition. If the global input is random, integrate this conditional
+product against its original \emph{joint} input coupling. In particular,
+we never factor a correlated initial store law into independent token
+laws. The product applies to fresh transitions conditional on the full
+paired input, not to the private input states themselves.
+
+\emph{Open calls and plugging.} The actual public parameter substitution
+selects the same arguments. An imported method uses L2. A compound
+implementation already certified by the induction can be used at that
+same interface. O4's typed plugging theorem guarantees that finite
+capture-avoiding substitution preserves each actual resource and result
+fibre. The allowed assignment is acyclic; substitution creates no
+recursive call knot and no owned capture.
+
+\emph{Stored code and ranked invocation.} Equal public code values have
+the same inspectable tag and captures, regardless of how often the data
+were copied or stored. Invocation selects the same template and
+instantiates it by the same pure substitution. Its lower rank supplies
+the induction hypothesis at the current related owned stores. Reusing an
+alias later invokes at the later store; the preceding step has already
+proved that store related. New sampling inside an invocation uses its
+fresh coupled transition, whereas an earlier stored random value stays
+in the public data or private store. The proof does not replace copying
+a sampled value by rerunning a sampler. Every admitted lower-ranked
+callback is another such invocation. Unbounded reentry is outside the
+syntax, not a missing induction case.
+
+For dependent substitution, evaluate each premise at the substituted
+public valuation. O4's substitution theorem reindexes the actual
+capability family as well as the data. The same finite coupling serves
+at that reindexed pair. This also handles parameter instantiation and
+local bind-variable projections. The preceding plugging case proves
+stability under finite simultaneous implementation substitution.
+
+Finally mix the open coupling against $\lambda$ from L1. Summing either
+input coordinate yields its stipulated initial law. Push the two output
+coordinates through $T\operatorname{pub}_F$: related private leaves
+become equal public leaves, and the cost inequality is unchanged. This
+is exactly~\eqref{eq:obsorder}. With exact local costs, every addition
+preserves equality, giving equality of the joint closing laws.
+\end{proof}
+This proof establishes the quantifier over the whole context class.
+Enumerating example clients, even every client below a chosen syntax
+size, would not establish it. Conversely, the theorem does not say that
+every contextually valid replacement has one of these tokenwise local
+simulation certificates.
+
+\section{Realization by the contracted categorical cells}\label{sec:cells}
+
+\subsection{The native cells that must actually be used}
+The frozen joint rig is
+\[
+ \mathcal V=(\mathbb R_{\ge0})_{\mathrm{disc}}\times\Cost,
+ \quad(p,c)\oplus(q,d)=(p+q,\min(c,d)),
+ \quad(p,c)\otimes(q,d)=(pq,c+d),
+\]
+where $\Cost=(\mathbb N\cup\{\infty\})^d$ has an arrow $c\to d$
+when $c\ge d$ coordinatewise. All execution costs here are finite. In
+the O1 mixed construction~\cite{O1}, a retained computation has a finite
+augmented witness family $(\Omega,p,c)$ and a tree body $\theta$.
+For endpoint maps $u:A\to A'$ and $v:B\to B'$, a native square has
+witness functions $r_a$ satisfying
+\begin{equation}\label{eq:native}
+ p'_{u(a),w'}=\sum_{r_a(w)=w'}p_{a,w},\qquad
+ c'_{u(a),w'}\le\min_{r_a(w)=w'}c_{a,w},\qquad
+ Tv\,\theta_a(w)=\theta'_{u(a)}(r_a(w)).
+\end{equation}
+The empty minimum is $\infty$. Cost-exact means equality of costs on
+every source witness, not surjectivity onto all target witnesses.
+O3 uses exactly these equations, not an independently invented notion of
+cell. The concrete content comparison induced by $\phi_i$ changes the
+body to $\phi_i\theta$ and leaves raw witnesses, probabilities and costs
+unchanged. Lemma~\ref{lem:normalization} is the multiplication condition
+needed for this comparison. More explicitly, the ordered-hole
+bijection identifies each dependent product in~\eqref{eq:occurrence}
+before and after normalization; the witness tuples, weights and costs
+are unchanged and grafting commutes. This proves the strong comparison
+on this terminal-grade instance directly, without appealing to a
+change-of-input theorem requiring an invertible extension map.
+
+\subsection{Lifting a law matrix back to retained histories}
+Fix a related full input pair $x\in S_E$ and a local or derived outcome
+coupling $G$. Let $w\in\Omega_P$ and $v\in\Omega_Q$ be the original
+raw histories, with probabilities $p_w,q_v$, normalized full outcomes
+$a(w),b(v)$, and pushforward laws $\mu,\nu$. Define
+\begin{equation}\label{eq:raw-lift}
+ \Gamma(w,v)=
+ \begin{cases}
+ G(a(w),b(v))\dfrac{p_w}{\mu(a(w))}\dfrac{q_v}{\nu(b(v))},
+       &\mu(a(w))\nu(b(v))>0,\\[6pt]
+ 0,&\text{otherwise}.
+ \end{cases}
+\end{equation}
+This is a finite conditional-weight formula, not a measure-theoretic
+choice of arbitrary disintegrations.
+
+\begin{lemma}[Raw lift and common cost]\label{lem:raw-lift}
+The matrix $\Gamma$ has marginals $p,q$. Its positive pairs define a
+finite normalized common retained object
+$W:S_E\Rightarrow S_F$, with a unique paired-leaf body and cost
+$c_W(w,v)=c_Q(v)$. There are native endpoint squares
+\begin{equation}\label{eq:span}
+ \begin{array}{ccc}
+ &W:S_E\Rightarrow S_F&\\[-2pt]
+ {}_{(\pi^E_P,\pi^F_P)}\swarrow&&
+       \searrow_{(\pi^E_Q,\pi^F_Q)}\\[-2pt]
+ H_P:E_P^{\wedge}\Rightarrow F_P^{\wedge}
+ &&H_Q:E_Q^{\wedge}\Rightarrow F_Q^{\wedge},
+ \end{array}
+\end{equation}
+after the specified content normalization. The reference leg is
+cost-exact; the candidate leg is cost-lowering.
+\end{lemma}
+\begin{proof}
+For $p_w>0$, summing first over raw $v$ with a fixed outcome $b$ turns
+$\sum_{b(v)=b}q_v/\nu(b)$ into one. The coupling marginal then gives
+\[
+ \sum_v\Gamma(w,v)
+ =\frac{p_w}{\mu(a(w))}\sum_bG(a(w),b)=p_w.
+\]
+If $p_w=0$, every summand is zero, so the equation still holds. The
+other marginal is symmetric. Hence the positive carrier has total mass
+one. Each supported pair has aligned normalized trees and related leaf
+stores, so~\eqref{eq:tree-lifting} supplies its paired body.
+
+The history functions are $(w,v)\mapsto w$ and $(w,v)\mapsto v$.
+Their probability pushforward equations are exactly the two marginals.
+Their body equations are~\eqref{eq:tree-lifting}, with input maps the
+relation projections. On every common history the reference target cost
+is $c_Q(v)=c_W(w,v)$. The candidate target cost satisfies
+$c_P(w)\le c_Q(v)=c_W(w,v)$. Therefore its target cost is at most every
+cost in its history fibre and hence at most their minimum. A target with
+no preimage has weight zero and satisfies the cost inequality against
+$\infty$. Nonnegative finite common costs give the required augmentation
+$(\sum\Gamma,\min c_W)\to(1,0)$. Thus all three equations
+in~\eqref{eq:native} hold on the actual O1 carrier.
+\end{proof}
+This is a proof-relevant span of native endpoint squares over a state
+relation. It need not be a direct cost-lowering native cell $H_Q\to H_P$: their
+private endpoint carriers can differ, and the coupling need not be the
+graph of a function. The relation carrier is mathematical proof data,
+not a program-owned resource or an operation exposing private state.
+The relation projections are mathematical endpoint maps in O1's ambient
+all-Set construction; they are not asserted to be executable client pure
+maps or authorized physical capability transformations.
+If private unary events differ, the squares live after the fixed content
+comparison; no full unnormalized body equation is asserted.
+
+\subsection{Composition is the actual occurrence construction}
+For a prefix witness $h$ whose tree has addressed holes $j$, O1 uses
+\begin{equation}\label{eq:occurrence}
+ \Omega_{t;u}(a)=\coprod_{h\in\Omega_t(a)}
+                 \prod_{j\in\leaf(\theta_t(h))}\Omega_u(b_j),
+ \qquad
+ p=p_t(h)\prod_jp_u(k_j),\quad c=c_t(h)+\sum_jc_u(k_j),
+\end{equation}
+with tree body obtained by grafting. Apply this formula to the paired
+prefix object $W_t$ and the paired continuation objects at its actual
+$S_F$ leaves. Its histories retain both component histories at every
+address. Its cost is the sum of their reference costs, hence the full
+reference cost. The two endpoint projections send the paired tuple to
+its $P$ and $Q$ tuples. Finite distributivity proves their marginal
+equations; tree grafting proves their body equations; addition proves
+the exact or lowering cost equations. Thus the bind construction in
+Theorem~\ref{thm:replacement} is literally an O1 occurrence composite,
+not a callback operational argument with a categorical name appended.
+The same product-and-fork calculation gives the separated batch square.
+
+There is no requirement that the raw lift of the final pushed-forward
+coupling be the \emph{same chosen witness set} as this composite span.
+Both realize the same needed relational statement. The composite span
+is a concrete retained certificate with its own histories; preservation
+of the theorem is existence of such a certificate, not equality of every
+choice of conditional splitting.
+
+\begin{proposition}[Reflexivity and vertical gluing]\label{prop:vertical}
+The observation order is a preorder. Local relational certificates
+compose when their state relations compose, and the existence judgments
+are stable under the horizontal language constructions proved above.
+\end{proposition}
+\begin{proof}
+Reflexivity uses diagonal couplings and equality of private states.
+For laws $\mu,\nu,\xi$ with couplings $G(a,b)$ and $D(b,c)$ define
+\begin{equation}\label{eq:gluing}
+ J(a,b,c)=
+ \begin{cases}G(a,b)D(b,c)/\nu(b),&\nu(b)>0,\\0,&\nu(b)=0.
+ \end{cases}
+\end{equation}
+Zero middle mass forces both associated marginal fibres to be zero.
+Summing gives the two input couplings and, after marginalizing $b$, a
+coupling of $\mu,\xi$. Equal public tree shapes and transitive cost
+order give the observation preorder.
+
+For state-indexed local certificates, let
+$S^{13}_{r,k}=S^{12}_{r,k};S^{23}_{r,k}$. At any related endpoint input
+pair, choose and retain a finite middle private-state witness at every
+owned token, giving one middle full input. Use the two local matrices
+at those two input pairs, and apply~\eqref{eq:gluing} to their common
+middle full-outcome law. Every resulting leaf has a middle state witness
+and thus belongs to $S^{13}$. Reassembly works because the states follow
+the same disjoint owned tokens. The middle input and outcome witnesses
+must not be dropped before this construction.
+
+Iterated vertical gluing can retain all middle variables; its positive
+joint masses are products of adjacent coupling masses divided by the
+positive intermediate marginals. Rebracketing the finite sums yields
+the same outer law when these choices are fixed. Horizontal closure is
+the separate occurrence proof already given.
+\end{proof}
+The safe categorical conclusion is an observation-directed,
+proof-irrelevant comparison of existence judgments, together with the
+explicit proof-relevant native spans that realize it. We do \emph{not}
+assert a strict double category of chosen coupling witnesses, a chosen
+horizontal--vertical interchange law, an equipment, or a faithful
+encoding of all O1 parallel cells. An arbitrary native hom cell whose
+endpoint/body relation does not preserve the selected public interface
+is not thereby a sound replacement. A native functional cell satisfying
+that interface condition gives a special graph coupling; the full
+relation criterion is the additional compatibility needed by O5.
+
+\subsection{Zero probability and the exact all path boundary}
+\label{sec:zeros}
+The positive carrier in Lemma~\ref{lem:raw-lift} need not cover
+zero-weight raw target histories. Thus exact joint laws and even a
+cost-exact reference leg do not prove an all-path bound. For example,
+add to an otherwise cost-zero candidate a raw branch of probability
+zero and cost $100$, with the same public body. Its observed law is
+unchanged; its all-raw-path budget $0$ is false.
+
+\begin{proposition}[The additional coverage guarantee]\label{prop:coverage}
+If a closing paired-history span has a surjective candidate-history
+projection, then an all-raw-path upper cost bound for the reference is
+an all-raw-path upper bound for the candidate. A sufficient local
+strengthening is candidate coverage of every local raw method and
+client-primitive certificate, including zero-weight histories, together
+with initial candidate-state coverage and the same support/body/cost
+conditions on those added pairs. This strengthening is preserved by the
+admitted context constructors.
+\end{proposition}
+\begin{proof}
+Lift any candidate raw history to a common history. Its candidate cost
+is at most the common cost, which equals the projected reference cost.
+A reference all-path bound therefore bounds the candidate history.
+For the local assertion, induct on an arbitrary candidate run. Return,
+case and ranked dispatch select the same public branch. At an operation,
+local coverage gives a paired reference raw history, even if its weight
+is zero. At bind, lift the prefix and then each candidate child history
+at the corresponding related leaf; the fixed tree comparison preserves
+all its positions. Batch lifts each disjoint child and retains the
+reserve. This yields a common composite history and proves surjectivity.
+Initial coverage supplies the needed related starting pair.
+\end{proof}
+The extra zero-mass pairs may be adjoined only when their body and cost
+inequalities really hold. Probability normalization alone supplies no
+such pairs. The main replacement theorem uses the law/almost-sure regime
+and does not assume this optional coverage strengthening.
+
+\section{The finite representation comparison}\label{sec:representation}
+\begin{theorem}[Compatibility with the frozen representations]
+\label{thm:representation}
+Every paired-history certificate constructed above has compatible
+finite-law, operational causal/cost and finite-discrete QBS images.
+Its two marginal laws are the corresponding interpretations of the two
+programs; its support proves the same closing observation order.
+\end{theorem}
+\begin{proof}
+For a finite augmented witness family, the O3 comparison is
+\[
+ L(H)(a)=\sum_{w\in\Omega(a)}p_w\delta_{(c_w,\theta_w)}.
+\]
+For the common object, retain in addition the two projected costs and
+bodies, yielding the explicit joint pushforward
+\[
+ \sum_{(w,v)}\Gamma(w,v)
+       \delta_{((c_P(w),\phi_P\theta_P(w)),
+                 (c_Q(v),\phi_Q\theta_Q(v)))}.
+\]
+The native marginal equations prove that this is the required coupling.
+The paired body's projection equations prove its state relation. The
+common object's reference cost is essential to the native realization;
+the displayed two-cost law is the relational comparison, not a false
+claim that both native legs preserve exact cost.
+
+Under occurrence composition, the product-and-graft formula
+\eqref{eq:occurrence} pushes forward to the O3 law composition on
+$\Dfin(\mathbb N^d\times T(-))$. Finite Fubini gives the same coupled
+formula~\eqref{eq:bind-coupling}; normalization commutes by Lemma
+\ref{lem:normalization}. O4's raw-run correspondence identifies these
+with the causal/cost projection of its operational evaluations.
+
+Embed the finite carriers and finite probability tables into discrete
+QBS. Each matrix, projection, tree constructor and cost operation is a
+map on these finite/discrete objects. The same finite sums have the same
+marginals in QBS probability, and the represented relation contains their
+support. Thus the certificate lives in the O3 execution model
+$KX=P(\mathbb N^d\times TX)$, with its specified independent-occurrence
+multiplication. The finite reindexing and plugging equations are
+preserved by these same maps.
+\end{proof}
+This is not a theorem choosing measurable couplings from arbitrary
+pointwise QBS existence assertions; every coupling family here was a
+finite table. Nor is it a theorem about the undecorated Markov monad
+$P$ alone: the execution meaning retains the tree and cost. Projecting
+private state after \emph{each} method generally breaks composition.
+The theorem erases it only when closing, after all interaction. A
+state-free per-method quotient would require a separate compatibility
+proof and is refuted in general by the next example.
+
+\section{Implementation change and an interaction distinguisher}
+\label{sec:examples}
+
+\subsection{A genuinely different cheaper persistent implementation}
+Fix a token $r$, a bound $N$, and public kinds $\Uninit$ and
+$\Ready_h$ for $0\le h\le N$. The reference $Q$ privately stores
+$(b,j)\in\{0,1\}^2$, while the candidate $P$ stores
+$b\in\{0,1\}$. Relate
+\[
+ b\ S_{r,\Ready_h}\ (b,j)\qquad(j\in\{0,1\}).
+\]
+At $\Uninit$, both private carriers are singletons, related uniquely.
+An initialization method on the preexisting $\Uninit$ token draws a
+fair $b$ in $P$, and independent fair $b,j$ in $Q$, and retypes that token
+$\Ready_N$. It has cost zero and a private unary management event, fixed
+as private in this API. Couple the initial raw branches by
+$\Pr(b,(b,j))=1/4$. There are two candidate raw histories and four
+reference histories; this is not a raw bijection.
+
+For $h>0$, the public call method returns $b$, retains its private store,
+retypes the same token to $\Ready_{h-1}$, and emits
+$\mathsf{call}(b)$. Give the candidate cost $1$ and the reference cost
+$2$. At every related input pair the Dirac pair of transitions is a
+local certificate. A matched explicit disposal method, if included,
+consumes $r$ on both sides at the same cost. Fixed unrelated client
+primitives preserve the relation by carrying the service entry with its
+single owner; any primitive that could inspect it must instead pass L3.
+No primitive reports the differing external call costs as public data.
+
+\begin{corollary}[Persistent implementation replacement]
+\label{cor:persistent}
+For every admitted O4 client at this API, including repeated calls through
+stored wrapper-code aliases, adaptive stopping, disjoint unrelated work
+and ranked callbacks, replacing $Q$ by $P$ preserves its public causal
+law and weakly lowers accumulated cost. On paired runs with $m$ effective
+calls, the reference cost exceeds the candidate cost by exactly $m$.
+\end{corollary}
+\begin{proof}
+The initialization matrix and each method pair satisfy L1--L4; the local
+call cost gap is one and all other paired costs are equal. Apply
+Theorem~\ref{thm:replacement}; its coupling preserves the complete
+public tree and therefore the number $m$ of public call nodes. Add the
+$m$ local gaps.
+\end{proof}
+The persistent bit is not resampled by repeated invocation. Common public
+wrapper code may call the abstract method slot, and that same wrapper can
+be copied, inspected and reused. Replacing the private implementation of
+that slot is not returning a different publicly inspectable wrapper tag.
+Adaptive resource change is real: if a client calls again only after a
+zero response, its final token can be $\Ready_{N-1}$ or
+$\Ready_{N-2}$ as a result-dependent public output. The relation and the
+proof track those two fibres rather than forcing one fixed continuation
+budget. The general theorem also covers multi-hole dependent operations;
+this small instance is not the definition of the context class.
+
+If the two call costs are both one, the same construction proves exact
+joint-law equivalence despite the different private carriers and raw
+histories. If the initial stores of this service and other tokens are
+correlated, the theorem still applies whenever a joint $S_E$-supported
+initial coupling is supplied; its proof does not require independently
+initializing every token.
+
+\subsection{Matching coarse endpoints do not support replacement}
+Take two services with the same owned-token protocol
+$\Ready_2\to\Ready_1\to\Ready_0$, the same public call labels and
+unit call costs. The shared service samples a fair bit $B$ once and
+returns $B$ on each call. The fresh service draws a fair bit anew on each
+call. Both have the same one-call public marginal and the same coarse
+resource endpoints. Their two-call laws are
+\[
+\begin{array}{c|rrrr}
+ &00&01&10&11\\\hline
+ \text{shared}&1/2&0&0&1/2\\
+ \text{fresh}&1/4&1/4&1/4&1/4.
+\end{array}
+\]
+The well-typed client stores its first answer $x$, calls again with the
+actual updated $\Ready_1$ ownership, and returns $(x=y)$ together with
+$\Ready_0$. Its probability of true is $1$ versus $1/2$. It can call
+through two aliases of one common wrapper code; the aliases do not
+supply two owners. Hence neither replacement direction holds for
+\eqref{eq:obsorder}.
+
+The exact local obstruction occurs after the first call. The retained
+shared state fixes the next answer to $B$, while the fresh service's
+conditional next-answer law remains fair. No matrix with those marginals
+can place all its mass on equal public replies. Forgetting $B$ after the
+first call would manufacture a false memoryless simulation. This is why
+the relational criterion keeps full private leaves until closing.
+
+\subsection{Public code and clock boundaries}
+If two implementations return different native procedure tags, a pure
+case returning the tag's Boolean discriminator separates them, even if
+invoking the two procedures would have equal output laws. The present
+criterion rejects that pair because its public leaves differ. An opaque
+adapter may be separately declared, but cannot retroactively remove
+these old code-inspection contexts.
+
+Likewise, if a method returns its exact cost as ordinary data, a context
+can branch on that value. Then the positive cheaper-service example does
+not satisfy the same public interface relation unless the returned values
+agree. The theorem orders only the external accumulated annotation and
+is not a license to hide a client-readable measurement.
+
+\section{Controlled recovery with a durable residual}\label{sec:recovery}
+
+\subsection{A bounded protocol with explicit recovery authority}
+This is one finite deployment/migration stress case, not an expansion of
+the later O6 application programme. Fix actual identities $r$ for a
+service, $k$ for a one-shot migration authority, and optionally $a$ for
+an audit authority. These identities preexist. Fix $N\in\mathbb N$.
+The public kinds of $r$ are $A_h$, $\mathsf{Stage}_h$ and $B_h$ for
+$0\le h\le N$. The kinds of $k$ are $\mathsf{Fresh}$ and
+$\mathsf{Armed}$; those of $a$ are $\mathsf{Audit1}$ and
+$\mathsf{Audit0}$. Other carried resources use their fixed declared
+interfaces and do not access $r$'s private audit entry.
+
+The service private state is $(\mathsf{phase},x,d)$, with Boolean
+physical payload $x$ and durable audit bit $d$. Its logical value is $x$
+in phase $A$ and $1-x$ in phases $\mathsf{Stage},B$. Set the admitted
+$\mathsf{Stage}$ and $B$ store fibres to have $d=1$; the $A$ fibre
+permits either bit. This is a definition of the well-formed state space,
+not an inference about arbitrary semantic states from reachability.
+The authority tokens have no nontrivial private state.
+
+All operations below are finite Dirac method tables with a public unary
+node, scalar cost one, and the displayed actual-token transition. Public
+labels include the method name and its returned value. Every unaffected
+resource explicitly carried by a table remains in its declared output;
+there is no generic implicit capability frame.
+\begin{description}
+\item[Stage.]
+$(r:A_h,k:\mathsf{Fresh})\to(r:\mathsf{Stage}_h,k:\mathsf{Armed})$,
+with $(A,x,d)\mapsto(\mathsf{Stage},1-x,1)$ and result
+$\mathsf{staged}$.
+\item[Rollback.]
+$(r:\mathsf{Stage}_h,k:\mathsf{Armed})\to r:A_h$, consuming $k$,
+with $(\mathsf{Stage},y,1)\mapsto(A,1-y,1)$ and result
+$\mathsf{rolledBack}$.
+\item[Commit.]
+$(r:\mathsf{Stage}_h,k:\mathsf{Armed})\to r:B_h$, consuming $k$,
+retaining the encoded payload and audit bit, with result
+$\mathsf{committed}$.
+\item[Cancel.]
+$(r:A_h,k:\mathsf{Fresh})\to r:A_h$, consuming $k$, leaving the
+service store unchanged, with result $\mathsf{cancelled}$. This is the
+actual two-token disposal table, not an untyped omission of $k$.
+\item[Read.]
+For $h>0$, $r:A_h\to(\mathsf{Bool},r:A_{h-1})$, returning $x$ and
+leaving $(A,x,d)$ unchanged.
+\item[Write a Boolean $b$.]
+For $h>0$, $r:A_h\to r:A_{h-1}$, changing $(A,x,d)$ to $(A,b,d)$
+and returning $\mathsf{written}$.
+\item[Health.]
+For $h>0$, $r:A_h\to r:A_{h-1}$, leaving the store unchanged and
+returning $\mathsf{AReady}$.
+\item[Audit.]
+$(r:A_h,a:\mathsf{Audit1})\to(\mathsf{Bool},r:A_h,a:\mathsf{Audit0})$,
+returning $d$ and leaving the service store unchanged.
+\end{description}
+Audit remains in the global signature. No method creates one of these
+identities, restores a consumed $k$, grants $\mathsf{Audit1}$, decreases
+$d$, or turns $B$ back into $\mathsf{Stage}$. Read/write analogues in
+$\mathsf{Stage}$ or $B$ are not needed and are not supplied in this
+small extension. They cannot be assumed as extra continuations without
+checking a new signature.
+
+The exact recovery domain is
+\begin{equation}\label{eq:recovery-domain}
+ D_{\mathrm{rec}}=\{(r:\mathsf{Stage}_h,k:\mathsf{Armed},
+                  (\mathsf{Stage},y,1)):0\le h\le N, y\in\{0,1\}\},
+\end{equation}
+with any explicitly admitted disjoint carried resources. Rollback is
+total on this typed finite domain. A committed $B$ state, a receipt
+without owned $k$, or an already consumed $k$ is outside it. A different
+API could declare a refusal result, but no refusal is silently identified
+with successful recovery here.
+
+\subsection{The right baseline and the residual relation}
+Start at $r:A_h$ with state $(A,x,d)$ and owned $k:\mathsf{Fresh}$.
+Let $D$ be the pure token-preserving map that discards an ordinary
+receipt and returns public unit. Use the explicit boundary prefixes
+$\mathsf{stage};D;\mathsf{rollback};D$ and
+$\mathsf{cancel};D$. The first $D$ supplies rollback's unit-data input;
+the final maps remove the unequal $\mathsf{rolledBack}$ and
+$\mathsf{cancelled}$ receipt values. They do not erase public event
+nodes or costs. With equal otherwise retained public memory $\Gamma$,
+these prefixes lead to
+\begin{align}\label{eq:residual-states}
+ \mathsf{stage};D;\mathsf{rollback};D:&\quad
+ s_{\mathrm{rec}}=(r:A_h,(A,x,1),\text{no }k),\notag\\
+ \mathsf{cancel};D:&\quad
+ s_{\mathrm{base}}=(r:A_h,(A,x,d),\text{no }k).
+\end{align}
+The boundary comparison requires identical public unit data and equal
+retained public $\Gamma$; it does not cover an observer that carries a
+different pre-boundary receipt or event history in its public memory.
+Such an observer can already distinguish the prefixes. The baseline
+explicitly disposes of unused recovery authority. Comparing
+instead to a state still owning $k:\mathsf{Fresh}$ would change the
+future interface and invalidate the claimed equality. The request
+counter $h$ is unchanged because neither prefix uses a service request;
+rollback does not replenish previously spent request credits.
+
+At the residual service kind define
+\begin{equation}\label{eq:residual-relation}
+ (A,x,d_0)\ \mathcal R_{r,A_h}\ (A,x',d_1)
+       \quad\Longleftrightarrow\quad x=x'.
+\end{equation}
+For the functional regime, take only the resource-indexed interfaces
+reachable from the stipulated residual ownership without $k$ or an
+$\mathsf{Audit1}$ token; that family is closed under the declared
+transitions and disjoint restrictions. All public configurations,
+actual ownership, other private entries and remaining counters must agree.
+Equivalently extend this relation to the full global signature with empty
+relation fibres on $k:\mathsf{Fresh}$, $k:\mathsf{Armed}$,
+$a:\mathsf{Audit1}$ and service phases $\mathsf{Stage},B$; retain the
+usual equality relation on an inert $a:\mathsf{Audit0}$ if present.
+Thus unavailable methods have no related input, rather than an omitted
+local obligation. This relation forgets precisely the
+protected audit bit, not the functional payload. The states
+in~\eqref{eq:residual-states} are related for every admitted $x,d,h$.
+
+The prefixes are not equivalent observations. Staging and rollback emit
+two public nodes and cost $2$; cancel emits a different single node and
+costs $1$. The residual theorem begins \emph{after} this boundary and
+does not erase that public history. With paired functional continuation
+cost $c$, the total costs are exactly $2+c$ and $1+c$. This is overhead
+one relative to the cancel baseline, not a full public-tree refinement,
+a cost refund, or equality with doing nothing.
+
+\subsection{All functional continuations preserve the residual relation}
+Let $\mathcal C_{\mathrm{fun}}(h)$ be all finite O4 closing contexts
+starting at the residual public interface $r:A_h$ without owned
+$a:\mathsf{Audit1}$ and with no operation able to acquire such authority.
+They retain all other well-typed operations of the fixed signature.
+Since $k$ is absent and cannot be created, staging, commit, rollback and
+cancel cannot be invoked at this boundary. Since the audit authority is
+absent, audit is not typable. This is a capability-defined class, not a
+post hoc deletion of a public test from an otherwise unrestricted
+interface. A different initial interface with audit authority is
+explicitly analyzed below.
+
+Contexts can read, write and test health repeatedly within the actual
+counter, store answers and code aliases, adapt their next operation or
+stop decision, sample client randomness, run declared unrelated work in
+disjoint batches, and invoke every permitted ranked template. Observations
+retain the full public causal tree, public final leaf data and owned token
+kinds, and exact continuation cost. No private management-event erasure
+is needed for this example; all displayed method events are public.
+
+\begin{theorem}[Residual continuation equivalence]\label{thm:recovery}
+For every $C\in\mathcal C_{\mathrm{fun}}(h)$ and every joint initial
+coupling supported on the expanded relation $\mathcal R_E$, the two
+observed continuation laws are equal. In particular,
+\begin{equation}\label{eq:recovery-equivalence}
+ \Obs(C[s_{\mathrm{base}}])=\Obs(C[s_{\mathrm{rec}}]).
+\end{equation}
+The statement is conditional on successful authorized rollback in
+$D_{\mathrm{rec}}$ and on the stated residual capabilities.
+\end{theorem}
+\begin{proof}
+We verify every available local method at arbitrary related stores.
+Read returns the same $x$, preserves each side's possibly different
+$d$, and decrements the same counter. Its response-labelled event and
+cost agree. Write receives the same public Boolean $b$, installs that
+same logical value, preserves both audit bits and decrements the same
+counter; its event and cost agree. Health returns the same readiness
+value, preserves the stores and decrements the same counter, again with
+equal event and cost. Thus each Dirac pair is an exact-cost local
+matrix with $\mathcal R$-related leaves. Other available primitive tables
+satisfy L3 by their declared independence from $r$'s audit entry and their
+explicit carried-token behavior. Audit has no well-typed input in this
+class; neither does an operation needing the absent $k$.
+
+The pure and ranked-code clauses of L4 are unchanged. The given initial
+joint coupling is L1, including correlations with other tokens or public
+data. The exact-cost form of Theorem~\ref{thm:replacement} therefore
+applies to every such context. Its native paired-history realization has
+both projection legs cost-exact. Final private-store projection identifies
+the related leaves and yields~\eqref{eq:recovery-equivalence}.
+\end{proof}
+This class has meaningful tests. If $h\ge1$, read distinguishes residual
+payload $0$ from payload $1$ with probability one. If $h\ge2$,
+write$(1)$ followed by read checks a persistent update. A read followed
+by a data-dependent write tests adaptive interaction and resource change.
+The theorem preserves these public results and exact costs; it does not
+obtain equivalence by removing every state-sensitive continuation.
+
+\subsection{The authorized audit distinguisher}
+If the residual interface also owns $a:\mathsf{Audit1}$, take initial
+$d=0$ and the actual typed continuation
+\[
+ \mathsf{audit}(r,a);\quad\Ret(\text{returned Boolean})
+ \quad [r:A_h,\ a:\mathsf{Audit0}\text{ retained}].
+\]
+It returns $0$ from $s_{\mathrm{base}}$ and $1$ from
+$s_{\mathrm{rec}}$, each with probability one, the same cost and the same
+resource transitions. Thus the broader residual equivalence is false.
+The local audit matrix cannot satisfy equality of public replies; the
+failure is identified in the premise rather than hidden in the proof.
+When the initial audit bit is already $1$, these particular residual
+stores coincide, although their prefixes still differ in events and cost.
+
+Equivalently, the projection $(A,x,d)\mapsto(A,x)$ preserves the
+functional method tables but is not a homomorphism for the full
+audit-capable signature: the public audit reply cannot be computed from
+that quotient. This is a concrete boundary on early state erasure and
+on which continuations a residual relation supports.
+
+\subsection{Why evidence and model revision are not recovery}
+The result $\mathsf{staged}$ is an ordinary receipt. A proof that
+rollback is possible, a model simulation, or a posterior assigning high
+probability to recovery is likewise not an owned $k:\mathsf{Armed}$.
+Only the actual rollback table with its typed authority premise provides
+the state transition. This follows the frozen separation of evidence,
+code and capability; there is no inverse-execution operation generated
+by a theorem or a prediction.
+
+Suppose an earlier model falsely said rollback removed every durable
+effect, and later observation establishes that $d$ remains set. Correcting
+the model is a revision of the transition table. Audit-authorized clients
+distinguish the old and corrected residual laws, so the correction is
+not automatically exact-law refinement in either direction. The restricted
+functional equivalence above has its own proof; it is not a consequence
+of naming the correction learning. Recovery is an application property,
+not a definition imposed on every semantic world model.
+
+\section{Existing theory and the exact increment}\label{sec:prior}
+Probabilistic couplings as relational proof witnesses are established:
+Barthe and collaborators connect them to probabilistic relational Hoare
+logic~\cite{Coupling}. Contextual reasoning for higher-order probability
+and state is also much broader than this finite fragment. Bizjak and
+Birkedal construct step-indexed logical relations for a language with
+polymorphism and recursive types, and extend their treatment to dynamic
+first-order references~\cite{Bizjak}. Relators and compositional
+applicative reasoning for monadic effects are established categorical
+techniques~\cite{Relators}; using a relational lifting is not itself a
+novel contribution.
+
+Approxis supplies higher-order approximate relational separation logic
+with state and exact contextual-equivalence applications, mechanized in
+Coq/Iris~\cite{Approxis}. The stronger current baseline Foxtrot proves
+contextual refinement for higher-order concurrent probabilistic programs
+with higher-order local state; its results are mechanized in Rocq/Iris
+\cite{Foxtrot}. O5 has no claim to supersede that expressiveness or
+verification strength. In particular, finite ranked callbacks are not
+a substitute for Foxtrot's concurrency or higher-order store results.
+
+Cost-sensitive relational reasoning is likewise established in RelCost
+\cite{RelCost}; Tachis provides mechanized higher-order probabilistic
+reasoning about expected and amortized costs~\cite{Tachis}. The present
+supportwise cost order inside a joint coupling is a different specified
+guarantee, not an assertion that expected-cost theory is inadequate or
+that generic cost refinement is new.
+
+The increment here is a self-contained specialization to the contracted
+language and its retained carriers: explicit capability-dependent local
+matrices, full open constructor closure, the paired-history realization
+with one common reference cost and actual O1 endpoint equations, its
+O3 representation comparison, and a sharp residual recovery example.
+The result claims no publication novelty for coupling, simulation,
+logical relations, contextual equivalence, relational lifting or
+compensation. Primary-source pages for the cited external baselines were
+checked on 1 November 2026; this is not an exhaustive literature survey.
+
+\section{Acceptance ledger and remaining boundaries}\label{sec:acceptance}
+\begin{longtable}{@{}p{0.29\textwidth}p{0.66\textwidth}@{}}
+\toprule
+O5 obligation&Established result\\
+\midrule
+\endhead
+Context class before replacement&Section~\ref{sec:regime}; all finite
+well-typed O4 contexts at fixed interface, signature and ranked library,
+including stored aliases, repeated private randomness, adaptive resources
+and disjoint batches.\\
+Exact observation and order&Equations~\eqref{eq:observation} and
+\eqref{eq:obsorder}; public causal trees and capability leaves match,
+external costs are ordered, private state is projected only at closing.\\
+Noncircular local premise&L1--L4 and~\eqref{eq:local-matrix}; finite
+method/input matrices and state-relation checks, not a hypothesis about
+all clients.\\
+Quantified open theorem&Theorem~\ref{thm:replacement}; full structural
+and rank induction, actual dependent leaves and arbitrary joint input
+laws. No finite client enumeration replaces it.\\
+Categorical connection&Lemma~\ref{lem:raw-lift} and
+Section~\ref{sec:cells}; native endpoint equations over relation carriers,
+reference-exact and candidate-lowering costs, actual O1 occurrence
+composition, scoped law-level vertical gluing.\\
+Representation comparison&Theorem~\ref{thm:representation}; explicit
+finite pushforward into the O3 operational/law/QBS execution models,
+without premature private-state erasure.\\
+Nontrivial positive pair&Corollary~\ref{cor:persistent}; distinct private
+carriers and raw initialization histories, persistent reused randomness,
+strictly lower per-call cost.\\
+Matching coarse endpoints fail&Section~\ref{sec:examples}; shared and
+fresh services have identical one-call marginals and resource endpoints
+but different two-call equality probabilities.\\
+Recovery domain and authority&Equation~\eqref{eq:recovery-domain}; an
+actual staged state and owned armed token, no receipt-to-reset rule.\\
+Residual guarantee and boundary&Theorem~\ref{thm:recovery}; all functional
+continuations after baseline authority disposal; authorized audit
+distinguishes; prefix events and exact overhead remain.\\
+Zero-probability scope&Section~\ref{sec:zeros}; law guarantees do not
+imply all-path budgets; candidate projection coverage is the explicit
+additional sufficient premise.\\
+\bottomrule
+\end{longtable}
+
+The private-state relation is a sufficient tokenwise invariant, not every
+possible relational invariant. Costs cannot secretly influence public
+control. Public code remains inspectable, and every imported body must
+obey the actual declared interface and finite call discipline. Continuous
+state, arbitrary QBS measurable coupling selection, dynamic name
+allocation, unrestricted recursion, unknown foreign callback semantics,
+physical interleaving, fairness, full abstraction and a general new
+cell-coherence theorem remain outside scope. None is used implicitly to
+obtain the finite result.
+
+\section{Source checks and verification status}\label{sec:checks}
+The accompanying archive contains this uncompiled TeX source,
+standard-library exact finite regression programs, their recorded output,
+a source-only checker, a reproducible explicit-inventory archive builder,
+a README, a manifest and checksums. The checks exercise local simulation
+marginals and support, the raw conditional lift and native cost equations,
+conditional products with correlated inputs, the sharing distinguisher,
+zero-weight scope and the recovery transition/invariance tables.
+They supplement the proofs; they do not enumerate every admitted context
+or decide the arbitrary-real-weight theorem.
+
+Source checks cover balanced braces and environments, internal references,
+bibliography keys, principal statement labels, and unresolved drafting
+markers. Archive checks verify inventory and file hashes. No TeX engine
+is invoked. There is therefore no compiled PDF, rendered-layout approval,
+proof-assistant certification, physical service execution or externally
+tested recovery claim. The uncompiled source is the requested artifact.
+
+\begin{thebibliography}{99}
+\bibitem{Contract}
+\emph{Expanded Research Contract Version 0.1}. Project source,
+1 November 2026, O5, lines 529--570.
+\texttt{Expanded\_Research\_Contract\_v0\_1.tex}.
+
+\bibitem{O1}
+\emph{General Independent Interaction Criterion}. Project proof dossier,
+1 November 2026. Augmented families, native endpoint cells and the mixed
+occurrence construction.
+\texttt{General\_Independent\_Interaction\_Criterion.tex}.
+
+\bibitem{O3}
+\emph{Plural Semantics for Result Dependent Protocols}. Frozen project
+proof dossier, 1 November 2026. CF-0.1 and its retained, operational,
+finite-law and QBS comparisons.
+\texttt{Plural\_Semantics\_for\_Result\_Dependent\_Protocols.tex}.
+
+\bibitem{O4}
+\emph{Typed Protocols and Bounded Higher Order Interaction}. Frozen
+project proof dossier, 1 November 2026. Finite dependent typing,
+substitution, private stores and ranked code.
+\texttt{Typed\_Protocols\_and\_Bounded\_Higher\_Order\_Interaction.tex}.
+
+\bibitem{Coupling}
+G. Barthe, T. Espitau, B. Gr\'{e}goire, J. Hsu, L. Stefanesco and
+P.-Y. Strub. \emph{Relational reasoning via probabilistic coupling}.
+arXiv:1509.03476v2, 2015. \url{https://arxiv.org/abs/1509.03476}.
+
+\bibitem{Bizjak}
+A. Bizjak and L. Birkedal. \emph{Step-Indexed Logical Relations for
+Probability}. FoSSaCS 2015; extended version arXiv:1501.02623v2.
+\url{https://arxiv.org/abs/1501.02623}.
+
+\bibitem{Relators}
+U. Dal Lago, F. Gavazzo and P. B. Levy. \emph{Effectful Applicative
+Bisimilarity: Monads, Relators, and Howe's Method}. LICS 2017;
+arXiv:1704.04647. \url{https://arxiv.org/abs/1704.04647}.
+
+\bibitem{Approxis}
+P. G. Haselwarter, K. H. Li, A. Aguirre, S. O. Gregersen, J. Tassarotti
+and L. Birkedal. \emph{Approximate Relational Reasoning for Higher-Order
+Probabilistic Programs}. PACMPL 9, POPL, article 41, January 2025.
+DOI: 10.1145/3704877. \url{https://arxiv.org/abs/2407.14107}.
+
+\bibitem{Foxtrot}
+K. H. Li, A. Aguirre, J. Tassarotti and L. Birkedal.
+\emph{Contextual Refinement of Higher-Order Concurrent Probabilistic
+Programs}. PACMPL 10, PLDI, article 187, June 2026.
+DOI: 10.1145/3808265.
+\url{https://iris-project.org/pdfs/2026-pldi-foxtrot.pdf}.
+
+\bibitem{RelCost}
+E. \c{C}i\c{c}ek, G. Barthe, M. Gaboardi, D. Garg and J. Hoffmann.
+\emph{Relational Cost Analysis}. POPL 2017.
+\url{https://people.mpi-sws.org/~dg/papers/popl17.pdf}.
+
+\bibitem{Tachis}
+P. G. Haselwarter, K. H. Li, M. de Medeiros, S. O. Gregersen,
+A. Aguirre, J. Tassarotti and L. Birkedal.
+\emph{Tachis: Higher-Order Separation Logic with Credits for Expected
+Costs}. PACMPL 8, OOPSLA2, article 313, October 2024.
+DOI: 10.1145/3689753.
+\url{https://iris-project.org/pdfs/2024-oopsla-tachis.pdf}.
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,222 @@
+Finite obstruction and a dependent history construction
+Proofs and finite counterexamples
+Checked 1 November 2026
+
+Main findings
+
+1. The binary-writer impossibility argument in the supplied transcript is valid for its exact arrow representation. It is not an impossibility result for stochastic contextads, dependent contexts, or deterministic context operations generally.
+2. A concrete dependent probability-family contextad already satisfies the ordinary contextad definition. It gives associative history-retaining experiments and a law-forgetting functor onto finite stochastic maps. No new generalization is needed for that construction.
+3. The proposed mixture-based reindexing on the extensional stochastic base is only lax in composition. Its forget-middle map is generally not invertible. It also fails preservation of the unit CONTEXT, a separate required axiom in Section 7. Merely replacing one associator by a lax comparison is not yet a coherent generalized contextad.
+4. What remains is to specify and prove the interaction of a given dependent context system with stochastic execution and an appropriate observation quotient. The finite construction below does not supply a probability monad on arbitrary category-valued fibres, choose resources from an empty fibre, or solve discovery of unknown action meanings.
+
+Sources and scope
+
+The attachment was read directly at the motivating transcript, lines 870–1109. Its mathematical claims were treated as unverified hypotheses.
+The primary paper was inspected in the available full text, not inferred from the transcript:
+Matteo Capucci and David Jaz Myers, Contextads as Wreaths; Kleisli, Para, and Span Constructions as Wreath Products, arXiv:2410.21889v1.
+https://arxiv.org/abs/2410.21889
+https://arxiv.org/pdf/2410.21889
+Key checks are Definition 3.26 pp.29–30, Definition 3.34 and Theorem 3.35 p.31, Definition 7.9 pp.70–71. Example 6.7 p.65 already uses finite probability spaces and passage from a random variable to its law; Section 8 p.76 explicitly discusses reifying probability by sample spaces and the prospective interaction of contextads with contentads. Therefore the experiment construction below is a baseline, not a novelty claim.
+Primary references and provenance are listed in references/primary_sources.json.
+
+A The finite writer obstruction
+
+Let W={0,1} under XOR. Over finite A take the discrete fibre of functions w:A->W, reindex by precomposition, let A odot w=A, unit be constant zero, combination be pointwise XOR, and counit/coassociator be identities. These are exactly the writer data in Definition 3.34 restricted to finite sets. All coherence reduces to the monoid equations. Pure arrows compose as
+
+ (v,g) after (w,f) = (a |-> w(a) XOR v(f(a)), g after f).
+
+Assume a category-like composition on the unchanged stochastic arrows
+
+ H(A,B) = {(w,k): w:A->W and k:A->Dist(B)},
+
+where Dist is TOTAL normalized finite probability. Require the two specified maps to preserve composition:
+
+ pure writer (w,f) |-> (w,delta_f),
+ ordinary stochastic k |-> (0,k).
+
+They agree on grade-zero deterministic arrows. Equality of H arrows is equality of the actual grade and the extensional output law. The contradiction uses associativity, not a separately assumed unit law.
+
+Let r:1->2 be a fair bit at grade zero; s:2->2 be deterministic bit flip at grade zero; g:2->1 write its input b; and u:1->1 write 1. Stochastic preservation forces s r=r. Pure writer preservation forces g s=u g. If h=g r, associativity gives
+
+ h = g(s r) = (g s)r = (u g)r = u(g r) = u h.
+
+Every H(1,1) arrow is in the pure-writer image, since Dist(1)=1. Its grade is one fixed bit w. Pure preservation then makes u h have grade 1 XOR w, never w. Contradiction.
+
+The discreteness of the grade fibre also rules out repairing this particular contradiction by coherent grade isomorphisms. One could evade it by changing representation or equality; that is precisely outside the theorem. In subprobability Dist_sub(1) is not terminal, so this proof as written does not apply. It also does not apply to intensional noise samplers where flip-after-sampling is not identified with the original sampler, even if the laws agree. It is unnecessary to invoke QBS, disintegration or any higher-order pathology.
+
+B The standard joint-law writer repair
+
+For the same monoid the arrows A->Dist(W x B) are the ordinary writer transformer over finite probability. Compose by sampling (w,b), then (v,c), then returning (w XOR v,c). Deterministic writer arrows become point masses at (w(a),f(a)); grade-zero kernels are pushed into the zero-grade component. The monad bind laws and XOR associativity prove associativity and units. In the example h becomes the fair mixture on (0,*) and (1,*), which is invariant under toggling. The operation XOR itself remains deterministic.
+
+This solves the finite writer instance, not an arbitrary contextad. Nothing in the data of a category-valued fibre supplies a space of random context objects or a probability distribution on it.
+
+C A genuinely dependent probability-family contextad
+
+Work over FinSet. Let Prob+ be finite probability spaces with every point assigned strictly positive mass, and deterministic measure-preserving maps. Full support avoids irrelevant zero-mass points; each normalized space is nonempty. Define the fibre over A to be Prob+^A. An object P is a family (P_a,p_a). An arrow over u:A->B consists of maps phi_a:P_a->Q_(u(a)) satisfying
+
+ sum_{x:phi_a(x)=y} p_a(x) = q_(u(a))(y).
+
+Ordinary reindexing is precomposition with u. This is a split indexed category / split fibration. Define
+
+ A odot P = {(a,x): a in A, x in P_a}.
+
+The action on a total-category arrow is (a,x)|->(u(a),phi_a(x)). The unit I_A is the singleton probability space at each a. For Q over A odot P define
+
+ (P tensor Q)_a = {(x,y): x in P_a, y in Q_(a,x)},
+ weight_a(x,y) = p_a(x) q_(a,x)(y).
+
+The weights sum to one. The counit removes the singleton coordinate; the coassociator changes (a,(x,y)) into ((a,x),y). Left/right unitors and associator are the evident tuple bijections. Their weights agree because products associate. The unit, pentagon, and action compatibility diagrams commute pointwise as maps of tuples.
+
+The remaining nontrivial functoriality check also holds. If phi:P->u*P' and psi:Q->(u odot phi)*Q' preserve their respective measures, the combined map is
+
+ (x,y) |-> (phi_a(x),psi_(a,x)(y)).
+
+For a target pair (x',y'), its pushed mass is
+
+ sum_{x:phi(x)=x'} p_a(x)
+       sum_{y:psi_(a,x)(y)=y'} q_(a,x)(y)
+ = sum_{x:phi(x)=x'} p_a(x) q'_(u(a),x')(y')
+ = p'_(u(a))(x') q'_(u(a),x')(y').
+
+Thus tensor is a functor. It preserves cartesian maps because fibrewise bijections induce bijections on dependent pairs. Ordinary base-change commutes with dependent pair formation, supplying the cartesian unit/tensor comparisons. All of Definition 3.26 is therefore met. This is a strong dependent contextad, not a candidate axiom list.
+
+The dependence is genuine: P_a may have different support sizes and different distributions at different inputs. It is not a constant product action by one fixed probability space.
+
+D History experiments and the law quotient
+
+A contextful arrow (P,F):A=>B is a probability family P over A together with a deterministic output function F:A odot P->B. Interpret it by its finite kernel
+
+ E(P,F)(a,b) = sum_{x:F(a,x)=b} p_a(x).
+
+For (Q,G):B=>C, contextad composition retains a pair (x,y), where y belongs to Q_(F(a,x)), with weight p_a(x)q_(F(a,x))(y). Its output is G(F(a,x),y). Thus the second context really is selected after the first sample. The finite sum formula gives exactly
+
+ E((Q,G) after (P,F))(a,c)
+ = sum_b E(P,F)(a,b) E(Q,G)(b,c).
+
+So E preserves composition and identities, and the sample-history construction is associative up to the contextad's canonical measure-preserving tuple bijections. There is no use of disintegration.
+
+Every finite kernel k:A->Dist(B) has a representative P_a=support(k(a,-)), p_a=k(a,-), F(a,b)=b. But choosing this representative is NOT a history-preserving functor from FinStoch back to experiments: composing two such representatives retains intermediate outcomes, while the representative of the composite has already summed them out. The intervening map is generally noninvertible.
+
+A precise quotient statement is available. Every experiment (P,F) has an output-commuting measure-preserving map to the canonical support experiment of E(P,F), given on each fibre by x|->F(a,x). Conversely every output-commuting measure-preserving map preserves E. Hence two experiments have the same kernel exactly when they are connected by a zigzag of these maps. Quotienting the horizontal hom-categories by their connected components yields FinStoch. It is a law quotient, not faithful retention of execution history.
+
+This explains why no contradiction with Part A occurs: the base probabilistic behavior is being represented by explicit sample contexts, and ordinary kernels are recovered only after forgetting presentation information. If later recovery needs a sampled variable, it must remain in the output/interface or in retained history; one cannot both discard it and continue to access it.
+
+E The tested mixture transport and its exact failure
+
+For a finite kernel f:A->Dist(B) and a probability family Q over B, define
+
+ (F_f Q)_a = {(b,r): b in support f(a,-), r in Q_b},
+ mass_a(b,r)=f(a,b)q_b(r).
+
+For a fibre map Q->Q', act by (b,r)|->(b,phi_b(r)); this is measure preserving. For g:B->Dist(C), the iterated fibre F_f(F_g R) contains (b,c,r), weighted f(a,b)g(b,c)r_c(r). The direct fibre F_(g after f)R contains (c,r), weighted (sum_b f(a,b)g(b,c))r_c(r). The projection
+
+ pi:(b,c,r)|->(c,r)
+
+is a natural measure-preserving map. It is onto when all supports are used. The comparison is normally not injective. Both routes of the lax associativity diagram forget exactly the same intermediate coordinates; the unit comparisons are canonical bijections because deterministic identity kernels have singleton support. Thus this is a lax contravariant Cat-valued assignment on FinStoch with invertible unit comparisons, not a pseudofunctor. Using the canonical singleton identifications, it can be presented as normal (strictly unital).
+
+Concrete dependent example: A=1, B={0,1}, C={s,t}; f is fair; g(0)=delta_s and g(1)=(delta_s+delta_t)/2. Take R_s={a} with mass1, R_t={b,c} with masses1/3 and2/3. The retained joint history is
+
+ (0,s,a) 1/2
+ (1,s,a) 1/4
+ (1,t,b) 1/12
+ (1,t,c) 1/6.
+
+The direct marginal is
+
+ (s,a) 3/4
+ (t,b) 1/12
+ (t,c) 1/6.
+
+It has three atoms instead of four. No isomorphism of finite probability spaces can give the Section 7 pseudo-compositor here. Even simpler, a fair bit followed by a constant map and a singleton R gives two atoms versus one.
+
+There is a second independent mismatch with Section 7. Its unit-context comparison (7.1.6) requires I_A isomorphic to f dot I_B. Under F_f, a family of singletons becomes the probability space support f(a,-), so a fair bit produces two atoms rather than one. The unique measure-preserving discard map goes F_f I_B->I_A. There is no deterministic measure-preserving map in the reverse direction from a unit singleton into a non-Dirac probability space. Therefore simply declaring the old invertible comparison to be lax without tracking its direction is insufficient.
+
+Definition 7.9 equations (7.1.4), (7.1.6), and (7.1.8) require invertible transport composition, unit-context, and context-combination comparisons. The tested F has canonical noninvertible composition and discard comparisons, so F is not the specified Section 7 transport on this same extensional base. A different contextad, different base retaining histories, different fibres, or observation quotient could still work. This finite failure does NOT prove all Section 7 approaches impossible.
+
+F Contexts after forgetting history require descent
+
+The map pi above merges h0=(0,s,a) and h1=(1,s,a). Suppose a later admissible-resource family has one element at h0 and two elements at h1. No family over the marginal point (s,a) pulls back, even up to fibrewise bijection, to that family. The cardinalities disagree inside one pi-fibre. Likewise a deterministic continuation which distinguishes b cannot factor through pi.
+
+This is an elementary finite descent obstruction. Marginalization is sound only relative to a continuation interface which forgets no information needed by the selected contexts, policies or recovery witnesses. It is not necessary to preserve every raw event forever: a proven sufficient interface is enough. Ordinary associativity of finite kernel composition is not in doubt.
+
+G Policies, persistence and missing resources
+
+A deterministic prechosen section s:B->sum_b R_b selects one resource s(b) for each b. It can express adaptive branch selection, but only deterministic resource choice given b. It requires every relevant R_b to be nonempty.
+
+A random persistent state-based policy samples a whole such section once, retaining its latent draw for reuse. A fresh kernel q_b samples afresh on each visit. They can agree for one visit and disagree on repetitions. If R_t={b,c} with q_t=(1/3,2/3), a persistent once-sampled choice repeats the same result with probability1. Two fresh visits disagree with probability4/9.
+
+This is NOT an impossibility of pre-sampling randomness. For a finite time horizon, one can pre-sample independent seeds indexed by full decision histories/occurrences and store them; that larger persistent strategy can reproduce fresh conditional draws. The false identification is between a single once-sampled state-based choice reused on revisits and independent new draws.
+
+If a resource fibre R_b is empty and b has positive probability, there is no normalized q_b. Options are: restrict to a declared successful domain; explicitly abort with a failure record; or use subprobabilities and interpret missing mass. For example probability3/4 of a usable singleton and1/4 of an empty fibre gives total successful mass3/4, not a normalized law. An explicit tagged abort branch conserves total mass and records why the resource was unavailable. For support-zero branches, local mixture can ignore the empty fibre, whereas a global section over all branches still fails; this is a further reason not to equate policies and realized contexts uncritically.
+
+The probability-family construction requires q_b as DATA. It does not choose a distribution on an arbitrary raw resource family, determine physical availability, grant permission, or construct a resource. Unweighted resources, persistent physical modes, semantic uncertainty and fresh probabilistic noise remain distinct roles.
+
+H What has and has not been established
+
+Established: the representation-specific finite writer obstruction; the writer joint-law repair; an ordinary dependent probability-family contextad with exact law quotient; the lax nature and noninvertibility of the tested mixture transport; failure of its Section 7 unit-context comparison; an elementary failure of descending arbitrary later resource families along history forgetting; the stated finite persistent/fresh/abort checks.
+
+Not established: a universal mixed contextad/contentad distributive law; a lift of arbitrary category-valued context fibres to stochastic bases; a generalized lax contextad theorem; a complete iterated-contextad construction for arbitrary unweighted resources; a general semantic-discovery or partial-undo calculus; a novelty claim.
+
+One mathematical target suggested by this finite application branch is a representation/interaction theorem for a declared class of dependent contexts and chosen effect presentations, proving pure preservation, stochastic preservation at the declared observation quotient, post-sampling contextualization, sequential associativity, unit-context and context-combination compatibility, and sound descent of the retained recovery interface. If noninvertible comparisons are allowed, their orientations and all coherences must be supplied and checked rather than inferred from the word lax. Recovery contracts and semantic-refinement validity require additional separate laws.
+
+Executable check
+tests/verify_finite_composition.py uses exact rational arithmetic and tests all numerical examples, the three-step forget-middle coherence, writer symmetry, policy-repeat difference, and abort mass. It passed; expected stdout is in tests/expected_composition_output.txt. These numerical checks support but do not replace the symbolic proofs above.
+
+I Sharpened theorem for canonical sampler representatives
+
+Let HistProb be the horizontal bicategory of the probability-family contextad in C. For fixed A,B its objects are experiments (P,F), and its morphisms (P,F)->(P',F') are fibrewise measure-preserving functions phi satisfying F'(a,phi_a(x))=F(a,x). Let FinStoch(A,B) be the discrete category of finite kernels.
+
+The evaluation E_(A,B):HistProb(A,B)->FinStoch(A,B) has a fully faithful right adjoint J_(A,B). For a kernel k, J(k) is its support experiment. Indeed
+
+ Hom_HistProb((P,F),J(k))
+
+is empty unless E(P,F)=k, and in that case contains exactly one arrow, x|->F(a,x). The codomain output map is the identity on its support, which forces this map; measure preservation follows exactly from the definition of output law. Therefore E is a local reflection, EJ=identity, and the unit at an experiment is its canonical outcome-forgetting map. Each law component has J(k) as its terminal object.
+
+Globally E respects horizontal composition, units and associators at the law level. J is only a lax functor/section: its composition comparison is
+
+ m_(g,f): J(g) after J(f) -> J(g after f),
+               (b,c) |-> c.
+
+The source mass is f(a,b)g(b,c), and pushing it along this map is exactly the target mass. Its unit comparison is the canonical bijection between the trivial singleton context and the support of delta_a. For three composable kernels the two coherence composites, after the canonical tuple reassociation, both send (b,c,d) to d. The two unit diagrams remove the same deterministic singleton. The analogous four-arrow pentagon sends every tuple to its final coordinate and commutes. Thus all lax coherence is checked directly.
+
+For deterministic f:A->B, J(delta_f) has a singleton support in each fibre. Its canonical comparison with the ordinary pure FinSet arrow (I_A,f after epsilon_A) is invertible; these comparisons are compatible with deterministic composition. For general kernels m is not invertible, as demonstrated by the fair-bit/constant-map example. Accordingly J is a locally fully faithful lax section, not a pseudofunctor or a strict embedding of the stochastic category into raw histories.
+
+This theorem is about this concrete finite construction, not a claimed universal completion of an arbitrary contextad. It is consistent with the explicit-sample-space viewpoint already present in the primary paper.
+
+J Exact descent statements and their limits
+
+Fix a particular history-forgetting map pi:H->Hbar over the initial input, with the target probability law obtained by pushforward. All supports here are positive, so equality on support is pointwise equality.
+
+For a deterministic history observable rho:H->D, there exists a deterministic rhobar:Hbar->D with rho=rhobar after pi if and only if rho(h)=rho(h') whenever pi(h)=pi(h'). If pi is onto, rhobar is unique. This is the exact deterministic factorization test. It applies to a recovery command, admissibility bit, residual label, or information used by a context selector when these are modeled as ordinary observed functions.
+
+For a family of unweighted finite resource sets R_h, descent up to fibrewise isomorphism means there exist a family Rbar_z and specified bijections R_h ~= Rbar_(pi h), compatible with any attached structure. In finite sets alone such an existential descent is possible exactly when fibre cardinality is constant within each pi-fibre; in labeled/permitted/typed resources, the attached structure must also agree up to its allowed isomorphisms. A chosen resource-selection policy or recovery evaluator must transport compatibly under these bijections. Merely matching the cardinalities does not guarantee those extra compatibilities.
+
+If the recovery operation is a conditional stochastic kernel K_h on a COMMON output space, it factors as Kbar_(pi h) exactly when its conditional law is constant on each pi-fibre. If resource/output types vary, the comparison first needs declared identifications of those types. Averaging nonconstant K_h over the conditional distribution of h given pi(h) can reproduce an averaged output law in this finite setting, but is a DIFFERENT operational claim: it need not preserve pathwise resource availability, correlation with retained state, robust modelwise guarantees or the same recovery witness. It is not a replacement for the factorization condition, and no global disintegration theorem is assumed.
+
+If the goal is only equality of a final marginal success probability, the factorization condition is sufficient but not necessary: accidental cancellations can give the same scalar. Therefore the research contract must say whether it preserves a numerical average, joint observable law, observation-adapted implementability, or a pathwise/modelwise recovery guarantee. The intended recovery interface determines which descent condition is relevant.
+
+The router example in examples/finite_examples.txt supplies a concrete context-sensitive check. The joint relation z=c XOR o supports the selected recovery command. Discarding calibration c or replacing the joint law by independent marginals is not valid descent for that interface. A rich history state or a proven sufficient statistic is already enough for ordinary kernel semantics; the unanswered structural question is how such sufficiency and recovery validity are preserved under allowed context/effect interchange and semantic refinement.
+
+Observation discipline
+The experiment contextad can retain a persistent latent parameter and can also add fresh conditional noise; the two are distinguished by which coordinate is stored and which conditional distribution is sampled. It does not, solely by being a contextad, prevent a controller from reading a hidden coordinate that the modeler included in a semantic state. Observation-adapted policies must be specified through an interface or suitable restricted class of arrows. Likewise no mathematical fibre element automatically constitutes physical possession or authorization.
+
+K A separate fixed global policy recipe also fails
+
+The attachment's complete lines1351–1499 were additionally inspected. Its finite criticism of the specific recipe
+
+ composite_resource(a)=sum_{p in P_a} product_{b in B} Q_b
+
+is correct. For a deterministic first computation, the original dependent composite uses only Q_(f(a,p)); the product over EVERY b can be empty because of an unreachable empty fibre. With B={0,1}, Q_0 a singleton and Q_1 empty, a computation always returning0 has a valid later context, but this global-policy replacement has none. Applied to a deterministic identity, it can similarly violate the left-unit law.
+
+The stated associativity countercheck is also correct for that recipe. Take B=C={0,1}, first P singleton, Q_b singleton, and R_c={0,1}. One grouping gives final deterministic policies on (b,c), a16-element set; the other gives policies only on c, a4-element set. If b,c are independent fair bits, the policy b AND c gives output1 with probability1/4 in the first group. The second grouping's policies give only probabilities0,1/2,1. Thus even the available output laws differ, not only the number of syntactic representatives.
+
+This rejects the stated indiscriminate binary recipe, not prechosen policies in general. Supplying a consistent history interface, indexed random seeds, or a declared memory restriction changes the proposal and must be analyzed on its own. These two counterchecks have been added to the exact finite test script.
+
+Operational interpretation
+A probability sample in the mathematical experiment is a latent execution witness, not automatically an observation available to a controller. Use two explicitly declared maps
+
+ latent execution Omega -> visible receipt or journal H -> external output B.
+
+Both the learner and recovery policy may depend only on their permitted H and authorized resources, not on hidden theta or raw latent samples merely because those occur in Omega. If past receipts remain necessary, the visible journal must retain them or a proven sufficient statistic. A physical action can be deterministic and still consume resources, require permission and cause irreversible effects; pure internal computation is a different notion.
+
+The canonical support experiment J(k) is a semantic representative of a given kernel. It does not learn k from data, implement an opaque physical sampler, or grant access to its hidden choices. Equal output laws alone do not justify replacing a real action by J(k) when receipts, permissions, residuals, timing or latent-state correlations differ. Forward finite sampling requires no disintegration. A Bayes-equivalent reordering of random variables may require a conditional sampler or physical reset which the available operations do not supply. No such capability is assumed here.

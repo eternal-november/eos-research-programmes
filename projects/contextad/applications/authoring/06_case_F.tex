@@ -1,0 +1,79 @@
+\section{Case F Fresh allocation and the reserved pool boundary}\label{sec:caseF}
+
+\begin{theorem}[Initial ownership bounds every O4 identity]\label{thm:F}
+In the exact fixed-token O4 fragment, every owned token identity in an
+intermediate or returned configuration belongs to the initially owned
+inventory. For a multileaf result, the union of its ownership domains is
+a subset of that inventory, and sibling output domains remain disjoint.
+This holds on every raw path, including zero-probability paths and ranked
+procedure invocation.
+\end{theorem}
+\begin{proof}
+Use simultaneous structural induction and well-founded procedure-rank
+induction. Return and pure maps preserve actual identities and kinds;
+ordinary data naming a token does not supply ownership. A declared
+primitive has pairwise-disjoint output bundles that are subsets of its
+input on every raw branch, including zero rows.
+
+For bind, the prefix produces disjoint inventories $I_j\subseteq I$.
+The continuation at its actual leaf receives precisely $I_j$ and by
+induction produces subsets of it. Their union remains within $I$, and
+outputs from different $j$ remain disjoint. A case executes its selected
+branch, not the union of alternative owners. Batch starts from its
+explicit disjoint partition, applies the same argument to each child,
+and includes any reserve as an explicit partition component.
+
+Pure dependent substitution, evidence and pure functions reindex ordinary
+data while preserving the capability-family equation. An open command
+variable is covered after well-typed filling by syntax satisfying the
+same signature and rank rules, not by an arbitrary external fresh-allocator
+oracle. Code captures public data and permitted lower-ranked code, not
+private stores or owned reserves. Invocation receives the actual current
+bundle and its body invokes only lower ranks, so the rank induction
+applies. Copying code or a token name changes none of these facts.
+Every admitted command constructor has now been covered. Raw equations
+or probabilistic quotients do not authorize a new primitive transition;
+all well-typed representatives already satisfy the invariant.
+\end{proof}
+The invariant is about initial \emph{ownership}, not merely membership
+in a globally declared set of names. Private-store coordinates are also
+indexed by the actual owned bundle; no captured hidden pool is allowed.
+
+For input inventory $I=\{q,r_0,r_1\}$, requesting a returned live
+capability $t\notin I$ contradicts Theorem~\ref{thm:F}.
+No amount of ordinary computation, cost budget or name/code copying can
+satisfy it. Generating a new bit-string name as data would still not
+produce its owned token. This is a language/signature limitation, not a
+no-go theorem for contextads, relative pseudopromonads, nominal models or
+allocation in general. A new freshness/world discipline could replace
+the subset premise; none is constructed here.
+
+\subsection{Positive bounded reserve implementation}
+For at most $N$ simultaneously retained successful allocations, begin
+with the coordinator and $N$ reserved identities $r_0,\ldots,r_{N-1}$.
+The declared allocation method picks the least unused reserve and retypes
+it to live, returns its identity as ordinary data together with the
+actual owner, and explicitly retains all unused reserves in the whole
+bundle as in B. Induction on $j\leq N$ gives $j$ distinct live identities
+and $N-j$ reserves. Request $N+1$ returns $\mathsf{Exhausted}$ and changes
+no state or kind. No still-owned identity is silently reused.
+
+For $N=2$, the successive results are $r_0:\mathsf{Live}$,
+$r_1:\mathsf{Live}$, then exhaustion. The actual inventory stays
+$\{q,r_0,r_1\}$ throughout; only kinds change. If the first request
+instead demands $r_2\notin I$, it is already impossible despite two
+available reserves. B's capacity and dependency checks may reject even
+earlier but cannot weaken this identity invariant.
+
+This correctly implements a finite specification asking for at most
+$N$ distinct handles, initially none live, from the declared reserve.
+Its freshness is ``not previously allocated'', not ``outside the initial
+inventory''. It is not equivalent to an unspecified unbounded allocator
+when clients inspect the reserve, insist on outside names, demand more
+successes or otherwise observe predeclaration. The shared
+\texttt{check\_case\_B\_F.py} checks reserve traces for $N=0,\ldots,8$,
+uniqueness, exhaustion and the subset invariant at every transition.
+The all-constructor proof above, not those traces, establishes the
+fragment-wide boundary. F remains one focused case linked to B, not a
+second full allocation family.
+
