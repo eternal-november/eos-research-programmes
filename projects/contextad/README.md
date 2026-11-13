@@ -13,6 +13,7 @@ Start with the [integrated treatment](synthesis/Integrated_Relative_Computation_
 - `protocols/higher-order/`: typed protocols and bounded higher-order interaction.
 - `protocols/refinement-recovery/`: contextual comparison and controlled recovery.
 - `protocols/law-and-possibility/`: information lost by probability-law semantics and its repair.
-- `applications/`: the nine-case portfolio and its explicit boundaries.
+- `applications/`: the nine-case portfolio and its explicit boundaries, plus a [catalogue of potential applications](applications/potential-applications.md) distinguishing demonstrations, integration work, and research extensions.
 
 The manuscripts contain written proofs at their stated scope. Python checks are finite diagnostics or source checks, not proof-assistant certification. Run checks with Python 3 in their containing directory. Use a disposable copy because several scripts write diagnostic outputs. TeX source checks may require the local manuscript filename as an argument; these do not compile TeX.
+
