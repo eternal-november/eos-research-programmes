@@ -17,5 +17,13 @@ Start with the [integrated treatment](synthesis/Integrated_Relative_Computation_
 
 A small [stochastic checkpointing example](applications/stochastic-checkpointing/README.md) illustrates retained versus resampled randomness and the importance of correlated observations; it makes no new general theorem claim.
 
+Additional finite worked examples:
+- [Constrained speculative sampling](applications/constrained-speculation/README.md): local legality versus conditioning on successful completion.
+- [Retry capabilities and deduplication](applications/retry-capabilities/README.md): adaptive retries, safe retirement, and the state needed for replayable keys.
+- [Cost refinement and strategic replacement](applications/strategic-refinement/README.md): when cost improvements preserve strategic best responses.
+
+These integrate established finite ideas with the existing framework; they make no new general categorical theorem claim.
+
 The manuscripts contain written proofs at their stated scope. Python checks are finite diagnostics or source checks, not proof-assistant certification. Run checks with Python 3 in their containing directory. Use a disposable copy because several scripts write diagnostic outputs. TeX source checks may require the local manuscript filename as an argument; these do not compile TeX.
+
 

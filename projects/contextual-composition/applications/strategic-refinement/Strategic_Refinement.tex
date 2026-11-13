@@ -1,0 +1,123 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{example}[theorem]{Example}
+\newcommand{\BR}{\operatorname{BR}}
+\title{Contextual Composition: Cost Refinement and Strategic Replacement}
+\author{}
+\date{13 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+A finite investment game shows that a genuine cost-lowering computation cell can change both best responses and equilibria, despite preserving every non-cost execution label. For a fixed strategic interface exposing action profiles, we prove an exact criterion for preservation under all payoff continuations: each player's expected cost saving must be independent of that player's own strategy, conditional on the other strategies. A sharp oscillation bound quantifies approximate preservation. A sequential example explains why checking this condition separately at the execution nodes is insufficient, and a telescoping certificate supplies a positive control. These are elementary finite integration results, not a new theory of open games or a general equilibrium-preserving functor from contextads.
+\end{abstract}
+
+\section{Why this example belongs here}
+The applications catalogue proposes equilibrium-preserving contextual refinement (item 28) and warns that cheaper computation can change equilibrium. The existing application casebook, \emph{Applications and Boundaries of Result-Dependent Interaction}, supplies a probability/cost interpretation of the independent-interaction construction and its native cells. Its observation order preserves the public tree and lowers vector cost; it is not equality of cost distributions. Its contextual theorem fixes an admissible client language, and does not turn every numerical cost improvement into a game morphism.
+
+This note instantiates that warning, then identifies an exact extra certificate in a deliberately narrow strategic setting. It separates three layers: the computation cell, the payoff interpretation, and strategic best response. The game-theoretic facts below are standard elementary payoff reasoning; no novelty claim is made. Hedges' open-game morphisms explicitly preserve best responses, hence equilibria \cite{hedges}; the broader compositional framework is established in \cite{ghani}. We do not construct its full lens/coutility interface or prove a functor into that category here.
+
+\section{An actual native computation cell}
+Let the pure input set be the four action profiles
+\(S=\{O,I\}^2\). Give each input a singleton history with probability one. Its output body is a one-leaf tree labeled by that same profile. This is the terminal-grade causal-tree contentad used in the casebook; no change to the independently checked interaction hypotheses is required.
+
+Use the product probability/cost rig with two cost coordinates, one per player. Reference cost is
+\[
+ c(s)=(2\mathbf1_{s_1=I},2\mathbf1_{s_2=I}),
+ \qquad c'(s)=(0,0).
+\]
+The identity witness map is a native cell from the reference implementation to the cheaper implementation: probability pushforward is the identity, body equality is literal, and \(c'(s)\leq c(s)\) coordinatewise. The body, witnesses, interfaces and action sets have not changed. Cost-lowering is not cost equality.
+
+The strategic payoff layer interprets a cost coordinate as a player's monetary disutility. This is an additional assumption, not an automatic property of the contextad model. Let gross reward be zero for staying out, three for being the sole investor, and one for investing alongside the other player. Net payoff is gross reward minus own cost. The two games are
+\[
+\begin{array}{c|cc}
+ &O&I\\\hline
+ O&(0,0)&(0,1)\\
+ I&(1,0)&(-1,-1)
+\end{array}
+\qquad
+\begin{array}{c|cc}
+ &O&I\\\hline
+ O&(0,0)&(0,3)\\
+ I&(3,0)&(1,1).
+\end{array}
+\]
+The old game has exactly the two asymmetric pure Nash equilibria, and the symmetric mixed equilibrium in which each invests with probability \(1/2\). In the new game investment is strictly dominant for both players, so \((I,I)\) is the unique Nash equilibrium, pure or mixed. For the old mixed equilibrium the investment payoff is \(1-2p\), while staying out pays zero; in the new game it is \(3-2p>0\) for all \(p\in[0,1]\).
+
+Thus even an identity-on-histories computation refinement need not preserve the best-response relation. There is no contradiction with contextual refinement: ordering accounting costs is not equality of the payoff comparisons used by strategic choice. In particular, applying equilibrium selection is not justified merely by an O5 cost-refinement cell.
+
+\section{Exact continuation-uniform criterion}
+Fix finite nonempty action sets \(S_i\) and a common execution mechanism. For each profile \(s\), its law of public outcomes is unchanged by the replacement. Let \(c_i(s),c'_i(s)\) denote finite expected costs and put
+\(d_i(s)=c_i(s)-c'_i(s)\). Cost refinement implies \(d_i\geq0\), but the theorem does not need that sign.
+
+The strategic interface in this section exposes the whole action profile. Consequently a permitted terminal payoff continuation may supply any real table \(g_i:S\to\mathbb R\). Payoffs are
+\[
+ u_i(s)=g_i(s)-c_i(s),\qquad
+ u'_i(s)=g_i(s)-c'_i(s)=u_i(s)+d_i(s).
+\]
+The same statement holds with additional common stochastic outcomes and arbitrary profile-dependent terminal transfers; their expected contributions are absorbed into \(g_i\).
+
+\begin{theorem}[Common-mode savings criterion]\label{thm:common}
+The following are equivalent.
+\begin{enumerate}
+\item For every payoff continuation \(g\), every player, and every pure opponent profile, the old and new best-response sets agree under the identity strategy map.
+\item For every player \(i\) there is a function \(a_i:S_{-i}\to\mathbb R\) such that \(d_i(s)=a_i(s_{-i})\).
+\end{enumerate}
+When these conditions hold, best-response sets against arbitrary mixed opponent strategies agree, and the sets of mixed Nash equilibria agree, for every continuation.
+\end{theorem}
+\begin{proof}
+If (2) holds, a player facing fixed opponents receives the same additive increment for every own action. Pairwise payoff differences are therefore unchanged. Against mixed opponents the expected increment is likewise independent of the player's own mixed action, which proves the final assertion.
+Conversely choose the allowed continuation \(g_i=c_i\). Every old action gives zero. Every action must therefore remain a best response for every fixed opponent profile. The new payoffs are precisely \(d_i\), so they must be constant across own actions. This proves (2).
+\end{proof}
+
+This is an iff about preservation of \emph{all best-response sets under every allowed payoff continuation}, not an iff for retaining one equilibrium of one fixed game. The ability to use the continuation \(g_i=c_i\) is essential to the necessity proof. If action identities are hidden and only a coarse outcome is observable, the available continuation tables can be smaller and necessity requires a separate analysis. Different strategy maps, changed admissibility, nonmonetary costs and risk-sensitive utilities are also outside the theorem.
+
+\section{Quantitative preservation and a sharp bound}
+For a player define the own-strategy oscillation
+\[
+ \Omega_i=\max_{s_{-i}}\left(\max_{a\in S_i}d_i(a,s_{-i})-
+                                      \min_{a\in S_i}d_i(a,s_{-i})\right).
+\]
+\begin{proposition}\label{prop:regret}
+Every mixed \(\varepsilon\)-Nash profile of the old game is a mixed
+\((\varepsilon_i+\Omega_i)_i\)-Nash profile of the new game. The coefficient one in front of \(\Omega_i\) cannot be reduced uniformly.
+\end{proposition}
+\begin{proof}
+For any unilateral deviation the new gain equals the old gain plus the difference in expected savings. Conditional on each pure opponent profile, the latter difference is at most its savings range. Averaging gives at most \(\Omega_i\). Taking the supremum over deviations proves the bound. For sharpness take one player with two old actions both paying zero and savings \((0,\Omega)\), \(\Omega>0\). The first action is an old equilibrium with new regret exactly \(\Omega\). Such savings arise from reference costs \((0,\Omega)\), candidate costs zero, and gross rewards equal to the reference costs.
+\end{proof}
+For a fixed pure equilibrium \(s^*\), an exact test is
+\[
+ u_i(s^*)-u_i(a,s^*_{-i})\ \geq\
+ d_i(a,s^*_{-i})-d_i(s^*)\quad\text{for every }i,a.
+\]
+This is necessary and sufficient for that profile to remain an equilibrium. A strict old margin larger than every possible savings advantage is a useful sufficient robust certificate. The criterion does not assert that no new equilibria appear.
+
+\section{Sequential composition: a local trap and a positive certificate}
+A sequential implementation may lower cost at each node but must be assessed on complete strategic policies. Let \(\sigma\) be a full policy profile in a fixed finite-horizon system, and let the replacement preserve its execution law. Write
+\[
+ D_i(\sigma)=\mathbb E_\sigma\left[\sum_{t=0}^{T-1}\delta_{i,t}(h_t,h_{t+1})\right].
+\]
+Theorem~\ref{thm:common} applies to the finite normal form of complete policies with \(D_i\) in place of \(d_i\), if its separating payoff-continuation hypothesis is supplied. It does not follow from inspecting choices at each execution node in isolation.
+
+For a counterexample, one player chooses \(L\) or \(R\). Each branch then has a forced execution step. Reference cost and gross reward are both one on \(L\), both zero on \(R\). A replacement removes the cost on \(L\). At either forced step there is only one local action, so ``saving is independent of local action'' is vacuous. Yet the old initial choice is tied and the new one strictly prefers \(L\). An earlier action selects which saving opportunity will be visited.
+
+A useful sufficient global certificate is telescoping. If on every coupled execution
+\[
+ \delta_{i,t}(h_t,h_{t+1})=\Phi_{i,t}(h_t)-\Phi_{i,t+1}(h_{t+1}),
+\]
+then total savings equal the initial potential minus the terminal potential. If their expected difference depends only on opponents' policies (for example, both endpoint potentials are fixed), Theorem~\ref{thm:common} applies. This certificate must be compatible with the actual preserved execution law, and nonnegative stage savings must be verified separately for a cost-lowering implementation. It is not a claim that arbitrary cost improvements telescope.
+
+For example, potentials \(3\) at start, \(2\) on \(L\), \(1\) on \(R\), and \(0\) at termination give stage savings \((1,2)\) or \((2,1)\). Every stage saving is nonnegative and each complete branch saves three, so incentives are unchanged despite branch-dependent local savings. This contrasts with the failed local test above.
+
+\section{Status, verification, and next obligation}
+The included dependency-free Python program uses exact integer/rational arithmetic. It checks the investment payoff tables, pure equilibria, mixed indifference, native cost inequalities, common-mode invariance and oscillation bounds over finite test grids, the sharpness example, and the sequential counterexample/control. It reports 1,259 assertions. These tests support the worked instances, not the universally quantified written proofs. No Lean replay or full external literature audit was performed.
+
+The mathematical work here is elementary and should be labeled a bounded integration example. Its value is the explicit separation between native computational refinement and strategic correctness, together with a checkable extra certificate. We have not proved a general O1-to-open-game translation, equilibrium preservation for hidden-action interfaces, subgame perfection for every history, or compositionality under arbitrary feedback. A substantive next target would specify a strategic interface and prove that the relevant native cells preserve best-response relations under the intended sequential composition, rather than assuming that ordered costs imply this.
+
+\begin{thebibliography}{9}
+\bibitem{internal} \emph{Applications and Boundaries of Result-Dependent Interaction}, existing programme casebook, sections on probability--cost rig, native cells and O5 contextual replacement. Repository: \url{https://github.com/eternal-november/eos-research-programmes/tree/main/projects/contextual-composition/applications}.
+\bibitem{hedges} J. Hedges, \emph{Morphisms of open games}, arXiv:1711.07059v2 (2017), \url{https://arxiv.org/abs/1711.07059}.
+\bibitem{ghani} N. Ghani, J. Hedges, V. Winschel and P. Zahn, \emph{Compositional game theory}, arXiv:1603.04641v3 (2018), \url{https://arxiv.org/abs/1603.04641}.
+\end{thebibliography}
+\end{document}

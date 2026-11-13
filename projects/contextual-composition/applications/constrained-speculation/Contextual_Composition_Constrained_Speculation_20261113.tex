@@ -1,0 +1,231 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,hyperref}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newcommand{\Prb}{\mathbb P}
+\title{Contextual Composition: Constrained Speculative Sampling\\\large A finite integration example and a continuation-information boundary}
+\author{}\date{13 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+A speculative sampler can exactly preserve its supplied target law while
+nevertheless implement the wrong interpretation of a constraint. We distinguish
+legal-prefix masking from conditioning on eventual valid completion, give a
+necessary-and-sufficient finite criterion for their agreement, and instantiate
+the accepted/rejected histories as native weighted-witness maps in the existing
+context--content construction. A two-token model has legal output in every run
+but total variation error $1/14$ relative to the intended conditioned law.
+The missing interface datum is continuation success mass, not an additional
+rejection-sampling trick. This is a worked integration of established finite
+probability and speculative sampling, not a new general contextad theorem.
+\end{abstract}
+
+\section{What this example tests}
+The applications catalogue lists speculative decoding as an integration problem:
+combine draft generation, verification and correction with a declared public
+semantics. Merely proving the familiar rejection identity would add little.
+Here the target itself changes with the admissible continuation interface.
+The issue is whether ``legal next token'' contains enough information to
+implement ``sample the original model conditional on eventual success.''
+It generally does not.
+
+All sets are finite, all weights rational, and the horizon $T$ fixed. There are
+no asymptotic speedup claims, floating-point approximations, irreversible tool
+calls, continuous samples, or concurrency semantics. We use the one-token
+acceptance/correction mechanism underlying speculative decoding, not a new
+implementation of its parallel multi-token scheduler.
+
+The existing independent interaction criterion supplies normalized finite
+weighted witnesses, dependent multiplication of weights, and native maps
+$f:X\to Y$ satisfying $\sum_{f(x)=y}w_x=v_y$. Its probability/list instance
+retains zero-weight witnesses and typed ordered output receipts. Its finite
+protocol construction evaluates result-dependent continuations by multiplying
+weights over dependent histories. These are the ingredients used below.
+The plural-semantics results require that observations be named explicitly;
+output-only equality is not automatically trace or cost equality.
+
+\section{A target-faithful sampler with an explicit witness map}
+Fix distributions $p,q$ on a common finite alphabet $A$. Here $p$ is the supplied
+target and $q$ the proposal. Put
+\[
+ a_i=\min(p_i,q_i),\qquad e_i=(q_i-p_i)_+,\qquad
+ d_i=(p_i-q_i)_+,\qquad \rho=\sum_i e_i=\sum_i d_i.
+\]
+There is an accepted witness $(\mathrm{acc},i)$ of weight $a_i$ for each $i$.
+If $\rho>0$, there is a rejected-and-corrected witness $(\mathrm{rej},i,j)$
+of weight $e_i d_j/\rho$. If $\rho=0$, no rejection branch is sampled;
+zero-weight points in the declared acceptance carrier are retained.
+The emitted-token map sends $(\mathrm{acc},i)$ to $i$ and
+$(\mathrm{rej},i,j)$ to $j$.
+
+\begin{lemma}[Weighted native comparison]
+The emitted-token map pushes these witnesses to $p$ and is a native weighted
+map in the finite probability instance.
+\end{lemma}
+\begin{proof}
+At token $j$, the total mass is
+$a_j+\sum_i e_i d_j/\rho=a_j+d_j=p_j$ when $\rho>0$.
+When $\rho=0$, $p=q$ and $a_j=p_j$. Summing also proves normalization.
+\end{proof}
+
+Operationally, first draw $i\sim q$ and accept with probability
+$\min(1,p_i/q_i)$ where $q_i>0$. On rejection draw $j$ from $d/\rho$.
+No division at a zero-probability proposal is needed. This is the standard
+acceptance/correction identity, credited to the speculative-decoding literature
+rather than claimed as a new result \cite{leviathan}.
+
+For each public prefix $h$, repeat this construction with $p_h,q_h$. The
+continuation interface is the prefix $hi$ after emitting $i$; draft $i$ is not
+committed before verification. The witness map preserves this endpoint and the
+single-token content receipt. Its body is the deterministic prefix update.
+Dependent accumulation therefore extends the pointwise map to a map on complete
+histories. Explicitly, induction over $T$ shows that projection has law
+$\prod_{t=0}^{T-1}p_{h_t}(i_{t+1})$.
+This is an actual use of the existing native weighted-map and dependent
+composition rules, not merely equality at one initial distribution.
+If content receipts instead retain drafts, rejection flags, timing or cost,
+this projection does not preserve those labels. One must declare a weaker
+observation; no equality of those stronger observations is claimed.
+
+\section{Legal masking versus conditioning}
+Let $P_h$ be the original model's next-token distribution, defined on every
+prefix of length below $T$. Let $L\subseteq A^T$ be the successful complete
+outputs. Define the backward success mass
+\[
+ u(h)=\Prb_P(H_T\in L\mid H_{|h|}=h),\qquad
+ u(h)=\sum_i P_h(i)u(hi),\quad u(w)=\mathbf1_L(w)\ (|w|=T).
+\]
+This is a definition via future model kernels, even at a prefix with zero
+probability from the chosen initial state. Assume $u(\epsilon)>0$.
+At a prefix with $u(h)>0$, let the admissible alphabet be
+$A_h^+=\{i:u(hi)>0\}$. This already uses the stronger notion of positive-mass
+extendibility, so failure below is not caused by an avoidable dead end.
+Two candidate next-token kernels are
+\[
+ M_h(i)=\frac{P_h(i)\mathbf1_{A_h^+}(i)}{Z(h)},\quad
+ Z(h)=\sum_{j\in A_h^+}P_h(j),\qquad
+ C_h(i)=\frac{P_h(i)u(hi)}{u(h)}.
+\]
+$M$ renormalizes only for local legal continuation; $C$ uses future success
+mass. These are separately declared normalized grades. Conditioning is not
+being smuggled in as a native weight-preserving map from the original $P$ grade.
+In general normalization changes weights, and no such native map exists.
+
+\begin{proposition}[Finite continuation criterion]
+The law generated by $C$ is $P(\cdot\mid L)$. The complete-output law of $M$
+agrees with it if and only if, at every prefix reachable under the conditioned
+law, $u(hi)$ is constant over $i$ with $P_h(i)>0$ and $u(hi)>0$.
+\end{proposition}
+\begin{proof}
+Along a successful word $w$, multiplication of the $C$ kernels telescopes:
+\[
+ \prod_t C_{h_t}(i_{t+1})=
+ \prod_t P_{h_t}(i_{t+1})\frac{u(w)}{u(\epsilon)}
+ =P(w)/u(\epsilon).
+\]
+Unsuccessful words have zero mass. At a reachable prefix, equality of
+$M_h(i)$ and $C_h(i)$ for positive legal $i$ is equivalent to
+$u(hi)=u(h)/Z(h)$, independent of $i$. This proves sufficiency by induction.
+For necessity, equality of complete word laws implies equality of prefix
+marginals and their one-step conditional laws at every positive-mass prefix.
+All paths admitted by $M$ have positive $P$ mass and end in $L$ (an induction
+using $u>0$), so the positive reachable prefix sets agree. Thus the displayed
+pointwise equality is necessary. Zero-probability branches impose no condition.
+\end{proof}
+
+This is elementary finite conditioning, often described as a Doob transform.
+The contribution of this example is its explicit interface interpretation and
+reproducible connection to the sampler, not novelty of that probability result.
+A speculative sampler supplied $M_h$ returns $M$, not $C$; supplied $C_h$ it
+returns $C$. Correct verification cannot repair a misdeclared target.
+
+\section{Exact two-token model}
+Take $A=\{a,b\}$, $T=2$, and $L=\{aa,ba,bb\}$. The original kernels are
+\[
+ P_\epsilon=(1/2,1/2),\qquad P_a=(3/4,1/4),\qquad P_b=(1/4,3/4).
+\]
+Then $u(a)=3/4$, $u(b)=1$, and $u(\epsilon)=7/8$.
+The two legal choices at the root have unequal future success mass.
+\begin{center}
+\begin{tabular}{lrrr}\toprule
+Law & $aa$ & $ba$ & $bb$\\\midrule
+Original law restricted to $L$ (unnormalized)&$3/8$&$1/8$&$3/8$\\
+Global conditioning $C$&$3/7$&$1/7$&$3/7$\\
+Local masking $M$&$1/2$&$1/8$&$3/8$\\\bottomrule
+\end{tabular}
+\end{center}
+Both implementations are always legal. Their total variation distance is
+$1/14$, witnessed for instance by the event that the first token is $a$.
+Use the deliberately imperfect proposal $q_h=(3/4,1/4)$ at each nonterminal
+prefix. Exact accepted/rejected witnesses project to the appropriate row
+whether the supplied target is $M$ or $C$. Thus draft mismatch and target
+misinterpretation are two distinct issues.
+
+Now alter only $P_a$ to $(1/4,3/4)$. The immediate admissible token sets at all
+prefixes are unchanged, as is $P_\epsilon$. Yet the correctly conditioned root
+law is $(1/5,4/5)$ instead of $(3/7,4/7)$. Consequently a root-level rule whose
+only inputs are $P_\epsilon$ and the immediate legality mask cannot compute the
+conditioned root law for both models. This is a precise limited-information
+obstruction, not a statement that full-model access cannot solve conditioning.
+In a finite model, backward dynamic programming does solve it.
+
+\section{What composes, and what must be retained}
+A state exposing only the set of legally enabled next tokens is sufficient to
+check step legality but insufficient for this conditioned-law specification.
+An enriched interface can expose the residual prefix (or an equivalent finite
+state) together with its future kernel and terminal success predicate, from
+which $u$ is computed. The local equation $u(h)=\sum_iP_h(i)u(hi)$ is a
+certificate of consistency between adjacent interfaces.
+
+For any fixed finite horizon and rational kernels, backward evaluation and
+rational arithmetic compute $C$ exactly. Installing the native speculative
+witness maps at these grades gives a pointwise replacement stable under all
+subsequent finite continuations that depend only on emitted tokens and the
+preserved public interface. This follows by multiplying and summing equal
+one-step conditional kernels; it does not require the continuation to be
+independent of previous emitted tokens. A continuation that observes hidden
+proposal history or charges implementation-dependent cost is outside this
+interface and need not be preserved.
+
+This example does not prove general higher-order contextual completeness,
+a new pseudodistributive law, tractable conditioning for arbitrary language
+models, finite-state closure for arbitrary constraints, or any speedup of
+single-token rejection. For large autoregressive models, future success mass
+may be far more expensive than next-token probabilities. The practical
+research problem is to find useful interface certificates or approximations,
+with explicit law-error bounds, rather than assume that a legality type
+already supplies global conditional probabilities.
+
+\section{Checks, scope and relation to earlier work}
+\texttt{check.py} uses only Python's standard library and exact rational
+arithmetic. It checks 225 three-token target/proposal pairs (including zero
+probabilities); 1,573 positive-success binary horizon-two model/language cases;
+the full-law continuation criterion; the two displayed tables; the $1/14$
+distance; two target-specific speculative compositions; and the identical-mask
+counterexample. Enumeration is regression evidence for the implementation,
+not a substitute for the proofs above. Run \texttt{python3 check.py}.
+No Lean replay or external scientific benchmark was run.
+
+The local source comparison found speculative decoding only as a prospective
+catalogue item, rather than an already developed example, in the inspected
+contextual-composition programme sources. This is not an exhaustive novelty
+claim. The existing foundational papers supply weighted native maps,
+dependent composition and explicitly scoped observations. The new artifact is
+a concrete integration example with an information boundary for target
+selection. Its conceptual ingredients are established probability and sampling.
+
+\begin{thebibliography}{9}
+\bibitem{leviathan} Y. Leviathan, M. Kalman, and Y. Matias,
+\emph{Fast Inference from Transformers via Speculative Decoding}, ICML 2023,
+PMLR 202:19274--19286, Section 2.3 and Appendix A.1.
+\url{https://proceedings.mlr.press/v202/leviathan23a.html}.
+\bibitem{O1} \emph{General Independent Interaction Criterion}, programme
+manuscript, 1 November 2026, sections ``Discrete semiring resources'' and
+``Finite probabilistic protocols.''
+\bibitem{O3} \emph{Plural Semantics for Result-Dependent Protocols}, programme
+manuscript, section on named output observations and raw histories.
+\bibitem{cat} \emph{Potential of applications for the generalized contextads
+research programme}, catalogue item 10, now under
+\texttt{projects/contextual-composition/applications/potential-applications.md}.
+\end{thebibliography}
+\end{document}
