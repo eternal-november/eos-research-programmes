@@ -1,0 +1,125 @@
+\subsection{An infeasible strict local minimum in a feasible singleton instance}
+
+The all-inactive stationary point of the unweighted encoding already shows
+that stationarity is not a feasibility certificate.  A positive weighting
+of the same residuals gives a stronger counterexample: a strict positive
+local minimum even when a one-state realization exists.  This example is
+for the weighted encoding, not a claim about the local minimality of the
+unweighted singleton objective.
+
+Let $J,E,S,I$ and the local hidden carrier all be singletons, take budget
+one, and prescribe $A=w=R=1$.  Write the slot coordinates as
+$(d,a,b,\rho,\sigma,\tau,\eta)$.  Define
+\begin{align*}
+ F={}&100\bigl[(d^2-d)^2+(1-d-\eta^2)^2
+ +(a-\rho^2)^2+(d-a-\sigma^2)^2\\
+ &\hspace{34mm} +(b-\tau^2)^2+2(b-d)^2\bigr]
+ +(ad-1)^2+2(ab-1)^2.
+\end{align*}
+The two copies of $b-d$ are the continuation normalization and the
+singleton local-marginal equation.  The three data residuals impose
+initialization, prior, and output, respectively.  Multiplying each
+structural residual by $10$ before squaring leaves the exact zero set
+unchanged; the objective remains a quartic polynomial sum of squares.
+
+At
+\[
+ P_0=(0,0,0,0,0,0,1),\qquad
+ P_1=(1,1,1,1,0,1,0),
+\]
+one has $F(P_0)=3$, $\nabla F(P_0)=0$, and $F(P_1)=0$.
+In fact, $P_0$ is a strict local minimum.  To prove this, set
+$L=a-\rho^2$, $G=d-a-\sigma^2$, and $N=b-d$.
+For $|d|<1/2$,
+\[
+ (d^2-d)^2\geq d^2/4,\qquad
+ a^2\leq 2d^2+2G^2+L^2,\qquad
+ b^2\leq 2d^2+2N^2.
+\]
+For the middle inequality, if $a<0$ then $a^2\leq L^2$;
+if $a\geq0$, the equation $a+\sigma^2=d-G$ gives
+$a\leq |d|+|G|$.  The data contribution satisfies
+\begin{align*}
+ (ad-1)^2+2(ab-1)^2-3
+ &=a^2d^2+2a^2b^2-2ad-4ab\\
+ &\geq a^2d^2+2a^2b^2-d^2-3a^2-2b^2.
+\end{align*}
+Combining the inequalities yields the explicit lower bound
+\begin{align*}
+ F-3\geq{}&14d^2+94G^2+97L^2+96N^2+a^2d^2+2a^2b^2\\
+ &+100\bigl[(1-d-\eta^2)^2+(b-\tau^2)^2+N^2\bigr].
+\end{align*}
+Every term on the right is nonnegative.  Equality forces
+$d=L=G=N=0$, then $a=b=\rho=\sigma=0$, then $\tau=0$
+and $\eta^2=1$.  In the open neighborhood $|d|<1/2$, $\eta>0$,
+equality therefore occurs only at $P_0$.
+Thus a local optimizer can stop at a strict positive minimum although an
+exact feasible solution exists.  The proof uses the quartic terms, not
+just the Hessian: the full Hessian has flat $\rho,\sigma,\tau$
+directions at $P_0$.
+
+\paragraph{Independent exact checks.}
+Symbolic differentiation gives all seven partial derivatives zero at
+$P_0$.  The Hessian principal block in $(d,a,b,\eta)$ is
+\[
+ \begin{pmatrix}
+ 1000&-202&-400&400\\
+ -202&400&-4&0\\
+ -400&-4&600&0\\
+ 400&0&0&800
+ \end{pmatrix}.
+\]
+Its leading principal minors are
+$1000$, $359196$, $150855200$, and $82286720000$.
+These provide regression checks on the specified coefficients, while the
+inequality above establishes strict local minimality.
+
+\subsection{Small residuals and attainment must be distinguished}
+
+The coercive polynomial encoding has an attained global minimum for every
+fixed input instance.  In particular, for that encoding, infimum zero is
+equivalent to existence of an exact zero.  This excludes an escape to
+infinity, but it does not turn a small computed value or a local minimum
+into an exact feasibility decision.
+
+For a quantitative example, take $0<\varepsilon<1$,
+$J=\{*\}$, $H_1=H_2=\{0,1\}$,
+$A_1=A_2=(1/2,1/2)$, and
+$E=\{(0,0),(1,1)\}$.  Let $S=\{0,1\}$ be a shared coarse
+carrier, with both local projections the identity, and set
+\[
+ B_1=\begin{pmatrix}1&0\\0&1\end{pmatrix},\qquad
+ B_2=\begin{pmatrix}1-\varepsilon&\varepsilon\\
+                   \varepsilon&1-\varepsilon\end{pmatrix}.
+\]
+Set $Q$ to the identity and $w=R=(1/2,1/2)$.
+All aggregate observed distributions agree.  Nevertheless, each allowed
+$K_h$ is empty because a shared continuation row would have to equal two
+different prescribed vectors.  No realization exists at any budget.
+
+Select two slots, one for each allowed tag, with root weights $1/2$ and
+continuation rows
+\[
+ b_0=(1-\varepsilon/2,\varepsilon/2),\qquad
+ b_1=(\varepsilon/2,1-\varepsilon/2).
+\]
+All constraints except local row preservation hold exactly.  The total
+squared local-row residual is $2\varepsilon^2$.  Thus infeasible instances
+can have arbitrarily small residual values.  This is a family of changing
+inputs, not a fixed instance with unattained infimum zero.  For each fixed
+positive $\varepsilon$, coercivity and infeasibility imply a positive
+attained global minimum.  There is no universal positive tolerance that
+certifies exact feasibility for every input in this family.
+
+\paragraph{Traps excluded by the chosen parameterization.}
+A strictly positive parameterization would miss valid boundary solutions.
+For example,
+\[
+ \beta(t)=\left(\frac{e^t}{1+e^t},\frac{1}{1+e^t}\right)
+\]
+has squared error $2/(1+e^t)^2$ relative to $(1,0)$, with infimum zero but
+no finite parameter attaining it.  Square variables retain the boundary.
+Separately, omitting the normalization and gate bounds can permit
+polynomial escape: $(ab-1)^2+a^2$ on $a,b\geq0$ has no zero but equals
+$1/n^2$ at $(a,b)=(1/n,n)$.  These are counterexamples to those alternative
+formulations, not to the coercive activity-slot encoding.

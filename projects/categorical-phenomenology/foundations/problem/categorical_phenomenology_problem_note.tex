@@ -1,0 +1,591 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,tabularx,array}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{condition}[theorem]{Success Condition}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{obstruction}[theorem]{Obstruction}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{test}[theorem]{Test}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{hint}[theorem]{Hint}
+
+\newcommand{\Real}{\mathsf{Real}}
+\newcommand{\Obs}{\mathsf{Obs}}
+\newcommand{\Mod}{\mathsf{Mod}}
+\newcommand{\Ctx}{\mathsf{Ctx}}
+\newcommand{\Ev}{\mathsf{Ev}}
+\newcommand{\Sat}{\mathsf{Sat}}
+\newcommand{\Beh}{\mathsf{Beh}}
+\newcommand{\Pred}{\mathsf{Pred}}
+\newcommand{\St}{\mathsf{St}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Vect}{\mathbf{Vect}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\im}{\mathrm{im}}
+\newcommand{\colim}{\operatorname{colim}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\poly}{\operatorname{Pol}_1}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\into}{\hookrightarrow}
+\newcommand{\onto}{\twoheadrightarrow}
+
+\title{Categorical Phenomenology: A Problem Note on Contextual Realization}
+\author{}
+\date{Draft research note}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This note formulates a proposed research program for categorical phenomenology: the construction, comparison, refinement, decomposition, and intervention-sensitive update of structured realizations from observational interaction data. The aim is not to place heterogeneous theories inside one permissive ambient category, and not to identify them by vocabulary. The aim is to isolate a small set of theorem-shaped success conditions whose satisfaction would justify saying that a single mathematical framework generalizes formal concept analysis, automata minimization and active automata learning, system realization, effect/state operational theories, decomposition-sensitive semantics, gradient-based learning, and descent-style local-to-global reconstruction. Several baseline results are proved here because they expose the obligations a stronger theory must preserve. The genuinely open parts are stated as problems with falsifiers and, where useful, low-risk hints.
+\end{abstract}
+
+\tableofcontents
+
+\section{Scope, interface, and declared kernel}
+
+The object of study is not a syntax/model satisfaction doctrine. The primitive interface is observational: phenomena or presentations are subjected to admissible probes and contexts; their responses generate observational identifications; admissible structural operations then determine which completions, decompositions, types, or latent states are warranted; subsequent interventions may force a refinement of the observational state. No appeal to institution theory is required for this interface, and no claim is made that institution-theoretic structure would solve the problems below.
+
+The intended kernel is deliberately small. A proposed general theory may choose different ambient technology---ordinary categories, enriched categories, fibrations, double categories, virtual equipments, $\infty$-categories, or something else---but it should expose, rather than erase, the following data: an evidence object, a presentation or realization class, an observational semantics, a class of admissible contexts, a structural doctrine describing allowed constructions, and a preservation law saying which observational identifications remain valid under composition, decomposition, localization, and intervention.
+
+The main danger is premature quotienting. Distinct presentations may be observationally equivalent for one probe class yet differ under decomposition, learning updates, causal interventions, or a later extension of evidence. Conversely, retaining every presentation forever defeats the purpose of reconstruction. The central problem is therefore to determine the \emph{largest identification justified by the currently declared observational law and all of its admissible consumers}.
+
+\subsection{A minimally committed realization interface}
+
+\begin{definition}[Realization interface]
+A realization interface consists of a category $\Mod$ of presentations, a category $\Obs$ of observational objects, an observational semantics $O:\Mod\to\Obs$, and a designated class $\mathcal A$ of admissible evidence comparisons in $\Obs$. For $d\in\Obs$, define the category of realizations of $d$ by
+\[
+\Real(d)=\{(M,a)\mid M\in\Mod,\ a:d\to O(M)\text{ lies in }\mathcal A\},
+\]
+with morphisms the maps of presentations compatible with the evidence comparisons. Exact realizations are those for which $a$ is invertible. The interface is \emph{contextual} when a category, multicategory, operad, equipment, or comparable doctrine of contexts $\Ctx$ acts on the relevant presentation and observation data and $O$ is compatible with that action.
+\end{definition}
+
+This definition is intentionally permissive. It does not decide whether evidence is Boolean, stochastic, enriched, homotopical, effect-valued, or witness-valued; whether contexts are unary substitutions, tensor contexts, intervention programs, or multicells; or whether type formation is primitive or reconstructed. Those are parameters whose variation is mathematically observable and therefore must not be silently quotiented away.
+
+\begin{definition}[Phenomenological equivalence]
+Given a family $T$ of tests on presentations and a class $C$ of admissible contexts, define $x\equiv_{T,C}y$ when every test after every admissible context gives the same result on $x$ and $y$. In a typed setting only well-typed contexts are quantified over. In a quantitative setting equality is replaced by a declared loss, distance, order, or comparison relation.
+\end{definition}
+
+\section{What would count as success?}
+
+The following conditions are intended as proof obligations rather than slogans. A framework that merely has enough expressive power to encode the examples does not pass them. The framework must construct the relevant objects, prove their universal or extremal properties, distinguish cases that should not collapse, and expose obstructions when a desired commuting law fails.
+
+\begin{condition}[Construction rather than accommodation]
+For each target domain, the framework must derive a canonical or extremal realization from observational data plus an explicitly declared structural doctrine. It is not enough to embed an already constructed automaton, concept lattice, learner, effectus, or decomposition space into a common metacategory.
+\end{condition}
+
+\begin{condition}[Identification/completion separation]
+The framework must distinguish observational identification from structural completion. The same interaction table may support distinct completions under different doctrines, and those completions need not have isomorphic underlying objects.
+\end{condition}
+
+\begin{condition}[Contextual validity]
+An observational quotient is valid only if its equivalence is stable under the declared class of contexts. The framework must construct the maximal valid quotient, or produce a witness that no requested quotient with the declared preservation properties exists.
+\end{condition}
+
+\begin{condition}[Decomposition sensitivity]
+If decomposition witnesses are semantically relevant, observational identification must respect them at their native level, including multiplicity, symmetry, and higher coherence when present. Preservation of composite outcomes alone is insufficient.
+\end{condition}
+
+\begin{condition}[Intervention sensitivity]
+If a presentation participates in learning, control, or causal intervention, equality of passive predictions is insufficient unless the induced interventions descend to the observational quotient. The framework must prove descent or refine the observational state until descent becomes possible.
+\end{condition}
+
+\begin{condition}[Type formation without presupposition]
+The framework must permit interfaces or types to arise by a justified completion, splitting, representability, or exactness construction, and it must detect when observational quotienting changes the available type completion.
+\end{condition}
+
+\begin{condition}[Local-to-global accountability]
+The framework must distinguish local realizability, compatible descent data, effective gluing, and obstruction to global realization. It must not replace an obstruction by a global model merely because a completion or sheafification exists in a larger category.
+\end{condition}
+
+\begin{condition}[Quantitative stability]
+Exact identifiability must be separated from stable reconstructibility. When observations are noisy or approximate, the framework must state a modulus, condition number, nonexpansiveness law, or comparable stability guarantee at the same level at which reconstruction is claimed.
+\end{condition}
+
+\begin{condition}[Active observability]
+A mature theory must treat the choice of further probes as part of the mathematics. It should state when non-equivalent candidate realizations admit a discriminating experiment, how probes compose, and when a finite or otherwise controlled discriminating family exists.
+\end{condition}
+
+\begin{condition}[Cross-domain theorem transfer]
+At least one nontrivial theorem should transfer across domains that are not merely notational variants---for example, from automata-style contextual minimization to learning dynamics, from observational saturation to decomposition-compatible quotients, or from descent to distributed learning. A shared vocabulary without transferred proofs does not count as unification.
+\end{condition}
+
+\section{Baseline theorem I: generated and observable realizations}
+
+The first exact model isolates generation from observation in ordinary universal algebra. Any more general framework should recover this result as a degenerate case.
+
+\begin{theorem}[Canonical generated-observable realization]
+Let $\Sigma$ be an algebraic signature for which free algebras exist, let $B$ be a $\Sigma$-algebra, let $S$ be a set of generators, and let $r:S\to U B$ be a response map. A realization of $r$ is a triple $(M,g,o)$ consisting of a $\Sigma$-algebra $M$, a map $g:S\to U M$, and a homomorphism $o:M\to B$ such that $Ug$ is interpreted by $o g=r$. Call the realization generated when $g(S)$ generates $M$, and observable when $o$ is injective. Then the subalgebra
+\[
+H_{\Sigma}(r)=\langle r(S)\rangle_{\Sigma}\subseteq B
+\]
+is terminal among generated realizations. Every generated and observable realization is uniquely isomorphic to $H_{\Sigma}(r)$ as a realization.
+\end{theorem}
+
+\begin{proof}
+Let $(M,g,o)$ be generated. Since $M$ is generated by $g(S)$ and $o$ is a homomorphism, the image $o(M)$ is the subalgebra of $B$ generated by $o(g(S))=r(S)$. Hence $o(M)=H_{\Sigma}(r)$. Corestricting $o$ therefore gives a surjective homomorphism $\bar o:M\onto H_{\Sigma}(r)$ satisfying $\bar o g=r$, where on the right $r$ is regarded as landing in its generated subalgebra. Any morphism of realizations $h:M\to H_{\Sigma}(r)$ must agree with $\bar o$ on $g(S)$, and because $g(S)$ generates $M$, it must agree with $\bar o$ everywhere. Thus $H_{\Sigma}(r)$ is terminal among generated realizations. If $(M,g,o)$ is also observable, then $\bar o$ is both surjective and injective, hence an isomorphism of $\Sigma$-algebras, uniquely compatible with the realization data.
+\end{proof}
+
+\begin{corollary}[Free generation followed by observational identification]
+If $F_{\Sigma}(S)$ is the free $\Sigma$-algebra, the extension of $r$ factors as
+\[
+F_{\Sigma}(S)\onto H_{\Sigma}(r)\into B.
+\]
+The first map identifies formally generated expressions with equal observable response; the second certifies that the resulting realization is separated by the ambient observations.
+\end{corollary}
+
+\begin{problem}[Generalized generated-observable factorization]
+Find the weakest ambient hypotheses under which the preceding theorem extends from free algebras and image factorization to typed, enriched, profunctorial, or equipment-valued interactions. The result should specialize to ordinary image factorization, to categorical automata minimization, and to generating/separating cylinder factorizations without forcing every interaction to be representable from the start.
+\end{problem}
+
+\begin{hint}
+Garner's cylinder factorization systems extend orthogonal factorization from arrows to cocones and cones, while the Isbell envelope supplies the corresponding pseudomonadic structure. This is a plausible static core, but a solution should state explicitly which presheaf or representability hypotheses are needed rather than declaring every observational problem to be an unrestricted Isbell completion \cite{Garner2015}.
+\end{hint}
+
+\section{Baseline theorem II: contextual saturation gives the maximal congruence}
+
+A raw observational kernel need not respect composition. The right construction is to saturate the tests under every context in which a candidate identification may later be consumed.
+
+\begin{theorem}[Contextual saturation theorem]
+Let $A$ be a $\Sigma$-algebra and let $T_0$ be a family of tests $t:U A\to\Omega$. Let $\poly(A)$ denote the unary polynomial operations of $A$. Define
+\[
+x\sim_{\mathrm{ctx}}y\quad\Longleftrightarrow\quad \forall t\in T_0\ \forall p\in\poly(A),\quad t(p(x))=t(p(y)).
+\]
+Then $\sim_{\mathrm{ctx}}$ is the largest $\Sigma$-congruence contained in the raw observational equivalence $\bigcap_{t\in T_0}\ker(t)$.
+\end{theorem}
+
+\begin{proof}
+The relation is an equivalence because it is an intersection of kernels of functions. To prove compatibility with an $n$-ary operation $\sigma$, suppose $x_i\sim_{\mathrm{ctx}}y_i$ for $1\leq i\leq n$. Fix $t\in T_0$ and an outer unary polynomial $p$. Replace the arguments of $\sigma(x_1,\ldots,x_n)$ by the corresponding $y_i$ one at a time. At the $i$th replacement, the resulting expression is a unary polynomial $q_i(z)=p(\sigma(y_1,\ldots,y_{i-1},z,x_{i+1},\ldots,x_n))$. Since $x_i\sim_{\mathrm{ctx}}y_i$, one has $t(q_i(x_i))=t(q_i(y_i))$. Chaining these equalities gives $t(p(\sigma(x_1,\ldots,x_n)))=t(p(\sigma(y_1,\ldots,y_n)))$, so $\sigma(x_1,\ldots,x_n)\sim_{\mathrm{ctx}}\sigma(y_1,\ldots,y_n)$. Hence $\sim_{\mathrm{ctx}}$ is a congruence. Now let $R$ be any congruence contained in the raw observational equivalence. If $xRy$, then $p(x)Rp(y)$ for every unary polynomial $p$, and therefore $t(p(x))=t(p(y))$ for every $t\in T_0$. Thus $R\subseteq\sim_{\mathrm{ctx}}$.
+\end{proof}
+
+\begin{condition}[Context saturation as a universal operation]
+A categorical phenomenology should internalize the preceding construction. Given primitive tests and an admissible context doctrine, it should construct a saturated test object or test doctrine whose kernel is exactly the greatest observational identification stable under those contexts.
+\end{condition}
+
+\begin{problem}[Typed contextual saturation]
+Construct the analogue of the contextual saturation theorem for a virtual equipment or comparable typed interaction formalism. The result should quantify only over well-typed contexts, allow horizontal interactions that are not yet representable by vertical maps, and characterize the maximal quotient or congruence object by a universal property.
+\end{problem}
+
+\begin{hint}
+Do not force every context into a unary endomorphism. In an equipment, the correct saturation may live at the level of multicells or modules, with representability as a later property. The theorem should reduce to unary polynomial saturation only after choosing a one-sorted representable specialization.
+\end{hint}
+
+\section{Separation test: FCA and automata must not collapse}
+
+The same observational table can support different canonical structures because the completion law is part of the problem specification.
+
+\begin{obstruction}[Row identification is not concept completion]
+Consider the Boolean incidence table with objects $g_1,g_2$, attributes $m_1,m_2$, and incidences $g_1 I m_1$, $g_2 I m_2$, with no cross incidences. There are two distinct observed rows. Row identification therefore yields two observational states. Formal concept analysis, however, yields four formal concepts: the top concept, the bottom concept, and the two singleton concepts. Thus no framework whose output is determined solely by equality of response rows can recover FCA in general.
+\end{obstruction}
+
+\begin{condition}[Parameterized completion doctrine]
+The input to the general theory must include enough structural information to distinguish at least row quotienting, closure under continuations, closure under intersections/Galois conjugacy, convex or stochastic closure, and decomposition closure. These choices may be related by morphisms of doctrines, but they must not be silently identified.
+\end{condition}
+
+\begin{test}[Automata recovery]
+For a language $L:A^*\to 2$, let the response of a prefix $u$ be $r(u)(v)=L(uv)$. Saturating by right-continuation contexts must identify $u$ and $u'$ exactly when their residual languages agree, and the resulting quotient must carry the induced transition action. In the deterministic case this should recover Myhill--Nerode minimization; in weighted settings it should recover the appropriate generated-observable factorization used by categorical automata learning \cite{CALF2017}.
+\end{test}
+
+\begin{test}[FCA recovery]
+For a polarity or formal context, the framework must recover the Galois connection and its fixed-point concept structure when the declared completion doctrine is Galois closure, rather than merely returning distinct rows or columns.
+\end{test}
+
+\section{Baseline theorem III: controlled observational equivalence}
+
+Automata, learning algorithms, controllers, and causal interventions share a simple but powerful pattern: passive outputs are insufficient unless equality is stable under a monoid or category of interventions.
+
+\begin{theorem}[Behavior under a context monoid]
+Let a monoid $K$ act on a set $P$ on the left, and let $o:P\to Y$ be an observation map. Define the behavior map
+\[
+\Beh:P\to Y^K,\qquad \Beh(p)(k)=o(k\cdot p).
+\]
+Then the kernel relation $p\sim q\iff\Beh(p)=\Beh(q)$ is $K$-invariant, the quotient $P/{\sim}$ carries a unique induced $K$-action, and the induced behavior map $P/{\sim}\into Y^K$ is injective. Moreover, $\sim$ is the largest $K$-invariant equivalence relation contained in $\ker(o)$.
+\end{theorem}
+
+\begin{proof}
+If $p\sim q$ and $h\in K$, then for every $k\in K$ one has $o(k\cdot(h\cdot p))=o((kh)\cdot p)=o((kh)\cdot q)=o(k\cdot(h\cdot q))$, hence $h\cdot p\sim h\cdot q$. Therefore the action descends uniquely to the quotient. Equality of quotient classes is exactly equality of behaviors, so the induced behavior map is injective. Finally, if $R\subseteq\ker(o)$ is any $K$-invariant equivalence and $pRq$, then $k\cdot p\,R\,k\cdot q$ for every $k$, so $o(k\cdot p)=o(k\cdot q)$; hence $p\sim q$.
+\end{proof}
+
+\begin{corollary}[Automata and controlled learners share the same quotient schema]
+Myhill--Nerode equivalence is the specialization in which $P=A^*$, $K=A^*$ acts by continuation, and $o(u)=L(u)$. A learning-aware behavioral quotient is obtained by taking $K$ to be the monoid of admissible training or control interventions.
+\end{corollary}
+
+\begin{theorem}[Descent criterion for a single update]
+Let $q:P\onto H$ be a surjection and $U:P\to P$ an update. There exists a unique update $\bar U:H\to H$ satisfying $qU=\bar U q$ if and only if
+\[
+q(p)=q(p')\quad\Longrightarrow\quad q(U(p))=q(U(p')).
+\]
+\end{theorem}
+
+\begin{proof}
+If $\bar U$ exists, the implication follows immediately by applying $\bar U$ to $q(p)=q(p')$. Conversely, assume the implication. Define $\bar U(q(p))=q(U(p))$. The implication makes this definition independent of the chosen representative, surjectivity of $q$ makes it total, and the defining equation is immediate. Uniqueness follows from surjectivity.
+\end{proof}
+
+\section{A decisive learning witness: static equivalence can be too coarse}
+
+\begin{example}[Two-parameter linear learner]
+Consider the predictor $f_{a,b}(x)=abx$ with parameter state $(a,b)\in\mathbb R^2$. For the single input $x=1$ and target $y$, take loss $\ell(a,b)=\tfrac12(ab-y)^2$ and gradient step size $\eta>0$. Write $w=ab$, $s=a^2+b^2$, and $\delta=w-y$. Gradient descent gives
+\[
+a'=a-\eta\delta b,\qquad b'=b-\eta\delta a,
+\]
+and therefore
+\[
+w'=w-\eta\delta s+\eta^2\delta^2w,\qquad s'=s-4\eta\delta w+\eta^2\delta^2s.
+\]
+Hence the pair $(w,s)$ is closed under all such training interventions.
+\end{example}
+
+\begin{proposition}[Exact learning-aware quotient for the example]
+If the observable prediction is $w=ab$ and the admissible interventions allow arbitrary target $y$ and positive step size $\eta$, then two parameter states are contextually indistinguishable under all finite sequences of prediction-and-training contexts if and only if they have the same pair $(w,s)=(ab,a^2+b^2)$.
+\end{proposition}
+
+\begin{proof}
+If two parameter states have the same $(w,s)$, the displayed recurrence gives the same $(w',s')$ after every one-step intervention, and induction gives the same future pair after every finite intervention sequence; in particular every future prediction $w$ agrees. Conversely, unequal $w$ is distinguished immediately by prediction. If $w$ agrees but $s_1\neq s_2$, choose any $y\neq w$ and any $\eta>0$. The two one-step predictions satisfy $w'_1-w'_2=-\eta(w-y)(s_1-s_2)\neq0$, so a single training intervention followed by prediction distinguishes the states.
+\end{proof}
+
+\begin{obstruction}[Static predictor quotient fails intervention descent]
+The quotient $(a,b)\mapsto w=ab$ is observationally exact for passive prediction but does not in general admit the gradient update. For example, with target $y=0$ and $\eta=0.1$, the states $(1,1)$ and $(2,\tfrac12)$ both have $w=1$, yet after one step their new products are $0.81$ and $0.585$, respectively.
+\end{obstruction}
+
+\begin{condition}[Intervention-closed state discovery]
+Given a family of observables and admissible interventions, the framework should construct the smallest observational state closed under those interventions whenever such a state exists in the chosen doctrine. Failure of finite closure should itself be visible, for example as an infinite tower of newly required observables.
+\end{condition}
+
+\begin{problem}[Learning closure hierarchy]
+For a parameterized differentiable model $z(\theta)$ trained by a specified optimizer, characterize the smallest family of functions of $\theta$ that is closed under the induced training dynamics and sufficient to predict all future observable outputs. Determine conditions for finite generation, smoothness of the quotient, and stability under architecture composition.
+\end{problem}
+
+\begin{hint}
+For Euclidean gradient flow, the function-space evolution contains the empirical kernel $J_\theta J_\theta^{\mathsf T}$. Treat this not as a universal answer but as the first new observable forced by intervention closure. Its own evolution may force higher-order observables. The two-parameter example above is a finite closure where $s=a^2+b^2$ plays this role. Categorical treatments of gradient learning via Para, lenses, and reverse derivative categories provide the compositional implementation layer, but they do not by themselves identify the minimal intervention-closed observational state \cite{Gradient2022}.
+\end{hint}
+
+\section{Baseline theorem IV: decomposition-compatible saturation}
+
+A quotient may preserve composition and still destroy decomposition multiplicities or witnesses. The finite-dimensional coalgebra case exposes the correct dual saturation pattern.
+
+\begin{theorem}[Largest decomposition-compatible observational quotient]
+Let $C$ be a finite-dimensional coalgebra over a field, with comultiplication $\Delta$ and counit $\epsilon$. Let $E_0\subseteq C^*$ be a set of linear tests, and let $E=\operatorname{alg}^{1}_{\star}(E_0)$ be the unital convolution subalgebra of $C^*$ generated by $E_0$, where $(a\star b)(c)=(a\otimes b)\Delta(c)$. Set $N=E^{\perp}$. Then $N$ is the largest coideal contained in $E_0^{\perp}$. Consequently, $C/N$ is the largest coalgebra quotient that identifies only distinctions invisible to the primitive tests and remains compatible with decomposition.
+\end{theorem}
+
+\begin{proof}
+In finite dimension, a subspace $N\subseteq C$ is a coideal exactly when its annihilator $N^{\perp}\subseteq C^*$ is a unital subalgebra for convolution. Since $E$ is by construction a unital convolution subalgebra, $N=E^{\perp}$ is a coideal. Also $E_0\subseteq E$, hence $N\subseteq E_0^{\perp}$. Now let $J\subseteq E_0^{\perp}$ be any coideal. Then $J^{\perp}$ is a unital convolution subalgebra and contains $E_0$, so by minimality of the generated algebra $E\subseteq J^{\perp}$. Taking annihilators reverses inclusion and gives $J\subseteq E^{\perp}=N$. Thus $N$ is largest.
+\end{proof}
+
+\begin{obstruction}[Composition quotient that destroys decomposition]
+Let $q:(\mathbb N,+)\to Q$ identify all positive integers, so $Q=\{0,p\}$ with $p+p=p$. This is a monoid homomorphism. In the incidence coalgebra of $\mathbb N$,
+\[
+\Delta[n]=\sum_{i+j=n}[i]\otimes[j].
+\]
+One has $(q\otimes q)\Delta[1]=[0]\otimes[p]+[p]\otimes[0]$, while $(q\otimes q)\Delta[2]=[0]\otimes[p]+[p]\otimes[p]+[p]\otimes[0]$. Since $q(1)=q(2)$, no comultiplication on the quotient can make $q$ a coalgebra map. Thus composition-compatible observational identification need not be decomposition-compatible.
+\end{obstruction}
+
+\begin{condition}[Native-level decomposition preservation]
+For decomposition spaces, unital $2$-Segal objects, incidence coalgebras, or typed decomposition structures, the general framework must formulate observational compatibility at the native witness level. Passing first to connected components or cardinalities is permitted only after a theorem proves that the intended quotient is invariant under that passage. Decomposition spaces are defined by an active--inert exactness condition weaker than Segal composition, so a solution must not silently replace decomposition by composition \cite{GKT2018}.
+\end{condition}
+
+\begin{problem}[Contextual saturation for decomposition spaces]
+Construct an objective or homotopy-coherent analogue of the convolution-saturation theorem. Given a family of observational probes on a decomposition space, identify conditions under which closing the probes under the dual decomposition operation produces a maximal CULF-compatible or otherwise incidence-compatible quotient. State the obstruction when no such quotient exists.
+\end{problem}
+
+\section{Type formation and a noncommutation test}
+
+Type formation cannot simply be placed before observational quotienting without proof. Quotienting may create idempotents and therefore create new retract-like types.
+
+\begin{obstruction}[Karoubi completion need not commute with observational quotient]
+View the additive monoid $\mathbb N$ as a one-object category. Its only idempotent is $0$, since $n+n=n$ implies $n=0$. Let $q:\mathbb N\to Q=\{0,p\}$ send $0$ to $0$ and every positive integer to $p$, with $p+p=p$. The quotient $Q$ has a new idempotent $p$, so its Karoubi envelope contains the additional object determined by $p$. This object is not in the image of the Karoubi envelope of $\mathbb N$. Hence quotienting can change the available idempotent-splitting completion.
+\end{obstruction}
+
+\begin{condition}[Typed reconstruction must expose order of operations]
+If types are obtained by splitting idempotents, exact completion, representability, Cauchy completion, or another completion operation $K$, the framework must compare $K(M/{\sim})$ with the appropriate quotient or localization of $K(M)$. A commuting theorem requires hypotheses; in their absence the discrepancy is part of the phenomenology rather than an implementation defect.
+\end{condition}
+
+\begin{problem}[Typed decomposition from untyped evidence]
+Given an untyped interaction or decomposition theory, identify a universal completion that creates precisely the interfaces justified by stable observational structure. Prove an invariance theorem characterizing when this completion commutes with contextual quotienting, and exhibit minimal counterexamples when it does not.
+\end{problem}
+
+\section{State/effect and stochastic specializations}
+
+A general framework should distinguish at least three notions of separation in operational theories: effects separating states, states separating effects, and contexts separating processes. Effectus theory is a natural test bed because states, predicates, scalars, validity, instruments, comprehension, and quotient are all explicit categorical structure rather than informal semantics \cite{Effectus2015}.
+
+\begin{condition}[Operational separation matrix]
+For every operational instantiation, the theory should state which of the following maps are monic or faithful and under what assumptions:
+\[
+\St(X)\longrightarrow \Omega^{\Pred(X)},\qquad \Pred(X)\longrightarrow \Omega^{\St(X)},\qquad \Hom(X,Y)\longrightarrow \Omega^{\Ctx(X,Y)}.
+\]
+Failure of one implication must not be repaired by silently assuming a stronger state--effect duality or a no-restriction hypothesis.
+\end{condition}
+
+\begin{condition}[Statistical experiment comparison]
+In stochastic instantiations, the framework should recover the distinction between sufficient statistics, observational equivalence, and information loss. At minimum it should support the abstract sufficient-statistic machinery available in Markov categories, including almost-sure equality and conditioning where defined \cite{Fritz2020}.
+\end{condition}
+
+\begin{problem}[A categorical information preorder for probe systems]
+Define a comparison relation between probe systems that reduces to a Blackwell-style informativeness preorder in stochastic models, to inclusion or simulation of test families in deterministic models, and to appropriate process-discrimination preorders in operational theories. Determine when this preorder admits meets, joins, minimal sufficient probe systems, or completion by idealized probes.
+\end{problem}
+
+\section{Locality, descent, and obstruction}
+
+Learning or reconstruction from local data is not the same operation as gluing already constructed local models. The comparison map between the two is itself a success condition.
+
+\begin{theorem}[Fiberwise descent under exact hypotheses]
+Let $\mathcal C$ be a site. Let $\Mod,\Obs:\mathcal C^{op}\to\Cat$ be stacks, and let $O:\Mod\Rightarrow\Obs$ be a cartesian pseudonatural transformation. Fix $U\in\mathcal C$ and $d\in\Obs(U)$. For $V\to U$, let
+\[
+\Real_d(V)=\Mod(V)\times^{(2)}_{\Obs(V)}\{d|_V\}
+\]
+be the $2$-fiber of exact realizations of the restricted datum. Then $\Real_d$ satisfies descent, provided the relevant bilimits exist in $\Cat$.
+\end{theorem}
+
+\begin{proof}
+For a covering family of $V$, the stack conditions identify $\Mod(V)$ and $\Obs(V)$ with the corresponding bilimits of their descent diagrams. The $2$-fiber is itself a bilimit construction in $\Cat$. Bilimits commute with bilimits up to equivalence, so taking the $2$-fiber of the global descent equivalence is equivalent to taking the descent bilimit of the local $2$-fibers. Hence compatible local exact realizations with coherent descent data glue to a global exact realization, uniquely up to the equivalence encoded by the stack condition.
+\end{proof}
+
+\begin{remark}
+The theorem is conditional by design. It does not say that arbitrary empirical models form a stack, nor that every locally compatible observational family has a global realization. Sheaf-theoretic contextuality supplies canonical counterexamples in which compatible local distributions have no global section \cite{AbramskyBrandenburger2011}.
+\end{remark}
+
+\begin{condition}[Reconstruction/localization comparison]
+If $L_U$ denotes a reconstruction procedure over region $U$ and $r:V\to U$ a restriction, there should be an explicitly constructed comparison map
+\[
+r_{\Mod}^{*}L_U\Longrightarrow L_V r_{\Obs}^{*}.
+\]
+A theorem that ``learn locally, then restrict'' agrees with ``restrict, then learn'' requires this comparison to be invertible. If it is not invertible, its defect should be measured rather than hidden.
+\end{condition}
+
+\begin{problem}[Descent-compatible learning]
+For at least one nontrivial learner class, prove a Beck--Chevalley-style theorem guaranteeing that reconstruction commutes with restriction and descent. Then construct a counterexample showing failure when one hypothesis is removed. Candidate settings include automata learned from local trace alphabets, sheaf-valued linear models, or parameterized learners whose parameter-sharing constraints form descent data.
+\end{problem}
+
+\section{Quantitative phenomenology: identifiability is not stability}
+
+\begin{lemma}[Context saturation induces nonexpansive contexts]
+Let $(Y,d_Y)$ be a metric space, let $T$ be a family of tests $t:X\to Y$, and define the extended pseudometric
+\[
+d_T(x,y)=\sup_{t\in T}d_Y(t(x),t(y)).
+\]
+Let $C$ be a family of contexts $c:X\to X$. If $T$ is closed under precomposition by contexts, meaning $t\circ c\in T$ for all $t\in T$ and $c\in C$, then every $c\in C$ is nonexpansive for $d_T$.
+\end{lemma}
+
+\begin{proof}
+For $c\in C$,
+\[
+d_T(c(x),c(y))=\sup_{t\in T}d_Y((t\circ c)(x),(t\circ c)(y))\leq \sup_{s\in T}d_Y(s(x),s(y))=d_T(x,y),
+\]
+because every $t\circ c$ is again a member of $T$.
+\end{proof}
+
+\begin{obstruction}[Faithfulness without stable inversion]
+For $\eps>0$, the map $f_\eps:\mathbb R\to\mathbb R$, $f_\eps(x)=\eps x$, is injective, hence perfectly identifying in the exact set-theoretic sense. Its inverse on the image has Lipschitz constant $1/\eps$, so reconstruction becomes arbitrarily ill-conditioned as $\eps\to0$. Exact observational faithfulness therefore does not imply robust reconstructibility.
+\end{obstruction}
+
+\begin{condition}[Indexed stability claim]
+Every approximate reconstruction claim should specify the perturbation model, observation metric or divergence, reconstruction metric modulo symmetries, and a modulus of continuity. A phrase such as ``approximately identifiable'' is incomplete until these indices are fixed.
+\end{condition}
+
+\begin{problem}[Enriched contextual realization]
+Develop a metric-, quantale-, or quantaloid-enriched version of contextual saturation and generated-observable realization in which exact kernels are replaced by optimal comparison bounds. Prove an enriched universal property and derive a stability theorem that separates observational expressivity from conditioning.
+\end{problem}
+
+\section{Transport and change of doctrine}
+
+A successful general theory should not only construct realizations inside one doctrine; it should say when a change of representation preserves them.
+
+\begin{proposition}[Preservation of canonical cylinder realizations]
+Suppose a cylinder in a category $\mathcal C$ has a factorization through $M$ by a cocone in a designated generating class $\mathcal E$ followed by a cone in a designated separating class $\mathcal M$, and suppose the pair $(\mathcal E,\mathcal M)$ has the corresponding uniqueness property. Let $F:\mathcal C\to\mathcal D$ preserve the relevant cylinder and carry $\mathcal E$-cocones to $\mathcal E'$-cocones and $\mathcal M$-cones to $\mathcal M'$-cones. Then $F(M)$ is canonically isomorphic to the canonical $(\mathcal E',\mathcal M')$-factorization of the transported cylinder.
+\end{proposition}
+
+\begin{proof}
+Applying $F$ to the original factorization produces an admissible $(\mathcal E',\mathcal M')$-factorization of the transported cylinder. By the uniqueness clause of the target cylinder factorization system, any two such middle objects are connected by a unique isomorphism compatible with both the generating cocone and separating cone. Therefore $F(M)$ is canonically isomorphic to the canonical target realization.
+\end{proof}
+
+\begin{condition}[No free transport]
+Whenever a theorem claims that realizations are invariant under change of base, enrichment, typing, localization, or abstraction, the preservation hypotheses must be named. ``Functoriality'' without specification of which generating, separating, exactness, or context structures are preserved is not sufficient.
+\end{condition}
+
+\section{Active probing and theory refinement}
+
+A static reconstruction theory terminates too early. In practice, a current realization category should determine which additional experiment would most sharply refine it.
+
+\begin{definition}[Discriminating probe]
+Given candidate presentations $M,N$ and an admissible probe family $T$, a probe $t\in T$ discriminates $M$ and $N$ if their responses differ under $t$. A probe family is separating on a candidate class $\mathcal K$ if every non-equivalent pair in $\mathcal K$ admits a discriminating probe.
+\end{definition}
+
+\begin{condition}[Probe selection must respect the same equivalence law]
+An active probe policy may optimize cost, expected information, rank gain, or worst-case refinement, but it must optimize over equivalence classes justified by the declared observation/context law. Selecting probes using presentation artifacts that have already been declared observationally irrelevant is a violation of the quotient law unless those artifacts are explicitly reintroduced as intervention-relevant state.
+\end{condition}
+
+\begin{problem}[Abstract experiment design]
+Construct a categorical experiment-design layer in which a state of knowledge is a realization category or suitable invariant thereof, an experiment is a probe object or context, and an outcome induces a refinement functor on realizations. Prove conditions under which repeated discriminating probes converge to the canonical observable realization, and characterize finite identification in terms of compactness, finite generation, rank, or another doctrine-specific finiteness condition.
+\end{problem}
+
+\begin{hint}
+Active automata learning already supplies a clean finite example: membership and equivalence queries refine an observation table until closure and consistency permit the target quotient. Bayesian experimental design and adaptive tomography suggest probabilistic analogues. The unifying problem is to identify the categorical invariant whose reduction is guaranteed by a useful probe.
+\end{hint}
+
+\section{A recovery suite: minimum examples a general theory should pass}
+
+The following suite is not intended as a taxonomy. It is a regression test. A proposed formalism should instantiate each case without collapsing distinctions that matter in the source theory.
+
+\begin{test}[Formal concept analysis]
+Recover Galois derivation, closure, formal concepts, and the distinction between observed rows and completed concepts. Explain which part of the general interface plays the role of polarity and which universal property selects the concept completion.
+\end{test}
+
+\begin{test}[Deterministic and weighted automata]
+Recover continuation-saturated observational equivalence, generated/reachable structure, observable/separated structure, and minimal realization. Recover the closedness/consistency lifting pattern used in categorical automata learning \cite{CALF2017}.
+\end{test}
+
+\begin{test}[Decomposition spaces]
+Recover decomposition-sensitive structure without replacing the active--inert exactness law by a Segal composition law. State what a probe observes: composites, decomposition witnesses, incidence coefficients, or higher groupoid data. Prove preservation at the chosen level \cite{GKT2018}.
+\end{test}
+
+\begin{test}[Typed decomposition]
+Demonstrate an example in which interfaces are reconstructed or completed rather than fixed in advance. Show that the construction distinguishes vertical typing from horizontal interaction and does not require every interaction to be represented by a map before reconstruction.
+\end{test}
+
+\begin{test}[Effectus-style operational theory]
+Recover state/effect validity and distinguish state separation, effect separation, and process tomography. State whether any no-restriction, state-effect duality, comprehension, quotient, or instrument hypothesis is being used \cite{Effectus2015}.
+\end{test}
+
+\begin{test}[Gradient learning]
+Recover the Para/optic or lens-level compositional implementation of models and updates, but additionally compute the observational quotient on which the chosen update descends. The static predictor quotient is not accepted unless descent is proved \cite{Gradient2022}.
+\end{test}
+
+\begin{test}[Local-to-global reconstruction]
+Exhibit both a positive descent theorem and an obstruction example. The framework fails this test if it turns every compatible family into a global realization by changing the model class without recording that change \cite{AbramskyBrandenburger2011}.
+\end{test}
+
+\begin{test}[Stochastic sufficiency]
+Recover categorical sufficient statistics and almost-sure distinctions in an appropriate Markov-category specialization. Compare two observation channels by an information preorder and state which decision or reconstruction law that preorder serves \cite{Fritz2020}.
+\end{test}
+
+\section{Failure modes that should count against the framework}
+
+\begin{obstruction}[Ambient-category trivialization]
+If every target theory fits only because all small categories, all profunctors, or all fibrations fit, no phenomenological theorem has been obtained. The missing obligation is to derive the source theory's canonical observational quotient or completion from the common primitives.
+\end{obstruction}
+
+\begin{obstruction}[Universal-nucleus overreach]
+Isbell, Chu, Galois, and closure constructions are powerful, but the FCA/automata separation example shows that one closure operator cannot be declared the unique phenomenological completion without additional doctrine data. A nucleus may implement a chosen completion; it does not choose the completion law for free.
+\end{obstruction}
+
+\begin{obstruction}[Premature extensionality]
+Quotienting a parameterized learner by equal predictions can destroy update dynamics; quotienting a compositional structure can destroy decomposition; quotienting before completion can create or erase types. Therefore an extensional behavioral quotient is final only relative to a declared consumer set.
+\end{obstruction}
+
+\begin{obstruction}[Local consistency confused with global realizability]
+Pairwise or coverwise compatibility does not entail existence of a global hidden realization. Any proposed gluing principle must name the descent hypotheses under which it is valid.
+\end{obstruction}
+
+\begin{obstruction}[Exactness confused with robustness]
+A faithful observational map may be arbitrarily ill-conditioned. A proof of injectivity cannot be presented as a stability theorem.
+\end{obstruction}
+
+\begin{obstruction}[Presentation symmetry confused with empirical multiplicity]
+When distinct presentations differ only by gauge, reparameterization, or automorphism, a set of equivalence classes may erase stabilizers and moduli information. The correct realization object may be a groupoid, stack, or higher category.
+\end{obstruction}
+
+\section{Proposed main conjecture and theorem schema}
+
+The following is deliberately stated as a schema rather than a theorem because the ambient exactness and representability assumptions are not yet fixed.
+
+\begin{problem}[Contextual Realization Theorem]
+Identify a class of contextual doctrines $\mathfrak D$ such that each doctrine $D\in\mathfrak D$ supplies: (i) a typed interaction object or profunctor of raw observations; (ii) a closure operation $\Sat_D$ generated by admissible contexts; (iii) a factorization or bilateral completion producing a generated-and-separated realization; (iv) a notion of intervention whose descent can be tested on that realization; and (v) a localization operation with a Beck--Chevalley comparison. Prove that whenever these structures satisfy stated distributive or exactness axioms, there is a canonical realization functor
+\[
+\mathcal R_D:\Ev_D\longrightarrow \mathsf{Real}_D
+\]
+characterized by an extremal property, and that $\mathcal R_D$ is stable precisely under the doctrine morphisms preserving the required context closure, generating/separating structure, intervention law, and localization comparison.
+\end{problem}
+
+\begin{remark}
+The purpose of this schema is not to maximize generality. A useful theorem should have enough hypotheses to be true and enough examples to transfer results. If a single ambient notion cannot cover decomposition spaces and gradient learners without making its axioms vacuous, a two-level theory is preferable: a common observational/contextual base plus doctrine-specific realization modules.
+\end{remark}
+
+\section{Milestones for a frontier-grade solution}
+
+\begin{condition}[Milestone A: exact common core]
+Prove a contextual realization theorem that strictly contains ordinary generated-observable factorization and contextual congruence saturation. Instantiate it to deterministic automata and at least one non-automata domain.
+\end{condition}
+
+\begin{condition}[Milestone B: one genuinely new cross-domain theorem]
+Use the common core to prove a theorem not already native to either source field. Examples include an intervention-closure algorithm for a class of differentiable learners derived from automata-style saturation, or a decomposition-compatible observational minimization theorem derived from dual test closure.
+\end{condition}
+
+\begin{condition}[Milestone C: obstruction calculus]
+Develop at least three computable or checkable obstruction invariants detecting failure of: update descent, decomposition preservation, and local-to-global reconstruction. A theory that only produces positive universal constructions is incomplete.
+\end{condition}
+
+\begin{condition}[Milestone D: quantitative extension]
+Generalize one exact theorem to a metric or ordered setting with an explicit stability bound. The extension must state when small observational error implies small realization error modulo declared symmetries.
+\end{condition}
+
+\begin{condition}[Milestone E: active probes]
+Prove a convergence or finite-identification theorem for a probe-selection process in at least one nontrivial doctrine, and identify the invariant whose strict refinement ensures progress.
+\end{condition}
+
+\begin{condition}[Milestone F: typed and local composition]
+Exhibit a typed example in which the realization is assembled compositionally from local evidence and prove the relevant Beck--Chevalley or descent condition. Include a nearby counterexample where the condition fails.
+\end{condition}
+
+\section{Suggested proof program}
+
+A disciplined proof order avoids building a large formalism before its invariants are known. First, prove the abstract contextual saturation theorem in the intended typed setting. Second, prove a generated/separated realization theorem using the weakest factorization hypotheses that actually cover the target examples. Third, define intervention descent and show that contextual saturation by intervention contexts yields the maximal valid quotient. Fourth, add decomposition and prove a distributive law or compatibility theorem between context saturation and incidence/decomposition structure; the finite-dimensional coalgebra theorem above is the sanity check. Fifth, add localization and prove a Beck--Chevalley comparison theorem. Sixth, enrich quantitatively and separate identifiability from stability. Only after these steps should a fully general ambient doctrine be frozen.
+
+The preferred direction of generalization is therefore not ``find the biggest category in which all examples live.'' It is ``find the weakest common proof obligations whose satisfaction forces the canonical constructions in each example and whose failure produces source-recognizable counterexamples.''
+
+\section{Compact checklist for evaluating candidate frameworks}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.24\textwidth}X>{\raggedright\arraybackslash}p{0.25\textwidth}}
+\toprule
+Criterion & Required witness & Immediate falsifier \\
+\midrule
+Observational separation & Explicit probe semantics and maximal context-stable kernel & Quotient not preserved by a legal context \\
+Generated realization & Universal/extremal construction from data & Model inserted by hand \\
+Completion discipline & Declared closure/completion doctrine & FCA and automata forced to same completion \\
+Decomposition & Native preservation theorem & Same quotient class has unequal decomposition images \\
+Intervention & Descended update/control action & Equal predictions evolve differently after quotient \\
+Typing & Universal type/interface formation & Types assumed that cannot be justified from data/structure \\
+Locality & Descent theorem plus obstruction mode & Local consistency asserted to imply global model unconditionally \\
+Quantitative stability & Explicit modulus/condition number & Injectivity cited as robustness \\
+Symmetry & Quotient/groupoid/moduli treatment & Gauge-equivalent presentations counted as distinct phenomena without reason \\
+Active learning & Probe-refinement theorem & No criterion for choosing distinguishing evidence \\
+Transport & Preservation hypotheses and comparison map & ``Functorial'' invariance with no structure-preservation theorem \\
+Cross-domain value & New theorem transferred between domains & Only a taxonomy or embedding result \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Conclusion}
+
+The proposed program has a sharp center: observational data define only a preliminary equivalence; admissible contexts determine which distinctions remain behaviorally meaningful; structural doctrine determines what may be generated or completed; decomposition, intervention, typing, and localization act as consumers that can invalidate an otherwise reasonable quotient; and quantitative structure determines whether exact reconstruction survives perturbation. The most credible general framework will therefore be judged by commutation and obstruction theorems, not by the breadth of its vocabulary.
+
+A concise target equation is
+\[
+\boxed{\begin{gathered}\text{evidence}\xrightarrow{\text{context saturation}}\text{valid observational law}\xrightarrow{\text{generation/separation}}\text{realization}\\\text{realization}\xrightarrow{\text{consumer tests}}\text{refinement or obstruction}.\end{gathered}}
+\]
+The research program succeeds when this pattern is theorem-generating across domains while retaining the specific distinctions that make FCA, automata learning, decomposition spaces, effectus theory, statistical sufficiency, gradient learning, and descent genuinely different mathematical phenomena.
+
+\begin{thebibliography}{99}
+\bibitem{Garner2015} R. Garner, ``The Isbell monad,'' \emph{Advances in Mathematics} 274 (2015), 516--537. doi:10.1016/j.aim.2015.01.015. arXiv:1410.7108.
+\bibitem{CALF2017} G. van Heerdt, M. Sammartino, and A. Silva, ``CALF: Categorical Automata Learning Framework,'' \emph{CSL 2017}, LIPIcs 82, Article 29. arXiv:1704.05676.
+\bibitem{GKT2018} I. G\'alvez-Carrillo, J. Kock, and A. Tonks, ``Decomposition spaces, incidence algebras and M\"obius inversion I: Basic theory,'' \emph{Advances in Mathematics} 331 (2018), 952--1015. doi:10.1016/j.aim.2018.03.016. arXiv:1512.07573.
+\bibitem{Effectus2015} K. Cho, B. Jacobs, B. Westerbaan, and A. Westerbaan, ``An Introduction to Effectus Theory,'' arXiv:1512.05813.
+\bibitem{Fritz2020} T. Fritz, ``A synthetic approach to Markov kernels, conditional independence and theorems on sufficient statistics,'' arXiv:1908.07021.
+\bibitem{Gradient2022} G. S. H. Cruttwell, B. Gavranovi\'c, N. Ghani, P. Wilson, and F. Zanasi, ``Categorical Foundations of Gradient-Based Learning,'' in \emph{Programming Languages and Systems (ESOP 2022)}, LNCS 13240, 1--28, 2022.
+\bibitem{AbramskyBrandenburger2011} S. Abramsky and A. Brandenburger, ``The Sheaf-Theoretic Structure of Non-Locality and Contextuality,'' \emph{New Journal of Physics} 13 (2011). arXiv:1102.0264.
+\end{thebibliography}
+
+\end{document}

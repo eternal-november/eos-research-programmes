@@ -1,0 +1,11 @@
+# Sources for the fixed-budget encoding derivation
+
+The model and constrained-rank target are read directly from `/workspace/shared/joint_realization_20261103/report.tex`, especially Definition 2.1, the tensor compatibility theorem, and the exact state-minimum theorem. All finite-slot equations, zero-set reconstruction, sublevel bounds, and stationary-point calculations in `encoding_derivation.tex` are derived directly here.
+
+Two standard external results support the arithmetic and certificate paragraph:
+
+1. Pablo A. Parrilo, *Semidefinite programming relaxations for semialgebraic problems*, Mathematical Programming, Series B 96 (2003), 293–320. DOI: 10.1007/s10107-003-0387-5. Author-hosted text: https://www.mit.edu/~parrilo/pubs/files/SDPrelaxations.pdf . Theorem 4.6 on printed page 305 (PDF page 13) states the Positivstellensatz alternative. With no inequality or inequation generators, the cone is the sum-of-squares cone and the multiplicative monoid contributes 1; the identity specializes to −1 = sum(q_i F_i) + sum(r_l²). Its direct verification is elementary; completeness invokes the theorem. No bounded degree, small certificate, or numerical solver success follows from this citation.
+
+2. Saugata Basu, *Algorithms in Real Algebraic Geometry: A Survey*, author-hosted 2014 version: https://www.math.purdue.edu/~sbasu/raag_survey2011_final-sep4-2014.pdf . Section 1.1 explicitly allows either the real field or the real algebraic numbers as the real closed ground field; Theorem 2.1 states quantifier elimination. The derivation uses the standard rational-sentence transfer consequence: a real solution to a rational polynomial existential system exists if and only if a real-algebraic solution does. The claim about algebraic certificate coefficients is obtained by applying this consequence a second time to the finite coefficient-matching system of an existing real certificate. It does not assert rational factors or rational coefficient certificates.
+
+Both author-hosted PDFs were inspected using web retrieval on 2026-11-03. The linked Basu/Pollack/Roy second-edition download on Marie-Françoise Roy's old Rennes domain timed out; it is not needed for the stated claims and is not cited as inspected.

@@ -1,0 +1,406 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem,booktabs,tabularx,array}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\cl}{\operatorname{cl}}
+\newcommand{\C}{\mathcal C}
+\newcommand{\I}{\mathcal I}
+\newcommand{\R}{\mathcal R}
+\setlist{nosep,leftmargin=*}
+\setlength{\parskip}{4pt}
+\title{A predictive and incidence bridge for choosing further experiments}
+\author{Exact comparison results and a source audit}
+\date{3 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Predictive states and incidence closures preserve different information in the same response table. This note asks whether their comparison has a consequence for further experiments, rather than merely a common diagram.
+
+On an exhaustive finite preparation domain, a finite inverse-image closure test decides whether any action continuation can create a new incidence extent. Partial column observations have exact criteria for forcing a new extent, permitting an old one, or already certifying redundancy. A separate threshold-query example makes the resource consequence explicit. An unknown transition preserves the observed chain of extents exactly when it is monotone. This property can be decided in $\Theta(n)$ additional binary probes, whereas identifying an arbitrary transition takes $\Omega(n\log n)$ in the worst case. The linear decision procedure reconstructs the transition on accepting runs, so that comparison alone does not establish persistent predictive uncertainty. A different accepting certificate uses $3k-2$ probes on $n=2k$ states, establishes incidence saturation for every future continuation, and leaves $2^k$ distinct predictive transition laws possible.
+
+A final family separates literal retention of measured columns from generation through a certified predictor: logarithmically many distinguishing tests coexist with exponentially many indispensable raw incidence supports. This is not an exponential lower bound on physical learning queries.
+
+The positive laws and counterexamples answer the proposed bridge test under explicit access and capacity assumptions. Strong sources cover their main ingredients, including FCA reduction, universal and residual automata learning, and linear threshold-query reconstruction. The note establishes no source-distinct theorem or Gate A pass and makes no change to the wider programme. The deliverable is intentionally uncompiled \LaTeX{} source.
+\end{abstract}
+\tableofcontents
+
+\section{The comparison question and its limits}
+\label{sec:scope}
+
+Starting from one response relation, construct a predictive carrier and an incidence closure. Ask what a comparison preserves, which additional experiments can expose its failure, and when a finite experimental certificate rules out every future failure. The positive result must have an independently stated input condition. It must not assume the ideal completion, the unknown transition, or an equivalence oracle as an unacknowledged answer.
+
+The main conclusions concern a fixed, exhaustive finite preparation domain with deterministic responses. We later explain how a reset-only state-cover certificate can justify such a domain under a separate capacity promise. Finite samples alone do not establish exhaustiveness. All observations are exact, stationarity is assumed, and terminal tests have fixed semantics. Noise, drift, partial actions, and open-domain certification require further results.
+
+The resource claims count additional membership probes after a stated baseline table is known. They do not erase the cost of obtaining that baseline, discover all useful experiments for free, or make an unavailable experiment executable. Constructed examples here are mathematical systems, not measurements of an external physical apparatus.
+
+\section{The interface and evidence ledger}
+\label{sec:interface}
+
+Let $Q$ be a finite exhaustive domain of labelled, repeatably preparable states. Let $\Sigma$ be a finite action alphabet, with stationary deterministic but possibly unknown maps $\delta_a:Q\to Q$. Let $B$ be a finite set of fixed binary terminal tests. A continuation is a word $w$ of actions followed by a terminal test $b$, written $wb$. Its outcome from $q$ is $b(\delta_w(q))$. Actions execute from left to right. The ideal continuation family is $U=\Sigma^*B$.
+
+A finite baseline $E\subseteq U$ contains $B$. Define the support of a test and the row of a state by
+\[
+ P_e=\{q\in Q:e(q)=1\},\qquad
+ R_q^E=\{e\in E:q\in P_e\}.
+\]
+A support is a subset of states; a row is a subset of tests. They must not be interchanged.
+
+At a stage of work distinguish the following.
+\begin{itemize}
+\item \textbf{Actual evidence:} outcomes on a finite set $T\subseteq Q\times U$ of performed preparation--continuation pairs. A known column means all of its entries on $Q$ have actually been obtained, or have explicitly justified fixed semantics.
+\item \textbf{Available experiments:} a set $A\subseteq Q\times U$ with $T\subseteq A$. An available entry is not automatically known. A continuation available on some states need not be available on all of $Q$.
+\item \textbf{Ideal benchmark:} the whole response function on $Q\times U$, used to define ideal objects. Writing it down does not grant an oracle for its unknown entries.
+\end{itemize}
+
+With reset-only access, labelled states may instead be represented by histories $H$. Running test $e$ after preparation $h$ requires the actual run $he$. One may treat $H$ as an exhaustive behavioral cover only with a separate proof or promise. Section~\ref{sec:certificate} provides one such route.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}p{.23\textwidth}XX@{}}
+\toprule
+Item & Supplied or independently justified & Constructed or tested \\
+\midrule
+Interface & Preparations, action syntax, fixed terminal tests, exact deterministic semantics & Response pairing and its implications \\
+Domain & Exhaustiveness and closure of action successors in $Q$, or a valid capacity certificate & Observational quotient of $Q$ \\
+Baseline & Actual full table on $Q\times E$ & Predictive rows and incidence closure \\
+Dynamics & Unknown actions remain in the stated model class & Their relevant inverse-image effects; possibly the transitions themselves \\
+Experiment choice & Which additional pairs are executable and their costs & A missing-column witness or a finite saturation certificate \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+The objective of the bridge is not necessarily full identification of the transition law. It can be a structural conclusion shared by every law compatible with the data. Warrant always requires that the compatible class is nonempty; inconsistency is a failed model or data assumption, not permission to infer every claim.
+
+\section{The two constructions and their typed comparison}
+\label{sec:comparison}
+
+The predictive quotient visible on $E$ is
+\[
+ q\sim_E r\Longleftrightarrow R_q^E=R_r^E,
+ \qquad Q_E=Q/{\sim_E}.
+\]
+Its classes preserve precisely the row distinctions made by $E$. They need not yet carry well-defined action maps.
+
+The extent closure and intent closure of the same table are
+\[
+ \C_E=\left\{\bigcap_{e\in D}P_e:D\subseteq E\right\},
+ \qquad
+ \I_E=\left\{\bigcap_{q\in S}R_q^E:S\subseteq Q\right\}.
+\]
+Empty intersections are $Q$ and $E$, respectively. Write
+\[
+ \cl_E(S)=\bigcap\{P_e:S\subseteq P_e,\ e\in E\}.
+\]
+Its fixed sets are $\C_E$. The usual formal-concept polarity gives an order-reversing correspondence between $\C_E$ and $\I_E$ when both are ordered by inclusion. This construction is standard formal concept analysis \cite{FCA}.
+
+Each predictive row is an intent, so there is an injective map
+\[
+ j_E:Q_E\hookrightarrow\I_E,\qquad [q]_E\mapsto R_q^E.
+\]
+It preserves the actual response profile of each state. It does not make every formal intersection of rows into a reachable predictive state.
+
+For $E\subseteq V\subseteq U$, define the two restriction maps
+\[
+ r:Q_V\twoheadrightarrow Q_E,\quad[q]_V\mapsto[q]_E,
+ \qquad
+ \rho:\I_V\twoheadrightarrow\I_E,\quad J\mapsto J\cap E.
+\]
+The second is surjective and preserves arbitrary intersections: an intent formed from states $S$ restricts to the intent formed from the same $S$. The square
+\[
+ \begin{array}{ccc}
+ Q_V&\xrightarrow{j_V}&\I_V\\
+ {\scriptstyle r}\downarrow&&\downarrow{\scriptstyle\rho}\\
+ Q_E&\xrightarrow{j_E}&\I_E
+ \end{array}
+\]
+commutes. Thus the comparison has an explicit type and a definite loss. Injectivity of $r$ says no predictive state distinctions are lost. Injectivity of $\rho$ says no distinct formal intents are collapsed. These are different conditions.
+
+\begin{proposition}[Literal preservation of the incidence closure]
+\label{prop:restriction}
+For finite $Q$ and $E\subseteq V$, the following are equivalent:
+\begin{enumerate}
+\item $\rho:\I_V\to\I_E$ is injective;
+\item $\cl_E=\cl_V$ on all subsets of $Q$;
+\item $\C_E=\C_V$ as families of subsets of the same labelled domain;
+\item every proper meet-irreducible of the finite closure lattice $\C_V$ is the support of some retained test in $E$.
+\end{enumerate}
+Here proper excludes $Q$, and repeated tests with identical supports do not count as different required supports.
+\end{proposition}
+\begin{proof}
+A closure operator is determined by its fixed sets, giving equivalence of the middle two claims. Equal restricted intents have equal $E$-closures of their generating state sets. If the two closure operators agree, they therefore have equal $V$-intents, proving injectivity. Conversely, if $\cl_V(S)\subsetneq\cl_E(S)$, let $S'=\cl_E(S)$. The sets $S,S'$ have the same $E$-intent but different $V$-intents, so restriction is not injective.
+
+Every element of a finite meet-semilattice with top is an intersection of its proper meet-irreducibles. Thus retaining their supports generates the whole closure. Conversely, if $\C_E=\C_V$, express any proper meet-irreducible as an intersection of retained supports. Only finitely many different supports occur. Meet-irreducibility forces one of them to equal that element.
+\end{proof}
+
+This is the classical attribute-reduction mechanism in a labelled experimental form, not a new reduction theorem. It gives a necessary kind of missing experiment: if $S$ is ideally closed and $q\in\cl_E(S)\setminus S$, some ideal test is positive on every state of $S$ and negative at $q$. Finding and executing such a test still requires access or a certified generator.
+
+\paragraph{Predictive separation alone is insufficient.}
+Take two states with rows $(1,0)$ and $(0,1)$. Keeping only the first column still distinguishes the states. But the full extent closure is $\{Q,\{q_1\},\{q_2\},\varnothing\}$, whereas the retained closure is $\{Q,\{q_1\}\}$. The new column changes the incidence structure without splitting any existing predictive class. This is a sharp counterexample to equating the two retention objectives.
+
+\section{A finite positive law for all future continuations}
+\label{sec:saturation}
+
+For an action $a$, define the inverse-image operation $D_a(S)=\delta_a^{-1}(S)$. It preserves arbitrary intersections and satisfies $D_a(P_e)=P_{ae}$. The full ideal closure is stable under these maps. The useful question is whether the observed closure already is.
+
+\begin{theorem}[Finite generator criterion for incidence saturation]
+\label{thm:saturation}
+Assume the finite preparation domain is exhaustive, action successors stay in it, $B\subseteq E$, and the response columns on $E\cup\Sigma E$ have been measured in full or are independently justified in full. Then
+\[
+ \C_E=\C_U
+ \quad\Longleftrightarrow\quad
+ \cl_E(P_{ae})=P_{ae}
+ \text{ for every }a\in\Sigma,\ e\in E.
+\]
+If a check fails, the explicit continuation $ae$ enlarges the incidence closure. If all checks pass, every future test support belongs to $\C_E$, every action descends to $Q_E$, and $Q_E=Q_U$ canonically as behavioral quotients.
+\end{theorem}
+\begin{proof}
+If all the checks pass, $D_a$ takes every generator $P_e$ into $\C_E$. Since it preserves intersections, it takes every element of $\C_E$ into $\C_E$. Each base terminal support $P_b$ lies in $\C_E$. Repeated preimages therefore put every $P_{wb}$ in $\C_E$, proving $\C_U\subseteq\C_E$. The reverse inclusion follows from $E\subseteq U$.
+
+Conversely, the ideal closure is stable under every $D_a$. Equality of the closures implies each checked support belongs to $\C_E$.
+
+States with the same $E$-row have the same membership in every intersection of $E$-supports. Hence they have the same response to every ideal test. This proves equality of predictive quotients. In particular they have the same $E$-row after every action, so the action maps on the quotient are well-defined. A failed check is a support outside the old closure, whose adjunction strictly enlarges it.
+\end{proof}
+
+The finite premise is a check on observed response columns, not a promise that the unknown ideal lattice is already complete. It may use at most $|Q||\Sigma||E|$ additional binary measurements beyond the known baseline, fewer when columns or entries coincide. It does not require identifying which labelled state is the action successor. No optimality claim is made for this generic budget.
+
+The closure computation is finite: from a measured support $S$, intersect all baseline supports containing it and test equality with $S$. An accepted check also gives an explicit conjunction representation for each $P_{ae}$. Those representations extend inverse-image operations to all baseline closed sets. Thus the conclusion supports generation of future supports, not just an assertion of equal cardinalities.
+
+\paragraph{Why this is stronger than predictive consistency.}
+Let $Q=\{1,2,3\}$ and use terminal supports $\{1\},\{2\}$. The three baseline rows are distinct, so every action trivially induces a map on the baseline predictive carrier. Let $\delta_a(1)=\delta_a(2)=1$ and $\delta_a(3)=3$. Then $P_{ae_1}=\{1,2\}$ lies outside $\{Q,\{1\},\{2\},\varnothing\}$. Predictive well-definedness alone does not imply incidence saturation. The new support is visible after one explicit action--test experiment.
+
+\paragraph{A limit on the inference.}
+The proof uses exhaustive preparation coverage and successor closure. A table on a sample of preparations cannot establish these assumptions. Nor does an unperformed but available column pass the criterion. A model-computed column can support the theorem only to the extent that the model itself has been certified under a valid promise.
+
+\section{What partial observations tell us to measure next}
+\label{sec:partial}
+
+Suppose a new column $e$ is only partly measured. Let $P,N\subseteq Q$ be its known positive and negative states, disjoint, and put $M=Q\setminus N$. At the level of this one column, absent additional constraints coupling it to other unknown columns, its possible supports form the interval
+\[
+ [P,M]=\{S:P\subseteq S\subseteq M\}.
+\]
+Unknown entries are not negative entries.
+
+\begin{theorem}[Exact partial-column decisions]
+\label{thm:partial}
+Let $\C$ be the known finite extent closure, with closure operator $\cl$. Then:
+\begin{enumerate}
+\item An old-closure completion exists if and only if $\cl(P)\cap N=\varnothing$.
+\item Every compatible completion creates a new extent if and only if $\cl(P)\cap N\ne\varnothing$.
+\item Every compatible completion belongs to $\C$ if and only if $M\in\C$ and $M\setminus\{x\}\in\C$ for every $x\in M\setminus P$.
+\end{enumerate}
+When neither the second nor the third condition holds, the partial column leaves both possibilities open.
+\end{theorem}
+\begin{proof}
+Any closed set containing $P$ contains $\cl(P)$, proving necessity in the first claim. If that least closed set avoids $N$, it is a compatible completion, proving sufficiency. The second claim is its negation.
+
+For the third claim, necessity follows because $M$ and each $M\setminus\{x\}$ in question are themselves compatible supports. For sufficiency, every $S\in[P,M]$ can be written
+\[
+ S=M\cap\bigcap_{x\in M\setminus S}(M\setminus\{x\}).
+\]
+Each excluded $x$ lies outside $P$. The stated closed sets therefore express every compatible support as an intersection of members of $\C$.
+\end{proof}
+
+This gives a practical conditional next experiment. When a closed completion remains possible, query an unobserved state in $\cl(P)\setminus P$, if such a query is available. A negative answer immediately proves that no old conjunction represents the column. A positive answer adds evidence but does not in general finish the test. The third condition, not a vague absence of observed conflict, supplies a sound early stopping rule. This is a decision criterion, not a theorem that this query policy minimizes cost.
+
+For example, in $\C=\{Q,\{1\},\{2\},\varnothing\}$ on three states, observations $P=\{1\}$ and $N=\{3\}$ allow either support $\{1\}$ or $\{1,2\}$. Querying state $2$ settles whether a new extent is present. By contrast, in the suffix-chain closure on $\{1,2,3\}$, the same partial data with $P=\{3\}$ and $N=\{1\}$ certify redundancy without measuring state $2$: both possible supports $\{3\}$ and $\{2,3\}$ are already closed.
+
+\paragraph{Predictive splitting has a different partial criterion.}
+A new column is forced to split an old equal-row class exactly when that class contains both a known positive and a known negative state. Otherwise a completion constant on each old class exists. Thus one can force an incidence change without forcing a predictive split. These are one-column statements on a fixed domain; known dynamical constraints can shrink the compatible interval and should then be included explicitly.
+
+\section{A bridge with an exact additional-query consequence}
+\label{sec:threshold}
+
+Take $Q=\{1,\ldots,n\}$ with its known order, $n\ge2$, and fixed terminal thresholds
+\[
+ e_j(i)=\mathbf1_{i\ge j},\qquad 1\le j\le n+1.
+\]
+Their baseline supports are all suffixes
+\[
+ C_j=\{j,\ldots,n\},\qquad C_1=Q,\quad C_{n+1}=\varnothing.
+\]
+The baseline table, including the two constant endpoints, is already known. This knowledge may come from actual initial measurements or independently guaranteed test semantics. Its acquisition cost is not included in the \emph{additional} bounds below. Acquiring the literal calibration rectangle from scratch can itself require $\Theta(n^2)$ binary measurements; the linear bound is not an end-to-end claim for that task.
+
+One unknown action $a$ has transition $\delta:Q\to Q$, with no monotonicity promise. Preparations $i$ are independent labelled reset settings, not histories $a^i$. Threshold tests are separate terminal operations with fixed semantics, not words involving the unknown $a$. Thus every one of the $n^n$ maps is initially admissible. Every nontrivial one-step pair $(i,a,e_j)$, $2\le j\le n$, is currently admissible. Higher powers of $a$ may remain ideal experiments only. An additional query $(i,j)$ returns
+\[
+ e_j(\delta(i))=\mathbf1_{\delta(i)\ge j}.
+\]
+This explicit typing is essential to both the upper and lower bounds.
+
+\begin{theorem}[Closure preservation and transition testing]
+\label{thm:threshold}
+The following are equivalent:
+\begin{enumerate}
+\item the ideal incidence closure for all $a^re_j$, $r\ge0$, equals the baseline suffix-chain closure;
+\item $\delta^{-1}(C_j)$ is a suffix for every threshold $j$;
+\item $\delta(1)\le\cdots\le\delta(n)$.
+\end{enumerate}
+There is an exact deterministic decision procedure using at most $3n-2$ additional binary threshold queries on every input. Any such decision procedure requires at least $n-1$ queries on some input. In contrast, exact identification of an arbitrary map $Q\to Q$ requires at least $\lceil n\log_2n\rceil$ binary answers in the worst case and is achievable in $O(n\log n)$ queries.
+\end{theorem}
+\begin{proof}
+A monotone map has suffix preimages of suffixes, and every iterate is monotone. Conversely, if $i<\ell$ but $\delta(i)>\delta(\ell)$, threshold $j=\delta(i)$ has preimage containing $i$ but not $\ell$, which is not a suffix. Theorem~\ref{thm:saturation}, or iteration directly, gives the stated equivalences.
+
+For the decision algorithm maintain an integer $t$, initially $1$. For states $i=1,\ldots,n$, first, if $i>1$ and $t>1$, query whether $\delta(i)\ge t$, where $t$ is the exact previous value. A negative answer rejects; at $t=1$ the guard is known true without a query. Otherwise query thresholds $t+1,t+2,\ldots$ until the first negative answer or $t=n$, increasing $t$ on every positive answer. Then $t=\delta(i)$ and continue. There are at most $n-1$ validation queries, at most $n-1$ successful increases, and at most $n$ final negative boundary queries. Hence at most $3n-2$ queries occur, even on a rejecting run. Acceptance proves monotonicity.
+
+For a lower bound consider the constant map $\delta(i)=1$. For each $i<n$, changing just $\delta(i)$ to $2$ makes the map nonmonotone. On this target the two maps differ at precisely the nontrivial query $(i,2)$. Every exact algorithm must therefore ask all $n-1$ such queries before accepting that target.
+
+Finally, there are $n^n$ arbitrary maps, and a binary decision tree identifying them needs a leaf for each. Its worst-case depth is at least $\lceil\log_2(n^n)\rceil$. Binary search independently identifies each value in $O(\log n)$ probes.
+\end{proof}
+
+\paragraph{What the cost gap does and does not mean.}
+The bridge turns a statement about all future incidence columns into a concrete monotonicity test of the unknown action. A rejection supplies a new one-step support and a pair witnessing why it is not an old suffix. This is a substantive instruction about additional experiments.
+
+The scanner learns every $\delta(i)$ on accepting runs. Therefore its $\Theta(n)$ versus $\Theta(n\log n)$ comparison is a property test versus unrestricted-map identification, not a claim that accepting the property leaves the transition unidentified. Promised-monotone maps themselves number only $\binom{2n-1}{n}$ and can be identified in linear threshold-query complexity. Damaschke already proves linear reconstruction with this exact threshold oracle under a monotonicity promise \cite{Damaschke}. The scan-and-abort extension above is elementary, not novelty clearance.
+
+\subsection{An accepting certificate that really leaves dynamics uncertain}
+\label{sec:positivecertificate}
+
+There is a separate and stronger distinction on particular evidence sets. Let $n=2k$, $k\ge1$. Obtain the following answers:
+\[
+ 2i-1\le\delta(i)\le2i\quad(1\le i\le k),
+ \qquad \delta(i)=n\quad(k<i\le n).
+\]
+These conditions are checked by primitive thresholds, without reading exact transition values:
+\begin{itemize}
+\item for $2\le i\le k$, query $\delta(i)\ge2i-1$ and obtain yes;
+\item for $1\le i<k$, query $\delta(i)\ge2i+1$ and obtain no;
+\item for $k<i\le2k$, query $\delta(i)\ge n$ and obtain yes.
+\end{itemize}
+Bounds $\delta(1)\ge1$ and $\delta(k)\le n$ are automatic from the declared range. Thus the total is $(k-1)+(k-1)+k=3k-2$ queries.
+
+\begin{proposition}[Incidence warrant without predictive identification]
+\label{prop:uncertain}
+These answers certify that the ideal incidence closure equals the baseline chain for every future continuation. Exactly $2^k$ different transitions remain compatible, giving pairwise different predictive laws under the labelled preparation and terminal-test interface. Precisely $k$ further binary queries suffice to identify the remaining map, and at least $k$ are necessary in the worst case within this compatible class.
+\end{proposition}
+\begin{proof}
+The first $k$ values lie in successively ordered disjoint intervals $\{2i-1,2i\}$; every later value equals $n$. Every compatible map is therefore monotone, so Theorem~\ref{thm:threshold} gives the incidence conclusion for all iterates. The $k$ binary choices are independent, giving exactly $2^k$ maps. Distinct choices at state $i$ are distinguished by the one-step threshold $2i$. Those $k$ queries identify all choices, and the binary information bound proves necessity.
+\end{proof}
+
+This is an explicit positive answer to the possibility of certifying incidence structure without learning all predictive dynamics. It is not a new worst-case testing theorem and does not give an optimal general policy for finding such certificates. It identifies the labelled family of state subsets $\C$, but not the full context of named future tests or the induced inverse-image action $D_a$ on that family. Individual unperformed future outcomes remain uncertain: their supports belong to the known family, but which family member a named test denotes can vary across compatible maps.
+
+\section{What fails without the independent assumptions}
+\label{sec:counterexamples}
+
+\paragraph{Dropping closure preservation.}
+In the threshold setting let $\delta(1)=2$ and $\delta(i)=1$ for $i\ge2$. The new support for threshold $2$ is $\{1\}$, not a suffix. No predictive state splits, because the baseline already separates every state. The incidence structure nevertheless changes. This is a concrete boundary for the positive implication.
+
+\paragraph{Dropping exhaustive preparation coverage.}
+Take the threshold preparations and compare the identity transition with a hidden-copy system. The latter has states $q_i,q_i'$ with identical terminal threshold responses at $q_i$ and $q_i'$. Let $a(q_i)=q_i'$ and $a(q_i')=q_{\pi(i)}$, where $\pi$ swaps $1,2$ and fixes the other indices. Both systems agree on every calibration and every one-step experiment from the named $q_i$. Nevertheless the two-step threshold-$2$ support contains preparation $1$ and excludes preparation $2$, so it is not a suffix. All one-step data on those preparations leave this possibility open without the exhaustion promise. The reset-word finite-modification construction in Section~\ref{sec:resource} gives another explicit failure on a fixed set of named histories.
+
+\paragraph{Changing the interface invalidates the cost comparison.}
+If preparation $i$ is required to be $a^i$ from one start state, the successor structure is constrained by that shared history. If terminal thresholds are themselves made from the unknown action, their semantics change with it. In either case the class need no longer contain all $n^n$ maps, so the arbitrary-map information lower bound cannot be imported. The positive certificate and the scanner concern the independent preparation/terminal interface stated above.
+
+\paragraph{Insufficient availability.}
+For example, on two exhaustive threshold states, suppose only one-step queries from preparation $1$ are available. The maps $(\delta(1),\delta(2))=(2,2)$ and $(2,1)$ agree on all available queries, but only the first preserves the suffix closure. Thus a missing support is an experimental target, not proof that it can currently be observed. If needed pairs are outside the available set $A$, direct acquisition is blocked. Model inference from a valid certificate can justify a statement without physically executing a long test, but it does not count that test as observed.
+
+\section{A precise resource comparison for literal columns}
+\label{sec:resource}
+
+The following family compares representations, not optimal physical-learning algorithms. It makes the distinction between retaining measured attributes and generating further ones from a certified predictor explicit.
+
+Let $n=2^m\ge2$, $k=n/2$, and $Q=\{0,\ldots,n-1\}$. Two actions are an $n$-cycle $c$ and a transposition $t=(0,1)$; they generate the symmetric group. Let the binary final set $F$ be one coordinate half of the $m$-bit labels, and use one terminal output. All ideal supports $P_w=\delta_w^{-1}(F)$ are exactly the $k$-subsets of $Q$.
+
+Choose $m$ continuation words $E=\{w_1,\ldots,w_m\}$ whose supports are the coordinate halves. One may take one word to be $\eps$, since $F$ itself is a coordinate half. They distinguish all $n$ states, and fewer than $m$ binary tests cannot do so. Yet
+\[
+ |\C_E|=2^m=n,
+ \qquad
+ \C_U=\{S\subseteq Q:|S|\le k\}\cup\{Q\}.
+\]
+Indeed, intersections of selected coordinate halves specify which coordinates must be one. Every ideal support has size $k$, and every set of size at most $k$ is the intersection of all $k$-sets containing it.
+
+The proper meet-irreducibles of $\C_U$ are precisely its $k$-subsets. A smaller set is the intersection of two strictly larger allowed sets, while a $k$-subset has only $Q$ strictly above it. Proposition~\ref{prop:restriction} therefore yields an exact lower bound:
+\[
+ \text{literal test supports required to preserve }\C_U
+ =\binom nk.
+\]
+A retained family attaining it takes one word for every $k$-support. If one such support $M$ is absent, no different ideal raw support contains $M$. Thus its retained closure is $Q$, and for any $q\notin M$ the missing support $M$ is the only raw support that can be positive on all of $M$ and negative at $q$.
+
+For $n=4$ the predictor has four states, two coordinate tests separate them, the baseline has four extents, the ideal closure has twelve extents, and six raw supports are indispensable. For $n=8$ the respective numbers are $8,3,8,164,70$.
+
+\subsection{A finite predictive certificate generates the missing supports}
+\label{sec:certificate}
+
+Suppose an unknown resettable behavior is independently promised to have at most $n$ reachable behavioral states. Let $H$ contain $\eps$ and have $n$ preparation histories. Let $E$ contain $\eps$. If the actually observed table on $(H\cup H\Sigma)E$ has $n$ distinct $H$-rows and each successor row equals one of them, the table determines the complete minimal predictor. The distinct rows require at least $n$ states; the bound permits no others. Thus they exhaust the state cover, successor rows identify the transitions, and the empty column supplies output. This is classical conformance reasoning \cite{Chow}.
+
+In the symmetric-group family use $H=\{\eps,c,\ldots,c^{n-1}\}$ and the coordinate words above. At most $3nm$ actual reset runs suffice for this certificate, once $H,E$ have been found and the capacity promise is valid. They determine every ideal support and hence the ideal closure without measuring every raw column.
+
+The word costs can also be bounded. Adjacent transpositions are conjugates of $t$ expressible with at most $n+1$ positive letters in $c,t$. Every permutation is a product of at most $n(n-1)/2$ adjacent transpositions. Therefore the coordinate words can have length at most
+\[
+ D_n=(n+1)n(n-1)/2.
+\]
+Each certificate run has length at most $D_n+n$, and total executed action letters are at most $3nm(D_n+n)=O(n^4\log n)$. These are coarse existence bounds, not optimal discovery or query bounds.
+
+\paragraph{Four quantities that must remain separate.}
+The number of ideal closed sets, the number of indispensable literal raw supports, the size of an explicit output listing, and the number of physical measurements required for logical warrant are different resources. The exponential retained-support lower bound does not apply to all learning algorithms: the polynomial certificate just given defeats that interpretation. Computing one support from the certified transition table costs $O(n|w|)$ elementary steps; explicitly enumerating an exponential closure can still require exponential output. Discovery of useful $H,E$ is not covered by the certificate's count.
+
+\subsection{An explicit failure without the capacity promise}
+
+For $n\ge4$, retain the fixed histories $H$ and any finite set $T$ of observed reset words from this family. Choose $S\subseteq H$ with $k<|S|<n$, and choose a word $z$ so long that every $hz$, $h\in H$, lies outside $T$. Change the accepted language on just those finitely many words so that $g(hz)=1$ exactly for $h\in S$. This finite modification is still regular and agrees with every observation in $T$. It supplies a new column support $S$ on the same named histories, outside the old ideal closure.
+
+All old $k$-supports still occur: each has infinitely many realizing continuations obtained by appending the identity word $c^n$ repeatedly, and only finitely many reset words were changed. Thus the ideal incidence closure genuinely changes. A closed-looking finite transition table alone cannot warrant the ideal closure in the unbounded regular class. The valid capacity promise is an independent condition, not a conclusion of model fitting.
+
+\section{Strongest-source audit and residual status}
+\label{sec:sources}
+
+The basic predictor--incidence bridge is established prior work. Clark's introduction and Table~1 explicitly distinguish the prefix--suffix row quotient (minimal DFA) from its Galois/factorization structure, and both from the two-sided context--substring syntactic congruence and syntactic concept lattice \cite{Clark}. Our one-sided extents and intents should not be renamed the two-sided syntactic concept lattice.
+
+Lombardy and Sakarovitch identify right factors with intersections of left quotients, construct the canonical universal automaton from a finite recognizer, and exhibit exponential size relative to minimal DFA size \cite{Universal}. Their canonical universal automaton is a nondeterministic maximal-factorization construction, not an automaton with an all-runs acceptance convention and not automatically the deterministic inverse-image action on our closure. These typed distinctions matter.
+
+\paragraph{The comparison already influences learning in the literature.}
+NL$^*$ uses row inclusion, unions and prime residuals to build its hypothesis; a consistency failure supplies a new letter-prefixed suffix \cite{NLstar}. It learns canonical residual automata under membership and equivalence queries. Its union structure is different from arbitrary intersection completion, but it already refutes a broad novelty claim for ``algebraic row structure guides the next experiment.''
+
+Björklund, Fernau, and Kasprzik learn canonical universal automata through observation tables, with polynomial query count measured in the universal automaton's size under membership and equivalence access \cite{UALearning}. Such a bound can be exponential in minimal predictor size. The published abstracts establish that prior-art point. An older inspected preprint contains suspect ancillary claims, so no fine complexity formula or theorem dependent on those remarks is imported here. A finite reset-only certificate with a known capacity bound is a different interface, but that difference alone does not make a generic bridge novel.
+
+Coalgebra learning via duality provides another substantial state/test comparison and learning theorem \cite{Duality}. Its logical test structure, counterexamples, successor exploration and finiteness hypotheses must be preserved when comparing access models. It cannot be treated as an unrestricted black-box sampling theorem, nor ignored because its target object occurs in the correctness semantics.
+
+\paragraph{Column and partial-column criteria.}
+FCA already removes an attribute whose support is an intersection of retained supports and characterizes reduced finite contexts through irreducibles \cite{FCA}. Proposition~\ref{prop:restriction} is that mechanism with the labelled observational meaning kept explicit. Partial descriptions and closure-based realization are also established \cite{Partial,Exploration}. The least-closure test in Theorem~\ref{thm:partial} is an elementary closure consequence. Our all-completions condition is proved directly; it is not claimed verbatim from those sources. Their implication/expert access should not be confused with individual membership probes.
+
+\paragraph{Abstract-interpretation completeness.}
+Giacobazzi and Ranzato study complete abstract domains relative to semantic operators and their complete extensions and restrictions \cite{AbstractInterpretation}. This is a further relevant predecessor for closure stability under inverse-image semantics. Only the author abstract is available to this audit; no equivalence with a particular technical completeness convention is asserted. The generic invariant-closure criterion should therefore not be presented as a new abstract-interpretation principle. The present finite probe model and its concrete certificates still require their own stated assumptions.
+
+\paragraph{Threshold-query overlap.}
+Damaschke's \emph{Searching for a monotone function by independent threshold queries} uses precisely the oracle $f(x)\ge y$ and reconstructs promised-monotone functions with linear query complexity \cite{Damaschke}. The inspected primary abstract states the exact interface and bound; the subscription full text was not inspected. It does not itself establish the no-promise rejection procedure, but scan-and-abort is an elementary extension. The $2^k$ accepting version space in Proposition~\ref{prop:uncertain} is a useful extra comparison control, not evidence of a new threshold-query theorem. Our order is supplied; we are not solving the different problem of finding an invariant order for an arbitrary automaton.
+
+\paragraph{The exponential family is especially close to a known witness.}
+Hospodár and Mlynárčik's permutation-automaton reversal theorem already uses cycle/transposition generators and a balanced final set to obtain exactly $\binom n{\lfloor n/2\rfloor}$ reachable reverse subsets \cite{Permutation}. Those subsets are our raw test supports. FCA irreducibility and the coordinate-test comparison are simple deductions from that known orbit. Neither the orbit nor completion blow-up is a new mechanism, and neither implies an oracle-query lower bound.
+
+\paragraph{What the audit establishes.}
+The report gives independently checked exact synthesis and concrete experimental consequences. The source inspection includes full texts for the main FCA, Clark, duality, and permutation claims, published-abstract support with explicit limitations for Damaschke and the final universal-automata learning version, and a direct proof for each mathematical result used here. The audit is targeted, not exhaustive. Failure to locate the exact wording of a corollary is not evidence of novelty.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+There is a meaningful one-way bridge. Predictive generation acts on incidence supports by inverse image; closure of finitely many measured generators can establish all-future incidence saturation. A failed generator check names an additional continuation, and a partial-column criterion says when more entries are needed. The threshold setting turns that law into a linear exact experiment budget and, with a separate accepting certificate, establishes the incidence structure while leaving exponentially many distinct transition laws possible.
+
+These results meet the concrete request for a positive law, independent assumptions, a typed comparison, an experimental consequence, and counterexamples. They do not establish the programme's required source-distinct research contribution. The strongest sources already cover the main ingredients, and the remaining deductions are elementary controls. The recommendation is to retain this attempt as a precise benchmark and source map, not label it a Gate A pass or expand the framework on the strength of these results alone.
+
+The practical distinction is now exact: \emph{a new predictive distinction, a new incidence extent, and an unidentified future transition are not the same uncertainty}. The comparison can determine which kind of experiment would resolve each one. It cannot substitute model inference for observed data, infer an unprovided capacity bound, or turn a succinct generator into a cheap explicit listing of every concept.
+
+\section*{Artifact verification}
+This is uncompiled TeX source. Static checks establish only source consistency, not successful compilation or PDF layout. Exact finite checks include all $50{,}069$ maps on $n\le6$ states, $63{,}525$ partial-column cases with $195{,}088$ completions, $13{,}512$ dynamic-saturation cases, and the positive ambiguous certificates for $k\le8$. They also verify the empty-support regression and permutation examples at $n=2,4,8$. These checks supplement the proofs and do not establish novelty or replace their general quantifiers.
+
+\begin{thebibliography}{99}
+\bibitem{FCA} B. Ganter and R. Wille. \emph{Formal Concept Analysis Mathematical Foundations}. Springer, 1999, Section 1.2, Definition 24 and Proposition 12. \href{https://doi.org/10.1007/978-3-642-59830-2}{Publication record}.
+\bibitem{Clark} A. Clark. \emph{The Syntactic Concept Lattice: Another algebraic theory of the context-free languages?} Journal of Logic and Computation 25(5) (2015), 1203--1229; online 2013. \href{https://alexc17.github.io/static/pdfs/JLC2013.pdf}{Author paper}; \href{https://doi.org/10.1093/logcom/ext037}{Publication record}.
+\bibitem{Universal} S. Lombardy and J. Sakarovitch. \emph{The Universal Automaton}. In \emph{Logic and Automata History and Perspectives}, 2008. \href{https://perso.telecom-paristech.fr/jsaka/PUB/Files/TUA.pdf}{Author chapter}, Proposition 2.1 and Sections 4--5.
+\bibitem{NLstar} B. Bollig, P. Habermehl, C. Kern, and M. Leucker. \emph{Angluin-Style Learning of NFA}. IJCAI 2009, 1004--1009. \href{https://www.ijcai.org/Proceedings/09/Papers/170.pdf}{Proceedings paper}.
+\bibitem{UALearning} J. Björklund, H. Fernau, and A. Kasprzik. \emph{Polynomial inference of universal automata from membership and equivalence queries}. Information and Computation 246 (2016), 3--19. \href{https://doi.org/10.1016/j.ic.2015.11.005}{Published record}. Earlier conference version: \emph{MAT Learning of Universal Automata}, LATA 2013. \href{https://link.springer.com/chapter/10.1007/978-3-642-37064-9_14}{Conference record}.
+\bibitem{Duality} S. Barlocco, C. Kupke, and J. Rot. \emph{Coalgebra Learning via Duality}. FoSSaCS 2019, 62--79. \href{https://arxiv.org/html/1902.05762}{Full author text}.
+\bibitem{Partial} F. Baader, B. Ganter, U. Sattler, and B. Sertkaya. \emph{Completing Description Logic Knowledge Bases Using Formal Concept Analysis}. IJCAI 2007. \href{https://ijcai.org/proceedings/2007/35}{Primary paper}, Definitions 2.1--2.4.
+\bibitem{Exploration} D. Borchmann. \emph{A General Form of Attribute Exploration}. 2012. \href{https://arxiv.org/html/1202.4824}{Full author text}.
+\bibitem{Damaschke} P. Damaschke. \emph{Searching for a monotone function by independent threshold queries}. ISAAC 1995, LNCS 1004, 284--290. \href{https://link.springer.com/chapter/10.1007/BFb0015433}{Inspected primary abstract}. Full subscription text not inspected.
+\bibitem{Permutation} M. Hospodár and P. Mlynárčik. \emph{Operations on Permutation Automata}. DLT 2020, LNCS 12086, 122--136. \href{https://doi.org/10.1007/978-3-030-48516-0_10}{Publication record}; \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC7247878/}{Full paper}, Lemma 7 and Theorem 11(d).
+\bibitem{AbstractInterpretation} R. Giacobazzi and F. Ranzato. \emph{Completeness in abstract interpretation A domain perspective}. AMAST 1997. \href{https://profs.sci.univr.it/~giaco/abstracts/amast97.abstract.html}{Author abstract}; full-paper completeness definitions not audited here.
+\bibitem{Chow} T. S. Chow. \emph{Testing Software Design Modeled by Finite-State Machines}. IEEE Transactions on Software Engineering SE-4(3) (1978), 178--187. \href{https://doi.org/10.1109/TSE.1978.231496}{Publication record}.
+\end{thebibliography}
+\end{document}

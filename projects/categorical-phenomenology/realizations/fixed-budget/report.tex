@@ -1,0 +1,738 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,array}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\newcommand{\R}{\mathbb R}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\Kcal}{\mathcal K}
+\newcommand{\Pcal}{\mathcal P}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Id}{\operatorname{id}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\title{Fixed budget native realization and compositional gradient assembly}
+\author{Technical study}
+\date{3 November 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+For fixed finite local stochastic mechanisms, we test whether at most $K$ middle states suffice for a joint native implementation. The answer is exactly encoded by the zero set of an explicit unconstrained degree-at-most-four sum of squares. Binary tuple selectors and square slacks treat an unused slot as inactive, so an empty coupling polytope does not obstruct unused capacity. Every sublevel set of this particular polynomial is compact; its global minimum is therefore attained, and its value is zero exactly when the budget is feasible. This is a global characterization, not a guarantee for gradient descent: an explicit positive-loss stationary point exists even in feasible instances. We separately audit the theorem that generalized negative gradients form a hypergraph functor. It justifies assembly of gradient fields from the residual factors, and requires a distinct increment convention to extend the construction to discrete Euler updates. It does not supply global minimization, convergence to a feasible realization, or a functorial choice of optimal implementations. The study gives exact proofs and finite regression checks, and makes no novelty or priority claim.
+\end{abstract}
+
+\section{What the fixed budget test establishes}
+
+The earlier note \emph{Joint native realization with fixed local mechanisms} treats unrestricted finite feasibility by a linear tensor system and identifies the minimum middle-state count by constrained factor ranks. Here the resource question is fixed before solving: does a realization exist with at most $K$ middle states, hence at most $K+2$ total native states? We retain the same native class, including its deterministic occurrence maps and its statewise local continuation rows. This restriction is essential: matching observable laws alone is a different and weaker problem.
+
+The central result has four parts. First, a finite family of real polynomial equations is equivalent to the fixed-budget question. Second, the sum of their squares is an unconstrained degree-at-most-four objective whose sublevel sets are compact. Third, a global zero reconstructs an actual implementation after inactive slots are discarded; a strictly positive \emph{certified global minimum} proves that the budget is insufficient. Fourth, the objective can be assembled from local residual factors and its gradient assembled through the corresponding linear variable-sharing maps.
+
+The fourth claim does not solve the third. The categorical theorem under audit is an algebraic statement about gradient construction and wiring. Even with attainment proved independently, a stationary point or a numerical optimizer's positive loss need not settle feasibility. We make that gap explicit rather than attributing a global solver to the functoriality theorem.
+
+\section{The fixed native data and resource question}\label{sec:native}
+
+All sets below are finite and nonempty, except that the integer budget $K$ is permitted to be zero. Let $L$ index modules. For module $i$ fix an announcement set $J$, hidden occurrences $H_i$, retained states $S_i$, and matrices
+\[
+ A_i\in\R_{\ge0}^{J\times H_i},\qquad
+ B_i:H_i\longrightarrow S_i.
+\]
+The rows of $B_i$ are stochastic. The $A_i$ are joint laws with common announcement marginal $A_i\one=p$, where $p$ is a probability vector. Fix allowed tuples $E\subseteq\prod_i H_i$, retained carrier $S\subseteq\prod_i S_i$, projections $e_i:E\to H_i$ and $\pi_i:S\to S_i$, a probability row $w$ on $S$, a stochastic observation matrix $Q:S\to I$, and a target joint law $R\in\R_{\ge0}^{J\times I}$ of total mass one. We assume the cheap consistency identities
+\[
+ R\one=p,\qquad \one^{\mathsf T}R=wQ,\qquad
+ w\pi_i=\one^{\mathsf T}A_iB_i.
+\]
+If the native models also name local observation channels $Q_i:S_i\to I_i$ and deterministic output maps $g_i:I\to I_i$, require the statewise square $Qg_i=\pi_iQ_i$ and the local target identity $Rg_i=A_iB_iQ_i$. These fixed checks do not introduce optimization variables.
+
+For $h\in E$ put
+\begin{equation}\label{eq:coupling-polytope}
+ \Kcal_h=\{\beta\in\R_{\ge0}^{1\times S}:\beta\one=1,
+ \ \beta\pi_i=B_i(e_i(h),-)\text{ for every }i\}.
+\end{equation}
+This polytope can be empty. A \emph{layer-native implementation} is a finite nonempty middle carrier $V$, nonnegative $A\in\R^{J\times V}$, a stochastic matrix $B:V\to S$, and a deterministic map $f:V\to E$ satisfying
+\begin{align}
+ Af_i&=A_i, &B\pi_i&=f_iB_i &&(i\in L),\label{eq:native-local}\\
+ \one^{\mathsf T}AB&=w, &ABQ&=R,\label{eq:native-global}
+\end{align}
+where $f_i=e_i\circ f$. Its total native state cost is $|V|+2$: root, middle states, and terminal are disjoint phases. The root emits announcement $j$ and enters $v$ with mass $A_{jv}$; $v$ emits the second output using $BQ$ and enters the terminal. The terminal loops on its own symbol. The equation $B\pi_i=f_iB_i$ preserves every retained continuation row, not merely the product $AB\pi_i$.
+
+States with $A_{jv}=0$ for every $j$ may be deleted. Their removal preserves all equations for the remaining states and cannot increase cost. We therefore ask about \emph{at most} $K$ effective middle states. No surjectivity onto $E$ or the $H_i$ is required; unused named local occurrences remain part of the input without demanding a preimage.
+
+For orientation, the earlier tensor formulation introduces $Z_{jhs}\ge0$ and $\alpha_{jh}=\sum_s Z_{jhs}$, with
+\begin{align}
+ \sum_{h:e_i(h)=u}\alpha_{jh}&=A_i(j,u),\label{eq:tensor-root}\\
+ \sum_{s:\pi_i(s)=x}Z_{jhs}&=\alpha_{jh}B_i(e_i(h),x),\label{eq:tensor-row}\\
+ \sum_{j,h}Z_{jhs}&=w_s,\qquad
+ \sum_{h,s}Z_{jhs}Q_{su}=R_{ju}.\label{eq:tensor-global}
+\end{align}
+Let $\Pcal(D)$ be this polytope. Its nonemptiness is equivalent to unrestricted finite native feasibility: normalize each positive row $(j,h)$ to get a middle state. The resulting upper bound is $|J||E|$. For a matrix $M$ and row polytope $\Kcal$, let $\rank_{\Kcal}(M)$ be the least inner dimension in $M=CD$ with $C\ge0$ and every row of $D$ in $\Kcal$; set $\rank_{\Kcal}(0)=0$, including when $\Kcal=\varnothing$. The fixed-budget condition is equivalently
+\begin{equation}\label{eq:rank-budget}
+ \exists Z\in\Pcal(D):\quad
+ \sum_{h\in E}\rank_{\Kcal_h}(Z^h)\le K.
+\end{equation}
+Partitioning the states of a realization by $f(v)$ proves one direction; concatenating the constrained factorizations proves the other. The optimization encoding below handles this existence condition directly, without presupposing that a low-rank factorization or a native realization has already been found.
+
+\section{An exact fixed-budget polynomial encoding}
+\label{sec:budget-encoding}
+
+Fix the finite normalized input data of the joint-native realization theorem.
+In particular, the module set is nonempty; $J,E,S$ are finite and nonempty;
+$A_i\one=p$ with $\sum_jp_j=1$; every $B_i$ and $Q$ is stochastic;
+and the prescribed $w$ and $R$ have total mass one.
+All input consistency and output-comparison squares are assumed checked.
+The budget $K\in\mathbb Z_{\ge0}$ counts \emph{middle states}, not optimization
+iterations. A middle-state budget $K$ is a total native-state budget $K+2$.
+
+For each slot $v\in\{1,\ldots,K\}$ introduce real variables
+\[
+ d_{vh}\ (h\in E),\quad \eta_v,\qquad
+ a_{jv},\rho_{jv},\sigma_{jv}\ (j\in J),\qquad
+ b_{vs},\tau_{vs}\ (s\in S).
+\]
+There are $N=K(|E|+1+3|J|+2|S|)$ real variables. Write
+$e_v=\sum_{h\in E}d_{vh}$ \emph{as an abbreviation}, not as an additional
+unconstrained coordinate. The complete residual family is
+\begin{align}
+ D_{vh}&=d_{vh}^2-d_{vh}, &&(v,h),\label{eq:poly-selector}\\
+ H_v&=1-e_v-\eta_v^2, &&(v),\label{eq:poly-cap}\\
+ P_{jv}&=a_{jv}-\rho_{jv}^2, &&(j,v),\label{eq:poly-root-positive}\\
+ G_{jv}&=e_v-a_{jv}-\sigma_{jv}^2, &&(j,v),\label{eq:poly-root-gate}\\
+ T_{vs}&=b_{vs}-\tau_{vs}^2, &&(v,s),\label{eq:poly-row-positive}\\
+ N_v&=\sum_sb_{vs}-e_v, &&(v),\label{eq:poly-row-normalization}\\
+ C_{vix}&=\sum_{s:\pi_i(s)=x}b_{vs}
+             -\sum_hd_{vh}B_i(h_i,x), &&(v,i,x\in S_i),\label{eq:poly-row-marginal}\\
+ L_{iju}&=\sum_va_{jv}\sum_{h:h_i=u}d_{vh}-A_i(j,u),
+             &&(i,j,u\in H_i),\label{eq:poly-local-root}\\
+ W_s&=\sum_{j,v}a_{jv}b_{vs}-w_s, &&(s),\label{eq:poly-retained}\\
+ O_{ju}&=\sum_{v,s}a_{jv}b_{vs}Q_{su}-R_{ju}, &&(j,u\in I).
+             \label{eq:poly-observed}
+\end{align}
+The objective is the unweighted sum of squares of \emph{every scalar}
+residual in this list, each included once:
+\begin{equation}\label{eq:poly-objective}
+ \Phi_K(x)=\sum_{v,h}D_{vh}^2+\sum_vH_v^2
+ +\sum_{j,v}(P_{jv}^2+G_{jv}^2)+\sum_{v,s}T_{vs}^2
+ +\sum_vN_v^2+\sum_{v,i,x}C_{vix}^2
+ +\sum_{i,j,u}L_{iju}^2+\sum_sW_s^2+\sum_{j,u}O_{ju}^2.
+\end{equation}
+Every residual has degree at most two, so $\Phi_K$ is a nonnegative real
+polynomial of degree at most four, and $-\nabla\Phi_K$ is polynomial of degree
+at most three. All these are unconstrained real coordinates: inequalities
+have been encoded by the square-slack equations, not silently omitted.
+
+\begin{theorem}[Exact bounded-state realization]
+\label{thm:budget-zero}
+For $K\ge1$, the following are equivalent:
+\begin{enumerate}
+\item There is a joint layer-native implementation with at most $K$ middle states.
+\item There exists $x\in\mathbb R^N$ with $\Phi_K(x)=0$.
+\item $\min_{x\in\mathbb R^N}\Phi_K(x)=0$.
+\item $\inf_{x\in\mathbb R^N}\Phi_K(x)=0$.
+\end{enumerate}
+In fact $\Phi_K$ is coercive, so its minimum is attained on every input.
+If no such implementation exists, its minimum is strictly positive.
+For $K=0$ there is no implementation and the empty-coordinate residual is
+the strictly positive constant
+$\sum_{i,j,u}A_i(j,u)^2+\sum_sw_s^2+\sum_{j,u}R_{ju}^2$.
+\end{theorem}
+
+\begin{proof}[Zero-set equivalence]
+At a zero, \eqref{eq:poly-selector} gives $d_{vh}\in\{0,1\}$ and
+\eqref{eq:poly-cap} gives $e_v\le1$. Consequently each slot has either no
+selected tuple ($e_v=0$) or exactly one selected tuple $h(v)$ ($e_v=1$).
+Equations \eqref{eq:poly-root-positive}--\eqref{eq:poly-root-gate} give
+$0\le a_{jv}\le e_v$. Equations \eqref{eq:poly-row-positive} and
+\eqref{eq:poly-row-normalization} give $b_{vs}\ge0$ and
+$\sum_sb_{vs}=e_v$. Thus all $a_{jv}$ and $b_{vs}$ are zero in an inactive
+slot. An active slot has a stochastic continuation row, and
+\eqref{eq:poly-row-marginal} says
+$B(v,-):=b_{v,-}\in\mathcal K_{h(v)}$.
+
+Let $V$ be the active slots, put $A(j,v)=a_{jv}$, and set $f(v)=h(v)$.
+Equations \eqref{eq:poly-local-root}, \eqref{eq:poly-retained}, and
+\eqref{eq:poly-observed} are precisely the local root and global retained
+and observed laws. The resulting $V$ is nonempty: for any one module,
+summing \eqref{eq:poly-local-root} over $j,u$ gives
+$\sum_{j,v}a_{jv}e_v=1$. Inactive slots vanish and active slots have $e_v=1$,
+so $\sum_{j,v\in V}a_{jv}=1$. We have constructed a native implementation
+with $|V|\le K$. Active slots with $\sum_ja_{jv}=0$ may also be deleted;
+their presence is not needed to count the budget.
+
+Conversely embed the states of any implementation with at most $K$ middle
+states in the slots. For its occupied slots set $d_{v,f(v)}=1$, all other
+selectors zero, $a_{jv}=A(j,v)$, and $b_{vs}=B(v,s)$. Its total root mass is
+one, so $0\le a_{jv}\le1$. For unoccupied slots set all $d,a,b$ to zero.
+Choose real square roots
+\[
+ \eta_v=\sqrt{1-e_v},\quad
+ \rho_{jv}=\sqrt{a_{jv}},\quad
+ \sigma_{jv}=\sqrt{e_v-a_{jv}},\quad
+ \tau_{vs}=\sqrt{b_{vs}}.
+\]
+Every residual vanishes. The existence of these real square roots, rather
+than their rationality, is all that is used. Coercivity and attainment are
+proved below and establish the remaining equivalences.
+\end{proof}
+
+\subsection{Why empty coupling polytopes and unused slots cause no exception}
+An active slot labelled $h$ supplies a row of $\mathcal K_h$, so an empty
+$\mathcal K_h$ cannot be selected at a zero. An inactive slot supplies the
+zero row, not a row normalized to one. It is therefore harmless even if
+\emph{every} $\mathcal K_h$ is empty. In that case the target mass equations
+make a zero impossible, as they should. A named unused local occurrence
+need not have a preimage: no surjectivity has been added.
+
+This also handles zero announcement mass, zero retained-state mass, and
+zero tensor blocks. For example, if $p_j=0$, the nonnegative root equations
+force $a_{jv}=0$ on every active slot; inactive slots already have zero root
+weight. If $w_s=0$, then $a_{jv}b_{vs}=0$ for every $j,v$.
+No division by one of these masses occurs in the encoding.
+
+One must not impose a normalized row in $\mathcal K_h$ for every padded
+factor and call the result a rank-at-most encoding. If $\mathcal K_h$ is
+empty and the desired block is zero, its constrained rank is zero but that
+padded normalization would be infeasible. The activity gate is what removes
+this false obstruction.
+
+\subsection{Exact relation to the constrained-rank resource law}
+At a zero define
+\[
+ Z_{jhs}=\sum_{v:d_{vh}=1}a_{jv}b_{vs}.
+\]
+It is a feasible tensor for the preceding joint-native theorem. If $r_h$
+is the number of active slots with label $h$, then
+$Z^h$ factors through $r_h$ nonnegative columns and continuation rows in
+$\mathcal K_h$. Thus
+\[
+ \sum_h\operatorname{rank}_{\mathcal K_h}(Z^h)\le\sum_hr_h\le K.
+\]
+Conversely, any feasible tensor with this constrained-rank sum at most $K$
+provides factors, hence an implementation and a residual zero. Therefore
+\begin{equation}\label{eq:budget-rank}
+ \exists x:\Phi_K(x)=0
+ \quad\Longleftrightarrow\quad
+ \exists Z\in\mathcal P(D):
+ \sum_h\operatorname{rank}_{\mathcal K_h}(Z^h)\le K.
+\end{equation}
+Here $\operatorname{rank}_{\mathcal K_h}(0)=0$ even for an empty polytope,
+and a nonzero unfactorable block has rank $+\infty$.
+Equivalently one can take the finite union over integer allocations
+$r_h\ge0$ with $\sum_hr_h\le K$. The global-slot selectors encode that union
+inside one polynomial system. They express an \emph{upper bound}; neither
+nonzero incoming mass in every slot nor exact rank $K$ is required.
+In particular $\operatorname{rank}(R)>K$ is an immediate obstruction, with
+a nonzero $(K+1)$-minor providing an exact lower-bound witness when available.
+The identity \eqref{eq:budget-rank} is about coupling-constrained
+nonnegative factor rank, not ordinary matrix rank alone.
+
+\subsection{Coercivity of the actual objective, without additional constraints}
+\label{sec:budget-coercivity}
+Fix $M\ge0$ and put $\varepsilon=\sqrt M$. On the sublevel set
+$\Phi_K\le M$, the absolute value of every residual is at most
+$\varepsilon$. Set
+\[
+ D_\varepsilon=\frac{1+\sqrt{1+4\varepsilon}}2.
+\]
+The selector residual gives $d_{vh}^2-d_{vh}\le\varepsilon$, hence
+$|d_{vh}|\le D_\varepsilon$ and $e_v\ge-|E|D_\varepsilon$.
+The cap residual gives
+$e_v=1-\eta_v^2-H_v\le1+\varepsilon$ and therefore
+\[
+ \eta_v^2=1-e_v-H_v\le1+|E|D_\varepsilon+\varepsilon.
+\]
+The root positivity and gate residuals imply
+\[
+ -\varepsilon\le a_{jv}\le e_v+\varepsilon\le1+2\varepsilon,
+ \qquad
+ \rho_{jv}^2\le1+3\varepsilon,
+ \qquad
+ \sigma_{jv}^2\le1+3\varepsilon.
+\]
+Indeed $a=\rho^2+P\ge-\varepsilon$ and
+$a=e-\sigma^2-G\le e+\varepsilon$; then
+$\rho^2=a-P$ and $\sigma^2=e-a-G$ give the two bounds.
+Similarly $b_{vs}\ge-\varepsilon$, while
+$\sum_sb_{vs}=e_v+N_v\le1+2\varepsilon$. Writing $n=|S|$ and using the
+lower bound for the other $n-1$ entries yields
+\[
+ -\varepsilon\le b_{vs}\le1+(n+1)\varepsilon,
+ \qquad
+ \tau_{vs}^2\le1+(n+2)\varepsilon.
+\]
+These estimates bound \emph{every} coordinate of the sublevel set; the
+fixed row and target coefficients play no role in the bounds. Sublevel sets
+are also closed, since $\Phi_K$ is continuous. They are therefore compact.
+If a sequence with Euclidean norm tending to infinity had bounded objective,
+it would lie in one such bounded sublevel set, a contradiction. Thus
+$\Phi_K$ is coercive. Its nonempty sublevel at any evaluated point contains
+a global minimizer by continuity and compactness. As $\Phi_K\ge0$,
+infeasibility makes this attained minimum strictly positive.
+For fixed positive weights $\lambda_\ell$, the weighted objective satisfies
+$F\ge(\min_\ell\lambda_\ell)\Phi_K$, so its sublevel sets are compact as well.
+Its zero set is unchanged.
+
+This proof applies to the displayed gated encoding. A generic assertion
+that every polynomial sum of squares attains its infimum would be false.
+The gates and normalization equations are essential to this proof; dropping
+them creates a different objective requiring a new argument.
+
+\subsection{An optional redundant circle completion}
+Every exact zero has $|x_q|\le1$ for every base coordinate $x_q$, as follows
+from the exact selector, gate, and normalization equations. Consequently
+one may introduce $z_q$ and add the residuals
+\[
+ U_q=x_q^2+z_q^2-1,\qquad
+ \widetilde\Phi_K(x,z)=\Phi_K(x)+\sum_{q=1}^NU_q^2.
+\]
+This preserves zero feasibility, keeps degree at most four, and gives the
+particularly short coercivity bound
+\[
+ \widetilde\Phi_K(x,z)
+ \ge\frac{(\|(x,z)\|_2^2-N)^2}{N}\qquad(N>0).
+\]
+It follows from Cauchy--Schwarz applied to the $N$ numbers
+$x_q^2+z_q^2-1$. It is not needed for the preceding coercivity theorem and
+should not be represented as a missing assumption of it.
+
+\subsection{The explicit positive-residual stationary point}
+\label{sec:budget-stationary}
+For any $K\ge1$, put
+\[
+ d=a=b=\rho=\sigma=\tau=0,\qquad \eta_v=1\quad(v=1,\ldots,K).
+\]
+All selector, cap, positivity, gate, normalization, and row-marginal
+residuals vanish. The remaining residuals are $-A_i(j,u)$, $-w_s$, and
+$-R_{ju}$. Their variable-dependent parts are bilinear in $(a,d)$ or
+$(a,b)$, so their entire gradients vanish at this point. Hence
+\[
+ \nabla\Phi_K=0,\qquad
+ \Phi_K=\sum_{i,j,u}A_i(j,u)^2+\sum_sw_s^2+\sum_{j,u}R_{ju}^2>0.
+\]
+This works even for an input that admits a zero. The fact that $\eta_v=1$
+is nonzero causes no hidden gradient contribution: its residual $H_v$ is
+zero, so the term $2H_v\nabla H_v$ is exactly zero.
+For the optional circle completion set $z_q=1$ when $x_q=0$ and $z_q=0$
+when $x_q=\eta_v=1$. Then every $U_q=0$, so all their gradient contributions
+also vanish. Thus the completed objective has the same positive-residual
+stationary obstruction.
+
+More generally $\nabla\Phi_K=2J_F^{\mathsf T}F$, where $F$ is the residual
+vector. The equation $J_F^{\mathsf T}F=0$ does not imply $F=0$. Along its
+negative-gradient flow,
+$d\Phi_K/dt=-\|\nabla\Phi_K\|^2$, but descent alone does not find a zero.
+Coercivity bounds each trajectory in its initial sublevel and the smooth
+polynomial vector field is locally Lipschitz, so forward solutions exist
+for all time. No assertion that their limits have zero objective follows.
+An optimization failure or a positive-residual stationary point is not an
+infeasibility certificate.
+
+\subsection{Inequalities, arithmetic, and exact certificates}
+A weak inequality $g(x)\ge0$ is equivalent over the reals to the existence
+of a slack $t$ with $g(x)-t^2=0$. Penalizing $g(x)^2$ instead imposes
+$g(x)=0$, which is not the same condition. A strict inequality $g(x)>0$
+can be encoded by $g(x)t^2-1=0$, but is unnecessary here and may destroy
+compactness; exact positive mass in every padded slot should not be
+smuggled into an at-most-budget question. If further polynomial weak
+inequalities in the already bounded base coordinates are added using
+square slacks, their slacks are bounded on sublevels too. Any more general
+extension must recheck the degree and attainment arguments.
+
+For rational input the displayed residual coefficients are rational.
+Clearing denominators gives an existential sentence over the reals with
+integer polynomial equations. Its size is polynomial in the expanded
+finite input tables and $K$. If $K$ is binary encoded, it can first be
+replaced by $\min(K,|J||E|)$, because the native reconstruction theorem
+already bounds the needed number of middle states by $|J||E|$ on every
+feasible instance. This gives membership in the existential theory of the
+reals relative to explicit tables. It is not a polynomial-time algorithm,
+a hardness proof, or a claim about succinctly specified product carriers.
+
+The real-algebraic zero-set alternative gives two kinds of exact evidence:
+\begin{itemize}
+\item A point at which every residual is exactly zero is a feasibility
+certificate and reconstructs the actual implementation as above. With
+rational coefficients a nonempty real zero set has a point over the field
+of real algebraic numbers: that field and $\mathbb R$ are real closed, and
+quantifier elimination~\cite[Section 1.1 and Theorem 2.1]{Basu2014} transfers the rational existential sentence between
+them. Rational factor coordinates are \emph{not} asserted. Even square
+slacks of rational factors need not be rational.
+\item If the polynomial residuals are $F_1,\ldots,F_m$ and have no common
+real zero, the equality-only real Nullstellensatz~\cite[Theorem 4.6]{Parrilo2003} supplies polynomials $q_i,r_\ell$ with
+\begin{equation}\label{eq:budget-nullstellensatz}
+ -1=\sum_iq_iF_i+\sum_\ell r_\ell^2.
+\end{equation}
+At a putative zero the right side is nonnegative, so an exact polynomial
+identity of this form certifies infeasibility. Conversely existence of
+such an identity excludes a zero. This is a finite certificate principle,
+not a promised small degree, a numerically stable search method, or a
+rational-certificate-size claim. For rational input one can obtain a
+certificate with real algebraic coefficients: fix the finite degree and
+number of squares of a real certificate, express coefficient matching as
+an existential rational system, and apply the same real-closed-field
+transfer. Exact algebraic arithmetic then verifies it.
+\end{itemize}
+If the original linear tensor polytope is empty, its Farkas separator is a
+simpler certificate excluding \emph{all} budgets. If that polytope is
+nonempty but $K$ is too small, a general linear separator need not capture
+the rank obstruction; the polynomial certificate principle applies.
+A known positive global lower bound also certifies failure of the budget,
+but a floating-point local optimizer value or a nonzero numerical residual
+does not. Conversely, approximate residual zero without a rigorous error
+bound or exact recovery does not prove existence. The instance-dependent
+positive gap exists in every infeasible instance by coercivity, but this
+does not supply its value or a universal numerical tolerance.
+
+\subsection{Compositional bookkeeping}
+To decompose the construction into components, give each scalar residual
+one owner. Selector, gate, positivity, and row constraints can belong to
+their individual slots; the local-root, retained, and observed sum
+constraints are global constraints and should each be included once.
+Shared coordinates can be identified through coordinate projections.
+Fixed constants such as $A_i,B_i,w,R,Q$ belong in polynomial coefficients;
+no claim that a constant-shift map is linear is needed. Duplicate
+constraints with positive weights preserve the zero set but change the
+objective and gradient field. Thus a particular compositional optimizer
+must specify ownership and weights; existence of this exact encoding does
+not supply a canonical choice of optimizer or a convergence theorem.
+
+\section{What the compositional gradient theorem proves}\label{sec:composition}
+
+The paper under audit is Hanks, Fairbanks, and Klawonn, \emph{Generalized Gradient Descent is a Hypergraph Functor}, published in EPTCS in 2025~\cite{Hanks2025}. Its Theorem 3.5 states that the generalized negative-gradient assignment
+\[
+ f\longmapsto -R[f]_1
+\]
+is a monoidal natural transformation between the paper's objective and dynamical-system decoration functors, for an optimization domain $(\mathcal C,R)$. Here $\mathcal C$ is a Cartesian reverse derivative category and $R[f]_1$ denotes its reverse derivative evaluated at the scalar unit in the output direction. Corollary 3.5.1 additionally assumes the category of linear maps has finite limits; the transformation then induces an identity-on-objects hypergraph functor between the corresponding decorated-span categories. The corollary is stated as a \emph{gradient-flow} functor. Its categorical preservation properties include serial wiring by pullback, parallel product, and the hypergraph structure.
+
+More precisely, the paper assumes additive inverses on hom sets, compatible commutative-ring structure on points $\operatorname{Hom}(*,X)$, and a total order making the scalar point ring $\operatorname{Hom}(*,R)$ an ordered commutative ring. These are part of its definition of an optimization domain, not assumptions inferred from a diagram.
+
+This is a legitimate algebraic theorem. The abstract hypotheses are not an assertion that every optimization problem has a minimum, that every scalar object carries the ordinary real order, or that every generated dynamics converges. Those properties require additional structure or separate arguments. We use the ordinary Euclidean instance here, where scalar values are real and the reverse derivative is the transpose Jacobian.
+
+\subsection{The concrete identity needed for this encoding}
+
+Let $x\in\R^n$ collect all variables of the polynomial encoding. Each residual uses a subset of these variables. Let $P_\ell:\R^n\to\R^{n_\ell}$ be the corresponding linear coordinate projection, with repeated uses of a shared variable wired to the same global coordinate. Write
+\begin{equation}\label{eq:factor-objective}
+ F(x)=\sum_{\ell=1}^m f_\ell(P_\ell x),\qquad
+ f_\ell(y)=\lambda_\ell r_\ell(y)^2,\quad\lambda_\ell>0.
+\end{equation}
+The data $A_i,B_i,Q,w,R$ occur as fixed coefficients. Labels such as $e_v=\sum_h d_{vh}$ are linear expressions. Multiplications of unknowns occur \emph{inside} smooth residual factors, not as allegedly linear wiring maps. Every residual has degree at most two, so $F$ has degree at most four and its negative gradient has degree at most three.
+
+The ordinary chain rule gives the exact assembly law
+\begin{equation}\label{eq:gradient-assembly}
+ -\nabla F(x)=\sum_{\ell=1}^m
+ P_\ell^{\mathsf T}\bigl(-\nabla f_\ell(P_\ell x)\bigr).
+\end{equation}
+This is the concrete content of the categorical transformation needed for the test. Sharing a variable adds its local gradient contributions. For two open objectives $f$ on $N$ and $g$ on $M$, with a chosen Euclidean pullback apex $P=N\times_Y M$ and linear legs $b_0:P\to N$, $b_1:P\to M$, their composite objective and field are
+\begin{align}
+ F&=f\circ b_0+g\circ b_1,\label{eq:pullback-objective}\\
+ -\nabla F&=b_0^{\mathsf T}\circ(-\nabla f)\circ b_0
+             +b_1^{\mathsf T}\circ(-\nabla g)\circ b_1.\label{eq:pullback-gradient}
+\end{align}
+Adjoints are with respect to the chosen Euclidean inner products. Formula~\eqref{eq:pullback-gradient} is not ordinary projection of arbitrary independently chosen local solutions. It is a field on the common apex.
+
+Thus the encoding fits the theorem with linear variable-sharing interfaces and smooth polynomial decorations. This fit neither establishes a global-zero search algorithm nor upgrades a zero-set equivalence into a statement about every iterate. Away from zero, the variables need not be nonnegative, normalized, one-hot, or valid native states. Their native interpretation is certified by the equations at a zero.
+
+\subsection{Discrete updates need an increment convention}
+
+For a linear map $A:X\to Y$, the field decoration reindexes a field $v:Y\to Y$ by
+\[
+ D(A)(v)=A^{\mathsf T}\circ v\circ A.
+\]
+It is incorrect to use that same formula on full discrete update maps and then claim forward Euler is natural. If $u_\eta=\Id_Y+\eta v$, raw reindexing gives
+\[
+ A^{\mathsf T}u_\eta A=A^{\mathsf T}A+\eta A^{\mathsf T}vA,
+\]
+whereas the Euler update of the reindexed field is
+$\Id_X+\eta A^{\mathsf T}vA$. The two agree only under an additional identity condition such as $A^{\mathsf T}A=\Id_X$.
+
+A valid discrete convention transports \emph{increments}:
+\begin{equation}\label{eq:discrete-target}
+ D_{\rm disc}(A)(u)
+ =\Id_X+A^{\mathsf T}\circ(u-\Id_Y)\circ A.
+\end{equation}
+Then $v\mapsto\Id+\eta v$ is natural for a common step size $\eta$:
+\[
+ D_{\rm disc}(A)(\Id_Y+\eta v)
+ =\Id_X+\eta D(A)(v).
+\]
+For the residual factors the correct global step is consequently
+\begin{align}
+ U_F(x)&=x-\eta\sum_\ell P_\ell^{\mathsf T}\nabla f_\ell(P_\ell x)\notag\\
+ &=x+\sum_\ell P_\ell^{\mathsf T}
+       \bigl(U_\ell(P_\ell x)-P_\ell x\bigr),\label{eq:euler-assembly}
+\end{align}
+where $U_\ell(y)=y-\eta\nabla f_\ell(y)$. Simply gathering full local updates gives
+$(\sum_\ell P_\ell^{\mathsf T}P_\ell)x-\eta\nabla F(x)$ and duplicates a shared state coordinate. For two zero objectives sharing one scalar coordinate, that incorrect rule sends $x$ to $2x$; the correct global update leaves $x$ fixed.
+
+Increment-based discrete wiring and Euler naturality have direct antecedents in Libkind et al.~\cite{Libkind2022}, and the earlier first-order optimization framework explicitly treats gradient flow and discrete gradient descent~\cite{Hanks2024}. Formula~\eqref{eq:discrete-target} records the convention being used; it is not a claim that the field target in the audited theorem already treats full update maps this way. In particular, arbitrary asynchronous steps, unequal local step sizes interpreted as one global Euler step, local optimization to completion, adaptive optimizers, and projection operations require their own definitions and proofs.
+
+\section{Attainment and dynamics are different conclusions}\label{sec:dynamics}
+
+Compact sublevel sets prove global attainment for the displayed polynomial. They also give a useful, narrower dynamical statement in the real Euclidean instance.
+
+\begin{proposition}\label{prop:flow-complete}
+Let $F$ be the displayed fixed-budget sum of squares with any fixed positive residual weights. For every initial point the gradient flow $\dot x=-\nabla F(x)$ exists for all $t\ge0$, remains in a compact sublevel set, and satisfies
+\[
+ \frac{d}{dt}F(x(t))=-\|\nabla F(x(t))\|^2\le0.
+\]
+This does not imply that its limiting loss is zero.
+\end{proposition}
+\begin{proof}
+The polynomial field is locally Lipschitz, so it has a unique local solution. The chain rule proves the energy identity. The solution remains in $\{F\le F(x(0))\}$, which is compact by the sublevel proof. On a neighborhood of this compact set the field is bounded and locally Lipschitz. The usual finite-dimensional continuation argument therefore prevents finite-time escape and extends the solution for every positive time. A positive-loss stationary point is a constant solution, so the final sentence cannot be strengthened without additional hypotheses.
+\end{proof}
+
+No globally valid fixed Euler step size follows from this argument. Even the coercive sum of squares $G(x)=x^4$ has update
+\[
+ x^+=x-4\eta x^3=x(1-4\eta x^2).
+\]
+For any $\eta>0$, starting with $|x|>1/\sqrt{2\eta}$ increases the magnitude; the resulting magnitudes increase without bound. To see the latter claim, a finite limit above the threshold would have to satisfy $4\eta x^2-1=1$, contradicting the strict inequality at the starting point. Coercivity of an objective therefore does not by itself make explicit gradient descent stable. Step-size rules, line searches, or alternative methods require a separate analysis.
+
+For fixed $\lambda_\ell>0$, a verified exact zero of~\eqref{eq:factor-objective} certifies all residual equations. A numerical value near zero is an approximate witness, not automatically an exact native realization. A positive stationary loss is neither an infeasibility certificate nor a lower bound on the global optimum. A \emph{certified} positive global lower bound would be useful, but the gradient functor does not provide one. With rational input the construction has rational coefficients; real solutions can still require irrational coordinates, and rational optimization or exact rational reconstruction is not asserted.
+
+\section{Concrete tests of the resource and compatibility boundaries}\label{sec:examples}
+
+\subsection{Feasible linear compatibility can require two states}
+Let $J=\{0,1\}$, let both local hidden carriers be singletons, and let their retained rows be uniform on $\{0,1\}$. Put $A_i(j,*)=1/2$, $E=\{*\}$, $S=\{0,1\}^2$, $Q=\Id$, and let $w$ be uniform on $S$. In column order $(00,01,10,11)$ set
+\[
+ R=\begin{pmatrix}1/4&0&0&1/4\\0&1/4&1/4&0\end{pmatrix}.
+\]
+The tensor system is feasible with its single block $Z^*=R$. A realization uses one state for each announcement and continuation rows $(1/2,0,0,1/2)$ and $(0,1/2,1/2,0)$, respectively. Both local marginals remain uniform at each state. The first two columns of $R$ have determinant $1/16$, so $\rank(R)=2$. Since any realization has $R=ABQ$, it needs at least two middle states. Hence $K=1$ is impossible and $K=2$ is exact, even though each fixed local factor has only one hidden state.
+
+The conclusion persists with full support. Replace the target by
+\[
+ R_{\rm full}=\begin{pmatrix}
+ 3/16&1/16&1/16&3/16\\
+ 1/16&3/16&3/16&1/16
+ \end{pmatrix}.
+\]
+Its first two columns have determinant $1/32$, all entries are positive, and each normalized row has uniform local marginals. Two states again suffice and one cannot. Linear feasibility therefore does not eliminate the separate nonconvex resource question.
+
+\subsection{Empty tuple polytopes can coexist with a feasible realization}
+Let $J$ be a singleton, $H_1=H_2=\{0,1\}$, $A_1=A_2=(1/2,1/2)$, and $B_1=B_2=\Id_2$. Let the joint retained carrier be the diagonal $\{(0,0),(1,1)\}$, identified with $\{0,1\}$ so that both projections are the identity. Put $E=H_1\times H_2$, $Q=\Id_2$, and $w=R=(1/2,1/2)$. Then
+\[
+ \Kcal_{(0,0)}=\{(1,0)\},\qquad
+ \Kcal_{(1,1)}=\{(0,1)\},\qquad
+ \Kcal_{(0,1)}=\Kcal_{(1,0)}=\varnothing.
+\]
+Two active slots with diagonal labels realize all data. A scheme assigning padded capacity to every label would incorrectly reject this instance if it required a normalized row in every $\Kcal_h$. The correct inactive slots have $d=a=b=0$ and $\eta=1$. Every named local hidden occurrence in this example has positive initial mass; the empty cross-tuples cannot be dismissed as merely unused local states.
+
+\subsection{Selected local minima need not form a joint witness}
+Three unbiased binary variables can have individually valid pairwise couplings with $X=Y$ almost surely, $Y=Z$ almost surely, and $X\ne Z$ almost surely. Each pair can be an exact zero of its own fitting objective, and the shared one-variable marginals agree. No common joint law can retain all three choices, since
+\[
+ \Pr(X\ne Z)\le\Pr(X\ne Y)+\Pr(Y\ne Z)
+\]
+would read $1\le0$. The individual unbiased mechanisms do admit global joint laws, including independence. The obstruction is to the selected intermediate pairwise correlations. Composing their objectives assembles a simultaneous constraint problem; it does not assert that arbitrarily selected local minimizers have a common realization or that independently selected minimal implementations have coherent comparison maps.
+
+\subsection{A positive strict local minimum in a feasible singleton instance}
+
+The all-inactive stationary point of the unweighted encoding already shows
+that stationarity is not a feasibility certificate.  A positive weighting
+of the same residuals gives a stronger counterexample: a strict positive
+local minimum even when a one-state realization exists.  This example is
+for the weighted encoding, not a claim about the local minimality of the
+unweighted singleton objective.
+
+Let $J,E,S,I$ and the local hidden carrier all be singletons, take budget
+one, and prescribe $A=w=R=1$.  Write the slot coordinates as
+$(d,a,b,\rho,\sigma,\tau,\eta)$.  Define
+\begin{align*}
+ F={}&100\bigl[(d^2-d)^2+(1-d-\eta^2)^2
+ +(a-\rho^2)^2+(d-a-\sigma^2)^2\\
+ &\hspace{34mm} +(b-\tau^2)^2+2(b-d)^2\bigr]
+ +(ad-1)^2+2(ab-1)^2.
+\end{align*}
+The two copies of $b-d$ are the continuation normalization and the
+singleton local-marginal equation.  The three data residuals impose
+initialization, prior, and output, respectively.  Multiplying each
+structural residual by $10$ before squaring leaves the exact zero set
+unchanged; the objective remains a quartic polynomial sum of squares.
+
+At
+\[
+ P_0=(0,0,0,0,0,0,1),\qquad
+ P_1=(1,1,1,1,0,1,0),
+\]
+one has $F(P_0)=3$, $\nabla F(P_0)=0$, and $F(P_1)=0$.
+In fact, $P_0$ is a strict local minimum.  To prove this, set
+$L=a-\rho^2$, $G=d-a-\sigma^2$, and $N=b-d$.
+For $|d|<1/2$,
+\[
+ (d^2-d)^2\geq d^2/4,\qquad
+ a^2\leq 2d^2+2G^2+L^2,\qquad
+ b^2\leq 2d^2+2N^2.
+\]
+For the middle inequality, if $a<0$ then $a^2\leq L^2$;
+if $a\geq0$, the equation $a+\sigma^2=d-G$ gives
+$a\leq |d|+|G|$.  The data contribution satisfies
+\begin{align*}
+ (ad-1)^2+2(ab-1)^2-3
+ &=a^2d^2+2a^2b^2-2ad-4ab\\
+ &\geq a^2d^2+2a^2b^2-d^2-3a^2-2b^2.
+\end{align*}
+Combining the inequalities yields the explicit lower bound
+\begin{align*}
+ F-3\geq{}&14d^2+94G^2+97L^2+96N^2+a^2d^2+2a^2b^2\\
+ &+100\bigl[(1-d-\eta^2)^2+(b-\tau^2)^2+N^2\bigr].
+\end{align*}
+Every term on the right is nonnegative.  Equality forces
+$d=L=G=N=0$, then $a=b=\rho=\sigma=0$, then $\tau=0$
+and $\eta^2=1$.  In the open neighborhood $|d|<1/2$, $\eta>0$,
+equality therefore occurs only at $P_0$.
+Thus a local optimizer can stop at a strict positive minimum although an
+exact feasible solution exists.  The proof uses the quartic terms, not
+just the Hessian: the full Hessian has flat $\rho,\sigma,\tau$
+directions at $P_0$.
+
+\paragraph{Independent exact checks.}
+Symbolic differentiation gives all seven partial derivatives zero at
+$P_0$.  The Hessian principal block in $(d,a,b,\eta)$ is
+\[
+ \begin{pmatrix}
+ 1000&-202&-400&400\\
+ -202&400&-4&0\\
+ -400&-4&600&0\\
+ 400&0&0&800
+ \end{pmatrix}.
+\]
+Its leading principal minors are
+$1000$, $359196$, $150855200$, and $82286720000$.
+These provide regression checks on the specified coefficients, while the
+inequality above establishes strict local minimality.
+
+\subsection{Small residuals and attainment must be distinguished}
+
+The coercive polynomial encoding has an attained global minimum for every
+fixed input instance.  In particular, for that encoding, infimum zero is
+equivalent to existence of an exact zero.  This excludes an escape to
+infinity, but it does not turn a small computed value or a local minimum
+into an exact feasibility decision.
+
+For a quantitative example, take $0<\varepsilon<1$,
+$J=\{*\}$, $H_1=H_2=\{0,1\}$,
+$A_1=A_2=(1/2,1/2)$, and
+$E=\{(0,0),(1,1)\}$.  Identify the diagonal retained carrier $S=\{(0,0),(1,1)\}$
+with $\{0,1\}$, so both local projections are the identity, and set
+\[
+ B_1=\begin{pmatrix}1&0\\0&1\end{pmatrix},\qquad
+ B_2=\begin{pmatrix}1-\varepsilon&\varepsilon\\
+                   \varepsilon&1-\varepsilon\end{pmatrix}.
+\]
+Set $Q$ to the identity and $w=R=(1/2,1/2)$.
+All aggregate observed distributions agree.  Nevertheless, each allowed
+$\Kcal_h$ is empty because a shared continuation row would have to equal two
+different prescribed vectors.  No realization exists at any budget.
+
+Select two slots, one for each allowed tag, with root weights $1/2$ and
+continuation rows
+\[
+ b_0=(1-\varepsilon/2,\varepsilon/2),\qquad
+ b_1=(\varepsilon/2,1-\varepsilon/2).
+\]
+All constraints except local row preservation hold exactly.  The total
+squared local-row residual is $2\varepsilon^2$.  Thus infeasible instances
+can have arbitrarily small residual values.  This is a family of changing
+inputs, not a fixed instance with unattained infimum zero.  For each fixed
+positive $\varepsilon$, coercivity and infeasibility imply a positive
+attained global minimum.  There is no universal positive tolerance that
+certifies exact feasibility for every input in this family.
+
+\paragraph{Traps excluded by the chosen parameterization.}
+A strictly positive parameterization would miss valid boundary solutions.
+For example,
+\[
+ \beta(t)=\left(\frac{e^t}{1+e^t},\frac{1}{1+e^t}\right)
+\]
+has squared error $2/(1+e^t)^2$ relative to $(1,0)$, with infimum zero but
+no finite parameter attaining it.  Square variables retain the boundary.
+Separately, omitting the normalization and gate bounds can permit
+polynomial escape: $(ab-1)^2+a^2$ on $a,b\geq0$ has no zero but equals
+$1/n^2$ at $(a,b)=(1/n,n)$.  These are counterexamples to those alternative
+formulations, not to the coercive activity-slot encoding.
+
+\section{Prior art and the limits of this result}\label{sec:prior}
+
+The Euclidean gradient assembly in~\eqref{eq:gradient-assembly} is an instance of the ordinary chain rule and an application of existing compositional optimization machinery. Hanks et al.'s earlier \emph{A Compositional Framework for First-Order Optimization}~\cite{Hanks2024} gives the direct Euclidean antecedent: Theorem 3.3 treats gradient flow and Corollary 3.3.1 treats discrete gradient descent. Libkind et al.~\cite{Libkind2022} separately supply increment-based discrete composition and Euler naturality. The reverse differential setting comes from existing categorical differentiation work~\cite{Cockett2020}, and the decorated-(co)span infrastructure predates the optimization application~\cite{Fong2015}. The 2025 paper's generalized reverse-derivative theorem is therefore useful here without being re-presented as a new theorem of this study.
+
+The resource problem is a constrained nonnegative factorization problem. Nonnegative rank and normalized nonnegative factorizations have a substantial classical literature~\cite{CohenRothblum1993}. Binary selectors, square slack variables, sum-of-squares feasibility encodings, and real-algebraic infeasibility certificates are standard devices~\cite{Parrilo2003,Basu2014}. What is proved here is their exact application to the declared native preservation constraints, including a gate that permits unused capacity and an explicit compact-sublevel argument for the actual objective. A new application or a self-contained derivation is not evidence of research novelty. This is a bounded source audit, not an exhaustive priority search, and no novelty, hardness, or efficient global optimization claim is made.
+
+The main limitation remains the native class. The input mechanisms, allowed tuples, retained carrier, output maps, and target laws are specified in advance. This study does not infer them, replace deterministic occurrence retention by arbitrary stochastic maps, preserve unspecified interventions, or cover unrestricted multistage processes. The earlier note's extension to a broader generator class required an explicit joint retained-link commuting square; that hypothesis is not removed here.
+
+The budget is an upper bound on middle states, not an optimization-time budget and not an exact-rank constraint. Finding the smallest feasible $K$ requires a separate exact feasibility procedure or certified upper and lower bounds. The universal $|J||E|$ upper bound limits the finite search when the linear tensor system is feasible, but the expanded carriers may already be exponentially large in the number of modules. A polynomial-size encoding relative to these tables is not a tractability theorem.
+
+There is also no claimed functor from the category of native realizations to canonical objective presentations or optimizer trajectories. No naturality theorem relating this objective wiring to native witness transport, and no identification with a proposed contextad presentation, is established here. Either extension would need specified maps on problem data, residual presentations, selector and slack coordinates, and a proof of the relevant unit and composition diagrams. The zero-set equivalence and the gradient chain rule alone do not supply those maps. Different residual ownership, positive weights, redundant equations, coordinates, or slack parameterizations can retain the same zero set while changing the field. In particular, under an invertible coordinate change $A$, a pulled-back Euclidean gradient uses $A^{\mathsf T}v(Ax)$, while trajectory conjugacy uses $A^{-1}v(Ax)$. General invertible coordinate changes do not identify these flows. The metric and the objective presentation are part of the dynamical choice, even when the exact realization question is unchanged.
+
+\section{Reproduction and artifact status}\label{sec:reproduction}
+
+The primary deliverable is this self-contained \LaTeX{} source. It does not require the section fragments used to prepare it. The accompanying README gives the exact check command and the source-audit boundary. No numerical optimizer output is used as a proof of feasibility, infeasibility, or global optimality.
+
+The dependency-free checks use exact rational polynomial arithmetic and explicit failures. They check the all-inactive stationary point, an explicit feasible zero, the weighted strict-local-minimum coefficients and Hessian minors, inactive slots with empty coupling polytopes, exact state-budget rank obstructions, four exact small-residual infeasible instances, variable-sharing gradient assembly, and the distinction between gathering increments and gathering whole next states. These finite tests supplement the proofs; they are not a general solver or a substitute for the compactness, categorical, or real-algebraic theorems.
+
+Run the checks from this directory with
+\begin{verbatim}
+./checks/run_checks.sh
+\end{verbatim}
+The wrapper runs 203 checks in both ordinary and optimized Python modes. Each run checks exact expected values and polynomial identities defined in the test source; the wrapper then compares the mathematical JSON reports after excluding the interpreter optimization flag. The 341 native cylinder calculations are included in one aggregate check. There is no separate stored-output oracle. The README distinguishes these checks from source validation and rendered PDF validation.
+
+\begin{thebibliography}{99}
+\bibitem{Hanks2025}
+Tyler Hanks, James Fairbanks, and Matthew Klawonn.
+\emph{Generalized Gradient Descent is a Hypergraph Functor}.
+Electronic Proceedings in Theoretical Computer Science 429 (2025), 217--233.
+Theorem 3.5 and Corollary 3.5.1.
+\url{https://arxiv.org/html/2403.19845v2}.
+DOI \url{https://doi.org/10.4204/EPTCS.429.12}.
+
+\bibitem{Hanks2024}
+Tyler Hanks, Matthew Klawonn, Evan Patterson, Matthew Hale, and James Fairbanks.
+\emph{A Compositional Framework for First-Order Optimization}.
+2024 author manuscript, Theorem 3.3, Corollary 3.3.1, and Example 2.12.
+\url{https://arxiv.org/html/2403.05711}.
+
+\bibitem{Libkind2022}
+Sophie Libkind, Andrew Baas, Evan Patterson, and James Fairbanks.
+\emph{Operadic Modeling of Dynamical Systems: Mathematics and Computation}.
+Electronic Proceedings in Theoretical Computer Science 372 (2022), 192--206.
+Propositions 3.1 and 3.3.
+\url{https://arxiv.org/html/2105.12282v3}.
+DOI \url{https://doi.org/10.4204/EPTCS.372.14}.
+
+\bibitem{Cockett2020}
+Robin Cockett et al.
+\emph{Reverse Derivative Categories}.
+Computer Science Logic 2020, LIPIcs 152, article 18.
+\url{https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.CSL.2020.18}.
+
+\bibitem{Fong2015}
+Brendan Fong.
+\emph{Decorated Cospans}.
+Theory and Applications of Categories 30 (2015), 1096--1120.
+\url{https://arxiv.org/abs/1502.00872}.
+
+\bibitem{CohenRothblum1993}
+Joel E. Cohen and Uriel G. Rothblum.
+\emph{Nonnegative Ranks, Decompositions, and Factorizations of Nonnegative Matrices}.
+Linear Algebra and its Applications 190 (1993), 149--168.
+\url{https://lab.rockefeller.edu/cohenje/PDFs/211CohenRothblumLAA1993.pdf}.
+
+\bibitem{Parrilo2003}
+Pablo A. Parrilo.
+\emph{Semidefinite Programming Relaxations for Semialgebraic Problems}.
+Mathematical Programming 96 (2003), 293--320. Theorem 4.6.
+\url{https://www.mit.edu/~parrilo/pubs/files/SDPrelaxations.pdf}.
+
+\bibitem{Basu2014}
+Saugata Basu.
+\emph{Algorithms in Real Algebraic Geometry: A Survey}.
+Author manuscript updated 2014, Section 1.1 and Theorem 2.1.
+\url{https://www.math.purdue.edu/~sbasu/raag_survey2011_final-sep4-2014.pdf}.
+\end{thebibliography}
+\end{document}

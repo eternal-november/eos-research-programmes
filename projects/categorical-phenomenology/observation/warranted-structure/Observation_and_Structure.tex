@@ -1,0 +1,548 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem,booktabs,tabularx,array}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\NN}{\mathbb N}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\Down}{\operatorname{Down}}
+\newcommand{\sg}{\mathfrak S_3}
+\newcommand{\M}{\mathcal M}
+\newcommand{\R}{\mathcal R}
+\newcommand{\C}{\mathcal C}
+\setlist{nosep,leftmargin=*}
+\setlength{\parskip}{4pt}
+\title{When observations warrant new structure}
+\author{An exact research note with source and boundary checks}
+\date{3 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+A sequence of experiments can justify an operation or algebraic law that was not supplied as part of the unknown system's description. The justification is relative to an experimental interface and a class of admissible worlds. We make this precise in two settings.
+
+The main example starts with resettable binary responses to words in two interventions. Under a known six-state capacity bound, a finite response table identifies a canonical six-state behavior and its noncommutative transition group. Neither the states nor reversibility nor a group decomposition is supplied. At coarse observation depths, the apparent states do not even carry well-defined intervention operations. Without a known complexity bound, every finite body of the same data also admits a finite-state irreversible explanation.
+
+A second example derives binary meets from comparison experiments on an unknown finite order. Exhaustive knowledge of the domain permits recovery, while unrestricted unseen elements can replace or destroy a meet without changing any comparison between previously observed elements. A height-two family gives an exact distinction between certifying that the operation exists and learning its table.
+
+These are positive constructions and sharp ambiguity controls, not new foundational theorems. Their core ingredients are covered by automata learning, conformance testing, syntactic algebra, coalgebraic partition refinement, order theory, and incomplete-information semantics. We give explicit typed comparisons, identify their information loss, and state what remains unproved. This note does not amend the existing programme or certify a new research-gate pass. It is intentionally uncompiled \LaTeX{} source.
+\end{abstract}
+\tableofcontents
+
+\section{The question and the result}
+\label{sec:scope}
+
+The question is whether expanding observations can warrant a useful structure that was not supplied as the output in advance. Three things must be kept separate:
+\begin{enumerate}
+\item the results of experiments actually performed;
+\item the experiments that can currently be performed;
+\item the complete observations used to define the ideal target.
+\end{enumerate}
+An ideal characterization is not an acquisition procedure. An available experiment is not a known answer. A stable-looking finite table is not a certificate that no unseen distinction remains.
+
+The main positive result is exact finite identification of a behavioral automaton and its intervention algebra under a non-group-specific state bound. Its concrete instance has a noncommutative group as the derived algebra. The negative result gives an irreversible finite-state completion of every finite transcript when that bound is removed. The order example tests a different issue: observations can enlarge the domain over which a universal property is asserted, rather than merely distinguish previously conflated behavior.
+
+These examples do not exhaust the programme. They establish neither a preferred ontology nor an unsupplied decomposition of an arbitrary system. They also do not replace the programme's comparative, generative, native-realization, empirical, or cross-instance goals by a classification-only exercise. A structure can be new to the observed instance while the theorem constructing it is classical. That is the status of the positive constructions here.
+
+\subsection{A usable meaning of finite warrant}
+
+Fix a declared class of worlds and an interpretation of the experimental interface. A finite transcript $d$ determines a set $V(d)$ of worlds compatible with its actual observations. A claim $P$ is \emph{warranted by $d$ relative to that class} when
+\[
+ V(d)\ne\varnothing
+ \quad\text{and}\quad
+ \text{every world in }V(d)\text{ satisfies }P.
+\]
+The nonemptiness condition prevents a contradictory model class from warranting everything. An empty set is a model or data failure. This definition uses the familiar compatible-completions or certain-answer idea; it is not a new inference doctrine \cite{Libkin}.
+
+More evidence about a fixed target can shrink $V(d)$. Revising the allowed world class or the domain-completeness assumption can enlarge it. These are different operations. The note will not call either change a refinement without identifying the actual map and what it preserves.
+
+\section{The main experimental setting}
+\label{sec:setting}
+
+Supply a finite nonempty alphabet $\Sigma$ of interventions, repeatable reset, and an exact binary reading taken after any admissible finite intervention word. Assume stationarity and deterministic responses. Words concatenate sequentially; the empty word $\eps$ is observable. These operational and semantic assumptions are supplied, not discovered. Reset is an external preparation operation, not a letter of $\Sigma$. Including a nontrivial reset among the algebra generators would add a constant state transformation and destroy the group conclusion. The recovered algebra is explicitly relative to the declared intervention signature.
+
+The ideal behavior is a function
+\[
+ f:\Sigma^*\longrightarrow\{0,1\}.
+\]
+At stage $n$, write $T_n\subseteq E_n\subseteq\Sigma^*$, where $T_n$ is the finite set of queried words and $E_n$ is the set of currently admissible experiments. The actual data are $d_n=f|_{T_n}$. The ideal benchmark permits all of $\Sigma^*$, but this notation gives the observer no oracle for unqueried values.
+
+For example, $E_n=\Sigma^{\le b_n}$ models a maximum run length. If $b_n$ stays bounded, repeated experiments do not reveal longer behavior. If $b_n\to\infty$, every fixed word can eventually be tested, but no finite time thereby certifies all words.
+
+\subsection{The model promise and the supplied and derived ledger}
+
+For a positive finite theorem let $\M_N$ be the class of behaviors whose minimal reachable deterministic binary-output realization has at most $N$ states, where $N\ge1$ is known. The claim $f\in\M_N$ is an external model-class promise. It cannot be inferred merely because the same finite table has a small fitted model.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}p{.21\textwidth}XX@{}}
+\toprule
+ & Supplied or assumed & Derived from responses \\
+\midrule
+Experiments & Alphabet, sequential composition, reset, terminal binary readout & Which histories can be distinguished by continuations \\
+Evidence & Exact values on the finite queried set & Compatible behaviors and finite certificates relative to the promise \\
+Capacity & Valid upper bound $N$ on minimal observable states & Actual minimal state count and transition table \\
+Algebra & The word monoid $\Sigma^*$ as intervention syntax & Its behaviorally justified quotient and its algebraic laws \\
+Not assumed & \multicolumn{2}{p{.74\textwidth}}{No unknown state set, transition table, group, reversibility, decomposition, or physical hidden-state ontology is given to the observer.} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+The nontrivial inference is the selection and identification of a quotient of the supplied intervention syntax. The construction does not discover syntax from an uninterpreted stream. Its usefulness is that the quotient predicts all permitted continuations and tells when intervention sequences have identical effects on all reachable behavioral states.
+
+\section{Canonical states and the intervention algebra}
+\label{sec:canonical}
+
+For complete $f$, define residual equivalence on histories by
+\[
+ u\sim_f v
+ \quad\Longleftrightarrow\quad
+ f(uz)=f(vz)\text{ for every }z\in\Sigma^*.
+\]
+Let $Q_f=\Sigma^*/{\sim_f}$. It has initial state $[\eps]$, output $o([u])=f(u)$, and transitions
+\[
+ \delta_a([u])=[ua]\qquad(a\in\Sigma).
+\]
+These definitions are well-defined because $u\sim_f v$ implies $ua\sim_f va$. Every state is reachable, and two distinct states have a distinguishing suffix. Hence this is the canonical minimal reachable observable automaton, uniquely determined up to initial-state-, output-, and transition-preserving isomorphism. It need not coincide with a physical hidden realization.
+
+For the intervention algebra use the two-sided relation
+\[
+ u\equiv_f v
+ \quad\Longleftrightarrow\quad
+ f(xuy)=f(xvy)\text{ for every }x,y\in\Sigma^*.
+\]
+It is a monoid congruence. The quotient $M_f=\Sigma^*/{\equiv_f}$ is the \emph{syntactic monoid}. It acts faithfully on $Q_f$ by $[x]\cdot[u]=[xu]$. Faithfulness follows because two words act identically exactly when their outputs agree in every left and right context. Thus $M_f$ is the transition monoid of $Q_f$.
+
+\paragraph{Composition convention.}
+A product $uv$ means execute $u$ and then $v$. The multiplication on right transformations uses this same sequential convention. This avoids silently reversing the intervention algebra when writing functions in ordinary right-to-left composition notation.
+
+\begin{proposition}[Canonical quotient property]
+\label{prop:syntactic}
+Consider alphabet-generated recognizers $(R,h,p)$, where $R$ is a monoid, $h:\Sigma^*\twoheadrightarrow R$ is a surjective monoid homomorphism, and $p:R\to\{0,1\}$ satisfies $f=p\circ h$. Then there is a unique surjective monoid homomorphism $\pi:R\to M_f$ with $\pi h$ equal to the syntactic quotient and with the output on $M_f$ pulling back to $p$.
+\end{proposition}
+\begin{proof}
+If $h(u)=h(v)$, then for every $x,y$,
+\[
+ f(xuy)=p\bigl(h(x)h(u)h(y)\bigr)
+       =p\bigl(h(x)h(v)h(y)\bigr)=f(xvy).
+\]
+Thus $\ker h\subseteq{\equiv_f}$ and $\pi(h(u))=[u]_{\equiv_f}$ is well-defined. It is a surjective homomorphism. Surjectivity of $h$ gives uniqueness, and the choice $x=y=\eps$ gives output compatibility.
+\end{proof}
+
+With morphisms preserving the generating map and output, this says that the syntactic recognizer is terminal among these generated recognizers. This is standard syntactic algebra, not a new universal construction \cite{Syntactic}. The target property in our example is not supplied: $M_f$ will be a \emph{noncommutative group}. In a finite-state realization, this means the generated transformations are a noncommutative permutation group.
+
+\section{What a finite body of evidence can identify}
+\label{sec:finite}
+
+\begin{theorem}[Bounded exact identification]
+\label{thm:finite}
+Suppose $f\in\M_N$. If the actual data contain $f(w)$ for every word $|w|\le2N-2$, then $f$ is the unique behavior in $\M_N$ compatible with those data. Consequently $Q_f$, $M_f$, and their algebraic properties are determined relative to this promise.
+\end{theorem}
+\begin{proof}
+Take two complete deterministic binary-output machines with $r,s\le N$ states. On their disjoint union, let $P_k$ identify states with equal outputs after all suffixes of length at most $k$. The partition $P_0$ is by immediate output. The next partition is determined by immediate output and the $P_k$-blocks reached by each letter.
+
+If $P_{k+1}=P_k$, the relation already preserves all transitions and immediate output. Induction on word length then shows that it is full behavioral equivalence. Otherwise a refinement adds at least one block. If there are behaviorally inequivalent states, at least two immediate-output blocks occur somewhere in the union; if every state had the same output, all states would be equivalent. There are at most $r+s$ blocks. Therefore after at most $r+s-2$ strict refinements from $P_0$, the partition has stabilized or is discrete. In either case $P_{r+s-2}$ is the full behavioral partition.
+
+Inequivalent initial states consequently have a distinguishing suffix of length at most $r+s-2\le2N-2$. Agreement on all the stated words rules this out. The canonical state and monoid constructions depend only on the resulting behavior.
+\end{proof}
+
+\paragraph{Effectiveness and cost.}
+This is a finite acquisition theorem, not only an ideal uniqueness statement. One may enumerate all complete binary-output machines with at most $N$ states over the finite alphabet, retain those consistent with the finite table, choose one, minimize it, and compute the finite monoid generated by its transitions. The promise ensures that at least one survives; the theorem ensures that every survivor has the same behavior. This gives effectiveness, not an efficient search algorithm.
+
+If $k=|\Sigma|\ge2$, the exhaustive test set has
+\[
+ \sum_{j=0}^{2N-2}k^j=\frac{k^{2N-1}-1}{k-1}
+\]
+words. For $k=1$ it has $2N-1$ words. The maximum experiment length is linear in $N$, but the number of experiments is exponential for a nonunary alphabet. No optimality of the number or design of tests, or practical-feasibility claim, is made. The maximum required word length is sharp in the worst case, as shown below. If the required words are outside $E_n$, the certificate is not currently obtainable.
+
+The index $2N-2$ uses terminal Moore-style outputs, including the empty word. It should not be copied to a different readout convention without checking it. No equivalence-query oracle is used. The known capacity bound does essential work that an equivalence oracle might do in another learning model.
+
+\subsection{The observation horizon is sharp}
+
+The horizon $2N-2$ cannot be uniformly shortened, even if only the group property is sought. For $N\ge2$, take two unary machines with states $0,\ldots,N-1$, start $0$, and sole accepting state $N-1$. The first transition is the $N$-cycle. The second has $0\mapsto1$, $i\mapsto i+1$ for $1\le i<N-1$, and $N-1\mapsto1$. Thus it has a one-step tail followed by an $(N-1)$-cycle.
+
+Both first accept at length $N-1$. Their next acceptance lengths are $2N-1$ and $2N-2$, respectively, so they agree on every word through length $2N-3$ and disagree at $2N-2$. Both machines are minimal: their states have distinct distances $0,\ldots,N-1$ to the next acceptance. The first syntactic monoid is $C_N$. In the second machine the initial state and the last state both map to state $1$, so its transition is not injective and its syntactic monoid is not a group. This is a sharp finite-state calibration, not a claim of a new lower-bound theorem.
+
+\section{A group obtained from a finite response table}
+\label{sec:group}
+
+For constructing a concrete example, take $\Sigma=\{a,b\}$, let $s=(12)$ and $r=(123)$ generate $\sg$, and let $\varphi:\Sigma^*\twoheadrightarrow\sg$ send $a$ to $s$ and $b$ to $r$. Define
+\[
+ f(w)=1\quad\Longleftrightarrow\quad\varphi(w)=e.
+\]
+This definition specifies the mathematical test system. The observer receives response values, not $\sg$, $\varphi$, or a promise of reversibility.
+
+\begin{proposition}[The derived structure]
+\label{prop:group}
+The minimal behavioral state set has six elements, and $M_f\cong\sg$ as an alphabet-generated monoid. Thus the derived intervention algebra is a noncommutative group.
+\end{proposition}
+\begin{proof}
+Histories with the same $\varphi$-value have the same residual. If $\varphi(u)\ne\varphi(v)$, choose a suffix $z$ representing $\varphi(u)^{-1}$. Then $f(uz)=1$ and $f(vz)=0$. Thus the six group elements give exactly the six residuals. The same argument, allowing the left context to be empty, proves $\ker\varphi={\equiv_f}$. The asserted monoid isomorphism follows.
+\end{proof}
+
+With a valid bound $N=6$, Theorem~\ref{thm:finite} gives an exhaustive certificate through length ten, comprising $2047$ tests. There is also a smaller explicit certificate. Put
+\[
+ H=\{\eps,a,b,bb,ab,ba\},\qquad T=(H\cup H\Sigma)H.
+\]
+After duplicate words are removed, $T$ has $48$ words, all of length at most five. The following are the measured rows on suffixes $H$ and the transitions reconstructed from the extended rows.
+
+\begin{center}
+\begin{tabular}{@{}c|rrrrrr|cc@{}}
+\toprule
+History & $\eps$ & $a$ & $b$ & $bb$ & $ab$ & $ba$ & after $a$ & after $b$\\
+\midrule
+$\eps$ &1&0&0&0&0&0&$a$&$b$\\
+$a$    &0&1&0&0&0&0&$\eps$&$ab$\\
+$b$    &0&0&0&1&0&0&$ba$&$bb$\\
+$bb$   &0&0&1&0&0&0&$ab$&$\eps$\\
+$ab$   &0&0&0&0&1&0&$bb$&$ba$\\
+$ba$   &0&0&0&0&0&1&$b$&$a$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{proposition}[Compact finite certificate]
+\label{prop:certificate}
+Under the promise $f\in\M_6$, the actual responses on $T$ determine the displayed minimal automaton and hence its full behavior and syntactic monoid.
+\end{proposition}
+\begin{proof}
+The six rows on $H$ are distinct, so any compatible behavior has at least six reachable, behaviorally distinct states. The promise permits at most six. Thus these histories exhaust the behavioral states. The $H$-row of each $ha$, respectively $hb$, identifies its successor uniquely among those six rows. Because no further behavioral state is possible, row equality here is actual state equality, rather than a guess based on a few tests. The column $\eps$ supplies immediate output, and the row for $\eps$ supplies the initial state. The table therefore gives every transition and output of the complete minimal machine.
+\end{proof}
+
+This is a standard state-cover and characterization-set conformance argument \cite{Chow,Fujiwara}. The certificate can be checked after those histories and suffixes have been found; it is not a claim that an observer is initially handed their meaning or discovers them at no cost.
+
+\paragraph{What the observations establish.}
+For example, $f(abab)=1$ and $f(baab)=0$ distinguish the orders $ab$ and $ba$ in a shared right context. That is a concrete witness of noncommutativity. It does not by itself prove reversibility. Global reversibility is justified by the complete finite certificate together with the capacity promise: the two displayed transitions are permutations, and the generated finite monoid is their group.
+
+No microscopic decomposition has been inferred. A larger hidden implementation can have the same minimal observable behavior. The certificate identifies a canonical operational algebra, not every internal mechanism compatible with it.
+
+\section{Indistinguishable worlds without the capacity promise}
+\label{sec:ambiguity}
+
+\begin{theorem}[No finite group certificate in the unbounded finite-state class]
+\label{thm:negative}
+For the behavior $f$ of Section~\ref{sec:group} and every finite queried set $T\subseteq\Sigma^*$, there is a regular deterministic behavior $g$ agreeing with $f$ on $T$ whose syntactic monoid is not a group.
+\end{theorem}
+\begin{proof}
+Choose $L\ge\max\{|w|:w\in T\}$, with $L=0$ allowed if $T$ is empty. Define
+\[
+ g(w)=\begin{cases}f(w),&|w|\le L,\\0,&|w|>L.\end{cases}
+\]
+A finite machine implements $g$ by tracking the group element and a counter through length $L$, then entering a rejecting absorbing state. Its accepted language is finite and nonempty, since it accepts $\eps$.
+
+In the minimal residual automaton of $g$, any fixed word longer than $L$ sends every state to the empty residual: after any history and that word, no accepted continuation remains. The initial residual is nonempty and the empty residual is reachable, so this constant transformation acts on at least two states. It is not bijective. A group of transformations has only bijective elements; therefore $M_g$ is not a group.
+\end{proof}
+
+The result remains true when every currently admissible experiment in $E_n=\Sigma^{\le L}$ has actually been performed. It is not an artifact of neglected available measurements. For this fixed pair, longer experiments distinguish the worlds: a sufficiently long word representing the identity is accepted by $f$ and rejected by $g$. Yet after any new finite horizon there is another delayed irreversible completion. The capacity promise is therefore substantive, rather than a dispensable convenience.
+
+This proves failure of positive finite certification at this group behavior in the class of all finite-state machines without a known bound. It does not say that every finite response table has both a group and a nongroup completion, or that every class promise is necessary in exactly the same form.
+
+\subsection{Finite certainty and eventual identification}
+
+The theorem does not prohibit learning in the limit. With fair eventual membership data and a fixed effective enumeration of all finite machines, a least-index consistent learner eventually stabilizes on a machine with the target behavior. Only finitely many earlier indices need refuting. The learner need not know when it has stabilized. Finite sound announcement and revisable eventual correctness have different guarantees.
+
+Likewise, observing many approximate matches is not an exact certificate in a noisy system. No statistical confidence, approximate reversibility, stability under drift, or sample-complexity claim follows from these noiseless theorems.
+
+\section{When the apparent states acquire operations}
+\label{sec:descent}
+
+The preceding construction also exposes a useful intermediate phenomenon. For the full ideal behavior define
+\[
+ u\sim_k v\quad\Longleftrightarrow\quad
+ f(uz)=f(vz)\text{ for all }|z|\le k,
+ \qquad Q_k=\Sigma^*/{\sim_k}.
+\]
+These are ideal quotients over \emph{all preparation histories}. Even when $k$ is finite, their definition concerns infinitely many $u$. They must not be silently replaced by a finite observation table. A finite state cover plus the class bound is what justifies that replacement in Proposition~\ref{prop:certificate}.
+
+There are surjections and degree-lowering transition maps
+\[
+ r_k:Q_{k+1}\twoheadrightarrow Q_k,
+ \quad [u]_{k+1}\mapsto[u]_k,
+ \qquad
+ t_{a,k}:Q_{k+1}\longrightarrow Q_k,
+ \quad [u]_{k+1}\mapsto[ua]_k.
+\]
+The second map is well-defined because $|az|\le k+1$ when $|z|\le k$. In general there is no well-defined endomorphism $Q_k\to Q_k$ for $a$.
+
+\begin{proposition}[Descent and stabilization]
+\label{prop:descent}
+For a letter $a$, an operation $\bar\delta_{a,k}:Q_k\to Q_k$ with
+\[
+ \bar\delta_{a,k}\circ r_k=t_{a,k}
+\]
+exists if and only if $t_{a,k}$ is constant on the fibres of $r_k$. When it exists it is unique. All letters descend if and only if $\sim_k=\sim_{k+1}$, and then $\sim_k=\sim_f$.
+\end{proposition}
+\begin{proof}
+Factorization through a surjection implies constancy on its fibres. Conversely, constancy makes $\bar\delta_{a,k}([u]_k)=[ua]_k$ well-defined, and surjectivity gives uniqueness. Equivalently,
+\[
+ u\sim_k v\ \Longrightarrow\ ua\sim_k va.
+\]
+If this holds for every $a$, then immediate outputs and all continuations of lengths at most $k+1$ agree whenever $u\sim_k v$, so $\sim_k\subseteq\sim_{k+1}$. The reverse inclusion always holds. Closure under every letter then implies closure under every word, and taking the empty suffix shows $f(uz)=f(vz)$ for all $z$. Thus the stabilized relation is $\sim_f$. The converse is immediate from the defining continuation tests.
+\end{proof}
+
+This is effective quotient descent in sets: $t_{a,k}$ must coequalize the kernel pair of $r_k$. It is also the deterministic instance of established coalgebraic partition-refinement and final-sequence mathematics \cite{Dorsch}, and close to the consistency requirement of an automata observation table \cite{Angluin,CALF}.
+
+For the group example the depth sizes are
+\[
+ |Q_0|=2,\qquad |Q_1|=4,\qquad |Q_2|=6.
+\]
+At depth zero, only identity versus nonidentity is visible. At depth one, suffixes $\eps,a,b$ single out three distinct group elements; the other three share a row. At depth two, the six words in $H$ provide every inverse, so all states are distinguished. The first two apparent state sets cannot support all interventions as operations; otherwise Proposition~\ref{prop:descent} would force immediate stabilization. At the third they can, and the resulting transformations generate $\sg$.
+
+Thus there is a concrete difference between merely naming a supplied operation and deriving one on an observational carrier. Sequential syntax exists throughout, but it induces a well-defined operation on the apparent state object only after enough distinctions have been made. The mathematical mechanism of that derivation is classical.
+
+\section{A typed comparison with incidence completion}
+\label{sec:incidence}
+
+The predictive construction and an incidence completion genuinely have different outputs. Their relationship can be stated without demanding equivalence.
+
+Let $R_u=\{v:f(uv)=1\}$ be a residual language, and let $\R=\{R_u:u\in\Sigma^*\}$, ordered by inclusion. This is a concrete representation of $Q_f$. Form the intersection closure
+\[
+ \C=\left\{\bigcap_{u\in A}R_u:A\subseteq\Sigma^*\right\},
+\]
+where the empty intersection is $\Sigma^*$. This is the intent closure of the history--continuation incidence context; ordering intents by inclusion is opposite to the usual extent-order convention for the concept lattice. Its meets are intersections. The inclusion $j:\R\hookrightarrow\C$ is an order embedding.
+
+For $a\in\Sigma$ define the inverse-image operation
+\[
+ D_a(S)=\{v:av\in S\}.
+\]
+It preserves arbitrary intersections, takes $R_u$ to $R_{ua}$, and hence restricts to an operation on $\C$. If $\delta_a$ denotes the residual transition, then
+\[
+ \begin{array}{ccc}
+ \R&\xrightarrow{\delta_a}&\R\\
+ {\scriptstyle j}\downarrow&&\downarrow{\scriptstyle j}\\
+ \C&\xrightarrow{D_a}&\C
+ \end{array}
+ \qquad\text{commutes.}
+\]
+Both carriers read out by testing membership of $\eps$, and $j$ preserves that readout and the initial residual. Every state reached in $\C$ from $R_\eps$ is a residual, so the reachable part is precisely $\R$.
+
+\paragraph{What is preserved and what is added.}
+This comparison preserves the given behavioral predictions, sequential transitions, and order. It adds formal intersections that need not be reachable behavioral states. For the unary even-length language, the two residuals are the even- and odd-length word sets. Their intersection is empty and is not a residual. The completion has four elements, namely those two sets, $\Sigma^*$, and $\varnothing$, whereas the minimal predictor has two. No carrier equivalence is asserted, and the completion's extra meet is not an experimentally reachable state.
+
+This explicit bridge is useful for auditing claims of emergence: predictive minimization and incidence completion construct different structures from the same response pairing. It is nevertheless an existing residual-to-intersection baseline, not the new comparative bridge required by the wider programme. It also does not construct a positive hidden realization or infer native resource cost.
+
+\section{An unlike control in which the domain grows}
+\label{sec:poset}
+
+The automaton example refines distinctions among histories in a fixed experiment grammar. A different ambiguity arises when observations may reveal new objects. Consider exact comparison queries
+\[
+ \operatorname{compare}(x,y)\in\{0,1\},
+ \qquad \operatorname{compare}(x,y)=1\Longleftrightarrow x\le y,
+\]
+on named tokens of a poset. There is no primitive meet, product, completeness, or equivalence oracle.
+
+In the \emph{open-domain regime}, only finitely many tokens have been named at any finite time, and compatible worlds include order-embedded extensions of their observed induced order. Even all positive and negative comparisons on those tokens do not certify that the domain is exhaustive. In the \emph{closed finite-domain regime}, an exhaustive list of $N$ token identifiers is supplied. Exhaustiveness is a promise about admissible worlds, not an empirical conclusion from silence.
+
+The ideal observation is the entire order on the actual domain. It determines whether a meet exists. That ideal determination alone says neither that the domain is finitely exposable nor that the meet has a finite sound certificate.
+
+\subsection{An operation derived without an operation oracle}
+
+With an exhaustive finite domain, query the $N^2$ ordered pairs, check the partial-order laws, and inspect the common lower bounds of every pair. A meet $m=x\wedge y$ exists exactly when one of these lower bounds dominates all the others. If every pair has a meet, this procedure constructs an operation table without a prior promise that such an operation exists.
+
+The operation is commutative and idempotent by its greatest-lower-bound property. Moreover, $(x\wedge y)\wedge z$ and $x\wedge(y\wedge z)$ are both greatest lower bounds of $\{x,y,z\}$, so uniqueness proves associativity. Thus a meet-semilattice algebra is derived from relation observations. In the associated thin category, these are binary products. The interpretation of comparison as order, and the thin-category interpretation, remain visible semantic commitments.
+
+\begin{theorem}[Sharp extension boundary for a named meet]
+\label{thm:meet}
+Let $P$ be a poset and suppose $m=a\wedge b$ in $P$. Every order embedding of $P$ into another poset preserves this meet equation if and only if $a$ and $b$ are comparable.
+\end{theorem}
+\begin{proof}
+If $a\le b$, then $m=a$, and in any target poset a common lower bound of the images of $a,b$ is automatically below the image of $a$. Hence the equation is preserved. The case $b\le a$ is symmetric.
+
+Suppose $a,b$ are incomparable. Add a new element $w$. Keep the old order unchanged and, for old $x,y$, specify
+\[
+ x\le w\Longleftrightarrow x\le m,
+ \qquad
+ w\le y\Longleftrightarrow (a\le y\text{ or }b\le y),
+\]
+and $w\le w$. These rules are transitive: an old-to-new-to-old path gives $x\le m\le a\le y$ or $x\le m\le b\le y$, already an old comparison. The other mixed paths follow from transitivity of the old order. A cycle through $w$ would imply $a\le m$ or $b\le m$, contradicting incomparability. The result is a poset and its inclusion of $P$ is an order embedding.
+
+All old common lower bounds of $a,b$ lie below $m$, hence below $w$. The new element $w$ is itself below $a,b$. Therefore their new meet is $w$, not the image of $m$.
+\end{proof}
+
+\paragraph{Explicit indistinguishable worlds.}
+Let $A=\{z,a,b\}$ have only $z<a$ and $z<b$ as nontrivial comparisons. In $A$, $a\wedge b=z$. One extension $B$ adds $w$ with $z<w<a,b$, giving the new meet $w$. Another extension $C$ adds $w<a,b$ incomparable with $z$, so $a,b$ have no meet. All comparisons, including noncomparisons, between old tokens agree in the three worlds.
+
+Consequently open finite comparison evidence cannot certify a named meet for an incomparable pair when such extensions remain admissible. It can certify the comparable case, so a blanket claim that open-domain data can never certify a meet would be false. Absence of a meet is also not certified for an incomparable pair: one can add a fresh element above all old common lower bounds and below $a,b$ and their upper bounds, preserving the old induced order and supplying a meet. These claims concern finite sound certification, not revisable learning in the limit.
+
+\subsection{The exact typed comparison under domain extension}
+\label{sec:downsets}
+
+An order embedding $i:P\hookrightarrow P'$ is a fully faithful functor of the associated thin categories. It need not preserve products. This is a failure of a specified preservation property, not an absence of a useful comparison.
+
+Write $\Down(P)$ for the complete lattice of lower subsets of $P$. There are monotone maps
+\[
+ L:\Down(P)\longrightarrow\Down(P'),\quad L(A)=\mathord\downarrow i[A],
+ \qquad
+ R:\Down(P')\longrightarrow\Down(P),\quad R(B)=i^{-1}[B].
+\]
+For lower sets, $L(A)\subseteq B$ exactly when $A\subseteq R(B)$, so $L\dashv R$. Also $RL=\id$, because $i$ reflects order. The map $R$ preserves arbitrary intersections and unions; $L$ preserves arbitrary unions. Both facts follow directly from their formulas. The embeddings $x\mapsto\mathord\downarrow x$ satisfy
+\[
+ L(\mathord\downarrow x)=\mathord\downarrow i(x).
+\]
+However, $L$ need not preserve intersections. In $A\hookrightarrow B$ above,
+\[
+ L(\mathord\downarrow a\cap\mathord\downarrow b)
+ =\mathord\downarrow z
+ \ \subsetneq\ 
+ \mathord\downarrow w
+ =L(\mathord\downarrow a)\cap L(\mathord\downarrow b).
+\]
+The inverse-image map forgets the new distinction: $R(\mathord\downarrow w)=\mathord\downarrow z$. These maps supply an explicit directed comparison and its information loss, rather than an unjustified equivalence between the old and new universal structures.
+
+\section{A finite family with a substantial probe cost}
+\label{sec:c4}
+
+Exhaustive domain knowledge makes meet recovery possible; it need not make recovery cheap. Consider a known domain with bottom $0$, lower elements $L=\{\ell_1,\ldots,\ell_n\}$, and upper elements $U=\{u_1,\ldots,u_n\}$, for $n\ge1$. Within each level distinct elements are incomparable. All unknown comparisons are the $n^2$ independent possibilities $\ell_i<u_j$. Every choice defines a poset. Let $G$ be the corresponding bipartite graph.
+
+\begin{proposition}[Existence reduces to a concrete combinatorial obstruction]
+\label{prop:c4}
+This poset has every binary meet if and only if $G$ has no four-cycle.
+\end{proposition}
+\begin{proof}
+For two distinct upper elements, their nonzero common lower bounds are exactly their common neighbors in $L$. With no common neighbor, the meet is $0$. With one, it is that neighbor. With two or more, the lower bounds are incomparable and there is no greatest one. Two shared neighbors are precisely a four-cycle. Every other pair has a meet: it is the smaller element when the pair is comparable, and $0$ otherwise.
+\end{proof}
+
+Querying all $n^2$ unknown comparisons therefore decides existence and constructs the operation when it exists. This is a family with genuinely variable output: some inputs produce a semilattice, others do not, and different successful inputs produce different operation tables.
+
+Let $z(n,n;2,2)$ denote the maximum edge count of a four-cycle-free bipartite graph with $n$ vertices on each side.
+
+\begin{proposition}[Existence certificates and table recovery have different costs]
+\label{prop:cost}
+On the empty-graph input:
+\begin{enumerate}
+\item the minimum number of comparison answers that soundly certify existence of every binary meet is $n^2-z(n,n;2,2)$;
+\item identifying the actual entire meet table requires all $n^2$ unknown comparisons.
+\end{enumerate}
+The first is a certificate-size statement; it does not assert an efficient method for finding an optimal certificate.
+\end{proposition}
+\begin{proof}
+Every queried answer on this input is negative. The unqueried edges remain free. All compatible completions are four-cycle-free exactly when the graph of unqueried edges is four-cycle-free: a cycle among those edges could be made present in a compatible completion, while every subgraph of a four-cycle-free graph is four-cycle-free. The largest possible unqueried set thus has $z(n,n;2,2)$ edges. This proves both the lower bound and existence of a certificate attaining it.
+
+For the second claim, if one edge $(\ell_i,u_j)$ remains unqueried, the completion containing just that edge still has every binary meet. But it changes $\ell_i\wedge u_j$ from $0$ to $\ell_i$. Hence the table is not identified. Querying all edges suffices.
+\end{proof}
+
+An elementary extremal estimate makes the first cost near quadratic. In a four-cycle-free graph with $m$ edges and upper-vertex degrees $d_1,\ldots,d_n$, any pair of lower vertices has at most one shared upper neighbor, so
+\[
+ \sum_{j=1}^n\binom{d_j}{2}\le\binom n2.
+\]
+Since $\sum_jd_j^2\ge m^2/n$, this gives $m^2/n-m\le n(n-1)$ and hence
+\[
+ z(n,n;2,2)\le\frac n2\bigl(1+\sqrt{4n-3}\bigr).
+\]
+Thus existence certification already requires at least
+\[
+ n^2-\frac n2\bigl(1+\sqrt{4n-3}\bigr)
+\]
+answers on that input, while table identification needs $n^2$. This is a direct graph-query reduction and classical Zarankiewicz estimate \cite{Zarankiewicz}, not a new extremal theorem or a new learning-complexity theory.
+
+\section{The strongest source comparisons}
+\label{sec:sources}
+
+The audit was targeted, not exhaustive. It supports precise reductions to close precedents and defeats overbroad novelty claims; it does not prove that no related theorem exists elsewhere. The sources below distinguish what is unknown to a learner from what must be fixed for its theorem. An unknown target appearing in a correctness diagram is not thereby supplied to the algorithm.
+
+\subsection{Automata learning and finite conformance}
+
+Angluin's $L^*$ learns states and transitions from a growing observation table, not from a supplied state architecture. Its prefix and suffix sets grow, new suffixes split rows, closedness supplies successor representatives, and consistency makes row transitions well-defined. Theorem~1 gives the finite-table minimality statement; Theorem~6 identifies the target minimum automaton under the stated membership- and equivalence-query model \cite{Angluin}. Our exhaustive bound and six-row certificate use a different access resource, a known state bound and enough membership observations, not a stronger learning guarantee. The construction is also a direct state-cover/characterization-set instance of finite-state conformance testing \cite{Chow,Fujiwara}.
+
+The syntactic monoid, its universal quotient property, and its identification with the transition monoid of the minimal automaton are established results. Ad\'amek, Milius, and Urbat provide the categorical syntactic-algebra comparison \cite{Syntactic}. The group in Section~\ref{sec:group} is new to the instance from the observer's perspective; the method of extracting it is not a new algebraic theorem.
+
+\subsection{The closest categorical predecessors}
+
+CALF factors an observational wrapper into a hypothesized carrier. Its Definition~8 states closedness and consistency, and Theorem~9, under the stated factorization and endofunctor hypotheses, characterizes when that carrier admits the compatible algebra structure \cite{CALF}. This directly precedes claims that an algebraic operation is induced on an evidence-built carrier. The categorical type and access interface are fixed, but the target carrier and algebra are not supplied to the learner.
+
+Dorsch, Milius, Schr\"oder, and Wi\ss mann give cross-partition structure maps in Proposition~3.7, a same-carrier quotient coalgebra when partitions agree in Corollary~3.8, and the final sequence and finite-depth observations in Remark~3.12 \cite{Dorsch}. With behavior functor $H(X)=\{0,1\}\times X^\Sigma$, the maps of Section~\ref{sec:descent} are a deterministic specialization, with an indexing shift because our $Q_0$ already observes output. Their algorithm is given a system to minimize, whereas our experimental acquisition must identify an unknown one. The distinction matters for access, but does not make quotient descent new.
+
+Hennessy and Milner already relate equivalence to the available observational formulas, finite-depth approximations, and the extra congruence requirement needed for contexts \cite{HennessyMilner}. Their nondeterministic setting is not identical to the single-valued transition setting here. L\# likewise grows an observation tree and a witnessed apartness relation, with hypotheses built from a discovered basis \cite{Apartness}. Lack of a distinguishing witness is not proof of equality.
+
+\subsection{Other reconstruction mechanisms already discover structure}
+
+Predictive reconstruction is a strong precedent rather than a foil. CSSR infers causal-state count and transitions from sequence data under conditional stationarity, finitely many causal states, and finite synchronizing-suffix assumptions \cite{CSSR}. Its predictive states should not be relabelled interventionist causes or unique physical mechanisms. James and Singh explicitly distinguish discovery of core predictive tests from parameter learning; their analytic procedure uses exact probabilities, while their empirical reset-based method estimates them \cite{PSR}. We do not transfer the exact analytic stopping theorem to noisy finite estimates.
+
+Attribute exploration elicits implications and counterexamples within a fixed finite attribute vocabulary, with expert and background-knowledge assumptions \cite{Attribute}. Its implications determine an intersection closure, not automatically the exact underlying object population. Learning algebraic structures from informants identifies isomorphism types from finite prefixes of an eventually complete positive-and-negative atomic presentation in a fixed signature and hypothesis family \cite{Informant}. Eventual stabilization need not come with a finite recognized stopping time.
+
+The system-identification literature also extracts behavior from informative response data. Willems and coauthors' persistency-of-excitation result concerns controllable linear time-invariant systems and sufficiently informative trajectories \cite{Willems}. Only its institutional abstract was inspected in this audit; no specific excitation-order formula or full theorem is imported here. These precedents already refute the broad claim that mathematics can only manipulate a completed structure handed to it in advance.
+
+\subsection{Open domains and universal properties}
+
+The warrant convention in Section~\ref{sec:scope} is closely related to certain answers over compatible completions. Libkin explicitly distinguishes object-valued answers from knowledge true in every realization and studies their information behavior \cite{Libkin}. The poset example is a concrete universal-property query under that kind of open-world uncertainty, not a new semantics of incomplete information.
+
+For meets, no implicit-definability theorem is required: their graph already has the explicit order formula
+\[
+ m\le a\ \wedge\ m\le b\ \wedge\
+ \forall x\bigl((x\le a\wedge x\le b)\Rightarrow x\le m\bigr).
+\]
+The quantifier ranges over the ambient domain. Knowing this formula does not supply a finite experiment that certifies its universal clause in an open domain. Classical Beth-style implicit definability concerns uniqueness across models with a common reduct; it is not by itself finite experimental identification. Logic- and finite-model qualifications matter, as the research comparison of ten Cate, Franconi, and Seylan illustrates \cite{Beth}. General preservation claims likewise require their exact map class and model class; they cannot be inferred from one order-extension example.
+
+\subsection{The current programme's comparative baseline}
+
+The residual-to-intersection construction of Section~\ref{sec:incidence} is an explicit incidence/predictive control, not a newly established bridge. Formal concept analysis already supplies its closure doctrine. The order example's lower-set adjunction is also standard order theory. Neither yields the native positive factorization, joint-preparation information, resource accounting, or coherent sequential implementation required by stronger native claims.
+
+Stacey's input/output testing and forcing constructions provide a substantive comparative precedent: inclusions, adjoints, and base changes have stated adequacy and forcing hypotheses, and stronger comparisons require separate tests \cite{Stacey}. Those smooth-space hypotheses do not supply an empirical identification theorem here. Likewise, the programme's existing generated-image and cylinder results remain dependencies rather than available novelty. No occurrence, coupling, or possibility-preservation data are constructed in this note, so no new native/cylinder theorem follows from the present quotients.
+
+\subsection{Source status of the present results}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}p{.28\textwidth}XX@{}}
+\toprule
+Result here & Strongest relevant baseline & Status \\
+\midrule
+Finite bounded identification and group certificate & Automata distinguishability and finite-state conformance & Classical mechanism; explicit worked instance \\
+Canonical intervention monoid & Syntactic algebra and minimal-automaton transition monoid & Established construction \\
+Operations after quotient stabilization & CALF closedness/consistency and coalgebraic refinement & Direct specialization, not a residual theorem \\
+Irreversible finite completion & Finite information versus delayed regular behavior & Exact counterexample, not a general learning no-go \\
+Meet instability under domain extension & Order embeddings and universal-property semantics & Elementary sharp control \\
+Meet existence and probe costs & Four-cycle detection and Zarankiewicz bounds & Explicit reduction to classical combinatorics \\
+Incidence and lower-set comparisons & Closure systems and order adjunctions & Typed bridges with visible loss; no novelty claim \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{What this test warrants and what remains open}
+\label{sec:conclusion}
+
+\paragraph{Established.}
+A finite collection of permitted exact response experiments can identify a useful unsupplied algebraic structure when the allowed world class provides a justified capacity bound. Without that bound, a finite transcript at the same target can leave a sharply different structure possible. Apparent states may acquire well-defined operations only after a quotient stabilizes. An observed order can determine a meet operation on a closed finite domain, while admissible unseen objects can change or remove it. These are precise answers to the concrete test, with positive constructions and indistinguishable alternatives.
+
+\paragraph{Not established.}
+The results do not supply a new theorem beyond the strongest sources, a universal theory of emergence, discovery of an unrestricted signature, statistical certification from noisy data, unique hidden ontology, an unsupplied native decomposition, or a new comparison to native cylinder constructions. A targeted search and an independent proof check cannot establish novelty. The existing research gates and wider programme remain unchanged.
+
+\paragraph{Recommendation.}
+Retain the two constructions as calibration tests. No source-distinct theorem-sized residual has been established, so these results do not justify selecting a new theorem as the missing Gate A contribution. In particular, neither ``operations emerge by descent'' nor ``unseen objects can change products'' is a sufficient new research claim.
+
+If a further candidate audit is undertaken, a concrete question is the following: given an exhaustive finite directed graph of named objects and arrows, including identities, with the category composition table unknown, and access only to individual composable-pair queries, what is the minimum worst-case number of answers needed to decide which named cones are binary products and recover their unique factorization maps, compared with learning the whole composition table? Composition must satisfy the category laws, but products are not promised; multiple parallel arrows must be allowed. Correctness is over all category structures compatible with the transcript. This fixes the input, primitive experiment, output, finite warrant, and non-thin source of ambiguity. It is not answered here, and may reduce to existing query-complexity or incomplete-structure results. A source comparison establishing a genuinely additional premise/conclusion obligation is required before recommending it as a new theorem. This audit question is optional and does not alter the programme's existing contract.
+
+The successful conceptual distinction in the present note is between \emph{a structure being defined by complete observations}, \emph{being recoverable through available experiments}, and \emph{being warranted by the evidence actually obtained}. The examples explain why all three are needed. Their classical foundations set the standard that a subsequent new result must exceed.
+
+\section*{Verification and scope of the artifact}
+The deliverable is uncompiled source, as requested. The mathematical claims have explicit proofs. Exact finite checks covered the six-state table, its 48-word certificate, depth sizes $2,4,6$, the sharp unary family for $N=2,\ldots,20$, all posets on at most four labelled elements, and the four-cycle criterion for $n\le3$ with extremal counts for $n\le4$. These finite checks supplement the proofs rather than extend their scope. Source-structure checks do not establish successful TeX compilation or PDF layout, and finite computation does not replace the general proofs. The examples are constructed mathematical systems, not measurements of an external physical system. Bibliographic links below point to the inspected source or a stable publication record; qualified abstract-only inspection is identified in the audit above.
+
+\begin{thebibliography}{99}
+\bibitem{Angluin} D. Angluin. \emph{Learning Regular Sets from Queries and Counterexamples}. Information and Computation 75 (1987), 87--106. \href{https://people.eecs.berkeley.edu/~dawnsong/teaching/s10/papers/angluin87.pdf}{Full paper}.
+\bibitem{Chow} T. S. Chow. \emph{Testing Software Design Modeled by Finite-State Machines}. IEEE Transactions on Software Engineering SE-4 (1978), 178--187. \href{https://doi.org/10.1109/TSE.1978.231496}{Publication record}.
+\bibitem{Fujiwara} S. Fujiwara, G. v. Bochmann, F. Khendek, M. Amalou, and A. Ghedamsi. \emph{Test Selection Based on Finite State Models}. IEEE Transactions on Software Engineering 17 (1991), 591--603. \href{https://www.site.uottawa.ca/~bochmann/Curriculum/Pub/1991%20-%20Test%20selection%20based%20on%20finite%20state%20models.pdf}{Author-hosted paper}.
+\bibitem{Syntactic} J. Ad\'amek, S. Milius, and H. Urbat. \emph{A Categorical Approach to Syntactic Monoids}. \href{https://arxiv.org/abs/1804.03011}{Research paper and version history}.
+\bibitem{CALF} G. van Heerdt, M. Sammartino, and A. Silva. \emph{CALF Categorical Automata Learning Framework}. CSL 2017. \href{https://arxiv.org/html/1704.05676}{Full text}.
+\bibitem{Dorsch} U. Dorsch, S. Milius, L. Schr\"oder, and T. Wi\ss mann. \emph{Efficient Coalgebraic Partition Refinement}. CONCUR 2017. \href{https://arxiv.org/html/1705.08362}{Full text}; \href{https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.CONCUR.2017.32}{Proceedings record}.
+\bibitem{HennessyMilner} M. Hennessy and R. Milner. \emph{Algebraic Laws for Nondeterminism and Concurrency}. Journal of the ACM 32 (1985), 137--161. \href{https://www.scss.tcd.ie/matthew.hennessy/pubs/old/HMjacm85.pdf}{Author-hosted paper}.
+\bibitem{Apartness} F. Vaandrager, B. Garhewal, J. Rot, and T. Wi\ss mann. \emph{A New Approach for Active Automata Learning Based on Apartness}. 2022. \href{https://arxiv.org/html/2107.05419}{Full text}.
+\bibitem{CSSR} C. R. Shalizi, K. L. Shalizi, and J. P. Crutchfield. \emph{An Algorithm for Pattern Discovery in Time Series}. 2002 preprint. \href{https://arxiv.org/html/cs/0210025}{Full text}; \href{https://escholarship.org/uc/item/9fz0f94d}{Institutional record}.
+\bibitem{PSR} M. R. James and S. Singh. \emph{Learning and Discovery of Predictive State Representations in Dynamical Systems with Reset}. ICML 2004. \href{https://icml.cc/Conferences/2004/proceedings/papers/117.pdf}{Conference paper}.
+\bibitem{Attribute} D. Borchmann and B. Ganter. \emph{Abstract Attribute Exploration with Partial Object Descriptions}. 2015 preprint. \href{https://arxiv.org/html/1511.06191}{Full text}.
+\bibitem{Informant} N. Bazhenov, E. Fokina, and L. San Mauro. \emph{Learning Families of Algebraic Structures from Informant}. Information and Computation 275 (2020), 104590. \href{https://arxiv.org/html/1905.01601v2}{Full text}; \href{https://doi.org/10.1016/j.ic.2020.104590}{Publication record}.
+\bibitem{Libkin} L. Libkin. \emph{Certain Answers as Objects and Knowledge}. Artificial Intelligence 232 (2016), 1--19. \href{https://www.pure.ed.ac.uk/ws/portalfiles/portal/23117001/Libkin_2015_Certain_Answers.pdf}{Author manuscript}.
+\bibitem{Beth} B. ten Cate, E. Franconi, and I. Seylan. \emph{Beth Definability in Expressive Description Logics}. IJCAI 2011, 1099--1105. \href{https://ijcai.org/proceedings/2011/188}{Conference paper}. This is the inspected comparison source, not a claim to have inspected Beth's 1953 original.
+\bibitem{Willems} J. C. Willems, P. Rapisarda, I. Markovsky, and B. L. M. De Moor. \emph{A Note on Persistency of Excitation}. Systems \& Control Letters 54 (2005), 325--329. \href{https://ftp.esat.kuleuven.be/stadius/markovsky/abstracts/04-101.html}{Inspected institutional abstract}; \href{https://doi.org/10.1016/j.sysconle.2004.09.003}{Publication record}.
+\bibitem{Zarankiewicz} G. Dam\'asdi, T. H\'eger, and T. Sz\H{o}nyi. \emph{The Zarankiewicz Problem, Cages, and Geometries}. \href{https://real.mtak.hu/13977/1/DHSzFIN.pdf}{Author manuscript}, Section 3 and Theorem 3.1.
+\bibitem{Stacey} A. Stacey. \emph{Comparative Smootheology}. \href{https://arxiv.org/abs/0802.2225}{Research paper and version history}.
+\end{thebibliography}
+\end{document}

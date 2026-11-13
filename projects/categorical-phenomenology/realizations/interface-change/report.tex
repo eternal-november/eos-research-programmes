@@ -1,0 +1,596 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,array}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\newcommand{\R}{\mathbb R}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\Kcal}{\mathcal K}
+\newcommand{\Pcal}{\mathcal P}
+\newcommand{\Wcal}{\mathcal W}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\core}{\operatorname{core}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\argmin}{\operatorname{argmin}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\title{Interface changes and fixed budget optimization}
+\author{Technical note}
+\date{3 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+A lawful change of interface sends every finite native realization to another realization on the same middle-state carrier. It therefore gives a resource inequality, but it need not preserve an optimal realization. We separate the cost of refactoring the transported tensor from the further saving possible when the target problem admits new tensors, and give checkable sufficient conditions for equality. The fixed-budget quartic encoding transports exactly at the level of feasible slot cores and at the level of its nonnegative-slack zero sets. That lift is continuous and compositional; a concrete announcement-coarsening example proves that no continuously differentiable lift preserving the prescribed core exists near one valid boundary point. Two further examples use the actual unweighted quartic objective to disprove loss and gradient commutation under natural interface maps. The generalized gradient functor supplies a contravariant chain-rule assembly result, not these missing forward transport properties. The conclusions concern specified finite mechanisms and specified interface changes; they do not select canonical minimum realizations or claim new general optimization theory.
+\end{abstract}
+
+\section{Why forgetting a report can change a memory decision}\label{sec:motivation}
+Consider a hypothetical stochastic controller. It first announces a binary mode $j$, then produces two binary indicator values $X,Y$. Each indicator must remain fair in every internal continuation state. This statewise fairness requirement is a stipulated local mechanism, stronger than saying that each indicator is fair on average. Suppose the required joint law is
+\begin{equation}\label{eq:binary-full}
+ R=\frac1{16}\begin{pmatrix}3&1&1&3\\1&3&3&1\end{pmatrix},
+ \qquad w=(1/4,1/4,1/4,1/4),
+\end{equation}
+where rows are the modes and columns are $00,01,10,11$. Each mode has probability $1/2$. Conditional on mode $0$, the indicators agree with probability $3/4$; conditional on mode $1$, they agree with probability $1/4$. Each indicator separately is fair in both modes.
+
+An engineer deciding whether one continuation state suffices cannot answer by checking the two individual indicators. One state would use the same joint indicator row after either mode. It cannot produce the required difference in agreement rates. Two states suffice: remember the mode, and use the corresponding normalized row of~\eqref{eq:binary-full}. The determinant of the first two columns is $1/32$, so the joint table has rank two and proves that one state is impossible in the model studied here.
+
+Now change the public contract: replace the mode announcement by a single undifferentiated announcement, while retaining the two indicator values and their aggregate joint law. The required remaining law is the uniform row $w$. A single continuation state can now draw from $w$. The exact minimum falls from two to one middle states, or from four to three total states when root and terminal phases are counted. Merely hiding the announcement on the existing controller still leaves its two states in place. The saving is obtained by solving the weaker realization problem again.
+
+This matters when deciding whether a smaller implementation is justified by a specification change. If the report is still needed to check mode-dependent coordination, the one-state replacement silently loses the required behavior even though both indicators and their aggregate joint distribution look correct. If the report-dependent condition is deliberately removed, the theorem certifies the smaller state budget. The numbers are a hypothetical exact specification, not measurements, a fitted model, or a hardware benchmark. The fairness constraints, allowed combinations, observation mechanism, and phase-counting convention are assumptions. Nothing here infers them from data or translates one abstract state into a number of physical bits.
+
+The rest of this note explains which parts of this reasoning compose under interface changes, and why the same conclusion does not automatically apply to a numerical loss or an optimizer trajectory.
+
+\section{The fixed native realization problem}\label{sec:data}
+We restate the data needed from the preceding realization and fixed-budget notes~\cite{JointNote,BudgetNote}. All sets are finite and nonempty. There is a nonempty set of modules $i$, an announcement set $J$, local hidden occurrences $H_i$, and local retained sets $S_i$. Fix
+\[
+ A_i\in\R_{\ge0}^{J\times H_i},\qquad B_i:H_i\to S_i,
+ \qquad A_i\one=p,
+\]
+where each $B_i$ is stochastic and $p$ is a probability column. Fix allowed tuples $E\subseteq\prod_iH_i$, a retained carrier $S\subseteq\prod_iS_i$, projections $e_i:E\to H_i$ and $\pi_i:S\to S_i$, a stochastic observation channel $Q:S\to I$, a probability row $w$ on $S$, and a total-one table $R$ on $J\times I$. The basic consistency equations are
+\[
+ R\one=p,\qquad \one^{\mathsf T}R=wQ,\qquad
+ w\pi_i=\one^{\mathsf T}A_iB_i.
+\]
+Any additionally specified local observation comparisons must satisfy their statewise squares. They do not change the equations below.
+
+For $h\in E$ define the possibly empty coupling polytope
+\begin{equation}\label{eq:Kh}
+ \Kcal_h=\{\beta\ge0:\beta\one=1,\quad
+                 \beta\pi_i=B_i(h_i,-)\text{ for all }i\}.
+\end{equation}
+A native implementation $X=(V,A,B,f)$ consists of a finite nonempty middle set $V$, $A\ge0$ on $J\times V$, a stochastic $B:V\to S$, and a deterministic $f:V\to E$ satisfying
+\begin{equation}\label{eq:implementation}
+ Af_i=A_i,\qquad B\pi_i=f_iB_i,\qquad
+ \one^{\mathsf T}AB=w,\qquad ABQ=R.
+\end{equation}
+Here $f_i=e_i\circ f$. Its total native cost is $|V|+2$, and its middle-state cost is $|V|$. The row equation in~\eqref{eq:implementation} retains a local mechanism at every middle state, rather than only after averaging over states.
+
+Define its tensor by
+\begin{equation}\label{eq:tensor-extraction}
+ P_D(X)_{jhs}=\sum_{v:f(v)=h}A_{jv}B_{vs}.
+\end{equation}
+The feasible tensor polytope $\Pcal(D)$ consists of nonnegative $Z_{jhs}$ with $\alpha_{jh}=\sum_sZ_{jhs}$ and
+\begin{align}
+ \sum_{h:h_i=u}\alpha_{jh}&=A_i(j,u),\label{eq:tensor-root}\\
+ \sum_{s:\pi_i(s)=x}Z_{jhs}&=\alpha_{jh}B_i(h_i,x),\label{eq:tensor-row}\\
+ \sum_{j,h}Z_{jhs}&=w_s,\qquad
+ \sum_{h,s}Z_{jhs}Q_{su}=R_{ju}.\label{eq:tensor-global}
+\end{align}
+Every feasible tensor has a split realization $N_D(Z)$ with middle states $(j,h)$ for which $\alpha_{jh}>0$, root entry $A^Z_{k,(j,h)}=\mathbf1_{k=j}\alpha_{jh}$, and continuation row $Z_{jh,-}/\alpha_{jh}$. Thus feasibility gives at most $|J||E|$ middle states, with all split memory counted.
+
+For $M\ge0$ and a row polytope $\Kcal$, let $\rank_{\Kcal}(M)$ be the least $r$ in a factorization $M=CD$ with $C\ge0$ and every row of $D$ in $\Kcal$. Set $\rank_{\Kcal}(0)=0$, even if $\Kcal$ is empty, and set the value to $+\infty$ when no factorization exists. Let
+\begin{equation}\label{eq:kappa}
+ \kappa_D(Z)=\sum_{h\in E}\rank_{\Kcal_h}(Z^h),\qquad
+ \kappa(D)=\min_{Z\in\Pcal(D)}\kappa_D(Z).
+\end{equation}
+An empty feasible set gives $\kappa(D)=+\infty$. Normalization ensures $\kappa(D)\ge1$ whenever it is finite. Partitioning $V$ by its tuple label, and conversely concatenating the corresponding factors, proves that $\kappa_D(Z)$ is the exact minimum over realizations of that tensor and $\kappa(D)$ is the exact global middle-state minimum. In particular,
+\begin{equation}\label{eq:rank-bound}
+ \rank(R)\le\kappa(D)\le |J||E|
+ \quad\text{when }\Pcal(D)\ne\varnothing.
+\end{equation}
+These minima exist because the possible finite costs are nonnegative integers and a finite split realization is available. No continuity assertion about constrained rank is needed.
+
+\section{Lawful changes and the direction of comparison}\label{sec:transport}
+A lawful interface change $F:D\to D'$ specifies stochastic channels
+\[
+ U:J\to J',\qquad L:S\to S',\qquad G:I\to I',
+\]
+and a deterministic tuple map $e:E\to E'$. For each target module $k$, choose a source module $i=i(k)$, a deterministic $C_k:H_i\to H'_k$, and a stochastic $L_k:S_i\to S'_k$, with
+\begin{align}
+ e(h)_k&=C_k(h_i),&
+ \pi_iL_k&=L\pi'_k,& B_iL_k&=C_kB'_k,\label{eq:lawful-row}\\
+ A'_k&=U^{\mathsf T}A_iC_k,&
+ w'&=wL,& R'&=U^{\mathsf T}RG,& QG&=LQ'.\label{eq:lawful-global}
+\end{align}
+All these are finite checks on supplied maps. They imply $\Kcal_hL\subseteq\Kcal'_{e(h)}$, since
+$(\beta L)\pi'_k=\beta\pi_iL_k=B_i(h_i,-)L_k=B'_k(e(h)_k,-)$.
+
+\begin{proposition}[Witness transport]\label{prop:transport}
+A lawful change sends
+\[
+ F(X)=(V,U^{\mathsf T}A,BL,e\circ f)
+\]
+to a target implementation with exactly the same presented middle carrier. Its tensor is
+\begin{equation}\label{eq:push}
+ (F_*Z)_{j'h's'}=\sum_{j,h,s}
+ U_{jj'}\mathbf1_{e(h)=h'}Z_{jhs}L_{ss'}.
+\end{equation}
+Thus $P_{D'}F=F_*P_D$. The maps compose by multiplication of the channels and composition of the deterministic tuple maps.
+\end{proposition}
+\begin{proof}
+The local initialization equations follow from $Af_i=A_i$ and~\eqref{eq:lawful-global}; the local continuation equations follow from~\eqref{eq:lawful-row}. For the global equations use
+$U^{\mathsf T}ABLQ'=U^{\mathsf T}ABQG=R'$ and $U\one=\one$.
+Expansion of~\eqref{eq:tensor-extraction} gives~\eqref{eq:push}.
+\end{proof}
+
+For completeness, the arrows in $\Wcal(D)$ are stochastic matrices $C:V\to V'$ with $AC=A'$, $CB'=B$, and $Cf'=f$. They preserve the full tensor. Transport acts as the same matrix $C$ on arrows. The split realization is initial in its tensor fibre, with unique arrow to $X$ given by
+\[
+ (\varepsilon_X)_{(j,h),v}
+ =\mathbf1_{f(v)=h}A_{jv}/\alpha_{jh}.
+\]
+Consequently reconstruction and transport have a canonical comparison
+\begin{equation}\label{eq:posterior}
+ \chi_F(Z):N_{D'}(F_*Z)\longrightarrow F(N_D(Z)),\qquad
+ \chi_F(Z)_{(j',h'),(j,h)}
+ =\frac{\mathbf1_{e(h)=h'}U_{jj'}\alpha_{jh}}{\alpha'_{j'h'}}.
+\end{equation}
+Only positive-mass pairs occur; zero masses require no division. Initiality proves the composition equation
+\begin{equation}\label{eq:chi-coherence}
+ \chi_{HF}(Z)=H(\chi_F(Z))\circ\chi_H(F_*Z).
+\end{equation}
+This direction is important: the reconstructed target maps \emph{to} the transported source reconstruction. Neither initiality nor~\eqref{eq:chi-coherence} says that the objects are optimal or that the arrow is invertible.
+
+\section{The resource inequality and exact equality checks}\label{sec:resources}
+\begin{theorem}[Two separate opportunities to save states]\label{thm:resource-chain}
+Suppose $D$ is feasible and $F:D\to D'$ is lawful. For every $Z\in\Pcal(D)$,
+\begin{equation}\label{eq:fibre-bound}
+ \kappa_{D'}(F_*Z)\le\kappa_D(Z).
+\end{equation}
+Define the best cost within the transported tensor image by
+\[
+ \mu_F=\min_{Z\in\Pcal(D)}\kappa_{D'}(F_*Z).
+\]
+Then
+\begin{equation}\label{eq:resource-chain}
+ \kappa(D')\le\mu_F\le\kappa(D).
+\end{equation}
+Transport sends a source minimum-state implementation to a target minimum-state implementation if and only if $\kappa(D')=\kappa(D)$.
+\end{theorem}
+\begin{proof}
+Transport a minimum realization of $Z$. It retains its middle carrier and realizes $F_*Z$, which proves~\eqref{eq:fibre-bound}. Minimizing over the image and then over all target tensors proves~\eqref{eq:resource-chain}. If $X$ is a source optimizer, its transported carrier has $\kappa(D)$ states. It is target-minimal exactly when this equals $\kappa(D')$. No formerly reached state becomes unreachable: $\sum_{j'}(U^{\mathsf T}A)_{j'v}=\sum_jA_{jv}$.
+\end{proof}
+
+The second inequality can be strict because a particular transported tensor can admit a smaller factorization. The first can be strict because the target constraints permit a different tensor outside the transported image. These are mathematically distinct changes; Section~\ref{sec:examples} realizes both separately.
+
+\begin{proposition}[Checkable sufficient conditions for equality]\label{prop:equality}
+Each of the following gives an exact equality conclusion.
+\begin{enumerate}
+\item If a reverse lawful change $H:D'\to D$ is supplied and its finite equations are checked, then $\kappa(D')=\kappa(D)$. No inverse equation is needed for this global conclusion.
+\item If in addition $H_*F_*Z=Z$ for a specified feasible tensor $Z$, then
+$\kappa_{D'}(F_*Z)=\kappa_D(Z)$. Equality for all source tensors follows if $H_*F_*=\Id$ on $\Pcal(D)$.
+\item Suppose an explicit source implementation has $m$ middle states and an $m\times m$ minor of $R'$ is nonzero. Then both data have exact minimum $m$.
+\item Bijective deterministic reindexings of all the data, modules, and coordinates preserve the resource problems and give inverse transports on implementations. They therefore give a bijection of optimal objects up to the indicated relabelling.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+Apply~\eqref{eq:resource-chain} in both directions for the first statement. Apply~\eqref{eq:fibre-bound} in both directions and use the tensor inverse identity for the second. For the third,
+\[
+ m\le\rank(R')\le\kappa(D')\le\kappa(D)\le m.
+\]
+For the fourth the inverse coordinate bijections satisfy the same squares and undo the constructions.
+\end{proof}
+
+\begin{proposition}[An observation recovery test]\label{prop:recovery}
+Suppose only the output observation changes: all $J,E,S,A_i,B_i,w$ stay fixed, with $Q'=QG$ and $R'=RG$. If a stochastic recovery channel $H:I'\to I$ satisfies
+\[
+ QGH=Q,\qquad RGH=R,
+\]
+then the feasible tensor sets and their constrained-rank objectives coincide. Hence native minimum values and minimum quadruples $(V,A,B,f)$ agree; the public output labels themselves may differ.
+\end{proposition}
+\begin{proof}
+Writing $T_{js}=\sum_hZ_{jhs}$, the new observed constraint is $TQG=RG$. Multiplying by $H$ recovers $TQ=R$. All other constraints and row polytopes are unchanged. The converse follows by multiplying $TQ=R$ by $G$.
+\end{proof}
+
+The minor certificate is a useful finite test: it combines a supplied upper-bound implementation with a target lower bound, without solving a global nonconvex problem. None of these sufficient conditions is asserted to be necessary. Surjectivity of $F_*:\Pcal(D)\to\Pcal(D')$ alone does not imply equality: a target tensor can lift only at a larger state cost.
+
+If $X$ is a chosen source optimizer with tensor $Z$ and $Y$ is a chosen target optimizer, there is a canonical span
+\[
+ F(X)\ \longleftarrow\ N_{D'}(F_*Z)\ \longrightarrow\ Y
+\]
+only when $P_{D'}(Y)=F_*Z$. The right arrow otherwise has the wrong tensor fibre and cannot exist. Even when the tensors agree, the span does not manufacture a direct arrow between $F(X)$ and $Y$, an isomorphism, or a canonical choice of optimizer. The cost is monotone for this specified transport, not along arbitrary stochastic comparison arrows.
+
+\subsection{An exact value transport that really does compose}\label{sec:value-function}
+There is a standard optimization transport, but its objective must be defined rather than identified with the native target objective. For $t=F_*$ define the inherited cost of a target tensor by
+\begin{equation}\label{eq:inherited-cost}
+ (t_!\kappa_D)(Z')=\inf\{\kappa_D(Z):Z\in\Pcal(D),\ tZ=Z'\},
+\end{equation}
+with value $+\infty$ for an empty fibre. Every finite fibre infimum here is a minimum, since the costs are nonnegative integers. Direct elimination gives
+\begin{equation}\label{eq:value-identities}
+ \inf_{Z'\in\Pcal(D')}(t_!\kappa_D)(Z')=\kappa(D),\qquad
+ (s\circ t)_!\kappa_D=s_!(t_!\kappa_D)
+\end{equation}
+for a further tensor transport $s$. The second equality simply groups the same source tensors by their intermediate image. The native target cost satisfies
+\begin{equation}\label{eq:value-comparison}
+ \kappa_{D'}(Z')\le(t_!\kappa_D)(Z').
+\end{equation}
+On a nonempty fibre this follows from~\eqref{eq:fibre-bound}; on an empty fibre the right side is infinite.
+
+These are exact commutation statements for \emph{inherited} costs. Equality with the independently defined $\kappa_{D'}$ requires more. A concrete sufficient condition is a lawful reverse $H$ with $F_*H_*Z'=Z'$ for every target tensor: the tensor $H_*Z'$ then supplies a lift of cost at most $\kappa_{D'}(Z')$, proving the reverse inequality in~\eqref{eq:value-comparison}. A reverse map without this target inverse identity proves equality only of global minima, as in Proposition~\ref{prop:equality}.
+
+Infimization along a map is classical value-function or epi-composition machinery~\cite[Eq.~1(17)]{RockafellarWets}; associativity here needs no convexity or differentiability. The exact identities are useful because they identify what is preserved, but they do not by themselves preserve a new target cost, choose a minimizing implementation, or transport gradient descent. The two strict-gap examples below can also be read as strict inequalities in~\eqref{eq:value-comparison}.
+
+A close compositional antecedent is Stein and Samuelson's framework for convex bifunctions~\cite{SteinSamuelson}. Their Section 3 composes bifunctions by infimizing a sum over the shared variable, and Section 4.3 describes perturbation and value functions through discarding a decision-variable output. This is directly relevant prior art for exact compositional elimination, rather than a selected-optimizer or gradient-trajectory theorem. Our constrained-rank cost is generally nonconvex, as is the quartic loss. The elementary identities~\eqref{eq:value-identities} remain valid for their extended nonnegative value functions, but no convex closure or duality conclusion from that framework is imported into this setting.
+
+
+\section{Exact examples separating the resource gaps}\label{sec:examples}
+\subsection{Refactoring the transported tensor saves one state}
+Use two modules, with singleton hidden carriers, $A_i=(1/2,1/2)^{\mathsf T}$, and $B_i=(1/2,1/2)$. Let $E$ be a singleton, let $S=I=\{00,01,10,11\}$, let $Q=\Id$, and use $R,w$ from~\eqref{eq:binary-full}. Since $Q=\Id$ and $E$ is a singleton, the source feasible tensor is uniquely $Z=R$. Its two normalized rows belong to $\Kcal$, and its rank is two, so $\kappa(D)=2$.
+
+Erase the announcement with $U=(1,1)^{\mathsf T}$ while taking $L,G,e$ to be identities. The target tensor is uniquely the row $w$. It belongs to the same coupling polytope and has constrained rank one. Hence
+\[
+ \kappa(D')=\mu_F=1<2=\kappa(D).
+\]
+The tensor pushforward is surjective because both feasible sets are singletons. Thus this is also a counterexample to the proposed criterion that surjectivity of feasible tensors preserves the optimum. The posterior comparison is the row $(1/2,1/2)$ from the one-state target split realization to the transported two-state source split realization. There is no arrow in the opposite direction: the only stochastic map from two states to one would require their two distinct continuation rows to be equal to $w$.
+
+\subsection{A new target tensor saves one state}\label{sec:new-tensor}
+Keep the same source, but now erase only the observed second output: take $U=L=e=\Id$, let $G:I\to\{*\}$ be the unique channel, and let $Q'$ be constant. The target announcement distribution is $R'=p$. The prescribed retained marginal remains $w$, and the local continuation rows are unchanged. If nontrivial local public readouts were named, coarsen those observable alphabets to singletons as well; they cannot remain identity readouts when the global output is constant. This changes no retained row $B_i$. The tensor pushforward is the identity, so the transported image still contains only $R$. Therefore $\mu_F=2$.
+
+The target nevertheless permits the different tensor
+\[
+ Z'=p w=\frac18\begin{pmatrix}1&1&1&1\\1&1&1&1\end{pmatrix}.
+\]
+It is realized with one state of continuation row $w$. Consequently
+\[
+ \kappa(D')=1<2=\mu_F=\kappa(D).
+\]
+Here $\chi_F(Z)$ is the identity on the two split states, since $U$ and $e$ are identities and the tensor is unchanged. Thus even an invertible reconstruction comparison does not imply preservation of optimal cost. A target optimizer with tensor $Z'$ has no native arrow in either direction to the transported implementation with tensor $R$, because arrows preserve tensors.
+
+\subsection{Forgetting hidden occurrence labels}
+Let $J,S,I$ be singletons, let there be one module with $H=E=\{0,1\}$, and set $A=(1/2,1/2)$ and $B=(1,1)^{\mathsf T}$. Deterministic retention of the two positive-mass hidden labels forces two middle states. Collapse $H,E$ to singletons and retain all other data. One state now suffices. Unlike the previous example, the two transported continuation rows coincide. There are stochastic arrows both ways between the two-state transport and the one-state target implementation, given by
+\[
+ C=\begin{pmatrix}1\\1\end{pmatrix},\qquad
+ D=\begin{pmatrix}1/2&1/2\end{pmatrix}.
+\]
+But $CD$ is the matrix with every entry $1/2$, not the two-state identity. Mutual comparison is not an isomorphism. This example will also test the actual quartic objective in Section~\ref{sec:loss-drop}.
+
+\subsection{A symmetry obstructs an equivariant optimal choice}\label{sec:symmetry}
+Let $J,S,I$ be singletons. Take two modules with $H_i=\{0,1\}$, $A_i=(1/2,1/2)$, and $B_i=(1,1)^{\mathsf T}$, and permit all four hidden tuples. Every feasible tensor is a coupling of the hidden occurrence marginals, of the form
+\[
+ \alpha=(t,1/2-t,1/2-t,t),\qquad 0\le t\le1/2,
+\]
+in tuple order $00,01,10,11$. Each positive tuple needs one state and one suffices for it, so $\kappa_D(\alpha)$ is exactly its number of positive entries. The global optimum is two, attained only at $t=0$ or $t=1/2$.
+
+The lawful hidden-label automorphism $(u,v)\mapsto(u,1-v)$ preserves the datum and sends $t$ to $1/2-t$. It exchanges the two optimal tensors. Its only fixed feasible tensor has $t=1/4$ and requires four states. Thus no choice of a globally minimum implementation can be equipped with native comparison arrows making it invariant under this symmetry: any such arrow would force its tensor to equal its swapped tensor. This is a concrete obstruction to an equivariant optimal selector, even though the symmetry preserves the minimum value. It is narrower than a claim that no choice is possible after extra symmetry-breaking data are supplied.
+
+\section{The precise fixed budget quartic}\label{sec:quartic}
+Fix a middle-state budget $K\ge1$. For every slot $v\in\{1,\ldots,K\}$ use real coordinates
+\[
+ d_{vh}\ (h\in E),\quad\eta_v,\qquad
+ a_{jv},\rho_{jv},\sigma_{jv}\ (j\in J),\qquad
+ b_{vs},\tau_{vs}\ (s\in S),
+\]
+and write $e_v=\sum_hd_{vh}$ as an abbreviation. The residuals are
+\begin{align}
+ D_{vh}&=d_{vh}^2-d_{vh},&H_v&=1-e_v-\eta_v^2,\label{eq:struct1}\\
+ P_{jv}&=a_{jv}-\rho_{jv}^2,&G_{jv}&=e_v-a_{jv}-\sigma_{jv}^2,\label{eq:struct2}\\
+ T_{vs}&=b_{vs}-\tau_{vs}^2,&N_v&=\sum_sb_{vs}-e_v,\label{eq:struct3}\\
+ C_{vix}&=\sum_{s:\pi_i(s)=x}b_{vs}-\sum_hd_{vh}B_i(h_i,x),\label{eq:local-row-residual}\\
+ L_{iju}&=\sum_va_{jv}\sum_{h:h_i=u}d_{vh}-A_i(j,u),\label{eq:local-root-residual}\\
+ W_s&=\sum_{j,v}a_{jv}b_{vs}-w_s,&
+ O_{ju}&=\sum_{v,s}a_{jv}b_{vs}Q_{su}-R_{ju}.\label{eq:global-residual}
+\end{align}
+Let $r_{D,K}$ list every scalar residual exactly once and define
+\begin{equation}\label{eq:loss}
+ \Phi_{D,K}(x)=\|r_{D,K}(x)\|_2^2.
+\end{equation}
+It has degree at most four. At a zero, every $d_{vh}$ is binary and each $e_v$ is zero or one. Inactive slots have $a=b=0$; active slots select one tuple, have $0\le a_{jv}\le1$, and have a stochastic continuation row in its coupling polytope. The remaining equations give an implementation with at most $K$ states. Conversely every such implementation fills slots with a zero by taking square roots for the slack variables.
+
+The preceding fixed-budget note proves compactness of every sublevel set of this particular polynomial. Consequently its global minimum is attained and
+\begin{equation}\label{eq:zero-equivalence}
+ \min_x\Phi_{D,K}(x)=0\quad\Longleftrightarrow\quad\kappa(D)\le K.
+\end{equation}
+For $K=0$ the objective has no coordinates and equals the strictly positive constant $\sum_i\|A_i\|_F^2+\|w\|_2^2+\|R\|_F^2$. Thus the zero-equivalence remains valid. For any finite $K$, an infeasible budget gives a finite positive attained polynomial minimum, whereas the native resource value may be $+\infty$ if no budget can work. These are different quantities.
+
+This equivalence concerns exact zeros and exact global minima. It does not turn a numerical near-zero or a positive stationary point into a feasibility certificate. The following comparisons use the residual family exactly as displayed, with no omitted equations and no changed weights.
+
+\section{What does lift to the encoding}\label{sec:zero-lift}
+Let $\core(x)=(d,a,b)$. A lawful change induces the linear core map
+\begin{equation}\label{eq:core-map}
+ d'_{vh'}=\sum_{h:e(h)=h'}d_{vh},\qquad
+ a'_{j'v}=\sum_jU_{jj'}a_{jv},\qquad
+ b'_{vs'}=\sum_sb_{vs}L_{ss'}.
+\end{equation}
+Write it $T_{F,K}$. It is defined on all core coordinates, but the validity of the following completion uses the source zero equations.
+
+\begin{theorem}[Compositional transport of exact zeros]\label{thm:zero-lift}
+If $\Phi_{D,K}(x)=0$, its transported core~\eqref{eq:core-map} admits target auxiliary coordinates with $\Phi_{D',K}(x')=0$. Thus
+\[
+ \Phi_{D,K}^{-1}(0)\ne\varnothing
+ \quad\Longrightarrow\quad
+ \Phi_{D',K}^{-1}(0)\ne\varnothing
+\]
+at the same budget. Quotient each zero set by equality of $(d,a,b)$. The maps $T_{F,K}$ give a strict functor on these quotients. Equivalently, restrict every zero set to nonnegative auxiliary coordinates and use
+\begin{equation}\label{eq:positive-completion}
+ \eta'_v=\sqrt{1-e'_v},\quad
+ \rho'_{j'v}=\sqrt{a'_{j'v}},\quad
+ \sigma'_{j'v}=\sqrt{e'_v-a'_{j'v}},\quad
+ \tau'_{vs'}=\sqrt{b'_{vs'}}.
+\end{equation}
+This gives continuous semialgebraic maps $\widehat F_K$ with
+$\widehat H_K\widehat F_K=\widehat{HF}_K$ and $\widehat{\Id}_K=\Id$ on the nonnegative-slack zero sets.
+\end{theorem}
+\begin{proof}
+At a source zero, a slot selects at most one tuple. Its image therefore does too, with $e'_v=e_v$. Nonnegativity of the channels gives $a',b'\ge0$, and the continuation row has mass $e_v$. For an active slot, total root mass one gives
+\[
+ 0\le a'_{j'v}\le\sum_ja_{jv}\le1=e_v.
+\]
+Inactive slots remain zero. The lawful squares imply all target local and global equations, exactly as in Proposition~\ref{prop:transport}. All radicands in~\eqref{eq:positive-completion} are thus nonnegative, and their square roots make the remaining residuals vanish.
+
+The core maps compose strictly. Each valid core has a unique nonnegative auxiliary completion, so successive completion gives the same answer as completion after the composite. Square root is continuous and semialgebraic on the nonnegative reals, which proves the stated regularity. On the full signed zero sets, all choices of auxiliary signs have the same core. Passing to that equivalence class gives the same strict construction.
+\end{proof}
+
+Selecting nonnegative square roots on the \emph{full signed} zero set is not an identity-preserving functor: the identity map would change negative slack signs. The quotient or nonnegative convention is therefore part of the statement, not cosmetic bookkeeping. The maps need not extend smoothly to the unconstrained ambient parameter spaces. Moreover every exact zero has zero gradient; agreement only on zero sets says nothing about optimization away from them.
+
+\subsection{A smooth lift can genuinely fail}\label{sec:no-c1}
+The square-root issue is not merely a poor choice of signs. Let $J=\{1,2\}$ and let $H,E,S,I$ all be singletons. Put $A=(1/2,1/2)^{\mathsf T}$ and $B=Q=w=1$, $R=A$. Use $K=2$ and erase the announcement with $U=(1,1)^{\mathsf T}$, keeping the other interface maps identities.
+
+For $(r_1,r_2)$ near $(0,0)$, take both slots active, $d_v=b_v=\tau_v=1$ and $\eta_v=0$, with
+\[
+ a_{11}=r_1^2,\quad a_{21}=r_2^2,\qquad
+ a_{12}=1/2-r_1^2,\quad a_{22}=1/2-r_2^2.
+\]
+Choose $\rho_{11}=r_1$, $\rho_{21}=r_2$, choose positive square roots for the two $\rho$ coordinates in slot two, and put $\sigma_{jv}=\sqrt{1-a_{jv}}$. This is a smooth two-parameter family of \emph{signed} source zeros near the origin. All radicands except $r_i^2$ stay strictly positive, and those two coordinates have been parametrized by $r_i$ themselves.
+
+\begin{proposition}[No continuously differentiable core-preserving lift]\label{prop:no-c1}
+There is no continuously differentiable ambient map near the central source zero that sends source zeros to target zeros and agrees with~\eqref{eq:core-map} on their slot cores.
+\end{proposition}
+\begin{proof}
+Such a map, restricted to the displayed smooth family, would have a continuously differentiable target coordinate $h(r)=\rho'_{*,1}$ satisfying
+\[
+ h(r)^2=a'_{*,1}=r_1^2+r_2^2.
+\]
+Then $h(0)=0$ and $h(r)=\ell(r)+o(\|r\|)$ for a linear functional $\ell$. Along $r=tu$, division by $t^2$ and passage to zero gives $\ell(u)^2=\|u\|^2$ for every $u\in\R^2$. A linear functional on $\R^2$ has a nonzero kernel vector, contradicting this identity.
+\end{proof}
+
+The central slot has zero incoming mass but a valid normalized continuation row; the fixed-budget encoding expressly permits it. This proves a boundary obstruction for the declared fixed-slot transport. Deleting that slot or allowing data-dependent slot reindexing changes the proposed map and does not refute the proposition. The result does not prohibit other encodings or regularity statements restricted to strictly positive strata.
+
+\section{The actual loss and gradient do not commute}\label{sec:loss}
+An interface map on mechanisms does not specify a map on off-zero slack coordinates, residual weights, or Euclidean metrics. Even where a particularly natural linear map exists on the \emph{entire} parameter space, the expected loss and gradient identities can fail.
+
+\subsection{Output erasure changes the loss with no coordinate change}\label{sec:loss-rise}
+Take one module, $J=E=H=S=\{*\}$, $A=B=w=1$, and budget $K=1$. The source has $I=\{0,1\}$, $Q=R=(1/2,1/2)$. Erase the output with $G=(1,1)^{\mathsf T}$; the target has $Q'=R'=1$. All other channels and all parameter coordinates are unchanged. Write the coordinates as $(d,a,b,\eta,\rho,\sigma,\tau)$ and put
+\begin{align*}
+ \Psi={}&(d^2-d)^2+(1-d-\eta^2)^2+(a-\rho^2)^2
+ +(d-a-\sigma^2)^2\\
+ &+(b-\tau^2)^2+2(b-d)^2+(ad-1)^2.
+\end{align*}
+Both copies of $b-d$ are required: one is row normalization, the other the singleton local continuation residual. The full objectives are
+\begin{equation}\label{eq:actual-objective-rise}
+ \Phi_{D,1}=\Psi+\tfrac32(ab-1)^2,\qquad
+ \Phi_{D',1}=\Psi+2(ab-1)^2.
+\end{equation}
+The retained residual contributes one copy, while the two source observed residuals each contribute $(ab-1)^2/4$ and the target observed residual contributes $(ab-1)^2$.
+
+At the exact point
+\[
+ x=(d,a,b,\eta,\rho,\sigma,\tau)=(1,0,1,0,0,1,1),
+\]
+all structural residuals vanish. Direct differentiation gives
+\begin{equation}\label{eq:gradient-rise}
+ \Phi_{D,1}(x)=5/2,\qquad \Phi_{D',1}(x)=3,\qquad
+ -\nabla\Phi_{D,1}(x)=5e_a,\qquad
+ -\nabla\Phi_{D',1}(x)=6e_a.
+\end{equation}
+Every other component is zero. The zero sets agree and both global minimum values are zero, but the identity parameter map intertwines neither the gradient flows nor equal-step Euler updates. Indeed the recovery channel $H=(1/2,1/2)$ satisfies $QGH=Q$ and $RGH=R$. Even the exact recovery criterion in Proposition~\ref{prop:recovery} therefore does not give equality of these Euclidean gradients. Source and target satisfy the original encoding without weights or omitted residuals.
+
+More generally output postprocessing sends the observed residual matrix to $OG$, changing its squared Frobenius norm to $\|OG\|_F^2$. Stochasticity concerns nonnegative probability mass, not preservation of a Euclidean norm on signed residuals. It does not supply the missing isometry.
+
+\subsection{A target zero can have a nonzero transported source gradient}\label{sec:loss-drop}
+Use the hidden-label-forgetting example of Section~\ref{sec:examples}, now with $K=2$. Define a linear map on all coordinates by
+\[
+ d'_v=d_{v0}+d_{v1}
+\]
+and leave $a,b,\eta,\rho,\sigma,\tau$ unchanged. Every source zero maps to a target zero: active source labels become one active target label and the other equations sum correctly.
+
+At slot one take $(d_{10},d_{11})=(1,0)$, $a_1=\rho_1=b_1=\tau_1=1$, and $\eta_1=\sigma_1=0$. At slot two take $(d_{20},d_{21})=(0,0)$, $\eta_2=1$, and $a_2=\rho_2=\sigma_2=b_2=\tau_2=0$. All source residuals vanish except the two local-root residuals $L_0=1/2$ and $L_1=-1/2$. Therefore
+\[
+ \Phi_{D,2}(x)=1/2,\qquad \Phi_{D',2}(Tx)=0.
+\]
+The only nonzero source gradient components are
+\[
+ \partial_{d_{10}}\Phi=1,\qquad
+ \partial_{d_{11}}\Phi=-1,\qquad
+ \partial_{a_1}\Phi=1.
+\]
+Their transported selector components cancel, but the $a_1$ component remains. Hence
+\begin{equation}\label{eq:gradient-drop}
+ T(-\nabla\Phi_{D,2}(x))=-e_{a_1}\ne0
+ =-\nabla\Phi_{D',2}(Tx).
+\end{equation}
+The map preserves exact feasibility, yet its transported source descent direction leaves a target global zero. Together with~\eqref{eq:actual-objective-rise}, this rules out a general monotonicity claim for the displayed losses under natural interface maps in either direction. It also shows why transporting gradient calculations cannot be justified by checking only exact solutions.
+
+\subsection{Genuine announcement erasure can increase the global minimum}\label{sec:global-minimum}
+The preceding off-zero comparisons do not compare positive global minima; their feasible budgets both have minimum zero. The following separate example proves a strict increase of the actual unweighted global minimum under information erasure, at positive budget $K=1$.
+
+Let $J=\{0,1\}$ and let there be one module with $H=\{0,1\}$. Let $S$ and $I$ be singletons, take $B=(1,1)^{\mathsf T}$, $Q=w=1$, and set
+\[
+ A=\begin{pmatrix}1/4&1/4\\1/4&1/4\end{pmatrix},\qquad
+ R=\begin{pmatrix}1/2\\1/2\end{pmatrix},\qquad E=\{0\}.
+\]
+All basic consistency checks hold. The positive mass of hidden occurrence $1$ has no allowed tuple, so no native implementation exists at any budget. Erase the announcement with $U=(1,1)^{\mathsf T}$ and all other interface maps identities. The target has $A'=(1/2,1/2)$ and $R'=1$, and is likewise infeasible. Write
+\[
+ \epsilon=\min\Phi_{D,1},\qquad \epsilon'=\min\Phi_{D',1}.
+\]
+Both are finite, positive, and attained, by the fixed-budget theorem.
+
+\begin{proposition}[A strict positive-budget minimum gap]\label{prop:erasure-gap}
+For this lawful announcement erasure,
+\begin{equation}\label{eq:erasure-min-gap}
+ \epsilon'\ge\epsilon+1/8.
+\end{equation}
+\end{proposition}
+\begin{proof}
+Put $z_+=\max(z,0)$ and $z_-=\max(-z,0)$. Eliminating each square-slack coordinate independently gives an exact reduced target loss on its core $(d,a,b)$:
+\begin{align}
+ f'(d,a,b)={}&(d^2-d)^2+(d-1)_+^2+a_-^2+(a-d)_+^2+b_-^2
+       +2(b-d)^2\notag\\
+ &+(ad-1/2)^2+1/4+2(ab-1)^2.\label{eq:reduced-target}
+\end{align}
+For example $\min_\rho(a-\rho^2)^2=a_-^2$ and
+$\min_\sigma(d-a-\sigma^2)^2=(a-d)_+^2$; every such scalar minimum is attained. The constant $1/4$ is the missing hidden-occurrence residual. Hence $\min f'=\epsilon'$, with a minimizing core supplied by a global minimum of the full quartic.
+
+There is a nonnegative minimizing core. Indeed replacing $(d,a,b)$ by $(|d|,|a|,|b|)$ cannot increase~\eqref{eq:reduced-target}. To check all terms, if $d=-t<0$, the decrease in the selector-plus-cap contribution is
+\[
+ (t^2+t)^2-(t^2-t)^2-(t-1)_+^2
+ =4t^3-(t-1)_+^2\ge0.
+\]
+For $t\le1$ the inequality is immediate; for $t\ge1$ use $(t-1)^2\le t^2\le t^3$. The positivity-plus-gate contribution obeys
+\[
+ (|a|-|d|)_+^2\le a_-^2+(a-d)_+^2:
+\]
+if $a\ge0$, use $|d|\ge d$; if $a<0$, bound the left side by $a^2=a_-^2$. The $b$ positivity term disappears, and
+$\bigl||b|-|d|\bigr|\le|b-d|$. Finally for every real $z$ and $c\ge0$,
+$(|z|-c)^2\le(z-c)^2$, which handles both product residuals.
+
+Take such a nonnegative minimizer $(d,a,b)$ and split its root mass evenly to a source core $(d,a_0,a_1,b)=(d,a/2,a/2,b)$. The reduced source loss at this core is
+\begin{align}
+ f(d,a/2,a/2,b)={}&(d^2-d)^2+(d-1)_+^2
+ +2(a/2-d)_+^2+2(b-d)^2\notag\\
+ &+\tfrac12(ad-1/2)^2+\tfrac18
+ +\tfrac32(ab-1)^2.\label{eq:reduced-source}
+\end{align}
+The two source hidden-$1$ equations contribute $2(1/4)^2=1/8$. The retained residual contributes $(ab-1)^2$ while the two observed residuals contribute another $(ab-1)^2/2$.
+
+For $a,d\ge0$,
+\[
+ 2(a/2-d)_+^2\le(a-d)_+^2.
+\]
+If $a\le2d$ the left side is zero; otherwise $2(a/2-d)^2\le(a-d)^2$ follows by expansion, or from $a/2-d\le(a-d)/2$. Subtracting~\eqref{eq:reduced-source} from~\eqref{eq:reduced-target} therefore gives at least
+\[
+ \tfrac12(ad-1/2)^2+\tfrac18+\tfrac12(ab-1)^2\ge1/8.
+\]
+Complete the source slacks at their independent minima. Then
+$\epsilon\le f(d,a/2,a/2,b)\le\epsilon'-1/8$, proving the claim.
+\end{proof}
+
+Stochastic splitting with $U=(1/2,1/2)$ is a lawful reverse change on these particular data and gives the opposite strict ordering of positive minimum values. This does not conflict with resource monotonicity: both native resource minima are $+\infty$, and both polynomial minima are strictly positive. The numerical amount of residual mismatch is not an intrinsic amount of missing memory.
+
+For an even simpler presentation check, naming two copies of one impossible local requirement adds its squared residuals. With $J,S,I$ singleton, $H=\{0,1\}$, $A=(1/2,1/2)$, $B=(1,1)^{\mathsf T}$, and $E=\{0\}$, duplication has the identical parameter space and, for every $K\ge1$,
+\[
+ \Phi_{\rm duplicate,K}-\Phi_{\rm single,K}
+ =\sum_v(b_v-d_v)^2+
+       \left(\sum_va_vd_v-\frac12\right)^2+\frac14\ge\frac14.
+\]
+Both directions are lawful and exact infeasibility is unchanged. This shorter check isolates residual duplication; Proposition~\ref{prop:erasure-gap} isolates genuine information erasure.
+
+\section{The diagrams needed for objectives and dynamics}\label{sec:diagrams}
+Let $T:\R^n\to\R^{n'}$ be a proposed \emph{linear ambient} parameter map, and abbreviate the two losses by $\Phi,\Phi'$. There are several distinct possible requirements.
+\begin{enumerate}
+\item \emph{Feasible transport:} $T(\Phi^{-1}(0))\subseteq(\Phi')^{-1}(0)$.
+\item \emph{Loss transport:} $\Phi'\circ T=\Phi$.
+\item \emph{Forward field transport:}
+\begin{equation}\label{eq:field-diagram}
+ T\nabla\Phi(x)=\nabla\Phi'(Tx)\quad\text{for every }x.
+\end{equation}
+\item \emph{Forward update transport:} for a common step $\eta$,
+$T(x-\eta\nabla\Phi(x))=Tx-\eta\nabla\Phi'(Tx)$.
+\end{enumerate}
+For a linear $T$ and $\eta\ne0$, the last two requirements are equivalent. For a nonlinear differentiable map, gradient-flow comparison instead uses $DT(x)\nabla\Phi(x)$; even that relation does not automatically give exact Euler-step commutation because a nonlinear map does not preserve increments.
+
+The quartic counterexamples disprove~\eqref{eq:field-diagram} for their stated maps. Proposition~\ref{prop:no-c1} rules out any ambient continuously differentiable map with the specified core behavior in its example. Those are different conclusions: a failed natural candidate is not a proof that every imaginable alternative fails.
+
+\begin{proposition}[A sufficient Euclidean criterion]\label{prop:metric}
+Suppose $T$ is linear and $\Phi=\Phi'\circ T$. Then
+\begin{equation}\label{eq:chain-rule}
+ \nabla\Phi(x)=T^{\mathsf T}\nabla\Phi'(Tx).
+\end{equation}
+Under this identity, forward field transport holds if and only if
+\begin{equation}\label{eq:metric-criterion}
+ TT^{\mathsf T}\nabla\Phi'(Tx)=\nabla\Phi'(Tx)
+ \quad\text{for every }x.
+\end{equation}
+In particular it holds if $TT^{\mathsf T}=\Id$. It also holds for bijective coordinate permutations with consistently permuted residuals and weights.
+\end{proposition}
+\begin{proof}
+Equation~\eqref{eq:chain-rule} is the Euclidean chain rule. Multiplying it by $T$ gives precisely~\eqref{eq:metric-criterion}. Coordinate permutations are orthogonal and preserve the declared sum of squared residuals when the residual presentation is permuted along with them.
+\end{proof}
+
+The more general useful check is residual-level: if $r'(Tx)=Sr(x)$, then
+\[
+ \Phi'(Tx)=r(x)^{\mathsf T}S^{\mathsf T}S r(x).
+\]
+An isometry condition on the actual residual image, or appropriately verified residual metrics, can yield loss equality. It is still separate from the parameter metric condition in~\eqref{eq:metric-criterion}. Preserving the zero set alone does not determine either metric. Positive reweighting, duplicated equations, or alternative slack coordinates can preserve exact feasibility while changing the field.
+
+Because the displayed losses are polynomials, any supplied polynomial candidate map has finite exact identity tests: expand the proposed loss or field relation and compare coefficients. Such a computation checks that particular presentation and map. It is not an automatic construction of them, and no polynomial map is supplied for the full class of lawful interface changes.
+
+\section{What the generalized gradient functor actually supplies}\label{sec:prior}
+Hanks, Fairbanks, and Klawonn prove that the negative generalized gradient is a monoidal natural transformation (Theorem 3.5), and under their stated finite-limit hypothesis it induces an identity-on-objects hypergraph functor (Corollary 3.5.1, titled \emph{Functoriality of Generalized Gradient Flow})~\cite{Hanks2025}. The field reindexing in their Theorem 3.4 is contravariant: for $\varphi:X\to Y$, it is
+\[
+ v\longmapsto\varphi^{\dagger}\circ v\circ\varphi.
+\]
+In the Euclidean linear case, $\varphi^{\dagger}=\varphi^{\mathsf T}$. For residual factors $f_\ell$ and linear variable-sharing maps $P_\ell$, the concrete consequence is
+\[
+ \Phi(x)=\sum_\ell f_\ell(P_\ell x)
+ \quad\Longrightarrow\quad
+ -\nabla\Phi(x)=\sum_\ell P_\ell^{\mathsf T}
+                         (-\nabla f_\ell(P_\ell x)).
+\]
+This assembles a field for a chosen objective presentation. It does not identify the forward interface pushforward $F_*$ with that contravariant reindexing, or turn the chain rule~\eqref{eq:chain-rule} into the forward relation~\eqref{eq:field-diagram}.
+
+For discrete updates the compatible assembly acts on increments. If $u(y)=y+\eta v(y)$, reindex the increment to obtain
+\[
+ x\longmapsto x+\varphi^{\mathsf T}(u(\varphi x)-\varphi x).
+\]
+Transporting the full update as $\varphi^{\mathsf T}u(\varphi x)$ adds an unwanted baseline $\varphi^{\mathsf T}\varphi x$ in place of $x$. The earlier fixed-budget note records this distinction and its antecedents. It does not rescue forward interface commutation in~\eqref{eq:gradient-rise} or~\eqref{eq:gradient-drop}.
+
+The present results use standard nonnegative factorization~\cite{CohenRothblum}, finite coupling, value-function elimination, the chain rule, and elementary differential obstructions. Their contribution here is the explicit separation and verification for the stated native data and the particular quartic encoding. No novelty or priority claim, contextad identification, canonical optimizer selection, convergence guarantee, or extension to arbitrary stochastic processes is asserted. In particular the metric and residual presentation are mathematical data, not consequences of equality of exact realization sets.
+
+\section{Conclusions and verification scope}\label{sec:verification}
+A lawful interface change gives a native witness functor, a tensor pushforward, and coherent posterior comparisons. It gives the exact resource inequality~\eqref{eq:resource-chain}, with equality under the concrete checks in Proposition~\ref{prop:equality}. It also gives a strict continuous transport on nonnegative-slack exact-zero sets at every fixed budget. These are positive results.
+
+The optimization extension has precise limits. An optimal source realization can cease to be optimal after transport. Surjectivity of feasible tensors and invertibility of the split reconstruction comparison each fail to prevent that. A smooth full-parameter lift can fail at a valid boundary zero. Where natural linear full-parameter maps do exist, the actual quartic objective and its gradients need not commute. A gradient-composition theorem therefore does not supply a functorial minimum-state solver or transported optimization trajectories.
+
+The companion exact checks verify the numerical identities and polynomial gradients used in the finite examples. They supplement the proofs, not replace them. No numerical optimizer is used as a feasibility, infeasibility, or global-optimality certificate. The primary deliverable is self-contained \LaTeX{} source; the README records exactly which automated and rendering checks were performed.
+
+\begin{thebibliography}{9}
+\bibitem{JointNote}
+\emph{Joint native realization with fixed local mechanisms}.
+Companion technical note, 3 November 2026. Sections on the exact native resource law and lawful transport with coherent native comparisons.
+\bibitem{BudgetNote}
+\emph{Fixed budget native realization and compositional gradient assembly}.
+Companion fixed-budget technical note, 3 November 2026. The explicit activity-slot residual family, zero-set equivalence, compact-sublevel proof, and gradient-composition audit.
+\bibitem{RockafellarWets}
+R. Tyrrell Rockafellar and Roger J.-B. Wets.
+\emph{Variational Analysis}. Springer, 1998; corrected third-printing author text.
+Equation 1(17), printed page 27.
+\url{https://sites.math.washington.edu/~rtr/papers/rtr169-VarAnalysis-RockWets.pdf}.
+\bibitem{CohenRothblum}
+Joel E. Cohen and Uriel G. Rothblum.
+\emph{Nonnegative Ranks, Decompositions, and Factorizations of Nonnegative Matrices}.
+Linear Algebra and its Applications 190 (1993), 149--168.
+\url{https://doi.org/10.1016/0024-3795(93)90224-C}.
+\bibitem{SteinSamuelson}
+Dario Stein and Richard Samuelson.
+\emph{Towards a Compositional Framework for Convex Analysis
+(with Applications to Probability Theory)}.
+FoSSaCS 2024, Lecture Notes in Computer Science 14574, 166--187.
+Sections 3 and 4.3.
+\url{https://arxiv.org/html/2312.02291v2}.
+DOI \url{https://doi.org/10.1007/978-3-031-57228-9_9}.
+\bibitem{Hanks2025}
+Tyler Hanks, James Fairbanks, and Matthew Klawonn.
+\emph{Generalized Gradient Descent is a Hypergraph Functor}.
+Electronic Proceedings in Theoretical Computer Science 429 (2025), 217--233.
+Theorems 3.4 and 3.5; Corollary 3.5.1.
+\url{https://arxiv.org/html/2403.19845v2#S3.SS3}.
+DOI \url{https://doi.org/10.4204/EPTCS.429.12}.
+\end{thebibliography}
+\end{document}

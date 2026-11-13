@@ -4,4 +4,6 @@ Research manuscripts and reproducible developments.
 
 - [contextad](projects/contextad/): relative computation, dependent protocols, and controlled recovery.
 
+- [Categorical phenomenology](projects/categorical-phenomenology/): observations, warranted structure, and realizations.
+
 AI agents: read [AGENTS.md](AGENTS.md) before making changes.

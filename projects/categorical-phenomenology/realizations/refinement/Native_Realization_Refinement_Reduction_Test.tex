@@ -1,0 +1,382 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,array,enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\setlist{itemsep=3pt,topsep=5pt}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Bcal}{\mathcal{B}}
+\newcommand{\Dcal}{\mathcal{D}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\diag}{\operatorname{diag}}
+\title{A focused reduction test for refinement of a chosen stochastic realization}
+\author{}
+\date{2 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Given a chosen finite coarse stochastic model and a richer process supplied by a finite generator, can another finite generator realize the richer process while retaining the chosen coarse model through a state comparison? What is the least number of fine states? For a specified state budget, the problem with a strong stochastic comparison reduces exactly to existential real algebra using an existing finite certificate for weighted-language equality. A stronger problem that preserves two specified realizations by deterministic projections reduces to supported Markov couplings and has a product-state bound; it must not replace the original behavior-only problem. For a two-stage class, feasibility is exactly a finite Blackwell garbling test, and optimal stochastic state cost is constrained nonnegative rank. A partition subfamily gives explicit obstructions and sharp closed-form costs. These results support using established machinery before proposing a new generalization. They do not provide a general unbounded decision procedure or an account of how richer observations are acquired.
+\end{abstract}
+
+\section{The decision from the reduction test}
+
+The focused test does not presently justify a new general framework. Its bounded finite version is an existing probabilistic-realization problem with extra polynomial comparison constraints. The two-stage test reduces completely to a linear feasibility problem equivalent to Blackwell garbling, with optimal stochastic state count given by a constrained nonnegative-rank minimization. Its simplest obstruction is the familiar difference between early and late resolution of randomness.
+
+There is nevertheless a substantive issue to retain. Two coarse models can generate exactly the same observable process yet differ in whether a richer observation process can be implemented while preserving their specified statewise Markov interface. That is not an impossibility of producing the richer observations. It is a failure of a particular chosen implementation to admit a particular strong state comparison. A report that forgets this distinction would answer an easier question than the one being tested.
+
+The conclusions have three scopes:
+\begin{enumerate}
+\item \textbf{Original problem with a state budget.} Search over every fine realization of the supplied richer behavior, with the chosen coarse realization fixed. There is an exact reduction to the existential theory of the reals.
+\item \textbf{Stronger fixed-pair problem.} Require deterministic projections to both the supplied fine generator and the chosen coarse generator. Supported couplings decide existence and give a product-state realization. This is sufficient, not necessary, for the original problem.
+\item \textbf{An exactly reduced test class.} In a two-stage class, feasibility is a Blackwell garbling problem; optimal stochastic state cost is constrained nonnegative rank. The partition subfamily has a closed-form criterion and costs.
+\end{enumerate}
+The finite proofs below are self-contained. The source audit in Section~\ref{sec:audit} separates established machinery, adaptations made here, and claims not established by this test.
+
+\section{The model and the comparison being tested}
+\label{sec:model}
+
+Let $A$ be a finite action alphabet, $Z$ a finite fine-output alphabet, and $O$ a finite coarse-output alphabet. A finite controlled stochastic generator has time-independent kernels: any clock or phase memory is included in its counted state space. Such a generator $M$ has state set $S_M$, an initial row distribution $\pi_M$, and nonnegative matrices $M_z^a$ satisfying
+\begin{equation}
+ \sum_z M_z^a\one=\one \qquad(a\in A).
+ \label{eq:normalization}
+\end{equation}
+The entry $M_z^a(s,s')$ is the joint probability of output $z$ and next state $s'$ when action $a$ is applied in state $s$. For an action/output word $w=(a_1,z_1)\cdots(a_t,z_t)$, set
+\[
+ M_w=M_{z_1}^{a_1}\cdots M_{z_t}^{a_t},
+ \qquad p_M(w)=\pi_M M_w\one.
+\]
+These are probabilities conditional on the prescribed actions, not a probability distribution over the action alphabet. This is why normalization is imposed separately for every action.
+
+The input consists of a chosen coarse generator $Y$ on $n$ states, a supplied fine generator $F$ on $m$ states, and an output map $q:Z\to O$. The generator $F$ specifies the desired richer behavior; its hidden-state presentation is not required to be retained. A candidate $X$ must satisfy $p_X(w)=p_F(w)$ for every fine action/output word. Write
+\[
+ \overline X_o^a=\sum_{z:q(z)=o}X_z^a.
+\]
+A necessary preliminary condition is equality of the coarse behavior of $Y$ and the $q$-garbled behavior of $F$. It is not sufficient for the statewise requirement below.
+
+\begin{definition}[Strong stochastic comparison]
+A comparison from $X$ to the chosen model $Y$ is a row-stochastic matrix $K\in\R_{\geq0}^{|S_X|\times n}$ such that
+\begin{equation}
+ \pi_XK=\pi_Y,
+ \qquad \overline X_o^a K=K Y_o^a
+ \quad(a\in A,\ o\in O).
+ \label{eq:link}
+\end{equation}
+A deterministic comparison is the special case in which each row of $K$ is a point mass, equivalently $K$ is induced by a function $S_X\to S_Y$.
+\end{definition}
+
+Equation~\eqref{eq:link} preserves a joint output/next-state kernel. Preserving only the unlabelled transition matrix $\sum_oY_o^a$ or only one-step output probabilities is weaker and may lose the output/next-state correlation. The direction of the comparison is part of the definition; a stochastic map in the opposite direction is a different requirement.
+
+\begin{proposition}[The comparison preserves coarse behavior]
+If \eqref{eq:link} holds, then for every coarse action/output word $v$,
+\[
+ \pi_X\overline X_v K=\pi_Y Y_v,
+ \qquad \pi_X\overline X_v\one=\pi_Y Y_v\one.
+\]
+\end{proposition}
+\begin{proof}
+The first identity follows by induction on word length from the initial equality and the labelled intertwining equations. The second follows from $K\one=\one$.
+\end{proof}
+Thus the same law is obtained under any common policy whose actions depend on the available coarse-output history. No intervention on an unobserved hidden state is being added to the observational language.
+
+\paragraph{Why this is an explicit choice.}
+Statewise preservation is stronger than retaining only the initial observable coarse law. It is appropriate if the chosen model's state transition rules are the interface to be retained under refinement. It is not forced by richer observations alone. A stochastic row $K(x,\cdot)$ represents a coarse distribution associated with a fine state; it need not identify one retained coarse state. A deterministic comparison does identify such a state and is therefore a different implementation requirement. In the finite deterministic case, the labelled equations are the corresponding strong lumpability condition.
+
+\paragraph{The state objective.}
+For comparison type $\mathsf{c}\in\{\mathsf{stoch},\mathsf{det}\}$ define
+\[
+ r_{\mathsf{c}}(F,Y,q)=\min\{|S_X|:p_X=p_F\text{ and }X\xrightarrow[K]{q}Y
+ \text{ of type }\mathsf{c}\,\},
+\]
+with value $+\infty$ if no finite candidate exists. The budget problem asks whether this value is at most $k$. This is the resource objective studied here, not the numerical precision of probabilities, construction time, or experimental cost of obtaining the richer observations.
+
+\section{An exact reduction for a fixed state budget}
+\label{sec:etr}
+
+Assume the supplied coefficients are rational and $k$ is an explicit positive state budget. Candidate probabilities and comparisons are allowed to be real. The following is an adaptation of the invariant-space encoding used for probabilistic automaton minimization by Kiefer and Wachter~\cite[Section 4.2]{KW2014}, with the native per-action normalization and the chosen-model constraints added.
+
+\begin{theorem}[Bounded synthesis is existential real feasibility]
+There is a finite polynomial system over the rationals that is feasible exactly when $r_{\mathsf{stoch}}(F,Y,q)\leq k$. Its number of variables and constraints is polynomial in $m,n,k$ and the alphabet sizes. Deterministic comparisons are handled by additional quadratic equations. The certificate is exact; no finite-horizon approximation is used.
+\end{theorem}
+\begin{proof}
+Use variables for $\pi_X$, every $k\times k$ matrix $X_z^a$, and the $k\times n$ matrix $K$. Impose nonnegativity, normalization of $\pi_X$, \eqref{eq:normalization}, row normalization of $K$, and \eqref{eq:link}. It remains to enforce equality with $F$ for every word by finitely many polynomial equations.
+
+Put $N=m+k$, index the alphabet by $\ell=(a,z)$, and define
+\[
+ D_\ell=\diag(F_z^a,X_z^a),\qquad
+ d=(\pi_F,-\pi_X),\qquad e=\one_N.
+\]
+Then $p_F(w)-p_X(w)=dD_we$. Introduce unrestricted real matrices $W,C_\ell\in\R^{N\times N}$ and an unrestricted real row $c\in\R^{1\times N}$. Require
+\begin{equation}
+ d=cW,\qquad WD_\ell=C_\ell W\ (\ell\in A\times Z),
+ \qquad We=0.
+ \label{eq:certificate}
+\end{equation}
+If these equations hold, the row span of $W$ contains $d$, is invariant under every $D_\ell$, and annihilates $e$. Consequently $dD_we=0$ for every word, so the behaviors agree.
+
+Conversely, if the behaviors agree, the reachable row space
+\[
+ V=\operatorname{span}\{dD_w:w\in(A\times Z)^*\}
+\]
+contains $d$, is invariant under all $D_\ell$, and annihilates $e$. Choose a basis of $V$ as rows of $W$, padding with zero rows to size $N$. Express $d$ and every row of $WD_\ell$ in that basis to obtain $c$ and $C_\ell$. Thus \eqref{eq:certificate} holds. No positivity is imposed on this linear-algebra certificate; positivity is imposed on the actual candidate generator and comparison.
+
+All the displayed constraints are polynomial, of degree at most two. To require a deterministic comparison, add $K_{ij}^2=K_{ij}$ for every entry. Together with nonnegativity and row sums one, these force exactly one unit entry in each row.
+
+A candidate with fewer than $k$ states can be padded without changing its behavior or comparison: add zero-initial-probability states whose outgoing row and $K$ row duplicate one original state, with all transitions still going to original states. Therefore feasibility at dimension $k$ is equivalent to feasibility with at most $k$ states.
+\end{proof}
+
+\paragraph{A direct finite-word check.}
+For fixed candidate coefficients, equality on all words of length at most $N-1$ also suffices. Indeed, let $V_j=\operatorname{span}\{dD_w:|w|\leq j\}$. If $V_j=V_{j+1}$ it is already invariant; otherwise its dimension increases. By dimension $N$, stabilization has occurred by $j=N-1$. Annihilation of $e$ on those words therefore implies annihilation on every word. Listing the words can be exponential; \eqref{eq:certificate} gives a polynomial-size existential encoding instead.
+
+\paragraph{What the reduction does not say.}
+It does not assert polynomial-time solvability, a practical numerical optimizer, an a priori budget sufficient whenever any finite solution exists, or equivalence between real and rational realizations. Polynomial size here is measured in the explicit requested dimension $k$; a budget written in binary can describe an exponentially large dimension. Testing $k=1,2,\ldots$ finds the optimum on a feasible instance but does not, by itself, terminate on an infeasible instance. No claim about unbounded decidability is made. For several specified initial preparations, add the corresponding initial constraints and one equality certificate per preparation.
+
+\section{A stronger problem solved by supported couplings}
+\label{sec:coupling}
+
+Suppose that, in addition to retaining $Y$, the fine generator must retain the particular state realization $F$ through a deterministic projection. This extra condition converts behavior-only synthesis into a fixed-pair common-refinement problem. The standard supported-coupling construction applies~\cite{JL1991,FKPV2025}.
+
+For a relation $R\subseteq S_F\times S_Y$ and a pair $(f,y)$, an admissible action-$a$ coupling consists of numbers
+\[
+ c_{f,y}^a(z,f',y')\geq0
+\]
+supported on $(f',y')\in R$ and satisfying
+\begin{align}
+ \sum_{y'} c_{f,y}^a(z,f',y')&=F_z^a(f,f'),
+ \label{eq:couple-f}\\
+ \sum_{z:q(z)=o}\sum_{f'} c_{f,y}^a(z,f',y')&=Y_o^a(y,y').
+ \label{eq:couple-y}
+\end{align}
+These are finite transportation feasibility constraints, including output compatibility.
+
+Starting from $R_0=S_F\times S_Y$, remove a pair whenever some action has no such coupling supported in the current relation. The decreasing sequence stabilizes at a greatest fixed point $R_*$. At most $mn$ strict removal rounds occur. Finally test whether there is an initial coupling $\lambda$ of $\pi_F$ and $\pi_Y$ supported on $R_*$.
+
+\begin{theorem}[Fixed-pair deterministic common refinement]
+There exists a finite generator admitting deterministic labelled comparisons to both $F$ and $Y$, with the specified initial distributions and output map $q$, if and only if the initial coupling test on $R_*$ succeeds. If it succeeds, a realization with at most $mn$ states exists.
+\end{theorem}
+\begin{proof}
+If the test succeeds, use state set $R_*$ and initial distribution $\lambda$. For each pair and action select one feasible coupling and set its entries to be the fine output/next-state kernel on $R_*$. The marginals \eqref{eq:couple-f} and \eqref{eq:couple-y} show that the coordinate projections preserve the respective labelled kernels. The initial marginals give the required initial preservation. Normalization follows from either marginal. Selecting one coupling per pair preserves the two specified marginal systems, not any independently prescribed extra joint correlations.
+
+Conversely, let a generator $H$ have the two deterministic projections. The image relation of its state pairs supports a coupling at every image pair: choose a representative state of $H$ and push its joint output/next-state law forward to the two projected next states. Its marginals are the specified kernels. The image relation is consequently contained in every pruning iterate and in $R_*$. Pushing the initial law of $H$ to the two coordinates gives a feasible initial coupling supported there.
+\end{proof}
+
+For rational data, every test is a rational linear-program feasibility problem, so this stronger fixed-pair problem has an effective finite procedure. But failure proves only that the two \emph{specified} realizations do not have this deterministic common refinement. Another generator with the same richer behavior as $F$ is still allowed in the original problem. Conversely, the $mn$ bound belongs to this stronger construction and is not a general state bound for original behavior-only synthesis. Stochastic rather than deterministic fixed-pair comparisons would also be a different problem.
+
+
+\paragraph{The stronger problem is strictly stronger.}
+Let $q$ be the identity. Take $F$ to choose a fair bit while emitting $a$ and then emit the stored bit; take $Y$ to emit $a$ and choose the fair bit only at the next step. Both then emit $\#$ forever. Their observable laws agree, so $X=Y$ solves behavior-only synthesis with the identity comparison to $Y$. But the fixed-pair test fails: every post-$a$ state of $F$ predicts a point-mass next output, whereas the post-$a$ state of $Y$ predicts a fair bit. No equal-output coupling can have both marginals. Thus fixed-pair failure does not establish original-problem failure.
+
+\section{The two-stage test reduces to garbling and constrained rank}
+\label{sec:twostage}
+
+Consider a single action and a chosen model with root $r_0$, intermediate states $s\in S$, and terminal state $t$. Index future outcomes by a finite set $I$ and early signals by a finite set $J$. From $r_0$ it emits $a$ and moves to $s$ with probability $w_s>0$, where $\sum_sw_s=1$. State $s$ emits $b_i$ and moves to $t$ with probability $Q_{si}$, with $Q\geq0$ and $Q\one=\one$; $t$ loops on $\#$. The richer target instead emits $a_jb_i\#\#\cdots$ with joint probability $R_{ji}\geq0$. Assume $p_j=\sum_iR_{ji}>0$, $\sum_jp_j=1$, and the necessary future-marginal agreement
+\[
+ \mu_i=\sum_sw_sQ_{si}=\sum_jR_{ji}.
+\]
+Garbling sends every $a_j$ to $a$ and fixes $b_i$ and $\#$. The three phase alphabets are disjoint. All generators remain time-homogeneous, and root and terminal memory count as states.
+
+Define the explicitly constrained polytope
+\begin{equation}
+ \mathcal P=\{T\in\R_{\geq0}^{J\times S}:TQ=R,\ \one^{\mathsf T}T=w^{\mathsf T}\}.
+ \label{eq:polytope}
+\end{equation}
+Here $w$ is regarded as a column for the displayed transpose; equivalently each column of $T$ sums to $w_s$. The row masses $T\one=p$ follow automatically. Write $\operatorname{rank}_+(T)$ for the least inner dimension of a factorization $T=AB$ with $A,B\geq0$.
+
+\begin{theorem}[Complete two-stage reduction]
+A strong stochastic refinement exists if and only if $\mathcal P\ne\varnothing$, and this is also equivalent to existence of a deterministic refinement. When feasible,
+\begin{equation}
+ r_{\mathsf{stoch}}=2+\min_{T\in\mathcal P}\operatorname{rank}_+(T),
+ \qquad r_{\mathsf{det}}=|S|+2.
+ \label{eq:twostage-cost}
+\end{equation}
+The minima range over arbitrary finite realizations, not just assumed two-stage state layouts.
+\end{theorem}
+\begin{proof}
+Given any refinement $X$ with comparison $K$, put $\eta_j=\pi_XX_{a_j}$, an unnormalized row. Its mass is $p_j$. After that history the only next outputs are $b_i$, so labelled comparison and nonnegativity force $\eta_jK$ to be supported on the intermediate coarse states: root would emit $a$ and terminal would emit $\#$. Set $T_{js}=(\eta_jK)_s$. The next-output law gives $TQ=R$, and summing the first-output comparison over $j$ gives $\sum_jT_{js}=w_s$. Thus $T\in\mathcal P$.
+
+Conversely, given $T\in\mathcal P$, retain the chosen coarse state set, replace its root transition by $r_0\xrightarrow{a_j}s$ of mass $T_{js}$, and leave every later kernel unchanged. The identity state map is a deterministic comparison, since column sums recover $w$, and the richer joint law is $TQ=R$. All coarse states are reachable, so any deterministic comparison needs at least one fine preimage per coarse state. This proves the deterministic formula.
+
+For the stochastic upper bound, take a nonnegative factorization $T=AB$ of inner dimension $h$. Delete zero rows of $B$ and normalize the remaining rows into a stochastic matrix $\Lambda$, absorbing their row sums into $A$, so $T=A\Lambda$ and $A\one=p$. Use $h$ intermediate fine states. The root emits $a_j$ and moves to state $v$ with probability $A_{jv}$; state $v$ emits $b_i$ with probability $(\Lambda Q)_{vi}$ and moves to terminal. Link state $v$ to coarse distribution $\Lambda(v,\cdot)$, and link root and terminal identically. These equations verify both the target law and every labelled comparison, using $h+2$ states.
+
+For the lower bound, let $H$ be the set of fine states reached after one first-phase output. Nonnegativity implies each such state's $K$ row is supported on intermediate coarse states. The preceding $T$ factors as $A\Lambda$, where $A_{jx}=\eta_j(x)$ for $x\in H$ and $\Lambda_{xs}=K_{xs}$. Therefore $\operatorname{rank}_+(T)\leq|H|$. States reached at times zero, one, and two must belong to disjoint sets: their next outputs lie in the mutually disjoint first, second, and terminal alphabets. Each set is nonempty, and time-independent normalized kernels prevent one state from serving two phases. Thus $|S_X|\geq|H|+2\geq\min_{T\in\mathcal P}\operatorname{rank}_+(T)+2$, including mixed initializations and all additional latent states.
+\end{proof}
+
+\paragraph{The feasibility test is exactly Blackwell garbling.}
+Delete any outcome $i$ with $\mu_i=0$, since positivity of $w_s$ makes the corresponding columns of $Q$ and $R$ zero. For the remaining outcomes define stochastic experiments
+\[
+ D_{is}=\frac{w_sQ_{si}}{\mu_i},\qquad
+ E_{ij}=\frac{R_{ji}}{\mu_i}.
+\]
+A feasible $T$ gives a stochastic garbling $L_{sj}=T_{js}/w_s$ with $E=DL$. Conversely any stochastic $L$ with $E=DL$ gives feasible $T_{js}=w_sL_{sj}$. This is exactly the ordinary comparison of statistical experiments by garbling~\cite[Section 5.1]{FGPR2023}: the old latent signal $s$ must be sufficient to generate the proposed early signal $j$ as information about future outcome $i$. The joint implementation $w_sQ_{si}L_{sj}$ makes $j$ conditionally independent of $i$ given $s$. No claim about an arbitrary pre-existing joint coupling is needed.
+
+This reduction uses the standard finite garbling definition, not a new categorical theorem or the full decision-theoretic Blackwell theorem. It also identifies what a bare static factorization would omit: not $\operatorname{rank}_+(R)$ alone, but the minimum rank over $T$ constrained by both the retained $Q$ and the retained weights $w$. Feasibility is linear programming; exact minimum nonnegative rank is not thereby an efficient optimization problem. In this class deterministic retention is zero-additional-state-or-impossible: if feasible, the chosen state count already suffices.
+
+\paragraph{A quantitative obstruction without forbidden outputs.}
+Let $w=(1/2,1/2)$ and
+\[
+ Q=\frac15\begin{pmatrix}4&1\\1&4\end{pmatrix},
+ \qquad R=\frac1{20}\begin{pmatrix}9&1\\1&9\end{pmatrix}.
+\]
+Both have full support and the required future marginal is uniform. Since $Q$ is invertible, $TQ=R$ forces
+\[
+ T=RQ^{-1}=\frac1{12}\begin{pmatrix}7&-1\\-1&7\end{pmatrix},
+\]
+so no nonnegative $T$ exists. The old latent signal predicts the future bit with accuracy $0.8$; the proposed early signal would predict it with accuracy $0.9$. Garbling cannot provide that improvement. Thus infeasibility is not confined to partition support zeros. For the same $Q,w$, taking every entry of $R$ to be $1/4$ gives optimal stochastic cost three, while $R$ with diagonal $37/100$ and off-diagonal $13/100$ gives cost four; their unique feasible $T$ matrices have ranks one and two, respectively.
+
+\section{A family with exact feasibility and exact state cost}
+\label{sec:partition}
+
+A single-action family suffices to expose the issue without complications from control. Let $I=\{1,\ldots,r\}$, with $p_i>0$ and $\sum_i p_i=1$. Write $p(B)=\sum_{i\in B}p_i$. Let $\Bcal$ and $\Dcal$ be partitions of $I$.
+
+The chosen coarse model $Y_{\Bcal}$ has states
+\[
+ r_0,\quad \{u_B:B\in\Bcal\},\quad t.
+\]
+It starts at $r_0$, emits $a$ and moves to $u_B$ with probability $p(B)$; state $u_B$ emits $b_i$ and moves to $t$ with probability $p_i/p(B)$ for $i\in B$; state $t$ loops with output $\#$. Its coarse law is
+\[
+ a\,b_i\,\#\,\#\cdots \quad\text{with probability }p_i,
+\]
+independently of the partition $\Bcal$. Every coarse state is reachable with positive probability.
+
+The richer target has law
+\[
+ a_D\,b_i\,\#\,\#\cdots \quad\text{with probability }p_i,
+ \qquad i\in D\in\Dcal.
+\]
+The output map sends $a_D$ to $a$ and fixes each $b_i$ and $\#$. Thus the coarse public law is correct for every pair $(\Bcal,\Dcal)$ before any state comparison is imposed.
+
+\begin{theorem}[Partition criterion and optimal state counts]
+\label{thm:partition}
+A strong stochastic comparison realizing the richer target exists if and only if $\Bcal$ refines $\Dcal$, meaning each $B\in\Bcal$ lies in a block $D\in\Dcal$. The same existence criterion holds for deterministic comparisons. When it holds, the exact minima are
+\[
+ r_{\mathsf{stoch}}=|\Dcal|+2,
+ \qquad r_{\mathsf{det}}=|\Bcal|+2.
+\]
+When it fails, no fine realization of any finite size admits either comparison, even with a mixed initial distribution.
+\end{theorem}
+
+\begin{proof}
+Apply Section~\ref{sec:twostage} with $S=\Bcal$, $w_B=p(B)$, $Q_{Bi}=p_i/p(B)$ for $i\in B$ and zero otherwise, and $R_{Di}=p_i$ for $i\in D$ and zero otherwise. If $T_{DB}>0$ and $B\nsubseteq D$, positivity of $p_i$ forces $(TQ)_{Di}>0$ for some $i\notin D$, contradicting $R_{Di}=0$. Hence $T_{DB}$ can be positive only when $B\subseteq D$. Every column has positive prescribed mass $p(B)$, so feasibility forces every $B$ to lie in some $D$.
+
+When that containment holds, the unique feasible matrix is $T_{DB}=p(B)$ if $B\subseteq D$, and zero otherwise. Its $|\Dcal|$ nonzero rows have disjoint supports, so its ordinary rank is $|\Dcal|$. Its nonnegative rank is at least ordinary rank and at most its number of rows, hence equals $|\Dcal|$. Equation~\eqref{eq:twostage-cost} gives the claimed minima. The general two-stage necessity already covers mixed initializations and all finite budgets.
+\end{proof}
+
+Explicitly, an optimal stochastic realization has one intermediate state $v_D$ per richer block, linked to
+\[
+ K(v_D)=\sum_{B\subseteq D}\frac{p(B)}{p(D)}e_{u_B}.
+\]
+An optimal deterministic realization keeps the coarse states and replaces the first output on the transition to $u_B$ by the unique $a_D$ containing $B$. The stochastic construction encodes a coarse posterior distribution, whereas the deterministic construction retains an identified coarse state. Their exact cost gap is $|\Bcal|-|\Dcal|$ and can grow without bound; the smaller stochastic realization must not be advertised as satisfying deterministic retention.
+
+\section{What the obstruction means}
+\label{sec:meaning}
+
+Take $r=2$, $p_1=p_2=1/2$, $\Bcal=\{\{1,2\}\}$, and $\Dcal=\{\{1\},\{2\}\}$. The chosen three-state coarse model emits $a$ before sampling the bit. The richer target announces that bit in its first output and repeats it in the second. The coarse public laws agree, but $\Bcal$ does not refine $\Dcal$. No strong stochastic comparison exists, regardless of the number of added fine states.
+
+An alternative coarse model with singleton blocks chooses the hidden bit while emitting $a$. It has the same public coarse law, has four reachable states, and admits the richer target with four states, optimally. For $r$ possible future outcomes, the late-sampling model still has three states and fails whenever $r\geq2$, whereas the early-sampling model admits an optimal $r+2$-state refinement. The late model is itself a minimum coarse realization: its three phase-distinguished predictive rows have disjoint next-output supports.
+
+This does not say that the richer process is physically impossible, unknowable, or unrealizable from scratch. The natural richer generator realizes it. It says that exposing a future branch can destroy compatibility with the old chosen statewise kernel. If a later bit is required to remain fair conditional on every fine state linked to the old post-$a$ state, it cannot simultaneously become determined by an earlier fine observation.
+
+\paragraph{Why a generic product is not enough.}
+A coupling of entire observable traces can correlate an early fine output with a later random event. It need not preserve the chosen coarse kernel conditional on the current fine state. In this example, after announcing the bit, the fine posterior must predict that bit with probability one; the chosen late coarse post-$a$ state still predicts a fair bit. The partition proof shows that no choice of extra fine states repairs the specified strong comparison. The failure is not merely an unsuccessful attempt at one product construction.
+
+\paragraph{What is established prior art.}
+Early versus late resolution of randomness is a standard distinction between branching-time and trace semantics. Bian and Abate~\cite[Figure 1]{BA2017} give an early/late pair with the same traces and different conditional branching probabilities. The partition-indexed criterion and state-cost calculations above are proved here for this test; this audit does not establish that they are novel. The elementary example must not be promoted as a new obstruction principle.
+
+\section{Source audit and reduction boundaries}
+\label{sec:audit}
+
+\paragraph{Simulation matrices already express the comparison.}
+\'Esik and Maletti~\cite[Definition 3.1]{EM2010} use a matrix $K$ with initial, transition, and final-vector compatibility to define a weighted-automaton simulation. With final vectors equal to one, a nonnegative compatible matrix is row-stochastic. After output aggregation, \eqref{eq:link} is such a simulation. Their results about chains of simulations over suitable semirings do not turn a signed linear span into a nonnegative stochastic realization, nor do they supply one prescribed comparison to a chosen model.
+
+\paragraph{The bounded algebraic certificate is established machinery.}
+Kiefer and Wachter~\cite[Proposition 10 and Theorem 11]{KW2014} give an existential-real formulation for bounded probabilistic automaton minimization. Section~\ref{sec:etr} adapts the invariant-space proof to controlled joint output/transition kernels and adds the chosen-model equations. The source does not state this exact anchored problem verbatim. Its complexity results are not a claim that exact native minimization has an efficient general algorithm.
+
+\paragraph{Couplings solve the specified fixed-pair problem.}
+Supported couplings are a standard expression of probabilistic bisimulation and related structural comparisons. Jonsson and Larsen~\cite{JL1991} are an early source; the coupling formulation is explicitly restated and attributed in Fatmi et al.~\cite[Definition 1]{FKPV2025}. Section~\ref{sec:coupling} specializes the construction to actions and jointly generated outputs. Its proof supplies the needed product-state result directly rather than assuming it solves behavior-only synthesis.
+
+\paragraph{Garbling already solves the two-stage feasibility test.}
+The explicit change of variables in Section~\ref{sec:twostage} identifies its feasibility polytope with ordinary Blackwell garblings. Fritz et al.~\cite[Section 5.1 and Theorem 5.4]{FGPR2023} give the experiment-comparison and conditional-independence formulation. Their result used here requires conditionals, not representability; the category of finite stochastic matrices is not representable. The later representable-category results are neither required nor being applied silently. The constrained-rank state formula is established directly above and is not claimed as a new general rank theory.
+
+\paragraph{Positive realization is relevant but does not remove the anchor.}
+Finite linear rank alone does not guarantee finite native nonnegative realization. Invariant positive-cone methods are part of the classical positive-realization literature; Boyle and Petersen~\cite[Theorem 4.40]{BP2011} give a careful account of Heller's criterion, including its historical correction. The present input already supplies a finite fine generator, so unconstrained existence is not the problem. The additional issue is the prescribed comparison to $Y$. Neither a Hankel-rank bound nor a finite response-table nonnegative factorization alone enforces every continuation operator and the chosen-model equations. This audit does not claim that an anchored cone formulation would be new.
+
+\paragraph{Audit scope.}
+This is a focused primary-source reduction check, not an exhaustive novelty search. It establishes that the main bounded question can be attacked with existing machinery and that the motivating temporal distinction has clear prior art. It leaves no basis for claiming a new general theory merely from the notation or the obstruction example.
+
+\section{The assumptions that determine the answer}
+\label{sec:choices}
+
+\begin{description}[style=nextline,leftmargin=0pt]
+\item[Finite controlled stochastic models]
+States, actions, and outputs are finite; each action has a normalized joint output/next-state kernel. No continuous-state, quantum, approximate, or adversarial semantics is covered.
+\item[Supplied richer behavior]
+A finite generator $F$ is given. Searching over other realizations of that behavior is permitted. Learning the behavior from data and discovering new observations are outside this test.
+\item[Chosen coarse realization]
+The matrices and initial distribution of $Y$, not merely its public behavior, are fixed. Replacing $Y$ by a trace-equivalent realization changes the question.
+\item[Strong labelled state comparison]
+Equation~\eqref{eq:link} is explicitly required. If only the original coarse trace law is to be retained, garbling consistency already permits using $F$ itself, and the partition obstruction disappears.
+\item[Stochastic versus deterministic comparison]
+These are separate preservation requirements. The partition family has the same feasibility criterion for both but different optimal state counts.
+\item[Exact probabilities and state budget]
+The bounded reduction uses rational input with real unknown probabilities and an explicit finite budget. Approximate equivalence, rational-only solutions, bit complexity, and practical numerical certification are not resolved.
+\item[Preparation and observation scope]
+One initial preparation is included unless a finite family is explicitly supplied. The result does not silently require preservation from every coarse state or grant access to hidden-state interventions.
+\end{description}
+
+\section{What would justify proceeding further}
+
+The immediate next mathematical target should be a result not already supplied by these reductions: for example, a useful sharp resource theorem for a stated class of chosen realizations; an effective unbounded criterion in a restricted class; or a substantive law describing how feasibility and cost change when the allowed observations change. An acquisition problem would require its own specification of which experiments, interventions, or data can produce the richer behavior. None follows merely from calling the current problem a refinement.
+
+For the present test the answer is concrete. With a state budget, the original problem has an exact reduction to known real-algebra machinery. With both realizations fixed and deterministic projections, supported couplings solve a stronger problem. The two-stage class reduces to Blackwell garbling and constrained nonnegative rank; the partition family has closed-form feasibility and state costs. The chosen Markov interface matters, but these results support exhausting established techniques before committing to a new generalization.
+
+\paragraph{Verification.}
+The accompanying exact-arithmetic checker covers 5,917 partition instances: 867 feasible cases with explicit stochastic and deterministic witnesses, and 5,050 infeasible cases with support-obstruction certificates. The feasible cases also check the two-stage equations and their sharp rank certificates; 718 cases have a strict stochastic/deterministic state gap. These finite checks supplement the proofs. They are not exhaustive searches over arbitrary latent state spaces and do not establish the general two-stage theorem by enumeration.
+
+\begin{thebibliography}{9}
+\bibitem{KW2014}
+Stefan Kiefer and Bj\"orn Wachter.
+\emph{Stability and Complexity of Minimising Probabilistic Automata}.
+ICALP, 2014. Full version: \url{https://arxiv.org/abs/1404.6673}.
+
+\bibitem{EM2010}
+Zolt\'an \'Esik and Andreas Maletti.
+\emph{Simulation vs. Equivalence}. 2010.
+\url{https://www.informatik.uni-leipzig.de/~maletti/pub/esimal10.pdf}.
+
+\bibitem{BA2017}
+Gaoang Bian and Alessandro Abate.
+\emph{On the Relationship between Bisimulation and Trace Equivalence in an Approximate Probabilistic Context}. 2017. Extended version:
+\url{https://arxiv.org/abs/1701.04547}.
+
+\bibitem{JL1991}
+Bengt Jonsson and Kim G. Larsen.
+\emph{Specification and Refinement of Probabilistic Processes}.
+LICS, 1991, pp.~266--277.
+\url{https://lics.siglog.org/1991/JonssonLarsen-Specificationandref.html}.
+
+\bibitem{FKPV2025}
+S.~Z. Fatmi, Stefan Kiefer, David Parker, and Franck van Breugel.
+\emph{Robust Probabilistic Bisimilarity for Labelled Markov Chains}. 2025.
+\url{https://arxiv.org/abs/2505.15290}.
+
+\bibitem{FGPR2023}
+Tobias Fritz, Tom\'a\v{s} Gonda, Paolo Perrone, and Eigil Fjeldgren Rischel.
+\emph{Representable Markov Categories and Comparison of Statistical Experiments in Categorical Probability}.
+Theoretical Computer Science 961, 113896, 2023.
+\url{https://arxiv.org/abs/2010.07416}.
+
+\bibitem{BP2011}
+Mike Boyle and Karl Petersen.
+\emph{Hidden Markov Processes in the Context of Symbolic Dynamics}.
+In \emph{Entropy of Hidden Markov Processes and Connections to Dynamical Systems}, 2011.
+Author manuscript: \url{https://math.umd.edu/~mboyle/papers/BoylePetersen07-10-2009.pdf}.
+\end{thebibliography}
+\end{document}

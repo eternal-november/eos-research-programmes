@@ -1,0 +1,323 @@
+% Standalone section-ready fragment. Authoritative source:
+% /workspace/shared/joint_realization_20261103/report.tex
+% All claims below are for the joint layer-native implementation class there.
+
+\section{An exact fixed-budget polynomial encoding}
+\label{sec:budget-encoding}
+
+Fix the finite normalized input data of the joint-native realization theorem.
+In particular, the module set is nonempty; $J,E,S$ are finite and nonempty;
+$A_i\one=p$ with $\sum_jp_j=1$; every $B_i$ and $Q$ is stochastic;
+and the prescribed $w$ and $R$ have total mass one.
+All input consistency and output-comparison squares are assumed checked.
+The budget $K\in\mathbb Z_{\ge0}$ counts \emph{middle states}, not optimization
+iterations. A middle-state budget $K$ is a total native-state budget $K+2$.
+
+For each slot $v\in\{1,\ldots,K\}$ introduce real variables
+\[
+ d_{vh}\ (h\in E),\quad \eta_v,\qquad
+ a_{jv},\rho_{jv},\sigma_{jv}\ (j\in J),\qquad
+ b_{vs},\tau_{vs}\ (s\in S).
+\]
+There are $N=K(|E|+1+3|J|+2|S|)$ real variables. Write
+$e_v=\sum_{h\in E}d_{vh}$ \emph{as an abbreviation}, not as an additional
+unconstrained coordinate. The complete residual family is
+\begin{align}
+ D_{vh}&=d_{vh}^2-d_{vh}, &&(v,h),\label{eq:poly-selector}\\
+ H_v&=1-e_v-\eta_v^2, &&(v),\label{eq:poly-cap}\\
+ P_{jv}&=a_{jv}-\rho_{jv}^2, &&(j,v),\label{eq:poly-root-positive}\\
+ G_{jv}&=e_v-a_{jv}-\sigma_{jv}^2, &&(j,v),\label{eq:poly-root-gate}\\
+ T_{vs}&=b_{vs}-\tau_{vs}^2, &&(v,s),\label{eq:poly-row-positive}\\
+ N_v&=\sum_sb_{vs}-e_v, &&(v),\label{eq:poly-row-normalization}\\
+ C_{vix}&=\sum_{s:\pi_i(s)=x}b_{vs}
+             -\sum_hd_{vh}B_i(h_i,x), &&(v,i,x\in S_i),\label{eq:poly-row-marginal}\\
+ L_{iju}&=\sum_va_{jv}\sum_{h:h_i=u}d_{vh}-A_i(j,u),
+             &&(i,j,u\in H_i),\label{eq:poly-local-root}\\
+ W_s&=\sum_{j,v}a_{jv}b_{vs}-w_s, &&(s),\label{eq:poly-retained}\\
+ O_{ju}&=\sum_{v,s}a_{jv}b_{vs}Q_{su}-R_{ju}, &&(j,u\in I).
+             \label{eq:poly-observed}
+\end{align}
+The objective is the unweighted sum of squares of \emph{every scalar}
+residual in this list, each included once:
+\begin{equation}\label{eq:poly-objective}
+ \Phi_K(x)=\sum_{v,h}D_{vh}^2+\sum_vH_v^2
+ +\sum_{j,v}(P_{jv}^2+G_{jv}^2)+\sum_{v,s}T_{vs}^2
+ +\sum_vN_v^2+\sum_{v,i,x}C_{vix}^2
+ +\sum_{i,j,u}L_{iju}^2+\sum_sW_s^2+\sum_{j,u}O_{ju}^2.
+\end{equation}
+Every residual has degree at most two, so $\Phi_K$ is a nonnegative real
+polynomial of degree at most four, and $-\nabla\Phi_K$ is polynomial of degree
+at most three. All these are unconstrained real coordinates: inequalities
+have been encoded by the square-slack equations, not silently omitted.
+
+\begin{theorem}[Exact bounded-state realization]
+\label{thm:budget-zero}
+For $K\ge1$, the following are equivalent:
+\begin{enumerate}
+\item There is a joint layer-native implementation with at most $K$ middle states.
+\item There exists $x\in\mathbb R^N$ with $\Phi_K(x)=0$.
+\item $\min_{x\in\mathbb R^N}\Phi_K(x)=0$.
+\item $\inf_{x\in\mathbb R^N}\Phi_K(x)=0$.
+\end{enumerate}
+In fact $\Phi_K$ is coercive, so its minimum is attained on every input.
+If no such implementation exists, its minimum is strictly positive.
+For $K=0$ there is no implementation and the empty-coordinate residual is
+the strictly positive constant
+$\sum_{i,j,u}A_i(j,u)^2+\sum_sw_s^2+\sum_{j,u}R_{ju}^2$.
+\end{theorem}
+
+\begin{proof}[Zero-set equivalence]
+At a zero, \eqref{eq:poly-selector} gives $d_{vh}\in\{0,1\}$ and
+\eqref{eq:poly-cap} gives $e_v\le1$. Consequently each slot has either no
+selected tuple ($e_v=0$) or exactly one selected tuple $h(v)$ ($e_v=1$).
+Equations \eqref{eq:poly-root-positive}--\eqref{eq:poly-root-gate} give
+$0\le a_{jv}\le e_v$. Equations \eqref{eq:poly-row-positive} and
+\eqref{eq:poly-row-normalization} give $b_{vs}\ge0$ and
+$\sum_sb_{vs}=e_v$. Thus all $a_{jv}$ and $b_{vs}$ are zero in an inactive
+slot. An active slot has a stochastic continuation row, and
+\eqref{eq:poly-row-marginal} says
+$B(v,-):=b_{v,-}\in\mathcal K_{h(v)}$.
+
+Let $V$ be the active slots, put $A(j,v)=a_{jv}$, and set $f(v)=h(v)$.
+Equations \eqref{eq:poly-local-root}, \eqref{eq:poly-retained}, and
+\eqref{eq:poly-observed} are precisely the local root and global retained
+and observed laws. The resulting $V$ is nonempty: for any one module,
+summing \eqref{eq:poly-local-root} over $j,u$ gives
+$\sum_{j,v}a_{jv}e_v=1$. Inactive slots vanish and active slots have $e_v=1$,
+so $\sum_{j,v\in V}a_{jv}=1$. We have constructed a native implementation
+with $|V|\le K$. Active slots with $\sum_ja_{jv}=0$ may also be deleted;
+their presence is not needed to count the budget.
+
+Conversely embed the states of any implementation with at most $K$ middle
+states in the slots. For its occupied slots set $d_{v,f(v)}=1$, all other
+selectors zero, $a_{jv}=A(j,v)$, and $b_{vs}=B(v,s)$. Its total root mass is
+one, so $0\le a_{jv}\le1$. For unoccupied slots set all $d,a,b$ to zero.
+Choose real square roots
+\[
+ \eta_v=\sqrt{1-e_v},\quad
+ \rho_{jv}=\sqrt{a_{jv}},\quad
+ \sigma_{jv}=\sqrt{e_v-a_{jv}},\quad
+ \tau_{vs}=\sqrt{b_{vs}}.
+\]
+Every residual vanishes. The existence of these real square roots, rather
+than their rationality, is all that is used. Coercivity and attainment are
+proved below and establish the remaining equivalences.
+\end{proof}
+
+\subsection{Why empty coupling polytopes and unused slots cause no exception}
+An active slot labelled $h$ supplies a row of $\mathcal K_h$, so an empty
+$\mathcal K_h$ cannot be selected at a zero. An inactive slot supplies the
+zero row, not a row normalized to one. It is therefore harmless even if
+\emph{every} $\mathcal K_h$ is empty. In that case the target mass equations
+make a zero impossible, as they should. A named unused local occurrence
+need not have a preimage: no surjectivity has been added.
+
+This also handles zero announcement mass, zero retained-state mass, and
+zero tensor blocks. For example, if $p_j=0$, the nonnegative root equations
+force $a_{jv}=0$ on every active slot; inactive slots already have zero root
+weight. If $w_s=0$, then $a_{jv}b_{vs}=0$ for every $j,v$.
+No division by one of these masses occurs in the encoding.
+
+One must not impose a normalized row in $\mathcal K_h$ for every padded
+factor and call the result a rank-at-most encoding. If $\mathcal K_h$ is
+empty and the desired block is zero, its constrained rank is zero but that
+padded normalization would be infeasible. The activity gate is what removes
+this false obstruction.
+
+\subsection{Exact relation to the constrained-rank resource law}
+At a zero define
+\[
+ Z_{jhs}=\sum_{v:d_{vh}=1}a_{jv}b_{vs}.
+\]
+It is a feasible tensor for the preceding joint-native theorem. If $r_h$
+is the number of active slots with label $h$, then
+$Z^h$ factors through $r_h$ nonnegative columns and continuation rows in
+$\mathcal K_h$. Thus
+\[
+ \sum_h\operatorname{rank}_{\mathcal K_h}(Z^h)\le\sum_hr_h\le K.
+\]
+Conversely, any feasible tensor with this constrained-rank sum at most $K$
+provides factors, hence an implementation and a residual zero. Therefore
+\begin{equation}\label{eq:budget-rank}
+ \exists x:\Phi_K(x)=0
+ \quad\Longleftrightarrow\quad
+ \exists Z\in\mathcal P(D):
+ \sum_h\operatorname{rank}_{\mathcal K_h}(Z^h)\le K.
+\end{equation}
+Here $\operatorname{rank}_{\mathcal K_h}(0)=0$ even for an empty polytope,
+and a nonzero unfactorable block has rank $+\infty$.
+Equivalently one can take the finite union over integer allocations
+$r_h\ge0$ with $\sum_hr_h\le K$. The global-slot selectors encode that union
+inside one polynomial system. They express an \emph{upper bound}; neither
+nonzero incoming mass in every slot nor exact rank $K$ is required.
+In particular $\operatorname{rank}(R)>K$ is an immediate obstruction, with
+a nonzero $(K+1)$-minor providing an exact lower-bound witness when available.
+The identity \eqref{eq:budget-rank} is about coupling-constrained
+nonnegative factor rank, not ordinary matrix rank alone.
+
+\subsection{Coercivity of the actual objective, without additional constraints}
+\label{sec:budget-coercivity}
+Fix $M\ge0$ and put $\varepsilon=\sqrt M$. On the sublevel set
+$\Phi_K\le M$, the absolute value of every residual is at most
+$\varepsilon$. Set
+\[
+ D_\varepsilon=\frac{1+\sqrt{1+4\varepsilon}}2.
+\]
+The selector residual gives $d_{vh}^2-d_{vh}\le\varepsilon$, hence
+$|d_{vh}|\le D_\varepsilon$ and $e_v\ge-|E|D_\varepsilon$.
+The cap residual gives
+$e_v=1-\eta_v^2-H_v\le1+\varepsilon$ and therefore
+\[
+ \eta_v^2=1-e_v-H_v\le1+|E|D_\varepsilon+\varepsilon.
+\]
+The root positivity and gate residuals imply
+\[
+ -\varepsilon\le a_{jv}\le e_v+\varepsilon\le1+2\varepsilon,
+ \qquad
+ \rho_{jv}^2\le1+3\varepsilon,
+ \qquad
+ \sigma_{jv}^2\le1+3\varepsilon.
+\]
+Indeed $a=\rho^2+P\ge-\varepsilon$ and
+$a=e-\sigma^2-G\le e+\varepsilon$; then
+$\rho^2=a-P$ and $\sigma^2=e-a-G$ give the two bounds.
+Similarly $b_{vs}\ge-\varepsilon$, while
+$\sum_sb_{vs}=e_v+N_v\le1+2\varepsilon$. Writing $n=|S|$ and using the
+lower bound for the other $n-1$ entries yields
+\[
+ -\varepsilon\le b_{vs}\le1+(n+1)\varepsilon,
+ \qquad
+ \tau_{vs}^2\le1+(n+2)\varepsilon.
+\]
+These estimates bound \emph{every} coordinate of the sublevel set; the
+fixed row and target coefficients play no role in the bounds. Sublevel sets
+are also closed, since $\Phi_K$ is continuous. They are therefore compact.
+If a sequence with Euclidean norm tending to infinity had bounded objective,
+it would lie in one such bounded sublevel set, a contradiction. Thus
+$\Phi_K$ is coercive. Its nonempty sublevel at any evaluated point contains
+a global minimizer by continuity and compactness. As $\Phi_K\ge0$,
+infeasibility makes this attained minimum strictly positive.
+
+This proof applies to the displayed gated encoding. A generic assertion
+that every polynomial sum of squares attains its infimum would be false.
+The gates and normalization equations are essential to this proof; dropping
+them creates a different objective requiring a new argument.
+
+\subsection{An optional redundant circle completion}
+Every exact zero has $|x_q|\le1$ for every base coordinate $x_q$, as follows
+from the exact selector, gate, and normalization equations. Consequently
+one may introduce $z_q$ and add the residuals
+\[
+ U_q=x_q^2+z_q^2-1,\qquad
+ \widetilde\Phi_K(x,z)=\Phi_K(x)+\sum_{q=1}^NU_q^2.
+\]
+This preserves zero feasibility, keeps degree at most four, and gives the
+particularly short coercivity bound
+\[
+ \widetilde\Phi_K(x,z)
+ \ge\frac{(\|(x,z)\|_2^2-N)^2}{N}\qquad(N>0).
+\]
+It follows from Cauchy--Schwarz applied to the $N$ numbers
+$x_q^2+z_q^2-1$. It is not needed for the preceding coercivity theorem and
+should not be represented as a missing assumption of it.
+
+\subsection{The explicit positive-residual stationary point}
+\label{sec:budget-stationary}
+For any $K\ge1$, put
+\[
+ d=a=b=\rho=\sigma=\tau=0,\qquad \eta_v=1\quad(v=1,\ldots,K).
+\]
+All selector, cap, positivity, gate, normalization, and row-marginal
+residuals vanish. The remaining residuals are $-A_i(j,u)$, $-w_s$, and
+$-R_{ju}$. Their variable-dependent parts are bilinear in $(a,d)$ or
+$(a,b)$, so their entire gradients vanish at this point. Hence
+\[
+ \nabla\Phi_K=0,\qquad
+ \Phi_K=\sum_{i,j,u}A_i(j,u)^2+\sum_sw_s^2+\sum_{j,u}R_{ju}^2>0.
+\]
+This works even for an input that admits a zero. The fact that $\eta_v=1$
+is nonzero causes no hidden gradient contribution: its residual $H_v$ is
+zero, so the term $2H_v\nabla H_v$ is exactly zero.
+For the optional circle completion set $z_q=1$ when $x_q=0$ and $z_q=0$
+when $x_q=\eta_v=1$. Then every $U_q=0$, so all their gradient contributions
+also vanish. Thus the completed objective has the same positive-residual
+stationary obstruction.
+
+More generally $\nabla\Phi_K=2J_F^{\mathsf T}F$, where $F$ is the residual
+vector. The equation $J_F^{\mathsf T}F=0$ does not imply $F=0$. Along its
+negative-gradient flow,
+$d\Phi_K/dt=-\|\nabla\Phi_K\|^2$, but descent alone does not find a zero.
+Coercivity bounds each trajectory in its initial sublevel and the smooth
+polynomial vector field is locally Lipschitz, so forward solutions exist
+for all time. No assertion that their limits have zero objective follows.
+An optimization failure or a positive-residual stationary point is not an
+infeasibility certificate.
+
+\subsection{Inequalities, arithmetic, and exact certificates}
+A weak inequality $g(x)\ge0$ is equivalent over the reals to the existence
+of a slack $t$ with $g(x)-t^2=0$. Penalizing $g(x)^2$ instead imposes
+$g(x)=0$, which is not the same condition. A strict inequality $g(x)>0$
+can be encoded by $g(x)t^2-1=0$, but is unnecessary here and may destroy
+compactness; exact positive mass in every padded slot should not be
+smuggled into an at-most-budget question. If further polynomial weak
+inequalities in the already bounded base coordinates are added using
+square slacks, their slacks are bounded on sublevels too. Any more general
+extension must recheck the degree and attainment arguments.
+
+For rational input the displayed residual coefficients are rational.
+Clearing denominators gives an existential sentence over the reals with
+integer polynomial equations. Its size is polynomial in the expanded
+finite input tables and $K$. If $K$ is binary encoded, it can first be
+replaced by $\min(K,|J||E|)$, because the native reconstruction theorem
+already bounds the needed number of middle states by $|J||E|$ on every
+feasible instance. This gives membership in the existential theory of the
+reals relative to explicit tables. It is not a polynomial-time algorithm,
+a hardness proof, or a claim about succinctly specified product carriers.
+
+The real-algebraic zero-set alternative gives two kinds of exact evidence:
+\begin{itemize}
+\item A point at which every residual is exactly zero is a feasibility
+certificate and reconstructs the actual implementation as above. With
+rational coefficients a nonempty real zero set has a point over the field
+of real algebraic numbers: that field and $\mathbb R$ are real closed, and
+quantifier elimination transfers the rational existential sentence between
+them. Rational factor coordinates are \emph{not} asserted. Even square
+slacks of rational factors need not be rational.
+\item If the polynomial residuals are $F_1,\ldots,F_m$ and have no common
+real zero, the real Nullstellensatz supplies polynomials $q_i,r_\ell$ with
+\begin{equation}\label{eq:budget-nullstellensatz}
+ -1=\sum_iq_iF_i+\sum_\ell r_\ell^2.
+\end{equation}
+At a putative zero the right side is nonnegative, so an exact polynomial
+identity of this form certifies infeasibility. Conversely existence of
+such an identity excludes a zero. This is a finite certificate principle,
+not a promised small degree, a numerically stable search method, or a
+rational-certificate-size claim. For rational input one can obtain a
+certificate with real algebraic coefficients: fix the finite degree and
+number of squares of a real certificate, express coefficient matching as
+an existential rational system, and apply the same real-closed-field
+transfer. Exact algebraic arithmetic then verifies it.
+\end{itemize}
+If the original linear tensor polytope is empty, its Farkas separator is a
+simpler certificate excluding \emph{all} budgets. If that polytope is
+nonempty but $K$ is too small, a general linear separator need not capture
+the rank obstruction; the polynomial certificate principle applies.
+A known positive global lower bound also certifies failure of the budget,
+but a floating-point local optimizer value or a nonzero numerical residual
+does not. Conversely, approximate residual zero without a rigorous error
+bound or exact recovery does not prove existence. The instance-dependent
+positive gap exists in every infeasible instance by coercivity, but this
+does not supply its value or a universal numerical tolerance.
+
+\subsection{Compositional bookkeeping}
+To decompose the construction into components, give each scalar residual
+one owner. Selector, gate, positivity, and row constraints can belong to
+their individual slots; the local-root, retained, and observed sum
+constraints are global constraints and should each be included once.
+Shared coordinates can be identified through coordinate projections.
+Fixed constants such as $A_i,B_i,w,R,Q$ belong in polynomial coefficients;
+no claim that a constant-shift map is linear is needed. Duplicate
+constraints with positive weights preserve the zero set but change the
+objective and gradient field. Thus a particular compositional optimizer
+must specify ownership and weights; existence of this exact encoding does
+not supply a canonical choice of optimizer or a convergence theorem.
