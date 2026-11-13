@@ -1,0 +1,34 @@
+import WitnessedDecompositions
+
+#print axioms WitnessedDecompositions.Collection.fiberTotalizeEquiv
+#print axioms WitnessedDecompositions.Collection.totalizeFiberEquiv
+#print axioms WitnessedDecompositions.Collection.fiberFamilyEquiv
+#print axioms WitnessedDecompositions.Path.slotComp
+#print axioms WitnessedDecompositions.Path.slotExpand
+#print axioms WitnessedDecompositions.Path.componentAt_slotExpand
+#print axioms WitnessedDecompositions.Path.expand_assoc
+#print axioms WitnessedDecompositions.Path.slotExpand_assoc
+#print axioms WitnessedDecompositions.Path.expandFamily_assoc
+#print axioms WitnessedDecompositions.Path.expandFamily_edges
+#print axioms WitnessedDecompositions.Path.expandFamily_edge
+#print axioms WitnessedDecompositions.Tree.frontierLeafEquiv
+#print axioms WitnessedDecompositions.Tree.frontierLeafEquiv_component
+#print axioms WitnessedDecompositions.Tree.operationSubstitutionEquiv
+#print axioms WitnessedDecompositions.Tree.frontier_profileGraft
+#print axioms WitnessedDecompositions.Tree.substituteOperation_identity
+#print axioms WitnessedDecompositions.Tree.identityOperation_substitute
+#print axioms WitnessedDecompositions.Tree.profileGraft_assoc
+#print axioms WitnessedDecompositions.Tree.freeCalc
+#print axioms WitnessedDecompositions.Tree.substituteOperation_assoc
+#print axioms WitnessedDecompositions.Tree.frontier_length_pos
+#print axioms WitnessedDecompositions.Calc.substitute_assoc
+#print axioms WitnessedDecompositions.Calc.Hom.onOperation_substitute
+#print axioms WitnessedDecompositions.Calc.Hom.comp_assoc
+#print axioms WitnessedDecompositions.Tree.interpret_profileGraft
+#print axioms WitnessedDecompositions.Tree.interpretFiber_substituteOperation
+#print axioms WitnessedDecompositions.Tree.interpret_unique_of_preserves
+#print axioms WitnessedDecompositions.Tree.extend
+#print axioms WitnessedDecompositions.Tree.restrict_extend
+#print axioms WitnessedDecompositions.Tree.extend_restrict
+#print axioms WitnessedDecompositions.Tree.homEquiv
+#print axioms WitnessedDecompositions.Tree.extend_natural_target

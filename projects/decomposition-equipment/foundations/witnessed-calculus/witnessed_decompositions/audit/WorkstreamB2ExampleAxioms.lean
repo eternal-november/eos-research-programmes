@@ -1,0 +1,23 @@
+import WitnessedDecompositions.RefinementExamples
+open WitnessedDecompositions.RefinementExamples
+#print axioms associativity_derivable
+#print axioms associativity_evaluated
+#print axioms groupings_distinct
+#print axioms quotient_retains_red_count
+#print axioms red_blue_distinct_in_quotient
+#print axioms unequal_parallel_arrows
+#print axioms semantic_hom_not_subsingleton
+#print axioms right_expansion_has_no_fixed_target_lift
+#print axioms raw_fixed_hom_thin
+#print axioms projection_not_injective
+#print axioms mixed_groupings_distinct
+#print axioms mixed_groupings_equal_in_quotient
+#print axioms mixed_unequal_parallel_arrows
+#print axioms mixed_semantic_hom_not_subsingleton
+#print axioms mixed_right_expansion_has_no_fixed_target_lift
+#print axioms mixed_witnesses_retained
+#print axioms nullary_frontier_length
+#print axioms addRed_changes_object
+#print axioms composed_left_endpoint
+#print axioms composed_right_endpoint
+#print axioms nullary_graft_not_a_unit

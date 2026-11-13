@@ -1,0 +1,753 @@
+Reusable environment discovery from action and readout records
+29 October 2026
+
+ABSTRACT
+
+This work establishes a conditional way to discover a reusable model of an
+unfamiliar environment from actions and readouts, without being handed its
+component groups or first enumerating its whole state. The method searches
+for small groups of outputs, the local inputs that predict them, and memories
+that update as observations arrive. Its guarantee includes new feedback
+controllers, not only the controllers used in testing.
+
+The broader theorem permits nonlinear, context-dependent responses within a
+bounded finite-memory class. Small conditional tests then control the complete
+next-observation law on covered contexts. A specialized additive construction
+also discovers groups of shared random influences, including three-way
+dependence invisible to pairwise tests. Overlapping descriptions must use the
+same random events and one persistent choice of model; separately plausible
+fits cannot simply be combined.
+
+A growing synthetic example learns unknown action-memory orders and noise
+groups for 12 through 96 readouts. At 96 readouts, it discovers 36 noise groups.
+Conditional on the stated assumptions, the learned and true probabilities of
+any ten-step transcript event differ by at most 0.099591, with confidence above
+99.34 percent over learning data. Longer-horizon bounds are looser.
+
+The positive result is a predictive decomposition with an executable witness
+and explicit resource obligations. Its assumptions are strong: bounded local
+interactions, finite observable memory, and appropriate exploration. The
+example is narrower still. This is not discovery of unique physical parts,
+certification of unlimited hidden interactions, or an automatic safety
+certificate. Many ingredients have established precedents; the report states
+the integration and limits without claiming novelty.
+
+1 What this result changes
+
+The earlier sparse-evidence example learned local scopes and tested four
+controllers with supplied ports and a one-lag construction. It did not
+establish unknown group and memory discovery with reuse beyond those tested
+controllers. The present target is to begin with labeled actions and readouts,
+discover a bounded compositional description, and justify its reuse when a new
+controller chooses actions from previous observations. A supplied numerical
+search ceiling
+is different from a supplied decomposition: knowing that a group has at most
+three members does not identify those members.
+
+There are three different deliverables here, and they must not be conflated.
+
+First, the discovery proof describes a model class and local statistical tests
+that can justify a full controlled predictive law without first enumerating a
+whole-system state. This is the main theoretical result. Its broader
+conditional-product formulation is separate from the narrower implemented
+demonstration.
+
+Second, the common-response construction asks whether several descriptions
+can be implemented together using one positive joint law, lawful input access,
+persistent memories, and the actual same shared events. It constructs a
+witness or rejects the request within a stated finite implementation language.
+That general search can be expensive. It is not the source of the efficient
+local discovery claim.
+
+Third, the executable experiment is a narrower nonlinear input-memory family.
+It demonstrates unknown memory and shared-noise grouping, finite-data
+certificates, and consistent crossing descriptions. It does not implement a
+general hidden-state learner or every search in the proof notes.
+
+A positive answer means that the environment admits a certified description
+in the declared predictive class and that the evidence supports the stated
+prediction guarantee. It does not mean that the description is the only one,
+that its components coincide with physical devices, or that every imaginable
+intervention is covered.
+
+2 The assumptions that carry the result
+
+The observations have named ports and finite alphabets or a stated bounded
+integer range. The learner knows which actions it issued and what it read.
+Those labels, observation meanings, and permitted operations are not learned
+from arbitrary unstructured sensory data. The main theorem starts from one
+common observed length-L initialization suffix. It certifies continuation
+from that suffix, not an arbitrary startup distribution learned from scratch.
+
+A finite observable-memory ceiling L is supplied. The intended predictive
+mechanism depends on no more than the declared suffix of actions and
+observations. This need not be the smallest memory, and the learner may
+compress it. But a finite hidden machine need not have such a finite observable
+suffix. Therefore a bound on physical hidden-state count is not interchangeable
+with this assumption.
+
+There are also numerical bounds on local input width and output-group width.
+The actual scopes, groups, conditional tables, and useful memory summaries are
+unknown. These bounds make local evidence potentially complete within the
+model class. Without them, a large parity interaction can hide from every
+smaller test while determining the full output.
+
+The data-acquisition law is explicit. The general concentration argument uses
+independent endpoint records from separate reset, warmup, or exploration
+episodes. Dependence within each episode is allowed. It does not count many
+overlapping windows from one trajectory as independent samples without a
+separate argument. The implemented example uses its own independent
+validation windows and fresh-noise calibration contract.
+
+Coverage refers to complete local history-and-action cylinders, including
+unions of possible scopes. It does not mean merely that each action occurred
+somewhere. A new controller can visit combinations that were rare or absent
+under collection. The theorem either confines reuse to covered contexts or
+charges an explicit probability of leaving them. Local counts do not prove
+global admissibility; a narrower domain needs its own membership gate and
+exit accounting.
+
+Finally, the physical intervention regime stays fixed. Sensor semantics,
+actuator effects, timing, and source access do not change silently between
+learning and reuse. A proof about a fitted kernel cannot itself justify a
+change to these physical mechanisms.
+
+These are premises to audit, not conclusions automatically discharged by
+passing the local tests. Finite records may reject a proposed class, but they
+cannot rule out all unrestricted alternatives agreeing on the recorded data.
+
+3 The broader conditional product discovery result
+
+The broader class does not require additive noise, integer response values,
+or a fixed context-independent residual distribution. It assumes that the
+complete next-readout law factors into unknown conditional blocks:
+
+  P(next readouts | history, action)
+    = product over unknown blocks B of p_B(readouts in B | local context).
+
+Each output block contains at most b readout coordinates. Its unknown local
+context uses at most w ports from the observable length-L suffix and current
+action. The functions p_B can be nonlinear and context dependent. Past
+readouts from one block can influence another, so this is not independence
+of entire subsystem trajectories. It is conditional independence of the
+current block innovations after the relevant past and action are given.
+
+The discovery input supplies the ceilings L, w, and b, but not the partition,
+scopes, or kernels. The learner estimates every small output marginal on
+sets of at most b coordinates, conditioned on input cylinders of width at
+most 2bw. Why this width? A small output set S can intersect at most b true
+blocks, so its true marginal depends on at most bw input ports. Comparing a
+candidate marginal scope with the unknown true marginal scope requires
+their union, of width at most 2bw. The true scope is included among the
+augmentations even though the learner does not know its identity.
+
+A simultaneous concentration event bounds the total-variation error of every
+sufficiently sampled empirical conditional row by eta. The event covers all
+candidate choices, including choices made after inspecting the data. Its
+sample requirement includes the finite output alphabet raised to the block
+width, the number of local history rows, and the minimum count threshold.
+It is not merely a logarithmic dependence on the number of ports.
+
+The algorithm builds a catalogue of positive empirical conditional tables
+for every candidate output block of size at most b and candidate input scope
+of size at most w. Missing rows get a declared normalized fallback and are
+marked uncovered. A candidate chooses disjoint output blocks covering all
+readouts and a table for each block. This gives a positive normalized model
+before any feedback use; it is not a collection of possibly incompatible
+signed predictors.
+
+For every small output set S, the candidate computes its own marginal from
+its selected block tables. It compares that marginal with empirical rows
+under every small input augmentation. With acceptance tolerance
+ t = (b+1)*eta,
+the catalogue contains a passing candidate using the actual blocks and
+scopes on the simultaneous confidence event. Extra interface or resource
+constraints can eliminate every candidate; that outcome is an honest
+abstention under the requested execution contract.
+
+The key local-to-global step compares two coherent product laws whose
+partitions may cross. If all their output marginals on at most b coordinates
+are within zeta in total variation and both partitions have block size at
+most b, then their complete joint laws are within 3*n*zeta. A comparison
+law built from the intersection marginals proves this by product coupling
+and the triangle inequality. Neither original law is assumed to factor over
+the intersection partition. The comparison law is a proof device, not a
+claim that different fitted laws have exactly the same physical source.
+
+Putting the augmentation test and this stability statement together gives,
+on every evidence-covered context,
+
+  TV(true next-readout law, accepted model law)
+    <= epsilon = min(1, 3*n*(b+2)*eta).
+
+This applies to every accepted candidate on the same data event, including a
+data-selected low-cost candidate. At eta zero, the small marginals identify
+the full law within the bounded-block class, even when the physical
+partition remains nonunique. At finite eta, coherent alternatives can be
+retained. Independent selection of uncertainty rows or a different
+partition after every observation is not covered.
+
+The general reuse statement is then direct. A controller may be any causal
+rule using its permitted observed past, including a controller designed after
+discovery or assembled by switching between local controllers. Before each
+output, both the real and learned stopped processes evaluate the same
+coverage gate on the current suffix and action. At first failure they emit a
+distinguished stopped symbol. For H attempted steps,
+
+  TV(true stopped transcript, learned stopped transcript)
+    <= min(1, H*epsilon).
+
+The argument couples controller randomness and successive output kernels.
+Before a mismatch the histories, actions, and gate results agree; each
+covered step adds at most epsilon mismatch probability. No enumeration or
+union bound over controllers is required. For an unstopped deployment, the
+bound additionally pays beta_Q, the selected model/controller's probability
+of a gate failure within H. That quantity needs its own justified calculation,
+separate simulation confidence, or an enforceable contract making it zero.
+Without it, only the stopped guarantee is established.
+
+This is a predictive guarantee, not an exact architecture theorem. The
+factor 3*n and subsequent horizon factor can make it loose. It supports
+scores bounded between zero and one through the corresponding expectation
+bound, but does not automatically discharge a safety threshold.
+
+The search is more structured than enumeration of arbitrary programs. Block
+choices form an exact-cover constraint problem; local tests become finite
+constraints on those choices. Nevertheless, unknown partition selection can
+be hard. With variable-domain bound D and constraint-elimination width
+kappa, the stated algorithm has a factor D^(kappa+1), in addition to local
+table construction and testing. Small output/input widths do not imply
+small kappa. Avoiding enumeration of environmental product states is not
+the same as proving all structural search is polynomial.
+
+An accepted model can retain its raw local suffix observers or minimize them
+by stable partition refinement. Approximate empirical rows may prevent exact
+merging even when the true rows coincide. A smaller proposed observer must
+be certified again, or exact recovery needs an additional known separation
+or probability-grid premise. The theorem offers such a grid specialization,
+but the broad approximate result and the implemented additive example do not
+assume that the environment's probabilities lie on a finite grid.
+
+A finite extension jointly searches for the history-to-memory map, recursive
+update, and stochastic response table, enforcing every local shift equation.
+It can use a rational implementation mesh that approximates physical
+probabilities rather than assuming they lie on that mesh. If a small
+recursive realization and permitted positive source protocol exist within
+the offered budgets and survive the approximation, sufficiently fine
+precision and a slackened tolerance make such a candidate available to the
+search. The additional variables and constraint width are charged. This is
+approximate memory synthesis, not finite-data proof of the unique smallest
+physical memory.
+
+Finally, predicting a normalized conditional law does not prove it can be
+implemented with restricted local inputs. For each learned output block,
+the separate interface synthesis enumerates complete allowed local response
+tables across the requested descriptions and asks for one positive mixture
+that realizes the same selected block kernel at every certified context.
+These tables include allowed action-aware recodings rather than fixing
+arbitrary seed names. Recursive observer equations check that all delivered
+contexts can actually be maintained. A feasible certificate supplies a
+common executable implementation; an empty feasible set rejects those
+permissions or budgets, not necessarily the learned statistical kernel.
+The general common-witness construction below makes this distinction
+explicit.
+
+4 The constructive additive specialization
+
+The additive specialization makes the mechanism especially transparent. At
+readout i and time t, write
+
+  Y_i(t) = f_i(local history and current action) + E_i(t).
+
+The response f_i has an unknown input scope of at most w ports. Its values are
+integers. The innovation vectors E(t) are independent across time, have one
+fixed joint law, and are independent of all pre-output history and the current
+intervention. Different coordinates of E(t) can be dependent. Their unknown
+finest mutually independent partition has blocks of at most b coordinates.
+
+This is a meaningful but strong family. It admits nonlinear local responses
+and shared same-tick randomness. It excludes arbitrary persistent latent noise
+and general context-dependent innovations. The broader conditional-product
+result addresses some nonadditive conditional behavior, but does not turn this
+specialized residual method into a universal latent-source discovery method.
+
+Unknown scopes are tested against all small augmentations. For each candidate
+scope U of at most w ports, compare its empirical conditional mean with the
+mean conditioned additionally on every candidate V of at most w ports. Reject
+U when one sufficiently sampled union row disagrees beyond the threshold.
+The proof uses the fact that the true, unknown scope T is among the possible
+augmentations V. It does not need to know which augmentation is T.
+
+On one simultaneous concentration event, a true scope passes. Every accepted
+scope predicts the true conditional mean closely at all covered contexts.
+Subtracting a single reference-context mean removes the unknown noise mean.
+If the empirical mean radius e is below 1/12, the difference is within less
+than half an integer of the true response difference, so rounding recovers
+that difference exactly. The fixed reference is important: selecting a new
+translation for each history or controller would destroy the common residual
+law.
+
+This is exact recovery by a known spacing assumption. Without spacing or a
+comparable separation condition, finite noisy samples generally support
+approximate response equality or an uncertainty family, not exact equality of
+two mechanisms. A failure to detect a small effect is not proof that the
+effect is absent.
+
+Fresh held-out records then yield residual vectors after subtracting the
+learned response. Record selection depends only on pre-output context passing
+the coverage gate, never on the output being tested. Under exact response
+recovery, each residual is the original innovation plus the same fixed
+translation. Its independent-block structure is unchanged.
+
+The residual-group test is higher-order, not merely pairwise. For each subset
+S of at most b coordinates, compare its joint law with the product law across
+every nontrivial split of S. A subset is an irreducible hyperedge only when all
+its splits show dependence beyond the simultaneous uncertainty allowance.
+No such edge crosses a truly independent block boundary. If each true
+nonsingleton block has a sufficiently large minimum split gap, the true block
+itself is detected. Connected components of these hyperedges, including
+isolated coordinates, then recover the unknown finest independent partition.
+
+For marginal total-variation radius r, the split-score error is at most 3r;
+a true-block split gap greater than 6r is sufficient in the general proof.
+Without a gap or another completeness argument, missing an edge does not
+certify independence. The output must retain coherent possible partitions
+and laws rather than independently sampling the apparently disconnected
+pieces.
+
+The test detects a three-bit parity-type source whose every pair is
+independent. This matters because a pairwise graph can appear empty while the
+joint output still has a strict three-way constraint. The included experiment
+contains full-support versions of this phenomenon, not only deterministic
+parity examples.
+
+5 Memory must be executable and uncertainty must stay coherent
+
+Two histories that have the same next-output prediction need not be the same
+state. They can lead to different predictions after one more observation. The
+memory construction therefore starts from a local suffix-shift machine and
+repeatedly separates histories whose response labels or successor classes
+differ. It stops at a stable equivalence relation under every admitted input
+symbol. A quotient state can then be updated recursively without reconstructing
+the original full local history.
+
+This is standard deterministic Moore-machine minimization applied to a
+learned local predictive table. Its relevance is the operational guarantee:
+the proposed memory is a running observer, not just a list of histories that
+look alike once. Minimality is relative to that finite table and its declared
+input language. It is not minimality over all stochastic realizations,
+physical components, or arbitrary latent states.
+
+Missing rows and illegal continuations require explicit treatment. One can
+use a totalized table with sentinel outputs, or prove that a smaller input
+language is closed. Silently deleting undefined transitions can make a
+nonexecutable summary appear compact. Similarly, an initialization contract
+must say how the observer gets its initial suffix or state.
+
+A local mathematical summary also needs its input wires. A processor that
+sees only A cannot update the parity of A and B without B or an equivalent
+message. The implementation must charge memory, clock access, initial data,
+communication, source distribution, and phase ordering. A sequential
+factorization of a joint law is not a parallel local implementation unless
+the necessary same-tick messages and generation order are permitted.
+
+For every learned innovation block, the canonical additive simulator draws
+one joint residual event at each tick and projects it to the outputs that
+consume it. If two descriptions overlap, both refer to that same event ID.
+They do not receive independently redrawn copies of its marginal. Alternative
+observer descriptions can be synchronized on their union input stream, with
+all additional interfaces and memory charged. The reachable image of this
+synchronized observer is the state carrier; arbitrary incompatible pairs of
+local states are not introduced.
+
+Uncertainty about a model is also persistent. A structural selector and its
+probability weights are chosen once for an entire run. The admissible family
+is a family of complete controlled laws, not permission to select a new
+plausible model after every action. For example, two worlds can each have fair
+pairwise bit marginals but a different fixed three-bit parity. Redrawing the
+world at every step introduces parity changes that neither original world
+allows.
+
+The same discipline applies to universal claims. Establishing that every
+possible world has some implementation does not necessarily provide one
+implementation that works without knowing the world. If a single deployed
+program is required, its program variables must be shared across the
+uncertainty family.
+
+6 One joint response witness for crossing descriptions
+
+The general bridge begins with finite candidate descriptions, their actual
+memory-update and report tables, an endpoint relation describing required
+agreement, and a finite permitted response or encoder language. These are
+candidate mechanisms to check, not automatically observed physical states.
+
+For each possible support L of the common response law, delete joint states
+that have an allowed-action successor outside the surviving state set under
+any response in L. Repeat until the set stabilizes. Then solve for nonnegative,
+normalized response and initial-state probabilities with the required
+marginals. Coupled evidence constraints use these same variables. A successful
+solution supplies actual projection maps, an initial coupling, and one shared
+response law. Conversely, any witness in the declared language survives the
+deletions for its own support and satisfies these constraints.
+
+This largest-invariant shortcut is complete for fixed source projections or
+encoders with a fixed declared input domain. If encoder-law correctness is
+required only on an unknown retained reachable state set, that state set
+must also be enumerated: enlarging it can add new response-law constraints.
+
+This finite search does not assume a common refinement as input. It discovers
+one or rejects all witnesses in its bounded language. It can nevertheless be
+very expensive: support enumeration alone has 2 raised to the response-alphabet
+size candidates, and the joint relation can have product size. Small physical
+neighborhoods do not by themselves bound this search. The local discovery
+route and this general synthesis completeness result have different
+complexity claims.
+
+Positive probabilities are essential. Three fair bits cannot simultaneously
+satisfy A different from B, B different from C, and A different from C, even
+though each pair requirement is individually realizable. Agreeing overlap
+marginals do not ensure a common positive extension. A signed algebraic
+solution would not be a simulator.
+
+A bad choice of seed names is a different issue. Consider two fair-bit
+implementations with outputs e and e' XOR a. No action-independent coupling
+of those fixed seed names makes the outputs equal at both actions. But if the
+second implementation is permitted to read a, the local recoding
+ e' = e XOR a
+repairs the problem. The search must include allowed recodings before
+reporting a behavior-level obstruction. If the action is not locally available
+in time, that repair is unavailable under the interface contract.
+
+The supplied checker also includes the familiar Bell-locality example
+ x XOR y = a*b.
+A mixture of responses x=f(a), y=g(b), with only local action access, cannot
+realize all four action contexts. A permitted one-bit message can repair it.
+This is a standard information-access obstruction, not a new theorem claimed
+for this project.
+
+A common source alone imposes no extra restriction on arbitrary finite global
+kernels when its alphabet is unlimited and every response may inspect the
+entire global input. One can sample a table containing an independent output
+for every input and return the appropriate entry. The nontrivial obligations
+are local input reuse, source and message budgets, actual endpoint identities,
+and dynamic compatibility. The construction must not inflate seed naming
+into an independent discovery advance.
+
+Probability weights need not lie on a predetermined finite grid. But a real
+probability vector is not automatically an executable random generator.
+Exact implementation needs a numerical representation and a licensed sampling
+primitive. Rational empirical weights are concrete; arbitrary uncomputable
+real weights are not claimed executable. Source latency and generation costs
+remain separate from the mathematical feasibility certificate.
+
+7 What the original C5 calculus contributes
+
+The bridge supplies a genuine compiler into the original C5 syntax after a
+faithful finite enlargement of its interface parameters. A licensed update
+is unrolled into named stages: delivered inputs, local reads, response
+projections, response evaluation, observer updates, and commit. Each stage
+is an actual finite function on an explicitly available wire bundle. The
+stochastic source remains an external port with its own positive-law and
+freshness certificate; it is not misrepresented as a deterministic arrow.
+
+The old generators compile the chosen sequential stage grouping. The original
+rules preserve its denotation, and genuine ordered refinements retain their
+intermediate interfaces. Faithfulness preserves distinctions in the old
+profiles. This is more than using the letters C5 as an analogy, but less than
+proving that the original small interface collection already contained all
+runtime mechanisms.
+
+The operational premises do the substantive work. An abstract function does
+not prove that hardware can read its inputs. A compiled equality does not
+establish sensor calibration, controller coverage, a positive joint source,
+or the discovered model class. Those contracts remain explicit obligations.
+
+Crossing operational descriptions also need not have a common original
+ordered C5 refinement. For example, the ownership partitions
+ {0,1}|{2,3} and {0,2}|{1,3}
+contain an ordering inversion. Their common intersection atoms cannot respect
+both linear occurrence orders. They can describe one coherent synchronous
+operational network while failing that original ordered-refinement criterion.
+An interchange extension or a different proved diagram language would be
+needed to identify unrestricted crossings with original C5 refinements.
+
+The report therefore separates three statements: a common executable
+operational realization exists; a particular schedule compiles into genuine
+C5 syntax; and two original ordered profiles have a common original
+refinement. None is silently substituted for another.
+
+8 The growing executable example
+
+The synthetic family has binary action streams and integer readouts. Each
+readout combines a current action, two unknown capped trailing-action-run
+memories, a nonlinear interaction, and a fresh binary residual. The relevant
+source channels and the run caps are unknown; the cap search bound is four.
+The example learns finite observable input memory, not general recurrent
+output memory or nonunifilar hidden physical state. It permits action-stream
+broadcasts. Learned input subscriptions are not discovery of an unknown
+restricted physical communication network.
+
+Its response grammar is an integer multilinear polynomial of degree at most
+five,
+with symmetric plus-or-minus-one residual coordinates. Those restrictions
+make a strong independent support-validation certificate possible. They are
+not inferred from the same records. Noise groups have size at most three and
+include pair dependence, common-shock triples, and pairwise-invisible pure
+three-way interactions. The generator uses parameters 0.43, 0.61,
+and 0.37; inference does not assume a supplied finite grid of source weights.
+
+The data are split between response fitting, independent support validation,
+and residual calibration. A frozen candidate is tested on held-out windows.
+Residual partition selection and probability calibration have their own
+confidence accounting. The emitted simulator samples an empirical joint row
+once per discovered group per time step. The corresponding rational weights
+and response tables are saved as an executable candidate. A separate exact
+sampler check uses 17 fresh fair bits per block per tick to sample those
+empirical weights, without rejection or a continuous uniform primitive.
+This costs 85, 153, 306, and 612 bits per tick in the four runs. A joint
+residual label needs at most three bits; each readout projection needs one.
+Action broadcasts, memory updates, and delivery fanout remain separately
+charged.
+
+Each main run used 348,160 action/readout vector records: 65,536 for training,
+20,480 validation-stream rows yielding 4,096 independent stride-five windows,
+and 262,144 residual-calibration rows split equally between group selection
+and probability calibration. These are stream rows, not 348,160 independent
+episodes. The four main runs total 1,392,640 vector records. A preliminary
+12-port pilot adds 54,272, for 1,446,912 unique generated records across this
+investigation. Repeating fixed seeds is reproduction, not additional evidence.
+
+The saved results report the following. "Local states" is a sum of small
+observer-state counts, not the number of states of their Cartesian product.
+The displayed transcript bounds are rounded outward to six decimal places.
+
+ Ports   Noise groups   Invisible triples   Local states   Raw lag states
+    12              5                   1             42             2^48
+    24              9                   3             84             2^96
+    48             18                   6            168            2^192
+    96             36                  12            336            2^384
+
+ Ports   TV bound at H 10   TV bound at H 100   Recorded runtime seconds
+    12          0.041890           0.132468                       4.34
+    24          0.055929           0.176863                       9.46
+    48          0.073859           0.233560                      18.84
+    96          0.099591           0.314932                      41.82
+
+Every run learned channel memory orders from one through four, realized by
+two through five states per local observer. No global transition table was
+built. The largest run examined 147,536 output subsets and 433,200 nontrivial
+split tests; the raw-history product was not enumerated.
+
+The confidence statement is conditional on the polynomial/input-memory
+class, fresh history-independent symmetric binary residuals, independent
+unknown blocks of size at most three, and a minimum true-block split gap of
+at least 0.18. Its failure allocation is 0.004 for grouping, 0.0025 for the
+primary probability bound, and a safe rational allowance n/2^64 for accepting
+an incorrect frozen response. The combined failure bound is therefore
+13/2000+n/2^64: confidence exceeds 99.34 percent for each run. A union bound
+for all four runs gives failure at most 4*(13/2000)+180/2^64, so confidence
+exceeds 97.39 percent for the collection. These are not the same claim.
+The same successful kernel event supplies the bound function for every legal
+feedback controller and every finite horizon; there is no additional union
+bound over the four smoke-test controllers.
+
+For probability calibration, N=131,072 fresh residual vectors and
+D=sum over blocks (2^block_size-1). The integer thresholds x for the four
+runs are 46, 82, 143, and 260. The primary bound is
+ sum KL(Q_group || P_group) <= x/N,
+with failure less than 1/400. The older empirical-Bernstein numbers remain
+in the result files for comparison only. They are not minimized with the
+primary bound or counted as a second simultaneous guarantee.
+
+There are four feedback-controller smoke tests, each run for 128 steps, across
+two crossing ownership layouts with independently executed local observer
+copies and shared-event projections. Equality in these tests is useful
+software regression evidence. It is not the all-controller theorem. The
+statistical reuse statement follows from the learned kernel certificate and the
+sequential chain rule, for arbitrary nonanticipating controllers under the
+same legal input and initialization contract.
+
+The all-feedback trajectory bound has the form
+
+  TV(true transcript, learned transcript)
+    <= min(1, sqrt(H * sum over groups KL(Q_group || P_group) / 2)).
+
+Here H is the horizon; P is the true residual-group law and Q the saved learned
+law. The direction is empirical-to-true relative entropy. Its confidence bound
+uses Agrawal's established multinomial relative-entropy inequality and the
+independence of the true residual blocks, not a new concentration theorem.
+The bound accumulates along the controlled trajectory and is converted to
+total variation by Pinsker's inequality. Total variation bounds the discrepancy
+in probability of any transcript event. It is not itself the probability of
+an unsafe physical outcome, and confidence in the bound is a separate
+probability over training data.
+
+The experiment also records simulator-side comparisons with its hidden
+construction. These show whether the code recovered the generated responses
+and partition in this run. They are not the observational proof of those
+claims: a learner of a real system would not have access to the hidden
+simulator truth. The report keeps that audit separate from held-out evidence.
+
+9 What no whole state enumeration means here
+
+The additive proof enumerates bounded-size local input scopes, local suffix
+tables, and residual output subsets. It constructs local recursive quotients
+without enumerating the product of all their states. For fixed local width,
+memory depth, and alphabets, these searches are polynomial in the number of
+ports. Their dependence on width, memory, and alphabet size is exponential
+and must remain visible.
+
+This is a parameterized result, not an unrestricted scalability result.
+The generic catalogue has roughly n^(b+w) options, but conditional evidence
+tables can require n^(b+2bw) rows before alphabet and memory factors.
+Coverage can be expensive because a complete local cylinder may have very
+small probability. The cost of acquiring resets or discarding records that
+fail a gate is part of data collection. A compact local certificate does not
+make an arbitrary global response-table search efficient.
+
+The implemented example uses a specialized feature screen and integer fit
+rather than exhaustively running every table in the general proof. Its
+held-out certificate can reject a wrong frozen candidate within its stated
+class even if the heuristic search fails to find the right one. Search
+success in the reported runs should not be promoted to a completeness
+theorem for that fitting procedure on every member of the broader class.
+
+Likewise, obtaining a compact predictive simulator does not solve planning,
+controller optimization, or safety verification. A controller can require
+hard global reasoning even when one step of the environment is cheaply
+simulated. Memory and source budgets can also rule out a refinement that is
+mathematically possible with unlimited interfaces.
+
+10 Relation to established work
+
+The full source audit is in prior_art/Discovery_Baselines.md. Its conclusion
+is not that all prior work receives the decomposition, nor that nobody has
+proved new-controller guarantees from incomplete observations.
+
+CoalA learns unknown component alphabets and component transition systems
+through automated alphabet refinement. Its membership and equivalence teacher
+is a materially stronger access model than finite sampled logs. It is a
+relevant unknown-decomposition baseline, not a supplied-decomposition straw
+man.
+
+FactoRL learns unknown grouping of observation atoms and sparse latent
+controlled dynamics in a factored block-MDP class. Its factorized emissions,
+disjoint supports, separation, reachability, regression, and planning
+assumptions matter. It directly refutes the broad claim that controlled
+factor discovery must receive the groups in advance.
+
+CSSR, context-tree methods, and predictive-state representation learning
+already discover recursive predictive memory under their own assumptions.
+Approximate information states already connect recursive predictive
+summaries to control guarantees. Offline PSR learning and output-only
+probabilistic alternating simulation already support reuse by new covered
+controllers. The present work must be compared on matched access, coverage,
+representation, and computation, not just on whether it uses the word
+compositional.
+
+Positive common-response feasibility is closely related to classical
+marginal-extension and local-response problems. Nonnegative coupling matrices,
+flow formulations, and greatest-fixed-point probabilistic relation algorithms
+are also established. Adding unknown response programs and resource limits
+creates additional search obligations; it does not make the underlying LP
+or closure operation new.
+
+Daskalakis and Pan's local-marginal bounds for Bayesian networks are another
+direct comparator. A straightforward common-DAG reduction for two different
+size-b block-product partitions uses marginals of size at most 2b-1 and gives
+a 2*n*zeta bound. The stability argument proved here uses only b-coordinate
+marginals, with a 3*n*zeta bound. That is a precise support-size distinction
+from this reduction, not evidence that the inequality has no earlier
+antecedent. Its proof uses elementary established coupling tools.
+
+The candidate integration is to connect unknown local grouping and executable
+recursive memory, finite-data simultaneous validity, coherent crossing
+positive realizations, and controller reuse while accounting for the work
+needed to find them. The proofs and example make this a concrete research
+object. They do not establish priority. A matched comparison demonstrating a
+strict improvement, reduction, or separation remains necessary before a
+novelty claim.
+
+Selected primary references
+
+CoalA, CONCUR 2025
+https://drops.dagstuhl.de/storage/00lipics/lipics-vol348-concur2025/html/LIPIcs.CONCUR.2025.20/LIPIcs.CONCUR.2025.20.html
+
+FactoRL, ICLR 2021
+https://openreview.net/references/pdf?id=0wpcsuBLCN
+
+CSSR, UAI 2004
+https://arxiv.org/pdf/cs/0406011
+
+Approximate Information State, JMLR 2022
+https://jmlr.org/papers/volume23/20-1165/20-1165.pdf
+
+Offline predictive-state learning, version 3
+https://arxiv.org/pdf/2307.00405v3
+
+Data-Driven Abstractions via Random Exploration, inspected version 2
+https://arxiv.org/html/2402.10668v2
+
+Abramsky and Brandenburger on global positive extensions
+https://arxiv.org/pdf/1102.0264
+
+Deng and Du on probabilistic bisimulation and lifted relations
+https://arxiv.org/pdf/1103.4577
+
+Agrawal on finite-sample multinomial relative entropy, Theorem I.3
+https://arxiv.org/html/1904.02291v4#S1.Thmtheorem3
+
+Daskalakis and Pan on local-to-global distribution bounds, COLT 2017
+https://proceedings.mlr.press/v65/daskalakis17a/daskalakis17a.pdf
+
+11 What remains open
+
+The most important boundary is not a missing optimization. Arbitrary hidden
+memory and unbounded high-order interactions are not identifiable from the
+local evidence used here. The method deliberately buys completeness by
+restricting the predictive class. Relaxing those restrictions requires new
+evidence, stronger access, broader uncertainty, or weaker guarantees.
+
+Exact structural discovery outside separated classes remains open. With
+finite data and arbitrarily small effects, exact equality and exact
+independence cannot generally be decided. Useful alternatives include
+approximate predictors, confidence sets of decompositions, and explicit
+abstention where interfaces or coverage are unresolved.
+
+The broad positive common-refinement search is finite but not generally
+tractable. A useful next theoretical step would bound its actual witness
+width or response grammar and prove a parameterized algorithm, rather than
+hide exponential variables inside an LP. Another is a precise translation
+to established probabilistic simulation methods showing what locality or
+persistence restriction adds.
+
+The experiment's longer-horizon numerical bounds also leave a practical open
+loop. For 96 ports the bound grows from 0.099591 at ten steps to 0.314932 at
+100 steps and eventually becomes uninformative when clipped at one. Better
+estimation, additional data, or problem-specific event bounds would be
+required for stronger deployment conclusions. No empirical success here
+establishes infinite-horizon safety.
+
+The defensible conclusion is a constructive restricted-class route from
+records to reusable environmental descriptions, with an executable growing
+example and explicit common-realization tests. That is more than checking
+whether a supplied decomposition fits four controllers. It is less than
+unrestricted discovery of a physical world, and the distinction is part of
+the result rather than a footnote.
+
+12 Source map and reproduction
+
+The technical arguments are in theory/Discovery_and_Reuse.md and
+theory/Witnessed_Feedback_Composition.md. Independent objections, corrections,
+and review status are in review/Assumption_Challenge.md. The literature audit
+is in prior_art/Discovery_Baselines.md.
+
+The runnable experiment is examples/check_growing_memory_environment.py.
+The declared model class is recorded in examples/experiment_spec.json. Saved
+runs under examples/runs contain the public manifests, frozen response fits,
+records, executable candidates, and numerical result files. Their summary is
+examples/runs/summary.json. The regression checkers in tests address the
+source-encoding and assumption boundaries.
+
+The source bundle provides reproduction instructions and hashes. Recorded
+timings are not a hardware-normalized benchmark.

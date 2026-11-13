@@ -1,0 +1,588 @@
+Discovering reusable predictive subsystem interfaces from incomplete evidence
+
+29 October 2026
+
+Abstract
+
+A reusable subsystem model should predict what several parts of an environment will do
+together, not merely answer one safety question under one controller. Its state must also be
+computable from available observations and updated by an executable program. This report
+gives a finite-horizon construction that searches those programs, their memory,
+communication and predictive boundaries, while retaining uncertainty about the environment
+that produced the evidence.
+
+The central certificate measures joint next-step prediction errors, weighted by histories
+that an allowed controller can actually encounter. It bounds the error of the complete
+action and observation record, and vanishes exactly when that record is predicted correctly
+for every compatible environment and every admitted controller. For a fixed recursive
+program, finding a positive joint predictor with this certificate is a finite linear
+program. Searching a bounded program language therefore discovers an implementation whenever
+one satisfies the certificate within that language. This is an exact construction, not an
+efficient general learning algorithm.
+
+A synthetic two-port experiment makes the construction concrete. From a seeded histogram
+representing 10.24 million independent episodes, the procedure discovers that each port
+needs an earlier local reading, a current neighboring reading and its own action. One
+positive common-source implementation coordinates their predictions. A weighted verifier
+bounds complete-record prediction error by 0.043613 over two future decisions, uniformly
+across adaptive controllers, with at least 95 percent simultaneous confidence under the
+acquisition assumptions. Treating every history like the rarest one gives 0.19998 and fails
+the same threshold.
+
+The result concerns predictive interfaces around supplied ports, not identification of
+physical components. Repeated update code does not establish unlimited-horizon validity.
+Persistent uncertainty may require additional joint likelihood computation and memory, and
+physical safety still needs separately justified observation-to-hazard contracts.
+
+1  The result and the discovery target
+
+The output sought here is an executable predictive decomposition: locally maintained state,
+messages that deliver needed information, and a positive joint response mechanism that can
+be reused when the controller or observable task changes. The implementation must be chosen
+without knowing which evidence-compatible environment is the real one. Its useful guarantee
+is not that each local forecast looks plausible, but that the complete controlled
+observation law remains close to the predicted law.
+[Robust_Recursive_Predictive_Discovery.md, Sections 1-5]
+
+This differs from a representation designed only to certify a selected risk statistic. A
+risk-specific message can discard distinctions needed by another maneuver or task. A
+whole-record prediction bound instead controls every bounded function of that record. It
+also differs from identifying a latent physical architecture: distinct physical mechanisms
+can produce the same controlled observations, and a useful predictive boundary need not
+coincide with a unique physical boundary. The discovery procedure retains alternative
+implementations rather than declaring an arbitrary representative to be the actual
+equipment. [Prior_Coverage_and_Target_Burden.md, Section 1;
+Robust_Recursive_Predictive_Discovery.md, Sections 7-8]
+
+Several ingredients are established mechanisms. Wolfe, James and Singh's Approximate
+Predictive State Representations studies factored scope choices, their compactness and
+accuracy tradeoff, and learning from data. Barnett and Crutchfield's Computational Mechanics
+of Input-Output Processes gives recursive causal-state transducers. Nayyar, Mahajan and
+Teneketzis use common-information coordination and prescriptions for decentralized control.
+Wang and colleagues' causal abstraction work explicitly targets reusable dynamics and
+task-specific abstractions in factored state spaces. These are relevant baselines, not
+claims this report supersedes. [External sources E1-E4 below]
+
+Positive realization and local shared-randomness polytopes are also established. Earlier
+project results include recursive interfaces, positive gluing and finite-horizon transfer.
+The bounded contribution is their evidence-to-interface construction with unknown executable
+programs, one jointly coherent positive prediction mechanism, and a controller-uniform
+discrepancy that admits exact fixed-program optimization. The rare-context calculation
+demonstrates a concrete benefit of weighted verification; it is not a novelty clearance or a
+practical-scale architecture-learning result. [Prior_Coverage_and_Target_Burden.md, Sections
+1-4; Positive_Joint_Realization.md, Section 6]
+
+A successful certificate consequently has a strict order of quantifiers: there exists one
+implemented predictor such that every environment compatible with the evidence, under every
+controller in the declared family, satisfies the error bound. Replacing that statement by a
+separate fitted predictor for each unknown environment would not supply an installed
+reusable interface. A persistent family of predictors is a valid alternative, but requires a
+different guarantee and additional execution accounting.
+
+2  Evidence defines the worlds and controllers being certified
+
+Fix finite observation and action alphabets and a horizon H. A complete record is
+
+    omega = (o0, a0, o1, ..., a(H-1), oH).
+
+Let h_t denote its history through o_t. Data are generated by a known exploration policy
+e(a|h), with exogenous action randomization and environment responses that do not change
+merely because a different policy selects the actions. A candidate exploration-law vector p
+assigns probabilities to complete records. Nonnegativity, normalization and the causal
+equalities
+
+    p(h,a) = e(a|h) p(h)
+
+combine with justified linear evidence intervals to form a nonempty confidence polytope C.
+Its members are complete causal laws, not assumed hidden-state models. Partial aligned
+measurements may leave many such laws unresolved. An empty C indicates incompatible
+constraints, not successful discovery. Statistical coverage of C is an obligation of the
+measurement procedure. [Robust_Recursive_Predictive_Discovery.md, Section 1]
+
+The main effective theorem uses a rectangular controller family: at each full history, a
+controller may choose any distribution over a specified allowed action set. Here
+“rectangular” describes controller choices, not permission to replace the environment with
+independently selected transition rows. Exploration must give positive probability to every
+admitted action at the histories in scope. For a controller pi, the product of its action
+probabilities divided by the exploration probabilities gives a known prefix weight
+w_pi(h,a). Then
+
+    p^pi(h,a) = w_pi(h,a) p(h,a).
+
+This change-of-policy identity transports the same underlying causal law to another
+controller. It does not license unsupported interventions. Tiny exploration probabilities
+can be algebraically valid while producing prohibitive data requirements.
+[Robust_Recursive_Predictive_Discovery.md, Sections 1 and 6]
+
+Policies, predictor kernels and updates are defined on the full syntactic history tree.
+Restricting that tree requires proving that both the real and predicted processes stay
+inside it, or explicitly defining and charging their continuation outside it. A history with
+zero probability in the real law may still be generated by an approximate predictor. This
+domain condition matters for adaptive feedback, whose actions must remain defined on
+predicted histories too. [Robust_Recursive_Predictive_Discovery.md, Section 1;
+Independent_Main_Proof_Review.md, Section 1.5]
+
+One simultaneous confidence event covers the true law before selecting programs or
+controllers. Because certification is universal over C, subsequent program selection does
+not need another union bound over candidate representations. Data-dependent construction of
+the evidence features or intervals still needs a valid simultaneous or held-out statistical
+argument. Searching interfaces cannot repair invalid confidence statements.
+[Robust_Recursive_Predictive_Discovery.md, Section 8;
+Quantifier_and_Statistical_Guardrails.md, Section 6]
+
+3  Discovering recursive programs and a positive joint implementation
+
+A resource signature specifies actual readout and action ports, processors, sensor access,
+communication phases, memory bounds and permitted shared-source access. A candidate program
+D chooses output-port grouping, local memory alphabets, initialization, message encoders and
+routes, recursive updates, and the local contexts used for prediction. These choices are
+synthesized within a finite language; the desired scopes and update tables are not assumed
+to be available. A processor cannot read the complete history unless the resource contract
+allows it. [Robust_Recursive_Predictive_Discovery.md, Section 2]
+
+Evaluating D on an observed history gives its maintained state and each component's current
+context c_i(h,a). After generating a new observation, the simulator runs the same update
+program on the generated permitted inputs. Persistent table identity matters: the update
+reused at two times is one table, not independently fitted copies. Initialization, clocks,
+stored probabilities, source distribution and message deadlines are resources, not free
+mathematical conveniences. A quotient of histories is admissible only when the program
+actually computes it.
+
+For fixed D, a deterministic response strategy sigma supplies a function f_i from each
+component's local context to its owned output. A probability vector mu over the allowed
+strategies gives
+
+    K(o|h,a) = sum_sigma mu_sigma
+               product_i 1[o_i = f_i^sigma(c_i(h,a))].
+
+One strategy draw is shared across the components for that tick. The same mu specifies
+responses at every context, rather than selecting a convenient coupling after seeing the
+context. An admitted initial distribution nu and startup protocol complete the generative
+predictor. All probabilities are nonnegative and normalized, so the construction defines one
+controlled joint process. [Robust_Recursive_Predictive_Discovery.md, Section 3;
+Positive_Joint_Realization.md, Sections 1-4]
+
+Fresh shared draws constrain this proposed simulator; they do not assert fresh independent
+noise in the physical environment. An evidence-compatible environment may have persistent
+hidden influences. If the discovered memory fails to retain their predictive consequences,
+the residual certificate must charge that failure. Conversely, a simulator's sampled latent
+branch does not become an observable state that a physical runtime observer can read.
+
+Joint realization is stronger than separately accurate marginals. Two fair output bits can
+agree always or disagree always while each marginal remains unchanged. A temporal version is
+more severe: two individually memoryless fair streams can have a fixed shared parity
+throughout an episode. Resampling that parity each tick preserves both complete marginal
+stream laws but changes their joint law. The interfaces therefore need common source
+identities and recursive joint consistency, not only local probability tables.
+[Quantifier_and_Statistical_Guardrails.md, Section 2]
+
+4  The reusable prediction theorem
+
+For one environment p and controller pi, define J as the initial total-variation discrepancy
+plus the sum of joint next-observation discrepancies under the real process's prefix
+occupation law. Total variation, abbreviated TV, is half the sum of absolute probability
+differences. Thus
+
+    J_(p,pi) = TV(p0,nu)
+             + sum_t E_(P_(p,pi)) TV(P_p(.|h_t,a_t),K(.|h_t,a_t)).
+
+An equivalent formula multiplies each absolute prefix-mass residual
+
+    |p(h,a,o) - p(h,a) K(o|h,a)|
+
+by w_pi(h,a)/2 and sums. This avoids dividing by candidate prefix probabilities. Zero-mass
+prefixes contribute zero. Let J be the supremum over p in C and pi in the controller family,
+and let Delta be the corresponding worst TV between complete real and predicted
+action/readout records. Then
+
+    Delta <= min(1,J),             J <= (2H+1) Delta.
+
+In particular, Delta <= J <= (2H+1) Delta. [Robust_Recursive_Predictive_Discovery.md,
+Sections 4-5]
+
+The first inequality follows by extending real and predicted prefixes one step at a time.
+Their action kernel is the same controller rule on the common history alphabet. Replacing
+the real output kernel by K costs its expected conditional TV; applying K to already
+different prefix laws cannot increase their TV. Iteration adds exactly the initial term and
+the true-prefix-weighted transition terms. This argument permits adaptive controllers and
+does not assume that their realized action sequences agree independently of observations.
+
+For the reverse inequality, compare a true extended prefix with the intermediate law
+obtained by applying K to its true prefix. Triangle inequality through the predicted
+extended prefix bounds the transition residual by the extended-prefix discrepancy plus the
+preceding-prefix discrepancy. Each is at most complete-record TV. The initial discrepancy
+adds at most one more such term, giving 2H+1. The factor is a general bound, not asserted
+optimal. [Robust_Recursive_Predictive_Discovery.md, Section 5;
+Independent_Main_Proof_Review.md, Sections 1.1-1.2]
+
+This makes J a meaningful sufficient certificate rather than an unrelated objective. It is
+zero exactly when every admitted full-record law is reproduced. If J <= epsilon, every score
+g(omega) taking values in [0,1] has expectation error at most min(1,epsilon), uniformly over
+the same worlds and controllers. Event probabilities are included. A task can therefore
+change from a terminal observation to a joint congestion event or another recorded
+performance criterion without relearning the decomposition. The result does not extend to an
+unobserved physical hazard merely because that hazard is important.
+
+5  Exact fixed program synthesis and finite discovery
+
+For fixed D, the joint kernel is linear in mu. Enumerate the vertices of C and the
+deterministic policies of the rectangular full-history controller family. At each confidence
+vertex introduce variables bounding the positive and negative versions of every prefix
+residual and the initial residual. For each vertex-policy pair, constrain their weighted sum
+to be at most epsilon. Together with the simplex constraints on mu and nu, these are linear
+inequalities. The resulting finite LP exactly minimizes J.
+[Robust_Recursive_Predictive_Discovery.md, Section 6]
+
+Two facts establish exactness. Holding the predictor fixed, the discrepancy is convex in the
+complete-law vector p, so its maximum over C is achieved at a vertex. Holding p and the
+predictor fixed, the policy-dependent expression is a cumulative nonnegative cost on a
+finite history tree; backward maximization has a deterministic optimizer. The absolute-value
+slack variables then describe the exact epigraph. This does not apply unchanged to
+controller constraints that couple choices across histories, such as a reused stationary
+randomized table. Such families require their own exact optimizer or a sound enlargement.
+[Robust_Recursive_Predictive_Discovery.md, Section 6]
+
+Enumerating all well-typed D in a finite discrete architecture and program budget and
+solving these LPs yields a discovery theorem. It finds a certified predictor whenever one
+exists in that language with J below the threshold; it can minimize a declared resource
+order and retain alternative passing decompositions. It is complete for exact prediction at
+zero threshold. More generally, an implementation with worst trajectory error eta is
+accepted at threshold (2H+1)eta. Failure proves only a limitation of the chosen evidence
+set, horizon, policy family, implementation language and certificate threshold.
+[Robust_Recursive_Predictive_Discovery.md, Section 7]
+
+The enumeration includes programs, not just a list of physical latent worlds. Nevertheless,
+this is not a tractability theorem. The full history tree, confidence vertices, policy
+trees, response strategies and program language may all be huge. Exact rational
+probabilities and certificates can also require substantial bit length, charged separately
+from the discrete program budget. A hard probability bit-length cap requires additional
+exact handling, rather than following automatically from the LP. Sparse physical wiring
+alone controls none of these costs. A compact installed state is not evidence of inexpensive
+discovery.
+
+An alternative source-evidence LP avoids enumerating confidence vertices. Write C using
+causal equalities Ap=b and evidence bounds l<=Fp<=u. Expanding the absolute values by sign
+choices turns each policy/sign test into maximization of d(mu)^T p plus an initial-law term
+c(nu). Its dual uses a free equality multiplier y and nonnegative interval multipliers
+lambda and eta:
+
+    A^T y + F^T(lambda-eta) >= d(mu),
+    b^T y + u^T lambda - l^T eta + c(nu) <= epsilon.
+
+One common mu and nu must satisfy all these dual certificates. This directly explains which
+evidence inequalities support the prediction claim. It avoids hidden-model identification
+and vertex construction, but the sign and policy index sets can still be enormous. A
+violating primal law is a counterexample permitted by the evidence, not necessarily the
+actual physical world. [Robust_Recursive_Predictive_Discovery.md, Section 11]
+
+6  Why weighting rare contexts matters
+
+Uniformly bounding every conditional row by the worst row can make a useful predictor fail
+because a rare history has few samples. A sound alternative needs worst-controller
+visitation, not merely the frequency under exploration. Otherwise a new controller could
+deliberately drive the process toward the neglected history.
+
+Suppose simultaneous full-history evidence provides envelopes a_t(h,a) for the conditional
+TV discrepancy against a proposed K, and r0 bounds initial-law error. Section 12 of the
+theory supplies a predictor-occupation certificate:
+
+    Delta <= min(1, r0 + sup_pi E_(Q_pi) sum_t a_t(h_t,a_t)).
+
+The supremum is computed by backward recursion, maximizing each action's current envelope
+plus its expected continuation under K. A reverse-prefix hybrid proof uses a fixed extension
+of the real kernel at unreachable histories; it does not select a new environment at each
+step. This certificate concerns Delta directly. A separately derived bound on J adds
+horizon-dependent envelope-range terms, so the two bounds must not be identified.
+[Robust_Recursive_Predictive_Discovery.md, Section 12]
+
+The experiment below uses a different weighted verifier: robust occupation under the true
+compatible-law family. Its evidence gives one TV ball for every full-history transition row
+and one for the initial law, without a shared parameter tying different rows together. In
+this particular family, independently choosing a row inside each ball defines a permitted
+complete causal law. Robust dynamic programming therefore bounds J directly by maximizing
+envelope costs under those possible true transitions. If evidence instead linked rows
+through a persistent parameter, the same rowwise computation would generally be an outer
+relaxation, not an exact optimization over that evidence family.
+[Finite_Evidence_Weighted_Discovery.md, Sections 3-4]
+
+Both methods expose the actual role of rare histories. Neither turns a short pooled-window
+estimate into a full-history conditional guarantee. A zero-count row needs the full
+uncertainty allowed by the remaining evidence, and neither method manufactures missing joint
+correlations. The predictor-occupation objective also depends nonlinearly on K through its
+visitation law: efficient verification of a candidate is not automatically a convex
+synthesis method.
+
+7  A finite evidence discovery example
+
+The service example has two supplied binary readout ports, not an unknown number of physical
+components. Its generator uses a current readout pair y, an earlier pair z and a joint
+action a. Reference marginal response probabilities are
+
+    p0 = (1 + 3a0 + 2z0 + 2y1)/10,
+    p1 = (1 + 3a1 + 2z1 + 2y0)/10.
+
+Half the time outputs use independent uniform thresholds; otherwise both use one common
+threshold. This creates temporal dependence, neighboring influence and simultaneous
+correlation. These generating formulas produce the synthetic data but are not supplied to
+the proposal and validator as known environmental structure.
+[Discovered_Service_Memory_and_Shared_Load.md, Sections 1-2;
+Finite_Evidence_Weighted_Discovery.md, Section 1]
+
+The principal run draws a compressed multinomial histogram of 10,240,000 independent
+synthetic episodes, with seed 202610291533. This has the distribution of counting
+independently sampled categorical episodes; it does not materialize millions of records.
+Floating-point sampling approximates the rational generating probabilities. Each H=2 episode
+records z, y, first action, next readout, second action and final readout. There are 4,096
+possible complete episodes. Uniform action exploration produces 64 first-decision
+history/action rows and 1,024 second-decision full-history/action rows: 1,088 rows in total.
+The smallest observed count is 365. [Finite_Evidence_Weighted_Discovery.md, Section 1;
+weighted_episode_discovery_checks.json]
+
+For each port, the proposal searches all 64 masks of the six binary coordinates
+(y0,y1,z0,z1,a0,a1). A 0.01 empirical-range tolerance selects unique inclusion-minimal
+masks:
+
+    port 0 uses (y1,z0,a0)
+    port 1 uses (y0,z1,a1)
+
+The tolerance and rounding to tenths are proposal heuristics, not confidence statements. The
+implementation stores one earlier local bit per port, receives the neighboring current bit
+before predicting, uses its own action, and updates its memory to the current local readout.
+Initialization reads the actual preceding observation. Each local response table has eight
+contexts. This discovers predictive input scopes, memory and messages around the supplied
+ports; it does not recover physical partition identity.
+[Finite_Evidence_Weighted_Discovery.md, Section 2]
+
+The joint proposal has shared mixture weight 1/2 and 110 positive deterministic response
+atoms: ten common-threshold atoms of weight 1/20 and one hundred independent-threshold atoms
+of weight 1/200. Each atom specifies its responses across all contexts. They form one
+context-independent mixture, not separate per-context couplings. In the population
+calibration, replacing the joint mechanism by independently sampled correct marginals
+produces one-step TV as large as 1/4. [Discovered_Service_Memory_and_Shared_Load.md, Section
+4; service_interface_checks.json]
+
+The concrete compiled sampler uses a common driver with 200 equiprobable outcomes per tick.
+It delivers one of ten threshold symbols to each port, requiring four fixed binary bits per
+delivery, in addition to each port's one-bit neighboring observation and one-bit recurrent
+memory. The checker verifies 4,096 two-tick traces. These driver deliveries are simulator
+resources, not assumed physical sensors. Exact uniform sampling, synchronization and
+deadlines also need an execution contract; fair-bit rejection sampling has no fixed
+worst-case draw count. A centralized numerical forecaster can instead calculate joint
+probabilities without sampling. [Finite_Evidence_Weighted_Discovery.md, Section 7;
+weighted_episode_discovery_checks.json]
+
+A bounded-work alternative draws exactly twenty independent fair bits per tick, forms their
+integer U, and sets R=floor(200 U/2^20). Its driver law differs from uniform200 by exactly
+33/1638400 in TV. Deterministic threshold processing cannot enlarge that discrepancy; over
+H=2, adding twice this source error gives the outward certificate 0.043653, still below
+0.05. Thus the 0.043613 figure refers to exact probabilities or the ideal-source simulator,
+while 0.043653 also covers this bounded-random-bit generative implementation. Fair-bit
+quality, bounded arithmetic and delivery remain declared capabilities, not verified
+hardware. [Finite_Evidence_Weighted_Discovery.md, Section 7;
+weighted_episode_discovery_checks.json]
+
+Validation then returns to every full-history row, rather than assuming that the proposed
+short memory is sufficient. For four outcomes, the 14 nonempty proper subsets give the
+conditional bound 14 exp(-2nr^2) for empirical TV radius r at a row with n visits. The
+construction fixes exponent 13 for each conditional row and 16 for the sixteen-outcome
+initial law before using the counts. Radii sqrt(13/(2n)) and sqrt(16/(2N)) are rounded
+upward to millionths with integer square roots and exact inequalities. The fixed
+unconditional union bound is
+
+    14 * 1088 * exp(-13) + 65534 * exp(-16) < 0.041804218.
+
+Exact rational Taylor bounds verify this inequality. Independent episodes justify
+conditioning on each row's own visit count, followed by unconditioning and a union bound;
+independence between rows is unnecessary. A sum evaluated at all observed random counts is
+not substituted for the fixed unconditional guarantee.
+[Finite_Evidence_Weighted_Discovery.md, Section 3; Independent_Main_Proof_Review.md, Section
+7]
+
+The resulting confidence universe includes all finite-horizon causal laws satisfying those
+full-history TV balls, with simultaneous coverage at least 95 percent. It does not assume
+Markov order, additive dynamics, rational parameters or a physical shared source.
+Conditional radii range from 0.006357 to 0.133448. The 10.24 million episodes are the
+acquisition cost of this construction, not an optimality claim or a sample lower bound.
+Histogram compression does not remove that cost. [weighted_episode_discovery_checks.json]
+
+8  The numerical certificate and what cheaper interfaces lose
+
+The example uses data-driven heuristic proposal followed by sound verification; it does not
+run the exhaustive program search or solve the general synthesis LP. For each row, the
+verifier adds the empirical discrepancy against K to its confidence radius and caps the
+result at one. Robust dynamic programming maximizes the sum of these costs over every
+adaptive action choice and every transition row in the corresponding TV ball. Linear
+expectation over a finite TV ball is maximized by moving probability mass from lower-value
+to higher-value outcomes, respecting the available radius and normalization; the checker
+performs this operation with rational arithmetic. The initial-law discrepancy is bounded
+separately and added. The dynamic program exactly maximizes this fixed envelope cost, not J
+itself: the envelopes and separate initial bounds can be conservative.
+[Finite_Evidence_Weighted_Discovery.md, Section 4; Independent_Main_Proof_Review.md, Section
+7]
+
+The checked result is
+
+    robust weighted J upper bound       0.04361246037245435
+    outward rational certificate        43613/1000000 = 0.043613
+    uniform worst-prefix bound          0.19998350864652698
+    acceptance threshold                1/20 = 0.05
+
+Thus the weighted certificate accepts the proposal and the uniform certificate rejects the
+same proposal on the same data. Since Delta<=J, the outward certificate also bounds complete
+action/readout-law TV for every compatible environment and every admitted adaptive
+controller. The statistical interpretation is conditional on the independent-episode,
+stable-regime, exogenous-exploration and policy-invariance assumptions. Simulation supplies
+those assumptions here; real logs would require their own justification.
+[weighted_episode_discovery_checks.json; Finite_Evidence_Weighted_Discovery.md, Sections
+4-5]
+
+The discovered memory and message have a certified role. The candidate's nominal positive
+law lies inside the confidence set. Under the “request when clear” controller, pairing
+equal-mass initial histories that differ only in the earlier local reading gives
+next-response probabilities separated by 1/5. A component denied that reading must issue the
+same forecast on the pair. Summing the triangle-inequality loss gives a lower bound J>=1/10.
+Pairing histories that differ only in the neighboring current reading gives the same lower
+bound when that signal and equivalent delivered information are unavailable. Both omissions
+fail the 0.05 certificate threshold. [Finite_Evidence_Weighted_Discovery.md, Section 6;
+weighted_episode_discovery_checks.json]
+
+These are lower bounds on J, not claims that complete trajectory TV is at least 0.1. They
+also depend on the access contract: the other component's action is not an uncharged side
+channel, and stored or transmitted encodings of a missing signal count as information.
+Centralization, moving memory or adding a query phase changes the implementation class.
+
+The companion checks include controllers that request service when a readout is clear and
+when it is busy. The all-controller theorem is stronger than those examples, allowing action
+choices based on the entire admitted observed history. No refitting is needed for a
+different bounded record score. However, the two-decision horizon, supplied ports and
+exhaustive full-history coverage make this a small integration result, not evidence of
+scalable discovery from sparse physical logs. Earlier population-table calculations and
+deliberately constructed deterministic counts are calibration controls, not substitutes for
+the sampled experiment. [finite_episode_discovery_checks.json;
+Finite_Evidence_Weighted_Discovery.md, Sections 5-7]
+
+9  Preserving uncertainty without resampling the world
+
+One predictor may be unable to approximate a wide confidence set. The persistent-family
+extension fixes one recursive program D but permits a separate positive parameter vector for
+each confidence vertex p^v. If its branch predictor Q_v has uniform error epsilon_v, then
+for any fixed mixture alpha, draw branch V at initialization and retain it throughout the
+episode. For every controller,
+
+    TV(P_(sum_v alpha_v p^v,pi), Q_(alpha,pi))
+       <= sum_v alpha_v epsilon_v.
+
+Every point of C is such a mixture, and every such mixture remains in C. This gives a
+policy-uniform Hausdorff approximation between the two law families. The same alpha is used
+across controllers, not chosen after observing which controller is installed.
+[Robust_Recursive_Predictive_Discovery.md, Section 10]
+
+Retaining the branch matters. A fixed coin bias of either 1/4 or 3/4 gives probability 3/8
+of two unequal outcomes. A row selector that changes the permitted bias after seeing the
+first outcome can produce 3/4 instead. It uses allowed individual conditionals but not an
+allowed persistent world. The general theorem and persistent-mixture construction avoid this
+substitution. [Quantifier_and_Statistical_Guardrails.md, Section 1]
+
+A generative branch register is not enough to predict from actual physical observations.
+That use requires branch likelihoods updated by
+
+    L_v(h,a,o) = L_v(h) K_v(o|h,a),
+
+and, for specified alpha and a positive normalizer, weights proportional to alpha_v L_v(h).
+These are conditional weights inside the chosen predictive model, not added statistical
+confidence that a physical world is true. Unknown alpha must remain consistently
+parameterized through the episode. A zero normalizer calls for declared out-of-model
+handling, not a confident posterior.
+
+Computing each likelihood may require joint readouts unavailable at any local owner. Exact
+finite-horizon rational likelihood products with b-bit factors and N branches have a direct
+storage upper bound O(NHb), before normalization and alpha representation. This is not
+merely a log N branch label. Joint likelihood computation, messages, numeric precision and
+deadlines must be added to the discovered interface budget. Without a permitted joint
+processor or a proved distributed likelihood circuit, the family theorem remains a law-level
+approximation rather than a complete low-cost local prediction interface.
+[Robust_Recursive_Predictive_Discovery.md, Section 10; Independent_Main_Proof_Review.md,
+Section 6]
+
+10  Composition source costs and the remaining boundary
+
+Several predictive views can compose by sharing actual sensor, memory, table and source
+identities inside one combined program. Duplicate outputs are equated, not independently
+sampled. Projection of its certified full-record law then preserves predictions for the
+views and their joint combinations. Changing a boundary can change the required contexts and
+realization class, so an independently successful marginal projection is not automatically
+an executable joint refinement. [Robust_Recursive_Predictive_Discovery.md, Section 8]
+
+The source budget is particularly easy to misstate. The deterministic-strategy LP is exact
+for unrestricted finite shared randomness, including implementations obtained by absorbing
+private randomness into the shared seed. Its number of positive strategy atoms is not the
+minimum shared-source cardinality when independent private randomness remains available. A
+fixed shared alphabet with private channels leads instead to a generally nonconvex
+mixture-of-products problem. Thus the example's 110 atoms are a valid implementation
+witness, not a minimum physical source count. [Positive_Joint_Realization.md, Sections 2-3]
+
+A simple refinement control makes the distinction visible. A uniform one-hot output on three
+bits admits a binary shared source for either of two grouped bipartitions, using private
+randomness inside the grouped side. Its three separate outputs need three shared-source
+values in the stated conditional-independent-private-randomness model: each allowed
+product-support component must be a singleton. For n one-hot outputs, all nontrivial binary
+cuts can still use a binary source, while the atomic refinement requires n values. This is
+an elementary source-cardinality obstruction, not an unrestricted dynamic memory theorem or
+a new positive-realization principle. [Positive_Joint_Realization.md, Section 5]
+
+Exact finite predictive memory also needs its own justification. The service stress family
+includes a two-state hidden mode whose noisy observations yield infinitely many distinct
+predictive posteriors. Finite physical state therefore does not imply finite exact observer
+state. A contracted and quantized log-odds filter supplies an approximate positive predictor
+in that particular known-parameter subfamily, but does not identify its parameters or
+generalize the discovery experiment to hidden architectures.
+[Interacting_Service_Zone_Family.md, Sections 3-5]
+
+The independent AI review found no mathematical blocker in the scoped main transfer,
+fixed-program LP and finite-search theorems, and accepted the persistent-family,
+evidence-dual and predictor-occupation extensions. Its superseding finite-evidence review
+accepted this instance after correcting the unconditional confidence calculation. An
+independent checker read the saved histogram, recovered the masks, checked 1,088 exact
+radius inequalities and solved 65 generic numerical LPs, reproducing the weighted result
+within 1e-10 without importing the original dynamic program. An additional exact check
+enumerates all 1,048,576 twenty-bit source inputs and 121 threshold pairs for the bounded
+sampler. Separate rational regressions check the theorem's quantifiers and failure controls.
+These are not proof-assistant verification or human review, and the numerical LP cross-check
+is not an exact LP certificate. [Independent_Main_Proof_Review.md, Sections 4-10]
+
+An approximately 4.36-percentage-point bound on arbitrary recorded-event probabilities can
+still be too loose for stringent safety targets. Predictive reuse establishes the form and
+scope of a guarantee, not that its numerical tolerance is adequate for every application.
+
+The established outcome is a bounded evidence-to-interface certificate calculus plus a
+finite-data recurrent joint-prediction demonstration. Repeated code does not certify
+arbitrary future horizons. Unmeasured hazards require sound observation-to-physical
+contracts. General physical partition discovery, scalable sparse-evidence synthesis,
+original C5 integration and broad reconstruction-contract discharge remain outside the
+demonstrated result. Reducing the evidence and verification burden while preserving the same
+joint, persistent-world and executable-resource obligations remains an open burden; local
+marginal fit does not resolve it. [Robust_Recursive_Predictive_Discovery.md, Sections 7-9;
+Prior_Coverage_and_Target_Burden.md, Section 4]
+
+Source locations
+
+Robust_Recursive_Predictive_Discovery.md and Positive_Joint_Realization.md are in theory/.
+The service notes, finite-evidence note and named JSON results are in examples/.
+Prior_Coverage_and_Target_Burden.md is in audit/. Independent_Main_Proof_Review.md and
+Quantifier_and_Statistical_Guardrails.md are in review/. These filename references identify
+the claims and calculations summarized above. The exact predecessor copy of the typed
+observer semantics is references/safety_representation/Executable_Observer_Calculus.md.
+
+External sources
+
+E1  Wolfe, James and Singh, Approximate Predictive State Representations, AAMAS 2008.
+[Approximate Predictive State Representations](https://www.ifaamas.org/Proceedings/aamas2008/proceedings/pdf/paper/AAMAS08_0647.pdf)
+
+E2  Barnett and Crutchfield, Computational Mechanics of Input-Output Processes, manuscript dated 6 February 2016.
+[Computational Mechanics of Input-Output Processes](https://csc.ucdavis.edu/~cmg/papers/et1.pdf)
+
+E3  Nayyar, Mahajan and Teneketzis, Decentralized Stochastic Control with Partial History Sharing.
+[Decentralized Stochastic Control with Partial History Sharing](https://arxiv.org/abs/1209.1695)
+
+E4  Wang and colleagues, Building Minimal and Reusable Causal State Abstractions for Reinforcement Learning, 2024.
+[Building Minimal and Reusable Causal State Abstractions](https://arxiv.org/html/2401.12497v1)

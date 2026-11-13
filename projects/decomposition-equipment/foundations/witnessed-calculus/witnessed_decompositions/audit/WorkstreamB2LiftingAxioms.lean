@@ -1,0 +1,5 @@
+import WitnessedDecompositions.RefinementLifting
+open WitnessedDecompositions.SemanticRefinement
+#print axioms liftArrow_of_family
+#print axioms mapArrow_surjective_of_operation_lifts
+#print axioms mapArrow_bijective_of_operation_bijective

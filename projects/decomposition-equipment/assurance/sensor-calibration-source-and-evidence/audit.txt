@@ -1,0 +1,24 @@
+Independent audit — 2026-10-30
+
+Reviewed calibration_solver.py in full and reran it successfully. Mathematical derivation was completed independently before reading source. Exact DP, primitive-fault enumeration, raw outcome replay, and enumeration of 11,686 deterministic collapsed-outcome trees agree for the reported cases. Enumeration uses three sufficient outcomes (00, 11, either discordance), not four-outcome raw policy trees. This is valid because either discordance identifies the mismatched phase with certainty and has the same continuation action set.
+
+Calibration aligned likelihood: P(00)=16/25, P(11)=9/25. Split likelihood: P(00)=64/125, P(11)=29/125, each discordance=16/125. Production bad probabilities: a=99/2500=.0396, b=7351/125000=.058808. Gap b-a=2401/125000.
+
+For any nonnegative history weights u,v and either calibration mode, sum_y min(u P0(y),v P1(y)) >= (93/125) min(u,v). Iteration across adaptive experiments bounds equal-world-average decision error below by (1/2)(93/125)^k; worst-world risk is at least this average transformed by a+(b-a)e. Random initial mode, repeat until first discordance then flip, otherwise retain initial mode, attains the bound equally in each fixed world. Thus this is true minimax, not an assumption of a Bayesian world prior. World must remain fixed independently of the policy's private random seed.
+
+Abort/deadline miss contributes loss 1, whereas on-time production in either mode has loss at most .058808. Therefore extra probes after k available probe slots and aborts cannot improve optimum. Early stopping is included in DP; padding stopped experiments with ignored observations justifies the same information lower bound. These claims use the stated restricted action model.
+
+R_k = 99/2500 + (2401/250000)(93/125)^k.
+R_0=.049204; R_1=.046745376; R_2=.044916159744.
+Two probes are necessary and sufficient for risk<=.045. At k=2 expected probe count is 1.872, maximum2; expected total time4.872, maximum5. Risk slack is .000083840256. Unresolved phase probability .776768 is distinct from mode error .276768: on no-discordance histories residual uncertainty remains, while discordance identifies phase exactly.
+
+Removing structural bridge: for fixed calibration phase theta, stable/reversed production phases have identical allowed preproduction transcripts. For any on-time executed mode their hazards sum a+b. If on-time execution probability is t, paired average bad risk is t(a+b)/2+(1-t)>=.049204. Fair blind mode attains .049204 in all four worlds for any probe budget. Therefore the bridge is an explicit unlearnable assumption in this regime, not a conclusion of calibration. The reported k=2 reversed-bridge risk .053491840256 is consistent.
+
+Marginal-only checking: each production report has invalid probability .0396 in both architectures. Worst coupling from those marginals alone permits .0792, so a sound marginal-only robust checker cannot certify .045. This failure to certify is not actual physical impossibility in the positive case. Assuming independent report faults would instead give .07763184, also unjustified. Checking only each marginal<=.045 is unsound for the union event.
+
+Provenance resolved: production_energy=2 and total energy budget k+2 are explicitly added normalized fixture conventions, not user-given or measured physical facts. No probability/time result depends on that normalization. These are exact mathematical checks under declared idealized assumptions, not empirical hardware validation or a real-world safety certification.
+
+Reviewed source SHA256: 36f15c7a2c78bc59889afceef4e0ce66aebf4571465dd4b5661b1bfeb493a0a1
+Reproduced results SHA256: adc5261e07fd5d8dfb9a9258b23b6e1b7bf5dc4e0cd91ebfd70d169d12a7998a
+
+Final metadata revision independently inspected and rerun; PASS. README_main_case.txt reviewed for agreement with proof and scope. Energy normalization is clearly labeled; exact mathematical validation is not empirical safety validation.

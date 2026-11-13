@@ -1,0 +1,40 @@
+import WitnessedDecompositions
+
+/-! Kernel dependency audit of the core laws and discriminating examples. -/
+
+#print axioms WitnessedDecompositions.Path.components_comp
+#print axioms WitnessedDecompositions.Path.components_expand
+#print axioms WitnessedDecompositions.Path.expand_edges
+#print axioms WitnessedDecompositions.Signature.nullary_is_loop
+#print axioms WitnessedDecompositions.Tree.graft
+#print axioms WitnessedDecompositions.Tree.graft_leaf
+#print axioms WitnessedDecompositions.Tree.graft_identity
+#print axioms WitnessedDecompositions.Tree.graft_assoc
+#print axioms WitnessedDecompositions.Tree.compose_identity
+#print axioms WitnessedDecompositions.Tree.atLeaf_fromLeaves
+#print axioms WitnessedDecompositions.Tree.fromLeaves_atLeaf
+#print axioms WitnessedDecompositions.Tree.substitutionEquiv
+#print axioms WitnessedDecompositions.Tree.frontier_corolla
+#print axioms WitnessedDecompositions.Tree.frontier_components
+#print axioms WitnessedDecompositions.Tree.leaves_graft
+#print axioms WitnessedDecompositions.Tree.frontier_graft
+#print axioms WitnessedDecompositions.Tree.graftOperation
+#print axioms WitnessedDecompositions.Algebra.evaluate_unique
+#print axioms WitnessedDecompositions.Algebra.evaluate_presentation
+#print axioms WitnessedDecompositions.Algebra.evaluate_flattening
+#print axioms WitnessedDecompositions.Examples.MultiInterface.different_presentations
+#print axioms WitnessedDecompositions.Examples.MultiInterface.equal_flattened_decompositions
+#print axioms WitnessedDecompositions.Examples.MultiInterface.evaluation_not_injective
+#print axioms WitnessedDecompositions.Examples.MultiInterface.equal_algebra_evaluations
+#print axioms WitnessedDecompositions.Examples.MultiInterface.distinct_presentation_evaluations
+#print axioms WitnessedDecompositions.Examples.MultiInterface.distinct_operations
+#print axioms WitnessedDecompositions.Examples.MultiInterface.ordered_frontier
+#print axioms WitnessedDecompositions.Examples.MultiInterface.graft_builds_rightGrouped
+#print axioms WitnessedDecompositions.Examples.RepeatedComponent.independent_occurrences
+#print axioms WitnessedDecompositions.Examples.RepeatedComponent.order_is_not_quotiented
+#print axioms WitnessedDecompositions.Examples.RepeatedComponent.nullary_frontier
+#print axioms WitnessedDecompositions.Examples.RepeatedComponent.nullary_has_no_leaves
+#print axioms WitnessedDecompositions.Examples.RepeatedComponent.nullary_has_no_occurrences
+#print axioms WitnessedDecompositions.Examples.RepeatedComponent.nullary_graft
+#print axioms WitnessedDecompositions.Examples.RepeatedComponent.nullary_insertion
+#print axioms WitnessedDecompositions.Examples.RepeatedComponent.concrete_associativity

@@ -1,0 +1,583 @@
+### A1 Typed algebraic specification and representation theorem
+
+**Class and claim:** M. Specify the category of path-profile nonsymmetric multicategories over fixed $(I,J)$ and prove that the chosen indexed tree representation implements the intended occurrence-linear syntax, rather than a weaker recursive fold language.
+
+**Inputs:** The frozen core; an explicit definition of ordered composable profiles and equality of profiles; a finite signature used as a running example.
+
+**Artifact:** A mathematical specification, a representation comparison between abstract typed planar trees and the implementation, and named fibre-level operation and substitution declarations.
+
+**Discharge:** L for typing, occurrence transport, frontier substitution, units, and associativity in the implemented operation fibres. P, supplemented by L where practical, for the representation comparison and the correspondence with the standard nonsymmetric colored multicategory formulation restricted to admissible path profiles. The comparison must be two-sided on the selected representation, not merely a semantics-preserving map.
+
+**Tests:** Wrong endpoints, reversed order, a nullary nonloop, and substitution at the wrong repeated occurrence must be rejected or distinguished. Test both nonempty and explicitly enabled nullary cases.
+
+**Dependencies:** None. **Status:** OPEN; the existing seed is relevant but does not yet meet this statement.
+
+**Minimum passing floor:** The fibre-level structure and two-sided representation comparison must cover arbitrary signatures over the fixed base. Output-indexed recursion, one-interface syntax, or passing example tests alone does not pass. This is infrastructure, not an independently major research contribution.
+
+### A2 Free universal property
+
+**Class and claim:** M. Construct the free functor on typed signatures and establish its universal property against every target calculus over the fixed base.
+
+**Inputs:** A1 and the category of signature maps and strict calculus morphisms.
+
+**Artifact:** A natural bijection
+
+$$\operatorname{Hom}_{\mathrm{Calc}}(F(S),M)\cong\operatorname{Hom}_{\mathrm{Sig}}(S,U(M)),$$
+
+with explicit mutually inverse maps, preservation of all operations, and uniqueness of the extending morphism.
+
+**Discharge:** L for the extension, preservation, uniqueness, and inverse laws on the core implementation; P for any categorical packaging not formalized. Naturality in both arguments and the free-forgetful adjunction must be stated and proved. A structural fold theorem with arbitrary values assigned to component leaves does not by itself discharge this obligation.
+
+**Tests:** Two target calculi, including a nontrivial relational or graph-cut model; two distinct assignments of a primitive parallel witness; and a failed assignment that does not preserve declared types.
+
+**Dependencies:** A1. **Status:** OPEN.
+
+**Minimum passing floor:** The universal quantifier over target calculi, morphism preservation, inverse correspondence, and naturality are required. A recursive fold with arbitrary leaf values, evaluation in one model, or uniqueness only among chosen recursive functions does not pass.
+
+### A3 Presented universal property and semantic soundness
+
+**Class and claim:** M. Construct the least parallel substitution congruence and prove the presented universal property. Explain the relation between derivability, equality in the presented calculus, and equality in all models satisfying the presentation.
+
+**Inputs:** A2; an explicit relation schema whose instances are all parallel.
+
+**Artifact:** Congruence rules, the quotient calculus, the factorization theorem for interpretations satisfying $E$, and a model-theoretic separation statement using the presented calculus itself where applicable.
+
+**Discharge:** L for the core congruence closure and quotient substitution well-definedness; P or L for the complete universal property and the precise all-models statement. The quotient must preserve the ordered boundary typing. The report must not substitute equality in one model for equational derivability.
+
+**Tests:** A genuine associativity-style presentation with nontrivial intermediate interfaces; a model satisfying it; a separating model for an undeclared equation; and rejection of a nonparallel equation.
+
+**Dependencies:** A1, A2. **Status:** OPEN.
+
+**Minimum passing floor:** The least parallel congruence and universal quotient must be constructed for arbitrary declared equations. Soundness in one model, a quotient type without substitution descent, or silently identifying all observed equalities does not pass.
+
+### A4 Decidable fragment and limits
+
+**Class and claim:** M. Establish one useful, nontrivial decidable equational fragment and an explicit boundary beyond which decidability is not asserted.
+
+**Inputs:** A3; a finite, typed, occurrence-linear rewrite specification with decidable matching and a stated reduction order. The mandatory concrete fragment contains C5’s binary cut rotations, unit elimination, finite-monoid decoration aggregation, and movement of decorations through cut constructors, with genuinely interacting schemas. The abstract theorem may state wider checkable hypotheses, but this mixed fragment cannot be replaced by associativity alone.
+
+**Artifact:** A termination proof, a complete critical-overlap or equivalent confluence proof, a normalization procedure, and a theorem identifying normal-form equality with the presented congruence for the selected fragment. Include a typed composition-associativity example over several interfaces, not solely an untyped binary tree toy.
+
+**Discharge:** P for the general fragment and its soundness/completeness; L for a sufficiently substantial worked instance and executable normalizer soundness. Supply a rigorous reduction showing how unrestricted unary witness presentations encompass monoid word problems, with a primary source for the undecidability theorem used. No claim of general decidability is permitted.
+
+**Tests:** All critical overlap shapes of the selected rewrite system; equalities requiring several rewrites; a deliberately nonconfluent presentation; and a nonterminating orientation whose rejection is explained.
+
+**Dependencies:** A3, C1. **Status:** OPEN.
+
+**Minimum passing floor:** The declared class must have a complete proof of matching, termination, confluence, and agreement with the semantic congruence; its normalization must support C5 or B3. A standard associativity normalizer by itself, a bounded exhaustive search, or an assertion that critical pairs can be checked does not pass.
+
+### B1 Raw refinement category and occurrence coherence
+
+**Class and claim:** M. Construct the raw leaf-graft refinement category, prove its category laws, and characterize its thinness and antisymmetry for the selected planar syntax.
+
+**Inputs:** A1; leaf-indexed forests and typed grafting.
+
+**Artifact:** Category construction; unique recovery of the graft forest when valid; a proof of the tree-prefix characterization; and a theorem identifying finite graft-event partial orders and showing that complete histories for the same forest differ precisely by interchange of independent events. Specify how event addresses change under grafting and prove the correspondence, not just two sample swaps.
+
+**Discharge:** L for the category laws, typed forest composition, and core occurrence correspondence. P or L for the full prefix and chronology comparison. If raw refinement is a poset, the result must say so; artificial parallel arrows must not be added to make it look richer.
+
+**Tests:** Repeated labels at different positions; independent grafts in both orders; a dependent graft that cannot be interchanged; nullary grafts when enabled; and a failed attempt to refine an existing internal vertex rather than a leaf.
+
+**Dependencies:** A1. **Status:** OPEN.
+
+**Minimum passing floor:** Prove raw thinness and antisymmetry as well as the category and chronology comparison. A free category of execution traces, a reachability relation with lost forest data, or category laws proved only after erasing occurrence positions does not pass.
+
+### B2 Evaluated refinements and comparison functors
+
+**Class and claim:** M. Construct the semantic refinement category for a general target calculus and prove that interpretation induces a functor from raw refinements.
+
+**Inputs:** A2, B1, and an interpretation $F(S)\to M$.
+
+**Artifact:** Explicit objects and arrow tuples; the evaluation functor; its identity and composition laws; and sufficient hypotheses for reflecting or preserving the distinctions the report claims.
+
+**Discharge:** L for the basic construction and functor laws where representation permits; P for the general comparison. Provide a genuine example in which two different presentation trees have the same evaluated witness. Provide a justified nonthin semantic refinement example, such as two different original occurrences refined to give the same quotient operation, and identify the arrow data that distinguish it.
+
+**Tests:** The associative binary-tree quotient gives parallel semantic refinements corresponding to different leaf expansions while raw tree-prefix refinements remain thin. A semantics that discards all witnesses is a negative control, not a certificate of faithful comparison.
+
+**Dependencies:** A2, A3, B1. **Status:** OPEN.
+
+**Minimum passing floor:** Construct actual arrow tuples and a functor for arbitrary target calculi, then distinguish the nonthin semantic example from raw prefix refinement. Showing equal evaluations of two trees or naming a category without arrow composition does not pass.
+
+### B3 Quotients and comparison coherence
+
+**Class and claim:** B. Determine when forming the presented witness calculus and then its refinement category agrees with an explicitly specified categorical quotient or completion of the raw refinement category.
+
+**Inputs:** A3–A4 and B1–B2; the interacting C5 presentation family and an independently specified categorical completion. The candidate completion is generated by elementary raw refinements and invertible equation steps, with raw category relations and explicit ordinary/mixed critical-coherence relations. The relations must have a finite or effectively enumerable basis under the selected hypotheses, rather than being defined as every equality true in the intended semantic target.
+
+**Artifact:** A precise comparison construction, a sufficient criterion for agreement, and a necessity analysis within the named class. All comparison squares involving interpretation, quotient, and refinement must have explicit commuting equalities or specified natural isomorphisms with coherence proofs.
+
+**Discharge:** Either a comparison theorem covering a nontrivial presentation class, or an obstruction showing exactly why the proposed quotient fails together with a repaired construction and positive theorem, or a sharp impossibility boundary for the stipulated class. A statement that quotients are subtle is not a result.
+
+**Tests:** Associativity equations; an equation that identifies different internal structures; a witness-collapsing semantics; and a case where quotienting objects alone fails to account for arrow witnesses.
+
+**Dependencies:** A3, A4, B1, B2, C5. **Status:** OPEN.
+
+**Minimum passing floor:** The comparison must cover an unbounded presentation family with genuine witness identification and characterize which information its arrows retain. A quotient of objects alone, one associative-tree example, or assuming the comparison is full/faithful as a hypothesis does not pass.
+
+### B4 Refinement invariants and recoverability
+
+**Class and claim:** M. Establish useful invariants of refinement and characterize what a refinement record can recover about its source and added structure.
+
+**Inputs:** B1–B3 and the principal models in Workstream C.
+
+**Artifact:** Theorems for frontier order, vertex growth or an appropriate well-founded measure, retained source structure, and a precise distinction between graft forest, final tree, evaluated witness, and chronological history. Include a classification within a stated finite or finitely presented class of when the chosen forgetful maps are injective or have nontrivial fibres.
+
+**Discharge:** P plus L for the elementary invariants. The classification must go beyond displaying one pair of equal images; it must identify a reusable structural criterion or an exact finite-family description with proof.
+
+**Tests:** Unary primitive vertices, nullary witnesses, repeated occurrences, and two distinct event schedules yielding the same forest.
+
+**Dependencies:** B1, B2, B3, C1, C2. **Status:** OPEN.
+
+**Minimum passing floor:** A structural criterion or exact family classification must identify recoverable source/forest information and support G2. Node counting alone, the tautology that injective maps are recoverable, or one equal-image pair does not pass.
+
+### C1 A finite typed graph-cut family
+
+**Class and claim:** M. Build a model family that simultaneously exhibits nontrivial interfaces, repeated occurrences, nonreconstructive cuts, and competing refinement trees.
+
+**Inputs:** A1–A3. Use finite simple graphs with explicitly ordered vertices, a bound $N\geq6$, and a finite category with at least three objects and nonidentity composable arrows. A three-object chain is an admissible starting case.
+
+**Artifact:** Component types pair a graph with an arrow $A\to B$. An $n$-ary witness consists of a whole graph, an ordered partition of its vertices into $n$ possibly empty blocks, and a composable interface-arrow string whose composite is the whole arrow; the input components are the induced subgraphs with the relevant arrows. Restrictions use a declared canonical relabeling convention. Substitution refines the partition inside each block. Explain explicitly why the bound is closed under this operation.
+
+**Discharge:** P for the family and all calculus laws; L for a typed nontrivial fragment; C for the finite test instance. The report must identify exactly which data are stored in a witness, in a whole, and in a leaf. It must not erase the whole graph while relying on it in the proof.
+
+**Tests:** A mixed-interface four-leaf path containing two identical loop-arrow component types at the middle interface, refined differently; two binary groupings evaluating to the same flat cut; and two different whole graphs with the same ordered induced leaf graphs because a cross-block edge differs. Empty blocks test units, not the principal nontriviality condition.
+
+**Dependencies:** A1, A2, A3. **Status:** OPEN.
+
+**Minimum passing floor:** Uniform laws for arbitrary finite sizes, a declared closed bounded instance, the six-vertex repeated-nonempty-component certificate, and its use in C5/F2 are required. A one-off graph, empty middle blocks, or a tree-size truncation not closed under composition does not pass.
+
+### C2 A relation-based interface model
+
+**Class and claim:** M. Develop a second model with genuinely different semantics and explicit boundary changes.
+
+**Inputs:** Finite interface sets; binary relations as components; compositional containment or equality as separately declared witness conditions.
+
+**Artifact:** The model definition, substitution laws, exact versus nonexact witnesses, and interface-restriction maps. Include witnesses whose whole relation strictly contains the composite relation so that exactness is not built into the definition.
+
+**Discharge:** P for the family and L or independently checked C for the finite certificates used elsewhere. Clarify that a posetal relational semantics may identify different primitive or presentation witnesses; that loss is a property to analyze, not a reason to equate the syntax.
+
+**Tests:** At least three interface sets; unequal cardinalities; a nonempty composite; a strict containment witness; and a non-surjective intermediate boundary map that removes intermediate relational witnesses and makes the comparison strict. Containment cells may survive even when exactness fails.
+
+**Dependencies:** A1, A2. **Status:** OPEN.
+
+**Minimum passing floor:** Prove the parameterized relational model and its actual interface comparison maps, then use it in D2/E. A singleton relation example or a containment/equality conflation does not pass. This familiar model is a baseline, not novelty by renaming.
+
+### C3 Separation and nonreconstruction theorems
+
+**Class and claim:** M. Prove which distinctions the models separate and which reconstruction claims they refute.
+
+**Inputs:** C1–C2 and the semantic comparison definitions.
+
+**Artifact:** A separation matrix with proof or explicit counterexample for: same frontier versus same tree; same tree shape versus same primitive labels; same leaf types versus same whole; same whole versus same witness; same evaluated witness versus same presentation; and same observation versus same semantic object.
+
+**Discharge:** P and X. Each entry must name the domain and map in question. The nonreconstruction result must quantify over a meaningful family, not merely state that one graph edge was deleted. For graph cuts, characterize the fibre of the map that retains only the induced block graphs: cross-block edges give freely varying missing data in the unrestricted simple-graph family.
+
+**Tests:** Exhaustive checks on all ordered simple graphs up to four vertices and their relevant ordered partitions, plus independently verified six-vertex repeated-component examples and cross-block families of arbitrary size in the proof. Check that any claimed injectivity disappears in the intended negative control.
+
+**Dependencies:** B2, C1, C2. **Status:** OPEN.
+
+**Minimum passing floor:** Determine the full missing-cross-edge fibre and distinguish whole, witness, and presentation maps. A two-vertex counterexample alone or a matrix of unsupported yes/no claims does not pass.
+
+### C4 Baseline and ablation comparison
+
+**Class and claim:** M. Establish what the new presentation buys relative to mature existing structures, and which ingredients are essential.
+
+**Inputs:** A1–A4, B1–B4, C1–C3 and the primary literature.
+
+**Artifact:** Explicit translations to the relevant ordinary nonsymmetric multicategory, restriction-species, and relation or double-category baselines. Include ablations that remove interfaces, occurrence positions, retained whole data, primitive witness multiplicity, or parallelism of equations, with a theorem or counterexample showing the effect of each removal.
+
+**Discharge:** P with an independent literature check. Terminological novelty is insufficient. Each proposed new contribution must survive translation into the strongest applicable baseline, or be relabeled as exposition, synthesis, or implementation.
+
+**Tests:** Reproduce at least one established construction without changing its hypotheses; then identify precisely what additional result or comparison the program supplies.
+
+**Dependencies:** A1, A2, A3, A4, B1, B2, B3, B4, C1, C2, C3. **Status:** OPEN.
+
+**Minimum passing floor:** Compare equally informative structured baselines, with explicit translations and exact hypotheses. An informal bibliography, withholding whole/witness data from the comparator, or listing new names does not pass.
+
+### C5 Sound and complete witness presentations
+
+**Class and claim:** M. Give a semantic presentation theorem for the parameterized typed graph-cut family, then identify exactly how finite witness decorations change it. This is the central link between the free syntax, the models, and the independent-cut theory.
+
+**Inputs:** C1 for arbitrary finite ordered graphs and finite interface categories, with each bounded instance explicitly closed under the operations; binary cut generators, the designated nullary units, and explicit local rotation/unit equations. The enriched family adds witness values in an arbitrary finite commutative monoid, with occurrence-wise composition aggregating values; unary decoration operations and their equations must be stated. This enrichment retains genuine parallel witnesses and need not satisfy the reduced/unit hypotheses of a 2-Segal recognition theorem.
+
+**Artifact:** Surjective generation by the chosen generators; soundness and completeness of the local equations for equality of the full flat cut witness, not just its leaves; an explicit normal form or comparably effective decision procedure; and a theorem comparing presented refinements with semantic refinements. For every finite commutative witness monoid in the declared family, prove the complete extended presentation with an explicit decoration normal form. The separate F-workstream may prove that such an enrichment fails a stronger unique-cut condition; that failure does not excuse the required semantic presentation theorem. An elementary observation that monoid labels admit multiple splittings is a baseline counterexample, not the enriched presentation/refinement compatibility result.
+
+**Discharge:** P for arbitrary finite sizes and monoid parameters under the stated hypotheses; L for a representative nontrivial instance; C using independently implemented tree evaluation and flat-cut evaluation. The semantic comparison must commute with interface relabeling and specify what happens to arrow witnesses. Tie the factorization/uniqueness analysis directly to F1–F3, rather than assuming decorations are harmless.
+
+**Tests:** Different trees with the same full cut; same leaves but different partitions; different retained decoration values; equal total values with different local placements; units; nontrivial intermediate interfaces; and an enriched model in which unique factorization fails for a reason other than cross-edge loss.
+
+**Dependencies:** A3, A4, B1, B2, C1. **Status:** OPEN.
+
+**Minimum passing floor:** The theorem is uniform over the declared families, has both soundness and completeness, and proves the refinement and transport compatibility. Giving only the ordinary associativity quotient of binary trees, or citing restriction species without presenting witnesses, does not pass. The graph-cut part is credited to its established baseline; significance must come from the full witness-sensitive presentation and compatibility package, not a novelty claim about graph partitions.
+
+### D1 Isomorphism transport and equivariant presentations
+
+**Class and claim:** M. Add transport along a specified groupoid of interface changes and prove its compatibility with witnesses, substitution, equations, and refinement.
+
+**Inputs:** A groupoid of allowed interface isomorphisms, actions on component types and primitive witnesses, and an invariant equation family.
+
+**Artifact:** The transported calculus, its identity and composite transport laws, an equivariant free/presented universal property, and coherent comparison functors on refinement categories.
+
+**Discharge:** P, with L for the finite typed action used in an example. The transport data must be supplied or constructed; they do not follow merely from the existence of interface names. Specify the strict or coherent convention and prove the required coherence at that level.
+
+**Tests:** Nontrivial permutations of finite interface sets; composite relabelings; repeated occurrences; a non-invariant relation that does not descend; and the effect of taking isomorphism classes versus retaining witnesses.
+
+**Dependencies:** A2, A3, B2, C2. **Status:** OPEN.
+
+**Minimum passing floor:** Transport must descend through equations and induce the claimed coherent refinement comparisons for arbitrary groupoid actions in the declared class. Renaming endpoints in one example or assuming relation invariance without checking it does not pass.
+
+### D2 Noninvertible transport and exactness criterion
+
+**Class and claim:** B. Identify the additional hypotheses needed for transport along noninvertible interface maps to commute with composition or decomposition.
+
+**Inputs:** C2 and a declared class of maps of finite interface sets. Begin with relational restrictions along maps $f:A'\to A$, $g:B'\to B$, and $h:C'\to C$.
+
+**Artifact:** A comparison between composing the restricted relations and restricting their composite; a sharp equality criterion for a meaningful map class; and a generalization or limitation theorem in the chosen categorical setting. For relations, analyze the role of surjectivity of the intermediate map, including the degenerate empty-interface exceptions rather than hiding them.
+
+**Discharge:** A proved criterion and nontrivial positive family, or a bounded obstruction plus a repaired transport construction or sharp impossibility theorem. The report must distinguish a comparison map, an inclusion, an isomorphism, and an equality.
+
+**Tests:** The basic inclusion can be strict when a needed intermediate witness lies outside the image of $g$. Include a positive surjective case, a non-surjective failure, and boundary cases where emptiness makes a naïve converse false.
+
+**Dependencies:** C2, D1. **Status:** OPEN.
+
+**Minimum passing floor:** A criterion must cover a parameterized map class, handle empty-interface exceptions, and prove arbitrary-tree compatibility where claimed. The elementary non-surjectivity counterexample alone, or assuming comparison invertibility as the only criterion, does not pass.
+
+### D3 Descent and change of interface presentation
+
+**Class and claim:** B. Determine when passing between equivalent presentations of interfaces preserves the presented witness calculus and its refinement theory.
+
+**Inputs:** D1–D2, invariant equations, and a bounded class of finite interface groupoids or selected equivalences.
+
+**Artifact:** A descent or invariance theorem with explicit comparison maps and coherence, or a classified failure identifying the information lost by quotienting interface symmetries. State separately the set-valued and groupoid-valued conclusions.
+
+**Discharge:** A useful theorem applicable to at least one principal model, or a precise obstruction plus an adequate retained-symmetry repair. A groupoid-valued extension need not be formalized in Lean, but its proof must not be replaced by an appeal to unspecified higher coherence.
+
+**Tests:** Nontrivial automorphisms, stabilizers of repeated components, and a case where naïvely taking isomorphism classes destroys a required lifting or uniqueness property.
+
+**Dependencies:** B3, C1, C2, D1, D2. **Status:** OPEN.
+
+**Minimum passing floor:** Produce a concrete descent/invariance theorem and retained-symmetry repair applied to the presented witness family. Declaring two structures equivalent because they preserve everything by definition, or citing generic descent without checking the witness data, does not pass.
+
+### E1 Axioms morphisms and the core comparison
+
+**Class and claim:** M. Define the full virtual equipment of witnessed decompositions and the appropriate 2-category of such structures. Use the standard virtual-equipment framework, then specify the genuinely additional witness, presentation, refinement, and marking data.
+
+**Inputs:** A small vertical category of interfaces; horizontal component types; multiary witness cells with specified vertical boundary arrows; identities and substitution. The theory must include all restrictions and horizontal units with their full universal properties, not just endpoint relabeling maps. Chosen restrictions and units may be used in syntax, but their relationship with unchosen universal structures must be explicit.
+
+**Artifact:** A complete axiom system; normal morphisms with their preservation conditions; 2-cells and their compositions; a forgetful comparison to the fixed-boundary core; and a theorem locating the globular/core witness calculus inside the equipment. Distinguish all multicells, a specified admissible decomposition subfamily when one is imposed, and the marked exact/opcartesian subfamily. Core witnesses map into the declared admissible cells; the comparison must state its image. The full equipment has restrictions even when arbitrary restriction does not preserve the admissible or exact marking. State a checkable preservation class and prove its coherent action instead of banning nonreconstructive witnesses. Nullary-source witnesses here must not be confused with nullary-target cells in an augmented virtual-double-category theory. Any extra marking must be preserved, reflected, or forgotten according to a declared morphism convention.
+
+**Discharge:** P for the full classical theory and the 2-category laws; L for its core-facing typed fragment. Prove that all-arity restriction factorization and universal-unit substitution work in arbitrary surrounding contexts. State sizes, choice assumptions, and strictness conventions.
+
+**Tests:** Nonidentity vertical arrows, multiple horizontal components between the same interfaces, parallel witness cells, nonuniversal legitimate witnesses, nullary universal units distinct from arbitrary nullary primitives, and two composable interface changes.
+
+**Dependencies:** A1, A2, A3, B1, B2, D1, D2. **Status:** OPEN.
+
+**Minimum passing floor:** An equipment definition plus one example does not pass. The complete morphism/2-cell theory, universal factorization laws, and core/refinement comparisons are required. Importing standard virtual-equipment theory is encouraged and credited, but does not discharge the witness-sensitive package by itself.
+
+### E2 Universal presentation and reconstruction
+
+**Class and claim:** M. Construct a universal chosen virtual equipment from a specified small presentation of vertical arrows, horizontal generators, witness generators, and parallel equations, and prove a reconstruction theorem for the resulting presented class.
+
+**Inputs:** E1 and a precise presentation category; the permitted equations may mention substitution, restrictions, units, and the selected exact marking. The parameterized C5 graph-cut and finite-decoration presentations must supply a substantive test family, not merely a diagram of all the cells of an already constructed model.
+
+**Artifact:** A term or equivalent construction; its interpretation theorem into arbitrary eligible target virtual equipments; uniqueness in the declared strict/coherent sense; and a sound-and-complete reconstruction of the selected semantic equipment from its local presentation. Prove the comparison when choices of restrictions or units change. Explain the passage from chosen syntax to unchosen structures using actual comparison maps and coherence, rather than saying universal choices are canonical.
+
+**Discharge:** P for the universal presentation and semantic reconstruction theorems, including morphisms and the relevant 2-dimensional comparison. The universal interpretation must compare categories of structure-preserving functors and transformations, with extension/restriction maps, inverse or equivalence laws, and naturality. A strict adjunction, biuniversal property, or equivalence must be stated at exactly the level proved; an object-level assignment or a 1-categorical hom-set theorem alone does not meet this 2-dimensional target. If a proposed strict formulation fails, the mandatory construction still needs a correct coherent formulation; finding the failure does not discharge the full equipment target. Construct the canonical map from the original presented core into the enlarged identity-boundary calculus, classify the new horizontal units/restriction components, and prove full faithfulness or conservativity on the ORIGINAL profiles for a nontrivial explicitly characterized input class. Do not identify an existing loop component with a newly adjoined universal unit without a proved reason. Analyze the generic input class separately: if arbitrary original-profile conservativity fails, prove the obstruction and give the precise additional hypotheses under which it holds. The positive recovery theorem and the full equipment construction remain mandatory. Literal equality with the original core is not the reconstruction target. Nor can the bare core determine the vertical category or restriction data: list that additional retained data in the reconstruction input. Give generator/relation-level criteria for quotient preservation of cartesian lift uniqueness. In particular, analyze when equations identify two composites through a cartesian cell without identifying their lifts; prove the adequacy and conservativity cost of any required saturation repair.
+
+**Tests:** Two distinct choices of restrictions; an equation compatible with substitution but not with the proposed restriction descent; repeated component occurrences; nontrivial unary/nullary interactions; and finite witness decoration that changes refinement or factorization information; explicitly check whether original-profile equalities are reflected after adjoining units and restrictions.
+
+**Dependencies:** A3, A4, B3, C5, D3, E1. **Status:** OPEN.
+
+**Minimum passing floor:** A free object defined by assuming the desired universal property, or a tautological presentation listing every semantic cell and every true equation, does not pass. A reusable generator-and-local-relation presentation, complete interpretation theorem, substantive reconstruction, and choice-coherence argument are required.
+
+### E3 Substantive models and faithful comparisons
+
+**Class and claim:** M. Construct and compare at least two parameterized full virtual-equipment models, including genuinely witnessed nonreconstructive decomposition.
+
+**Inputs:** For the primary graph-cut equipment, use a finite interface groupoid and prove cartesian restriction of an arrow grade $h$ along $f$ and $g$ by the formula $g^{-1}hf$, together with its witness-level universal property. An arbitrary C1 interface category is not assumed to have this restriction; extending it requires a specified restriction envelope. A separate relational, span, profunctor, or similarly established model supplies genuinely noninvertible vertical arrows.
+
+**Artifact:** All cell sets, restrictions, universal units, morphisms, and exact markings; proofs of every required universal property; and comparison morphisms to the core and between the relevant models. At least one model must retain multiple witnesses and wholes, rather than mapping all cells into a posetal relation. Explain what each comparison preserves, reflects, or forgets.
+
+**Discharge:** P uniformly over the stated parameter families, plus C and a checked typed core instance. Prove that the witness model is a virtual equipment even where chosen finite horizontal composites do not exist. Demonstrate nonrepresentability of a genuine path in the unchanged horizontal-object universe when applicable.
+
+**Tests:** Three or more interfaces, repeated nonempty components with distinct refinements, nonreconstructive wholes, nontrivial interface change, an arbitrary witness that is not opcartesian, and a positive exact assembly. A groupoid-only transport model cannot by itself meet the separate noninvertible-interface requirement.
+
+**Dependencies:** C1, C2, C3, C5, D2, E1. **Status:** OPEN.
+
+**Minimum passing floor:** Verifying Rel or Span alone, or decorating a terminal equipment with irrelevant labels, does not pass. The witness-sensitive model must do work in E2, E4, and the cut/refinement comparisons.
+
+### E4 Ordinary equipment representability and completion
+
+**Class and claim:** B. Characterize when the virtual theory has all finite universal horizontal composites, and when a universal ordinary-equipment completion exists while preserving the specified core information.
+
+**Inputs:** E1–E3, a fixed class of presented virtual equipments, and an explicit notion of information preservation. Ordinary equipment means actual representability of every finite horizontal source path, not the ability to write a formal path symbol.
+
+**Artifact:** Checkable presentation/model criteria; a construction and universal property for an ordinary completion on a parameterized genuinely nonrepresentable positive input class, adding new horizontals while proving the stated information-preservation comparison; a proof of the coherent associators and unitors induced by universal composites; and a precise obstruction or information-loss analysis outside that class. State whether horizontal objects, vertical maps, or witness equalities must change.
+
+**Discharge:** A theorem for the selected class or a sharp bounded impossibility theorem, together with the required positive completion class. The standard theorem that a representable virtual double category yields a pseudo double category is background; the task is to identify representability and completion compatibility for the presented decomposition theory.
+
+**Tests:** A representable relational/span family; a nonreconstructive graph-cut path without a representing whole in the original model; a completion that adds genuine formal horizontal composites; and a completion that improperly identifies distinct witnesses or wholes and therefore fails the preservation requirement.
+
+**Dependencies:** B3, D3, E1, E2, E3. **Status:** OPEN.
+
+**Minimum passing floor:** Calling the virtual equipment an ordinary equipment, or asserting that formal composites automatically have the needed universal property, does not pass. A lone nonrepresentable example does not discharge the completion question. An identity completion of already representable Rel/Span does not supply the required positive completion class; it is only a regression/model certificate.
+
+### E5 Exact assemblies and local to global transport
+
+**Class and claim:** B. Develop a sharp theory of marked exact assemblies inside the full equipment, including preservation and failure under substitution, internal interface reindexing, and presentation quotients.
+
+**Inputs:** E1–E4 and D2; a precise universal-cell or exactness marking and a bounded class of allowed models and maps.
+
+**Artifact:** A local-to-global criterion connecting the relevant comparison squares to compatibility with arbitrary finite tree substitution; a faithful exact-assembly criterion; stability or failure theorems for restriction and quotient; and a nonreconstruction obstruction that does not exclude nonexact witnesses from the equipment itself.
+
+**Discharge:** The positive criterion must apply to a nontrivial parameterized family and be independently checkable from its structural data. A negative branch needs a sharp boundary and a useful repaired positive family or impossibility classification. Distinguish opcartesian composition, cartesian restriction, and any additional exactness notion throughout.
+
+**Tests:** Strict relational containment versus equality, a surjective and a non-surjective intermediate boundary map, cross-edge nonreconstruction, equation families that do and do not preserve marking, and an equipment whose restrictions exist while the desired internal substitution transport fails.
+
+**Dependencies:** A3, D2, D3, E1, E2, E3, E4. **Status:** OPEN.
+
+**Minimum passing floor:** Existence of companions, conjoints, or restrictions is not the local-to-global theorem. The familiar non-surjective relation example is a required regression test, not the whole result. A repair hypothesis may not simply restate the desired preservation conclusion.
+
+### F1 Cut criterion and its distinction from substitution
+
+**Class and claim:** M. Specify the additional structure that allows an evaluated operation to be cut coherently along intervals, and prove that ordinary substitution laws alone do not supply it.
+
+**Inputs:** A typed witness calculus $M$ and a finite or locally finite set-valued setting. The starting candidate is bijectivity of a factorization map for each proper contiguous interval:
+
+$$\coprod_K M(p/K;W)\times M(p_{[i,j]};K)\longrightarrow M(p;W).$$
+
+Here $p/K$ replaces the selected subpath by the single component $K$, and the map is the corresponding substitution. All intermediate boundaries and the exact interval range must be specified.
+
+**Artifact:** An exact criterion with normalized unary and nullary/unit conditions where needed; a theorem relating unique interval factorizations to coherent cuts; and a counterexample showing why generic free or presented calculi do not automatically satisfy the criterion.
+
+**Discharge:** P. The candidate must be corrected if it is too strong, too weak, or missing unit hypotheses; corrections are recorded through the amendment process before acceptance. It is not enough to name an axiom 2-Segal and then restate it as the theorem.
+
+**Tests:** Multiple factorizations, no factorization, two incompatible cuts, and missing unit data. Check all boundary cases separately.
+
+**Dependencies:** A3, B2, B3, C1, C5. **Status:** OPEN.
+
+**Minimum passing floor:** Prove a structural recognition criterion tied to C5 and B3, including units and coherent iteration. Naming the desired property as an axiom, or observing that a nontrivial monoid label has two factorizations, does not pass the research package.
+
+### F2 Positive typed finite bridge
+
+**Class and claim:** M. Construct an actual nontrivial finite-degree, multi-interface simplicial set satisfying the unital 2-Segal conditions, and connect its operations and cuts to the core model.
+
+**Inputs:** C1 with ordered graph sizes bounded by $N\geq6$ and a finite three-object category. A concrete candidate is the product of the ordered graph-cut simplicial set with the nerve of that finite category.
+
+**Artifact:** Define every level and all face and degeneracy maps; prove the simplicial identities and the 2-Segal comparison bijections for every triangulation and every degree; identify the operation fibres and substitution comparison with C1. Explain that each degree is finite, while the entire simplicial object has arbitrarily high degenerate degrees. A finite truncation check alone is not the theorem.
+
+**Discharge:** P for all-degree claims and the typed comparison; C for exhaustive finite verification over all graphs through four vertices and simplicial degree four, plus the mandatory six-vertex mixed-interface witnesses. The all-parameter proof must justify any factorized checking that avoids repeating equivalent interface-chain cases; a documented equivalent exhaustive check is allowed. L for a selected low-dimensional certificate is desirable but not required beyond the formal scope in Section 13.
+
+**Tests:** Both triangulations of a quadrilateral; pentagon compatibility; a noninjective ordinary Segal comparison showing that different wholes share the same pieces; outer restrictions that discard cross-block edges; empty-block degeneracies; nonidentity interface arrows; and repeated component occurrences. A one-object terminal nerve does not discharge this obligation.
+
+**Dependencies:** C1, F1. **Status:** OPEN.
+
+**Minimum passing floor:** The all-degree theorem and explicit operation/presentation comparison are required. The known graph restriction-species construction is reused infrastructure; checking a quadrilateral, taking the ordinary nerve of raw refinement, or merely multiplying by a category nerve does not discharge the larger F1–F3 scientific target.
+
+### F3 Recognition theorem and necessary hypotheses
+
+**Class and claim:** B. Prove an interface-typed recognition or comparison theorem between a clearly specified class of coherently cut calculi and finite discrete 2-Segal objects, and identify its exact limits.
+
+**Inputs:** F1–F2 and the existing correspondence with invertible nonsymmetric operads or multivalued categories.
+
+**Artifact:** Explicit forward and reverse constructions on the stated class, morphism-level comparison, and inverse/comparison laws; or a sharp obstruction to the proposed equivalence together with a correct fully stated replacement. Provide a hypothesis-independence analysis using finite examples whenever possible.
+
+**Discharge:** A substantive recognition theorem or the B-class alternative, plus a literature comparison explaining which part is established and which typed/refinement/quotient compatibility is new. The recognition result must include a criterion for compatibility with the C5 presentation quotient and B3 refinement comparison; merely inserting interface labels into a known equivalence does not pass. General infinity-categorical machinery is neither required nor assumed. An unsupported analogy to higher categories does not count.
+
+**Tests:** Remove each essential hypothesis in turn, including factorization uniqueness, coherence, and units. Include at least one example in the positive class not determined by an ordinary single-valued composition law.
+
+**Dependencies:** B3, C5, D3, F1, F2. **Status:** OPEN.
+
+**Minimum passing floor:** The theorem must characterize presentation-quotient and refinement compatibility on a declared unbounded class, with a real positive model and sharp missing-hypothesis boundary. A rewording of the corrected invertible-operad equivalence or a single obstructed nerve does not pass.
+
+### F4 CULF and nonidentifiability
+
+**Class and claim:** M. State and test the appropriate unique-lifting condition for a simplicial map, and prove that it does not imply recovery of the underlying whole or witness from its image.
+
+**Inputs:** F2 and the map forgetting graph edges while retaining the underlying ordered vertex set, partition, and interface data.
+
+**Artifact:** An all-degree proof that the designated forgetful map is CULF, formulated by the relevant cartesian naturality squares, together with an explicit noninjective map on whole objects. State the direction of every map. Explain that the lift is unique after fixing the source whole; it does not identify that whole from its image.
+
+**Discharge:** P and C; X for the nonidentifiability example. Separately test a map that fails unique lifting. The report may not use CULF as a synonym for faithfulness, injectivity, reconstruction, or observational identifiability.
+
+**Tests:** Two graphs with the same ordered vertices and different edges; a fixed graph and a prescribed partition having a unique lifted cut; and a deliberately duplicated cut-witness model that violates the lifting condition.
+
+**Dependencies:** C3, F2. **Status:** OPEN.
+
+**Minimum passing floor:** Prove the actual all-degree lifting condition, nonidentifiability, and a failing-lift control on the selected witness maps. A discrete two-point-to-point example is only a regression check, not the CULF/quotient analysis required by F3/I3.
+
+### G1 A typed semantics and observation hierarchy
+
+**Class and claim:** M. Formalize the distinction between presentation equality, equality in a presented calculus, equality under a selected semantics, and equality of observations.
+
+**Inputs:** A3, B2 and at least two interpretations of the principal models. Observations are explicitly supplied maps or families of maps, not unnamed physical measurements.
+
+**Artifact:** A diagram of typed maps and kernel relations; the valid implications between the equality notions; and theorems giving conditions for factorization through a presentation. State whether an observation concerns a component, whole, witness, refinement arrow, or entire presentation.
+
+**Discharge:** P, with L for the kernel and factorization facts used by the core. At least two implication converses must be refuted in substantive models, and at least one nontrivial positive separation theorem must be proved.
+
+**Tests:** A graph observation retaining only blockwise induced graphs; a richer observation recovering cross edges; a semantics identifying two binary trees; and an observation that is not substitution-compatible and therefore cannot silently be treated as a calculus morphism.
+
+**Dependencies:** A3, B2, C3. **Status:** OPEN.
+
+**Minimum passing floor:** Use typed maps to prove all claimed implications and the positive separation criterion, then supply the proper converses and failures in C5 models. A generic chain of kernels with no witness/observation interpretation does not pass.
+
+### G2 Identifiability and minimal sufficient retained information
+
+**Class and claim:** B. Determine, for specified model families and observation classes, which retained data are sufficient and necessary to distinguish the target objects.
+
+**Inputs:** C1–C3 and G1. Targets and allowed observations must be frozen before a recovery claim is tested.
+
+**Artifact:** A model-specific identifiability theorem and a matching impossibility or lower-bound result. For graph cuts, analyze the exact missing cross-block edge data; for refinements, distinguish access to a final operation from access to the occurrence-indexed forest.
+
+**Discharge:** A classification on a stated nontrivial family, or a bounded obstruction plus a minimal or explicitly sufficient augmentation and a positive recovery theorem. Merely adding the complete original object as an observation does not count as a useful recovery result unless accompanied by a sharp necessity statement showing why no smaller allowed data suffice.
+
+**Tests:** Families with multiple independently variable missing edges; occurrence ambiguity under quotient semantics; and a positive decoder verified independently of its encoder.
+
+**Dependencies:** B4, C3, F4, G1. **Status:** OPEN.
+
+**Minimum passing floor:** Prove necessary and sufficient retained information, a meaningful structural lower bound or exact fibre classification, and a nontrivial recovery method for the chosen observation class. Adding the entire original object, or giving one indistinguishable pair, does not pass.
+
+### G3 Scientific use and nonclaims
+
+**Class and claim:** M. Derive a disciplined template for applying the calculus without confusing formal structure with empirical validation.
+
+**Inputs:** G1–G2 and all established model assumptions.
+
+**Artifact:** One fully synthetic application case, with specified objects, witnesses, observations, recoverable quantities, and falsifiable failure tests. State what an empirical application would still need: a measurement map, calibration, noise and intervention assumptions where relevant, identifiability, and independent validation.
+
+**Discharge:** A mathematically complete worked example and a reviewer-confirmed separation between formal consequences and empirical claims. This does not require or authorize a physiological study or collection of new personal data.
+
+**Tests:** A synthetic ambiguity that survives all selected observations, and a deliberately overclaimed inference rejected by the stated identification assumptions.
+
+**Dependencies:** G1, G2. **Status:** OPEN.
+
+**Minimum passing floor:** The synthetic case must use the accepted refinement, cut, and identification results to answer an explicit question and reject an invalid inference. A hypothetical application paragraph or physiological analogy does not pass.
+
+### I1 Conservative modular amalgamation
+
+**Class and claim:** B. Determine when two finite path-typed witness presentations sharing a nontrivial interface subtheory can be combined conservatively, with their refinement and cut certificates retained.
+
+**Inputs:** Two presentations in the A4/C5 fragment; embeddings of a common presented subtheory; explicit shared vertical/interface maps; and proposed mixed critical diagrams. The model class includes graph-cut presentations with finite witness palettes and nontrivial shared interfaces, not only disjoint signatures.
+
+**Artifact:** A pushout/comparison construction; checkable conditions implying conservativity on both input theories; a complete mixed-coherence criterion for transferring refinement certificates; and the precise additional conditions for transferring cuts and interface restrictions.
+
+**Discharge:** P plus C for nontrivial instances. Prove a meaningful converse within the selected class or an unbounded failure family in which individually convergent presentations acquire a new equation or unjoinable mixed peak after interface identification. If the general target fails, provide a useful conservative subclass and a proved transfer theorem.
+
+**Tests:** Shared operations and interfaces; mixed rewrite/refinement peaks; a preserved positive amalgam; and an interface-identification failure independently checked on both sides.
+
+**Dependencies:** A4, B3, C5, D3, E2, F1, F3. **Status:** OPEN.
+
+**Minimum passing floor:** Existence of a pushout, the disjoint-union case, assuming away every mixed interaction, or enumerating one finite amalgam does not pass. Compare with coherent rewriting and structured/decorated cospans, and identify the extra witness/refinement theorem.
+
+### I2 Contextual observation and minimal compositional realization
+
+**Class and claim:** B. Characterize equivalence under admissible one-hole graft contexts together with specified cut probes and interface changes, and construct the minimal compositional observable realization where it exists.
+
+**Inputs:** A finite observable algebra on a bounded instance of the parameterized C5 family; observations on wholes and witness values; the declared allowed graft contexts, cut probes, and interface changes. The family must also vary its graph size, boundary size, or finite witness palette so that finite instances form a genuine parameterized class.
+
+**Artifact:** A finite-index/realizability criterion; a minimality and uniqueness theorem; an effective construction for the selected fragment; and explicit size or stabilization bounds with a structural lower-bound or strict-hierarchy family. Explain when the resulting quotient is a witness calculus, a cut system, or only an observational transition system.
+
+**Discharge:** P and C. The result must prove how graft contexts and cut probes interact, not only apply ordinary tree-automaton minimization. If finite-index realization fails in the broader class, identify why and prove a substantial positive restricted theorem. The allowed probe family must be specified before evaluating its adequacy. Finite control states do not imply finitely many terms or operation arities: empty blocks and unary decorations can produce unbounded syntax. Give finite generators or effective schemata and prove that the algorithm covers every generated context and cut, not just bounded depth. Full profiles remain sorts for any claimed multicategory quotient; states may be shared across profile schemata, but profiles may not be identified. A coarser result must be labeled only as an observational transition model.
+
+**Tests:** Observations adequate without contexts but not compositional; two states separated only by a cut probe after a graft; repeated occurrences; a minimal realization whose decoder is verified independently; and a growing family forcing more observational states.
+
+**Dependencies:** B3, C5, G1, G2, F3. **Status:** OPEN.
+
+**Minimum passing floor:** Defining contextual equivalence, invoking Yoneda with all possible probes, or running a standard finite automaton minimizer does not pass. Compare explicitly with tree-automata/Myhill–Nerode theory and prove the new mixed-operation compatibility and quantitative statement.
+
+### I3 Objective and numerical incidence quotients
+
+**Class and claim:** B. Characterize when a presented/coarsened cut system descends its actual decomposition span, and distinguish this from representative-independent aggregated numerical decomposition coefficients.
+
+**Inputs:** F2–F4, a specified quotient of whole and witness data, and precise finiteness hypotheses. Begin with the typed graph-cut family and a decoration subclass or explicit repair proved cut-compatible by F3, together with their named presentation quotients; use arbitrary finite size rather than one table. Specify the target cut-span data before asserting descent.
+
+**Artifact:** Separate structural criteria for objective descent and numerical coalgebra descent; a theorem comparing them; an unbounded family showing a genuine distinction; and a transfer or correction result for decomposition coefficients, length bounds, or Möbius inversion. Any cardinality calculation must disclose whether sets or groupoids and automorphism weights are being used.
+
+**Discharge:** P, worked formulas on the parameterized family, and C for finite instances. Prove the hypotheses that justify the incidence construction and the chosen transfer result. If a proposed distinction cannot occur in the selected class, prove that boundary and exhibit the nearest precisely specified extension where it does, rather than asserting a difference abstractly.
+
+**Tests:** A CULF positive case; a quotient with stable aggregated coefficients but inadequate objective lifting in the prescribed target; nullary/unary phenomena affecting length; and a quotient that fails coefficient independence.
+
+**Dependencies:** C5, F2, F3, F4, G1. **Status:** OPEN.
+
+**Minimum passing floor:** The known fact that CULF maps induce coalgebra maps, a generic semiring evaluation, or cardinality arithmetic without descent/coherence does not pass. Compare with restriction-species incidence, operadic incidence, and tracelet quotient constructions. The quotient criterion must apply to the program's witness presentation and report lost provenance.
+
+### I4 Cut and substitution interchange
+
+**Class and claim:** B. Characterize when independent cuts and occurrence-wise substitution can be interchanged coherently in a typed witnessed model.
+
+**Inputs:** The C5 layered graph-cut family, allowed ordered cuts, explicit boundary transport, and a witness-decoration subclass or repair proved cut-compatible by F3. Do not silently apply the cut construction to arbitrary commutative-monoid witness decorations. Specify the mixed comparison maps and their variance. In the basic ordered-partition case, crossings and lexicographic order of nonempty intersections are part of the data; the generalization must not silently add symmetry to the planar core.
+
+**Artifact:** An independently checkable combinatorial criterion equivalent to invertibility of the mixed comparison maps in the declared class; a theorem extending the local criterion to arbitrary finite trees and iterated cuts; and the resulting precisely specified double, bisimplicial, or comodule structure with its full coherence proof.
+
+**Discharge:** P plus C. The selected output structure and equations must be frozen before the proof attempt. A negative branch requires a classified useful positive subclass and a sharp obstruction outside it. Separate failure due to nonparallel planar order from failure of witness recovery or boundary compatibility.
+
+**Tests:** Noncrossing positive cuts; crossing cuts with incompatible ordered profiles; a retained-boundary case and its information-forgetting failure; repeated occurrences; and a decorated-witness case whose coherence is not decided solely by the underlying graph.
+
+**Dependencies:** B3, C5, D2, D3, E5, F1, F2, F3. **Status:** OPEN.
+
+**Minimum passing floor:** A commuting square for one partition, the ordinary associativity of substitution, or a citation that operads have incidence structures does not pass. Compare directly with Baez–Dolan/free-operad comodules and directed hereditary species, then identify the witness/quotient/interface compatibility absent from the reused baseline.
+
+### I5 Simultaneous completion and noncommuting repairs
+
+**Class and claim:** B. Starting from a specified observational abstraction, characterize its least refinement complete for substitution, admissible cuts, and permitted interface transport, and determine when the separate repairs commute.
+
+**Inputs:** I2 and I4; the lattice or ordered collection of explicitly represented observational partitions/domains on the selected finite instances; three precisely defined repair operators. State the information order so that “least refinement” and “closure” are unambiguous. A finite carrier does not make the operation family finite: supply a complete finite basis or effective schemata for all generated substitutions, cuts, and transport, with a proof that stabilization certifies unbounded contexts. Keep full typed profiles as sorts whenever the output is claimed to be a calculus quotient.
+
+**Artifact:** An optimality theorem for the simultaneous refinement; an effective representation of the extra decomposition information it retains; a structural commutation criterion; an unbounded family requiring iteration or showing order dependence; and finite-fragment stabilization bounds with a genuine lower-bound or necessity analysis. Determine when local repairs can be combined by I1.
+
+**Discharge:** P and C. If an optimal domain fails to exist in the selected representation class, prove that failure and the exact enlargement needed for a useful positive theorem. At least one application must show how the extra retained information changes a refinement, cut, or transport judgment.
+
+**Tests:** A one-pass positive case; a decomposition-specific noncommuting family; an abstraction complete for one operation but not the others; and a modular local-repair case that does and does not give the global optimum.
+
+**Dependencies:** I1, I2, I4, D3, G2. **Status:** OPEN.
+
+**Minimum passing floor:** Existence of lattice fixed points, a generic complete-shell theorem, or two unrelated closure operators on a tiny lattice does not pass. Compare with complete abstract-interpretation shells/cores and identify the new criterion in witnessed-decomposition terms.
+
+### H1 Theorem dependency and contribution audit
+
+**Class and claim:** G. Every headline claim must be traceable to assumptions, proof, models, and a comparison with existing mathematics.
+
+**Inputs:** All mathematical workstreams.
+
+**Artifact:** Theorem ledger, acyclic dependency graph, source/provenance ledger, contribution statement, and an unresolved-questions register.
+
+**Discharge:** An independent reviewer can select any headline claim and locate its exact theorem, dependencies, proof status, and limitations. No circular use of a recognition theorem to establish its own hypotheses is allowed. Statements withdrawn after a counterexample remain visible in the failure register.
+
+**Tests:** Audit every main theorem and a random sample of supporting lemmas; check source attributions and cited hypotheses directly.
+
+**Dependencies:** A1, A2, A3, A4, B1, B2, B3, B4, C1, C2, C3, C4, C5, D1, D2, D3, E1, E2, E3, E4, E5, F1, F2, F3, F4, G1, G2, G3, I1, I2, I3, I4, I5. **Status:** OPEN.
+
+**Minimum passing floor:** Audit exact claims and dependency closures, including every integrated bundle and the strongest applicable prior art. A list of theorem names, self-reported novelty, or a favourable summary that omits failures does not pass.
+
+### H2 Clean reproduction and trusted base
+
+**Class and claim:** G. A third party can reproduce all formal and finite evidence from a clean checkout without private caches or undocumented manual edits.
+
+**Inputs:** Pinned source commit, Lean toolchain, mathlib revision, scripts, and finite test definitions.
+
+**Artifact:** Clean build instructions and logs; machine-readable theorem-to-artifact index; dependency lock files and hashes; exact test domains and seeds; axiom/import report; and resource requirements. State the access required to fetch public dependencies separately from the mathematical build.
+
+**Discharge:** An independent clean reproduction succeeds. No claimed foundational theorem may rely on `sorry`, `admit`, `sorryAx`, an unproved custom axiom that states the desired result, or an unchecked external computation presented as a kernel proof. Standard logical principles and imported axioms must be listed by actual dependency closure, with their role disclosed. Native computation, decision procedures, and code-generation-based checks must have their trust status stated rather than being described indiscriminately as kernel verification.
+
+**Tests:** Build in a fresh directory; run all negative controls; inspect axiom reports for the principal declarations; and deliberately break one equation or model law to show the test suite detects the mutation.
+
+**Dependencies:** A1, A2, A3, A4, B1, B2, B3, B4, C1, C2, C3, C4, C5, D1, D2, D3, E1, E2, E3, E4, E5, F1, F2, F3, F4, G1, G2, G3, I1, I2, I3, I4, I5. **Status:** OPEN.
+
+**Minimum passing floor:** The clean run, axiom provenance, finite-domain accounting, and mutation-sensitive negative controls must all be independently verified. An author-local build, cached artifact, unchecked oracle, or absence of a string named sorry in one file does not pass.
+
+### H3 Independent acceptance and final report
+
+**Class and claim:** G. Acceptance is separate from authorship and requires both mathematical and reproducibility review.
+
+**Inputs:** H1–H2 and the frozen obligation ledger.
+
+**Artifact:** An attributable review report by a competent non-author reviewer, independent of the implementation/proof attempt being assessed; defect log; responses and revisions; and a final acceptance matrix with ACCEPTED, OPEN, FAILED, or SUPERSEDED status for every obligation.
+
+**Discharge:** Every M obligation passes; every B obligation passes one of its approved branches; all G-class gates pass; no unresolved defect undermines a headline result. Mathematical and reproducibility reviewers must independently inspect the actual arguments and artifacts, not merely accept an author-written summary. An agent-managed non-author review is eligible, with its provenance and correlated-model limitations disclosed; it must adversarially test scientific scope separately from kernel correctness. External human review is an optional higher-assurance gate requiring separate authorization, not an implicit blocker or promise.
+
+**Tests:** The reviewer reconstructs selected nontrivial proofs, verifies the principal positive model, checks the strongest negative result, and reproduces the formal core. Review must include the distinct failure risks of quotients, occurrence indexing, and 2-Segal lifting.
+
+**Dependencies:** H1, H2, A1, A2, A3, A4, B1, B2, B3, B4, C1, C2, C3, C4, C5, D1, D2, D3, E1, E2, E3, E4, E5, F1, F2, F3, F4, G1, G2, G3, I1, I2, I3, I4, I5. **Status:** OPEN.
+
+**Minimum passing floor:** The non-author review must attempt to falsify scientific-scope compliance, inspect proofs/artifacts, and issue separate correctness and significance verdicts. A second agent paraphrasing the author report, a kernel success alone, or a waiver of hard obligations does not pass.

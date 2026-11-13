@@ -1,0 +1,200 @@
+"""Finite consistency checks for the prospective refinement propositions.
+
+This is theorem-side testing, not a mission benchmark. It uses its own tiny
+exhaustive sparse rows and does not import the implementation's plant/solver.
+"""
+from fractions import Fraction as F
+from itertools import product, combinations, permutations
+from pathlib import Path
+import hashlib
+import json
+
+
+def response(g, u, n=3, L=1):
+    out = []
+    for t in range(len(u) + L):
+        out.append(sum(g[j * (L + 1) + lag] * u[t-lag][j]
+                       for j in range(n) for lag in range(L+1)
+                       if 0 <= t-lag < len(u)))
+    return out
+
+
+def signature(g, known, L=1):
+    return tuple(g[j*(L+1)+lag] for j in sorted(known)
+                 for lag in range(L+1))
+
+
+def topk(g, known, u, t, n=3, L=1, s=2):
+    fixed = sum(g[j*(L+1)+lag] * u[t-lag][j]
+                for j in known for lag in range(L+1)
+                if 0 <= t-lag < len(u))
+    remaining = s - sum(g[j*(L+1)+lag] != 0
+                        for j in known for lag in range(L+1))
+    unknown = [u[t-lag][j] if 0 <= t-lag < len(u) else F(0)
+               for j in range(n) if j not in known
+               for lag in range(L+1)]
+    return fixed + sum(sorted(unknown, reverse=True)[:remaining])
+
+
+def path_checks():
+    q, n = 2, 4
+    edges = [(i, i+1) for i in range(n-1)]
+    worlds = list(product((0, 1), repeat=len(edges)))
+    batches = list(combinations(range(n), q))
+    good = {}
+    for world in worlds:
+        safe_batches = []
+        for first in batches:
+            time = [0 if j in first else 1 for j in range(n)]
+            safe = True
+            for (x, y), bit in zip(edges, world):
+                current, delayed = (x, y) if bit == 0 else (y, x)
+                if time[current] == time[delayed] + 1:
+                    safe = False
+            if safe:
+                safe_batches.append(first)
+        assert safe_batches, (world, "fine infeasible")
+        good[world] = safe_batches
+    for first in batches:
+        assert any(first not in good[w] for w in worlds)
+    # Finite randomized guarantee: every mixture of batches is defeated with
+    # probability at least 1/|worlds| by some fixed world, by averaging.
+    for weights in product(range(3), repeat=len(batches)):
+        total = sum(weights)
+        if not total:
+            continue
+        failure = [sum(weight for first, weight in zip(batches, weights)
+                       if first not in good[w]) for w in worlds]
+        assert max(failure) * len(worlds) >= total
+    return {"worlds": len(worlds), "balanced_batches": len(batches),
+            "small_rational_randomized_mixtures": 3**len(batches)-1}
+
+
+def topk_checks():
+    n, L, s = 3, 1, 2
+    rows = [g for g in product((F(0), F(1, 2), F(1)), repeat=n*(L+1))
+            if sum(v != 0 for v in g) <= s]
+    schedules = [tuple(tuple(F(bits[t*n+j]) for j in range(n))
+                       for t in range(2))
+                 for bits in product((0, 1), repeat=2*n)]
+    evaluated = {g: [response(g, u) for u in schedules] for g in rows}
+    equalities = 0
+    states = 0
+    witness_checks = 0
+    for mask in product((0, 1), repeat=n):
+        known = {j for j, b in enumerate(mask) if b}
+        groups = {}
+        for g in rows:
+            groups.setdefault(signature(g, known), []).append(g)
+        for compatible in groups.values():
+            states += 1
+            exemplar = compatible[0]
+            for ui, u in enumerate(schedules):
+                for t in range(len(u)+L):
+                    direct = max(evaluated[g][ui][t] for g in compatible)
+                    envelope = topk(exemplar, known, u, t)
+                    assert direct == envelope
+                    equalities += 1
+                    fixed = sum(exemplar[j*(L+1)+lag] * u[t-lag][j]
+                                for j in known for lag in range(L+1)
+                                if 0 <= t-lag < len(u))
+                    if fixed <= 1 < envelope:
+                        assert any(j not in known and
+                                   any(u[t-lag][j] > 0 for lag in range(L+1)
+                                       if 0 <= t-lag < len(u))
+                                   for j in range(n))
+                        witness_checks += 1
+    return {"sparse_rows": len(rows), "knowledge_states": states,
+            "exact_topk_equalities": equalities,
+            "unknown_positive_contribution_witnesses": witness_checks}
+
+
+def sensor_checks():
+    delta, epsilon, eta = F(1, 4), F(1, 4), F(1, 128)
+    cases = 0
+    assert epsilon * delta > 2 * eta
+    grid = [delta*k for k in range(5)]
+    for true in grid:
+        for noise in (-eta, F(0), eta):
+            z = epsilon*true + noise
+            recovered = min(grid, key=lambda value: abs(epsilon*value-z))
+            assert recovered == true
+            assert epsilon*true <= 1
+            cases += 1
+    # At equality the midpoint can be generated by either adjacent coefficient.
+    equality_eta = epsilon*delta/2
+    assert epsilon*F(0) + equality_eta == epsilon*delta - equality_eta
+    return {"bounded_noise_cases": cases,
+            "strict_gap_counterexample_at_equality": True}
+
+
+def finite_progress_checks():
+    n, L, s, budget = 3, 1, 2, 10
+    rows = [g for g in product((F(0), F(1, 2), F(1)), repeat=n*(L+1))
+            if sum(v != 0 for v in g) <= s]
+    candidates = []
+    for horizon in range(n, 7):
+        for times in combinations(range(horizon), n):
+            if max(times) != horizon-1:
+                continue
+            for order in permutations(range(n)):
+                u = [[F(0)]*n for _ in range(horizon)]
+                for j, t in zip(order, times):
+                    u[t][j] = F(1)
+                candidates.append(tuple(tuple(r) for r in u))
+    accepted = abstained = probes_total = 0
+    for truth in rows:
+        known, elapsed, probes = set(), L, 0
+        while True:
+            possible = []
+            for u in candidates:
+                if elapsed + len(u)+L > budget:
+                    continue
+                lower = tuple(v if j//(L+1) in known else F(0)
+                              for j, v in enumerate(truth))
+                if max(response(lower, u)) <= 1:
+                    possible.append(u)
+            if not possible:
+                # Exhaustive optimistic infeasibility is checked directly in
+                # the true row; no actual schedule can evade the lower bound.
+                assert not any(elapsed+len(u)+L <= budget and
+                               max(response(truth, u)) <= 1 for u in candidates)
+                abstained += 1
+                break
+            u = possible[0]
+            maxima = [topk(truth, known, u, t) for t in range(len(u)+L)]
+            if max(maxima) <= 1:
+                assert max(response(truth, u)) <= 1
+                assert elapsed + len(u)+L <= budget
+                accepted += 1
+                break
+            t = next(t for t, val in enumerate(maxima) if val > 1)
+            j = next(j for j in range(n) if j not in known and
+                     any(u[t-lag][j] > 0 for lag in range(L+1)
+                         if 0 <= t-lag < len(u)))
+            assert j not in known
+            # Each safe singleton probe has amplitude 1/4 and a complete tail.
+            pulse = [tuple(F(1, 4) if k == j else F(0) for k in range(n))]
+            assert max(response(truth, pulse)) <= 1
+            known.add(j)
+            elapsed += L+1
+            probes += 1
+            assert probes <= n
+            if elapsed > budget:
+                raise AssertionError("probe budget reserve not checked")
+        probes_total += probes
+    return {"fixed_true_rows": len(rows), "accepted": accepted,
+            "safe_abstentions": abstained, "paid_probes": probes_total,
+            "probe_bound_per_run": n,
+            "not_a_benchmark_or_progress_optimality_claim": True}
+
+
+if __name__ == "__main__":
+    result = {"status": "PASS", "path_strictness": path_checks(),
+              "robust_envelope": topk_checks(),
+              "safe_probe_identification": sensor_checks(),
+              "finite_progress": finite_progress_checks()}
+    result["source_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    target = Path(__file__).with_name("refinement_law_checks.json")
+    target.write_text(json.dumps(result, indent=2)+"\n")
+    print(json.dumps(result, indent=2))

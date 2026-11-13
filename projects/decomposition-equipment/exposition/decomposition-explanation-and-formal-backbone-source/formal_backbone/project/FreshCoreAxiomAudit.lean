@@ -1,0 +1,66 @@
+import WitnessedDecompositions.RawRefinement
+import WitnessedDecompositions.RefinementComparison
+import WitnessedDecompositions.RefinementLifting
+import WitnessedDecompositions.RefinementFunctoriality
+import WitnessedDecompositions
+import GraphCutFragment
+#print axioms WitnessedDecompositions.Collection.fiberTotalizeEquiv
+#print axioms WitnessedDecompositions.Collection.totalizeFiberEquiv
+#print axioms WitnessedDecompositions.Collection.fiberFamilyEquiv
+#print axioms WitnessedDecompositions.Path.slotComp
+#print axioms WitnessedDecompositions.Path.slotExpand
+#print axioms WitnessedDecompositions.Path.componentAt_slotExpand
+#print axioms WitnessedDecompositions.Tree.frontierLeafEquiv
+#print axioms WitnessedDecompositions.Tree.frontierLeafEquiv_component
+#print axioms WitnessedDecompositions.Tree.operationSubstitutionEquiv
+#print axioms WitnessedDecompositions.Tree.frontier_profileGraft
+#print axioms WitnessedDecompositions.Path.expand_assoc
+#print axioms WitnessedDecompositions.Path.slotExpand_assoc
+#print axioms WitnessedDecompositions.Tree.substituteOperation_identity
+#print axioms WitnessedDecompositions.Tree.identityOperation_substitute
+#print axioms WitnessedDecompositions.Tree.profileGraft_assoc
+#print axioms WitnessedDecompositions.Tree.substituteOperation_assoc
+#print axioms WitnessedDecompositions.Tree.freeCalc
+#print axioms WitnessedDecompositions.Tree.extend
+#print axioms WitnessedDecompositions.Tree.interpretFiber_substituteOperation
+#print axioms WitnessedDecompositions.Tree.extend_restrict
+#print axioms WitnessedDecompositions.Tree.restrict_extend
+#print axioms WitnessedDecompositions.Tree.homEquiv
+#print axioms WitnessedDecompositions.Tree.extend_unique
+#print axioms WitnessedDecompositions.Free.homEquiv
+#print axioms WitnessedDecompositions.Free.triangle_free
+#print axioms WitnessedDecompositions.Free.triangle_forget
+#print axioms WitnessedDecompositions.Presentation.derives_parallel
+#print axioms WitnessedDecompositions.Presentation.derives_least
+#print axioms WitnessedDecompositions.ParallelCongruence.quotientSubstitute_project
+#print axioms WitnessedDecompositions.ParallelCongruence.quotient_eq_iff
+#print axioms WitnessedDecompositions.ParallelCongruence.factor
+#print axioms WitnessedDecompositions.ParallelCongruence.factor_unique
+#print axioms WitnessedDecompositions.Presentation.derives_iff_all_models
+#print axioms WitnessedDecompositions.Raw.comp
+#print axioms WitnessedDecompositions.Raw.comp_val
+#print axioms WitnessedDecompositions.Raw.hom_subsingleton
+#print axioms WitnessedDecompositions.Raw.id_comp
+#print axioms WitnessedDecompositions.Raw.comp_id
+#print axioms WitnessedDecompositions.Raw.comp_assoc
+#print axioms WitnessedDecompositions.Raw.antisymm
+#print axioms WitnessedDecompositions.SemanticRefinement.comp
+#print axioms WitnessedDecompositions.SemanticRefinement.assoc
+#print axioms WitnessedDecompositions.SemanticRefinement.mapArrow_id
+#print axioms WitnessedDecompositions.SemanticRefinement.mapArrow_comp
+#print axioms WitnessedDecompositions.SemanticRefinement.functor
+#print axioms WitnessedDecompositions.SemanticRefinement.mapArrow_injective
+#print axioms WitnessedDecompositions.RefinementComparison.unique_raw_lift_of_family
+#print axioms WitnessedDecompositions.SemanticRefinement.mapArrow_bijective_of_operation_bijective
+#print axioms WitnessedDecompositions.Tree.weight_profileGraft
+#print axioms WitnessedDecompositions.Tree.weight_substituteOperation
+#print axioms WitnessedDecompositions.Presentation.derives_weight
+#print axioms WitnessedDecompositions.PresentationExamples.Mixed.undeclared_not_derivable
+#print axioms WitnessedDecompositions.PresentationExamples.Mixed.undeclared_quotient_distinct
+#print axioms WitnessedDecompositions.GraphCut.graph_graft_identity
+#print axioms WitnessedDecompositions.GraphCut.graph_graft_assoc
+#print axioms WitnessedDecompositions.GraphCut.occurrencewise_graft_is_A_graft
+#print axioms WitnessedDecompositions.GraphCut.competing_groupings_equal_in_A3_quotient
+#print axioms WitnessedDecompositions.GraphCut.repeated_refinements_distinct
+#print axioms WitnessedDecompositions.GraphCut.colour_keyed_mutation_rejected
+#print axioms WitnessedDecompositions.GraphCut.coordinate_erasure_mutation_rejected

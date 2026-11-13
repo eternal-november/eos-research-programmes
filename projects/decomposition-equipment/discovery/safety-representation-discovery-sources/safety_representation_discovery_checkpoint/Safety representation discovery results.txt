@@ -1,0 +1,247 @@
+Discovering safety relevant representations from incomplete evidence
+
+Research results for the target approved on 29 October 2026
+
+Plain language abstract
+
+The question is not whether we can invent one environment in which a controller is safe. It is which distinctions and interactions we must retain, and actually be able to measure, before incomplete evidence can justify safety for a fixed controller. This report gives a bounded answer for finite experiments with calibrated observations and a separately justified connection to physical hazards.
+
+Instead of choosing from a catalogue of hidden mechanisms, the construction considers every causal law of the declared observable experiment that fits the evidence. It keeps correlations and persistent hidden influences together. Executable observer programs determine which local histories, messages and synchronized interactions can be reported. Statistical bounds apply simultaneously to the eligible reports, so choosing a representation after examining the data does not silently invalidate confidence.
+
+The resulting procedure either produces a risk certificate supported by executable reports, identifies existing evidence that a coarse representation forgot, returns evidence-compatible adverse behavior, or exposes an interface limitation. A separate test can show that two equally observed behaviors have different risks. Thus failure says whether to retain more information, collect new evidence, change an interface, or reconsider the controller, rather than merely saying that verification failed.
+
+A stopping example makes the distinction concrete. Separate delay and braking records can hide dangerous coincidence. A synchronized logger restores the missing task distinction. Constructed validation data give a nonvacuous confidence bound, while a three-signal example shows why pairwise summaries can still be inadequate.
+
+This is behavioral representation discovery, not discovery of the machine's unique physical architecture. Its causal assumptions, hazard calibration, sensing capabilities and computational costs remain explicit. Exact search can be exponential. The result does not establish deployment safety for an unmeasured machine, publication priority, or the programme's original categorical integration.
+
+1 What has been established
+
+The positive result is an end-to-end finite construction linking five objects that must not be conflated: an experimental law, justified evidence about that law, executable observer programs, a selected representation, and a quantitative safety certificate. The representation is an output. It need not start with supplied component boundaries or a catalogue of latent transition mechanisms.
+
+The guarantee has the following form. With a stated confidence over the evidence collection, every causal behavioral law remaining in the selected confidence region satisfies the fixed controller's risk threshold, provided the physical hazard transfer contract holds. If the procedure cannot establish that statement, it can return a concrete reason with an appropriate scope. An adverse compatible law is not a claim that this is the actual physical world.
+
+The mathematical infrastructure is deliberately standard: causal change of policy, concentration bounds, linear programming duality, finite program synthesis and communication complexity. The result is not that a robust linear program has been renamed a decomposition. The additional construction ties its evidence rows to causal source programs, discovers missing task distinctions from adverse laws, preserves one shared uncertainty object, and distinguishes absent evidence from discarded evidence and unavailable interfaces. It gives a proved finite target and checkable examples, not an industrial-scale discovery implementation.
+
+2 The experiment and its assumptions
+
+Fix a finite horizon H, finite action and observation alphabets, and complete observable records
+
+    omega = (o_0, a_0, o_1, ..., a_(H-1), o_H).
+
+The finite set of records is Omega. The history h_t is the observable prefix through o_t. Timestamps, sensor identities and distinctions needed by the experiment belong in that history. A controller sees only its declared causal projection of the history; recording more telemetry does not give it additional action inputs.
+
+The following are assumptions or separately established contracts, not consequences of fitting the data.
+
+* The exploration policy e_t(a|h) is a known randomized intervention. Its randomization is independent of the physical past conditional on the permitted observed history. Matching action frequencies in an observational log is insufficient.
+* Replacing exploration by the fixed target controller pi leaves the environment's causal response laws unchanged, except through the named actions. Unrepresented changes in hardware, workload or operating regime violate this condition.
+* Every target-supported action has positive exploration probability at the relevant history. An unexplored target action is an identification obstruction, not permission to invent its effect.
+* The finite observation vocabulary and sensor calibration are adequate for the stated hazard transfer. An unseen hazard cannot be ruled out merely because no existing readout mentions it.
+* The simple confidence construction uses independent complete episodes from the same experimental law. Dependence within an episode is allowed. One dependent time series is not automatically a collection of independent episodes. Outcome-dependent missingness, episode selection and stopping require their own statistical argument.
+* Observer reads, memory, messages and timing are provided by a capability contract. Passive instrumentation does not alter the controller or physical behavior. Safety-relevant logging overhead must instead be included in the experiment.
+
+These assumptions replace the earlier complete mechanism grammar with a broader behavioral class; they do not eliminate modeling assumptions. Source memory and hidden common causes may be arbitrary and non-Markov. The finite horizon and chosen observable resolution remain genuine limits.
+
+3 Exact causal behavioral laws and policy change
+
+For a probability vector p on Omega, write p(h) and p(h,a) for prefix sums. The admissible exploration laws satisfy
+
+    p >= 0,       sum p = 1,
+    p(h,a) = e_t(a|h) p(h).
+
+Write these linear equalities as A p = b. Every causal environment driven by the stated exploration policy satisfies them. Conversely, every such p has a non-Markov causal realization: take its initial marginal and, at every positive-mass prefix, use the conditional next-observation law p(h,a,o')/p(h,a). Choose arbitrary stochastic rows at zero-mass prefixes. Induction recovers the original path law.
+
+This converse establishes exactness of the behavioral class. It does not validate the experimental randomization assumption for an unfamiliar machine.
+
+Under support coverage, every realization of p has the same target-controller law
+
+    p_pi(omega) = w_pi(omega) p(omega),
+    w_pi(omega) = product_t pi_t(a_t|h_t)/e_t(a_t|h_t).
+
+The coefficient is fixed independently of the unknown p. On paths with a zero exploration denominator it is defined as zero; coverage ensures zero target mass there. Zero-mass paths with positive denominators still use the displayed coefficient. Cancellation of the chronological action factors proves the formula; an induction shows that arbitrary kernel choices on unreachable exploration prefixes cannot affect the target law.
+
+One joint law is retained throughout. There is no independent resampling of uncertain transition rows at each step. For example, a persistent bit with Y_0=Y_1 always has zero disagreement risk. Replacing it by independently chosen stepwise uncertainty admits disagreement risk one. Such a relaxation can be conservative, but it is not the same model.
+
+4 Physical hazard meaning and justified evidence
+
+Let B be the actual unsafe event. The observable upper score g_+ in [0,1] must satisfy a separate physical transfer contract
+
+    P_pi(B) <= E_pi[g_+] + eta_+.
+
+The quantity eta_+ is a deployment-risk allowance for decoder failure, not the statistical confidence failure probability. A sound deterministic detector has eta_+=0. If the transfer contract itself holds only with confidence 1-delta_h, combine its confidence failure with the evidence failure delta; do not silently replace a deployment-risk allowance by a confidence level. A necessary-unsafe conclusion requires its own lower transfer contract using g_- and eta_-.
+
+Overflow, missing, uncalibrated and out-of-range outcomes can be explicit observation symbols, with g_+=1 conservatively charging their mass. They must actually be recorded rather than censored; this does not detect an unreported sensor failure.
+
+The fixed risk coefficient is c_+(omega)=w_pi(omega)g_+(omega). If exploration probabilities are bounded below by gamma, the weight can still grow as gamma^(-H). A miss bound calibrated under exploration generally needs this transfer cost before it can be used under the target controller.
+
+An observer D produces a report Psi_D(omega). A measured feature is f_j(omega)=r_j(Psi_D(omega)), with known range [a_j,b_j]. For N independent episodes, an empirical mean fhat_j and failure allocation delta_j give the valid radius
+
+    eps_j = (b_j-a_j) sqrt(log(2/delta_j)/(2N)).
+
+Clipping fhat_j plus or minus eps_j to the feature range gives [l_j,u_j]. Allocating sum delta_j <= delta gives simultaneous coverage. Features may be dependent within the same episode; the union bound does not require feature independence.
+
+Observer selection after inspecting the data is therefore covered when every eligible feature was included in this simultaneous guarantee. A countable prefix-coded program language can instead receive data-independent weights summing to at most one and failure allocation delta times each weight. That permits adaptive finite selection without requiring a fixed finite observer catalogue. It does not make infinite program search decidable or manufacture missing data.
+
+Availability is separate from executability. A new AND logger can be replayed only if its required sensor records were archived with the necessary alignment. Unaligned marginal logs do not supply a joint confidence interval. A legal but unmeasured observer is a measurement proposal. Rows from different experimental regimes cannot be combined as if they constrained one law without a justified transfer argument.
+
+5 The executable source to certificate bridge
+
+The observer language consists of finite, typed, scheduled programs. Ports carry finite alphabets, owners and time phases. Primitive nodes are permitted local reads, deterministic tables, memory updates, allowed message encoders and channels, and permitted copy, discard and constant operations. Unrolling memory across H steps produces an acyclic circuit in the declared phase order. No node may use a future reading, an undelivered message or another owner's private state.
+
+A shared source registry ensures that repeated uses of one sensor reading refer to the same trace coordinate. Copying a wire does not create an independent random sample. Program costs include memory carriers, message alphabets, transmissions, phases and latency. Costs must be recomputed for a composite; two admissible parts need not have an admissible combined resource grade.
+
+For a typed circuit D:X->Y, evaluation gives a finite function F_D on its named input bundle. The acquisition map rho_X reads that bundle from the trace, so Psi_D=F_D composed rho_X. Induction through the circuit proves that typed sequential plugging satisfies F_(E after D)=F_E composed F_D, with side inputs explicitly retained as wires. Parallel wiring evaluates as
+
+    omega -> (Psi_D(omega), Psi_E(omega))
+
+on the SAME omega. This is an exact categorical and operational bridge for the scheduled observer language. It does not establish an embedding into original C5, virtual equipment, or the newer physical-mechanism synthesis language. Earlier limited categorical interpretations elsewhere in the programme are not erased by this remaining gap.
+
+Unknown encoders, wiring and update tables can be synthesized as finite variables under explicit budgets. Local evaluation constraints, permissions and terminal equalities decide whether a proposed statistic is implemented on every declared trace. Checking only sampled traces would be weaker. A successful source-level check certifies implementability relative to the capability contract, not that the physical hardware actually meets that contract.
+
+For each program, define the report matrix
+
+    P_D[y,omega] = 1 when Psi_D(omega)=y, and 0 otherwise.
+
+Its report law is P_D p, and every evidence row is literally a test pulled back along this program. For a postprocessor E on report values, let Q_E be its report-to-report pushforward. Then P_(E after D)=Q_E P_D; Q_E is not a second root-trace matrix. Parallel report laws remain joint pushforwards of p; they are not products of marginal report laws unless independence is separately justified. These equations connect the code to the exact rows used by the risk proof.
+
+A fixed certificate potential phi_D can pass through a coarser report q_D precisely when phi_D is constant on every fibre of q_D over the declared carrier. Any restriction to reachable outputs needs its own justification. The decoder is the common value on that fibre. This finite check preserves the pointwise potential, but its expectation bound must also be retained or recalibrated. Failure to factor this certificate does not prove that no different certificate works on the coarser report.
+
+6 Risk certificates and discovery
+
+For selected valid evidence rows S, form
+
+    C_S = { p >= 0 : A p=b, l_S <= F_S p <= u_S },
+    U_S = max_(p in C_S) c_+^T p.
+
+An empty set is an inconsistency to diagnose, not a vacuous safety certificate. A nonempty set is compact. Its exact dual minimizes
+
+    b^T y + u_S^T lambda - l_S^T nu
+
+subject to
+
+    A^T y + F_S^T(lambda-nu) >= c_+,
+    lambda >= 0, nu >= 0.
+
+Multiplying the pointwise inequality by p proves soundness; finite linear programming duality supplies an optimum. On the simultaneous evidence and hazard-validity event,
+
+    P_pi(B) <= min(1, U_S + eta_+).
+
+Thus U_S+eta_+<=alpha is uniform assurance, not existential safety. The F terms are potentials on executable reports. The A terms are normalization and causal identities; they are algebraic proof data, not automatically sensor programs or compact local factors.
+
+Let D include all currently available justified rows. Begin with any selected representation S and solve its robust problem. If the bound passes, return the dual certificate and its implementation witnesses. Otherwise inspect a maximizing law p_bad. If it violates an omitted row in D, add an admitted observer exposing that row. This removes the countermodel while preserving the true law on the confidence event. If p_bad satisfies every full-evidence row, return it as an evidence-compatible adverse law.
+
+When the full row family is jointly admissible, each refinement adds an unused row, so at most |D minus S| additions reach a certificate or a full-evidence adverse law. This is exact finite completeness, not an efficiency or minimum-cost guarantee. Exhaustive search over bounded programs and admissible families can separately find a least-cost solution relative to the declared language and costs. A timeout is not an impossibility proof.
+
+The failure outputs have different meanings.
+
+* Representation loss means U_D<=alpha-eta_+ but U_S exceeds it. Existing evidence already excludes the adverse coarse law. Retain the omitted distinction; do not call that law an actual remaining possibility.
+* Evidence insufficiency means even full evidence does not give the upper certificate. Extremal laws can show an unresolved risk range. More samples may help if this is interval uncertainty; genuinely absent joint information needs new acquisition or additional justified assumptions.
+* Interface insufficiency means the necessary statistic cannot be delivered within the stated sensing, memory, communication or timing contract. A complete synthesis obstruction or information lower bound supports this diagnosis.
+* A uniform unsafe conclusion needs a lower-risk bound exceeding alpha and the lower physical transfer contract. Failure of an upper certificate, or a high conservative-envelope score, is not enough.
+
+Necessity can be stronger than an algorithm's choice of feature. On the supported affine hull, with a strictly positive feasible reference law, risk is determined by Fp exactly when c lies in the row span of [A;F]. Otherwise a kernel vector v gives laws p_0 plus or minus a small multiple of v with identical retained feature means and different risks. A paired-law optimization inside the actual confidence region gives a quantitative version. A difference need not cross the required cutoff. For the threshold task alone, maximize c^T q-t subject to p,q in the declared candidate family, Fp=Fq and c^T p<=t, where t is the surrogate cutoff after any physical allowance. A positive optimum gives exactly a threshold-straddling fibre. An infeasible low-score side means every candidate exceeds that surrogate cutoff; a nonpositive optimum means the verdict is constant on each fibre. This weaker test avoids demanding exact risk reconstruction when only a threshold decision matters. Equality of selected moments still does not imply equality of every statistic available from richer raw records.
+
+7 A nonvacuous stopping example
+
+Under a stated speed bound v during reaction and a braking-deceleration lower bound b>0, stopping distance is at most
+
+    v*tau + v^2/(2*b).
+
+Let d lie strictly inside the free distance, leaving positive clearance reserve. Exceeding d is a conservative envelope violation. With sound geometry, speed, braking and calibration assumptions, collision is contained in that violation event, up to the stated failure allowance. Envelope violation alone does not establish a collision. In a model stipulating exact constant reaction speed and braking, the expression is the modeled stopping distance.
+
+For illustrative values v=2, b in {1,2}, tau in {0,1/2} and d=5/2, the four distances are 1, 2, 2 and 3. Violation occurs exactly when delayed reaction and weak braking coincide. Each adverse marginal can have probability 0.1 while coincidence ranges from zero to 0.1. The independence answer 0.01 is not justified by those marginals.
+
+Consider a constructed validation histogram of 300 independent maneuvers under the fixed controller, with no policy-change weighting needed in this illustration: 240 with neither condition, 30 delay-only, 30 weak-braking-only and zero joint events. These are hypothetical data, not measurements from a physical robot. With a predeclared family of at most seven event statistics and total confidence failure 0.05, a zero count has simultaneous one-sided upper bound
+
+    1 - (0.05/7)^(1/300) = approximately 0.0163372.
+
+A conservative rational bound is 0.017, since (0.983)^300 < 1/140. It is below the illustrative risk budget 0.02. This is a genuine nonvacuous statistical illustration, not a recommended safety threshold. Physical decoder failure, policy transfer and operating-regime changes still have to fit the remaining risk margin.
+
+An end-to-end reference program uses the same constructed histogram but searches all 16 Boolean event functions, with confidence allocated to that larger family. Exact one-sided binomial inversion, rounded outward to denominator 2000, gives the distinct bound 39/2000=0.0195<0.02. It must not borrow the sharper seven-statistic calibration above. Exact four-atom risk optimization gives a local-only upper risk of 313/2000=0.1565. Searching all 16 one-bit report functions finds only AND and its complemented coding NAND sufficient. Their pointwise certificate is the hazard output event itself, and their exact robust surrogate risk equals 0.0195. This leaves only 0.0005 for any additional physical decoder allowance; none is silently included.
+
+The same code exhaustively checks 32 source-synthesis cases, covering each report with one or two message symbols. For the selected joint report, one sender-to-receiver bit per maneuver is necessary and sufficient under the stated one-way distributed interface. Replaying an already aligned central archive needs no new physical communication. One retained report bit per maneuver describes output cardinality, not total memory: aggregating a count over 300 trials uses nine bits plus sample-size and other metadata. This is a small runnable discovery-and-certificate pipeline, not an implementation of the unrestricted general search.
+
+If the 300 aligned raw pairs already exist but the representation retained only marginals, discovery recovers the AND statistic and its assurance value from existing evidence. If only unaligned marginal records exist, the same program cannot recover those counts. It is then a concrete measurement plan, not a retrospective result. If a permitted node sees both signals, directly counting the hazard bit is the simplest sufficient representation. No artificial rule forbids that efficient preprocessing.
+
+8 When pairwise summaries and local histories fail
+
+Three binary stopping penalties give a second interaction example. Let h=1 when at least two penalties are active. Suppose each single probability is 0.1 and each pair coincidence is 0.01. Every compatible law has triple probability q between zero and 0.01, with
+
+    p111=q,
+    p110=p101=p011=0.01-q,
+    p100=p010=p001=0.08+q,
+    p000=0.73-q.
+
+Hence risk is 0.03-2q. Pair summaries permit risk 0.03, while q=0.007 gives risk 0.016. The two laws have identical single and pair information but lie on opposite sides of alpha=0.02.
+
+The exact identity
+
+    h = X1*X2 + X1*X3 + X2*X3 - 2*X1*X2*X3
+
+holds on all eight assignments. Pair bounds within eps of 0.01 and a triple bound within eps of 0.007 give risk at most 0.016+5eps. At eps=0.0005 the upper bound is 0.0185. The certificate retains overlapping events rather than treating pair risks as independent. It requires synchronized inputs or another admitted implementation of the same task distinction. A direct hazard counter can again substitute when executable; the triple coordinate itself is not uniquely necessary.
+
+The statistical price is substantial: ordinary simultaneous Hoeffding bounds for seven [0,1] statistics at confidence 0.95 need 11,269,580 independent records for that radius. The small 300-record zero-event illustration is therefore the practical-scale demonstration; the triple example demonstrates structural interaction and the cost of a particular conservative estimator.
+
+A separate recurrent construction shows why more local history is not always enough. A bit vector remains in either an even or odd parity class, refreshing within that class with a persistent holding probability. Every fixed proper-coordinate patch has the same entire history law under both classes, but the three-bit threshold hazard has different probabilities. A common independent rare activation process scales the risks without revealing the class to those patches.
+
+This obstruction is explicitly for separately sampled fixed-patch histories without cross-patch alignment. Aligned overlapping records can reconstruct the full vector; switching patches on one correlated trajectory can also reveal information. With independent within-class refresh at every step, even adaptive proper-patch choices cannot identify the class if same-time records cannot be combined. The claim is protocol-relative, not that every local sensing strategy fails.
+
+9 Concrete interface costs and computation
+
+For a one-way simultaneous interface, suppose the sender sees s, the receiver sees r, and it must compute f(s,r). Two sender records may share a message exactly when they give the same response for every admissible receiver record. On full product support, the minimum message alphabet is the number of distinct response rows. Necessity follows because identical messages cannot be decoded differently at fixed r; sufficiency sends the row class.
+
+For s,r in {0,...,K} and f(s,r)=1[s+r>K], all K+1 sender values have different rows. At least K+1 symbols, or ceil(log2(K+1)) bits, are needed, despite arbitrary sender preprocessing. If the receiver sends r first, a later one-bit reply can suffice. That is a different two-phase interface with different latency and communication costs. Non-product support requires a support-relative argument rather than blindly applying this formula.
+
+The continuous stopping boundary similarly shows why a local good/bad label may lose necessary precision. A positive support margin from the boundary and calibrated sensor resolution can make a finite grid sufficient. Neither the margin nor the calibration is supplied by the communication theorem.
+
+There is an important simpler baseline: with complete aligned episode records and unrestricted centralized processing, estimate the single score w_pi*g_+ directly. Elaborate decomposition can then be unnecessary. Its substantive role requires independently meaningful distributed access, acquisition, timing, retained-memory or reuse constraints, not restrictions invented to make a simple problem look difficult.
+
+The general computational costs remain visible. Path space grows exponentially with horizon and alphabet count. Enumerating bounded circuits and choosing observer families are additional combinatorial searches. Full certificate checking may inspect every path, and an adverse law may need exponentially many trajectory weights rather than a short causal narrative. Factor elimination helps only when actual factors are provided; its induced width includes hazard, controller likelihood ratios, persistent memory, common sources and causal proof potentials, not just physical wiring. Confidence penalties, sample counts, data alignment, message size, memory and latency must also be charged. Exact rational checking or conservative outward rounding is needed when numerical tolerances are comparable to the safety margin.
+
+10 What changes in the eight earlier weaknesses
+
+Existential assurance is replaced by a uniform bound over an evidence confidence region. What remains conditional is membership of the actual experiment in the declared causal and physical class, not selection of a convenient safe realization.
+
+A complete latent mechanism grammar is no longer an input. All causal laws on the observable experiment are allowed. The remaining grammar describes sensing and executable programs, with explicit finite budgets; finite observation vocabulary and hazard semantics remain assumed.
+
+The categorical and operational gap is narrowed by exact evaluation and composition of scheduled observer programs and their report-law maps. Original C5 integration and reconstruction of physical mechanisms are not established by this result.
+
+Interfaces are now source programs with owners, timing, memory and message alphabets, not arbitrary maps on inaccessible states. Hardware attestation and instrumentation noninterference still require external justification.
+
+Width is accounted for rather than solved away. Small physical components do not imply small proof width; the result is exact finite discovery, not global polynomial scaling.
+
+Quantitative uncertainty now has simultaneous coverage, explicit deployment-risk allowances and persistent joint dependence. The numerical examples show both a useful margin and an expensive precision regime. General dependent-data calibration remains a separate obligation.
+
+Failure becomes informative through excluded adverse laws, full-evidence risk ranges, identical-information pairs and interface obstructions. These witnesses are deliberately not conflated with actual unsafety or the failure of every conceivable assurance argument.
+
+Usefulness is demonstrated for task-specific telemetry: a small synchronized statistic can replace a broad joint distribution and eliminate a marginally invisible risk ambiguity. No general benchmark proves that this representation makes arbitrary downstream problems cheaper; only the concrete examples and bounded construction support that claim.
+
+11 Comparison with established approaches
+
+The nearest mathematical engines are trajectory importance sampling and marginal-risk optimization, not just sensor refinement. Precup, Sutton and Singh give an early off-policy likelihood-ratio baseline. Kallus, Mao, Wang and Zhou combine policy evaluation with worst-case expectations and statistical guarantees under divergence uncertainty. Our joint sequential law polytope and partially measured statistics differ, but neither policy reweighting nor robust evaluation is new. This result also does not inherit robustness to arbitrary distribution shift or confounded actions. [Off-policy evaluation](https://web.eecs.umich.edu/~baveja/Papers/OffPolicy.pdf) and [Distributionally robust off-policy evaluation](https://proceedings.mlr.press/v162/kallus22a.html).
+
+Bounds under overlapping marginal information are studied by Embrechts and Puccetti; Fan, Park and Xu establish duality and optimizer existence with uncertain marginal laws. Causal transport also provides established linear nonanticipation constraints and duality. Our finite interval constraints, causal experiment and executable acquisition layer specialize a developed mathematical pattern, not a new risk-duality theorem. The added deliverable is the explicit, resource-accounted connection between available evidence, programs and task-dependent report selection. [Overlapping marginals](https://air.unimi.it/handle/2434/358569), [Uncertain marginal risk](https://doi.org/10.1287/moor.2024.0557), and [Causal transport](https://arxiv.org/abs/1606.04062).
+
+Task-relevant state abstraction is established. Wang and colleagues derive task-specific causal abstractions in factored reinforcement-learning settings; their theorem assumptions include fully observed factored states and conditional independence structure. The present target instead permits non-Markov observable laws and asks for evidence-supported executable reports. This is a difference in scope, not a claim to have invented task relevance. [Building Minimal and Reusable Causal State Abstractions for Reinforcement Learning](https://arxiv.org/html/2401.12497v1).
+
+Counterexample-guided sensor discovery is also established. Fu, Dimitrova and Topcu refine partial-information games and sensing modalities using counterexamples and interpolation. Chatterjee, Chmelik and Topcu synthesize additional sensors and memory tradeoffs in a supplied POMDP. The current procedure adds uncertainty justified by incomplete experimental evidence and source-level report implementations; its refinement mechanism is not new CEGAR. [Sensor design](https://eprints.whiterose.ac.uk/id/eprint/156437/1/acc14.pdf) and [POMDP sensor synthesis](https://ojs.aaai.org/index.php/ICAPS/article/view/13875).
+
+Probabilistic assume-guarantee learning already produces learned assumptions, counterexamples and quantitative bounds. Feng, Kwiatkowska and Parker do so for supplied probabilistic components. Komuravelli, Pasareanu and Clarke show why stochastic-tree counterexamples can be needed for their simulation problem. Our finite-law witnesses are suited to the specific linear risk problem, not universal replacements for richer counterexample structures. [Probabilistic learning](https://qav.cs.ox.ac.uk/papers/qest10learn.pdf) and [Assume-guarantee refinement](https://arxiv.org/abs/1207.5086).
+
+Data-driven quantitative abstraction is not new either. Jackson and colleagues learn uncertain dynamics and construct interval-MDP abstractions; Coppola and colleagues use sampled noise and known dynamics for bundled interval-MDP abstractions. Coupled uncertainty is explicitly studied by Mannor, Mebel and Xu. The present integration avoids choosing a latent Markov architecture and retains one full joint law, while accepting potentially much greater computational cost. [Partially known stochastic systems](https://mortezalahijanian.com/papers/HSCC2021.pdf), [Bundled interval MDPs](https://licioromao.com/assets/bibfiles/individual-pdf/CPRAM24.pdf), and [Coupled robust uncertainty](https://doi.org/10.1287/moor.2016.0786).
+
+Earlier work in this programme already covers continuation-sensitive quotients, persistent-world interface constraints, robust quantifier orders and limited categorical interpretations. The incremental burden met here is their evidence-facing behavioral counterpart with explicit quantitative and executable obligations. The focused comparison is not a publication-priority clearance.
+
+12 Evidence for this milestone and remaining work
+
+The accompanying source notes contain the causal realization and policy-change proof, the risk dual and finite refinement proof, the observer composition and synthesis construction, the exact information obstruction, and the stopping and persistent-history derivations. Reproducible finite checks exercise policy-change identities, confounding failures, post-selection confidence failures, joint uncertainty, the stopping identity, risk margins and observation-protocol limitations. Independent AI proof review found no unresolved substantive mathematical defect after the recorded repairs; this was not human review or a formal proof-assistant check. Exact controls include 4,096 independently checked policy-change models, 1,365 executable-observer traces and 6,372 observer steps, plus the numerical interaction and protocol tests. Passing them supports the constructions and catches specific mistakes; it is not validation of a real deployment. No physical experiment, hardware installation or safe-exploration trial was performed.
+
+The result supports a concrete next experiment: declare the controller and physical envelope, inventory aligned archives and legal observer programs, establish the sampling and causal contracts, then let adverse laws identify which existing statistic to retain or which new measurement to acquire. Evidence gaps and implementation blocks should remain visible throughout. Physical mechanism identification, unrestricted sensor discovery, original categorical integration, scalable general synthesis and real-system validation remain separate research tasks. Completing this bounded milestone does not discharge the original broader research contract.
+
+Source guide for the accompanying archive
+
+- theory/Causal_Evidence_and_Risk_Decomposition.md contains the causal, confidence, risk and discovery statements and proofs.
+- theory/Executable_Observer_Calculus.md contains typed source semantics, synthesis and interface transport.
+- examples/Stopping_Interaction_Discovery.md contains the physical envelope, statistical illustrations and persistent-history scope.
+- audit/Safety_Representation_Baselines.md records the focused comparison and prior programme coverage.
+- review/Independent_Proof_Review.md records independent AI review and repairs.
+- examples/End_to_End_Observer_Discovery.md and tests/check_end_to_end_discovery.py document and execute the complete 16-report discovery example. The remaining tests, examples/check_stopping_interactions.py and reproduction contain component checks, results and rerun outputs.

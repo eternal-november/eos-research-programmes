@@ -1,0 +1,52 @@
+# Prior work and target gate: budgeted interaction compatibility
+
+Reviewed 2026-10-30. This is a targeted primary-source comparison, not an exhaustive novelty search. The proposed research concerns safe interleaving of learning and mission execution, unknown local structure, finite resources and expiring opportunities, and independently checked positive/negative certificates.
+
+## Verdict
+
+The augmented decision problem is standard in its broad ingredients. Adding a hidden model index, physical state, mission automaton and remaining resources to an information-state planning problem does not by itself create a new theory. Likewise, exact Boolean AND/OR recursion, winning-region shielding, joint model/state filtering, factored belief updates, and local inference via elimination all have substantial precedents.
+
+The potentially substantive target is narrower: **discover a valid local semantic decomposition from allowed evidence and prove that its recursively maintained interface preserves the global contingent learning-and-mission decision, including shared budgets and observation timing; exhibit a checked cost advantage over an equally informed coherent baseline.** Whether the proposed family delivers this remains open.
+
+## Closest comparators
+
+1. **Learning and planning jointly.** Ross, Pineau, Chaib-draa and Kreitmann, *A Bayesian Approach for Learning and Planning in Partially Observable Markov Decision Processes*, JMLR 2011, formalize Bayes-adaptive POMDPs. Model uncertainty belongs inside the planning state, so actions may trade immediate performance for information. This blocks novelty claims for merely combining state uncertainty, parameter uncertainty and useful work. Bayesian expected reward differs from our intended uniform finite-budget guarantee. [Primary paper](https://www.cs.mcgill.ca/~jpineau/files/sross-jmlr11.pdf).
+
+2. **Dual control.** Klenske and Hennig, *Dual Control for Approximate Bayesian Reinforcement Learning*, explicitly develops control that both influences and learns the system. Our observation that probes consume resources and alter future options is a motivation, not a novel principle. [Primary paper](https://arxiv.org/abs/1510.03591).
+
+3. **Unknown mechanisms and hidden states together.** Amir, *Learning Partially Observable Deterministic Action Models*, IJCAI 2005, introduces simultaneous learning and filtering over possible transition relations and world states, including exact compact factored regimes. It already warns against separating model learning from current-state inference. Our claimed new factorization must be compared against its restrictions and representation, not merely a world-enumeration strawman. [Primary proceedings](https://ijcai.org/proceedings/2005/196).
+
+4. **Goal achievement while learning.** Chang and Amir, *Goal Achievement in Partially Known, Partially Observable Domains*, ICAPS 2006, interleaves planning and execution with online transition-belief updates in a restricted STRIPS setting. Its bounded goal-achievement results are directly relevant, although they are not automatically hard safety/resource guarantees for irreversible missions. The assumptions must be compared before claiming an advance. [Primary paper copy](https://citeseerx.ist.psu.edu/document?doi=167f36c86200ca67cf1db637a36ebf09b951db3a&repid=rep1&type=pdf).
+
+5. **Safety plus eventual completion under partial observation.** Junges, Jansen and Seshia, *Enforcing Almost-Sure Reachability in POMDPs*, CAV 2021, computes winning regions for reaching a goal while avoiding bad states and uses them to constrain safe exploration. Carr et al., *Safe Reinforcement Learning via Shielding under Partial Observability*, integrates such shields with learning using a partial environment model. In the latter setting all possible transitions must be covered, even when probabilities and rewards are unspecified. Unknown support discovery therefore needs an explicit conservative initial class and a sound elimination rule. [Winning regions](https://arxiv.org/abs/2007.00085), [POMDP shielding](https://arxiv.org/abs/2204.00755).
+
+6. **Hard resources.** Brázdil et al., *Stochastic Shortest Path with Energy Constraints in POMDPs*, AAMAS 2016, already imposes a hard resource-level constraint rather than merely an expected penalty. Finite deadlines and consumable budgets can be encoded in state, although this can be costly. Our benefit cannot be that budget is explicit. [Primary proceedings](https://www.ifaamas.org/Proceedings/aamas2016/pdfs/p1465.pdf).
+
+7. **Safe information acquisition.** Turchetta, Berkenkamp and Krause, *Safe Exploration in Finite Markov Decision Processes with Gaussian Processes*, NeurIPS 2016, learns unknown safety constraints while respecting reachability and avoiding getting stuck under its regularity/confidence assumptions. A meaningful distinction for our project is completion before irreversible deadlines, not simply learning a reachable safe set. [Primary proceedings](https://papers.neurips.cc/paper_files/paper/2016/hash/9a49a25d845a483fae4be7e341368e36-Abstract.html).
+
+8. **Exact local beliefs are already a theorem.** Bonet and Geffner, *Factored Probabilistic Belief Tracking*, IJCAI 2016, gives exact factor maintenance over causally closed beams under backward determinism of shared variables. Computing marginals can still be hard; acyclic structure supplies an exact efficient case. Its decomposition comes from the model structure. This is especially close to a proposed learned-interface theorem: distinguish discovery of that structure, sound maintenance of shared variables, and planning over the resulting information states. [Primary proceedings](https://ijcai.org/proceedings/2016/432).
+
+9. **Planning width is separate.** Geffner and Bonet, *Width and Complexity of Belief Tracking in Non-Deterministic Conformant and Contingent Planning*, AAAI 2012, develops width-sensitive belief tracking. Amir and Engelhardt, *Factored Planning*, IJCAI 2003, already combines tree-structured local planning through interaction descriptors with soundness/completeness and interface-sensitive complexity. Task-based decomposition of factored POMDPs is also established. A new separator theorem must explain what its interfaces preserve beyond known local tracking/planning constructions. [Belief width](https://ojs.aaai.org/index.php/AAAI/article/download/8365/8224), [Factored planning](https://ijcai.org/proceedings/2003/133), [Task decomposition author paper](https://tzin.bgu.ac.il/~shanigu/Publications/DecomposingPOMDPs.SMC.4.pdf).
+
+## Required theorem distinctions
+
+- **Uniform versus per-world:** every possible world having a successful clairvoyant policy does not imply one observation-based strategy succeeds across the evidence class. The latter quantifier order is the target.
+- **Fixed uncertainty versus switching adversary:** parameter uncertainty must remain correlated across time. Replacing a persistent model class with independently chosen local transitions may destroy winning strategies. If a negative certificate uses this enlargement, it proves only inability to certify under that enlargement, not impossibility in the original class.
+- **Filtering versus planning:** exact small factors do not imply a small optimal policy or local feasibility test. Shared deadlines, action exclusivity and resource allocations create global choice constraints. Report inference width, planning/interface width and certificate size separately.
+- **Information timing:** elimination orders or local plans must not let an action depend on an observation that arrives later or is hidden from that agent. A numerically correct marginalization can still encode an illicit policy.
+- **Safety semantics:** public predictive equivalence alone does not preserve hidden hazard labels. Include the relevant physical hazard interpretation and mission objective in the refinement/abstraction theorem.
+- **Strategy scope:** state whether policies are arbitrary finite-history, finite-memory, bounded-depth, deterministic or randomized, and whether all actions are included. A failed restricted search is not a general negative result.
+- **Finite-budget semantics:** distinguish sure finite-horizon success, probability-one eventual success, and chance-constrained success. Infinite-horizon POMDP complexity or undecidability results cannot simply be attributed to a finite acyclic benchmark.
+- **Computation:** if wall-clock computation consumes mission time, account for it physically. Otherwise label the budget as simulated action/observation cost and report solver time separately.
+
+## Recommended target gate and experiments
+
+Before implementation, require a small exact witness where an information-producing useful action preserves a later opportunity, but an upfront identification policy exhausts it; require a nearby instance where every permissible strategy fails. Prove these statements against the declared policy class, not selected heuristic policies.
+
+Use a two-level certificate: a locally verified semantic-interface witness and a global contingent mission certificate over those interfaces. Do not hide an unrestricted global verifier inside the interface. State the cost of discovering and checking every interface.
+
+For negatives, an acyclic counterstrategy certificate must cover every legal action and provide a possible observation/successor that remains losing, with model consistency retained along branches. Positive certificates must cover every possible observation following each chosen action. Unknown means a proof search limit, a missing modeling premise, or insufficient abstraction, not a third semantic truth value in an otherwise exactly solved finite model.
+
+At least one fair baseline should use the same retained joint evidence in a symbolic coherent representation, not only enumerate all worlds. Separate acquisition savings from representation/checking savings. Include weak baselines only as diagnostics. Test a scope/dependency violation and verify that the method rejects or enlarges the interface rather than silently reusing an invalid local certificate.
+
+The strongest plausible bounded result is a **learned-interface exactness theorem with an explicit separator/resource complexity bound and measured reuse benefit**, plus a constructive obstruction when the hypotheses fail. If the final method is merely an exact global planner over a hand-specified factor graph, report it as an integration baseline, not discovery of compositional compatibility.

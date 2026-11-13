@@ -1,0 +1,266 @@
+Evidence to mission compatibility checkpoint
+30 October 2026
+
+We can now tell exactly when a particular set of linear measurements is enough to
+guarantee a chosen mission through one fixed feedback loop. The guarantee covers every
+linear completion in the declared class consistent with those measurements. It does not
+require identifying the system or forcing its internal state to be unique.
+
+The result gives both a certificate of success and a concrete counterexample when the
+guarantee fails. A second construction handles finite networks when their unknown
+quantities and connections are explicitly represented. It retains their correlations and
+handles exceptional cases that ordinary calculations can miss.
+
+These are scoped mathematical results, not a solution to the whole research problem.
+They do not yet tell us whether the model includes the real physical couplings, how to
+collect evidence safely and cheaply, or whether a compact realization can be obtained.
+Within this declared setting, the connection to the earlier structural theorem has also
+been checked. Novelty is unresolved.
+
+One fixed loop from two sided evidence
+
+Work in finite-dimensional real vector spaces. An unknown linear box F maps V=A
+direct-sum U to Y direct-sum U. Write p:V->A and t:V->U for projections. The exact
+evidence specifies F on a known subspace S and specifies HF for a known output
+measurement H. First check consistency; contradictory evidence is not certified by
+vacuity.
+
+Choose any consistent F0. Let K=ker H, i_K its inclusion, and q:V->V/S the quotient. The
+complete supported family is exactly
+
+    F_Z=F0+i_K Zq,                 Z:V/S->K arbitrary.
+
+A difference between completions vanishes on S and lands in K, proving this
+parametrization. The same Z controls internal and observed uncertainty; splitting it
+into independent uncertainties would change the evidence.
+
+Fix a linear mission readout h:Y direct-sum U->O, a fixed linear target J:A->O, and the
+wiring that identifies internal output with internal input. Define
+
+    L0=pr_U F0-t,     B=pr_U i_K,
+    O0=hF0,          C=hi_K,          E0=O0-Jp,
+    L_Z=L0+BZq,      E_Z=E0+CZq.
+
+The mission is p(ker L_Z)=A and E_Z|ker L_Z=0 for every Z: every input has a fixed
+point, and every fixed point gives the prescribed readout. This is mission-relative
+kernel-image admission, not hidden-state uniqueness. One policy is fixed throughout.
+
+Put W=S intersect ker p, R0=L0(W), and T=L0^{-1}(im B). The exact
+necessary-and-sufficient theorem is the conjunction of feasibility and output below.
+
+    Feasibility: F1 OR F2
+    F1: p(S intersect ker L0)=A.
+    F2: im B is contained in R0 AND p(ker L0)=A.
+
+    Output: use the applicable branch
+    O1, if T is contained in S: E0|ker L0=0.
+    O2, if T is not contained in S:
+        there exists D:U->O with DL0=E0 and DB=C.
+
+These are finite subspace, rank, and linear-equation tests. Their truth is independent
+of the chosen F0, because another choice merely translates Z in the same completion
+family.
+
+Witnesses and the reason the theorem is exact
+
+Under F1, choose a section Kobs:A->S intersect ker L0 of p. It works for every
+completion. Under F2, choose K0:A->ker L0 with pK0=id and R:im B->W with L0R=id. Then
+
+    K_Z=K0-RBZqK0
+
+satisfies pK_Z=id and L_ZK_Z=0, since pR=qR=0. Under O2, E_Z=DL_Z; under O1, every
+possible fixed vector lies in T contained in S and is already nominal. Both branches
+therefore control all fixed points, not just the selected section.
+
+Conversely, if im B is not contained in R0, a functional annihilating R0 but not B can
+be used to make a residual row equal a nonzero external-input functional unless F1
+holds. For output, any x in T outside S can be made fixed by prescribing Zqx=k with
+Bk=-L0x. Requiring E0x+Ck=0 for every such choice forces C to vanish on ker B, and then
+yields exactly the multiplier D in O2. This also explains the separate O1 branch.
+
+If the conjunction fails, some completion with rank Z at most one witnesses failure; Z=0
+covers nominal failures. Otherwise choose Z=k ell to create the missing input or a bad
+fixed point. Thus rejection has an explicit adverse model within the declared evidence
+class, not merely a failed search.
+
+Independent proof checking found the algebra sound. Direct exhaustive checks over the
+two-element field agreed in 69,952 small instances: 320, 65,536, and 4,096 for the three
+tested dimension pairs. The tested (dim A, dim U) pairs were (1,1), (1,2), and (2,1),
+with dim K=dim O=1. These checks support the proof; they are not general empirical
+evidence about physical systems.
+
+A useful correlated example
+
+Take A=U=Y=R, readout y, and target y=a. Observe the diagonal experiment F(1,1)=(1,1),
+and measure y-v on an input basis, obtaining the row identity y-v=a-u by linearity.
+These finite experiments give the exact completion family
+
+    F_z(a,u)=(a,u)+z(a-u)(1,1),       z in R.
+
+The diagonal supplies u=a as a fixed point. The conservation law plus actual feedback
+v=u forces y=a at every fixed point. At z=0, every u is fixed; at nonzero z, u=a is
+unique. The mission succeeds without identifying z or requiring a unique hidden fixed
+point. Independent internal/output perturbations would destroy the conservation
+correlation and invalidate this conclusion.
+
+Optional stricter original admission
+
+If the original operational specification demands inverse-domain feedback, retain that
+requirement separately. With vertical inclusion i_U, Q=qi_U and D0=L0i_U, every residual
+internal block D0+BZQ is invertible exactly when
+
+    D0 is invertible AND QD0^{-1}B=0.
+
+Under this guard let R=i_U D0^{-1} and K0 be the unique nominal fixed-point section. The
+exact prescribed-output test is
+
+    O0K0=J AND [qK0=0 OR C=O0RB].
+
+The inverse follows from a square-zero update; output equals O0K0+(C-O0RB)ZqK0. Failure
+again admits a rank-at-most-one countermodel. This optional contract intentionally
+rejects the z=0 example, although its kernel-image mission is valid. Other original
+safety or scheduling guards are not supplied by algebraic fixed-point existence.
+
+Known contexts and the boundary of the one loop rule
+
+For known linear pre/post maps P and G, the family GFP is exactly another two-sided
+family with nominal GF0P, sampled subspace P^{-1}(S), and uncertainty image G(K). The
+induced map V'/P^{-1}(S)->V/S is injective and K->G(K) is surjective; splitting these
+maps lifts every transformed uncertainty back to an original completion. Successive
+forward context maps compose exactly. If F remains correlated with other unknown
+components, retain the shared parameter and lift relation; the projected family must not
+be independently resampled. A transformed mission and its guards must still be checked.
+
+Stronger consistent evidence restricts the completion family and its successful witness
+family. Recomputed sections in the same world differ by an invertible shear id+(K'-K)p
+on the fixed-point carrier, preserving both mission legs and satisfying the cocycle
+identity. Different worlds need not have isomorphic raw carriers.
+
+Unknown composition is different. Reusing an unknown scalar a twice yields a^2,
+whose supported values [0,infinity) are not affine. Even independent unknown row/column
+factors produce a rank-at-most-one matrix family, also non-affine. The one-loop rule is
+therefore not recursively closed under arbitrary unknown composition.
+
+Finite networks with shared parameters
+
+A broader checked algebraic construction uses a nonempty semialgebraic locus Theta of
+shared parameters theta, specified by evidence and a declared structural theory T. Fix
+finite ports and a finite declared collection of networks, contexts, and substitution
+routes. Each network has homogeneous wire equations
+
+    A_N(theta)w=0,            external e=L_N(theta)w,
+
+with polynomial coefficients in theta. The same parameters and all coupling equations
+remain shared. Affine equations require a distinguished homogenizing coordinate fixed to
+one; a free extra coordinate would change the problem.
+
+Branch Gaussian elimination on every zero/nonzero pivot possibility, then take a common
+refinement for the finite collection. All rank drops get their own strata. On each chart
+one computes rational matrices N,H,Tc,Sr,Dk with explicitly nonzero denominators such
+that
+
+    ker A_N=im N,       L_N N=H Tc,
+    Tc Sr=I,           ker Tc=im Dk,
+
+where N,H,Dk have independent columns. The exact observable interface and all its
+witnesses are
+
+    e=Hc,              w=N(Sr c+Dk z).
+
+This extracts an actual external relation and its invisible freedoms, not just a mission
+truth value. Empty matrices cover zero-dimensional cases. No generic chart is
+specialized through a vanishing denominator. Intersecting charts with stronger evidence
+restricts the same formulas, retaining rank-drop strata; independently recomputed charts
+use their overlap transitions.
+
+Relational composition is exact when private witnesses are disjoint, shared cut
+variables remain visible until gluing, and the same theta is retained. Hidden
+cross-couplings must stay at the cut or appear as joint constraints. Composing unions
+after independently forgetting theta would incorrectly mix worlds. Direct and staged
+extraction then represent the same external subspace. Their basis-coordinate transitions
+are uniquely determined by that subspace and obey the cocycle law. Chosen internal
+sections differ by invisible-kernel shears; they need not be unique or executable.
+Completion-dependent and chart-dependent internal witnesses certify existence. They are
+not hidden-world policies; an observable implementation is a further obligation.
+
+For required input projection p with m-dimensional codomain and readout residual
+r=O_m-Jp, where O_m is the stated linear readout, the pointwise necessary-and-sufficient
+mission tests are
+
+    rank([A_N;r])=rank A_N,
+    rank([A_N;p])=rank A_N+m.
+
+The first controls every solution; the second supplies some solution for every input.
+Conjoin the original admission guards for each required schedule. With real algebraic
+coefficients and semialgebraic guards, quantifier elimination decides universal success
+over Theta relative to T. A failure gives a supported parameter countermodel and a
+failed guard, bad solution, or infeasible input. It is not necessarily a physically
+realizable world if T only overapproximates reality.
+
+What the categorical bridge does and does not establish
+
+The interface carrier honestly realizes its external relation in finite-dimensional
+linear relations: preparation requires x=H_Xc and testing requires y=H_Yc. Their
+relational composite is exactly im H. A witness section alone generally does not
+preserve the whole preparation relation and must not be called a realization morphism.
+
+The application of the separately established v2 cylinder-factorization-system (CFS)
+theorem has now been checked in a concrete setting. Use the full small compact skeleton
+FinLinRel_R: objects R^n, all finite-dimensional real linear relations, and direct sum.
+Its monoidal free-Isbell envelope supplies actual M-left/E-right comparison spans from
+honest realizations to the canonical middle for their labelled cylinder. The context
+base is the discrete parameter set Theta times the declared Prep x Test^op category,
+restricted to admitted contexts. The verified hypotheses yield the specified naturality
+and substitution coherence; no naturality between different hidden worlds is presumed.
+
+The surjective quotient from the kernel carrier to the external-image carrier preserves
+both realization legs. Its comparison is a SOURCE-CHANGING double cell, not an
+isomorphism or an asserted E/M classification of that quotient. Changes between
+independent external-interface bases, by contrast, are actual leg-preserving
+isomorphisms. Raw local assemblies and separately extracted composite carriers retain
+distinct comparisons unless an explicit boundary comparison connects them.
+
+Finite rational matrices explicitly present the raw interfaces, sections, and chart
+transitions. They do NOT establish finite effective presentations or finite size bounds
+for the free-Isbell comparison apices and legs. Those are supplied by the categorical
+construction. A compact relational trace describes algebraic constraint closure; it
+neither admits extra operational loops nor enlarges the finite declared context closure.
+
+Likewise, the ordinary image im J is not automatically the free-Isbell canonical middle.
+Retain comparison families across supported worlds, charts, and admitted contexts rather
+than identifying raw carriers across rank changes. Evidence refinement restricts those
+families. The earlier world-indexed/CFS restriction is a provenance-derived baseline,
+not a novelty result.
+
+Prior art and remaining work
+
+Two-sided matrix completion is classical, including the Cecioni consistency result
+presented by Penrose in A generalized inverse for matrices:
+https://faculty.kfupm.edu.sa/math/jaafarm/lec-notes/Moore-Pinrose.pdf
+
+Tian and Cheng give extremal rank and range-invariance results for A-BXC, closely
+matching full-block uncertainty: https://nyjm.albany.edu/j/2003/9-18.pdf
+
+Eising and Trentelman establish uniform rank/informativity tests for affine system
+families: https://arxiv.org/html/2010.15564
+
+Malherbe, Scott, and Selinger define the kernel-image partial trace and distinguish it
+from inverse-domain feedback: https://arxiv.org/html/1107.3608#S3.SS3.SSS3
+
+Van Waarde and coauthors already establish data informativity without plant
+identification: https://arxiv.org/html/1908.00468
+
+Ballarin and Kauers give constraint-maintaining zero/nonzero-pivot branching and uniform
+solution regimes in Solving Parametric Linear Systems, Sections 3-4, the direct baseline
+for the network extraction: https://wwwbroy.in.tum.de/publ/papers/rwca02.pdf
+
+The bounded source audit did not locate the exact F1/F2 plus O1/O2 branching criterion;
+it did not establish priority or rule out a classical reduction. Parametric elimination,
+relational composition, rank tests, and splitting shears are established ingredients.
+
+The coherent bridge is therefore proved within the selected linear doctrine and
+declared contexts, using the verified comparison theorem. Global symbolic inference is
+allowed; no local-only method or efficiency advantage is required or proved. Next obligations are physical
+model adequacy, omitted couplings, noisy acquisition, budget, and actively chosen safe
+experiments. Compact realizations are desirable, but adversarial uncertainty may
+obstruct them. Neither the broader composition problem nor novelty has been settled.

@@ -1,0 +1,77 @@
+# Exact bridge for the bounded discovered-tool instance
+
+Status: construction/obligation map, not a claim that a generic environment-learning theorem was already proved. 2 November 2026.
+
+## 1. Recovered sources and exact anchors
+
+Sources are in `reference_sources/relative/sources/stages/O*/` and `reference_sources/decomposition/` relative to this directory. The source archives have verified SHA-256 values:
+
+- Integrated_Relative_Computation_Source_and_Checks.zip: `406f65cd8636e0f76997698878eb24b4e1c258025e8f83a4f0a57cdfc8f44694`.
+- Decomposition_Explanation_and_Formal_Backbone_Source.zip: `80a19c710b6ec8e275db206bf46e81f671999da4c53a0a0750edc2e7576e8617`.
+
+**Older exact-record backbone.** `formal_backbone/project/JointQuotientDecoder.lean`: `exact_iff_sound_and_sourceFixedLift`, `quotient_exact_iff_stable`, `joint_test_preserved`, `exact_compose_records`, `graft_descends_iff`, `generated_tests_preserved`. These require complete records and a lift at EACH source representative. Graft congruence is separate from record exactness. They do not discover an environment.
+
+**Older concrete cylinder wiring.** `stage_sources/return_cylinder_bridge_source/return_cylinder_bridge/theory/cylinder_priority_bridge_20261031/bridge_theorem.md`, sections 2–5. An actual same-witness Boolean constraint network is first shown to realize the operational support; its witness-indexed tensor carrier then has a preparation/test-preserving span through the generated submodule to the canonical image. Only complete shared boundaries may be normalized. This is a reusable construction, not a theorem that arbitrary local marginal models glue.
+
+**O4.** `Typed_Protocols_and_Bounded_Higher_Order_Interaction.tex`, `lem:execution`, `thm:substitution`, `thm:main`: finite typed contexts, fixed owned resource tokens, pure evidence substitution, acyclic ranked procedures. This does not provide arbitrary scheduling, fairness, physical isolation, or detection of hidden drift.
+
+**O5.** `Contextual_Refinement_and_Controlled_Recovery.tex`, L1–L4 in `sec:local`, `thm:replacement`, `lem:raw-lift`, `eq:occurrence`: locally checked full-state couplings lift to all admitted finite contexts and actual occurrence-composed O1 spans. Every imported AND fixed client primitive must preserve the relation. Initial correlations are retained.
+
+**O7 (optional strengthening).** `Law_and_Possibility_Repair_for_Dependent_Protocols.tex`, `thm:span`, `thm:contextual`: add candidate possibility coverage at every related input, including zero-weight inputs, to preserve universal declared-outcome properties. This requires more than law preservation. It does not assign probabilities to epistemic uncertainty.
+
+## 2. Independently constructed physical constraint instance
+
+Fix a finite dimension m, one epoch, and a hidden but fixed coupling vector theta in F_2^m. Commissioning produces true equations A theta=b using supplied safe dummy probes. Let V(A,b)={theta:A theta=b}; require V nonempty. A pending real operation starts with command x. A public word of auxiliary actions has parity vector v. The physical pending bit is
+
+    s = x + theta·v.
+
+One owner controls the entire station, including the gate and shared pending store. An individual work action j increments v by e_j and s by theta_j. There is no claim that separately owned resources have independent hidden effects.
+
+For a fixed public word j_1,...,j_n, construct Boolean factors with variables theta, s_0,...,s_n, v_0,...,v_n:
+
+    A theta=b; s_0=x; v_0=0;
+    v_(k+1)=v_k+e_(j_k);
+    s_(k+1)=s_k+theta_(j_k).
+
+Equality wires retain the SAME theta at every occurrence. Further factors encode the declared gate, correction, epoch and output rules. Existentially hide internal states only after their final shared use. A physical run satisfies every factor. Conversely, any satisfying assignment determines exactly a physical run for its theta by induction over k. Thus this explicit diagram's joint boundary relation equals the finite model's physical trace relation—not merely an overapproximation assembled from marginal checks.
+
+At the disturbance boundary the resulting section is
+
+    K_(A,b)(v,d) iff exists theta: A theta=b and d=theta·v.
+
+Here v is a proposed scheduled action word's parity; b is observed evidence, not an actuator giving control over hidden theta. K is a possibility relation, not a probability kernel. If a full physical preparation/test cylinder is wanted, use the actual safe commissioning/production protocol as preparation and include its observed transcript among the joint tests; do not silently treat evidence b as a physically selectable preparation.
+
+The old Boolean complete-module construction now applies to these independently established factors F_i. With all shared assignments z retained, set X_N=direct_sum_z tensor_i M_(F_i). Its test/preparation pairing is OR_z AND_i F_i, hence the proved physical relation. The explicit comparison is X_N <- U_N ->> im(K_!), with U_N generated by labelled preparations. Regrouping factors and normalizing complete boundaries preserves this kernel and the labelled comparisons. This is the exact older decomposition contribution; the factor-to-physical-run induction is the NEW instance proof.
+
+## 3. Mission-relative exactness, not full mechanism identification
+
+A uniform correction exists precisely when theta·v is constant on V(A,b). For nonempty V this is equivalent to v in rowspan(A). If lambda A=v, the correction is d=lambda b. Different choices of lambda agree because A theta=b has a solution. Conversely, if v is not in the row space, some h in ker(A) has h·v=1, so theta and theta+h give different disturbances while agreeing with all evidence.
+
+This elementary linear-algebra lemma supplies an independently decidable boundary for the interface. It is not imported from either categorical programme. More evidence A' theta=b' extends A,b: V' subset V and rowspan(A) subset rowspan(A'). Old certificates extend by padding lambda with zeros. This is a concrete refinement law: knowledge restricts possible worlds while enlarging the set of certifiable composed actions. It does NOT say all refinements are good physically or that probes are free.
+
+Nontrivial joint-witness example: one probe gives theta_1+theta_2=b. Each marginal remains {0,1}, but the combined work v=(1,1) has known correction b. Replacing V by its independent marginal product loses this useful certificate. Conversely, discarding the coupling condition and retaining an isolated-tool promise admits an unsafe one-action context when theta_j=1. These are different failures: marginalization is conservative but incomplete if used honestly; treating an isolated promise as universal is unsound.
+
+## 4. Actual O5 comparison, not a framework diagram
+
+Fix theta in V(A,b). The candidate is the physical station plus its checked controller. The reference is a guarded ideal station with the SAME public events, costs, action history/parity, epoch and resource protocol, but no hidden disturbance. A pending ideal operation retains x and v. The relation R pairs full states exactly when their public fields and owners agree and the candidate has s=x+theta·v. Quiescent states agree on public completed output. The guard permits corrected commit only with a verified lambda A=v and current epoch receipt. Begin, each work action, correction/commit, safe hold and other declared methods must be checked separately.
+
+The finite local checks are substantive: begin establishes the invariant; work preserves it even if the intermediate v is outside rowspan(A); verified commit gives s+lambda b=x; safe hold preserves the pending state and does not promise completion. Exact costs and public outputs match. Correct-and-commit must either be one trusted method or use an explicit intermediate phase that prevents unmodelled interleavings. A stale-epoch receipt is rejected by an effectful controller check, not merely a pure tag. Arbitrary unobserved parameter drift is excluded, not detected by this theorem.
+
+For deterministic local tables, each related input has the diagonal singleton outcome coupling of weight 1. This supplies O5 L2 and its actual native span; every other primitive supplies L3 by explicit table proof. O4 typing supplies exclusive ownership and the declared finite client context class, not hardware isolation. O5 then derives contextual substitution for all such clients, including partial pending work. It does NOT derive deadline completion: mission completion and budget need the separate concrete scheduling argument.
+
+No probability distribution over theta is necessary. Prove for each theta in V. Alternatively, any expressly supplied joint prior supported in V can be coupled with the reference by retaining theta as a common witness, without replacing it by independent marginals. O7 adds value only if a probabilistic application distinguishes declared zero-weight possibilities; in this deterministic fixture candidate coverage is automatic and should not be advertised as a new probabilistic achievement.
+
+## 5. Important exact-decoder caveat
+
+The old quotient theorem does not justify erasing theta for unrestricted probes. At fixed theta, a probe has one actual answer; a union over all theta in V can have both. Such a union fails source-fixed lifting at each concrete representative. Two honest alternatives:
+
+1. use V as a sound epistemic support during commissioning and apply the exact abstraction only to the guarded post-commissioning production language;
+2. retain enough hidden/source information for exact probe semantics, while treating evidence updates as explicit observations refining V.
+
+For guarded production, the local invariant above proves equal retained public records for every related theta; therefore forgetting theta/s is stable for those records. The old exact decoder and generated-test results then apply to this restricted interface after its concrete cut/step instances are supplied. They do not apply to tests exposing private s, unrestricted output, or arbitrary future probes. Complete histories may share one theta across multiple calls; factoring per-call possibilities first would destroy this common-world condition.
+
+## 6. Required new proofs and stopping point
+
+New instance obligations are: physical factor/run equivalence; row-space iff uniform correction; per-method full-state simulation with epoch/ownership guards; paid mission completion under stated finite budget; impossibility of uniform corrected release outside the row space in the declared observation regime; and explicit counterexamples to marginalization/unguarded reuse. Existing machinery supplies normalized witness-preserving wiring, typed finite plugging, and contextual closure once those local facts hold.
+
+The appropriate bounded deliverable is this instantiated theorem package and executable finite checks. It is not a new contract, a general semantics-discovery algorithm, unrestricted concurrent separation logic, automatic physical isolation, a universal cylinder realization theorem, or a novelty claim for the underlying linear algebra.

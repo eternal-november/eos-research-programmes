@@ -1,0 +1,4 @@
+import JointArrayDecoderBridge
+#print axioms JointArrayDecoderBridge.exact_array_decoder
+#print axioms JointArrayDecoderBridge.array_predicate_preserved
+#print axioms JointArrayDecoderBridge.intermediate_products_preserved

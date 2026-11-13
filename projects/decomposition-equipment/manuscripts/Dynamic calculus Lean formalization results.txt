@@ -1,0 +1,90 @@
+Dynamic calculus Lean formalization results
+27 October 2026
+
+Abstract
+
+This formalization checks a precise way of describing how a system can be decomposed and its pieces expanded into finer decompositions. A system records both its states and its individual events. Two events remain different even when they have the same starting and ending states. A decomposition records an ordered list of pieces and the actual maps connecting the system to those pieces, rather than only their visible behavior.
+
+The central result is a working dynamic calculus in Lean: each occurrence can be expanded independently, and expansion satisfies identity and associativity laws. Empty lists receive special treatment. They retain the boundary system instead of being replaced by a single point. An empty decomposition exists exactly when its two boundary maps agree. It is lossless exactly when that common map is reversible on both states and events.
+
+The construction also connects to the project's existing language of expressions and declared equations. Generator assignments extend to expressions; they extend through declared equations exactly when the full interpreted maps agree. Concrete checks distinguish repeated pieces, hidden event loss, and different refinement witnesses. The result covers this dynamic calculus and its interpretation bridge, not the entire surrounding theory. Lean proofs establish general statements; small examples test whether the definitions retain the intended distinctions.
+
+Scope and principal result
+
+The deliverable is an additive formalization of the graph-span dynamic target, its empty-profile classification, and its connection to the original free, presented, and semantic-refinement APIs. The central definition, Assignment.calculus, has the project's existing type Calc V. It is not a new syntax-only analogue, a calculus restricted to exact maps, or a collection whose substitution laws are assumed.
+
+For an arbitrary typed quiver and graph assignment, operations retain their full ordered profile, a graph map at each original occurrence, and the fine boundary compatibility equations. The implementation proves closure under substitution and both identity laws and associativity as equalities of operations. Assignment.operationEquiv identifies each prescribed-profile operation fibre with all boundary-preserving graph maps into the corresponding compatible tuple graph. This equivalence connects the coordinate implementation to the intended graph-map semantics without discarding information.
+
+Graphs and compatible tuples
+
+Graph contains separate State and Event types, together with source and target functions from events to states. Graph.Hom contains a state function, an event function, and proofs that both incidence functions are preserved. Parallel event records are therefore not identified merely because they share endpoints. No finiteness, inhabitance, simplicity, or reconstructibility assumption is built into Graph. Finite examples are permitted, but a separate finite-carrier framework is not claimed.
+
+Assignment gives each interface a boundary graph and each original Component a component graph with left and right boundary legs. For a nonempty profile, tupleSpan recursively forms pullbacks on both sorts. The resulting carrier retains compatible ordered state tuples and compatible ordered event tuples. Its conditions compare actual boundary images, not counts, reachability, or observations.
+
+For the empty path, tupleGraph is definitionally the boundary graph, and both tuple boundary maps are identities. The singleton comparison is an actual graph isomorphism, established by tupleSingleton_isIso, rather than an assertion that the recursive tuple representation is literally the component graph.
+
+Theorems coordinates_assemble and coordinates_ext establish the relationship between coordinate families and tuple maps. In particular, coordinates_ext includes the retained left boundary map: coordinates alone contain no data for an empty profile. The equivalence compatibleFamilyEquiv packages the full correspondence with specified outer legs. The development does not pretend that differently parenthesized pullback types are definitionally equal.
+
+Original occurrences and substitution
+
+The construction uses the unchanged Component, Path.Slot, Path.componentAt, and Path.expand. A slot is an occurrence address, not merely the name or color of a component. Two appearances of the same component can consequently receive different replacements. Their order and separate maps survive expansion.
+
+Occurrences.lean supplies joinFamily and proves that assembly and the original expandFamily undo one another. Its ordered word representation is an extensional proof device carrying typed map data; it is not a replacement semantics based on traces. MapOperations.lean defines substitution by expanding the original path and composing the actual graph maps at each outer and inner occurrence. The resulting map families satisfy the unit and associativity laws.
+
+Compatibility.lean proves that this substitution preserves every fine boundary equation. The proof handles arbitrary outer and inserted profiles, including empty ones. Empty inserted profiles contribute equality of their exposed boundary maps; they are not excluded by a positivity premise. The theorem compatible_joinFamily supplies the closure proof used by the actual dynamic operations.
+
+Target.lean restricts the ambient coordinate data by compatibility, not by invertibility. Its Assignment.calculus inherits proved operation-level laws while keeping every compatible map. The witness of an operation is assembled into the tuple graph. Exactness is separately defined as the statement that this witness is a graph isomorphism. Identity operations are proved exact, but exactness is not required for an operation to belong to the target.
+
+Empty profiles and exactness
+
+The nullary classification has four parts. For a loop component and the empty profile, an operation exists if and only if the component's left and right legs are equal. Its prescribed-profile fibre is a subsingleton, so a witness, when it exists, is unique. The actual witness map is the common boundary leg itself. Finally, the operation is exact if and only if that common leg is a graph isomorphism.
+
+These claims appear at the tuple-map level as nullary_nonempty_iff, nullary_map_eq, nullary_subsingleton, and nullary_exact_iff. Target-level statements include nullary_operation_nonempty_iff, nullary_operation_map_eq, and nullary_exact_iff_leg. The typed path prevents an empty profile from being assigned to genuinely different endpoints.
+
+Graph.isIso_iff_bijective characterizes a graph isomorphism by bijectivity of both its state and event functions. State bijectivity alone is insufficient. In particular, a common leg may preserve all state information while merging distinct parallel events. Such a leg supplies a valid unique nullary operation, but that operation is not exact. Conversely, all-nullary substitution can retain a nontrivial boundary graph and its distinct state and event values; empty syntax does not imply a collapsed boundary.
+
+Bridge to the original syntax and presentations
+
+Bridge.lean works with a generic original Signature and a typed GeneratorMaps assignment. Every generator receives a boundary-preserving graph map at its original input profile and result component. The equivalence generatorEquiv converts exactly between these maps and the original signature-assignment API.
+
+freeExtend is defined using Tree.extend, and freeHomEquiv specializes the original free universal property to the dynamic target. Thus assigning generator maps gives the original calculus homomorphism from Tree.freeCalc, with the universal correspondence retained. The implementation does not invent an alternate tree language to make this statement easier.
+
+For a presentation, EquationMaps requires equality of the full interpreted graph maps for every declared equation. This includes their event functions. The theorem equationMaps_iff_satisfies identifies this condition with the original Presentation.Satisfies predicate. With that premise, presentedExtend invokes Presentation.extend; projection_presentedExtend proves its factorization through the original quotient projection. The converse is also proved: descends_iff says that such a factorization exists exactly when EquationMaps holds.
+
+The quotient remains the original least congruence generated by the declared equations. It is not replaced by an interpretation's semantic kernel, and equal state behavior is not silently promoted to equality of graph maps. The freeRefinementFunctor and presentedRefinementFunctor definitions invoke the existing SemanticRefinement.functor. This preserves the API in which a refinement arrow retains a replacement for every original occurrence. No faithfulness claim is made for arbitrary dynamic interpretations.
+
+Discriminating checks
+
+The independent checks are organized into four Lean suites covering original occurrences, tuple semantics, the actual target, and the bridge. They include repeated equal colors with distinct addresses and independent replacements; mixed and all-empty expansions; retained Boolean states and events at an empty profile; unequal legs forbidding a nullary map; and event-only collapse producing a valid but nonexact nullary operation. Maps with identical state functions but different actions on parallel events are proved unequal.
+
+The bridge checks contain a genuinely nonempty declared equation between distinct generators. Equal full-map assignments satisfy it and factor through the presented calculus. An alternative assignment permutes event records while keeping the same state behavior. A Lean theorem proves that it fails the equation, and another proves that no presented descent exists. This rejection is a proved negation, not an intentionally uncompilable test.
+
+A further nonthinness check constructs two distinct SemanticRefinement.Arrow values with the same source and target operation. One is the identity forest; the other changes an occurrence replacement. Their total substituted operation is equal, yet their retained forests are unequal. This demonstrates retained refinement data, not injectivity of every interpretation.
+
+Two separate expected-failure controls check that Lean rejects a nonloop empty path and a purported graph map that fails an incidence equation. Their intended type errors are distinguished from infrastructure failures. These finite fixtures probe definitions; the unrestricted calculus, equivalence, and nullary results are theorem proofs, not extrapolations from finite simulation.
+
+Verification and trust boundary
+
+The independent assurance review passed for the authorized focused slice, with no correctness or scope-weakening blocker found. This combines independent agent review with Lean kernel verification; it is not external human review or a novelty assessment.
+
+The recorded machine verification rebuilds all seven Dynamic modules and their imported original project modules from fresh project source without reusing project .olean files. It compiles the four positive regression suites, checks both intended rejection controls, and inspects 38 headline and regression axiom closures. These closures contain no sorryAx or newly introduced axiom. The new source has no sorry or declared axiom; source screening supplements, rather than replaces, proof checking and dependency audits. The union of the audited dependencies is propext, Quot.sound, and Classical.choice.
+
+These are standard Lean axioms, not unproved dynamic-calculus assumptions. They provide propositional extensionality, soundness of quotient identifications, and classical choice respectively. Assignment.calculus uses propext and Quot.sound. The general isomorphism-bijection equivalence uses Classical.choice and Quot.sound; the presented constructions and descent/refinement bridge also inherit standard dependencies from the original quotient development. Accordingly, the result should not be described as axiom-free or wholly constructive.
+
+Verification uses official Lean 4.35.0. The recorded official-release SHA256 is 7289597a44543246c9227b8cae501767e095ce17f6d448b95fc4a8dc97268f6d. The unchanged manifest pins mathlib at 56a005855ea17e0b0958f73ec801ae140b0a1679. Pinned upstream compiled dependencies were cached and reused; this is not a full source rebuild of Lean, mathlib, or every transitive dependency.
+
+Source preservation and reproduction
+
+The implementation adds Graph.lean, Occurrences.lean, MapOperations.lean, Compatibility.lean, Tuples.lean, Target.lean, and Bridge.lean under WitnessedDecompositions/Dynamic, together with focused verification and regression material. The original library root and Lake configuration were not changed. The original verify_export.sh passed, and the separate original-file comparison confirmed that all 811 original files remained byte-for-byte unchanged. All 1,679 entries in the original integration payload checksum manifest also matched. These preservation checks do not amount to a rerun or new acceptance of the full later integration chain.
+
+With the pinned Lean installation on PATH and the original project configuration retained, run from the project root:
+
+    bash scripts/verify_dynamic.sh
+
+The driver checks original payload hashes, builds the dynamic bridge, checks 19 implementation axiom closures, and runs fresh-source verification and the independent regressions. It writes reproduction results separately. If pinned dependencies are absent, obtain them using the project's documented cache setup. Do not run lake update, because it would change dependency resolution. A fresh environment requires access to the external compiler and dependencies; the source deliverable is not an offline toolchain distribution.
+
+Limits and conclusion
+
+The established slice is the actual dynamic target Calc, its graph-map and tuple semantics, the full nullary classification, identity exactness, and the original free/presented/refinement bridge. It does not establish general exact-substitution closure, the context-free-grammar lifting decision procedure, execution or path-time comparisons, interface coarsening and base-change obstructions, staging or controller claims, or the full virtual-equipment and graph-cut bisimplicial or 2-Segal theory.
+
+Within that boundary, the construction retains actual events, ordered occurrence-specific maps, and the nontrivial empty boundary. It supplies a concrete target for the existing syntax and proves exactly when declared equations permit presented interpretation. The result is a focused formalization with explicit semantic and dependency boundaries, not a claim that all recent proofs or the entire surrounding theory have been formalized.

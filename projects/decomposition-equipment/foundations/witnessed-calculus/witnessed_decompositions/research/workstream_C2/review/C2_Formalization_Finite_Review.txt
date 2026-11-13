@@ -1,0 +1,254 @@
+C2 INDEPENDENT FORMALIZATION / FINITE-EVIDENCE REVIEW
+Frozen local positive M branch — 25 October 2026 UTC
+
+VERDICT
+
+PASS for correctness and meaningfulness of the delimited C2 L implementation
+and its finite evidence. No unresolved implementation or finite-domain defect
+was found. This supports the LOCAL C2 model checkpoint, subject to the separate
+uniform-P review and parent acceptance. It does not accept full C2: mandatory
+D2/E use remains OPEN, and no C3/D/E work or novelty is claimed.
+
+Scientific-scope verdict: adequate standard relational infrastructure at the
+frozen local floor, not a new major mathematical result or completion of the
+broader research program. Compiling Calc fields alone was not the criterion.
+Actual operations, validity, maps, transports, witnesses, and failure cases were
+inspected and independently exercised.
+
+PROVENANCE AND AUTHORITY
+
+Reviewer: /root/audit_relational_calculus_formalization, a non-author agent
+assigned by the parent, independent of the model author and finite checker.
+This reviewer edited no author model/proof/checker or inherited baseline file.
+New review files and disposable replay workspaces only were written.
+
+The complete C2 clause, §3.4, §13, and frozen T1–T4/F1–F6 target were read.
+Contract v0.1 SHA256:
+47c53465b745aaa0397d8972cdc760de7da1f9c86bcab0e3bbeecf0aaf6a165e
+C2_Targets.md SHA256:
+b6711190a46b19205ef25f439105eaf1951137d90f5e55a595ea67daf172e2f4
+No target, branch, empty-interface case, nullary case, or acceptance floor was
+weakened. Review is agent-managed, not external human certification. The agents
+share a model family; correlated mathematical and implementation error remains
+possible despite separate authorship, source inspection and redundant execution.
+
+CHECKED FROZEN ARTIFACTS
+
+lean/RelationInterface.lean:
+6d8d638c8d2001b02b2e136ba7b609d867436ce6f08a79ffbfb8c4637dcfad6f
+lean/AxiomAudit.lean:
+0d058f65e1dc8cfd7073157954c64f2d3a16cb306bb155f52ecd5eddef3bec28
+lean/README.txt:
+3bea28e649736b971e85325b8c141b5cda878417147539b4c303677967f0f3be
+finite/check_c2_model.py:
+bcce2866d8510a6a3afec0b85599d048fcfb52d017d302b8a16fd72449595b95
+finite/AuthorCertificate.json:
+77068b1ae46b4a84e14528f2c53b9babf8e6e6a1b35395794bd4fb429f86f2f5
+finite/DOMAIN.md:
+c3ad2313ac47536b7c45a449c5838b78d447a0dd65fbd18b5a964390d7a97078
+review/IndependentFinite.py:
+d96e6a93c4689d6e539026742c0a5885a5ea9b76800eb40455559887735632d1
+review/IndependentFinite.json:
+84744534d8113d571c4af6139c31ad56e28538208fe81735b6776948dfa028a2
+
+The P document was read to check the precise P/L boundary and map adequacy;
+its uniform proof has a different non-author review. The revised coordinate
+identification in lean/README.txt explicitly supplies the wrapper-to-label
+P correspondence rather than pretending an absent Lean declaration exists.
+
+1. WHAT THE FORMALIZATION ACTUALLY PROVES
+
+T1 / semantic domain. Interface I X retains a label in arbitrary I; its arrow
+family is ALL predicates X(i) -> X(j) -> Prop. No Fintype, nonempty, decidability,
+or cardinality bound occurs. Thus all frozen finite families, including empty
+I and empty carriers, are covered. evaluate recursively composes relations
+existentially and maps nil to the diagonal, not to an empty relation. A total
+operation stores an actual public Quiver.Path, with fixed Component output and
+its validity proof. ContainmentOp uses inclusion; ExactOp uses equality. The
+whole is independent, not definitionally the path composite.
+
+T2 / actual calculus laws. containmentData and exactData are the public A
+CalcData. Their substitution fields use Path.Slot and componentAt, and build
+Path.expand from one independently supplied child at every occurrence.
+evaluate_expand_le proves existence by composition monotonicity; its exact
+counterpart separately proves equality. A proof-irrelevant validity field does
+not make an invalid operation exist. It is used only after these validity
+proofs and the entire profile equality have been established.
+
+containmentCalc and exactCalc fill the public Calc fields, not a similar private
+record. The units use expand_edges and nil_comp. Associativity uses the public
+CalcData.composeAt_profile. That lemma was inspected: it is derived from the
+data's profile law and Path.expand_assoc/expandFamily, not by assuming the
+operation associativity being proved. The latter transports the third-level
+occurrences correctly. Thus the short Subtype.ext arguments are meaningful
+operation equalities, not a shortcut proving only equality of relation values.
+
+exactInclusion is a genuine same-base Calc.Hom. Its structure preservation is
+literal; the word strict does not assert properness for every degenerate family.
+The generic diagonal_containment_nonexact theorem and finite named witness
+establish properness where advertised. IndependentSemanticChecks additionally
+proves that a strict Boolean diagonal-to-top cell has an empty exact fibre and
+that different full profiles remain distinct total containment operations.
+
+T3 / actual restriction maps. restrictionQuiver maps each relation by membership
+R(f(x),g(y)) between the two generally different relation quivers. Its component
+map retains endpoints and its path map retains order. The source never claims
+this is a same-base Calc.Hom. restriction_path_comparison recursively maps the
+actual existential intermediate values through f; it covers nil as equality
+transport. restrictContainment applies that comparison and the original cell's
+validity to the independently restricted whole. It is not an assertion that
+pull-of-composite equals composite-of-pulls.
+
+Identity/composite quiver and path restrictions are checked. The positive-arity
+equality theorem has a cons-path conclusion and requires surjectivity exactly
+at targets of prefix edges: internal occurrences. It does not demand endpoint
+surjectivity/injectivity as extra assumptions. A global map reused at an internal
+occurrence of an endpoint label naturally has to satisfy that internal condition.
+There is no unsound universal converse about arbitrary relations or empty sets.
+
+The nullary theorem explicitly identifies the pulled diagonal with the kernel
+pair. Its equality with the primed diagonal is equivalent to injectivity.
+IndependentSemanticChecks constructs a surjective constant Bool -> Unit map:
+its nullary exactness fails, although the actual containment operation restricts
+successfully. This also checks that onto and injective have not been conflated.
+
+IMPORTANT L BOUNDARY: the source gives global per-label maps and existential
+comparison proofs. A separate first-class map of realization SETS, arbitrary
+locally chosen incidence-compatible vertex maps, and restriction/substitution
+commutation for every forest are P, with finite C checks. They are not exported
+L theorems. This is honestly stated, and the frozen target permits the P route.
+The P diagram condition uses the same primed set and map on each glued vertex
+class; a nullary child identifies its two endpoint classes. This is sufficient:
+restricted child wholes then equal the actual restricted parent slots, and both
+orders have the same restricted leaf path and whole. Without that agreement
+the alleged substitution diagram is not available. No map/law adequacy is waived
+because the two Calcs compile.
+
+T4 / public bridge and syntax loss. containmentFiberEquiv and exactFiberEquiv
+are actual two-sided equivalences from prescribed public operation fibres to
+empty/singleton Unit subtypes. Their inverse sends validity to the prescribed
+path, and their inverse laws eliminate the profile equality. The model therefore
+has the promised fibres, not merely an untyped relation evaluator.
+
+primitiveAssignment has the public Signature.Assignment type and requires the
+complete declared profile/output condition for each label. presentationExtension
+uses the actual A2 Tree.extend; uniqueness quantifies over public strict
+Calc.Hom maps agreeing on primitive assignments. Source FreeExtension and the
+relevant Calculus/PathOccurrences API were inspected. same_frontier_same_semantics
+fixes the same Component output and full frontier; it concludes equality of
+relational values only, never equality of raw trees or primitive labels.
+The finite certificates independently exhibit both semantic collisions. There
+is no hidden quotient by all equalities of this selected model.
+
+2. FRESH BUILD AND AXIOM CLOSURES
+
+Author build success was not accepted as reproduction. The final independent
+harness created a new temporary project, copied the unchanged project sources
+and manifest, and rebuilt these local transitive A2 modules from source:
+Core, Collections, PathOccurrences, TreeOccurrences, Calculus, FreeCalculus,
+FreeExtension. It then compiled frozen RelationInterface.lean to new proof
+objects under its full public import path and compiled the independent probes.
+No pre-existing project olean was used in that final project. The pinned
+third-party/mathlib build caches and Lean runtime WERE reused; this is not a
+bootstrap of Lean or a fresh source rebuild of all mathlib.
+
+Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc.
+Final source compilation and semantic probes exit 0, warning-free.
+IndependentAxiomAudit prints 44 closures: all 40 author-selected declarations
+plus Interface, relationQuiver, Rel, Included. Their union is exactly
+{propext, Quot.sound}. Some declarations use no axioms. There is no sorryAx,
+Classical.choice, custom postulate or native computation oracle in these
+closures. The four independent semantic check closures likewise contain at
+most propext/Quot.sound. This is not an axiom-free claim.
+
+The authoritative final logs are in lean_audit_evidence/final_clean_replay/.
+Earlier semantic_checks_attempt1/2 logs are FAILED reviewer-probe drafts
+(definitional rewriting and decidability elaboration errors), not accepted
+model proofs. Their implicit error placeholders were rejected with exit 1;
+the repaired probes were independently recompiled successfully in the clean
+replay. An initial reviewer import-path setup was also corrected. No author
+source change or target weakening was needed for any of these harness repairs.
+
+3. FINITE EVIDENCE, REALIZERS, GUARDS AND NEGATIVE CONTROLS
+
+The separate non-author IndependentFinite.py was inspected, including its
+explicit F3 outer-whole loop, fixture reconstruction and distinct syntax.
+It imports no author evaluator. Its matrices and whole-vertex-assignment
+algorithms are redundant computations; author JSON is read as data only and
+its 15 serialized cells, actual maps/realizer lists, syntax shapes and nested
+nullary graft are independently reconstructed. The peer reported F1–F3 were
+written/run before author code inspection; its report discloses provenance.
+This reviewer then ran the entire independent suite again, twice, including
+the final clean harness. JSON was byte-identical to its frozen certificate.
+
+F1: 113,171 relation/function comparison cases; 33,821 onto-middle cases;
+17,424 strict comparisons; 75,547 realizing triples mapped; 661,613 containing
+whole cells restricted; 297,272 resulting nonexact cells.
+F2: 8,507 relation triples; 62 unit equalities per evaluator.
+F3: 9,040 profiles, 132,793 segmentations/exact cases, 8,162,514 intermediate
+whole assignments, 25,619,591 explicitly visited containing outer-whole cells.
+No weighted omission of W choices occurs. Empty interfaces and weak cuts are
+retained. Cardinality-skeletal computations are not an infinite enumeration
+of label spellings; DOMAIN explicitly explains that scope and actual-label
+syntax is separately tested. Extra checks include 23,015 iterated restrictions
+and all 11 nullary maps on cardinalities 0–2, including three strict kernels.
+
+The principal 2,3,2 example has composite {(0,0),(1,1)} and independent strict
+whole adding (0,1). Its nonsurjective middle inclusion deletes the realizer
+through 2 and outer pair (1,1), while retaining (0,0). The pulled exact whole
+still contains both pairs; the resulting containment cell is NONEXACT. The
+surjective (0,1,2,2) example restores endpoint-relation equality yet maps two
+realizers to one. Noninjective endpoints and empty-set cases are retained.
+Thus comparisons concern actual maps and witness loss, not merely a boolean
+assertion that some inclusion exists.
+
+Four actual in-memory source mutations were inspected and rerun: reverse
+containment; conflate the two composites; merge repeated component occurrences;
+replace nullary diagonal by empty relation. All were detected, and replay JSON
+matched the frozen mutation certificate. The independent syntax example also
+makes an occurrence-collapse mutation change the composite itself, not just
+the profile. Wrong order/endpoints, false equality and nullary failures are
+not accepted as legal instances.
+
+Additional reviewer BoundaryGuards.py deliberately imports the author API
+(so it is NOT advertised as a no-import oracle). For arities 0–8 it checks
+correct boundary count, retained arity, identity restriction, and restriction/
+substitution with all-nullary children under a single global map. Twenty-eight
+invalid boundary assignments are rejected: extra/missing boundaries, a wrong
+same-size original label, and two independent maps for a nullary. Separate
+maps at nonglued occurrences remain allowed. These are bounded executable
+probes; general incidence compatibility is still P, not a claim inferred
+from testing nine arities.
+
+Four independent Lean negative files must FAIL by a specific type mismatch:
+ReverseContainment, ExactConflation, NonloopNullary and
+VacuousSurjectivityNullary. All exit 1 for the intended mismatch, not an import
+failure. The last tries to apply the positive-arity equality theorem to nil;
+Lean exposes the cons-vs-nil conclusion mismatch. Positive semantic checks
+separately prove the nullary counterexample, so a mere failed elaboration is
+not used as its mathematical proof.
+
+4. REPRODUCTION AND REMAINING SCOPE
+
+From the checkpoint root with the unchanged pinned Lean/Lake on PATH:
+  source /workspace/shared/witnessed_B_20261024/toolchain_recovery/env.sh
+  python3 research/workstream_C2/review/reproduce_formalization_review.py \
+    --output /tmp/c2-formal-review-replay
+
+The env.sh location is this workspace's toolchain helper, not a new dependency.
+A normal pinned toolchain installation can replace it. The harness requires
+assertions enabled, checks the frozen source hash, creates fresh project proof
+outputs, runs both positive and expected-negative Lean probes, API guards, the
+full independent finite suite and actual source mutations, and records each
+command/status. --skip-finite explicitly omits only the redundant finite reruns.
+The final result.json records PASS, 44 closures and four expected Lean rejections.
+
+This report does not replace the separate full P audit, baseline/package integrity
+review or full inherited A/B/C1 reproduction. It does not claim complete Lean
+formalization of all T3 forest maps, necessity/sharp D2 classifications, arbitrary
+equipment structure, or downstream use. Standard existential relation composition
+and these elementary restriction laws are familiar background. The local model
+meets its stipulated useful floor because it supplies coherent all-parameter
+semantics and the actual public A integration, not because of line/test counts.
+Full C2 remains OPEN until the required later D2/E integration is authorized,
+performed and separately accepted. Parent retains the acceptance decision.

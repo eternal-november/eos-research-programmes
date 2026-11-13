@@ -1,0 +1,109 @@
+# E2 finite verification: actual cells, bounded scope
+
+## Replay
+
+Python 3.10+ standard library only. No installation, network, Lean, or generated
+source is needed. Run from any directory:
+
+```sh
+python -B /path/to/source-root/checks/run_e2_checks.py --output /tmp/e2-receipt.json
+```
+
+The output argument is a **file** and must be outside the source tree. Resolved
+symlink paths and existing hard-link aliases of source files are rejected before
+any receipt write; even the rejection receipt is stdout-only for these paths. Exit zero
+means all three complete baselines (normal, `-O`, `-OO`) produced byte-identical
+JSON and all twelve semantic mutation runs were explicitly rejected. Any source
+drift, incomplete manifest, failed baseline, optimization discrepancy, timeout,
+mutation escape, or crash is a nonzero hard rejection. The source manifest binds
+the two mathematical theorem files, both checker files, and this README before
+and after execution. Receipt values contain no timestamps or machine paths.
+The bundle's independent ledger binds inherited source dependencies; this finite
+source-scope manifest does not pretend to reprove or execute those dependencies.
+
+## What is independently evaluated
+
+`e2_finite_cells.py` implements actual finite functions, finite span apices,
+boundary-marked compatible tuples, induced ordered graphs, fully typed multicells,
+ordinary substitution, restriction factor maps, and contextual unit factor maps.
+Every cell constructor checks the actual endpoint equations and occurrence-indexed
+partition. All checks use explicit exceptions; no Python `assert` participates.
+
+* Original C5 uses the faithful regular realization of the three-object chain
+  `K=[2]`, every simple ordered graph on 0–3 vertices, arities 0–3, every actual
+  ordered partition and nondecreasing interface chain, and all three scalars in
+  `C2` with an absorbing zero. A right-comb expression using original `C,U,D`
+  generators is evaluated by the generic substitution implementation and compared
+  with the separately specified flat partition and actual coefficient map.
+  Separate tests evaluate `R, UL, UR, D0, DA, DL, DR`, including empty/repeated slots.
+* EXT uses all graphs on 0–2 vertices, arities 0–3, a two-witness span over a
+  singleton, every coefficient function, and every scalar. The local `u,c,c0,d`
+  compiler constructs genuinely nested tuple apices and explicit flattening maps,
+  including a nullary coefficient square with different outside boundary maps.
+  It is not a checker whose success predicate defines presentation completeness.
+* Three tagged restriction choices also vary their cartesian cells by invertible
+  scalars. The checker constructs inverse comparison maps, factor equations,
+  three-choice cocycles, two different three-stage restriction comparison routes,
+  contextual unit factors at every position, two-unit insertion coherence, and
+  mixed unit/restriction maps. Target spans are three explicitly listed examples;
+  endpoint maps range exhaustively over source sets of size 0–2. Unit contexts
+  use all paths of 0–3 repeated two-witness spans and every coefficient function.
+  Separate finite commuting diagrams test restriction/unit transformation-component
+  naturality with noninvertible vertical components and preservation of component
+  composition. They are finite diagram instances, not enumeration of functors on
+  the entire finite-set category.
+* Independent finite probe fibres test the proposed cartesian classification
+  (actual pullback-apex bijection **and** invertible scalar) and unit classification
+  (actual identity-span isomorphism **and** invertible scalar). Empty-apex probes
+  are retained: otherwise a nonunit scalar could pass vacuous witness tests.
+* A nullary cell keeps its one shared vertical precomposition map even when its
+  two outside maps differ. An empty-apex substitution with unmatched middle maps
+  is explicitly rejected rather than accepted vacuously.
+* Repeated components retain ordered scalar-refinement tuples: nine distinct
+  pairs evaluate to three aggregates with fibre sizes 2, 2, and 5. Evaluation is
+  not falsely called faithful on refinement tuples. Distinct actual `K(2,2)` cuts
+  with equal input types remain distinct. A separate ordinary graph-forest test
+  distinguishes the empty graph **word** (new unit) from one empty graph **letter**.
+* `Q_H`, for `H=C2`, is exact on empty graphs/nullaries and identifies precisely
+  the two invertible scalars on nonempty graphs, never the absorbing zero.
+  Fixed-endpoint forest lifting is exhaustively checked on the stated C5 graph/
+  arity/scalar domain. `Q_H` and activated coefficient forgetting `Q_I` are checked
+  on actual restriction/unit factor maps and finite unary substitution contexts.
+
+## Negative quotient test: exact level
+
+The finite acyclic category with objects `P,R,H`, arrows `a,b:P→R`, and
+`k:R→H` has eight arrows including identities and composites. Its **entire**
+ordinary category congruence generated by `ka=kb` is checked under every composable
+context; `a` and `b` remain distinct. Prospective cartesian cancellation would
+force their equality. This is a **preequipment**, not a full virtual equipment
+with an already cartesian `k`. A full fixed-sort equipment substitution congruence
+already respects restriction/unit factors by the ordinary-context theorem in
+`reconstruction_theorem.md`; the checker does not contradict that theorem.
+
+The NOGO reference-signature check verifies that no new generator outputs any
+`R_i`, so its least all-old-frontier reachability closure contains no `R_i` or `T`.
+This checks the premise of the syntactic structural-induction proof, not bounded
+term enumeration masquerading as that proof. In actual graph-span semantics,
+the terminal restrictions and their chosen-section return contexts are evaluated
+for `K(r,r)`, `r=1,2,3`, and middle-interface sizes 2 and 3. Each return recovers
+the original cut exactly. Thus identifying the two restricted cuts would identify
+the distinct old cuts; the checker never imposes that equation while claiming
+old-witness conservation. The positive quotient tests demonstrate a different,
+precisely delimited repair, not a repair of an impossible conservation demand.
+
+## Semantic controls and limits
+
+Four opt-in mutations alter the actual evaluated semantics: discard a nullary
+child's scalar; omit the inverse chosen cartesian scalar; forget occurrence order
+of a refinement tuple; or sort an actual graph partition. Each is rejected by an
+explicit semantic witness under all three optimization modes. These are not just
+hash guards. Mutation mode never edits a source file. Hash guards separately
+prevent a successful receipt from being attributed to different sources.
+
+The printed domain counts are the full finite scope. These tests do **not** prove
+the arbitrary-target interpretation-category universal property, its transformation
+extension/naturality theorem, arbitrary-depth local-relation completeness, or
+general all-cell generation. Those are parameterized **P** proofs in the named
+theorem files and their retained sources. No new **L** result is claimed. No
+original source, prior artifact, remote service, or Library item is modified.

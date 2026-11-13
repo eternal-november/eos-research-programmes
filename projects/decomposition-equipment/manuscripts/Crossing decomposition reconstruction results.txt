@@ -1,0 +1,472 @@
+Reconstructing a component from crossing decompositions
+A relative reconstruction theorem for finite witnessed systems
+26 October 2026
+
+Abstract
+
+Two workable divisions of one system can conceal incompatible internal explanations.
+They may agree on every possible input and output, and every event count, while
+assigning different meanings to the same supposed component when another branch changes.
+
+We now have a necessary and sufficient criterion for recovering one missing component in
+a four-component layout with crossing row and column groupings. The other components,
+larger subsystem descriptions, and actual whole-event matching are fixed. First
+reconstruct an intermediate component using explicit local checks and permutation
+equations. Then test whether it leaves the parallel branch unchanged and remains the
+same component at every parallel signal value. These conditions are computed from
+supplied event records, not assumed from the desired conclusion.
+
+When all relevant interfaces expose witnesses, the result is unique up to unique
+compatible renaming. A complete fallback classification covers empty interfaces,
+alternative matching choices, and genuine symmetries of invisible events. The
+reconstructed components also have precise transport laws for surrounding context and
+compatible interface changes.
+
+This establishes a bounded but genuine crossing reconstruction theorem. It does not
+settle arbitrary crossing families or physical implementation languages. Separate sensor
+examples show why those next steps matter: mathematically sufficient information need
+not be available through permitted hardware.
+
+1 What has been reconstructed
+
+The target is relative reconstruction: recover a concrete decomposition of a specified
+whole, compatible with decompositions already supplied, rather than construct some
+system with the same abstract behavior.
+
+Three levels must be separated.
+
+  Support asks which endpoint pairs can occur.
+  Multiplicity asks how many distinct witnesses realize each pair.
+  Coherence asks how those witnesses match across the supplied decompositions.
+
+Success at one level does not guarantee success at the next. For one missing component
+with the other three fixed, the result has two stages: solve a two-sided interpolation
+square, then test the additional context-independence needed for a genuine four-corner
+crossing. A three-piece factorization alone would not establish the second stage. Both
+results can require a prescribed abstract support for the missing component: they
+compute a realization fibre over that candidate rather than silently changing it.
+
+Here is the smallest useful separation at the elementary-square stage. Suppose each of
+its four boundary spans has two witnesses and every interface has one value. All 24
+bijections between the two four-witness wholes agree on support and multiplicity. Yet
+only four permit a common middle component. The other twenty fail solely because of the
+supplied matching. Replacing that matching would change the reconstruction problem, not
+solve it.
+
+The systems are spans, not graphs. The incidence diagram used to compute the answer is a
+diagnostic representation extracted from their witnesses, not an assumption about the
+physical system's ontology.
+
+2 The elementary witnessed square
+
+A finite span L from A to B is a finite set of witnesses, each carrying an A endpoint
+and a B endpoint. Distinct witnesses may have the same endpoints. Composing L with U
+retains every compatible pair (l,u) whose shared endpoint agrees. This is pullback
+composition.
+
+Fix four spans
+
+  L : A to B       R : C to D
+  V : A to C       W : B to D
+
+and an actual endpoint-preserving bijection
+
+  theta : V;R -> L;W.
+
+The semicolon means composition in reading order. Thus theta identifies the witnesses of
+two decompositions of one A-to-D whole. It is part of the input, not a choice the
+reconstruction may revise.
+
+We seek a span U from B to C and bijections
+
+  alpha : L;U -> V       beta : U;R -> W
+
+satisfying, for every compatible triple,
+
+  theta(alpha(l,u),r) = (l,beta(u,r)).
+
+This equation says that the same intermediate witness u explains both sides of the
+supplied matching. All endpoints, boundary witnesses, and theta stay fixed.
+
+A compatible isomorphism between two solutions is a bijection of their U witnesses
+preserving endpoints, alpha, and beta. Keeping these isomorphisms gives the solution
+groupoid: it records alternatives and their automorphisms rather than forgetting them to
+an existence verdict.
+
+If an abstract relation Ubar between B and C is prescribed, require additionally that U
+has a witness over (b,c) exactly when (b,c) belongs to Ubar. The relative fibre is the
+full subgroupoid satisfying this requirement. Abstract support equations are necessary,
+but the theorem below supplies the additional witness-level conditions.
+
+3 A constructive rectangle criterion
+
+Build a bipartite incidence diagram. Its left vertices are witnesses v of V; its right
+vertices are witnesses w of W. Whenever
+
+  theta(v,r) = (l,w),
+
+insert an edge from v to w labelled by the pair (l,r). Retain parallel edges and all
+witness labels.
+
+Write L_b for witnesses of L ending at b, and R_c for witnesses of R starting at c.
+First suppose every L_b and every R_c is nonempty. The theorem says:
+
+  A coherent U exists exactly when every connected incidence component
+  is a complete labelled rectangle with the prescribed L_b and R_c
+  coordinate sets. If it exists, the solution groupoid is contractible.
+
+Concretely, a rectangle must have one common B endpoint b and one common C endpoint c.
+Each left vertex must carry one consistent l label, each right vertex one consistent r
+label. The left vertices must be indexed bijectively by L_b and the right vertices by
+R_c. Every left-right pair must have exactly one edge, with the corresponding labels.
+
+Reconstruction is explicit: introduce one U witness for each such rectangle. Given l and
+that witness, alpha selects the unique left vertex labelled l. Given that witness and r,
+beta selects the unique right vertex labelled r.
+
+Why is this sufficient? The rectangles partition all vertices, so alpha and beta are
+bijections. Their edges express exactly the required coherence equation. Why is it
+necessary? Any proposed intermediate witness u generates the entire rectangle of pairs
+(l,u,r). Different u values cannot share vertices because alpha and beta are bijections.
+These rectangles therefore must be precisely the connected components already present in
+the input.
+
+Every solution witness is forced to correspond to its incidence component, proving
+uniqueness of the compatible isomorphism. This concerns the fixed witnessed boundary
+data, not all decompositions of the underlying whole.
+
+Failure has a short finite certificate: an incompatible endpoint, a changing vertex
+label, a missing or repeated required edge, or an incorrect label fibre. The method
+reads the supplied matching rather than enumerating all conceivable intermediate spans.
+
+4 The obstruction can be presented by permutations
+
+The rectangle condition has a useful algebraic form. After endpoint and vertex-label
+consistency pass, group left vertices by their l label and right vertices by their r
+label. For each pair (l,r), theta induces a bijection
+
+  m_lr : V_l -> W_r.
+
+For a fixed endpoint pair (b,c), all these sets have the same finite size, possibly
+zero. Choose base labels l0 and r0. Transport a witness from V_l0 through four matchings
+around a label square. The resulting permutation of V_l0 is
+
+  h_lr = m_l0r^(-1) m_lr m_lr0^(-1) m_l0r0,
+
+where the rightmost map acts first. Reconstruction succeeds exactly when every h_lr is
+identity. Only (|L_b|-1)(|R_c|-1) permutations need checking at each endpoint pair. A
+witness moved by one of these permutations is a compact obstruction certificate. The
+permutations are derived from theta; no arbitrary group labels are added.
+
+For a tiny genuinely global matching defect, let l and r each range over {0,1}, and give
+every label fibre two witnesses, called sheets 0 and 1. Set three of the four m_lr to
+identity and set m_11 to the swap of the two sheets:
+
+                 r = 0       r = 1
+  l = 0          identity    identity
+  l = 1          identity    swap
+
+Every individual matching is a bijection, and all local endpoint and label checks pass.
+But transport around the square swaps sheet 0 with sheet 1. One cannot consistently
+declare which middle witness is "the same" across all four positions. The incidence
+diagram is an eight-cycle rather than two separate four-edge rectangles.
+
+This answers the presentation question positively in this finite witnessed setting: the
+obstruction is a finite list of explicit permutation equations, preceded by elementary
+typing checks. It is not merely a statement that some unspecified obstruction class
+vanishes.
+
+The separation is exact: with two left and two right labels, one middle witness gives 4
+coherent matchings out of 24; two middle witnesses give 288 out of 40,320. In the latter
+case 576 matchings pass the local checks; half still fail the permutation test. The
+proof companion derives a general factorial counting formula.
+
+5 Empty interfaces retain choices and symmetry
+
+Visibility is substantive. The elementary square theorem also classifies all empty-side
+cases.
+
+If L_b is nonempty but R_c is empty, a witness of U_bc is seen only through alpha. The
+remaining problem is a typed tiling: partition the relevant V witnesses into copies of
+prescribed L fibres. Its finite nonnegative count equations are
+
+  sum_b |L_ab| n_bc = |V_ac|.
+
+Actual tilings can be nonisomorphic, but their compatible automorphisms are trivial
+because each copy is observed. There is a dual classification when only R_c is nonempty.
+
+If both sides are empty, U_bc can be any finite set. An n-element choice has the full
+symmetric group on n letters as its automorphism group: these are genuine unobserved
+witnesses.
+
+The complete solution groupoid combines the forced visible part, the one-sided tilings,
+and these finite-set groupoids. Prescribing Ubar requires zero witnesses outside its
+support and positive counts inside it. This preserves all alternatives and symmetries
+instead of obtaining uniqueness by discarding unseen data.
+
+6 From interpolation to a genuine crossing
+
+Consider four component occurrences R,T,Q,S, with only T unknown:
+
+      R ----> T
+              |
+              v
+      Q ----> S
+
+R feeds T; T and the neighboring branch Q jointly feed S. The supplied groupings are
+
+  {R,T} | {Q,S}       and       {R,Q} | {T,S}.
+
+Their four intersections are the four component occurrences, so these cuts genuinely
+cross. Q need not be an identity or an unused component.
+
+Write R:A to B, Q:K to L, S:C times L to D, and seek T:B to C. Given parent components P
+and N, require
+
+  R;T is isomorphic to P,
+  (T times identity_L);S is isomorphic to N,
+
+compatibly with the actual supplied matching theta:(P times Q);S -> (R times Q);N. This
+must preserve the very same witness of Q, not merely its endpoint values.
+
+Apply the elementary theorem with boundaries R times Q, S, P times Q, and N. It
+reconstructs an arbitrary U from B times L to C times L. But the required U must be T
+times identity_L: one component independent of the other branch. The new theorem derives
+exactly when that further factorization exists.
+
+Assume L is nonempty and every R output fibre, Q output fibre, and S input fibre is
+nonempty. After the elementary rectangle/permutation criterion passes, perform three
+tests:
+
+  Preserve Q. The whole matching must leave every actual Q witness q
+  unchanged. This also forces U to preserve the parallel value ell.
+
+  Preserve the factor across parallel witnesses. For u at level ell,
+  read from alpha its function R_b -> P_c, taking each r to the
+  resulting parent witness p. This actual function must be independent
+  of which q ending at ell exposes u.
+
+  Preserve the component across parallel values. The sets of these
+  endpoint-typed functions must be identical at every ell. Equal
+  cardinalities or endpoint supports are not enough.
+
+These conditions are necessary and sufficient. The canonical T is the common set of
+typed functions. Evaluating a function at r gives the first parent isomorphism; the
+square's beta supplies the second. Every realization is uniquely isomorphic to this one.
+A prescribed abstract support Tbar is realizable exactly when it equals the support of
+that reconstructed T.
+
+A fully active Boolean example isolates the distinction. R and Q negate bits, S computes
+XOR, and the successful counterpart uses a bit negation for T. A twisted whole-event
+matching still admits an elementary square filler. But its two R-labelled parent-event
+blocks are
+
+  at ell = 0:  {00,10} and {01,11};
+  at ell = 1:  {00,11} and {01,10}.
+
+The first bit labels the R event. No renaming of the two blocks makes these partitions
+agree. A single T cannot explain both without seeing ell, which its prescribed interface
+excludes. Untwisting only the whole-event matching restores a genuine grid, leaving
+every support, count, and external behavior unchanged.
+
+This adds a genuine crossing obstruction beyond elementary interpolation: a fitted
+intermediate component may secretly change what its witnesses mean when the parallel
+branch changes. The direct structural test assumes visibility.
+
+For arbitrary empty-sector grid data, a separate complete presentation uses counts n_bc
+satisfying the typed parent equations
+
+  sum_b |R_ab| n_bc = |P_ac|,
+  sum_c n_bc |S_(c,ell),d| = |N_(b,ell),d|.
+
+Whenever R_b or some S_(c,ell) is nonempty, n_bc has an explicit finite bound from these
+equations. Enumerate the bounded typed parent bijections satisfying the actual theta
+equation, modulo relabelling T witnesses. The action is free, so this part is a finite
+set of genuine alternatives. Pairs with R_b empty and every S_(c,ell) empty contribute
+independent groupoids of arbitrary finite sets and their permutations. Prescribed
+support imposes zero or positive counts.
+
+This classifies every realization and gives a terminating existence procedure, including
+empty Q or L. It is a potentially factorial enumeration fallback, not an efficient
+extension of the visible permutation test.
+
+For explicitly listed finite witness inputs, the fully visible problem is decidable in
+polynomial time. The general problem allowing empty exposing fibres is NP-complete, even
+with prescribed support. The reduction from three-dimensional matching [5] keeps Q and
+every R output fibre nonempty, but sets S and N empty: the whole is empty in the
+hardness instances. It does not show hardness of the visible test. Visibility therefore
+changes both uniqueness and computational difficulty.
+
+7 Why the abstraction and transport matter
+
+The ambient abstraction is explicit:
+
+  finite witnessed spans -> finite relations,
+  E -> {(a,b) : some witness of E has endpoints (a,b)}.
+
+It preserves identity interfaces, horizontal composition, and cartesian restriction
+along endpoint maps. In equipment language, finite sets and functions supply objects and
+vertical maps, spans supply horizontal processes, and witness maps supply cells. Taking
+support respects this structure. The reconstruction problem therefore lives over a
+genuine structure-preserving semantic translation, not an arbitrary forgetful picture.
+
+It cannot be universally reversed while preserving composition and units. Compose the
+total relation from a singleton to two points with its converse. The relation composite
+is the singleton identity, but any spans realizing those relations have at least two
+composite witnesses, whereas the identity span has one. A universal identity-on-objects
+realization section is impossible.
+
+Existing square fillers do transport through actual surrounding spans. Given H before A
+and K after D, replace the boundaries by H;L, R;K, H;V, and W;K. Keep U and extend alpha
+and beta by the unchanged surrounding witness coordinates. The coherence equation
+remains true. Crossing-grid realizations likewise transport with the same T and
+unchanged Q. Successive substitutions agree through the canonical tuple-regrouping
+isomorphisms.
+
+This is preservation, not an equivalence of solution spaces: surrounding context may
+hide an obstruction or introduce invisible choices. Surjective outer-interface
+restrictions also reflect existence; arbitrary restrictions need not.
+
+Internal interface changes have a sharper two-sided condition. Start with a realized
+visible grid and change B and C by functions f:Bnew -> B and g:Cnew -> C, keeping Q and
+L fixed. Restricting the parent spans separately does not automatically provide a new
+whole matching: every old whole event has g-fibre copies on one side and f-fibre copies
+on the other.
+
+A supplied matching over the old theta is exactly a family of bijections
+
+  eta_(r,t,q,s) : g^(-1)(c_t) -> f^(-1)(b_t).
+
+The retyped grid is realizable exactly when these bijections depend only on t. In
+particular, they must be independent of the neighboring branch value ell, not merely
+agree within each ell level. Equal fibre sizes alone do not suffice.
+
+Writing the common bijection as lambda_t, construct new middle witnesses (t,cnew) with
+endpoints lambda_t(cnew) and cnew. Their support is a union of these matching graphs,
+not necessarily the full inverse image of the old support. A prescribed new abstract
+support must match the actual reconstruction.
+
+Compatible internal changes compose and commute with outer-context substitution through
+explicit tuple bijections. Parallel transport paths with identical final interface
+functions must still agree on their composite fibre matchings. This is a restricted
+coherent transport calculus, not a claim that every independent cartesian restriction
+preserves a realization.
+
+8 What the supporting system models establish
+
+At the support layer, one unknown relation U occurring once in each union-preserving
+typed context C_k has an exact synthesis procedure. For required parent behaviors P_k,
+set
+
+  Umax = {u : C_k({u}) is contained in P_k for every k}.
+
+A solution exists exactly when every C_k(Umax)=P_k. All solutions are subsets of Umax
+still covering every required behavior. This applies to a crossing grid, but does not
+preserve witness multiplicities or theta; repeated occurrences of U can invalidate the
+construction.
+
+The physical-model work gives another, independent view of the difficulty. Consider four
+Boolean state coordinates c,u,v,z with update
+
+  c' = u XOR v XOR z,
+
+and the other coordinates unchanged. The apparatus supplies only a=v XOR z and b=u XOR
+z. The crossing divisions {c,u}|{v,z} and {c,v}|{u,z} each work: the first computes c'=u
+XOR a and the second c'=v XOR b.
+
+Their only common finer partition is the singleton partition. Its c component receives
+c,a,b, yet cannot distinguish states (0,0,0,0) and (0,1,1,1). These observations agree
+while c' differs. Neither more careful bookkeeping nor combining the old sensors repairs
+the missing decoding information. Adding any one raw sensor u, v, or z does repair it,
+giving three genuinely different implementation options.
+
+The supplementary models also establish two limits. A family on 2^r Boolean coordinates,
+each updated by the AND of the others, has r crossing cuts whose every proper subfamily
+admits a common refinement under a 2^r-2 raw-sensor budget, while the whole family does
+not. Pairwise tests therefore cannot be uniformly complete over that class. For linear
+updates, the observation row-space rank defect is the exact minimum number of
+unrestricted scalar measurements needed, but can underestimate the cost of a fixed
+sensor catalog.
+
+These sensor-policy models have exact local updates, but are not yet connected to the
+complete witnessed grid theorem by a structure-preserving implementation translation.
+That remains a substantive integration problem.
+
+9 Evidence and interpretation
+
+The principal claims have mathematical proofs and independent AI proof review.
+Independently written checks compared the rectangle diagnostic with direct alpha/beta
+fillers, including all 40,320 matchings in the two-label, two-sheet case and 530 typed
+squares, 459 with empty side fibres. The explicit two-sheet twist's nonidentity loop was
+checked separately.
+
+For the genuine crossing, 332,952 Q-preserving whole matchings across four small
+profiles were compared with direct grid realizations. Further checks covered 235 small
+all-fibre grid cases, including empty Q and nonunique bounded realizations. Among 256
+retyping-matching families in another fixture, 16 admitted square fillers but only four
+admitted cylindrical grid fillers.
+
+The companion also includes executable checks of relational synthesis and finite-state
+examples. These are regression evidence for stated finite domains, not substitutes for
+the proofs or exhaustive verification of arbitrary systems. No Lean formalization has
+been run.
+
+The result is an exact one-missing-component grid theorem, not a new general theory of
+holonomy. Rectangle reconstruction has a standard difunctional-relation core [1], and
+permutation transport is classical covering mathematics [2]. Generic span factorization
+[3] is an essential adjacent baseline. The useful result is the fixed-theta realization
+fibre and its cylinder constraint, including prescribed support, empty sectors,
+symmetries, and exact transport limits. A priority claim would require a sharper
+theorem-to-theorem comparison than the present audit establishes.
+
+10 The next substantive theorem
+
+The next target is reconstruction over larger families of overlapping crossing
+decompositions, not another isolated counterexample. It should derive compatibility of
+local solution groupoids from primitive implementation data, including partially visible
+overlaps and noninvertible interface changes. It must retain physical admissibility
+rather than infer it from span realizability.
+
+Three obligations make that target concrete. First, specify an implementation category
+whose permitted sensor operations and composition laws are explicit. Second, prove how
+its realization fibres map to and lift the span-level fibres. Third, identify enough
+higher compatibility to assemble local reconstructions, proving sufficiency rather than
+assuming global coherence under another name. Existing square-based unique-factorization
+results make the higher-coherence comparison unavoidable [4].
+
+The finite models supply useful tests: the positive theorem must explain the
+raw-boundary successes, reject the encoded-sensor failure for the right reason, and
+respect the high-order budget family. The invisible sectors supply a further test
+because their choices and symmetries cannot be handled by a uniqueness shortcut.
+
+The milestone is therefore substantial but bounded: an exact witnessed reconstruction
+criterion for one genuine four-corner crossing schema, supported by a complete
+elementary interpolation classification and explicit transport laws. The larger goal is
+to assemble such calculations into a theorem about physically admissible decompositions
+of systems.
+
+Primary references
+
+[1] Richard Garner, Remarks on exactness notions pertaining to pushouts,
+Theory and Applications of Categories 27 (2012), 2-9, Section 2.
+https://research-management.mq.edu.au/ws/portalfiles/portal/62153447/Publisher%2Bversion%2B%28open%2Baccess%29.pdf
+
+[2] Jonathan L Gross and Thomas W Tucker, Generating all graph coverings
+by permutation voltage assignments, Discrete Mathematics 18 (1977), 273-283.
+https://doi.org/10.1016/0012-365X(77)90131-5
+
+[3] Charles Walker, Generic bicategories (2018), and Bicategories of spans
+as generic bicategories (2020).
+https://arxiv.org/abs/1805.01703
+https://arxiv.org/abs/2002.10334
+
+[4] Robert Hazlewood, Iain Raeburn, Aidan Sims and Samuel B G Webster,
+On some fundamental results about higher-rank graphs and their C*-algebras,
+Proceedings of the Edinburgh Mathematical Society 56 (2013), 575-597,
+Theorem 4.4.
+https://arxiv.org/abs/1110.2269
+
+[5] Richard M Karp, Reducibility among Combinatorial Problems, in
+Complexity of Computer Computations (1972), 85-103, Main Theorem,
+problem 17 on three-dimensional matching.
+https://doi.org/10.1007/978-1-4684-2001-2_9

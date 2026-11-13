@@ -1,0 +1,360 @@
+Persistent decomposition discovery results
+Research milestone for Sean
+26 October 2026
+
+Abstract
+
+A machine can have a useful component in every available partial description
+and still have no single component that works throughout its actual operation. A
+small
+transport mechanism makes the problem concrete: its position alternates between
+two stations, but only one movement reverses its load. Sampling every second
+movement reveals an independent orientation component. At the actual movement
+rate, no autonomous two-state orientation component exists over that position
+context, even when its coordinates and fixed update rule are freely chosen.
+
+This milestone gives a constructive answer for finite synchronous systems with
+specified interfaces and bounded implementation resources. It searches for
+components rather than assuming them, checks that their combined transitions
+are exactly the original executions, and reconciles the actual correspondences
+across partial descriptions. Separate tests determine whether the descriptions
+can hide a coupling, whether an interface change preserves synchronization,
+and whether one causal device and controller can realize the result.
+
+Positive results cover every execution length and exact component refinements.
+A docking family also gives an exact tradeoff between boundary wires and
+internal sensors. These are mathematical models motivated by robotics, not
+empirical robot demonstrations. The algebraic and control mechanisms are
+standard; the contribution is their explicit integration and the distinctions
+the examples force. This is a bounded dynamic milestone, not completion of the
+larger original reconstruction and equipment program.
+
+
+1  A component visible at the wrong time scale
+
+Consider a carrier moving between stations 0 and 1 with a binary load
+orientation b. The movement out of station 0 preserves b. The movement out of
+station 1 flips it. There are four actual transitions:
+
+    (0,0) -> (1,0) -> (0,1) -> (1,1) -> (0,0).
+
+The whole therefore follows a four-state cycle. The proposed context is fixed:
+it is the station, alternating 0 -> 1 -> 0. We ask whether the remaining
+component can have two states and one autonomous update rule, with no station
+signal entering it. Its coordinates need not be the original b: either station
+may use either naming of the two component states.
+
+The answer is no. Exact reconstruction forces the component to have one outgoing
+execution at each state, because the whole and context do. Since the whole
+update is reversible, that component update must be either identity or flip.
+Both return a component state to itself after two updates. The station also
+returns after two updates, whereas the actual whole does not. No coordinate
+renaming fixes this contradiction. Adding local nondeterminism cannot help:
+its extra component executions would produce extra whole executions.
+
+Yet either movement type alone admits an exact autonomous decomposition.
+After two movements, the sampled system also factors exactly: station is
+unchanged and b flips. Its coarse events may retain the complete two-movement
+records; the obstruction still appears when we require that factorization to
+respect the intermediate temporal cut. This is not just information lost by
+throwing away a path.
+
+The general family has m stations and permutation updates a_i on an orientation
+set. Let H be their composite around the cycle. An autonomous d-state factor
+over the fixed station context exists exactly when H is conjugate to sigma^m
+for some permutation sigma on d states. This derives all allowable coordinate
+changes as well as the update rule. For a binary orientation and even m, an
+odd number of flips obstructs every such factor. Every proper subset of the
+cycle edges nevertheless factors. For odd m, every binary flip pattern factors.
+
+A permitted signal telling the component whether the current movement twists
+it repairs the model: b becomes an open component with update b XOR signal.
+The context must actually supply that signal through an authorized port; a
+mathematical function of its hidden state is not a physical wire.
+
+There is also a positive temporal test. For a reversible finite system, if two
+coprime sampling intervals factor under the SAME state cut and identifications,
+then the one-step update factors there too. Bezout's identity combines the two
+powers. This fails for nonreversible updates, and independently discovered,
+unmatched cuts at the two sample rates do not meet its hypothesis.
+
+
+2  What the discovery theorem constructs
+
+The general model is not restricted to reversible cycles. It is a finite
+directed multigraph: states X, actual transition records E, and their sources
+and targets. Parallel records remain distinct even when endpoints and visible
+labels agree. An interface J specifies the shared state boundary and the events
+on which components synchronize, including action labels when relevant.
+
+A candidate cut identifies X with compatible pairs of component and context
+states, written Z times_over_B Y. An exact dynamic decomposition additionally
+provides a bijection
+
+    E <-> component records times_over_J context records.
+
+Every matching pair must be an actual whole transition, and every whole
+transition must have exactly one pair. A hidden global scheduler cannot discard
+unwanted combinations. Matching possible outputs or trace languages is weaker.
+
+The bounded discovery theorem takes a fixed whole, a finite family of actual
+same-clock view maps, finite lists of local candidate decompositions, permitted
+interface choices, and finite state/event bounds. Local candidates may themselves
+be generated; none is assumed to extend globally. It constructs all compatible
+global factorizations, their actual comparison maps to the chosen local factors,
+and their allowed relabellings. Failure means none exists in that declared class.
+
+Its key calculation is explicit. For each shared interface event j, index rows
+by component source/target pairs and columns by context source/target pairs.
+Let M_j count the actual whole records of each combined type. Exact factorization
+at this cut is equivalent, before local matching constraints, to
+
+    M_j = d_j c_j^T,
+
+with nonnegative integer vectors giving component and context record counts.
+For a nonzero matrix this is equivalent to every two-by-two minor vanishing.
+Writing M_j = g p q^T with primitive integer p and q, all multiplicity choices
+are d_j = k p and c_j = (g/k) q, where k divides g. This classifies the choices
+rather than accepting an unexplained factorization oracle.
+
+Counts are not the final answer. The construction then chooses actual record
+bijections and tests each view against ONE common whole identification. If an
+actual execution appears in two views, its extracted component records must be
+the images of the same global component record. Independently favorable
+relabelings in each view do not pass. State maps, event incidence, overlaps and
+any claimed exact interface restrictions are checked separately.
+
+Two finiteness qualifications matter. Enumerating cuts by partitions of X finds
+factors whose states occur in the whole projections. Extra states can be invisible
+when the opposite factor has an empty matching boundary fibre; these require
+explicit bounds and separate enumeration. Similarly, if M_j is zero, one factor
+may have arbitrarily many records while its partner has none. Such invisible
+event sectors cannot silently be deleted. The bounded theorem includes them
+only within its stated bounds.
+
+This gives a terminating sound-and-complete construction, not a claim of an
+efficient implemented general solver. The state search can be large. The whole
+is mathematically specified; the theorem does not identify an unknown physical
+plant from measurements alone.
+
+
+3  What partial descriptions can and cannot certify
+
+For a fixed candidate cut, suppose each view coarsens component transition types
+and context transition types separately. Its count table is formed by summing
+all original record counts into the corresponding blocks. Define H to be the
+space of changes to the joint table that preserve both component marginals
+and disappear under every such aggregation.
+
+The exact criterion is H = 0: the family detects every failure of independent
+count factorization if and only if it hides no nonzero interaction direction.
+It is a finite rational linear-algebra test on the view maps. If H is nonzero,
+an integer hidden direction can be added to a sufficiently large uniform product
+table, producing a coupled whole with exactly the same separate summaries as
+an independent one. This converse allows arbitrary finite multiplicities on
+full rectangular support. A fixed hardware budget, deterministic updates or
+structural zeros may rule out that construction; necessity then needs another
+argument. H = 0 remains sufficient.
+
+A concrete example uses two three-mode mechanisms. Give clockwise moves sign
++1, counterclockwise moves -1, and self-loops sign 0. Set the multiplicity of a
+joint transition to one plus the product of its signs. Equal directions have
+two records; opposite directions have none. The two mechanisms are coupled.
+Nevertheless every proper state quotient on each side kills the signed
+circulation, so every separate coarse count table factors.
+
+Crucially, this is a failure of separate summaries, NOT of all available actual
+record information. Those proper state maps jointly distinguish the original
+states. If the same event identities are aligned across views, its source and
+target can be reconstructed and the coupling exposed. The hidden-correlation
+criterion and the cross-view record equations use different information.
+
+There are genuine positive proper-view families. With at least four states per
+component, take all combinations of quotients merging just one state pair on
+each side. Each view forgets information, but for any desired source/target
+pair a quotient can merge two other states. These views jointly recover every
+joint entry and therefore detect dependence. For literal restricted submatrices
+rather than aggregations, a different exact criterion applies: every choice of
+two rows and two columns must occur together in some view.
+
+Even a rank-one table does not preserve supplied synchronization witnesses.
+Suppose each component has one event labelled 0 and one labelled 1. The original
+whole has only the matching pairs (0,0) and (1,1). Forgetting the labels leaves
+two whole records, which can be newly factored as two times one. But retaining
+the original component projections would require four pairs, adding the two
+crossed combinations. The original decomposition descends unchanged precisely
+when coarsening creates no new compatible record pair. Reconstructing some new
+factor and preserving the old factor are different questions.
+
+
+4  From a mathematical component to a usable controller
+
+The physical model explicitly orders each tick: acquire permitted observations,
+accept an external action, execute transitions and communication, then commit
+state and controller memory. Pre-action and post-action signals have different
+types. A returned measurement cannot choose the action that caused it.
+
+A finite hardware specification fixes register carriers, primitives, allocations
+and acyclic wiring templates. Each primitive has actual execution records.
+Independent invocations retain separate coordinates; copying one returned value
+shares its existing record. Finite table saturation generates exactly the gate
+functions available within the specified templates, with circuit witnesses.
+
+Importantly, the plant is compiled and matched with an OPEN action socket.
+Only afterward is a controller plugged in. Otherwise a convenient controller
+could hide unsupported plant actions and falsely certify the original system.
+An accepted lift uses one fixed state, pre-action-record and post-action-record
+bijection throughout all times and views. A complete-transition factorization
+alone does not supply a missing factorization of sensor acquisitions.
+
+A subsystem can exist with hidden state. That does not entitle its controller
+to read it. Nor does an action enabled locally have to be enabled in the whole:
+under exact factorization, component and context must have a matching interface
+event for that action. Safe local control transfers only after checking this
+nonblocking condition, preservation of observations and initial states, and
+that local safety and goal predicates imply the intended whole properties.
+
+For a specified controller memory and gate grammar, the closed-loop graph gives
+an exact all-time safety/progress test. Treat the goal as terminal. Every
+reachable state must be safe; no possible acquisition may leave the chosen
+action blocked; and the reachable non-goal graph must contain no cycle. A
+natural-number rank decreasing on its edges certifies inevitable completion.
+The bound is the number of reachable non-goal vertices, not an arbitrarily
+chosen simulation horizon. All environment choices are adversarial here.
+
+Enumerating the generated open capabilities and controller tables therefore
+decides implemented, controlled existence within the declared finite grammar.
+Success supplies a compiled device, common state and record comparisons, a
+controller and its rank certificate. Failure is relative to those interfaces,
+resources and memory bounds, not a prohibition on every conceivable apparatus.
+
+The transport example separates memory from hidden ontology. In a controlled
+variant, a fixed hidden bit h determines the final twist. It is observed at the
+first station but not at the last. A two-state controller stores h and applies
+compensation c = h on the last movement. Starting with orientation zero, the
+load stays safe and completes m movements. A memoryless controller cannot choose
+the right compensation for both h values. Without the early sensor, memory
+alone cannot help. This adds a real resource and changes the closed-loop
+behavior; it does not retroactively factor the uncontrolled plant.
+
+
+5  Discovering a docking boundary under a resource budget
+
+A second family makes the subsystem boundary itself a design variable. A robot
+must choose one of two docking commands according to the parity of n binary
+orientation mechanisms. A wrong choice crashes; waiting does not complete the
+task. After each action the mechanisms may reset independently and adversarially.
+One mechanism is protected external infrastructure, so the proposed subsystem
+cannot simply absorb the whole.
+
+Choose which mechanisms J to include with the robot. Under a raw-port interface
+language, every remaining external mechanism must expose its own current bit.
+This condition is necessary and sufficient for exact dynamic decomposition.
+If one is omitted, two context states have identical permitted inputs but
+opposite correct docking outcomes. Covering both actual transitions forces both
+component outcomes; independent recombination then invents an impossible one.
+
+Moving a mechanism inside saves an external wire but does not install a sensor.
+The controller needs all internal bits too. Because the hidden bits can reset,
+waiting and memory cannot guarantee that an unobserved bit has a favorable
+value at docking. With all bits observed, the parity command reaches the goal
+in one step regardless of the following reset.
+
+Consequently, with at most k raw boundary pins and l internal raw sensors, a
+permitted proper subsystem with exact factorization and sure safe completion
+exists exactly when
+
+    k >= 1 and k + l >= n.
+
+For n = 3, k = 2 and l = 0, three candidate boundaries give persistent factors,
+but none gives the required controller. Adding one internal sensor and choosing
+a one-mechanism internal cut repairs the problem. An installed parity aggregator
+would change the resource theorem; it is not free preprocessing in this model.
+
+The same family supplies a structural negative control. Every view omitting a
+mechanism factors into a loose nondeterministic robot and retained mechanisms,
+with agreeing extracted robot records. But pairing that robot with the full
+context produces 11 times 4^n events rather than the actual 9 times 4^n. The
+extra docking outcomes pass every omission view. Local agreement alone has not
+proved independent recombination in the original whole.
+
+
+6  Persistence and refinement mean exact comparisons
+
+One accepted one-tick state/event factorization gives, for every n, a bijection
+between actual n-tick whole paths and matching component/context paths. It
+commutes with cutting and concatenating paths. The fixed staged physical
+identification also compares infinite executions point by point. No sequence
+of separately chosen finite-horizon matches is substituted for this one map.
+
+At an exact spatial refinement, substitute a factorization at a marked component
+occurrence and keep all leaf records. Expanding components before forming paths
+or afterward gives the same tuple of records. A phase-correct physical refinement
+also transports a fixed controller's safety/progress certificate. Independent
+occurrences are never identified merely because their types agree.
+
+This does not promise that a requested finer decomposition exists. For example,
+reset three bits by a' = e, b' = e, c' = f, with independent choices e and f.
+The coarse factor (a,b) is independent of c. Splitting a from b through a trivial
+interface fails because their resets agree. Views retaining only (a,c) or (b,c)
+miss the coupling; a view retaining (a,b) detects it. Actually supplying e as an
+authorized synchronization signal repairs the finer factor. Detection and
+physical repair are separate achievements.
+
+Same-clock pullback transport preserves exact factorizations, but need not
+reflect them back to the original system. Coarse-time sampling, deleted steps
+and asynchronous execution are not automatically such pullbacks.
+
+
+7  Evidence and remaining limits
+
+The proofs are accompanied by executable bounded checks. The cycle checks cover
+508 binary update tables, 501 proper edge views and 252 ternary tables; direct
+factor searches agree with the permutation-root criterion. Separate multiset
+checks include parallel-record possibilities. Docking checks compare actual
+event sets for n = 2 through 4 and test 280 resource-budget pairs. The control
+criterion is cross-checked against backward winning-set computation on 332,940
+small graph instances. Independent checks also compare count reflection and
+actual record coarsenings. The arguments received independent AI proof review.
+This is not external human or proof-assistant verification, exhaustive testing
+of all finite systems or empirical robotics.
+
+Classical mechanisms are credited rather than presented as newly invented.
+Factor discovery has established transition-system precedents; for example,
+Teren, Cortadella and Villa construct synchronizing state-machine decompositions
+using regions and excitation closure:
+https://arxiv.org/html/2106.13852v3
+
+Independence-detecting embeddings have an established kernel formulation in
+Szabo and Sriperumbudur. The arbitrary paired-view test here is a finite
+linear-algebra specialization, not a claim that their tensor-product theorem
+literally states this version:
+https://jmlr.org/papers/volume18/17-492/17-492.pdf
+
+Controller transfer follows standard simulation and feedback-refinement
+reasoning, with timing and enabledness derived and checked here. A primary
+baseline is Reissig, Weber and Rungger:
+https://arxiv.org/html/1503.03715
+
+Permutation roots, finite gate-function closure and finite-game reachability
+are likewise standard. Novelty priority of the integrated result remains
+unestablished; the useful result is its explicit chain of obligations and the
+examples that separate them.
+
+Relative to the earlier program, this advances model-level transport/descent
+questions associated with D2-D3, concrete models and exact assemblies associated
+with E3/E5, recovery and scientific use associated with G2-G3, and the path/cut
+substitution comparison relevant to I4. It does not reconstruct an equipment
+from its presentation as required by E2, or discharge I4's original syntactic
+and universal prerequisites. A formal interpretation and preservation theorem
+connecting this finite synchronous model to the original presented calculus
+is still needed.
+
+The present completeness statements are bounded: declared cuts, interfaces,
+hardware templates, hidden sectors and controller memory. They do not cover
+arbitrary architectures, unbounded memory, continuous dynamics, asynchronous
+communication, probabilistic guarantees or general network reconstruction.
+There is no demonstrated search-efficiency advantage over using the whole
+model. Within that scope, the result separates a component that merely appears
+in partial descriptions from one that persists, preserves actual executions,
+and supports an implementable causal controller.

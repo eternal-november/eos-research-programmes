@@ -1,0 +1,171 @@
+{
+  "schema": "sequential-mission-v1-transfer-correction",
+  "frozen_before_outcomes": true,
+  "source_acquisition_config_sha256": "12acc154eb04e15ffaba059f4fcf7b469ef8d9a3fd2fbd10444f9fc463faabfe",
+  "n_ports": 4,
+  "L": 3,
+  "n_outputs": 4,
+  "truth_seeds": [
+    202610292200,
+    202610292201,
+    202610292202,
+    202610292203,
+    202610292204,
+    202610292205,
+    202610292206,
+    202610292207,
+    202610292208,
+    202610292209,
+    202610292210,
+    202610292211,
+    202610292212,
+    202610292213,
+    202610292214,
+    202610292215,
+    202610292216,
+    202610292217,
+    202610292218,
+    202610292219,
+    202610292220,
+    202610292221,
+    202610292222,
+    202610292223
+  ],
+  "initial_flush_ticks": 3,
+  "base_acquisition_ticks": 12,
+  "initial_transfer_ticks": 10,
+  "initial_transfer_command": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "initial_transfer_energy": 1,
+  "initial_transfer_semantics": "One metre coarse-safe bay transfer at v=0.5m/s, acceleration/deceleration1m/s^2:0.5s acceleration+1.5s cruise+0.5s braking=2.5s=10quarter-secondticks; commands alloff; one travel-energy unit.",
+  "mission_orders": [
+    [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ]
+    ],
+    [
+      [
+        2,
+        3
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        0,
+        1
+      ]
+    ]
+  ],
+  "held_patterns": [
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      1
+    ],
+    [
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0,
+      0
+    ]
+  ],
+  "prep_lengths": [
+    1,
+    2,
+    3
+  ],
+  "diagnostic_ticks": 1,
+  "passage_distance_m_by_endpoint_parity": {
+    "even": 10,
+    "odd": 12
+  },
+  "passage_duration_ticks": "4*distance_m+3",
+  "absolute_deadline_ticks": 180,
+  "absolute_energy_budget": 450,
+  "energy_model": "one unit per ON-command per tick plus distance_m units per passage; initial transfer one unit; base ON ticks and flush included",
+  "acquisition_semantics": "Use each fixed truth seed and exactly the existing12-tick aggregate acquisition records; no further aggregate probe anywhere in planning or execution.",
+  "planning_semantics": "At each leg choose command pattern and prep duration; then one paid individual diagnostic of first endpoint under same held command advances counters. Branch universally on every feasible coordinate result. Each branch chooses endpoint only if certified1 for every next passage tick; update exact persistent K and counter state; recursively require all remaining legs by same global resource budgets.",
+  "baseline": "Drop all edges from exact arc-consistent domains at root, then same recursive search/action/order/budgets and individual observations.",
+  "action_order": "prep ascending, held patterns in frozen order, feasible endpoint ascending passage duration then endpoint ID",
+  "early_stop": "First valid complete policy in deterministic search order; no optimality claim",
+  "physical_access_or_hardware_validation_claim": false,
+  "conditionality": "Completion certificates start only for roots reached after actual paid base observations; initial unrestricted class contains all-zero worlds, so no unconditional universal goal-completion claim.",
+  "correction_reason": "Parent physical contract required10ticks rather than abstract1tick. Original results preserved. Seeds,missionorders,deadline180,energy450,searchgrammar unchanged.",
+  "original_config_sha256": "6a971c8055cf9826606a32e5782f0cdac9cfeea8555dad828c10be59981a888c",
+  "negative_test": {
+    "truth": "all four functions constantzero",
+    "expected": "safe stopped refusal after paid acquisition; no unconditional initial goal guarantee",
+    "status": "declared before corrected outcomes"
+  }
+}

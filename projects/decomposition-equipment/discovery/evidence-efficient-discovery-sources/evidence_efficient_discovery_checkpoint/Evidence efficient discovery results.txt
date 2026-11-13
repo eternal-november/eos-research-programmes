@@ -1,0 +1,530 @@
+Evidence efficient discovery of a recursive predictor
+Results and limits of the final operational certificate
+29 October 2026
+
+PLAIN LANGUAGE ABSTRACT
+
+A small interacting predictor can now be learned and checked with substantially less
+evidence than the preceding construction. The final reusable protocol needs 210,000
+simulated episodes, versus the predecessor's 10.24 million: 48.76 times fewer episodes
+and 12.19 times fewer observed transitions. The entire investigation, including
+development, used 500,000 episodes, giving reductions of 20.48 and 5.12 times
+respectively. These savings buy a deliberately narrower guarantee, not a cheaper version
+of the previous full-trajectory guarantee for every controller.
+
+The learner starts with two supplied observation ports, but not their predictive
+dependencies. From action and observation records, it selects an earlier local reading,
+a current neighboring reading, and the local action for each port. It learns their
+response tables and a correlated update mechanism, producing one positive recursive
+program rather than a collection of unrelated predictions.
+
+Fresh validation then checks that unchanged program under four specified feedback
+controllers over eight steps. The certificate covers every bounded question about both
+readings at any three fixed times, plus every bounded question about each joint
+pattern's longest consecutive run during the complete execution. The exact predictor's
+largest certified error is 0.040428, with confidence above 95 percent. Three specified
+simpler programs that remove memory, neighboring information, or update correlation fail
+the same observational requirement.
+
+Sound acceptance does not assume that the real environment is Markov or belongs to the
+learner's model family. It does require independent, repeatable episodes and matching
+observation, initialization, and controller conditions. It does not identify unique
+physical components, certify arbitrary new controllers, or establish physical safety.
+The result is an evidence-efficient, executable predictive discovery demonstration
+within an explicit operational scope; behavior outside that scope remains unresolved.
+
+1  Main result and the price of the evidence reduction
+
+The final result is a learned positive joint recursive predictor with an independently
+checked operational error bound of
+
+    0.04042731731498145 < 0.05.
+
+The confidence is at least 0.958516904673. This is a simultaneous frequentist statement
+about all declared contexts under all four tested controllers, subject to the
+acquisition assumptions below. It is not a posterior probability that the particular
+model is correct.
+
+The predecessor spent 10,240,000 two-step episodes to certify complete-record total
+variation uniformly over its full adaptive-controller family. Its weighted bound was
+approximately 0.043613. That was mathematically successful but expensive even for a
+small example; the episode count was a demonstrated cost, not a lower bound. Here the
+same two-port service family is examined over eight transitions, while the promise
+changes to a specified family of observable questions under four controllers. Neither
+the different horizon nor the lost controller and event coverage should be hidden by the
+cost ratios.
+
+Two substantive features survive the change. First, predictive dependencies are proposed
+from data rather than supplied as a sufficient factorization. Second, one positive
+executable joint process answers the whole certified query family. The confidence test
+does not simply fit a few terminal utilities, and the implementation does not
+independently resample unresolved local predictions. Nevertheless, the method does not
+reconstruct every possible trajectory distinction.
+
+The primary evidence is the last fresh validation batch only. Earlier protocols informed
+the final specification but do not supply additional confidence for it. Their
+acquisition cost is retained in the accounting. All experiments are synthetic; no
+physical robot or service installation was tested.
+
+2  Exactly which questions are covered
+
+Each episode supplies two binary readings at an initial warmup time -1, an initial
+tested time 0, and times 1 through 8 after eight joint actions. The warmup is recorded
+and available to the controller and predictor. It is not one of the nine tested times.
+The certificate averages over the declared initial distribution; it does not separately
+guarantee accuracy conditional on every warmup value.
+
+Write y=(y0,y1) for current readings and z=(z0,z1) for the previous readings. Each
+deployment uses one of these four fixed feedback controllers throughout the episode:
+
+    Request when clear       a=(1-y0, 1-y1)
+    Request when busy        a=(y0, y1)
+    Crossed feedback         a=(y1, 1-y0)
+    Own remembered change    a=(z0 XOR y0, z1 XOR y1)
+
+The last controller uses the supplied warmup at its first action. Each policy may react
+within an episode as its rule specifies. The certificate does not permit arbitrary
+switching among those rules during an episode.
+
+For every controller, the final context family contains:
+
+    84 three-time contexts
+    Choose three distinct fixed indices from 0 through 8. Expose both
+    readings at each chosen time. The resulting six bits have 64 outcomes.
+
+    Four whole-run contexts
+    For each pattern 00, 01, 10, or 11, report its longest consecutive run
+    among the nine tested readings. Each maximum has values 0 through 9.
+
+Thus 352 categorical laws are certified: four times 88. Total variation of a context law
+controls every [0,1]-valued function of that context, not just a selected event. One-
+and two-time questions follow by marginalizing a three-time law. The run laws include
+all 36 events of the form "pattern b occurs consecutively at least k times," for four
+patterns and k from 1 through 9. They include whether both channels ever read one.
+
+This makes the guarantee reusable within its declared language. A user can inspect the
+results and then choose any already-covered bounded score, indexed triple, or
+controller. An episode-start mixture of the four controllers also inherits the bound
+when the choice is independent of that episode's environment. Full-run monitors
+legitimately depend on where a pattern occurs; that is already part of their fixed
+definition.
+
+Three important exclusions remain. A triple whose times are chosen separately within
+each episode using the whole observed history is not automatically a fixed-index
+context. A joint function of two different maximum-run outputs is not automatically a
+function of either output alone. A newly synthesized controller is not covered merely
+because it calls the same local routines. Those extensions require their own admitted
+tests and action coverage.
+
+3  The model free certificate
+
+Let P_i be the actual complete-episode observable law under controller i, and let Q_D,i
+be the law generated by candidate program D with that controller. P_i can have arbitrary
+hidden memory and coupling. Fix bounded observable tests g in [0,1], and define the
+operational discrepancy
+
+    d_G(P,Q_D) = sup over admitted (i,g) of |P_i g - Q_D,i g|.
+
+Here P_i g denotes the expected score. This is an integral probability metric restricted
+to the declared tests, or more precisely a pseudometric on observable laws. Zero
+discrepancy does not imply that the laws, latent mechanisms, or physical decompositions
+are identical.
+
+Suppose n_i complete episodes are independent draws from P_i. Assign fixed confidence
+weights a_i,g with nonnegative total at most one. For positive weights, set
+
+    r_i,g = sqrt(log(2/(delta a_i,g)) / (2 n_i)).
+
+Hoeffding's inequality and a union bound give, with probability at least 1-delta,
+simultaneous bounds
+
+    |empirical mean_i,g - P_i g| <= r_i,g.
+
+On that event, the triangle inequality gives, for every candidate D,
+
+    |P_i g - Q_D,i g|
+      <= |empirical mean_i,g - Q_D,i g| + r_i,g.
+
+A candidate is accepted only when these upper bounds are at most the chosen tolerance
+for every demanded test. The event concerns observations, not the candidate family.
+Consequently sound acceptance needs neither a Markov assumption nor a promise that some
+candidate generates the real environment. There is no additional union penalty for the
+number of candidate programs. If none passes, the procedure must abstain.
+
+The test family and weights cannot be chosen retrospectively to favor observed
+deviations without protection. A fixed prefix-coded test language can allocate
+confidence by code length, allowing later selection among its tests. It cannot turn
+every computable test into a small-error guarantee from finite data. Longer programs
+receive larger radii, and an unbounded language is a statistical statement rather than a
+terminating exhaustive verifier.
+
+For finite categorical contexts, a useful specialization certifies all bounded functions
+at once. If a context has s outcomes, then
+
+    Pr[TV(empirical law, true law) > r]
+      <= (2^s - 2) exp(-2 n r^2).
+
+The reason is that TV equals the largest positive probability discrepancy over outcome
+subsets. There are 2^s-2 nonempty proper subsets; one-sided Hoeffding suffices for each.
+Neither observations at different times nor overlapping contexts need be independent.
+Independence is required across complete episodes within each controller's sample.
+
+For m equally sampled controllers and contexts with alphabet sizes s_j, the failure
+bound is
+
+    m sum_j (2^(s_j)-2) exp(-2 n r^2).
+
+For a nonconstant family, taking n at least log(m sum_j(2^(s_j)-2)/delta)/(2r^2)
+therefore suffices per controller. Total validation acquisition is m n, not n. For fixed
+k and readout alphabet size a, all k-time projections have binomial(H+1,k) contexts of
+size a^k. Their logarithmic confidence penalty grows as k log(H+1) plus a^k, rather than
+the number of full paths. A maximum-run output has H+2 values and contributes an O(H)
+term. Enlarging the permitted scores or controller family changes this accounting; these
+rates do not retain unrestricted trajectory coverage.
+
+This shows what becomes cheaper. The confidence burden follows the declared output
+alphabets and context count rather than all distinguishable histories. It does not
+remove horizon-dependent acquisition, monitor execution, or controller coverage costs.
+Large context alphabets can still be expensive.
+
+Exact candidate expectations are used here. In a different implementation, a certified
+numerical expectation error b must be added to the empirical residual and confidence
+radius. Model Monte Carlo would need a separate valid error budget; synthetic
+computation is not free precision.
+
+4  Discovery and the executable program
+
+The general discovery statement fixes a finite, resource-bounded language of positive
+recursive programs. It may include choices of state, input scopes, messages,
+initialization, shared sources, and rational parameters. Exhaustive search checks every
+candidate and returns a minimum declared-cost passing program, or abstains. This is a
+finite existence procedure, not a polynomial-time algorithm or a guarantee that a small
+useful program exists.
+
+Soundness is model free. Approximate completeness is model relative: with common radius
+r and exact expectations, any candidate whose true operational error is at most
+epsilon-2r must pass on the confidence event. Two triangle inequalities establish that
+slack. Thus, if such a candidate belongs to the finite language, exhaustive search
+returns a passing candidate no more costly under the declared cost order. This does not
+imply completeness for arbitrary physical environments or unrestricted architecture
+discovery.
+
+The experiment uses a cheaper proposal heuristic, not that exhaustive minimum-cost
+procedure. It considers all 64 subsets of six possible inputs for each supplied output
+port:
+
+    current0, current1, previous0, previous1, action0, action1.
+
+From 10,000 training episodes, with 80,000 transitions and independently uniform joint
+actions, it fits Bernoulli tables and scores masks by BIC. The selected masks are
+
+    Port 0: current1, previous0, action0
+    Port 1: current0, previous1, action1.
+
+The two ports, one-lag vocabulary, and finite search range are supplied. The selected
+dependencies are learned. The vocabulary is deliberately suitable for this synthetic
+family; that helps candidate discovery but is not a premise of certificate soundness.
+
+Both learned local tables, ordered by neighboring bit, own previous bit, and own action,
+are
+
+    1/10, 2/5, 3/10, 3/5, 3/10, 3/5, 1/2, 4/5.
+
+Equivalently, each local next-one probability is
+
+    p = (1 + 3 own_action + 2 own_previous + 2 neighbor_current) / 10.
+
+Table rounding is a proposal choice. A least-squares shared-versus-independent threshold
+estimate of approximately 0.5106206 is rounded to one half. The initial joint law of
+previous and current readings is proposed as uniform on its 16 possibilities. Neither
+rounded tables nor initialization are assumed to describe the physical truth; validation
+must cover their resulting predictions.
+
+The positive joint update is explicit. If the two local probabilities are p and q, the
+probability of two next ones is
+
+    c = (p q + min(p,q)) / 2,
+
+and probabilities for 00, 01, 10, 11 are respectively
+
+    1-p-q+c, q-c, p-c, c.
+
+These are normalized and nonnegative. One implementation uses a shared source: with
+probability one half both ports receive the same uniform threshold in {0,...,9};
+otherwise they receive independent thresholds. Each emits one precisely when its
+threshold divided by ten is below its local probability. The local memory update stores
+its own current reading for the next transition.
+
+Resource accounting matters. Each port retains one lag bit and receives one current
+neighboring bit per update, alongside its own current reading and action. The correlated
+threshold source is an additional resource, not part of that one-bit message. An exact
+implementation uses a fresh uniform source on 200 symbols and supplies one ten-valued
+threshold to each port, requiring four bits per threshold in a fixed-length encoding.
+Initialization includes both current and warmup readings. Uniform200 is treated as an
+exact stochastic primitive; exact fair-bit sampling requires rejection or another
+implementation whose worst-case draw count is not bounded. An independent checker
+verifies the compiled joint law in all 64 input contexts.
+
+A bounded fair-bit version draws a uniform 20-bit integer U per step and returns
+floor(200 U / 2^20). Its source differs from Uniform200 in TV by 33/1638400. Coupling
+the eight sources bounds its full-transcript deviation from the exact predictor by
+33/204800. Its operational error is therefore at most 0.040589, rounded outward, with
+the same confidence; 0.040428 remains the exact-predictor bound. This is a code-level
+transfer, not hardware validation: independent fair bits, computation, and delivery
+remain implementation premises.
+
+This is an executable predictive simulator with legal local access, not proof that its
+latent random draws are observable physical states or that it is an online filter for
+arbitrary hardware. Nor is the shared source identified as the actual physical cause.
+Other encodings can relocate memory, communication, or randomness.
+
+5  Fresh validation and exact numerical results
+
+The training seed is 202610291611. The final validation seeds, in the controller order
+listed above, are
+
+    202610301611
+    202610301612
+    202610301613
+    202610301614.
+
+The final candidate is unchanged from the second development protocol. Before final
+observation generation, the four additional run monitors, all triples, four controllers,
+horizon, sample sizes, and radius were fixed. Each controller then received 50,000 fresh
+validation episodes. Final observations were not used to alter the candidate, its
+initial law, or the test specification. This chronology is documented in executable
+ordering and saved records, not externally timestamped preregistration.
+
+With n=50,000 and r=0.0231, the combined confidence failure probability is bounded by
+
+    4 [84 (2^64-2) + 4 (2^10-2)] exp(-2 x 50000 x 0.0231^2)
+      < 0.041483095327 < 0.05.
+
+The ten-outcome monitor terms are included, although they are too small to change the
+displayed leading digits. A finite positive Taylor sum lower-bounds the exponential
+denominator; rational arithmetic therefore gives a conservative exact upper bound. This
+is not a normal approximation or estimated confidence level.
+
+The largest empirical-to-candidate context TV is 0.017327317314981446. Adding r gives
+the final upper bound, exactly
+
+    41397572930541 / 1024000000000000
+      approximately 0.04042731731498145.
+
+The worst three-time bounds by controller are:
+
+    Request when clear       0.038230528151
+    Request when busy        0.037902040209
+    Crossed feedback         0.038892913633
+    Own remembered change    0.040427317315
+
+All whole-run monitor bounds are below 0.029210, so the global maximum comes from a
+three-time context. The run predictions are not inferred from the triple marginals. They
+are independently calculated by a finite-state recursion that tracks predictor state,
+current run length, and maximum run length.
+
+Candidate probabilities use exact integer dynamic programming. For a three-time query,
+the recursion combines the 16 possible previous/current readout states with the partial
+six-bit answer. The run recursion adds bounded counters. These are states of the
+candidate, not an inferred bound on physical state. Computation is polynomial in the
+explicitly expanded product-state representation, not necessarily in a compressed
+program description; state products and rational bit lengths must be charged. This
+avoids Monte Carlo error in candidate predictions, but does not establish scalable
+synthesis or verification for larger systems.
+
+Three specified cheaper candidate programs fail under the same confidence event:
+
+    Averaging away own lag memory        TV at least 0.12196875
+    Averaging away neighboring reading   TV at least 0.16683875
+    Replacing joint updates by products  TV at least 0.17953250
+
+Each lower bound is empirical discrepancy from that ablation minus the confidence
+radius. These are observation-based rejections, not merely distances from the learned
+model. All exceed 0.05. They establish that these three simplifications lose predictive
+accuracy on covered questions. They do not prove that every memoryless, message-free, or
+differently coordinated implementation must fail.
+
+6  Evidence accounting and comparisons
+
+All training and development acquisition is charged. The sequence was:
+
+    First development protocol
+    10,000 training + 80,000 validation = 90,000 episodes.
+    Target: all three-individual-bit projections.
+    Training seed 202610291606; holdout seeds 202610291706 through 202610291709.
+
+    Second development protocol
+    10,000 new training + 200,000 validation = 210,000 episodes.
+    Target: all three-joint-time projections.
+    Training seed 202610291611; holdout seeds 202610291711 through 202610291714.
+
+    Final primary validation
+    The second trained candidate retained unchanged.
+    200,000 fresh episodes; triples and four full-run monitor laws.
+
+Actual investigation total: 500,000 unique episodes and 4,000,000 transitions. The
+prescribed one-pass workflow would use its 10,000 training episodes and 200,000 final
+validation episodes: 210,000 episodes and 1,680,000 transitions. Regenerating an
+identical seeded dataset for verification is not a new acquired evidence sample.
+
+Relative to 10,240,000 predecessor episodes and 20,480,000 transitions:
+
+    Accounting basis             Fewer episodes     Fewer transitions
+    Actual whole investigation   20.48 times        5.12 times
+    One-pass final workflow      48.76 times        12.19 times
+
+These are measured protocol-cost ratios across different-strength guarantees. They do
+not show that the old full-trajectory, all-controller guarantee can be obtained 49 times
+more cheaply. The new runs also last four times as many transitions per episode. No
+wall-clock or physical experimental-cost reduction has been established from these
+counts alone.
+
+The two development certificates are not combined with the final certificate into a
+simultaneous 95-percent theorem. The fresh final sample supports the primary claim even
+though development helped select its specification. Retaining the development cost
+avoids presenting protocol refinement as free.
+
+Direct empirical query estimation is an important baseline. The same concentration event
+already gives empirical answers to the declared questions without synthesizing a
+predictor. The extra deliverable here is one compact recursive joint representation that
+generates coherent forecasts across the covered controllers and contexts. Its
+simulation, interpretation, storage, or downstream computational value must justify
+learning it; the concentration theorem alone does not establish those practical
+benefits. No sample-optimality or runtime-optimality claim is made.
+
+7  Composition and the remaining ambiguity
+
+Compositional transfer has a precise boundary. If a postprocessing context C is applied
+to a transcript and every downstream score h has admitted pullback h composed with C,
+then the operational certificate controls that downstream score. Randomized
+postprocessing can similarly use its conditional expected score when its extra
+randomness is independent and that bounded pullback is covered.
+
+Typing and observability make a context legal; they do not automatically make it
+statistically covered. Testing primitive monitors does not certify arbitrary
+conjunctions, concatenations, or repeated compositions. Their combined pullbacks must
+belong to the validated language, with appropriate resource and confidence accounting.
+Contexts that alter actions require controller coverage, not just observation-processing
+closure.
+
+Even the final enlarged language leaves maximal full-path ambiguity possible. There are
+4^9=262,144 possible joint-readout paths. The complete list of context probability
+coordinates imposes at most
+
+    84 x 64 + 4 x 10 = 5,416
+
+linear constraints on a path law. Normalization is already in their span. The linear
+context map therefore has a nonzero signed kernel vector of total mass zero. Its
+positive and negative parts have equal mass. Normalize those parts separately: the
+resulting two probability laws have disjoint supports yet identical distributions for
+every declared context. Their full-path TV is one.
+
+Both laws can be realized causally by drawing a complete path at initialization and
+releasing it over time. An environment that ignores actions supplies this same
+counterexample under all four controllers; the same independent warmup convention can be
+used. Consequently neither zero context discrepancy nor the added full-run monitors
+imply full-transcript identification. This is a mathematical limit of the stated
+information, not an observed defect in the particular fitted synthetic model.
+
+8  Acquisition assumptions and physical interpretation
+
+The certificate needs independent complete episodes within each controller group and a
+stable common law for that group. Dependence within an episode is allowed. It also needs
+correct recording of actions and observations, the declared warmup and reset
+distribution, and a deployment regime matching validation. Changes in sensors, reset
+handling, controller implementation, or environmental conditions require a new validity
+argument. Long uninterrupted logs are not automatically independent episodes.
+
+On-policy collection avoids products of inverse action propensities for these four
+controllers, but it pays for four separate experimental groups. It may be unsafe,
+unavailable, or expensive on physical hardware. The theorem does not authorize those
+interventions or supply guarantees for actions never adequately tested. Off-policy
+transfer would require its own coverage and error analysis.
+
+A physical hazard must itself be a covered observable score or have a separately sound
+relationship to one. If g upper-bounds an unsafe-event indicator pathwise, its predicted
+expectation plus the certified error bounds true risk, capped at one. If that relation
+has extra uncertainty, it must be charged. A binary reading labeled "busy" is not
+automatically a collision, thermal, or reliability certificate. Sensor validity and
+hazard grounding remain separate obligations.
+
+The essential distinction is between restricting the search and assuming the truth. The
+learner uses finite memory and particular source mechanisms to propose D. The confidence
+theorem does not impose those restrictions on P. It nevertheless promises only agreement
+on the admitted questions, not evidence that untested higher-order effects are absent.
+
+9  Relation to established methods
+
+The statistical tools are standard concentration and finite-class testing, not a new
+inequality. Unrestricted full-TV learning includes ordinary finite-distribution
+learning: a one-action episode can return an arbitrary categorical sample. This
+elementary reduction explains why eliminating history dependence while retaining every
+event needs additional assumptions or access. Canonne's account describes the
+finite-domain learning background. [A short note on learning discrete
+distributions](https://arxiv.org/abs/2002.11457)
+
+Conditional-independence testing is not a general escape from evidence cost either.
+Known discrete testing bounds depend on the conditioning alphabet, even when the two
+tested variables have bounded alphabets. Treating long histories as that conditioning
+variable does not generically make their complexity disappear. [Testing Conditional
+Independence of Discrete Distributions](https://arxiv.org/abs/1711.11560)
+
+Predictive-state learning offers stronger possibilities under structural conditions.
+Zhan, Uehara, Sun, and Lee supply a core test set and assume realizability, regularity,
+and valid trajectory distributions in their model class. Those are substantive premises,
+not consequences of a small empirical test residual. The present route instead retains
+model-free soundness and limits the operational promise. It does not provide a
+replacement theorem for their policy-learning objective. [PAC Reinforcement Learning for
+Predictive State Representations](https://arxiv.org/html/2207.05738v3)
+
+The bounded contribution is the integration of learned input scopes, a positive
+correlated recursive implementation, explicit operational-query semantics, exact
+independent validation, and observation-based failed alternatives at lower evidence
+cost. It is not a novelty clearance, universal decomposition theorem, or demonstration
+that unrestricted physical architecture has been discovered.
+
+10  Reproduction and verification status
+
+The companion source package contains the theory, raw episode arrays, frozen candidate,
+context counts, exact predictive laws, and review code. Its principal files are:
+
+    theory/Operational_Context_Discovery.md
+    examples/Final_Operational_Discovery.md
+    examples/check_monitor_service_discovery.py
+    examples/monitor_service_frozen_candidate.json
+    examples/monitor_service_results.json
+    examples/monitor_service_monitor_results.json
+    examples/check_compiled_predictor.py
+    review/Independent_Proof_Review.md
+    review/independent_raw_review.py
+    review/independent_raw_review_results.json
+    tests/review_final_monitor_certificate.py
+
+The development protocols remain separately labeled. Python with NumPy runs the
+experiment and review scripts. From the package directory, the primary reproduction and
+checking commands are:
+
+    python examples/check_monitor_service_discovery.py
+    python examples/check_compiled_predictor.py
+    python review/independent_raw_review.py
+    python tests/review_final_monitor_certificate.py
+
+The independent reviewer did not import the author's checker. It reconstructed all 336
+final three-time histograms and all 16 maximum-run histograms from raw records; checked
+controller actions and candidate identity; independently recomputed all 352 candidate
+laws; and reproduced the combined confidence calculation and all three ablation lower
+bounds. Its run-monitor implementation used threshold-survival recursion and
+contiguous-window tests, distinct from the author's maximum-counter recursion.
+
+This is independent AI proof and source review with reproducible exact-arithmetic
+checks, not proof-assistant verification, external human review, or physical validation.
+Pseudorandom NumPy samples are synthetic data, not a physical acquisition trial. Those
+qualifications do not weaken the stated arithmetic result, but they limit what it
+demonstrates experimentally.
+
+The resolved outcome is specific: an unchanged learned recursive predictor passes a rich
+joint-temporal and whole-run operational certificate using a 210,000-episode one-pass
+protocol; developing and validating it consumed 500,000 episodes. That is a substantial
+evidence reduction within a narrower declared scope, without assuming the true process
+has the discovered decomposition. Extending the scope requires new evidence, a new
+theorem, or explicit additional assumptions.

@@ -1,0 +1,233 @@
+Sensor calibration result and its limit
+30 October 2026
+
+Abstract
+
+In this specified two-sensor model, two calibration probes are necessary and
+sufficient to get the worst-case whole-run failure probability below 4.5%.
+They cost up to two time units; counting production, the run needs a deadline
+of five. Under the stated energy bookkeeping it needs four energy units.
+The exact optimum is 4.4916159744%. One probe cannot meet the target.
+
+Existing decision and hypothesis-testing methods solve this case. No new
+composition theorem is needed. The important qualification is that the model
+already tells us how calibration relates to production. If that link can
+secretly reverse, every permitted calibration record is compatible with two
+opposite production choices. Then no number of these probes can beat 4.9204%
+worst-case failure. This locates a genuine missing premise: the calibration
+to production link must be trusted or tested by a different experiment. The
+results are exact for the stated model, not measurements of a physical device.
+
+
+1  What the experiment assumes
+
+There are two sensor modes, labelled 0 and 1, and one persistent unknown bit,
+theta. Mode r is aligned when r equals theta; otherwise it is split. Theta is
+fixed before the controller's private random choices, not chosen after seeing
+them.
+
+A safe calibration fixture supplies a known target, making the report-fault
+bits A and B observable. With independent primitive fault bits U1, U2, U3,
+the given model is
+
+    A = U1 OR U2
+    B = A                 in the aligned mode
+    B = U2 OR U3          in the split mode.
+
+During calibration each primitive fault has probability 0.2. The resulting
+probabilities are
+
+    Observed pair       Aligned       Split
+    00                   0.640        0.512
+    11                   0.360        0.232
+    01                   0            0.128
+    10                   0            0.128
+
+A disagreement proves the tested mode is split. Agreement does not prove it
+is aligned. Primitive draws are fresh on each call, but theta persists.
+
+Calibration is assumed harmless and costs one time and one energy unit.
+Production uses fresh primitive faults with probability 0.02, two sensor polls,
+and one execution. It costs three time units. Its two-unit energy cost is a
+bookkeeping convention, not measured evidence. Failure means either poll is
+faulty, or the run aborts or misses its deadline. There is no additional
+execution fault in this model. Production supplies no usable information
+about whether its payload is faulty. No alternative actions or concurrent
+execution are available.
+
+The fault rates, source templates, safe calibration fixture and unchanged
+calibration to production routing are supplied assumptions. The controller
+learns about theta, not those assumptions. For integer budgets D and E, where
+D is the deadline and E is energy, the maximum probe count is
+n = min(D - 3, E - 2). If production alone does not fit, the mission fails.
+
+
+2  The optimal policy and its actual cost
+
+Production in the aligned mode depends on two distinct fault sources; the
+split mode depends on three. Thus their failure probabilities are
+
+    a = 1 - 0.98^2 = 0.0396
+    b = 1 - 0.98^3 = 0.058808.
+
+The exact minimum worst-case failure probability with at most n probes is
+
+    R(n) = 0.0396 + 0.009604 * 0.744^n.
+
+This minimizes failure over all allowed policies and takes the worse of the
+two fixed values of theta. It is not an average-case guarantee based on an
+assumed distribution of theta.
+
+    Max probes   Deadline   Energy   Optimal failure probability
+    0            3          2        0.049204
+    1            4          3        0.046745376
+    2            5          4        0.044916159744
+    3            6          5        0.043555222849536
+
+An optimal controller is simple:
+
+    1. Choose mode 0 or 1 with a private fair coin.
+    2. Probe that same mode until the first disagreement or the budget ends.
+    3. On disagreement, switch modes and stop probing.
+       Otherwise keep the initially chosen mode.
+    4. Complete production in that mode.
+
+For either fixed theta, the chance of choosing the wrong production mode is
+0.5 * 0.744^n. Each extra probe reduces this residual mode error by 25.6%.
+The fair initial choice gives the same total failure probability in both
+worlds, making the worst-case guarantee attainable.
+
+With the two-probe budget, early stopping uses 1.872 probes on average, so
+expected total time is 4.872 and expected energy is 3.872. The worst-case
+costs remain five and four. The guarantee counts the learning before acting;
+it does not grant free identification or discard unsuccessful runs.
+
+
+3  Enough information is not complete identification
+
+After this two-probe policy, the phase is still ambiguous with probability
+0.776768. Both values of theta remain possible whenever all observed pairs
+agree. Nevertheless, the policy meets the whole-run target in each fixed
+world. A useful decision can therefore be certified without fully recovering
+the hidden arrangement.
+
+The 4.4916% guarantee is assessed before the run, including its random choices
+and calibration outcomes. It is not a fresh 4.5% guarantee conditional on
+every observed history. In particular, we cannot keep only favorable records
+and reset the risk budget.
+
+The controller need only retain its chosen mode, probe count and whether a
+disagreement occurred. It can discard the distinction between 00 and 11 even
+though their likelihoods differ. This is sufficient for this decision, not
+a reconstruction of everything the observations could reveal.
+
+The source accounting also matters. Each sensor separately has operational
+fault probability 0.0396. Adding those marginal bounds gives 0.0792, too loose
+to certify the target. That is a failed certificate, not proof the mission is
+impossible. Counting the distinct shared sources gives the sharper joint
+values a and b. Here the hazard is an OR of failures, so sharing a fault source
+reduces that union probability; shared noise is not automatically worse.
+
+
+4  What happens if the calibration link is not known
+
+Now allow one extra persistent unknown bit, gamma. Calibration still uses
+theta, but the production phase is theta XOR gamma. Gamma 0 means the link
+is unchanged; gamma 1 means it reverses. There are four possible fixed worlds.
+
+For a fixed theta, the two gamma values give identical calibration records
+under every permitted policy, however many probes it takes. Yet the preferred
+production modes are opposite. Even perfect knowledge of the calibration
+phase cannot tell the controller which production mode is better.
+
+The exact worst-case optimum is then
+
+    (a + b) / 2 = 0.049204,
+
+for every probe budget. A fair production-mode choice without calibration
+already attains it. Each world individually has a 0.0396-risk choice, but
+no single permitted learning policy can reliably select it across all four
+worlds. The unchanged-link two-probe policy would instead have failure
+probability 0.053491840256 in the reversed-link worlds.
+
+This is an information limit, not a shortage of clever computation. More of
+the same records cannot resolve a distinction that never affects them.
+
+
+5  What this establishes
+
+The positive case reduces to a finite partially observed decision problem
+with known observation laws, coupled to an explicit local fault-union check.
+Standard methods solve it exactly. Related output-feedback abstraction work
+formalizes control from observed histories [1]; probability-sensitive POMDP
+abstraction already supports controller refinement with satisfaction bounds
+[2]. Those papers provide background, not this case's numerical proof. Here
+the explicit finite calculation makes approximate abstraction unnecessary.
+The compact controller requires no online optimization. Declared operation
+costs are counted, but no measured hardware timing or general computation-cost
+certificate is claimed.
+
+The negative case identifies the missing physical link precisely. It does not
+show a need for a new composition theorem. Nor does the positive case solve
+the stronger problem of learning unknown likelihoods, discovering arbitrary
+source structures, or validating a physical calibration bridge affordably.
+
+The two-probe result also has little numerical slack: it is only
+0.000083840256 below the 0.045 limit. Exact assumed rates support the result;
+unquantified rate or model errors do not. A physical safety claim would need
+evidence and uncertainty bounds for those assumptions.
+
+Verification combined exact rational dynamic programming through six probes,
+replay over primitive fault outcomes in each world, and enumeration of 11,686
+deterministic policy trees through two probes. These use three
+information-distinct outcome classes, with repeated lower-depth policies
+retained. An independent audit rederived the result and reran the checks.
+The general optimality and unknown-link conclusions follow from the short
+proofs below, not from treating finite computation as an all-budget proof.
+
+
+Short proof
+
+For either probe mode, the overlap of its two observation distributions is
+
+    c = sum over outcomes of min(P0, P1) = 0.512 + 0.232 = 0.744.
+
+At any history with likelihood weights x and y, any next probe obeys
+
+    sum min(x P0, y P1) >= c * min(x, y).
+
+Consequently an adaptive n-probe experiment retains transcript overlap at
+least c^n. Equal-prior binary testing error is half that overlap. This average
+error lower-bounds worst-case error, even when actions use raw histories and
+private randomness. Early-stopping policies can be padded with ignored probes
+for this lower-bound argument. Abort counts as failure and cannot improve on
+feasible production, whose failure probability is at most b < 1.
+
+The displayed policy errs only if its initial fair choice is wrong and all
+n split-mode probes agree. That probability is c^n / 2 in either world. It
+therefore attains the lower bound. Fresh production faults give
+
+    R(n) = a + (b - a) * c^n / 2.
+
+For the unknown-link case, pair the two gamma worlds at any fixed theta.
+Their calibration transcripts, stopping decisions and final action
+distributions are identical. Any production choice has risk a in one world
+and b in the other. Their risks therefore sum to a + b; branches that abort
+or miss the deadline only increase this sum. At least one world has risk
+at least (a + b) / 2. A fair production-mode choice attains equality in every
+world, proving the stated optimum for every budget that permits production.
+
+
+References
+
+[1] Rupak Majumdar, Necmiye Ozay and Anne-Kathrin Schmuck.
+    On Abstraction-Based Controller Design With Output Feedback. 2020.
+    https://arxiv.org/html/2002.02687v1
+    Observation-history implementability; qualitative, not our risk proof.
+
+[2] S. Haesaert, P. Nilsson, C. I. Vasile, R. Thakker, A. Agha-Mohammadi,
+    A. D. Ames and R. M. Murray. Temporal Logic Control of POMDPs via
+    Label-based Stochastic Simulation Relations. IFAC-PapersOnLine 51(16),
+    271-276, 2018. DOI 10.1016/j.ifacol.2018.08.046.
+    https://authors.library.caltech.edu/records/8652e-1ns11
+    Belief-model abstraction and probability bounds; not bridge validation.

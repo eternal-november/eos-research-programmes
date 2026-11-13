@@ -1,0 +1,121 @@
+Local mechanism discovery from noisy readout histories
+Research results for the authorized milestone of 28 October 2026
+Reviewed research manuscript with finite exact law checks
+
+Lay abstract
+
+The new result explains how, in a restricted but growing class of systems, noisy measurements can reveal small interacting mechanisms without first building the enormous model of every possible whole-system state. The learner is not told how many hidden components each measurement bundle contains, how many states they have, which bundles share a component, or which components influence one another. It can recover these features, including nonlinear interactions and delays, when the observation protocol and dynamics satisfy explicit assumptions.
+
+The important step is to use change over time, not just agreement between sensors. Two overlapping bundles might expose their shared variable while leaving a private variable hopelessly scrambled. Conditional next-step distributions can untangle that private variable. When the dynamics are too symmetric to do so, the result keeps alternative descriptions instead of declaring one hidden architecture true.
+
+The construction then finds recursively maintainable boundary summaries for small regions and checks whether different descriptions can share one consistent stochastic execution. Agreement of separate predictions is not enough: shared events must remain the same events. A positive local-to-global theorem supplies the missing joint guarantee within the declared model class.
+
+This is a substantive extension of the earlier named-port example, not a general robot-world or safety theorem. It asks for richer measurements, not just more analysis of the same earlier data. It assumes three suitably informative noisy views per measurement bundle, coverage of every hidden factor, bounded interactions and delays, aligned stationary observations, and independent fresh updates conditional on the past. The work comprises mathematical arguments, an independent AI review, and finite exact-law checks. It is not a production learner, a new Lean verification, or external human validation.
+
+What has advanced
+
+The earlier theorem began with one hidden bit per named port and a copy-and-innovation mechanism. Here the correspondence between ports and components, local cardinalities, overlap pattern, and local update rules are unsupplied. Observation bundles can mix several components. A component can occur in only one bundle; no static overlap cover has to isolate it.
+
+The result has two forms. Under a quantitative distinguishability condition on local transition distributions, it identifies a canonically finest collection of elementary innovation factors, up to reordering and relabeling their states. Without that condition, it constructs the compatible family of local coordinate descriptions and supplies a criterion for which ones define the same positive global dynamics. Efficiently representing that ambiguous family requires an additional bounded-width condition.
+
+This is not a strict enlargement in every direction, nor a stronger result on identical data and assumptions. It requires aligned multiview and patch-history records beyond the earlier fixed-readout pair information. Nonlinear delayed interaction is allowed, but fresh update randomness must be conditionally independent across elementary factors. Arbitrarily correlated simultaneous innovations allowed by earlier source-process treatments are not covered. A common past influence is allowed; adding a same-tick shared source would require a separately analyzed update order.
+
+What the learner is given
+
+The declared system has finite hidden factors. Each next value depends on at most d earlier factor values, drawn from at most L preceding ticks. Every possible local update outcome has probability bounded away from zero. These factors can form feedback loops and interact nonlinearly.
+
+Each named measurement patch contains at most w factors and has at most R latent states. Its ownership and latent state count are unknown. Every factor appears somewhere. Each patch supplies three categorical sensor views, independent conditional on its hidden state; sensor noises are also independent across patches and times. Their unknown emission matrices have full column rank. Even strictly positive emissions qualify, so no single reading need reveal any hidden state.
+
+The three-view grouping and its independence structure are supplied measurement assumptions, not themselves discovered. Population access means exact probabilities of bounded, time-aligned readout collections. Finite-data access requires independent stationary windows or a justified dependence bound for the actual trajectory. Readouts from unrelated runs cannot be combined as though they were simultaneous. Bounds, sensor access, synchronization, preprocessing, and sampling requirements are resources, not free capabilities.
+
+From readouts to mechanisms
+
+First, standard three-view mixture identification recovers each patch's hidden alphabet and emissions up to a patch-state permutation. The rank of a two-view probability matrix identifies its unknown cardinality. A three-view spectral decomposition identifies the emission columns. Statistical inversion then recovers bounded joint laws of latent patch states. This is inversion of probability tables, not decoding each noisy sample.
+
+Second, the learner finds enough past information before attempting a product decomposition. For a target patch, it searches contexts of at most wd patch-and-lag variables and minimizes the conditional entropy of the next patch state. Some such context covers all its true parents. An exact minimizer therefore gives the same next-state distribution as conditioning on the full history, even though the components have not yet been identified. This order matters: averaging over an unknown shared parent can make independently updated components appear dependent.
+
+Third, it tests possible Cartesian coordinates on the recovered patch alphabet. In the true coordinates, every sufficient-context next-state row is a product distribution. A classical product-preserver principle says that a recoding preserving every positive product law can merge disjoint groups of factors, but cannot mix them across output coordinates. Because a bounded patch has finitely many recodings, a generic product row excludes every false non-merging recoding. Several rows can jointly do the same job.
+
+The required promise is that the actual transition rows separate the false recodings. This is weaker than requiring a maximal span of log-probability rows. Generic separation can be justified for freely varying sparse local kernels; it cannot simply be assumed for a parameter-tied or symmetric mechanism family. Numerical recovery additionally needs a positive separation margin. Among surviving grids, the finest identifies elementary factors. Larger groupings remain legitimate; the result does not canonize an author's preferred physical modules.
+
+Fourth, same-time joint supports align discovered factor appearances across patches. Two appearances of one factor agree through a state-label bijection. Two distinct factors have full joint support. The learner checks consistency around overlap cycles, including that following labels around a loop returns to the starting label. Private factors need no matching appearance elsewhere.
+
+Finally, bounded searches over factor-and-lag parent sets recover the essential arguments and complete local conditional tables. Positivity lets an essential parent vary while other arguments stay fixed, preventing its silent replacement by a different variable. The local tables give a compact positive generative process with nonlinear, delayed interaction. This is discovery inside the declared universe, not causal hardware identification from unrestricted passive data.
+
+Why time reveals a private component
+
+The growing example has patches containing three hidden bits: one private bit and two neighboring shared bits. Patches form a cycle whose order is not supplied. Their noisy ten-symbol sensors hide the eight possible local states. Adding patches grows the interacting system, rather than merely repeating disconnected gadgets.
+
+Static overlaps expose the shared bits but leave sixteen candidate ways to label each private bit: its label can be flipped independently for each setting of the two shared bits. Under a non-fair private update, these context-dependent flips destroy the product structure of the next-patch distribution. Exactly two choices remain, differing only by a uniform renaming of the private bit. Thus the temporal evidence discovers something the overlap evidence cannot.
+
+If the private update is fair in every context, all sixteen pass that local product test. They must not be arbitrarily collapsed to one answer. Additional global parent or resource limits still matter: some transformed descriptions need more parents and can fail a tighter indegree budget. Local ambiguity is not automatic admissibility under every global constraint.
+
+The analytic family includes genuine nonlinear feedback and an extra delayed dependence. Its sufficient context uses three past patch variables plus one next patch variable. The implemented growing-cycle check uses an immediate-parent variant with two past patches plus the next patch. The latter's 1,000-entry observable tensors do not establish that same bound for the delayed version, whose corresponding ten-symbol tables can have 10,000 entries.
+
+Discovering interfaces without inventing free access
+
+For a bounded candidate region, retain its necessary history register and ask which features of that register affect outside receivers. Group histories with identical outgoing responses. Repeatedly split a group whenever two histories give different probabilities of entering a current group under the same permitted incoming values.
+
+The stabilized partition is a recursively updateable interface: its next distribution depends only on its current summary and the admitted inputs. It is the coarsest deterministic controlled strongly lumpable partition preserving the specified outgoing responses. Equivalently, it uses the fewest summary states within that precise interface contract. The construction checks all admitted states and inputs, not only likely stationary trajectories.
+
+A concrete source has three stored bits but emits only one. The emitted bit alone has two possible values and cannot predict its own next distribution: a second source bit changes that distribution. Refinement discovers four summary states, while correctly discarding the irrelevant third bit. This shows a genuine recursive-state requirement, not just renaming the current output.
+
+The qualification is essential. It is not a lower bound against every randomized encoding, communication protocol, retiming scheme, or memory placement. A delayed bit can live in a boundary register or in the source's retained history. These allocations can be exactly equivalent, and the bit must be charged once, not twice. Likewise, an inferred latent-state map does not give a controller an installed sensor or a free wire. Real-time filtering and physical access remain separate obligations.
+
+Whole process consistency and crossing descriptions
+
+The positive gluing result is stronger than accepting separate local fits. A candidate atlas consists of compatible small coordinate charts whose shared factors reproduce all pair-support relations and whose label identifications agree around cycles. Under the full-product support promise, such charts describe one globally coherent state recoding without enumerating the global product.
+
+Now check each patch's entire conditional next-state distribution, not merely pair moments. If it factorizes according to the candidate factors, these local tests imply that the candidate product transition equals the whole true transition. The reason is specific: both positive transition laws have log-probabilities expressible as sums of patch-supported functions. Matching every patch marginal makes the difference of the two expectations of their log-density ratio zero. That difference is the sum of two nonnegative relative entropies, forcing the laws to agree. Cyclic observation covers are allowed.
+
+This is not a claim that arbitrary pairwise-compatible distributions glue. The support and independent-innovation promises exclude counterexamples outside the model class. Approximate patch agreement also yields a whole-transition error bound, but it worsens with system size and depends on positivity margins.
+
+An exact coupled execution record retains old states, each sampled innovation and new state, and the original observation noise. Two regroupings reuse this same record; they never draw a shared event twice. Exact record regroupings therefore have a common realization. Execution stores the admitted lag registers and charges shared registers and random draws once; retaining an additional transcript is a separate storage cost.
+
+Many-to-one summaries are different. Two separately valid quotient processes need not have an autonomous joint quotient. The test asks whether the joint next-summary law is identical for every source state having the same retained summaries and admitted inputs. If it fails, two such representatives witness the obstruction. Partition refinement can add the missing distinctions, but the resulting joint summary may exceed the memory budget. Exact-record crossing must not be presented as proof that every lossy summary crossing works.
+
+A concrete crossing example sharpens the distinction. One summary emits a fair bit R; the other emits R XOR H. Each alone is a valid two-state process. Together they reveal H, whose next probability depends on an omitted mode Z. Their four-state pair is therefore not Markov for every initial state. Retaining Z repairs it with eight deterministic current-summary states. That is not an eight-state lower bound for all machines: a different output-timing contract permits a two-state machine storing Z and emitting fresh outputs on transitions.
+
+Costs and statistical status
+
+With fixed R, w, d, L and sensor alphabet sizes, discovery uses polynomially many bounded observed tables rather than an exponentially large whole-state transition table. The general patch-context count is O(m(mL)^(wd)) for m patches; subsequent parent search is polynomial for fixed d. Local Cartesian chart enumeration can be factorial in R. Bounded-region interface search adds polynomial region counts and receiver scans. These are theoretical fixed-parameter statements, not practical runtime benchmarks or general polynomial learnability.
+
+When coordinates remain ambiguous, the candidate charts form a finite constraint problem. Bounded observation-overlap width and bounded width of the actual combined chart, temporal, and interface constraint graph permit standard tree-decomposition dynamic programming to represent all solutions compactly. Physical wiring width alone is insufficient. Finding or supplying the decomposition has a cost. Without these width promises there is no general polynomial global-search guarantee; even a compact representation can describe exponentially many answers.
+
+Finite data require well-conditioned sensor matrices, spectral separation, positive context coverage, and margins for context, factor, parent, and interface distinctions. A finite-sample wrapper for independent stationary windows combines a uniform calibration-stability constant on a bounded, well-conditioned parameter class with explicit local error propagation and concentration. The calibration constant is proved finite, not numerically evaluated. Calibration uses an ideal fit to a compact valid-model class; approximate fitting must also control optimization error. No polynomial dependence on conditioning constants, practical sample budget, or complete implementation is claimed. Parent selection uses an error-controlled band of near-minimizers before choosing the smallest set. The experiments use exact probabilities, not finite sampled datasets. Without margins, retain confidence families rather than assert exact empirical architecture.
+
+Initialization is separately charged. Positive kernels do not by themselves imply rapid mixing or a cheap exact stationary sampler. A stated contraction condition yields an approximate burn-in bound, including delayed history; the growing example satisfies a suitable influence bound. This initializes a model simulation, not the physical environment. Whole-transcript error also includes initial-law error and accumulates transition error over the requested horizon.
+
+Evidence and relation to established work
+
+Finite QA covers unknown patch cardinalities, nonlinear parents, delays, private factors, retained symmetry, memory relocation, and gluing obstructions. The small exact-law fixtures use whole models of 72, 576, and 256 states only as test-data generators and independent validation oracles. The tested learner receives bounded observable tensors, not those matrices. This validates selected implementations and examples, not the general theorem, finite-data rates, or all candidate atlas searches. Product-rigidity fixtures additionally use exact integer independence checks.
+
+The major ingredients have established precedents. Three-view calibration follows classical latent-class identification; product rigidity specializes classical tensor-preserver theory; recursive interface refinement is controlled Markov-state minimization. FactoRL already discovers latent factored structure and nonlinear transitions without joint-state enumeration under rich, state-decoding observations. Overlapping-view representation learning and multiview time-series identification already address latent alignment. The attached audit records these comparisons rather than treating them as missing baselines.
+
+The defensible contribution is their constructive integration for unsupplied finite local alphabets under genuinely lossy noisy measurements, with temporal discovery of private factors, nonlinear delayed mechanisms, explicit interface contracts, coherent positive realizations, and retained alternatives. Modest novelty is a reasonable working assessment; no priority claim or exhaustive literature verdict is justified.
+
+Current conclusion
+
+This milestone supplies a structured population discovery result and local-to-global realization criteria, with explicit limits and reproducible finite checks. Independent AI review is additional scrutiny, not human peer review or formal verification. No new Lean proof has been produced. The original broader contract is not discharged by this result. The next genuine gaps are an explicit end-to-end finite-data implementation, more general shared-innovation models, and physically available filtering and interfaces under a chosen access budget.
+
+Selected primary references
+
+Allman, Matias and Rhodes, Identifiability of parameters in latent structure models with many observed variables, 2009. Three-view latent-class baseline.
+https://jarhodesuaf.github.io/papers/Latent.pdf
+
+Westwick, Transformations on tensor spaces, 1967, Theorem 3.4. Product-preserver baseline.
+https://msp.org/pjm/1967/23-3/pjm-v23-n3-p21-p.pdf
+
+Misra, Liu, Jin and Langford, Provable Rich Observation Reinforcement Learning with Combinatorial Latent States, ICLR 2021. FactoRL comparison.
+https://openreview.net/references/pdf?id=0wpcsuBLCN
+
+Dean and Givan, Model Minimization in Markov Decision Processes, AAAI 1997. Recursive partition-refinement baseline.
+https://cdn.aaai.org/AAAI/1997/AAAI97-017.pdf
+
+Yao et al., Multi View Causal Representation Learning with Partial Observability. Overlap and complement identification comparison.
+https://arxiv.org/html/2311.04056v2
+
+Huang et al., Latent Processes Identification From Multi View Time Series, IJCAI 2023. Temporal alignment comparison.
+https://www.ijcai.org/proceedings/2023/0428.pdf
+
+Full assumptions, proofs, audit, scripts, and QA records are in the accompanying source archive.

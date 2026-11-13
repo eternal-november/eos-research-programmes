@@ -1,0 +1,37 @@
+# Stratified relational interfaces: bounded primary-source comparison
+
+2026-10-30. Scope: a constructive synthesis of classical parametric elimination, exact linear-relation semantics, and the established v2 comparison theorem. It genuinely extracts interfaces and witness maps rather than only deciding a global query. None of those facts establishes a new elimination or compositional-black-boxing theorem. The declared structural/coupling theory remains input; actual-world adequacy is not learned by this procedure.
+
+## Closest extraction baseline
+
+**William Y. Sit, An algorithm for solving parametric linear systems (1992), JSC 13, 353–394**, [primary publisher](https://doi.org/10.1016/S0747-7171(08)80104-6), [author's IBM publication record](https://research.ibm.com/publications/an-algorithm-for-solving-parametric-linear-systems). The primary abstract explicitly includes degenerate parameter values and uniform solutions on parameter regimes, with irredundant regimes for homogeneous systems. Thus all-specialization solution extraction is already the goal, not just consistency testing. Full original theorem numbering was not inspected; do not attach an unverified theorem number.
+
+**Clemens Ballarin and Manuel Kauers, Solving Parametric Linear Systems: an Experiment with Constraint Algebraic Programming**, [author-hosted manuscript](https://wwwbroy.in.tum.de/publ/papers/rwca02.pdf). Full PDF downloaded and §3–4 inspected. Section 3 modifies Gaussian elimination by maintaining a constraint store and branching when both a pivot's zero and nonzero cases remain consistent; §4 calls regions supporting uniform solutions regimes. The paper explicitly warns that generic solutions need not specialize correctly. This is a direct algorithmic baseline for Section 2 of `stratified_relational_interface_theorem.md`, not merely an analogy. Its polynomial equation/inequation consistency discussion uses algebraic closure/Nullstellensatz; the stratified theorem’s real semialgebraic locus needs real QE (or may keep empty branches), rather than mistaking complex consistency for real consistency. Repeating elimination on LN and T and taking a finite common refinement is an elementary extension, not an independently new principle.
+
+**Volker Weispfenning, Comprehensive Gröbner bases (1992)**, [primary publisher](https://doi.org/10.1016/0747-7171(92)90023-W). Constructs a finite basis that specializes to a Gröbner basis for every parameter specialization into a field. This is a more general specialization-aware baseline; the homogeneous linear setting does not require its full machinery. It does not by itself certify real inequality guards or infer omitted coupling equations.
+
+## Closest compositional baseline
+
+**Baez–Fong, A Compositional Framework for Passive Linear Networks**, [primary full text](https://arxiv.org/html/1504.05625). Theorems 1.1 and 7.7 construct a hypergraph black-box functor from passive circuits to Lagrangian relations, so whole-network external behavior is obtained by composing component behaviors. This is an actual constructive semantic functor, not a global yes/no verifier. Its circuit laws and coefficients are supplied; its specific passive/Lagrangian hypotheses are narrower than arbitrary linear constraints. Conversely it does not claim the stratified theorem’s incomplete-evidence stratification or original partial-domain guards.
+
+**Fong–Rapisarda–Sobociński, A categorical approach to open and interconnected dynamical systems**, [primary full text](https://arxiv.org/html/1510.05076). The paper supplies a sound and complete diagrammatic theory for complete discrete LTI behaviors, via corelations; appendix C.3 explicitly proves the corelations-of-vector-spaces/linear-relations correspondence. This is the closer general relational-semantics baseline than restricting all networks to passive circuits. Bi-infinite trajectory semantics differs from the stratified theorem’s finite static wire systems. Neither supplies an inference of physical model-class adequacy from data.
+
+The shared-theta quantifier discipline is essential: compose the exact relations *fiberwise*, keeping genuinely shared witnesses at the cut. Independently existentially eliminating theta in each component would introduce false mixed-world behaviors. This is ordinary relational semantics, not a new gluing theorem.
+
+## Rank strata and specialization
+
+The optional Tor exact sequence follows by two Tor long exact sequences for K→P→im A and im A→Q→coker A, using P,Q free; the displayed sequence and readout-quotient map check out. It is a standard explanation of specialization failure, not an extra assumption of global flatness. Elementary pivot charts already suffice for the theorem.
+
+For a precise reference formulation (a maintained mathematical reference, not a priority claim), [Stacks, Fitting ideals, Lemmas 15.8.4 and 15.8.8](https://stacks.math.columbia.edu/tag/07Z6) gives base-change compatibility of Fitting ideals and the vanishing/unit criterion for finite local freeness. Imposing higher minors zero and inverting a selected nonzero minor produces the split-rank chart used here. Do not claim that merely constant rank on real points automatically supplies all scheme-theoretic identities without imposing the requisite minor equations.
+
+## What the CFS linkage adds, and what it does not
+
+The stratified theorem supplies concrete honest carriers C with both external legs and full witness carriers K, plus sections and invisible-kernel changes, for every supported parameter chart. Exact shared-parameter relational composition then supplies v2's same-cylinder hypotheses. Applying the already-proved v2 theorem gives the actual M-left/E-right comparison families and their context/wiring coherence. This is a legitimate evidence-conditioned application of v2, stronger in output than a verdict-only procedure, and does not assume a universal fixed raw endpoint.
+
+But this should be called a linkage/application theorem, not a new classical elimination result. It does not establish that all parameter worlds have the same labelled cylinder, nor a single observable executable selector. World-indexed exact semantics is distinct from evidence determinacy. Mission uniformity is only the specified rank/guard predicate across the supported locus.
+
+**Finite-presentation caveat:** finite rational matrices explicitly describe raw interfaces, witness sections, and chart transition maps. V2 supplies free-Isbell apex/maps by its categorical construction. Unless separately proved, do not say the resulting free-CFS apex and legs themselves have finite rational-matrix representations or a finite effective size bound. They are actual mathematically specified comparisons, not thereby a practical data structure. Raw assembly carriers and separately extracted composite carriers retain distinct left endpoints, as the theorem notes.
+
+## Review conclusion
+
+No flaw found in the elementary all-rank chart construction, section parametrization, finite common refinement, mission rank tests, or optional Tor calculation. The critical scope conditions are already mostly explicit: finite declared closure; homogeneous linear-in-wire equations; supplied and physically adequate shared-parameter structural theory; original guards separately certified; policy fixed; no executable-selector guarantee. The finite-free-CFS-presentation caveat above remains essential. Novelty remains unestablished; the safe deliverable is an exact constructive scoped bridge built from cited baselines and v2.

@@ -1,0 +1,66 @@
+--- research/workstream_integration/lean/harness_failures/build_before_realpath.py	2026-10-24 21:11:46.235770409 -0400
++++ research/workstream_integration/lean/build.py	2026-10-24 21:11:46.261542453 -0400
+@@ -87,8 +87,30 @@
+     if not re.search(r'\bversion 4\.35\.0\b', version):
+         raise RuntimeError('Wrong Lean version: ' + version)
+     prefix = Path(subprocess.check_output(['lean', '--print-prefix'], env=env, text=True).strip())
+-    standard = (prefix / 'lib/lean').absolute()
+-    packages = (project / selected_lock.get('packagesDir', '.lake/packages')).absolute()
++    standard = (prefix / 'lib/lean').resolve()
++    packages = (project / selected_lock.get('packagesDir', '.lake/packages')).resolve()
++    project_build = (project / '.lake/build').resolve()
++    git_records = {}
++    git_env = dict(env, GIT_OPTIONAL_LOCKS='0')
++    for name, rev in wanted.items():
++        package = (packages / name).resolve()
++        git = shutil.which('git', path=env.get('PATH'))
++        top = subprocess.run([git, '-C', str(package), 'rev-parse', '--show-toplevel'],
++                             env=git_env, text=True, capture_output=True) if git else None
++        if top is None or top.returncode or Path(top.stdout.strip()).resolve() != package:
++            git_records[name] = {'path': str(package), 'expected_rev': rev,
++                                 'status': 'GIT_METADATA_UNAVAILABLE_LOCK_ONLY'}
++            continue
++        head = subprocess.check_output([git, '-C', str(package), 'rev-parse', '--verify', 'HEAD'],
++                                       env=git_env, text=True).strip()
++        if head != rev:
++            raise RuntimeError(f'Actual dependency Git HEAD mismatch for {name}: {head} != {rev}')
++        dirty = subprocess.run([git, '-C', str(package), 'diff', '--no-ext-diff', '--quiet',
++                                'HEAD', '--'], env=git_env, text=True, capture_output=True)
++        if dirty.returncode != 0:
++            raise RuntimeError(f'Tracked dependency worktree differs from pinned HEAD: {name}')
++        git_records[name] = {'path': str(package), 'expected_rev': rev, 'actual_head': head,
++                             'status': 'HEAD_MATCH_TRACKED_WORKTREE_CLEAN'}
+     raw = subprocess.run(['lake', 'env', 'printenv', 'LEAN_PATH'], cwd=project, env=env,
+                          text=True, capture_output=True, check=True).stdout.strip()
+     external, rejected = [], []
+@@ -96,21 +118,25 @@
+         if not item:
+             continue
+         p = Path(item)
+-        p = p.absolute() if p.is_absolute() else (project / p).absolute()
++        p = p.resolve() if p.is_absolute() else (project / p).resolve()
+         # Only selected package trees and compiler stdlib survive. In particular,
+         # the selected project's .lake/build/lib/lean is NEVER admitted.
+-        if p.is_relative_to(packages) or p == standard:
++        if not p.is_relative_to(project_build) and (p.is_relative_to(packages) or p == standard):
+             external.append(str(p))
+         else:
+             rejected.append(str(p))
+-    if not external:
+-        raise RuntimeError('No supported external dependency paths found in selected Lake environment.')
++    if not any(Path(p).is_relative_to(packages) for p in external):
++        raise RuntimeError('No supported package dependency paths found in selected Lake environment.')
+     env['LEAN_PATH'] = os.pathsep.join([str(BUILD)] + external)
+     return env, {'dependency_selection': mode, 'lake_project': str(project),
+                  'toolchain_root_override': str(tool) if tool else None,
+                  'recovery_explicitly_enabled': recovery, 'lean_version': version,
+                  'external_lean_path': external, 'rejected_project_lean_paths': rejected,
+-                 'matched_dependency_revisions': wanted}
++                 'matched_dependency_revisions': wanted,
++                 'canonical_package_root': str(packages),
++                 'canonical_project_build_excluded': str(project_build),
++                 'package_git_checks': git_records,
++                 'external_cache_trust': 'Git HEAD and tracked-worktree checks are source provenance, not a rebuild or cryptographic verification of generated external oleans; packages without Git metadata are explicitly lock-only.'}
+ 
+ 
+ result = {'status': 'RUNNING', 'out': str(OUT), 'modules': []}

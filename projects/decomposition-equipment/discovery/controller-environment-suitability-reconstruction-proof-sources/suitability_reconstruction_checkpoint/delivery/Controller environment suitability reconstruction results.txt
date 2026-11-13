@@ -1,0 +1,220 @@
+Controller environment suitability through typed decomposition
+
+Research results for Sean Synakowski
+27 October 2026
+
+Abstract
+
+A controller can work with each partial description of an environment and still fail when those descriptions must describe one actual interaction. The missing information can be a shared physical connection, the order in which observations arrive, or the obligation to use the same memory and update rule throughout. This report gives a constructive recognition result for that problem in a finite, explicitly bounded hardware setting. Given two crossing descriptions of the same controller–environment interaction, it searches an unbounded grammar of possible common refinements. It either constructs an exact refinement using the same physical controller, or establishes that none exists in the specified class. The search preserves actual events and independently declared joint possibilities, rather than joining unrelated summaries.
+
+A growing example shows why this matters. An admission controller receives N zone-status bits and must later authorize or refuse entry within an initially announced block. Each separate information cut needs only enough codes for that block, yet one real controller can require substantially more memory. Removing just the promise that the final block matches the initial block can raise the requirement to 2^N memory states, although both partial descriptions remain unchanged.
+
+The results concern declared finite models and physical interfaces. They do not identify an actual environment from measurements or complete the original research contract.
+
+
+1 The main result and the question it answers
+
+The central question is not whether a convenient small controller can be verified. It is whether independently meaningful decompositions of both an environment and its controller can describe the SAME causal interaction, without supplying the controller with hidden information or changing its hardware while changing descriptions.
+
+The strongest structural result in this package is constructive common-refinement recognition. Two crossing descriptions of a fixed coupled interaction are supplied. Their common refinement is not supplied. A finite procedure searches every finite candidate allowed by one specified context-free grammar, without a depth or component-count cutoff. It recovers actual refinement maps, a derivation, and the correspondence between leaf occurrences when successful. A negative result excludes every candidate in that grammar and physical implementation class, not merely the examples tried.
+
+The decisive restriction is explicit: the operational carriers and physical world family are finite, hardware is fixed, and independently declared joint-support constraints have finite-state recognizers. The grammar can generate arbitrarily many occurrences of existing resources; it cannot allocate arbitrarily much fresh physical memory. The two parent descriptions are exact descriptions of the same given coupled root. The theorem discovers their common semantic refinement, not an unknown real-world plant from sensor data.
+
+Exact coupled descriptions represent an already installed controller; they do not automatically decompose its physical implementation. The stronger, two-sided physical claim uses the additional hardware checks below.
+
+Two supporting results make that conclusion operationally meaningful. First, simultaneous cut constraints distinguish separately sufficient summaries from summaries that one physical update table can actually maintain. Second, finite tests connect the original typed decomposition operations to real observation, command and memory-update maps. Exact reconstruction then preserves executions, while a separate controller check establishes whether those executions meet the task.
+
+The distinction matters in both directions. A controller can accomplish its task without realizing a requested decomposition. Conversely, finding an exact decomposition of a controller that fails its task does not make it suitable.
+
+
+2 A growing family where the environment semantics changes capability
+
+Consider N = mr zones in m blocks of r. The model's bit x_i states whether zone i satisfies its task-admissibility condition. An episode is
+
+    Start(j), Read(1,x1), ..., Read(N,xN), End(j,ell).
+
+The environment announces block j, supplies every indexed status bit, and finally requests position ell within that SAME block. The required response is the requested bit: permit entry exactly when it is 1. Both sound authorization and complete admission are required; always refusing does not solve this task. The initial announcement does not reveal ell. All blocks, status vectors and final offsets are adversarial within this promise.
+
+The controller has b persistent register states and one time-homogeneous deterministic update table. Start, Read and End are actual delivered tags; each Read includes its sensor index. No free internal clock, future offset or analyst's view of the complete vector is supplied. Finite tag-decoding logic is permitted. The resource bound measures persistent register states, not gate count or bandwidth.
+
+An imaginary encoder at a single cut can see the entire past, while its decoder can see the entire remaining suffix. At every cut, at most 2^r codes suffice: record the already observed bits in the selected block. Different initial blocks do not conflict because their permitted suffixes name different final blocks. At the cut after all readings, 2^r codes are necessary. Thus the maximum separate-cut demand is exactly 2^r.
+
+One physical controller is more constrained. After Start, at least ceil(m/b) initial blocks must lead to the same register value. Call that set I. From this same value the same status stream produces the same subsequent register trajectory, whichever initial block in I was named. Before End, the controller must therefore preserve all r|I| bits that might be queried. Two vectors differing at one such bit cannot share a register value: the same permitted final query would require different answers. Consequently
+
+    b >= 2^[r ceil(m/b)],
+    b >= 2^r, and N <= b floor(log2 b).
+
+A matching construction groups k consecutive blocks into a batch. It remembers which batch is awaited, records that batch's bits as their indexed readings arrive, and then forgets the batch identifier. End supplies the offset needed for the answer. Waiting, active-recording and completed-recording values are disjoint parts of one register; the actual Read index supplies position information. One fixed table implements every stage, using at most
+
+    ceil(m/k) + 2^(rk+1) + 3
+
+states. Optimizing k gives, uniformly for N >= 2,
+
+    minimum register states = Theta(max(2^r, N/log2 N)).
+
+Equivalently, persistent memory bits equal
+
+    max(r, log2 N - log2 log2 N) + O(1).
+
+For r = 1, every cut separately needs at most one bit, but one causal controller needs Theta(N/log N) states. This is not an amplification by independent little controllers: there is one register, one shared stream and one persistent matching promise. The displayed law is an all-parameter asymptotic result, not a formula for every small exact optimum.
+
+Now remove only the promise that the final block equals the initial block. End(k,ell) may request any zone. Keep the same task—answer the status requested at End—and the same physical interface. All 2^N status vectors must now produce distinct pre-End register values, since any differing coordinate can be queried. Storing the full vector suffices. The exact requirement is 2^N states.
+
+The two environments nevertheless have identical partial chart images:
+
+    left chart     initial block and complete status vector
+    right chart    complete status vector and final block and offset
+
+Writing X = {0,1}^N, these carriers are U = [m] x X and V = X x [m] x [r]. Matching them over the fine boundary X x [m] retains equality of the initial and final blocks. Matching only over X forgets that equality and admits the changed-block environment. Neither chart carrier changes.
+
+This is a concrete semantic distinction, not merely a different modal verdict. The retained whole possibilities determine what the same controller must remember. If the actual environment is stable-block but an analysis joins the charts only on X, the invented possibilities can falsely reject an appropriate controller. When m = 1 the two environments coincide, as they should.
+
+This models pre-entry authorization, not a complete navigation policy. Status bits and matching are assumptions, not empirical validation of sensors or zone safety. The completed-world graph can itself be exponentially large.
+
+
+3 What is kept in a controller environment description
+
+An environment component is a staged directed multigraph: states, actual event records, source and target, command labels, delivered replies and permitted pre-action observations. Parallel events remain distinct even when they have equal endpoints. A completed event can contain hidden matching information that is not available to the controller before it acts.
+
+A controller component consists of owned stores, permitted read/write ports, primitive table identifiers and phase-respecting wiring. Repeated uses of a physical identifier mean the same table. Repeated references to a store mean the same physical memory, not independent copies. The environment boundary, memory boundary and sensor interface need not be the same object.
+
+Coupling selects the command using the available observation and memory; Nature then selects any admitted adverse event; the permitted update consumes its delivered reply. The coupled state is an environment-state/memory pair. Its reachable support is a joint relation, not a product of independent environment and memory marginals. Different histories can reach the same environment state with different memories.
+
+This explains the model/comodel/runner motivation. The environment supplies stateful responses to requested operations; the controller requests and implements operations through an interface; a runner gives their actual interaction. Typed decomposition must respect that interaction on both sides. Calling a component a comodel, or equating its observable stream function with another's, does not establish the required physical implementation.
+
+The resulting primary object is the interaction and its permitted possibilities. Statements such as “this controller is suitable” are judgments derived from it. A modal account can express those judgments later; it is not a substitute for reconstructing the environment, observations and controller capabilities on which they depend.
+
+
+4 How the unbounded refinement search works
+
+Fix one physical implementation kappa and a nonempty finite set Omega of possible persistent physical worlds. For each world, form the actual coupled graphs. A candidate leaf letter records its component color, occurrence and physical aliases, permitted memory view, and actual environment/proof maps for every world. Physical tables and implemented adapters are the same throughout the word and across worlds. World-dependent mathematical coordinates are proof data, not runtime observations.
+
+There are finitely many such letters. Each is checked for incidence, local selected-event compatibility and the memory-update equation. A single leaf need not reconstruct a request assembled from several component outputs. Additional finite monitors enforce typing, shared aliases and global physical assembly. A semantic projection of an existing store does not create hardware; a view needing computation must use an already permitted adapter.
+
+For actual physical decomposition, the global monitor checks coverage of the fixed implementation's named primitive nodes, stores and ports, consistent writers, and equality of its assembled command/update truth tables. Glue operations belong to that same counted phase-respecting architecture. Memory-only exactness is checked against an independently declared hardware-memory support: exact coupled records alone might reconstruct memory using hidden environmental state. Any online inverse still needs a permitted physical implementation. Thus the strict branch decomposes both environment and hardware; the weaker branch only redescribes their installed interaction. Neither adds memory with each grammar occurrence.
+
+The target joint support is specified independently by a finite automaton. Its input is a sequence of actual component state records, or actual component event records, with the two outer boundary records retained. Its constraints may express adjacent boundary matches, repeated store values, a persistent world identifier, and a fixed finite registry of crossing anchors. The support is NOT defined to be the image of the proposed root map: doing that would assume the reconstruction being tested. Nor are different accepting runs counted as different physical events.
+
+Three finite defect recognizers characterize exactness.
+
+    Image defect
+    Some actual root record produces a tuple forbidden by the declared support.
+
+    Injectivity defect
+    Two distinct root records have identical leaf and outer-boundary coordinates.
+
+    Surjectivity defect
+    An admitted target tuple has no actual root record explaining all its coordinates.
+
+The last recognizer gives the useful finite-state invariant. Start with the set S of root records compatible with the left boundary. On each chosen component record z, replace S by the records whose proposed component map takes value z. At the right boundary, intersect once more. If the support automaton accepts but S is empty, the components have invented a possibility. The record set is finite, so its subsets form a finite recognizer even though candidate words have unbounded length.
+
+All three checks run separately on states and events. This catches event loss invisible at the state level. Empty profiles require an original syntactic loop type and use its actual boundary carrier, not a singleton. Isomorphic semantic boundaries do not identify distinct syntactic endpoints. Empty supports and parallel boundary events are handled literally.
+
+Exclude the defect languages and intersect the remaining regular language with the profile grammar. Emptiness is decided by saturating finite facts of the form “this grammar nonterminal can connect automaton state p to state q.” A production composes such relations. There are finitely many facts, so saturation terminates even with recursive productions and empty words. Retained predecessors reconstruct an accepting derivation. This is why the result covers every finite generated profile rather than only a depth-limited search.
+
+For crossing refinement, place prospective leaf occurrences in cells (i,j), where i names a component in the first description and j one in the second. A letter supplies maps from both parents to the leaf. Their composites from the root must agree on actual states AND events. Use one context-free grammar for complete cell-tagged words. Each row and column reads its own subsequence and applies its exactness recognizer; their finite product is intersected with the grammar.
+
+The output gives both refinement forests and a named bijection between their LEAF occurrences. Let H_U and H_V be the reconstructed bijections from the root to the row and column joint targets. Their comparison is
+
+    Phi = H_V composed with inverse(H_U).
+
+Its graph is a common augmented joint object retaining both boundary registries. The leaf equations prove that Phi respects the named leaf correspondence, including repeated colors. Internal boundary records are reconstructed through the root inverse, not silently discarded or permuted. A prescribed stronger boundary comparison requires additional finite equality tests. This is a comparison of retained joint-support diagrams, not an equality of planar profile types or a newly assumed symmetry of the source calculus.
+
+Several restrictions do real work. Arbitrary independent context-free requirements cannot simply be intersected; the simultaneous requirements must live in one grammar or additional regular monitors. Arbitrary unbounded crossing constraints are not presumed regular. Discovered semantic maps need not be denotable by the old source generators. The method is finite, potentially expensive, and not an unrestricted distributed-controller synthesis algorithm.
+
+
+5 From exact descriptions to the same actual executions
+
+The finite presentation layer supplies six groups of checks: task/admissibility, represented states, command assembly and selected events, memory-update cubes, shared occurrences and declared comparisons, and exact state/event reconstruction where requested. They evaluate actual tables rather than assume that a strategy transfers.
+
+The update cube says that updating the root memory and then taking its component view gives the same result as taking that view and applying the local update with only its delivered inputs. Command assembly uses the declared physical wiring. It cannot silently introduce a central observer of private sensors.
+
+Substitution then composes these checked equations. For exact substitution, a flattened leaf tuple is admitted precisely when each inner block belongs to its retained support and the recovered parent tuple belongs to the outer support. Applying inner inverses and then the outer inverse gives a genuine reconstruction. This retains correlations that a join of marginal supports could lose. A separately supplied composite support must be checked against that generated support before it inherits the coherence claim.
+
+The resulting coupled graph isomorphisms preserve actual executions of every finite length and commute with truncation and concatenation. They do not reorder the physical observation schedule. Spatial regrouping and temporal rescheduling are different operations; the latter can change memory requirements.
+
+For suitability, check the same physical controller's reachable product separately. Every admitted initial state and every adverse successor must remain represented. Commands must be available; unintended deadlock is failure. Safety requires every reachable pair to satisfy the task predicate. Guaranteed stopping additionally requires no reachable nonstopping cycle or deadlock, equivalently a decreasing finite rank before the first successful stop. Local idle loops do not independently violate a root-level termination condition. Probability thresholds, almost-sure success and fairness are different objectives and are not inferred from support-only semantics.
+
+
+6 Interface changes and shared hardware constraints
+
+The simultaneous cut criterion gives an exact finite implementation test. Code maps assign memory values to actual available histories. They must respect initialization and shared-prefix anchors, allow one permitted update table per physical identifier, and allow one terminal decoder satisfying every demand at the same physical input. A per-cut coloring checks only the last information requirement, not whether its codes can be maintained causally.
+
+The constraint-descent result extracts equality implications from pairs of actual rows using the SAME primitive and equal delivered readouts. Terminal records contribute forbidden equality patterns when their acceptable-action sets have empty common intersection. Pairwise compatibility is insufficient for general action sets. Finite equality closure recognizes whether coarse obligations follow from the fine ones for every code assignment. Failure constructs an explicit finite separating assignment.
+
+There is a further sharing issue. Two fragments can each admit some table yet disagree on which literal table to use in a shared context. The stronger parametric formulation therefore retains update and decoder function symbols instead of existentially discarding them. Its finite ground formulas describe the actual input/output rows, guarded command obligations and task demands. A countermodel to fine-implies-coarse supplies finite codes and one total table per identifier that works finely but fails coarsely. Equivalence with those same symbols retained is stable when a further context adds rows using them.
+
+The table-parametric theorem has passed paper review. Its contextuality applies to conjunction of extracted obligations, explicit port identification and well-sorted term substitution. An actual spatial operation inherits it only after its operational record extraction is proved to have that form. The general extraction lemma for arbitrary typed spatial substitution remains open; logical context closure alone does not supply it.
+
+These are different guarantees: existence of some implementation, preservation of code assignments with reconstructible tables, and preservation of the same physical tables in sharing contexts. None permits dropping the matching promise in the block example without checking the newly admitted records.
+
+
+7 Physical uncertainty is not a mathematical witness choice
+
+The operational quantifiers are
+
+    choose one permitted physical implementation;
+    for every admitted persistent physical world;
+    choose a coherent mathematical decomposition witness for that world;
+    check every admitted initial state and every adverse execution.
+
+Physical table and store choices remain outside the world quantifier. A mathematical factorization can vary with the world without granting a world-dependent action to the runner. A witness used as an actual runtime adapter is instead an implementation and must obey the physical restrictions. A request for one common profile across worlds is stronger than separate world-specific profiles and is tested accordingly.
+
+An unknown physical alignment persists along a run; Nature does not select it afresh at every edge. Fixing it nevertheless retains all its adverse outcomes. An empty witness fibre rejects the requested decomposition certificate, not the physical world. An empty physical family reports inconsistent assumptions, not vacuous controller success.
+
+Finite completion from partial charts is supporting infrastructure. Its completeness requires jointly separating chart maps and generated component carriers, or explicit bounds on invisible sectors. It cannot reconstruct unbounded hidden copies of states or events. Exhaustive completion and ordinary partial-observation games provide reference semantics and checks, not the headline result.
+
+
+8 Evidence and what remains to establish
+
+The sources contain general proofs as well as finite executable checks. These roles are separate: a successful finite run does not prove an all-parameter theorem.
+
+The independent block-family audit passes the stated capability law and matching comparison. Its independent implementation tests 44,026 episodes across twenty small parameter pairs, 47 exact cut-coloring cases, five fine/coarse comparisons, and additional start-code and scaling controls. The proof, rather than those samples, establishes the general bounds.
+
+Independent recognition checks compare 13,020 direct tuple calculations with automata across 420 regular-support instances. Controls include nullary boundaries, event-only loss, and a defect missed by depth-14 truncation but recovered by grammar saturation. Positive and negative common-refinement fixtures are decided over their full languages. A dynamic four-bit fixture has 16 states and 32 events: it reconstructs an unknown four-leaf refinement, excludes every arity when one required cell is forbidden, and detects expansion to 256 coarse event tuples despite unchanged state data. These are discriminating tests, not the mathematical basis for extrapolation.
+
+The finite physical-presentation checker passed 43 expected checks after review repaired shared-store ownership, request-assembly table sharing and selected local-event coverage. Separate checks exercise simultaneous cut constraints and equality descent. Independent retained-table checks cover shared update/decoder contexts, action guards, nested terms and multiple memory sorts.
+
+The trust base is mathematical proofs reviewed by independently tasked AI reviewers, plus executable Python evidence. This is neither external human review nor Lean/kernel verification of the new operational theorems. Review includes the strict physical-assembly and memory-only distinction, retained-boundary transport, and the finite operational, regular-support, single-grammar limitations.
+
+Independent AI paper review and finite checks pass for the recognition and crossing reconstruction theorems in the stated class, including physical-assembly, boundary and universal-candidate controls. This supports the scoped research milestone, not literature priority or full contract discharge.
+
+The original completion contract remains the organizer, with no new full discharge:
+
+    G semantic use and observation
+    The status-bit family separates formal consequences from empirical claims
+    and shows why equal partial observations can leave different whole demands.
+
+    I1 conservative modular amalgamation
+    Shared-table constraint transport contributes an operational comparison.
+    It is not the contract's full presentation amalgamation theorem.
+
+    I2 contextual observation and minimal realization
+    Unbounded grammar recognition and the memory family give operational
+    recognition and resource results, not the required general minimal
+    compositional observable realization.
+
+    I4 cut and substitution interchange
+    Unknown crossing refinement is recognized in the stated generated
+    joint-support doctrine, with explicit boundary transport. Full mixed-cut
+    recognition and the specified coherent 2-Segal-related structure remain open.
+
+    I5 simultaneous completion and repairs
+    The criteria expose coupled information and implementation obligations.
+    They do not establish the least simultaneous repair or its general
+    commutation criterion.
+
+E2, the universal virtual-equipment presentation and reconstruction theorem, remains open. A retained joint-support comparison is not its universal property. These contributions do not amend the obligations or settle arbitrary simultaneous completion or unrestricted distributed synthesis.
+
+The next substantive open work is to extend the independently recognizable crossing class and its typed interface extraction, while retaining one physical implementation. Useful extensions must add an actual recognition or capability theorem, not merely larger finite examples. Efficient factorized algorithms would need separate complexity results. Empirical deployment would additionally require evidence that the supplied charts, observation timing and physical libraries describe the real system.
+
+
+9 Sources and established methods
+
+The principal package sources are Operational_Semantic_Profile_Recognition.md, especially section 7; Coupled_Target_Index_Capability.md; Typed_Causal_Presentation_Closure.md; Operational_Cut_Capability.md; Causal_Constraint_Descent.md; and Parametric_Causal_Descent.md. The completion and game sources supply supporting semantics. The accompanying curated verification receipt identifies the checked versions, independent findings and reproducible check scripts. The primary comparisons needed for this report are listed below.
+
+The methods are credited without claiming a new mechanism or verified priority. Stateful runner/comodel semantics is developed by Ahman and Bauer in Runners in action, https://arxiv.org/abs/1910.11629, and Garner in Stream processors and comodels, https://arxiv.org/abs/2106.05473. Controller-transfer relations and memory-bearing interfaces have established control-architecture treatments, including https://arxiv.org/abs/1503.03715 and https://arxiv.org/abs/2410.06083.
+
+The block-family information tradeoff is related to the deterministic INDEX protocol in Miltersen, Nisan, Safra and Wigderson, On Data Structures and Asymmetric Communication Complexity, section 3.2, https://www.math.ias.edu/~avi/PUBLICATIONS/MYPAPERS/MILTERSEN/JOURNAL/final.pdf. Compatibility plus successor closure is established in incomplete-machine minimization; see Puri and Gu, An Efficient Algorithm to Search for Minimal Closed Covers in Sequential Machines, https://web.cecs.pdx.edu/~mperkows/CLASS_573/Asynchr_Febr_2007/00229748.pdf. Partial-observation game methods are baseline infrastructure, including Reif, https://www.sciencedirect.com/science/article/pii/0022000084900345, and Arnold, Vincent and Walukiewicz, https://www.sciencedirect.com/science/article/pii/S0304397502004425. Finite automata, grammar saturation, Horn closure and congruence closure are also established tools.
+
+The research result to assess is their explicit operational recognition class: what typed witnesses and independently specified supports permit us to discover, which actual executions are preserved, and what the same physical controller can implement. The report makes no claim that a literature search has established mathematical priority or that these results finish the wider program.

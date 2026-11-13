@@ -1,0 +1,184 @@
+C2 independent finite-evidence review
+
+VERDICT: PASS for the frozen local C2 finite certificate domain, including the
+author's named certificate. No finite-domain defect remains. This is C evidence,
+not a proof of the unrestricted model or the public A Calc correspondence.
+Full C2 remains OPEN pending its mandatory D2/E integration; no later phase is
+activated and no novelty is claimed for the relational baseline.
+
+Reviewer: /root/construct_relational_interface_model/independent_c2_finite
+Role: non-author finite checker. Review is agent-managed and shares the general
+model family with the author; it is not external human certification. Correlated
+reasoning and implementation errors remain possible, although this checker was
+written without importing or copying author evaluator code. F1--F3 were run
+before the author's implementation was inspected. Author fixture data and source
+were inspected subsequently to check the same named examples.
+
+Frozen authority and scope
+--------------------------
+Contract v0.1: research/CompletionContract.md
+SHA256 47c53465b745aaa0397d8972cdc760de7da1f9c86bcab0e3bbeecf0aaf6a165e
+Cleared target: research/workstream_C2/C2_Targets.md
+SHA256 b6711190a46b19205ef25f439105eaf1951137d90f5e55a595ea67daf172e2f4
+The complete C2 acceptance clause, T1--T4, F1--F6, positive-only M branch,
+A1/A2 dependencies and exclusions in that target were read before work. The
+independent check does not weaken those conditions. All changes by this reviewer
+are new files in research/workstream_C2/review; no baseline file was edited.
+
+Checked artifacts
+-----------------
+IndependentFinite.py
+SHA256 d96e6a93c4689d6e539026742c0a5885a5ea9b76800eb40455559887735632d1
+IndependentFinite.json
+SHA256 84744534d8113d571c4af6139c31ad56e28538208fe81735b6776948dfa028a2
+Author source finite/check_c2_model.py
+SHA256 bcce2866d8510a6a3afec0b85599d048fcfb52d017d302b8a16fd72449595b95
+Author output finite/AuthorCertificate.json
+SHA256 77068b1ae46b4a84e14528f2c53b9babf8e6e6a1b35395794bd4fb429f86f2f5
+
+Method and exact finite coverage
+--------------------------------
+The standalone Python checker imports only standard-library modules, never the
+author model. It independently implements Boolean matrix multiplication and a
+second evaluator which enumerates all global vertex assignments satisfying all
+edge predicates, then projects to endpoints. The latter is used for F3 source
+and segmented compositions. The occurrence-typed syntax and validity checks
+are independently authored dataclasses. None calls the author's functions.
+
+F1: all six carrier sizes in {0,1,2}; every f,g,h and every R,S.
+  113,171 actual boundary-map/relation tuples.
+   33,821 tuples with surjective internal g; equality holds in every one.
+   17,424 strict comparisons; these are not silently replaced by equality.
+   75,547 mapped realizing triples checked edge-by-edge.
+  661,613 choices of containing whole W, all restrictions remain containment.
+  297,272 of those restricted cells are nonexact.
+   46,707 tuples have at least one empty interface.
+The W choices exceed the explicitly minimal F1 tuple domain; all are visited.
+
+F2: every relation triple on four carrier sizes in {0,1,2}.
+  8,507 relation triples; both bracketings and whole-path evaluator agree.
+  62 unit equalities, checked by both evaluators, including size zero.
+
+F3: every path of arity 0--3 on canonical carrier sizes in {0,1,2}, every
+relation, every weak cut sequence for outer arity 0--3, every tuple R_i
+containing its block composite, and every W containing the outer composite.
+       9,040 source profiles.
+     132,793 profile/segmentation pairs and exact substitution cases.
+   8,162,514 intermediate-whole tuples.
+  25,619,591 full containment substitution cells.
+  By source arity, the numbers of full cells are
+    0:127; 1:10,664; 2:591,190; 3:25,017,610.
+  By outer arity, they are
+    0:6; 1:195,322; 2:2,621,014; 3:22,803,249.
+No F3 cell is skipped by weighting, sampling or semantic-class factorization.
+The inner loop visits every W explicitly. A weak cut sequence
+0=t0<=...<=tk=m corresponds bijectively to contiguous blocks [t_i,t_{i+1}].
+An empty block keeps the SAME positional interface at both ends. The code does
+not use equal cardinality as a license to contract distinct interface labels.
+
+All finite carriers are represented canonically as [n]. Membership computations
+are independent of the spelling of an interface label; F1--F3 test the numeric
+matrix domain, not an infinite enumeration of arbitrary names. F5 separately
+uses actual repeated labels and rejects distinct labels of equal cardinality.
+No unrestricted assertion about names, arbitrary finite sizes or unbounded
+arities is inferred from these finite tests; that belongs to P/the API bridge.
+
+Additional coherence coverage:
+  31 relation identity-restriction cases.
+  23,015 iterated relation-restriction cases for all involved sizes 0--2.
+  All 11 functions [a'] -> [a] with a,a' in {0,1,2} as nullary restrictions.
+  In these 11 cases Delta(a') equals the pulled old diagonal iff f injective;
+  the 3 strict kernel-pair comparisons are retained as strict, not exact.
+
+Named certificates and source inspection
+---------------------------------------
+The independently constructed principal example has A,B,C of sizes 2,3,2,
+R={(0,0),(1,2)}, S={(0,0),(2,1)}, composite={(0,0),(1,1)}, and strict whole
+{(0,0),(0,1),(1,1)}. The map [2]->[3] with values (0,1) leaves composite
+{(0,0)} but restricts the original exact whole to {(0,0),(1,1)}. Containment
+survives; exactness fails. A surjective map (0,1,2,2) restores equality, while
+its map of realizing tuples is not injective. Noninjective endpoint maps are
+also tested. A nullary exact singleton diagonal pulled along (0,0):[2]->[1]
+becomes the whole kernel pair, while the new empty composite is only Delta[2].
+
+Every one of the author's 15 serialized named cells was independently parsed
+with its actual labels/sizes/relations and recomputed by whole-path assignment
+enumeration. Pair lists and masks are checked against each other. The principal
+boundary maps and old/new/mapped realizer lists were recomputed, not trusted as
+booleans. The author's two four-leaf grouping shapes and its two different
+substitutions at literally identical loop components were rebuilt in the
+independent syntax. Its refined cell, repeated-colour mutation and an exact
+nullary bottom graft were independently reconstructed. All match.
+
+The independent additional repeated-component example uses nonexact unary
+substitutions P={(0,1)} and Q={(1,2)} into the universal three-element loop.
+Its correct refined composite is {(0,0)}; copying P to both occurrences or
+swapping the occurrences yields the empty composite. This detects occurrence
+collapse even without relying only on differing profiles. Two differently named
+primitive nodes and two binary groupings remain different raw syntax while
+their selected semantic cells agree. No syntax quotient is introduced.
+
+Restriction/evaluation is compared on ten independently built typed trees.
+Actual restriction/grafting equality is checked under one global map per
+interface, including a nullary child. The same global B map is used wherever
+nullary contraction identifies B boundaries. The suite rejects wrong ordered
+profiles, a wrong repeated occurrence output, a nonloop nullary despite equal
+endpoint cardinalities, false containment, and mismatched node children.
+
+Mutations: reverse the containment direction; replace composite-of-pulls by
+pull-of-composite; merge repeated-component occurrences; use empty relation
+instead of diagonal at arity zero; infer nullary exactness from vacuous internal
+surjectivity. Each has an explicit independently computed distinguishing case.
+The author's key mutation payloads were recomputed, not merely read as PASS.
+
+Reproduction and trust boundary
+-------------------------------
+At the source checkpoint root, with Python 3 on PATH:
+  python research/workstream_C2/review/IndependentFinite.py \
+    --output /tmp/C2-independent.json
+  cmp research/workstream_C2/review/IndependentFinite.json /tmp/C2-independent.json
+
+It reads only its own source, the frozen target/contract, and the author's
+source-hashed JSON fixture; it imports no local model module. The evidence JSON
+is deterministic (timings are printed only into the run log). A run took about
+9.5 seconds here. IndependentFiniteRun.log records that full run. A second run
+from a fresh temporary directory containing only these required source/data
+files produced byte-identical JSON; IndependentFiniteCleanRun.log records it.
+Python lru_cache only memoizes this process's explicit computations; no prior
+proof/test cache is consumed. This does not claim to bootstrap Lean or reproduce
+the entire inherited A/B/C1 implementation; the owner's separate clean driver
+and formalization audit cover those tasks.
+
+No test failure or counterexample to the frozen C2 finite targets was found.
+Finite success cannot establish all-parameter P, justify an omitted hypothesis,
+or prove a Calc adapter merely by resemblance. The public A correspondence,
+all-arity mathematical substitution and all-arity restriction laws require
+separate review. Full C2's later D2/E use is still OPEN. Correct familiar baseline
+implementation is useful infrastructure, not a new mathematical contribution
+or satisfaction of the broader scientific-scope acceptance gate.
+
+Executed mutation replay
+------------------------
+The separate author runner finite/run_mutations.py was inspected: it checks
+unique source anchors, compiles each changed string into an isolated module,
+and reruns the unchanged named/F1 test. No checkpoint source is edited. I then
+executed it independently. All four mutants were detected and the replay JSON
+was byte-identical to the author's mutation certificate.
+Runner SHA256:
+082bc6a2c5e7bddfdee5e5e0b31ac5ea104e1b59d48b2a122bf86728099c4389
+Replay JSON SHA256:
+c68c57c57148e25d0d5bd3af2e33d04824225705b6b3b1efb164e284c2731f00
+Replay artifacts: IndependentFiniteMutationReplay.json and
+IndependentFiniteMutationReplay.log. This is actual mutant execution, additional
+to the independent distinguishing examples above, not a grep for assertions.
+All finite scripts require Python assertions enabled; never run them with -O.
+
+Review correction (resolved)
+----------------------------
+A small coverage wording issue in finite/DOMAIN.md was raised: the author's
+restriction/substitution example uses nonnullary children, while its nested
+nullary example initially tested associativity separately. The revised text
+now says so and attributes the actual restriction/graft-with-nullary check to
+the independent suite. Source and certificate did not change. This is a prose
+precision repair, not a changed domain or weakened requirement. Reviewed DOMAIN
+SHA256 c3ad2313ac47536b7c45a449c5838b78d447a0dd65fbd18b5a964390d7a97078.

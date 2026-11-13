@@ -1,0 +1,113 @@
+Persistent interface discovery from noisy readouts
+Research results and limits
+28 October 2026
+Scope clarification revision 1
+
+Plain language abstract
+
+The research now establishes a concrete positive result: within a specified family of noisy interacting systems, it is possible to discover the hidden coordinates, recover two overlapping ways of grouping the mechanisms, and construct compressed interfaces that remember exactly what their neighbors will need. These are parts of one theorem on the same growing model family, rather than separate demonstrations that assume away one another's difficulties. The learner receives noisy measurements and recorded actions, not the hidden state, true grouping, or a revealing reset. Its guarantees remain conditional on the declared model family; they do not validate that family or identify physical hazards.
+
+The discovery uses small groups of measurements over short time windows. Its description and computation remain polynomial as the number of hidden variables grows, when the declared local widths and delays stay fixed. The full predictive state space can nevertheless be exponential. A separate checker can validate a proposed model with quadratically many small measurement statistics instead of repeating the discovery search.
+
+The interfaces are genuinely persistent: finite update rules preserve their meaning indefinitely inside the fitted model. Their optimality is precise but limited to a specified stream-processing contract. Moving memory into a source, allowing additional reads, or introducing shared randomness changes the resource question and must be counted explicitly.
+
+Two further results make the distinction tangible. We characterize when several interfaces can share minimum storage while each uses minimum reads, and quantify a repair when those requirements conflict. A complementary example shows that two individually memoryless observation streams can jointly require growing persistent memory. These are constructive mathematical findings, supported by independent AI review and bounded regression checks, not physical robot validation or completion of unrestricted architecture discovery.
+
+What has been established
+
+The main result connects noisy data to an explicit implementable model through one chain:
+
+noisy readouts and actions -> unknown latent frame -> sparse delayed mechanisms -> crossing regions -> compressed persistent ports -> finite assembly certificates.
+
+The population theorem identifies the discrete structure and local noise parameters up to a permutation of the hidden coordinates. Its finite-data version recovers discrete structure with stated confidence under quantitative separation assumptions, while retaining uncertainty in real-valued probabilities. It does not manufacture exact probabilities from finite samples.
+
+The result is stronger than identifying a global hidden Markov model and subsequently searching every partition. The algorithm works with bounded-width moments and sparse equations; it never constructs the global hidden-state table. In the stationary subclass, the exact controlled predictive rank is 2^(nL), where n is the number of hidden bits and L the maximum delay. This preserves action records and future test inputs; it is not a claim about readouts alone after random actions are discarded. Any exact finite-state causal presentation of this controlled process whose joint state separates past and future therefore needs that many joint states, even though this factored description is polynomial. This is a representation-size separation, not an exponential lower bound on every structured learning algorithm.
+
+The declared family and actual observations
+
+The hidden dynamics are binary linear recurrences with delay:
+
+    X_t = A_1 X_(t-1) + ... + A_L X_(t-L) + B U_t + E_t,
+    Y_t = M X_t + N_t.
+
+Addition is XOR. The matrices, mixing frame M, innovation probabilities and relevant component groups are unknown. Each recurrence has bounded parent count. M is invertible and admits mixing blocks of size at most q, after unknown row and column permutations. The identifiable block target is the finest indecomposable mixing partition, not an arbitrary originally assigned grouping. For example, I_2 has two singleton indecomposable blocks even though it can also be described as one two-coordinate block. Coarser admissible groupings are not ruled out or uniquely recovered. Innovations E are independent across coordinates and time, with probabilities bounded strictly between zero and one half. Sensor errors N are independent with a known calibrated nondegenerate error rate. Discovery actions U are independent uniform bits of fixed width.
+
+For the clean end-to-end theorem, the last-delay matrix A_L is invertible and the system starts in its uniform stationary lag-history law. The realized history remains hidden. This is a known distribution, not hidden-state access or a revealing reset. Terminal-delay invertibility makes that uniform law invariant; it does not make an arbitrary initial distribution uniform immediately. The initialization or stationarity premise is separate. Arbitrary starting histories can be handled by burn-in for transition discovery; the theorem does not reconstruct arbitrary unknown initial correlations.
+
+These are substantial restrictions. The observation map is not an arbitrary nonlinear decoder; sensor noise is not uncalibrated; the process is not arbitrary real-valued physics. Heat and motion motivate overlapping mechanisms but do not supply, or emerge as, identified physical semantics.
+
+Discovery and finite confidence
+
+First, sparse parity predictors recover the recurrence in mixed coordinates. The correct residual has a strictly positive sign expectation; wrong predictors have a quantitative gap. Known sensor-noise attenuation can be divided out of each bounded-width parity moment. This is moment correction, not recovery of individual clean hidden samples.
+
+Second, dependence among residual parities reveals the finest indecomposable mixing blocks, as explicitly proved by the overlap-component construction. Within each small block, a Fourier transform of log-characteristic moments identifies the mixing columns and innovation probabilities. Strictly biased independent innovations are essential: fair innovations can erase the identifying information. The recovered matrices then reveal connected components of each distinguished lag-support graph.
+
+Finite samples are taken from separated windows of one nonreset trajectory. An explicit concentration schedule covers every candidate bounded-width moment, including those selected after looking at the data. A Fourier mixing argument uses invertibility of the terminal-delay matrix to remove the earlier high-innovation-noise restriction. The resulting spacing is polynomial in n; the stronger contraction condition remains an optional route to shorter spacing. Neither argument assumes adjacent windows are independent.
+
+For fixed local widths, delay and positive margins, search and sample costs are polynomial. The degree of the sparse search and the noise-amplification constants can still be large. Poor conditioning near fair sensor noise or fair innovations is charged, not hidden: as innovation probabilities approach one half, identifying information disappears. These structural and quantitative premises define a favorable subclass, not a general escape from hidden-decomposition complexity. The crossing regions likewise derive from preselected lag classes; their physical interpretation is not discovered merely by choosing those classes.
+
+On the correct-structure event, if estimated innovation probabilities differ from the truth by at most epsilon per coordinate, the H-step action/readout transcript laws differ in total variation by at most min(1,nH epsilon), using the same uniform initial law. The bound holds for observation-history controllers, including a subsequently chosen controller, provided the deployment initial-law premise also holds. A fresh deployment with the same uniform initial law independent of the training record is a clean application. Continuing the same physical run after training generally conditions its hidden state on that record and does not automatically satisfy this premise. With a separately certified conditional initial-law mismatch epsilon_0, replace the bound by min(1, epsilon_0+nH epsilon). It is a finite-horizon guarantee, not uniform infinite-horizon approximation.
+
+What is still needed for physical assurance
+
+On the correct-structure and parameter-confidence event, let beta=min(1, epsilon_0+nH epsilon). If the fitted closed-loop model gives a specified unsafe transcript event probability at most alpha, the corresponding true in-family probability is at most min(1,alpha+beta). Uniformity over admitted policies permits data-dependent controller selection; it does not waive the initial-law condition.
+
+A physical hazard must additionally have a justified interpretation in the model or a sound conservative relation to that transcript event. For example, if physical danger implies the proxy event except with a separately justified probability eta, the conditional bound becomes min(1,alpha+beta+eta). The proof's coupling can also transfer represented latent-state events when a sound physical state interpretation is available; hazards need not literally be observable. A latent coordinate's identification up to permutation alone supplies no such interpretation.
+
+If the learning confidence event has failure probability at most delta, adding delta gives a conservative unconditional risk allowance under the same class and deployment premises. That allowance does not cover model misspecification or an unjustified hazard mapping. Without those premises, or for an unbounded horizon, the stated theorem supplies no physical safety guarantee.
+
+A cheaper check for a supplied proposal
+
+Finding a decomposition and checking one are different tasks. In the stationary subclass, one corrected residual moment per proposed recurrence row distinguishes a correct row from an incorrect one: the latter is exactly zero because the lag history and exploration action are uniform.
+
+After those checks, pairwise innovation moments test a proposed bounded-block frame. Within this independent biased-bit linear family, vanishing pairwise dependence forces the proposed frame to match the true one up to permutation. This implication is not valid for arbitrary distributions.
+
+The verifier evaluates O(n^2) bounded-width moments, rather than repeating the learner's sparse support search. Its moments can use up to 2q(r+1) observed locations, with r the raw recurrence row width. The confidence budget must cover that width and data-selected proposals, or use independent validation data. Acceptance is conditional on membership in the declared model class; it cannot certify that an arbitrary external world belongs to it. Untested nonlinear interactions, correlated disturbances or additional hidden mechanisms can lie outside the family while agreeing with the tested low-order statistics. Statistical confidence within the family is not a probability that the world belongs to the family. The separation is from the supplied discovery algorithm, not a lower bound on all other learners.
+
+Crossing regions and persistent compression
+
+Two different lag classes induce two finest invariant partitions for their respective matrices. They need not be nested. Their full implementations retain other-lag interactions as explicit channels rather than pretending each region is autonomous.
+
+A growing witness uses two hidden bits at every site of an m by m torus. One mechanism groups sites into rows; another groups them into columns. Both interact bidirectionally. A bounded-region alternative uses shifted pairings along a chain, giving an unbounded number of interacting modules with at most four hidden bits each.
+
+For a recovered region, stack all outside recipients' influence maps before minimizing. Two source histories are equivalent exactly when every common continuation produces the same future outside influence. A finite block Hankel matrix calculates this quotient: rank h gives an h-bit linear interface, and every exact deterministic stream transducer under the same information and timing contract needs at least h bits, including nonlinear transducers.
+
+On the torus, each row sends m independent parity values instead of its 2m raw source coordinates. Its standalone delay-two influence interface needs 2m persistent bits. A column's corresponding delay-one interface needs m. This is noncoordinate compression with genuine persistence in the same discovered system.
+
+Those are not architecture-independent extra-memory minima. A source already retaining delayed state may compute outgoing parities from that store without separate port registers. Retiming, receiver side information, storage sharing and common randomness change the comparison. Sensor mixing also has its own charged bounded-fanin wiring layer; it is not a free global decoder. Internal latent messages belong to the synthesized generative model, not to a real controller's observable input.
+
+Certificates preserve events as well as outputs
+
+The calculus bridge supplies explicit state maps, event maps and local identities using the existing API, rather than substituting equality of output marginals for exact refinement. Every innovation and sensor-noise draw has one owner; other occurrences borrow that same event. Derived registers are initialized from one common history. Independently sampling overlapping records would generally change the joint law.
+
+For the shifted-matching chain, both crossing groupings genuinely refine to the same ordered occurrence profile using the original interval-split operations. Restriction and union of consistent records give inverse state and event maps. For the torus, the two ordered presentations are compared through a common record graph; freely permuting planar leaves is not silently an existing calculus equation.
+
+Finite coefficient identities certify persistent updates and exact equality at every horizon for presentations of the same fitted model. Statistical error between fitted and true models remains a separate statement. A minimal port quotient alone is usually many-to-one, so it is not an exact whole-state isomorphism. The bridge retains the owned history or supplies a reversible joint representation.
+
+These certificates permit local rechecking and reuse without enumerating all trajectories. This is a written constructive specialization and checker specification, not a new Lean formalization or a completed implementation of the entire checker.
+
+What simultaneous sharing costs
+
+Suppose consumers require linear interface-state spaces W_i, and every joint demand value is admitted. Minimum global storage d=dim(sum W_i) and minimum fixed-address reads d_i=dim(W_i) per consumer are simultaneously attainable exactly when the generated subspace lattice is distributive, under admitted overlap sites, inputs, initialization and invariant updates. The obstruction now covers arbitrary deterministic encoders and decoders into d finite-field-sized registers, not just linear ones. Saturated global and local capacity forces the demand-equality partitions to behave like coordinate subsets. A linear adapted basis supplies the positive construction. This is a zero-error, full-support result: adaptive addresses, free private side information, extra messages and unaccounted persistent randomness are excluded. The compatible-basis core is classical; no priority claim is made for this strengthening.
+
+The smallest obstruction is three consumers requiring x, y and x+y. Two stored bits suffice if the third consumer may read both. If every consumer gets only one read, three physical registers are necessary. The redundant third register is not a third independent bit and must preserve its dependency through initialization and updates.
+
+Within the linear register-bank class, the repair scales quantitatively. For all nonzero subset-parity demands on d source bits, a b-read local construction uses at most b(2^ceil(d/b)-1) registers, within factor 2e of the counting lower bound. Exact endpoint costs are 2^d-1 registers for one read and d registers for d reads. Source-input traffic, timing and physical support are charged separately. The general finite repair search and these coding bounds remain linear-only. This is a storage/read tradeoff, not a general impossibility of crossing implementations.
+
+A complementary hidden correlation result
+
+A second family has an unknown pairing and path order among noisy observed ports, with heterogeneous transition and joint-emission kernels. At one time all readouts are jointly uniform. Small two-time moments nevertheless identify the pairs and path; additional three-time moments identify the local kernels without recursively amplifying estimation error down the path. Individual sensor-noise splittings remain unidentifiable.
+
+The discovered implementation stores one bit per pair and sends one old-state bit to its successor. Selecting one port from each pair gives one stream, with the remaining ports forming another. Each stream alone is iid and needs no temporal memory; their joint predictive rank is 2^k and requires at least k total persistent bits. Independently correct marginal models therefore cannot simply be glued together. This theorem uses independent stationary three-tick episodes for its finite-sample guarantee, a different experimental resource from the main theorem's single trajectory.
+
+Evidence and remaining boundary
+
+The work includes written all-size arguments, independent AI target-fidelity review and bounded computational checks. Exact sharing checks covered 560 subspace arrangements, 896 invariant-shift cases and 36 storage/read constructions. The proposal check tested all 168 invertible three-dimensional binary transforms, accepting exactly the six permutations. Further regressions checked torus and chain ranks, equal-bias mixing recovery, and heterogeneous path identities. These tests support the proofs; they are not empirical performance studies or proof substitutes.
+
+The strongest matched baseline is sparse parity identification plus finite-field independent component analysis, followed by ordinary linear-system minimization and compositional equation checking. It can reproduce much of this construction. Yeredor already establishes finite-field ICA identifiability and the binary pairwise-independence ingredient used by the verifier: [Independent Component Analysis Over Galois Fields](https://arxiv.org/abs/1007.2071). Structured realization also has substantial prior theory: [Lessard, Kristalny and Rantzer](https://arxiv.org/abs/1212.1839). Compatible-basis and coding results likewise deserve credit.
+
+The established payoff is the integrated, confidence-controlled route from genuinely hidden noisy mechanisms to crossing positive implementations and compressed persistent interfaces, with explicit ownership and resource certificates. It is not a priority claim, proof that the calculus is indispensable, unrestricted stochastic architecture optimality, automatic discharge of a broader contract, or validation on a physical robot. Robust simultaneous discovery for general real-valued models and a demonstrated advantage over the strongest structured baseline remain open.
+
+Technical record
+
+The detailed proofs and qualifications are in Coupled_Family.md, Proposal_Validation.md, Discovery_Calculus_Bridge.md, Shared_Interface_Realization.md and Constructive_Target.md. Target_Fidelity.md records independent AI review. Distributed_Realization_Baselines.md, Linear_Sharing_Realization_Addendum.md and Finite_Field_ICA_Source_Credits.md document the prior-art comparisons and resource cautions.

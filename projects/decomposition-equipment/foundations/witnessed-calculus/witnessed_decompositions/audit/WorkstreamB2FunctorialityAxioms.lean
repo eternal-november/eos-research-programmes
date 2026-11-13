@@ -1,0 +1,5 @@
+import WitnessedDecompositions.RefinementFunctoriality
+open WitnessedDecompositions.SemanticRefinement
+#print axioms functor_identity
+#print axioms functor_composite
+#print axioms functor_inverse
