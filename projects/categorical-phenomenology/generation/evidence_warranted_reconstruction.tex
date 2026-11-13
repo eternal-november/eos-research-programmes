@@ -1,0 +1,1941 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,enumitem,booktabs}
+\usepackage[T1]{fontenc}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Ext}{\mathsf{Ext}}
+\newcommand{\cl}{\operatorname{cl}}
+\newcommand{\Fix}{\operatorname{Fix}}
+\newcommand{\Pow}{\mathcal P}
+\newcommand{\Safe}{\mathsf{Safe}}
+\title{Evidence Warranted Reconstruction and Experimental Access}
+\author{}
+\date{4 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+An incomplete observation record may determine a structural invariant
+without determining its incidence table, and a conservative generated
+test may still have an unknown answer. This note gives finite comparison
+and conflict certificates for FCA, row, and Dowker structures, exact
+symbolic obligations for correlated evidence, and a coNP-completeness
+boundary. Two evidence-relative closure operators have opposite refinement
+laws; their finite common-closed-hull iteration and several core
+preservation statements are formally verified. Executable experiments
+identify a specified target exactly when they separate its conflicting
+models under reusable access. A four-state family shows that two structural
+alternatives can require arbitrarily many exact observations. A sequential
+access model explains why destructive measurements invalidate the static
+criterion and supplies finite winning and impossibility certificates.
+Finally, an unknown-frequency oscillator exhibits persistent passive
+aliasing, the gap between exact and robust identification, and a calibrated
+intervention with explicit bounded-error certificates. Every conclusion is
+conditional on its model class, access, and error assumptions; no theorem
+here infers those assumptions from the same finite record or claims a
+general theory of scientific discovery.
+\end{abstract}
+\tableofcontents
+
+\section{From interpreted tests to warranted reconstructions}
+\label{sec:orientation}
+
+An exact incidence table determines several structures, but an observed
+record generally does not determine that table. A transition law can
+produce useful future tests, but deriving a formula for such a test does
+not establish the law, supply a measurement procedure, or warrant its
+outcome. The problem considered here is therefore conditional:
+\emph{given an explicit family of possible models, a record, and licensed
+experiments, which structural conclusions are warranted, and what can
+resolve the remaining ambiguity?}
+
+Three questions will be kept separate throughout.
+\begin{enumerate}[label=(\roman*)]
+\item \emph{Conservative extension.} Does admitting a generated test preserve
+      the chosen structures in every compatible model?
+\item \emph{Identification.} Do all compatible models give the same
+      declared structural target, or at least satisfy the same requested
+      structural proposition?
+\item \emph{Operational reconstruction.} Can available experiments produce
+      evidence that identifies that target, with an explicit procedure,
+      cost, and stopping guarantee?
+\end{enumerate}
+A positive answer to the first question does not answer the other two.
+Likewise, a useful experiment may properly change the observation quotient
+rather than conservatively rename an existing predicate.
+
+The note proceeds from fixed-domain preservation to correlated evidence,
+then to executable experiments, sequential access, and a scientific example.
+The main guarantees are relative to a stated model family and measurement
+semantics. They do not establish that the actual system belongs to that
+family. An inconsistent record is reported as such; an empty compatible
+model set is not treated as evidence for every conclusion.
+
+\subsection{What is retained from exact incidence reconstruction}
+
+Let $H$ be a common object or state domain, let $T$ index tests, and let
+$E_t\subseteq H$ be their interpreted extents. For
+$\mathcal E=\{E_t:t\in T\}$, write
+\[
+ \operatorname{Ext}(\mathcal E)
+ =\left\{\bigcap\mathcal F:\mathcal F\subseteq\mathcal E\right\},
+ \qquad \bigcap\varnothing=H,
+\]
+\[
+ \operatorname{cl}_{\mathcal E}(A)
+ =\bigcap\{E\in\mathcal E:A\subseteq E\},\qquad
+ K(\mathcal E)=\{\varnothing\}\cup
+ \{\sigma\subseteq H:\sigma\text{ finite and }
+                       \sigma\subseteq E\text{ for some }E\in\mathcal E\}.
+\]
+The first is the labeled FCA extent closure, and the second is the object
+Dowker complex. A state with no positive test need not be a vertex of this
+complex. The empty face is included even if the realization is empty.
+
+If a monoid $M$ acts on the right of $H$, define
+\[
+ h\equiv_{\mathcal E}k
+ \quad\Longleftrightarrow\quad
+ \forall m\in M\ \forall E\in\mathcal E,
+ \quad (hm\in E\Longleftrightarrow km\in E).
+\]
+This is a right congruence; the quotient carries the induced action.
+These are explicitly chosen consumers of the observation system, not
+interchangeable meanings of its structure. Literal preservation fixes the
+same $H$ and the same action and retains labeled subsets, equivalence
+relations, and finite faces. Isomorphism or homotopy preservation is a
+different specification.
+
+\begin{proposition}[Fixed-domain preservation baseline]
+\label{prop:baseline}
+For an added family $\mathcal G$ of extents on the same $H$ and with the
+same action, the following exact criteria hold.
+\begin{enumerate}[label=(\roman*)]
+\item FCA closure is unchanged iff every $D\in\mathcal G$ belongs to
+$\operatorname{Ext}(\mathcal E)$.
+\item Residual equivalence is unchanged iff every $D\in\mathcal G$ is a
+union of $\equiv_{\mathcal E}$-classes.
+\item The object complex is unchanged iff every finite subset of every
+$D\in\mathcal G$ is already in $K(\mathcal E)$. For finite $D$, this means
+$D=\varnothing$ or $D\subseteq E_t$ for some old test.
+\end{enumerate}
+Moreover every old closed extent is a union of residual classes, so (i)
+implies (ii). The same implication holds for current-row equivalence,
+obtained by taking only the identity action.
+\end{proposition}
+\begin{proof}
+Every added column is itself a new closed extent, proving necessity in
+(i); intersections of old closed extents remain closed, proving sufficiency.
+For (ii), necessity follows by testing a new column at the identity.
+Conversely, if $h\equiv_{\mathcal E}k$, then $hm\equiv_{\mathcal E}km$
+for every $m$, by composing future actions. A saturated new extent
+therefore cannot distinguish them after any action. The only new faces
+in (iii) are the finite subsets of added extents. If $D$ is finite and
+nonempty, $D$ itself must have an old witnessing column; the converse
+is immediate. Finally, old columns and all their intersections are unions
+of residual classes, since equivalent states agree on every old test at
+the identity.
+\end{proof}
+
+\subsection{Which suggested directions bear on the present question}
+
+The proposed research directions correctly warn that logical definability
+need not preserve a chosen topology. For example, the old extents
+$\{0\}$ and $\{1\}$ on $H=\{0,1\}$ give two isolated vertices.
+Admitting their disjunction $H$ as another witness adds an edge, although
+the FCA closure and observable distinctions are unchanged. Logical
+availability, executable measurement, and admission as a structural witness
+must therefore be specified separately. This distinction is already part
+of the exact framework; the work here is to give it evidential and
+operational consequences.
+
+\begin{example}[Individual homotopy checks do not certify a batch]
+\label{ex:square-batch}
+Let $K$ be the four-cycle with edges $12,23,34,41$, and consider
+$D_1=\{1,2,3\}$ and $D_2=\{1,3,4\}$. Adjoining either full triangle
+alone preserves the canonical homotopy type: collapse its triangle and
+new free edge $13$ to recover $K$. Adjoining both fills the square by two
+triangles and produces a disk, which is contractible, whereas $K$ has
+homotopy type $S^1$.
+
+Hence homotopy-safe families are not closed under union. Nor are globally
+safe families downward closed: from the path $12\cup23$, adding edge
+$13$ creates a circle, and then adding triangle $123$ yields a contractible
+space. The final inclusion is a homotopy equivalence although the
+one-edge subfamily is unsafe. An ordinary compatibility complex or a
+persistent ``conflict'' certificate therefore requires a stronger,
+explicitly hereditary safety requirement.
+\end{example}
+
+The example is a useful boundary, not the main research direction of this
+note. Exact joint conservativity is separable test by test; arbitrary
+homotopy conservativity is not. We do not claim an efficient general
+homotopy checker or a new classification of safe batches. The central
+question is how incomplete evidence and changing experimental access
+warrant a declared reconstruction in the first place.
+
+
+\section{Correlated evidence and structural conflicts}
+Let $H$ and $T$ be finite, $H\ne\varnothing$, and let $W\ne\varnothing$ be a finite set of admissible worlds. Each world supplies an incidence relation
+\[
+ R_w\subseteq H\times T,\qquad E_{w,t}=\{h:R_w(h,t)\}.
+\]
+The worlds are \emph{joint} completions of the whole table, including explicitly assumed correlations across cells and objects. They are not, in general, a product of independent choices for each blank. Three choices are kept separate:
+\begin{enumerate}[label=(\roman*)]
+\item The \emph{evidence state} $V\subseteq W$, always nonempty.
+\item The \emph{designated structural labels} $B\subseteq T$, used for the reconstruction.
+\item The \emph{licensed experiments} $Q$, whose outputs can be obtained by declared procedures.
+\end{enumerate}
+The symbol $B$ is not a claim that every formula, recorded answer, or executable measurement is a structural witness. Changing $B$ is a separate operation.
+
+For $\mathcal E^B_w=\{E_{w,t}:t\in B\}$ put
+\begin{align*}
+ c^B_w(A)&=\bigcap\{E_{w,t}:t\in B,\ A\subseteq E_{w,t}\},\qquad \bigcap\varnothing=H,\\
+ \Ext^B_w&=\Fix(c^B_w),\\
+ K^B_w&=\{\varnothing\}\cup\{\sigma\subseteq H:\exists t\in B,\ \sigma\subseteq E_{w,t}\},\\
+ h\sim^B_w k&\Longleftrightarrow\forall t\in B\ (R_w(h,t)\leftrightarrow R_w(k,t)).
+\end{align*}
+Thus $c^B_w$ is the FCA object-closure operator; $K^B_w$ is the object Dowker complex, including the empty face even with no active vertices; and $\sim^B_w$ is the current-row equivalence. Equality of these labeled structures on $H$ is intended, not unspecified abstract isomorphism. A \emph{target} $F_B(w)$ can be any one of these structures or a specified tuple. The row relation is retained as an independently meaningful target, although equality of FCA extent families implies equality of current-row relations.
+
+A generated characterization has a fixed interpreted expression but generally a varying value:
+\[
+ \varphi\longmapsto C_w=\llbracket\varphi\rrbracket_w\subseteq H.
+\]
+Knowing the expression does not mean that the $C_w$ agree, nor that their answers are experimentally obtainable. A fixed known extent $C$ is the special case $C_w=C$ for every $w\in V$. We say its answer at $h$ is warranted exactly when $1_{C_w}(h)$ is constant on $V$; it is warranted true when that constant is one. This is a conditional evidential assertion, not a guarantee that the actual system lies in $V$.
+
+\subsection{Finite structural conflicts without enumerating concepts or simplices}
+The next lemma supplies the nontrivial finite interface needed to make experiment selection about reconstructions rather than about every unknown entry.
+
+\begin{lemma}[Column and row comparison]\label{lem:compare}
+For two finite families $\mathcal E=(E_t)_{t\in B}$ and $\mathcal F=(F_u)_{u\in B}$ on the same $H$:
+\begin{enumerate}[label=(\alph*)]
+\item $\Ext(\mathcal E)=\Ext(\mathcal F)$ if and only if every $E_t$ is $\mathcal F$-closed and every $F_u$ is $\mathcal E$-closed. For an arbitrary $X\subseteq H$,
+\[
+ X\in\Ext(\mathcal F)\quad\Longleftrightarrow\quad
+ \forall h\notin X\ \exists u\in B\quad X\subseteq F_u\ \text{and}\ h\notin F_u. \tag{E1}
+\]
+\item $K(\mathcal E)=K(\mathcal F)$ if and only if each nonempty $E_t$ is contained in an $F_u$ and each nonempty $F_u$ is contained in an $E_t$.
+\item The row relations differ if and only if some pair $h,k$ agrees on every column in one family and differs on a column in the other.
+\end{enumerate}
+If $n=|H|$ and $m=|B|$, the three comparisons together take $O(nm^2+n^2m+1)$ Boolean operations using the explicit tables. The case $m=0$ is immediate. No concept or simplex enumeration is needed.
+\end{lemma}
+\begin{proof}
+An extent is an intersection of columns. Thus, if all $E_t$ are closed for $\mathcal F$, every intersection of the $E_t$ is also closed for $\mathcal F$. Apply the argument in both directions. Formula (E1) says precisely that the intersection of all $F_u$ containing $X$ excludes every point outside $X$; this is equivalent to $c_{\mathcal F}(X)=X$.
+
+Every finite nonempty $E_t$ is itself a face of $K(\mathcal E)$. If the complexes are equal, it must be contained in one $F_u$. Conversely, that containment puts every subset of $E_t$ in $K(\mathcal F)$. The empty face causes no condition. Again apply both directions. Part (c) is obtained by expanding equality of the two equivalence relations. For the bound, compute each column's closure in the other context by scanning at most $nm$ entries, test all column containments, and compare every pair of rows.
+\end{proof}
+
+\begin{proposition}[Small conflict witnesses]\label{prop:small}
+A Dowker conflict has a witnessing face of size at most $m$ when $m\ge1$. An FCA conflict has a witnessing closure comparison
+\[
+ h\in c_{\mathcal F}(A)\setminus c_{\mathcal E}(A),\quad\text{or conversely},\qquad |A|\le m.
+\]
+The witness may have $A=\varnothing$. A row conflict has a witnessing pair of objects and one separating column.
+\end{proposition}
+\begin{proof}
+For a Dowker conflict choose, by Lemma~\ref{lem:compare}, a nonempty $E_t$ not contained in any $F_u$. For every $u$ choose $a_u\in E_t\setminus F_u$. Then $\sigma=\{a_u:u\in B\}$ is a face on the first side and not on the second, and $|\sigma|\le m$.
+
+For an FCA conflict choose a column $X=E_t$ which is not $\mathcal F$-closed and $h\in c_{\mathcal F}(X)\setminus X$, or interchange the families. For each $u$ with $h\notin F_u$, closure membership implies $X\nsubseteq F_u$, so choose $a_u\in X\setminus F_u$. Put $A=\{a_u:h\notin F_u\}$. Every $F_u$ containing $A$ contains $h$, so $h\in c_{\mathcal F}(A)$. But $A\subseteq E_t$ and $h\notin E_t$, hence $h\notin c_{\mathcal E}(A)$. The bound follows. The row assertion is immediate.
+\end{proof}
+
+\begin{remark}[Not a homotopy algorithm]
+These checks decide literal FCA, row, and simplicial equality. They do not decide homotopy equivalence, classify all maximal homotopy-conservative families, or transfer to changing object domains without further comparison maps.
+\end{remark}
+
+
+
+\section{Two FCA reconstructions from evidence, with different variance}
+An uncertainty report should distinguish assertions about the closure of a particular set from assertions that a set is closed in every world. They have different answers and different update laws. For this subsection, the world and test sets may also be arbitrary, provided the evidence set is nonempty and $H$ is finite. The guaranteed-consequence operator alone remains a closure operator even for infinite $H$. Suppress $B$ and define
+\[
+ c^{\cap}_V(A)=\bigcap_{w\in V}c_w(A),\qquad
+ J_V(A)=\bigcup_{w\in V}c_w(A),\qquad
+ c^{\vee}_V(A)=J_V^{\,n}(A),\quad n=|H|.
+\]
+
+\begin{theorem}[Two-sided closure reconstruction and refinement]\label{thm:envelopes}
+Both $c^{\cap}_V$ and $c^{\vee}_V$ are closure operators. The former records exactly the \emph{certain closure consequences}:
+\[
+ h\in c^{\cap}_V(A)\Longleftrightarrow\forall w\in V\ h\in c_w(A).
+\]
+The latter is the least closure operator above all $c_w$, and
+\[
+ \Fix(c^{\vee}_V)=\bigcap_{w\in V}\Ext_w. \tag{E3}
+\]
+Consequently, for nonempty $V'\subseteq V$,
+\[
+ c^{\cap}_V\le c^{\cap}_{V'},\qquad
+ c^{\vee}_{V'}\le c^{\vee}_V,\qquad
+ \Fix(c^{\vee}_V)\subseteq\Fix(c^{\vee}_{V'}), \tag{E4}
+\]
+where order on operators is pointwise inclusion. Thus more evidence strengthens warranted closure consequences while admitting more subsets as guaranteed closed.
+
+The exact Dowker uncertainty envelope and the guaranteed row relation satisfy
+\begin{align*}
+ K^-_V:=\bigcap_{w\in V}K_w&\subseteq K^-_{V'},&
+ K^+_{V'}:=\bigcup_{w\in V'}K_w&\subseteq K^+_V,\\
+ {\sim}^{-}_V:=\bigcap_{w\in V}{\sim}_w&\subseteq{\sim}^{-}_{V'}.
+\end{align*}
+Both $K^-_V,K^+_V$ are complexes; ${\sim}^{-}_V$ is an equivalence relation. In contrast, $\bigcup_w{\sim}_w$ need not be transitive, and $\bigcup_w\Ext_w$ need not be an intersection-closed extent family.
+\end{theorem}
+\begin{proof}
+Extensivity and monotonicity of $c^{\cap}_V$ follow componentwise. For idempotence, $c^{\cap}_V(A)\subseteq c_w(A)$ for each $w$, whence
+\[
+ c_w(c^{\cap}_V(A))\subseteq c_w(c_w(A))=c_w(A).
+\]
+Intersect over $w$ and use extensivity for the other inclusion.
+
+The map $J_V$ is extensive and monotone. Unless an iterate is already fixed, it adds at least one point. Therefore $J_V^n(A)$ is fixed, and is the least $J_V$-fixed set containing $A$. A set is $J_V$-fixed if and only if it is fixed by every $c_w$. This proves that $c^{\vee}_V$ is a closure operator and (E3). If $d$ is a closure operator with $c_w\le d$ for all $w$, induction gives $J_V^k(A)\subseteq d(A)$, proving the least-upper-bound assertion. Removing worlds makes the intersection defining $c^{\cap}$ larger and the union defining $J$ smaller; iteration proves (E4). The remaining inclusions are elementary set operations. Intersection and union of complexes are complexes; intersections of equivalence relations are equivalence relations. The last warnings follow from the examples below.
+\end{proof}
+
+\begin{corollary}[When the evidence already determines the reconstruction]\label{cor:determined}
+The FCA reconstruction is constant on $V$ if and only if $c^{\cap}_V=c^{\vee}_V$. The exact Dowker reconstruction is constant on $V$ if and only if $K^-_V=K^+_V$. Hence equality of these two pairs of bounds determines the joint FCA/Dowker/current-row target, even if many entries of the labeled incidence table remain unknown.
+\end{corollary}
+\begin{proof}
+For every $w\in V$, $c^{\cap}_V\le c_w\le c^{\vee}_V$ and $K^-_V\subseteq K_w\subseteq K^+_V$. Equality of the bounds forces equality of all the intervening structures. Conversely, if all structures agree, each pair of bounds is that common structure. Current-row equality follows from equality of FCA extent families, by Lemma~\ref{lem:compare}.
+\end{proof}
+
+\begin{example}[The upper FCA bound really needs closure]\label{ex:iteration}
+On $H=\{a,b,c\}$ define
+\[
+ c_0(A)=A\cup\{b:a\in A\},\qquad c_1(A)=A\cup\{c:b\in A\}.
+\]
+Both are closure operators and can be represented by finite incidence contexts by taking all their closed sets as columns. But
+\[
+ J(\{a\})=\{a,b\},\qquad J^2(\{a\})=H.
+\]
+Thus the one-step union of possible closures is not itself a closure operator. Here $c^{\cap}$ is the identity, whereas $c^{\vee}$ imposes the chain $a\Rightarrow b\Rightarrow c$. After restriction to world $0$, the certain consequence $b\in c_0(\{a\})$ becomes warranted, while the upper closure of $\{a\}$ decreases from $H$ to $\{a,b\}$. For a separate example showing that possible closed sets need not form a closure system, put $d_0(A)=A\cup\{b:a\in A\}$ and $d_1(A)=A\cup\{c:a\in A\}$. Then $\{a,b\}$ is $d_0$-closed and $\{a,c\}$ is $d_1$-closed, but their intersection $\{a\}$ is closed in neither world. For the row warning, take two worlds with partitions $ab\mid c$ and $a\mid bc$. Their union relates $a$ to $b$ and $b$ to $c$ but not $a$ to $c$.
+\end{example}
+
+\begin{proposition}[Structural designation is a different axis]\label{prop:designation}
+If $B\subseteq B'$, then in every world
+\[
+ c^{B'}_w\le c^B_w,\qquad
+ \Ext^B_w\subseteq\Ext^{B'}_w,\qquad
+ K^B_w\subseteq K^{B'}_w,\qquad
+ {\sim}^{B'}_w\subseteq{\sim}^B_w.
+\]
+Accordingly both evidence closure operators $c^{\cap}$ and $c^{\vee}$ decrease, both Dowker envelopes increase, and the guaranteed row equivalence refines. These statements also apply to world-dependent generated columns with fixed interpreted syntax. They do not follow from merely acquiring more experimental access, which leaves $B$ unchanged.
+\end{proposition}
+\begin{proof}
+More columns give more possible separating columns in the FCA closure intersection, more simplex witnesses, and more equal-row obligations. The pointwise operator inequalities pass to intersections and, by monotonicity, to the finite iteration defining $c^{\vee}$.
+\end{proof}
+
+
+\paragraph{What the finite bound means.}
+The common-closed hull is stationary by step $|H|$ even for infinitely
+many compatible worlds or tests: every strict stage adds a previously
+absent object. It is a semantic stabilization result, not an algorithm
+without a way to compute the world-quantified union. These closure laws
+also concern fixed subsets of $H$. A generated formula may instead have a
+different extent $C_w$ in each world, as in the next criterion and examples.
+
+
+
+\subsection{A uniform defining conjunction is stronger than worldwise preservation}
+In this subsection take $T$ to be the designated old structural labels and let $E\subseteq W$ be the nonempty current evidence set. For a world-indexed candidate $C_w\subseteq H$, put
+\[
+ U_E(C)=\{t\in T:\forall w\in E\; C_w\subseteq E_{w,t}\},\qquad
+ E_{w,t}=\{h:hR_wt\}.
+\]
+A uniform conjunction means a single $I\subseteq T$, independent of $w$,
+with $C_w=\bigcap_{t\in I}E_{w,t}$ for every $w\in E$.
+Here the conjunction may be infinite; this is not a finite-syntax or
+execution certificate unless an additional finiteness assumption is supplied.
+
+\begin{theorem}[Canonical uniform-conjunction criterion]\label{thm:uniform-conjunction}
+A uniform conjunction exists if and only if
+\[
+ C_w=\bigcap_{t\in U_E(C)}E_{w,t}\qquad(w\in E).
+\]
+When it exists, adding $C_w$ preserves the FCA extent closure in every
+admissible world.
+\end{theorem}
+\begin{proof}
+If $I$ is a uniform defining conjunction, each label in $I$ belongs to
+$U_E(C)$. Intersecting all labels in $U_E(C)$ therefore gives a subset of
+$C_w$, and the reverse inclusion follows from their definition. Conversely,
+the displayed equation supplies the single set of labels $U_E(C)$.
+An intersection of old columns is an old closed extent, giving the last
+claim. Neither statement asserts preservation of the object complex.
+\end{proof}
+
+
+
+\section{Correlated symbolic certificates}
+Return to finite $H,T$. For a large implicitly represented $W$, take Boolean variables $r_{ht}$ and a satisfiable constraint circuit $\Theta(r,z)$, with auxiliary model variables $z$ when needed. Its satisfying assignments are the joint worlds. A generated interpretation is supplied by Boolean circuits $c_h(r,z)$, one for each $h$. This is an explicit semantic input, not an inferred unknown interpretation. Introduce Tseitin variables for circuit gates if a CNF input is desired.
+
+For a proposed structural column $C_w=\{h:c_h(w)=1\}$, define
+\begin{align*}
+ \mathsf{Bad}_{\rm FCA}(r,c)
+ &=\bigvee_{h\in H}\left[\neg c_h\ \wedge\!
+ \bigwedge_{t\in B}\left(r_{ht}\vee\bigvee_{k\in H}(c_k\wedge\neg r_{kt})\right)\right],\\
+ \mathsf{Bad}_{K}(r,c)
+ &=\left(\bigvee_{h\in H}c_h\right)\wedge
+ \bigwedge_{t\in B}\bigvee_{h\in H}(c_h\wedge\neg r_{ht}),\\
+ \mathsf{Bad}_{\rm row}(r,c)
+ &=\bigvee_{h,k\in H}\left[
+ \bigwedge_{t\in B}(r_{ht}\leftrightarrow r_{kt})\ \wedge\ (c_h\mathbin\oplus c_k)\right].
+\end{align*}
+Empty conjunctions and disjunctions have their usual truth values.
+
+\begin{theorem}[Exact SAT obligations, with no independent-cell relaxation]\label{thm:sat}
+The generated column preserves the named structure in every admissible world if and only if $\Theta\wedge\mathsf{Bad}$ is unsatisfiable for that structure. Joint FCA/Dowker/row preservation is certified exactly by unsatisfiability of $\Theta\wedge(\mathsf{Bad}_{\rm FCA}\vee\mathsf{Bad}_K\vee\mathsf{Bad}_{\rm row})$. The row clause is redundant when the FCA clause is excluded, but useful for row-only guarantees. By Proposition~\ref{prop:baseline}, the same joint certificate also preserves the residual relation under unchanged declared actions. Circuit size is polynomial in $n,m,|\Theta|$ and the interpreted generated circuits.
+
+For a fixed reconstruction target $F_B$ and a finite proposed set $S$ of experiments whose listed responses are jointly obtainable, exact reconstruction from those responses is possible if and only if
+\[
+ \Theta(x)\wedge\Theta(y)\wedge
+ \bigwedge_{q\in S}(q(x)=q(y))\wedge\mathsf{Diff}_F(x,y) \tag{E5}
+\]
+is unsatisfiable, where $\mathsf{Diff}_F$ has a polynomial-size circuit obtained from Lemma~\ref{lem:compare}. This requires polynomial-size output circuits for the experiments as an additional assumption, and does not certify that the protocols can actually be composed. The reusable-access model in Section~\ref{sec:er-reconstruction} is one sufficient execution hypothesis; Section~\ref{seq:section} explains its failure for destructive reads. A satisfying assignment provides two correlated compatible worlds with identical obtainable outputs and a concrete structural conflict. Unsatisfiability is an exact conditional guarantee; it is not obtained just by printing the formula, nor does polynomial encoding size imply polynomial decision time.
+\end{theorem}
+\begin{proof}
+FCA failure is exactly an excluded $h$ belonging to $c_w(C_w)$: every old column either contains $h$ or fails to contain $C_w$. The first circuit expresses this. Dowker failure is exactly a nonempty $C_w$ not contained in any old column; the second circuit expresses it. Row failure is an old-equivalent pair split by $C_w$. These are the fixed-world preservation criteria, now checked under the original joint $\Theta$.
+
+A finite family of added columns preserves FCA or Dowker structure if and only if each added column does so; this follows from intersections of already closed sets and from testing each added full simplex. FCA-closed columns cannot split an old row-equivalence class, giving the redundancy assertion. Finally, the comparison lemma uses bounded Boolean loops over table entries and therefore gives a polynomial circuit; (E5) is exactly a conflict not separated by the selected experiments, so Theorem~\ref{thm:er-target} applies. Tseitin conversion preserves satisfiability and has size linear in the supplied circuit.
+\end{proof}
+
+\begin{theorem}[Sharp complexity of universal joint safety]\label{thm:conp}
+For Boolean circuit interpretations and polynomial-size evidence constraints, deciding universal exact FCA/Dowker/row conservativity is coNP-complete. Hardness already holds with two objects, identity dynamics, fixed old FCA closure and row quotient, a fixed old Dowker complex, and independently unknown table cells.
+\end{theorem}
+\begin{proof}
+A violating world is a polynomial-size certificate: verify the evidence constraint, evaluate the generated circuit, and apply Lemma~\ref{lem:compare}, or the failure circuits above. Thus failure lies in NP.
+
+For hardness, let $\theta(x_1,\ldots,x_k)$ be a CNF formula. Take $H=\{0,1\}$, fixed old columns $e_0=\{0\}$ and $e_1=\{1\}$, and columns $x_i$ whose value at $0$ is fixed false and whose value at $1$ is an independent unknown bit. The admissible world family is nonempty. In every world the old FCA extent closure is $\Pow(H)$, the old row equivalence is equality, and the old object complex consists of two isolated vertices. Define the rowwise generated formula
+\[
+ \varphi=e_0\vee\bigl(e_1\wedge\theta(x_1,\ldots,x_k)\bigr).
+\]
+Its extent is $\{0\}$ when the assignment at object $1$ falsifies $\theta$, and $H$ when that assignment satisfies $\theta$. Both extents preserve FCA and rows. The singleton preserves the old Dowker complex, while $H$ adds its edge. Therefore universal joint safety holds exactly when $\theta$ is unsatisfiable. The construction is polynomial and proves coNP-hardness.
+\end{proof}
+
+\paragraph{Certificates and validation.}
+A counterexample assignment can be checked by evaluating $\Theta$, the interpretation circuits, and the displayed structural witness. To turn an unsatisfiable answer into an independently checkable certificate, a solver must emit a proof in an explicitly supported proof format and that proof must be checked. These theorems do not claim that a SAT engine or proof checker has already been implemented or verified.
+
+
+
+\section{Executable reconstruction on a finite model family}
+\label{sec:er-reconstruction}
+
+The preceding sections provide finite tests for structural conflicts and
+worldwise conservativity. We now ask which experiments can resolve such
+conflicts. Interpretations and transitions may depend on an unknown model. The output is a
+conditional reconstruction theorem: it specifies which structure the data
+identify, which experiment can resolve a remaining ambiguity, and when no
+licensed experiment can resolve it. This is a finite, deterministic setting,
+not a general procedure for discovering an unrestricted scientific law.
+
+\subsection{Models, protocols, and the target of identification}
+
+Let $W$ be a nonempty finite family of candidate models. A licensed
+experiment $e\in\mathcal A$ is a finite executable protocol, including its
+preparation or reset, controls, readout, and the convention for recording
+its answer. In this subsection its exact deterministic response is a known
+function
+\[
+ r_e:W\longrightarrow Y_e.
+\]
+Knowing this function means that the predictions of each candidate can be
+computed; it does not mean that the actual candidate is known. Every experiment in this menu is assumed reusable after every consistent
+transcript, with the same response function of the unchanged model. A
+world-faithful reset to the same initial preparation is one sufficient
+assumption. A fixed output table alone does not establish this access.
+Without reset, the physical state and available continuations belong in the
+candidate state of the decision problem; one cannot freely reuse the model
+below for destructive or history-dependent experiments.
+
+A consistent record $d=((e_1,y_1),\ldots,(e_k,y_k))$ determines
+\[
+ V_d=\{w\in W:r_{e_j}(w)=y_j\text{ for }1\le j\le k\}\ne\varnothing.
+\]
+The nonemptiness condition is substantive. If it fails, the assumed family,
+measurement semantics, or record is inconsistent, and no conclusion is
+obtained by vacuous universal quantification. The guarantee throughout is
+conditional on the actual model belonging to $W$ and the readings satisfying
+the stated response law.
+
+Choose a target $J:W\to\mathcal S$. Examples are a labeled equivalence
+relation on a common $H$, its output- and action-labeled quotient system,
+a labeled FCA closure, a labeled simplicial complex, or an isomorphism or
+homotopy class. These are different targets. If models have different state
+sets, literal equality of partitions is not even a target until state
+identifications have been supplied. Taking an isomorphism class does not
+supply those identifications.
+
+The exact evidential output is the set
+\[
+ \mathcal J(d)=\{J(w):w\in V_d\}.
+\]
+A single structure is warranted precisely when this set is a singleton.
+A structural proposition $P$ is warranted when $P(J(w))$ holds for every
+$w\in V_d$. Thus some conclusions can be settled even when neither the
+whole structure nor the model is settled. For finite $W$, this specification
+is executable when candidate responses and the requested structural
+comparisons are decidable. It is not an efficiency guarantee.
+
+Define experimental indistinguishability by
+\[
+ w\simeq_{\mathcal A}w'
+ \quad\Longleftrightarrow\quad
+ r_e(w)=r_e(w')\quad\hbox{for every }e\in\mathcal A.
+\]
+
+\begin{theorem}[Exact finite target identification]
+\label{thm:er-target}
+For a nonempty $V\subseteq W$, the following are equivalent.
+\begin{enumerate}[label=(\roman*)]
+\item $J$ is constant on each $\simeq_{\mathcal A}$-class in $V$.
+\item There is a finite set of licensed experiments whose combined responses
+      determine $J$ on $V$.
+\item There is a finite adaptive experiment tree that determines $J$ on $V$.
+\end{enumerate}
+When these hold, an adaptive tree of depth at most $|V|-1$ exists. More
+precisely, a nonadaptive family $B\subseteq\mathcal A$ succeeds if and only
+if it meets every set
+\[
+ \Delta(w,w')=\{e\in\mathcal A:r_e(w)\ne r_e(w')\},
+ \qquad w,w'\in V,\quad J(w)\ne J(w').
+\]
+Thus experiment selection is a separating-set problem for target-disagreeing
+pairs, rather than necessarily for all different models.
+\end{theorem}
+\begin{proof}
+If (i) holds, each target-disagreeing pair has a separating experiment.
+There are finitely many pairs, so selecting one for each proves (ii).
+A nonadaptive list is a special adaptive tree, giving (iii). If (i) fails,
+two target-disagreeing models give the same response to every experiment.
+Induction down any adaptive tree puts them on the same branch and at the
+same leaf, contradicting correctness. This proves (iii)$\Rightarrow$(i).
+For the depth bound, if $J$ is not constant on the current version set,
+choose a separating experiment for a target-disagreeing pair. Every nonempty
+response fiber is a proper subset of that set. Repeat; cardinality decreases
+at each unresolved step and a singleton is resolved. The final assertion
+is exactly the condition that no target-disagreeing pair has identical
+responses to all experiments in $B$.
+\end{proof}
+
+For a finite available experiment list, the theorem gives a direct
+certificate procedure. Enumerate surviving models and their targets. If the
+targets agree, return the common target and the list of surviving models.
+Otherwise find a target-disagreeing pair. A separating experiment supplies a
+concrete next protocol; failure of every licensed experiment to separate that
+pair supplies an impossibility certificate. With an infinite experiment
+language, existence of a separator does not by itself give an effective
+search or a certificate that none exists.
+
+For completeness, the optimal worst-case number $D(V)$ of unit-cost
+experiments satisfies
+\[
+ D(V)=
+ \begin{cases}
+ 0,&J\text{ is constant on }V,\\[2pt]
+ 1+\displaystyle\min_{e\text{ splitting }V}
+       \max_{y\in r_e(V)} D(V\cap r_e^{-1}(y)),&\text{otherwise},
+ \end{cases}
+\]
+where an empty minimum is $+\infty$. Only proper nonempty fibers enter the
+second line, so this is a recursion on $|V|$. Even for infinite $\mathcal A$
+there are finitely many partitions of finite $V$ induced by experiments;
+the existence result is finite, although computing the available partitions
+may not be effective.
+
+\begin{remark}[Why finiteness matters]
+Let $W=\mathbb N\cup\{\infty\}$, let $e_k$ ask whether the model is $k$,
+and let $J$ distinguish $\infty$ from every finite model. Every
+target-disagreeing pair is separable. But any finite transcript of negative
+answers is compatible with $\infty$ and with an unqueried integer, so no
+procedure can terminate correctly at $\infty$. Pairwise distinguishability
+alone is not finite exact identification for unrestricted model classes.
+\end{remark}
+
+\subsection{Structural certificates and the cost of useful queries}
+
+For the incidence targets already defined, the abstract target comparison
+in Theorem~\ref{thm:er-target} can be implemented without enumerating
+concepts or simplices. Lemma~\ref{lem:compare} constructs all conflict
+pairs among $N$ explicit worlds in
+$O(N^2(nm^2+n^2m+1))$ table operations, where $n=|H|$ and $m=|B|$.
+For a finite experiment list $\mathcal A$, its discriminator sets cost
+$O(N^2|\mathcal A|)$ response comparisons. With positive costs $a_e$,
+minimum-cost nonadaptive selection is the weighted hitting-set problem
+on these discriminator sets. This reduction does not make the optimization
+polynomial-time.
+
+For a finite list, the adaptive recurrence has the weighted form
+\[
+ D_a(V)=
+ \begin{cases}
+ 0,&J\text{ is constant on }V,\\[2pt]
+ \displaystyle\min_{e\text{ splitting }V}
+ \left(a_e+\max_{y\in r_e(V)}D_a(V\cap r_e^{-1}(y))\right),
+ &\text{otherwise},
+ \end{cases}
+\]
+with an empty minimum or an impossible branch assigned $+\infty$.
+Every branch enters a proper nonempty subset. The first experiment and
+its worst response branch give the lower bound; choosing optimal
+subpolicies for its finitely many smaller fibers gives the reverse
+bound. Positive costs make a constant or already answered query
+unnecessary. Under the reusable-access assumptions of this section,
+shrinking a nonempty evidence set or adding available experiments cannot
+increase the optimum for a fixed target.
+
+\begin{corollary}[Postprocessing does not add identifying access]
+\label{cor:processing}
+If $r_{e_*}(w)=f(r_{e_1}(w),\ldots,r_{e_k}(w))$ for existing experiments,
+adding $e_*$ cannot make an unidentifiable target identifiable. When all
+input responses are already recorded, computing this value cannot shrink
+the evidence set. A new physical procedure realizing the same function
+can have a different cost, which must be supplied separately.
+\end{corollary}
+\begin{proof}
+Models agreeing on every existing response agree on its postprocessing,
+so every target-disagreeing indistinguishable pair remains one. If the
+input record is already fixed on the evidence set, so is its deterministic
+postprocessing.
+\end{proof}
+
+\subsection{A four-world example of target-directed experiment selection}
+Let $H=\{a,b,c\}$ and $B=T=\{p,q,r,s\}$. There are four worlds indexed by $\alpha,\beta\in\{0,1\}$:
+\[
+\begin{array}{c|cccc}
+ &p&q&r&s\\\hline
+ a&1&1&0&0\\
+ b&\alpha&1-\alpha&1&0\\
+ c&0&0&\beta&1
+\end{array} \tag{E6}
+\]
+Thus $\{E_p,E_q\}=\{\{a\},\{a,b\}\}$ in every world, with unresolved label assignment; $E_r=\{b\}$ for $\beta=0$ and $E_r=\{b,c\}$ for $\beta=1$; $E_s=\{c\}$.
+
+\begin{proposition}[Exact reconstruction and decisive access in (E6)]\label{prop:example}
+The following hold.
+\begin{enumerate}[label=(\roman*)]
+\item Every current-row partition is discrete. For $\beta=0$,
+\[
+ K=\Delta(\{a,b\})\cup\Delta(\{c\}),\qquad
+ \Ext=\{H,\{a,b\},\{a\},\{b\},\{c\},\varnothing\}.
+\]
+For $\beta=1$,
+\[
+ K=\Delta(\{a,b\})\cup\Delta(\{b,c\}),\qquad
+ \Ext=\Ext_{\beta=0}\cup\{\{b,c\}\}.
+\]
+Hence the two topology targets differ even in number of components, whereas the row quotient never changes.
+\item The primitive experiment $q_\alpha=R(b,p)$ alone cannot identify the FCA or Dowker target, even after it resolves both unknown $p,q$ entries at $b$. The experiment $q_\beta=R(c,r)$ identifies both structures with one binary observation. It leaves the label assignment $\alpha$ unresolved. With access to both experiments, identifying the entire labeled incidence table requires two observations in the worst case; identifying the joint structural target requires only one.
+\item The generated formula $\varphi=p\vee q$ has the known common extent $\{a,b\}$ and is conservative for FCA, rows, and Dowker in every world. There is no single old column that contains this extent in every world. Indeed, there is no one fixed subset of $\{p,q,r,s\}$ whose conjunction equals $\varphi$ in all four worlds.
+\item The formula $\chi=r\wedge s$ is conservative for all three structures in every world, but its answer at $c$ is not warranted before observing $q_\beta$. Its extent is $\varnothing$ or $\{c\}$ according to $\beta$. Thus a universally valid preservation certificate is not a certificate of a known answer.
+\item The formula $\psi=p\vee r$ is FCA- and row-conservative in every world. It is Dowker-conservative exactly when $\beta=0$. Its extent is $\{a,b\}$ for $\beta=0$ and $H$ for $\beta=1$. The decisive experiment $q_\beta$ therefore resolves both the reconstruction and whether admitting $\psi$ as a structural witness changes the topology.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+List the extents above and their intersections. Rows are pairwise different because $a$ is the only object positive on both $p,q$, $b$ is positive on $r$ and negative on $s$, and $c$ is positive on $s$. The two values of $\alpha$ exchange synonymous roles in the unlabeled extent family and therefore do not affect these targets. The value $\beta$ adds the edge $bc$ and the closed extent $bc$. Worlds with fixed $\alpha$ but opposite $\beta$ are an unseparated conflict for $q_\alpha$. Conversely $q_\beta$ determines all displayed structures. Four possible labeled tables and binary primitive outputs require two observations to identify the table, and both observations suffice.
+
+For $\varphi$, the extent $ab$ is always one of $p,q$ and never contained in $r$ or $s$. No fixed choice of $p$ or $q$ works in both orientations. The only columns that could occur in a fixed conjunction equal to $ab$ would have to contain $ab$ in every world, and there are none. The empty conjunction is $H$, not $ab$. For $\chi$, an intersection of old columns is closed and is contained in each factor, including when empty. Its value at $c$ is precisely $\beta$. Finally $p$ always contains $a$, $r$ always contains $b$, and only $r$ can contribute $c$; this proves the claimed extents of $\psi$. Both $ab$ and $H$ are closed, but no old column contains $H$. Apply the finite containment criterion.
+\end{proof}
+
+\subsubsection{Why per-cell lower and upper bounds lose the useful fact}
+In (E6), form the cellwise must-relation $R^- =\bigcap_w R_w$. Its $p,q$ columns are both $\{a\}$, its $r$ column is $\{b\}$, and its $s$ column is $\{c\}$. Consequently $K(R^-)$ has only three isolated vertices, but
+\[
+ K^-_W=\Delta(\{a,b\})\cup\Delta(\{c\}). \tag{E7}
+\]
+The edge $ab$ is guaranteed because \emph{some} old column witnesses it in each world, although no \emph{one} column witnesses it in every world. Thus in general
+\[
+ K\!\left(\bigcap_wR_w\right)\subsetneq\bigcap_wK(R_w).
+\]
+Moreover replacing the constraint $q(b)=1-p(b)$ with independent intervals admits the spurious completion $p(b)=q(b)=0$. Then $p\vee q$ has extent $\{a\}$ rather than the warranted $\{a,b\}$, and the guaranteed edge $ab$ disappears. The interval relaxation can be used for sound conservative bounds, but it is not an exact evidential replacement.
+
+A false-negative preservation example uses $H=\{a,b,c\}$ and two columns: the two worlds have $(E_p,E_q)=(\{a\},\{a\})$ and $(\{b\},\{b\})$. Their correlation says that the two columns coincide, and the generated union $p\vee q$ is therefore always an old column. The independent-cell interval relaxation admits $(E_p,E_q)=(\{a\},\{b\})$, whose union $\{a,b\}$ is neither closed (on this three-object domain) nor an old face. Thus preserving correlations can certify a generated characterization that the independent-cell relaxation cannot certify.
+
+
+\subsection{A four-state family with an unbounded experiment requirement}
+\label{subsec:er-parity}
+
+Fix $r\ge1$, work over $\mathbb F_2$, and let
+\[
+ W=\mathbb F_2^r,\qquad H=\mathbb F_2^2,\qquad p(x,y)=x.
+\]
+The unknown parameter is $\theta=(\theta_1,\ldots,\theta_r)$. There are
+$r$ named controls with transition maps
+\[
+ a_i^\theta(x,y)=(x+\theta_i y,y),\qquad 1\le i\le r.
+\]
+The global form of these maps, the fixed four-state domain, the readout, and
+the meaning of the control labels are modeling assumptions. The values of
+$\theta_i$ are unknown. A calibrated preparation $h_*=(0,1)$ is available.
+An identification experiment resets to $h_*$, executes a finite word $w$
+in the controls, and records \emph{one terminal bit}. Intermediate readouts
+are not included in that one-bit cost convention.
+
+Let $c(w)\in\mathbb F_2^r$ record the parity of the number of occurrences
+of each control. Every parity vector is executable by using each selected
+control once. Commutativity and $y$-invariance give
+\begin{equation}
+ \tau_w^\theta(x,y)=(x+(c(w)\cdot\theta)y,y),
+ \qquad
+ r_w(\theta)=p(\tau_w^\theta(h_*))=c(w)\cdot\theta.
+ \label{eq:er-parity}
+\end{equation}
+Thus a physical protocol realizes a linear query on the unknown model.
+Counting all intermediate observations instead would count their individual
+bits; a word with $r$ intermediate readings is not one binary observation.
+Control length, reset cost, and readout count are separate resources.
+
+Admit as structural witnesses only the terminal outcome predicates
+\[
+ E_{w,b}^\theta=\{h\in H:p(\tau_w^\theta(h))=b\},
+ \qquad b\in\mathbb F_2,
+\]
+and write $\mathcal E_\theta$ for their distinct extents. Both polarities
+of the readout are included, but arbitrary Boolean combinations are
+\emph{not} automatically admitted as new topological witnesses. Let
+$\sim_\theta$ be equality of all these future readouts. Let
+$\operatorname{Ext}(\mathcal E_\theta)$ be the intersection closure,
+including the empty intersection $H$, and let
+\[
+ K(\mathcal E_\theta)
+ =\{\varnothing\}\cup\{\sigma\subseteq H:
+                      \sigma\subseteq E\text{ for some }E\in\mathcal E_\theta\}.
+\]
+Define the labeled structural target
+\[
+ J_{\rm str}(\theta)
+ =\bigl(\sim_\theta,\operatorname{Ext}(\mathcal E_\theta),
+                     K(\mathcal E_\theta)\bigr).
+\]
+This target retains the common state labels, but deliberately forgets which
+control word presents each extent and forgets the induced action maps.
+
+Put
+\[
+ A_b=\{(x,y):x=b\},\qquad B_b=\{(x,y):x+y=b\}.
+\]
+
+\begin{theorem}[Structure, witness discovery, and exact experiment cost]
+\label{thm:er-family}
+The family has the following properties.
+\begin{enumerate}[label=(\roman*)]
+\item If $\theta=0$, then $\mathcal E_\theta=\{A_0,A_1\}$,
+$\sim_\theta$ identifies states exactly when their $x$ coordinates agree,
+and the behavioral quotient has two states. The extent lattice has four
+members $\varnothing,A_0,A_1,H$. The object complex consists of two disjoint
+edges and has homotopy type $S^0$.
+\item If $\theta\ne0$, then
+$\mathcal E_\theta=\{A_0,A_1,B_0,B_1\}$ and $\sim_\theta$ is equality.
+The quotient has four states. The extent lattice has ten members:
+$H$, $\varnothing$, the four displayed two-element extents, and the four
+singletons. The object complex is the four-cycle and has homotopy type
+$S^1$.
+\item Consequently $J_{\rm str}$ has only two values, but every always-correct
+adaptive identification procedure has worst-case cost at least $r$
+terminal binary observations. This bound is attained by querying the
+individual controls.
+\item A single positive response to a word $w$ certifies the nonzero
+structural case, even though $2^{r-1}$ models may survive. It also identifies
+an executable state-separating probe: for every $h=(x,y)\in H$,
+\[
+ p(\tau_w^\theta(h))=x+y,
+ \qquad
+ y=p(h)+p(\tau_w^\theta(h)).
+\]
+Thus one data-certified control word, together with the old readout,
+reconstructs both coordinates of an arbitrary state under the assumed family.
+For $r\ge2$, the experiment can learn a usable observation recipe without
+learning every control law.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Equation~\eqref{eq:er-parity} shows that the coefficient of $y$ is always
+zero when $\theta=0$, and takes both values when $\theta\ne0$. This gives
+the two extent families. The two forms $x$ and $x+y$ separate all four
+states, whereas $x$ alone has two fibers. In the nonzero case opposite
+members of the same pair $A_0,A_1$ or $B_0,B_1$ are disjoint, and every
+intersection $A_b\cap B_{b'}$ is a singleton; this lists exactly the ten
+closed sets. The four two-element extents are the edges
+\[
+ 01-00-11-10-01,
+\]
+with no two-dimensional faces. In the zero case only the disjoint edges
+$00-01$ and $10-11$ remain. This proves (i)--(ii).
+
+For the lower bound, follow the branch generated by the actual parameter
+$\theta=0$. After $k$ experiments the answers are all zero, even when the
+queries $c_1,\ldots,c_k$ were chosen adaptively. The compatible set is
+\[
+ \ker C,\qquad
+ C=\begin{pmatrix}c_1^\mathsf T\\ \vdots\\c_k^\mathsf T\end{pmatrix}.
+\]
+If $k<r$, its dimension is at least $r-k>0$. It contains both the zero model
+and a nonzero model, which have different targets. The procedure cannot
+correctly stop. The coordinate queries determine $\theta$ in $r$ readings,
+so in particular determine the target. Finally, a positive response says
+$c(w)\cdot\theta=1$. Substitute this equality in
+\eqref{eq:er-parity} for an arbitrary $h$, not just for the calibrated
+preparation. A single nontrivial linear equation has $2^{r-1}$ solutions.
+\end{proof}
+
+The coordinate-recovery protocol additionally assumes that the first
+readout $p(h)$ does not disturb the state before the word is applied, or
+that identically prepared copies are available. The last inference is
+conditional on the specified family of global transition laws. One measurement does not independently establish that law
+at every state. Nor does the theorem say that a correct algorithm always
+finds a positive witness in one query: one positive bit is a short
+\emph{certificate}, whereas finding such a bit can require many attempts.
+
+For a transcript with query matrix $C$ and response vector $z$, the exact
+answer can be stated without enumerating its models:
+\begin{equation}
+ V_d=\{\theta:C\theta=z\}.
+ \label{eq:er-affine}
+\end{equation}
+If this affine system is inconsistent, the family is refuted under the
+noiseless convention. Otherwise:
+\begin{itemize}
+\item $z\ne0$ warrants the four-state quotient, ten-element extent lattice,
+and cycle, regardless of whether the parameter is unique;
+\item $z=0$ and $\operatorname{rank}(C)=r$ warrant the two-state quotient,
+four-element lattice, and two components;
+\item $z=0$ and $\operatorname{rank}(C)<r$ leave both structural possibilities.
+Any next query outside the row span of $C$ gives a genuine refinement;
+queries in the span are already determined by the record.
+\end{itemize}
+These are explicit positive certificates, unresolved cases, and next
+experiments. The number of structural possibilities, here two, does not by
+itself control the number of allowed experiments needed to distinguish them.
+
+\begin{proposition}[Keeping action labels changes the target]
+\label{prop:er-labels}
+Let $J_{\rm dyn}(\theta)$ retain the quotient's output map and each named
+control action, up to output- and control-label-preserving isomorphism.
+Then $J_{\rm dyn}$ has $2^r$ distinct values. For $r\ge2$, a single positive
+response determines $J_{\rm str}$ while leaving $J_{\rm dyn}$ unresolved.
+For $r=1$, that response identifies the unique nonzero parameter.
+\end{proposition}
+\begin{proof}
+The zero quotient has two states; every nonzero quotient has four. On a
+nonzero quotient, control $a_i$ is the identity exactly when $\theta_i=0$.
+Being the identity is invariant under conjugacy. Two different nonzero
+parameters disagree on this property for some named control, so their
+labeled systems cannot be isomorphic.
+\end{proof}
+
+This is also a distinction between \emph{having} an executable state-separating
+observation and \emph{knowing} the transition law of every named action in
+those coordinates. Forgetting control labels, initial preparations, or
+state identifications would define still other targets.
+
+\begin{remark}[The exact lower bound is not a statistical lower bound]
+For a fixed nonzero $\theta$, a uniform independent parity vector $c$ has
+$c\cdot\theta=1$ with probability $1/2$. Consequently $k$ independent
+uniform parity experiments, declaring the nonzero case if any response is
+one, have false-negative probability $2^{-k}$ and no false positives under
+these noiseless models. They provide a bounded-error decision with a
+number of readouts independent of $r$. They do not provide a universally
+valid zero certificate: after fewer than $r$ readings an all-zero transcript
+still admits a nonzero model. Each random word may also use order $r$
+control operations. Exact warrant, probabilistic error guarantees, and
+physical cost must not be conflated. The varying quantity $r$ is the number
+of independently parameterized named controls; this is not a lower bound
+with a fixed control alphabet or fixed model-description length.
+\end{remark}
+
+\subsection{What changes when access changes?}
+\label{subsec:er-access}
+
+Suppose the licensed macro-controls have parity vectors generating a
+subspace $L\le\mathbb F_2^r$, and compositions and repetitions of these
+macro-controls are licensed. Their attainable parity vectors are exactly
+$L$. The experiment interface records only terminal outputs of those
+protocols. Define $J_{{\rm str},L}$ using only these accessible future
+predicates, and let $\theta|_L$ mean the functional
+$c\mapsto c\cdot\theta$ on $L$.
+
+\begin{theorem}[Accessible reconstruction versus an inaccessible target]
+\label{thm:er-access}
+For $d=\dim L$:
+\begin{enumerate}[label=(\roman*)]
+\item Two models are indistinguishable by every licensed experiment exactly
+when their difference lies in $L^\perp$.
+\item The accessible structural target is the two-component case when
+$\theta\in L^\perp$ and the four-cycle case otherwise. It can be identified
+with $d$ binary readings, and $d$ is necessary in the worst case if $d>0$.
+For $d=0$ it is known without observations.
+\item If $L\ne\mathbb F_2^r$, the full-action target $J_{\rm str}$ is not
+identifiable uniformly over $W$ by these experiments. The zero model and
+every nonzero model in $L^\perp$ are a concrete obstruction pair.
+\item If $L\subseteq L'$, the behavioral equivalence for $L'$ refines that
+for $L$, giving a canonical surjection $Q_{L'}^\theta\twoheadrightarrow
+Q_L^\theta$. But the two associated complexes need not be homotopy
+equivalent: for a fixed known $\theta\in L^\perp\setminus (L')^\perp$,
+access expansion changes two components to a cycle.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Equality of all responses means exactly
+$c\cdot(\theta-\theta')=0$ for every $c\in L$, proving (i).
+The set of coefficients $c\cdot\theta$ is either $\{0\}$ or $\mathbb F_2$,
+so the previous extent computation applies. A basis of $L$ supplies $d$
+measurements. On the zero-answer branch fewer than $d$ queries do not span
+$L$, and there is a linear functional on $L$ vanishing on the queried
+span but not on all of $L$. Such a functional extends to
+$\mathbb F_2^r$ and is represented by some $\theta$, proving necessity.
+For (iii), a proper $L$ has a nonzero annihilator, so invoke
+Theorem~\ref{thm:er-target}. Inclusion of the experiment families proves
+refinement in (iv), and the displayed condition gives the two different
+complexes by (ii).
+\end{proof}
+
+There are therefore two different changes. Additional data shrink $V_d$
+for a \emph{fixed} target and can turn an ambiguous reconstruction into a
+warranted one. Under the accessible-witness convention defining $J_{{\rm str},L}$, additional control access also changes the target's defining
+observation family; even with the actual model already known, it can refine
+the quotient and change the complex. These effects should not be described
+by a single undifferentiated notion of ``more characterization. Enlarging
+the candidate model class is a third change: it can destroy a previously
+warranted conclusion even while preserving all old observations.''
+
+There is a further contrast with logical closure. In the nonzero case the
+inferred operational witnesses give a cycle. Adjoining their disjunction
+$A_0\cup A_1=H$ \emph{as a topological witness} makes the complex a full
+three-simplex. Merely knowing this tautological formula does not require
+that admission. The cycle is the topology of the declared operational
+witness relation; it is not an intrinsic topology of the physical four-state
+substrate. Its role here is to show exactly which relational structure is
+licensed by the chosen data, model, and witness convention.
+
+\subsection{An explicit model-class failure and the prior-art boundary}
+
+The modeled family cannot be silently enlarged while retaining its
+conclusions. Set $r=1$ and compare, on the same labeled $H$ and with the
+same readout and preparation,
+\[
+ M:\ a(x,y)=(x+y,y),\qquad
+ N:\ a(x,y)=(x+1,y),\qquad h_*=(0,1).
+\]
+From $h_*$ both systems alternate $01,11,01,11,\ldots$. They give the
+same answer to every finite reset-and-control experiment from that
+preparation, including full observed traces. Nevertheless, $M$ has the
+four-state full-domain behavioral quotient and four-cycle above; $N$ has
+the two-state quotient determined by $x$ and only the two extents $A_0,A_1$.
+Thus $W=\{M,N\}$ violates the condition in
+Theorem~\ref{thm:er-target} for the global structural target.
+A new calibrated preparation $(0,0)$ followed by $a$ separates them, with
+outputs zero and one. The obstruction concerns access, not an inability to
+invent enough formulas from the old record.
+
+This also clarifies the distinction between global state structure and
+structure reachable from an initial preparation. From $h_*$, the two
+systems have the same reachable input-output behavior. A predictive
+representation of those histories need not reconstruct either candidate's
+unvisited $y=0$ states. Conversely, observing a prepared object with a
+known label is additional grounding; a bare quotient isomorphism does not
+supply that label or a physical preparation procedure.
+
+The general identification theorem is elementary finite experiment and
+decision-tree theory, not a new learning principle. Its separating sets
+and version sets make explicit the obligations needed to apply the earlier
+exact reconstruction theorems to uncertain interpretations. The parity
+family supplies a concrete, proved interaction: one measured witness can
+settle several extensional structures and enable state reconstruction while
+leaving action-labeled dynamics unresolved; certifying the alternative
+structure has an arbitrarily large exact experiment requirement even with
+only four physical states and two structural alternatives.
+
+The connection to predictive-state representations is close but should not
+be overstated. Littman, Sutton, and Singh represent controlled processes by
+predictions of future action-observation tests; their linear PSR existence
+result bounds the number of predictive coordinates by the number of states
+in a finite POMDP representation. The operational probes above share that
+future-test idea. Our $r$ bound concerns learning which model-dependent
+probe is informative under restricted queries, not the dimension of a PSR
+for a known process. Moreover, the global labeled $H$ target includes states
+not necessarily reachable from the available preparation.
+\cite{LittmanSuttonSingh}
+
+Angluin's $L^*$ identifies regular languages using membership queries and
+an equivalence/counterexample teacher; its state and test tables address
+actual learning rather than semantic quotient construction alone. The
+finite family here uses no equivalence oracle, but supplies a known finite
+candidate class and computable candidate response functions, which are
+substantial assumptions of its own. Neither construction justifies
+unrestricted scientific-law discovery, and a closed finite observation
+table does not by itself establish completeness outside those assumptions.
+\cite{Angluin}
+
+The resulting research object is not one reconstructed structure alone but
+\[
+ \boxed{\begin{gathered}
+ \text{compatible models and licensed experiments},\\
+ \text{declared target and warranted conclusions},\\
+ \text{separating protocols or obstruction pairs}.
+ \end{gathered}}
+\]
+In this setting each component is explicit, the changes caused by data and
+by access have different proved meanings, and the possibility of learning
+some structure without identifying the whole model is exact.
+
+
+\section{Sequential acquisition and changing experimental access}
+\label{seq:section}
+
+The reusable menu assumption was essential in Section~\ref{sec:er-reconstruction}. We now replace it with an explicit stateful access model. Fix a finite nonempty set $\Theta$ of evidence-compatible models. A target
+$F:\Theta\to\mathcal Z$ records \emph{only the specified reconstruction
+invariant}. Its values may be isomorphism classes of concept lattices,
+homotopy types, a Betti number, a tuple of such invariants, or the Boolean
+claim that adjoining a generated characterization preserves specified
+invariants. No canonical labeling of all model states is presumed. All
+claims below are conditional on the actual model belonging to $\Theta$.
+
+There are three different questions. Is $F$ already constant on the models
+compatible with the record? Can one permitted experiment make it constant?
+Can one adaptive, physically executable policy guarantee that it eventually
+becomes constant? The last question cannot in general be answered from a
+static table listing the responses to experiments run separately from a
+fresh start. Experimental commands change the state from which later
+commands must run.
+
+\subsection{An exact criterion and finite certificates}
+
+For each $\theta\in\Theta$, let $X_\theta$ be a finite set of experimental
+configurations, with initial configuration $x^0_\theta$. Configuration can
+include the specimen, instrument, remaining budget, and preparation state.
+There are finite command and output alphabets $A$ and $O$. An enabled
+command $a$ has deterministic output and successor
+\[
+ o_\theta(x,a)\in O,\qquad
+ \delta_\theta(x,a)\in X_\theta.
+\]
+A \emph{belief} is a nonempty subset
+$B\subseteq S:=\coprod_{\theta\in\Theta}\{\theta\}\times X_\theta$.
+Initially $B_0=\{(\theta,x^0_\theta):\theta\in\Theta\}$. A command is
+admissible at $B$ if enabled at every member of $B$; write $A(B)$ for this
+set. If attempting a disabled command is permitted and produces an
+observable refusal, that refusal must instead be included explicitly in
+the transition model. It must not silently count as an executable test.
+
+For an admissible command and an observed output, the exact update is
+\[
+ \operatorname{Post}(B,a,o)=
+ \{(\theta,\delta_\theta(x,a)):
+        (\theta,x)\in B,\ o_\theta(x,a)=o\}.
+\]
+Only nonempty successors are possible. The model tag must be retained:
+merging experimental configurations does not establish that their original
+structures had the same invariant. Set
+\[
+ F[B]=\{F(\theta):(\theta,x)\in B\},\qquad
+ \mathcal H_F=\{B:|F[B]|=1\}.
+\]
+Thus $B\in\mathcal H_F$ means that the target is warranted \emph{now}.
+A policy chooses admissible commands from the observed history and stops
+with a verdict. It identifies $F$ if it stops after finitely many commands
+and gives the correct value for every initial possibility.
+
+Define an ascending sequence of belief families by
+\begin{align*}
+ W_0&=\mathcal H_F,\\
+ W_{n+1}&=W_n\ \cup\
+ \{B:\exists a\in A(B)\ \forall o\in O,
+     \operatorname{Post}(B,a,o)\ne\varnothing
+     \Rightarrow\operatorname{Post}(B,a,o)\in W_n\}.
+\end{align*}
+Let $W_*=\bigcup_{n\ge0}W_n$.
+
+\begin{theorem}[Sequential invariant-identification criterion]
+\label{seq:criterion}
+A belief $B$ admits a policy identifying $F$ in at most $n$ commands if and
+only if $B\in W_n$. It admits a policy terminating on every possibility if
+and only if $B\in W_*$. If $N=|S|$, the iteration stabilizes after at most
+$2^N-1$ strict additions of stages. In particular, when identification is
+possible, a finite belief-based policy with a decreasing integer rank
+certifies it.
+\end{theorem}
+\begin{proof}
+For $n=0$, a sound immediate verdict exists exactly on $\mathcal H_F$.
+For the induction step, a nontrivial policy must choose a command enabled
+throughout $B$. Its continuation after every possible output must identify
+$F$ within $n$ further commands. The induction hypothesis gives exactly the
+displayed predecessor condition. Conversely, choose the witnessing command
+and attach the policies given by the induction hypothesis.
+
+In the deterministic finite setting there are finitely many initial
+possibilities in $B$. A policy terminating on all of them therefore has a
+finite maximum stopping time and belongs to some $W_n$. There are at most
+$2^N-1$ nonempty beliefs, so the ascending iteration stabilizes within that
+many strict increases. Giving a winning belief its first-entry index
+provides a rank; the chosen command sends every possible output to a
+strictly smaller rank. Rank zero permits a sound verdict.
+\end{proof}
+
+The finite calculation is effective only when the command laws and equality of the selected target values are available effectively. Allowing homotopy types as abstract targets does not supply a general homotopy-equivalence algorithm. The bound is a coarse finite-certificate bound, not a claim that this
+powerset algorithm matches specialized adaptive-testing algorithms.
+The theorem also allows a smaller closed collection of reachable beliefs
+in place of all subsets of $S$.
+
+\begin{corollary}[Positive and negative certificates]
+\label{seq:certificates}
+A positive certificate consists of a finite family of beliefs containing
+$B_0$, with a nonnegative integer rank at each belief, homogeneous targets
+at rank zero, and, at every positive-rank belief, one admissible command
+whose every nonempty successor is in the family with smaller rank.
+
+A negative certificate consists of a family $\mathcal L$ containing $B_0$
+such that $\mathcal L\cap\mathcal H_F=\varnothing$ and, for each
+$B\in\mathcal L$ and $a\in A(B)$, some nonempty
+$\operatorname{Post}(B,a,o)$ belongs to $\mathcal L$. Such a certificate
+exists exactly when $B_0\notin W_*$.
+\end{corollary}
+\begin{proof}
+Rank descent proves the positive assertion. For a negative certificate,
+induction shows that $\mathcal L$ is disjoint from every $W_n$: each
+command has a successor still outside the preceding winning stage. Thus
+Theorem~\ref{seq:criterion} rules out identification. Conversely, the
+complement of $W_*$ is disjoint from $\mathcal H_F$. At a fixed point, every
+admissible command from this complement has a nonempty successor in the
+complement, or the predecessor rule would add the belief to $W_*$.
+\end{proof}
+
+These certificates must retain correlations between complete models.
+Replacing a belief by independently chosen intervals for table entries is
+an overapproximation and can destroy completeness of the calculation.
+For large symbolic model classes, the finite checks suggest SAT/SMT proof
+obligations, but no efficient general symbolic procedure is asserted here.
+
+\subsection{A three-world obstruction for a generated disjunction}
+
+\begin{example}[Pairwise distinguishability does not warrant conservativity]
+\label{seq:destructive}
+Take $H=\{u,v\}$ and two known witness extents $U=\{u\}$ and $V=\{v\}$.
+Two additional seed predicates have uncertain extents $P\subseteq U$ and
+$Q\subseteq V$. The evidence and background constraints admit exactly
+\[
+\begin{array}{c|cc|cc|c}
+\theta&P&Q&P(u)&Q(v)&D=P\cup Q\\ \hline
+1&\{u\}&\varnothing&1&0&\{u\}\\
+2&\varnothing&\{v\}&0&1&\{v\}\\
+3&\{u\}&\{v\}&1&1&\{u,v\}
+\end{array}
+\]
+The proposed generated characterization is the disjunction
+$D=\llbracket P\lor Q\rrbracket$. In each world the old witness family
+$\mathcal E_\theta=\{U,V,P,Q\}$ has object Dowker complex $S^0$.
+Adjoining $D$ preserves this complex in worlds 1 and 2, but adds the edge
+$\{u,v\}$ in world 3, making it contractible. Consequently, the
+conservativity target
+\[
+ F(\theta)=
+ \mathbf1\{|K(\mathcal E_\theta\cup\{D\})|
+                  \simeq |K(\mathcal E_\theta)|\}
+\]
+has values $(1,1,0)$. Equivalently, the augmented complex has ordinary
+zeroth Betti number $(2,2,1)$.
+
+The old singleton witnesses already separate $u$ and $v$, and their
+intersections, including the empty intersection, give every subset of
+$H$. Thus adjoining $D$ preserves both row equivalence and the FCA extent
+closure in \emph{all three worlds}. The uncertainty is specifically about
+topological conservativity, not complete model identity.
+
+Available commands $a$ and $b$ read $P(u)$ and $Q(v)$, respectively. Each
+read irreversibly locks the instrument. Formally,
+$X_\theta=\{\ell,d\}$, with initial state $\ell$; at $\ell$ the outputs
+are the displayed bits and both commands lead to $d$; at $d$ either command
+returns a common symbol $\bot$ and remains at $d$. All commands are enabled.
+The structure being investigated is unchanged; only access to it is lost.
+
+Every pair of initial worlds is distinguishable: $a$ separates 2 from both
+1 and 3, and $b$ separates 1 from 3. Nevertheless, no adaptive policy
+identifies $F$. If its first command is $a$, output 1 leaves worlds 1 and 3
+in the locked state. If its first command is $b$, output 1 leaves worlds
+2 and 3 in that state. These pairs disagree on $F$ and have identical
+future outputs. Stopping before a command also fails. This proves
+impossibility at every horizon, not merely at a particular budget.
+\end{example}
+
+A three-belief negative certificate is
+\[
+ \mathcal L=\{B_0,
+       \{(1,d),(3,d)\},\{(2,d),(3,d)\}\}.
+\]
+For the initial belief choose output 1 against either command; for either
+other belief choose $\bot$. This is directly checkable. Randomization cannot
+provide sure correctness either. Even correctness with probability one
+under every world is impossible: with finitely many worlds, the
+intersection of their probability-one successful random-seed events would
+contain a deterministic seed successful in all worlds.
+
+The obstruction is minimal in the number of initial hypotheses: with at
+most two hypotheses, either the target is already constant, or a policy
+distinguishing that pair identifies it. The general failed implication is
+\[
+ \bigl[\forall\theta,\theta'\text{ with }F(\theta)\ne F(\theta'),\
+       \exists\text{ a pair-separating experiment}\bigr]
+ \ \not\Rightarrow\
+ \bigl[\exists\text{ one executable policy identifying }F\bigr].
+\]
+The failure persists here with deterministic, total commands and Boolean
+initial responses; neither noise nor unsafe input is responsible.
+
+\subsection{Why there need not be a finest operational characterization}
+
+For a deterministic policy terminating on every world, its terminal
+transcripts partition $\Theta$.
+Call a partition \emph{recoverable} when some terminating policy has
+transcript blocks refining it. Recoverable partitions are closed under
+coarsening: a policy identifying a target also identifies any function of
+that target.
+
+\begin{proposition}[Failure of common-refinement closure]
+\label{seq:no-finest}
+Without replay or preservation of access, recoverable partitions need not
+be closed under common refinement. There need not be a single finest
+recoverable quotient representing all individually attainable
+characterizations.
+\end{proposition}
+\begin{proof}
+In Example~\ref{seq:destructive}, the bit $P(u)$ is recoverable by $a$,
+and the bit $Q(v)$ by $b$. Their partitions are
+$\{\{1,3\},\{2\}\}$ and $\{\{2,3\},\{1\}\}$. Their common
+refinement is the discrete partition, since the three bit pairs differ.
+No policy identifies that partition, since it would in particular identify
+$F$, contrary to the example. A finest recoverable partition would refine
+both recoverable bit partitions, hence would have to be discrete.
+\end{proof}
+
+Thus individually executable semantic predicates need not be jointly
+executable, even if their pointwise Boolean combination is well-defined.
+The two bits are measurements at explicitly addressed locations, not a
+claim that arbitrary states admit canonical names. The failed Boolean
+combination in the example is itself a label-independent topological claim.
+
+\subsection{What reset or persistent access restores}
+
+A \emph{replayable menu} $\mathcal T$ consists of experiments with
+responses $e:\Theta\to O_e$ that can each be executed from a common
+preparation, with that preparation recoverable between any two experiments.
+All observations made within an experiment are included in its response.
+Reset operations are assumed to produce no model-dependent information;
+if they do, that information must be included in the menu responses.
+Only policies using this declared menu and these resets are considered.
+Every experiment used must be admissible in every remaining model.
+In particular, a world-faithful reset has the form
+\[
+ (\theta,x)\longmapsto(\theta,x^0_\theta).
+\]
+It restores the original preparation within the same world, rather than
+synchronizing distinct possible worlds to a known state that has erased
+the original target. A replacement specimen qualifies only under an
+explicit assumption that it carries the same relevant hidden model.
+
+\begin{theorem}[Replay restores the static separation criterion]
+\label{seq:reset}
+For finite $\Theta$ and a replayable menu of globally admissible experiments,
+the following are equivalent:
+\begin{enumerate}
+\item Some finite adaptive sequence of menu experiments identifies $F$.
+\item For every pair $\theta,\theta'$ with different $F$-values, some
+      $e\in\mathcal T$ has $e(\theta)\ne e(\theta')$.
+\item $F$ is constant on the equivalence classes
+      $\theta\sim_{\mathcal T}\theta'$ defined by equality of all menu
+      responses.
+\end{enumerate}
+When these conditions hold, at most $|\Theta|-1$ experiments suffice
+along each branch, excluding reset cost. The quotient
+$\Theta/{\sim_{\mathcal T}}$ is itself recoverable. Hence the recoverable
+partitions are exactly its coarsenings.
+\end{theorem}
+\begin{proof}
+The equivalence of 2 and 3 is immediate. If 2 fails, the two worlds produce
+the same response to each menu experiment and therefore, inductively, the
+same transcript under every adaptive menu policy. This excludes 1.
+Conversely, retain the models matching the observed responses. Whenever
+$F$ is nonconstant on that set, choose a pair with different target values
+and a separating experiment. Replay makes it executable. Whatever response
+occurs, at least one of the selected pair is removed. At most
+$|\Theta|-1$ such strict eliminations are possible before $F$ becomes
+constant. Applying the same argument to the equivalence-class target
+proves recoverability of the quotient. Constancy on its classes is then
+necessary and sufficient for any target.
+\end{proof}
+
+In Example~\ref{seq:destructive}, one faithful reset between the two
+reads permits $a$, reset, $b$. The two bits determine the disjunction's
+conservativity and the augmented complex's homotopy type. Equally, if the
+reads leave the instrument live, $a$ followed by $b$ suffices without reset.
+The destructive and nondestructive interfaces have \emph{the same fresh
+response table}, Boolean semantics, and pairwise observational equivalence,
+but different reconstructible topological targets. An extensional test
+family alone therefore cannot determine operational reconstructibility.
+
+\subsection{Evidence refinement and access change obey different laws}
+
+\begin{proposition}[Two valid monotonicities and one invalid substitution]
+\label{seq:monotonicities}
+For fixed experimental configurations, if $\varnothing\ne C\subseteq B$,
+then $F[C]\subseteq F[B]$ and any policy identifying $F$ from $B$ also
+works from $C$. Thus both already-warranted and attainable targets are
+monotone under genuine evidence restriction at unchanged configurations.
+Adding commands while retaining the old commands' output and transition
+laws cannot remove an attainable target.
+
+By contrast, executing an information-producing command need not preserve
+future attainability, because its successor belief changes configurations
+as well as restricting models.
+\end{proposition}
+\begin{proof}
+Subset restriction preserves admissibility of every command used by a
+policy and gives successor subsets by the update formula. Induction down
+the policy tree proves the first assertion. Keeping an old policy proves
+the access-extension assertion.
+
+For the final assertion, add to Example~\ref{seq:destructive} a command
+$\bar a$ that, at $\ell$, reads $P(u)$ and remains at $\ell$, and
+that, at $d$, returns $\bot$ and remains at $d$. The target $F$
+is now identifiable by $\bar a$ followed, if necessary, by $b$. But taking
+the original destructive command $a$ and observing 1 gives strictly more
+information about the model, restricting it to $\{1,3\}$, while making
+$F$ unidentifiable from the locked successor. This successor is not a
+subset of the initial belief in the tagged configuration space.
+\end{proof}
+
+An access upgrade alone does not make a previously uncertain invariant
+\emph{already} warranted: it changes which future evidence can be obtained,
+not which outputs have been observed. Nor does it alter the actual
+model's invariant. When the target itself changes, for example from
+conservativity of one generated test to conservativity of another, one
+must recompute the target map rather than cite access monotonicity.
+
+\paragraph{Relation to established testing theory.}
+The policy-versus-pair distinction and irreversible information loss are
+classical, not new identification principles. Lee and Yannakakis study
+adaptive distinguishing sequences and their construction
+\cite{seqLY1994,seqLY1996}. Yannakakis's testing-game exposition explicitly
+allows a desired function of the unknown machine and notes that even a
+reduced machine need not admit a winning distinguishing strategy
+\cite{seqYannakakis2006}. Van den Bos and Vaandrager extend state
+identification to input/output transition systems, with partiality and
+adversarial output behavior \cite{seqBosVaandrager2021}. The criterion
+above is the standard finite belief-state reachability construction,
+with terminal sets determined by the selected structural invariant.
+The particular contribution here is its use to audit \emph{generated
+characterization conservativity}: three evidence-compatible incidence
+models, a topological target coarser than model identity, and explicit
+certificates showing exactly what a reset assumption changes. No priority
+claim is made for the testing machinery or the general warning against
+interchanging its quantifiers.
+
+
+\section{A scientific example with aliasing and calibrated intervention}
+\label{sec:sci-evidence-example}
+
+The known-frequency oscillator example in
+\emph{Generated Observations and Conservative Characterization Formation}
+separates pointwise generation from observation after a known evolution.
+The following extension makes uncertainty about the dynamics part of the
+world space. It gives a precise sequence of failures and successes:
+three observations leave a target characterization unwarranted; infinitely
+many observations on the same grid do not repair it; one ideal exact
+observation can repair it without robustness; and a new calibrated
+intervention can give a robust repair without a frequency bound. These are
+conditional identification results, not a deduction of an oscillator
+law from finitely many observations.
+
+\subsection{Explicit hypotheses, access, and the target claim}
+
+Choose position units once and for all. The passive hypothesis class is
+\[
+ \mathcal H=\{h=(a,v,\omega):a,v\in\mathbb R,\ \omega>0\},
+ \qquad
+ x_h(t)=a\cos(\omega t)+\frac{v}{\omega}\sin(\omega t).
+\]
+Thus $a=x_h(0)$ and $v=x_h'(0)$. Each hypothesis asserts that free motion
+obeys $x''=-\omega^2x$ for its own constant, unknown frequency $\omega$.
+No particular $\omega$ or $v$ is known. Membership of the actual system in
+$\mathcal H$, a calibrated position scale, accurate times, and persistence
+of the same trajectory are explicit assumptions. They are not consequences
+of the observations below.
+
+An experiment $e$ has a model-dependent prediction $P_e(h)$ and returns
+$y_e$ with a declared deterministic error bound $\eta_e\geq0$. Define
+\[
+ W(E)=\{h\in\mathcal H:|P_e(h)-y_e|\leq\eta_e
+                         \text{ for every }e\in E\}.
+\]
+The particular target characterization will be
+\[
+ \varphi(h)=[v>0].
+\]
+When $W(E)\ne\varnothing$, a positive certificate means
+$W(E)\subseteq\{v>0\}$; a negative certificate means
+$W(E)\subseteq\{v\leq0\}$. If both kinds of worlds remain, the evidence
+leaves the answer unresolved. An empty compatible set diagnoses a failure
+of the joint model, calibration, and error assumptions, not a positive
+certificate obtained by vacuous universal quantification.
+
+All pointwise functions of a fixed record agree on its evidence fibers.
+Consequently no algebraic manipulation of that record can decide
+$\varphi$ if a fiber contains velocities of both signs. The issue is
+whether a new experiment splits that fiber, not whether one can write
+down a formula containing the symbol $v$.
+
+\subsection{A complete alias fiber with opposite velocity signs}
+
+Fix a sampling interval $\tau>0$. Suppose that three exact observations are
+\begin{equation}\label{eq:sci-three-samples}
+ x(0)=1,\qquad x(\tau)=1,\qquad x(2\tau)=-1.
+\end{equation}
+
+\begin{proposition}[Exact compatible worlds]\label{prop:sci-alias-fiber}
+The worlds compatible with \eqref{eq:sci-three-samples} are precisely
+\[
+ h_k=(1,\lambda_k,|\lambda_k|),\qquad
+ \lambda_k=\frac{\pi/2+2\pi k}{\tau},\qquad k\in\mathbb Z.
+\]
+Their free trajectories are
+\[
+ x_k(t)=\cos(\lambda_k t)+\sin(\lambda_k t).
+\]
+For every integer $n\geq0$, all these worlds give the same position
+\[
+ x_k(n\tau)=\cos(n\pi/2)+\sin(n\pi/2).
+\]
+In particular, even the complete infinite exact grid record leaves
+$v>0$ undecided: $k\geq0$ has positive velocity and $k\leq-1$ has
+negative velocity.
+\end{proposition}
+\begin{proof}
+Every member of $\mathcal H$ satisfies the sampled recurrence
+\[
+ x((n+2)\tau)=2\cos(\omega\tau)x((n+1)\tau)-x(n\tau).
+\]
+The three observations force $\cos(\omega\tau)=0$. The middle observation
+then gives $(v/\omega)\sin(\omega\tau)=1$, so $v=\pm\omega$, with the
+sign fixed by $\sin(\omega\tau)$. Enumerating the positive frequencies
+with cosine zero gives exactly $v=\lambda_k$, $\omega=|\lambda_k|$.
+Since cosine is even and sine is odd, the displayed $x_k$ is the trajectory
+of $h_k$. At integer multiples of $\tau$, the additional phase $2\pi kn$
+vanishes modulo $2\pi$, proving the final assertion.
+\end{proof}
+
+This is not merely an underdetermined fit from too few data. The obstruction
+survives every additional observation allowed by the same passive grid
+protocol. A learner returning one preferred alias has selected a model;
+it has not certified that alias or even its velocity sign from this evidence.
+
+\subsection{Exact additional access is not robust additional access}
+
+\begin{proposition}[One ideal off-grid observation separates the aliases]
+\label{prop:sci-irrational}
+For any irrational $\alpha>0$, the map
+$k\mapsto x_k(\alpha\tau)$ is injective. Thus the three exact observations
+and one further exact observation at, for example, $t=\sqrt5\,\tau>2\tau$
+identify the world within $\mathcal H$ whenever the data are compatible.
+\end{proposition}
+\begin{proof}
+Write $z_k=\alpha(\pi/2+2\pi k)$. Equality of
+$\cos z_k+\sin z_k=\sqrt2\cos(z_k-\pi/4)$ and the corresponding expression
+for $\ell$ entails one of
+\[
+ z_k-z_\ell=2\pi m,
+ \qquad
+ z_k+z_\ell=\pi/2+2\pi m,
+ \qquad m\in\mathbb Z.
+\]
+The first implies $\alpha(k-\ell)=m$, hence $k=\ell$.
+The second implies
+$\alpha(1+2(k+\ell))=1/2+2m$, impossible because its nonzero integer
+coefficient of $\alpha$ is odd. This proves injectivity.
+\end{proof}
+
+The conclusion uses an exactly known irrational timing ratio and an exact
+real-valued measurement. It is a semantic identification statement, not a
+finite-precision laboratory protocol. In fact, it has a sharp instability.
+
+\begin{theorem}[Finite noisy passive observations cannot remove unbounded aliases]
+\label{thm:sci-noisy-passive}
+Retain the exact record \eqref{eq:sci-three-samples}, or even the complete
+exact integer-grid record. Add any finite list of passive observation times
+$t_1,\ldots,t_m$ with strictly positive error tolerances
+$\eta_1,\ldots,\eta_m$. If their reported values are the exact values of
+any one alias $h_{k_0}$, then the compatible worlds still contain aliases
+with arbitrarily large positive initial velocities and arbitrarily large
+negative initial velocities. In particular, neither the velocity sign nor
+any bounded interval containing all compatible velocities is certified.
+\end{theorem}
+\begin{proof}
+Set $\alpha_j=t_j/\tau$. For every $Q\geq1$, place the $Q^m+1$ points
+\[
+ (\{\ell\alpha_1\},\ldots,\{\ell\alpha_m\}),
+ \qquad 0\leq\ell\leq Q^m,
+\]
+into $Q^m$ half-open cubes of side $1/Q$ in $[0,1)^m$.
+Two points share a cube, giving an integer $q$, $1\leq q\leq Q^m$, with
+\[
+ \max_j\|q\alpha_j\|_{\mathbb R/\mathbb Z}\leq 1/Q.
+\]
+There are arbitrarily large such near-return integers with discrepancies
+tending to zero. Indeed, if one can choose an unbounded subsequence of the
+$q$ this is immediate. Otherwise one fixed nonzero $q$ occurs for
+arbitrarily large $Q$, so every $q\alpha_j$ is an integer and its arbitrarily
+large multiples give exact returns.
+
+The derivative of $f(s)=\cos s+\sin s$ has absolute value at most $\sqrt2$.
+Hence, along those near returns, both choices $k=k_0+q$ and $k=k_0-q$
+satisfy
+\[
+ |x_k(t_j)-x_{k_0}(t_j)|
+ \leq 2\pi\sqrt2\,
+       \|q\alpha_j\|_{\mathbb R/\mathbb Z}\longrightarrow0
+ \quad(1\leq j\leq m).
+\]
+Eventually all the strictly positive tolerances are met. The associated
+velocities $\lambda_{k_0\pm q}$ tend to $+\infty$ and $-\infty$.
+\end{proof}
+
+The theorem also blocks a worst-case sound finite adaptive passive
+protocol at such a transcript. Run the protocol with readings equal to a
+chosen alias's exact outputs. If it stops after finitely many noisy
+measurements, those chosen times form a finite list, and the proof produces
+opposite-sign worlds compatible with the entire same transcript. This does
+not forbid useful statistical inference under an additional noise law or
+prior. It forbids the stated deterministic certificate under the stated
+unbounded hypothesis class. Timing uncertainty cannot improve the conclusion,
+since allowing exactly the nominal times already leaves the countermodels.
+
+\paragraph{A frequency bound is a different kind of repair.}
+If one separately assumes $0<\omega\tau<\pi$, the alias family above reduces
+to $k=0$. More generally, exact samples $a=x(0)$, $b=x(\tau)\ne0$,
+$c=x(2\tau)$ determine
+\begin{equation}\label{eq:sci-band-reconstruction}
+ r=\frac{a+c}{2b},\qquad
+ \omega=\frac{\arccos r}{\tau},\qquad
+ v=\frac{\omega(b-ar)}{\sqrt{1-r^2}}
+\end{equation}
+when $r\in(-1,1)$. This is a valid conditional reconstruction. The bandwidth
+restriction is additional model information, not something inferred merely
+by applying $\arccos$ to the original grid data. When $b=0$ but the trajectory
+is nonzero and nonresonant, a fourth sample allows the recurrence to be used
+at a nonzero middle sample. The identically zero passive trajectory cannot
+identify its frequency at all.
+
+\subsection{A calibrated intervention supplies the missing scale}
+
+Now enlarge the available actions, not merely the formula language. Assume
+that, at a specified instant, a calibrated impulse of known size $u>0$
+changes velocity by $u$, leaves position continuous, and leaves the same
+$\omega$ in force afterwards. This is an explicit extension of the model's
+intervention semantics. As an alternative continuation immediately after the third observation,
+apply this impulse at time $2\tau$ and measure the resulting position $z$ at
+$3\tau$. The off-grid and impulse protocols are alternative continuations of the
+three-sample record.
+No reset or repeat preparation is needed within this intervention protocol.
+
+For general exact passive samples $a,b,c$ with $b\ne0$, put
+\begin{equation}\label{eq:sci-response}
+ r=\frac{a+c}{2b},\qquad
+ d=z-(2rc-b).
+\end{equation}
+The term $2rc-b$ is the \emph{model-predicted} position at $3\tau$ without
+the impulse. Linearity of each explicitly assumed oscillator gives
+\[
+ d=\frac{u}{\omega}\sin(\omega\tau).
+\]
+It is the calibrated response amplitude, rather than a further phase
+observation alone, that supplies the missing scale.
+
+\begin{proposition}[Exact reconstruction with a calibrated impulse]
+\label{prop:sci-active-reconstruction}
+Suppose $b\ne0$ and $d\ne0$. Compatible exact observations determine at most
+one member of $\mathcal H$ with the specified intervention semantics:
+\begin{equation}\label{eq:sci-active-formula}
+ \omega=\frac{u\sqrt{1-r^2}}{|d|},\qquad
+ v=\frac{u(b-ar)}{d},\qquad x(0)=a.
+\end{equation}
+There is a compatible member exactly when $r\in(-1,1)$ and the reconstructed
+frequency satisfies
+\[
+ \cos(\omega\tau)=r,
+ \qquad
+ \operatorname{sign}(\sin(\omega\tau))=\operatorname{sign}(d).
+\]
+For \eqref{eq:sci-three-samples}, specifically,
+\[
+ z_k=-1+\frac{u}{\lambda_k},\qquad
+ d_k=z_k+1=\frac{u}{\lambda_k},\qquad
+ v=\lambda_k=\frac{u}{d_k},\qquad\omega=|\lambda_k|.
+\]
+Thus a single new action followed by a grid-timed position observation
+separates all the old passive aliases, with no upper frequency bound.
+\end{proposition}
+\begin{proof}
+Let $\theta=\omega\tau$. Since $r=\cos\theta$ and
+$d=u\sin\theta/\omega$, squaring the second identity gives
+$\omega^2d^2=u^2(1-r^2)$. Also
+$b-ar=(v/\omega)\sin\theta=vd/u$. These identities force
+\eqref{eq:sci-active-formula}. Necessity of the phase checks is immediate.
+Conversely, the phase checks and the formula for $\omega$ imply
+$d=u\sin(\omega\tau)/\omega$. The formula for $v$ then gives the sample $b$;
+the recurrence gives $c$; and the response relation gives $z$.
+For the special alias family, $r=0$, $b-ar=1$, and $2rc-b=-1$,
+so the last display follows directly.
+\end{proof}
+
+In the observation-generation language, augment state to $(x,v,\omega)$,
+write $A=\Phi_\tau$ for free evolution and $J_u(x,v,\omega)=(x,v+u,\omega)$
+for the new impulse. With $p(x,v,\omega)=x$, the old probes $p\circ A^n$
+agree on all $h_k$, whereas
+\[
+ (p\circ A\circ J_u\circ A^2)(h_k)=-1+u/\lambda_k
+\]
+is injective on this fiber. The new probe does not factor through the old
+passive record. Its interpretation can be written before the experiment,
+but its value is newly evidenced only after that intervention is available
+and performed.
+
+\paragraph{What the intervention does not guarantee.}
+If $\sin(\omega\tau)=0$, then $d=0$ for every such impulse, and free
+one-step position is $x\mapsto(-1)^n x$ for $\omega\tau=n\pi$,
+independent of velocity. Any sequence of velocity impulses applied only
+at grid times leaves this position-only obstruction in place. One needs a
+nonresonant timing option, a different sensor, or additional justified
+information. Nor may impulse calibration be silently inferred from the
+passive data. If its magnitude is unknown, the equation $d=u/\lambda$
+can be preserved by rescaling positive $u$ and positive $\lambda$ together,
+so frequency magnitude remains underdetermined. A nonzero data residual
+may reflect an incorrect model, a mistimed or miscalibrated impulse, or
+measurement error; it does not isolate the cause by itself.
+
+\subsection{A finite, deterministic, noise-aware certificate}
+
+The success above need not rest on exact passive data. Suppose the measured
+positions at $0,\tau,2\tau,3\tau$ are $A,B,C,Z$, each with error at most
+$\eta$, where the last is taken after the known impulse $u>0$ at $2\tau$.
+Assume $|B|>\eta$, and calculate
+\begin{align*}
+ \widehat r&=\frac{A+C}{2B},&
+ \rho&=\frac{\eta(1+|\widehat r|)}{|B|-\eta},\\
+ J&=[\widehat r-\rho,\widehat r+\rho]\cap[-1,1],&
+ R&=\max_{r\in J}|r|,\\
+ \widehat g&=B-A\widehat r,&
+ q&=\eta(1+R)+|A|\rho,\\
+ \widehat d&=Z-2\widehat rC+B,&
+ \xi&=2\eta(1+R)+2|C|\rho.
+\end{align*}
+An empty $J$ is inconsistent with the joint assumptions. Otherwise every
+compatible world obeys
+\begin{equation}\label{eq:sci-interval-controls}
+ |r-\widehat r|\leq\rho,\qquad
+ |(b-ar)-\widehat g|\leq q,\qquad
+ |d-\widehat d|\leq\xi.
+\end{equation}
+These outer interval checks alone do not establish that a compatible oscillator exists; the nonempty-model premise below is separate. No stochastic independence of the errors is being assumed. These are
+conservative outer bounds; they need not describe the exact compatible set.
+
+\begin{proposition}[Positive velocity certificate under bounded errors]
+\label{prop:sci-noise-certificate}
+Assume that the joint compatible model set $W(E)$ is nonempty. If
+\[
+ \widehat g-q>0,\qquad \widehat d-\xi>0,
+\]
+then every compatible world has $v>0$, and
+\begin{equation}\label{eq:sci-v-interval}
+ \frac{u(\widehat g-q)}{\widehat d+\xi}
+ \leq v\leq
+ \frac{u(\widehat g+q)}{\widehat d-\xi}.
+\end{equation}
+If additionally $R<1$, every compatible frequency satisfies
+\begin{equation}\label{eq:sci-w-interval}
+ \frac{u\sqrt{1-R^2}}{\widehat d+\xi}
+ \leq\omega\leq\frac{u}{\widehat d-\xi}.
+\end{equation}
+These conclusions require no a priori upper frequency bound.
+\end{proposition}
+\begin{proof}
+Write $a,b,c,z$ for the true four positions. Since $|b|\geq|B|-\eta>0$,
+\[
+ \left|\frac{a+c}{2b}-\frac{A+C}{2B}\right|
+ \leq\frac{2\eta|B|+\eta|A+C|}
+             {2|B|(|B|-\eta)}=\rho.
+\]
+Using $r\in J$, the other two bounds follow from
+\begin{align*}
+ |(b-ar)-(B-A\widehat r)|
+ &\leq\eta+\eta|r|+|A|\rho,\\
+ |(z-2rc+b)-(Z-2\widehat rC+B)|
+ &\leq2\eta+2\eta|r|+2|C|\rho.
+\end{align*}
+Both numerator and denominator in $v=u(b-ar)/d$ are then positive;
+interval division gives \eqref{eq:sci-v-interval}. Finally
+$\omega=u\sqrt{1-r^2}/d$, with
+$\sqrt{1-R^2}\leq\sqrt{1-r^2}\leq1$, gives
+\eqref{eq:sci-w-interval}.
+\end{proof}
+
+\begin{example}[A numerical certificate with no frequency cutoff]
+Set $\tau=1$ and $u=1$ in calibrated units. Suppose the readings are
+\[
+ A=B=1,\qquad C=-1,\qquad Z=-1+2/\pi,
+ \qquad\eta=0.02.
+\]
+They are compatible, for example, with $\omega=v=\pi/2$.
+Here
+\[
+ \widehat r=0,\quad \rho=1/49,\quad R=1/49,\quad
+ \widehat g=1,\quad q=2/49,\quad
+ \widehat d=2/\pi,\quad\xi=4/49.
+\]
+In particular $\widehat d-\xi>0$ and $\widehat g-q>0$. Outward rounding
+of the certified bounds yields
+\[
+ 1.3354\leq v\leq1.8754,\qquad
+ 1.3919\leq\omega\leq1.8019.
+\]
+The initial velocity sign is therefore warranted throughout the compatible
+model class. In contrast, keeping the same three passive readings and
+replacing this intervention by any finite collection of noisy passive
+position observations admits the opposite-sign countermodels of
+Theorem~\ref{thm:sci-noisy-passive} when those readings follow the stated
+alias trajectory. The difference is the added experimental action, not
+an improvement in symbolic expressiveness.
+\end{example}
+
+\subsection{The law itself remains conditional}
+
+Finite successful observations do not establish membership in
+$\mathcal H$ among all smooth or analytic trajectory models. For a finite
+set of observation times $t_i$, let
+\[
+ \widetilde x(t)=x_h(t)+\epsilon\prod_i(t-t_i)^2,
+ \qquad\epsilon\ne0.
+\]
+This analytic alternative has the same observed positions and first
+derivatives at every $t_i$, but it is not an undamped oscillator trajectory
+on $\mathbb R$: the added nonconstant polynomial is unbounded, whereas
+every positive-frequency trajectory in $\mathcal H$ is bounded. Increasing
+the factors' powers preserves any specified finite collection of derivative
+observations. For a controlled run, analogous smooth perturbations between
+measurement and intervention times preserve the recorded positions and the
+prescribed velocity jump while changing the unobserved free dynamics.
+Thus even the active certificate is a certificate \emph{relative to the
+specified free-motion and intervention model}, not an unconditional discovery
+of the law.
+
+If only smoothness rather than analyticity is assumed, even an entire
+continuous past trajectory through time $T$ does not fix the future:
+adding a nonzero smooth function supported after $T$ preserves that entire
+past. An independently justified physical class, error envelope, and
+intervention semantics are therefore part of the warrant, not bookkeeping
+that may be omitted once a reconstruction formula has been found.
+
+\paragraph{What changes at each stage.}
+The target formula $[v>0]$ has the same meaning throughout. Adding algebraic
+consequences leaves its evidential status unchanged on the alias fiber.
+Additional exact off-grid access can split that fiber, but lacks a bounded-noise
+guarantee without further restrictions. A frequency cutoff changes the
+admissible model class. A calibrated intervention changes available actions
+and produces a response that can yield a robust sign certificate. All of
+these operations can refine a characterization, but they do so for different
+reasons and with different warrants. None, by itself, says that an associated
+FCA closure, Dowker complex, or homotopy type has been preserved: those are
+separate structural obligations on the chosen representation.
+
+
+\section{Relation to established work and limits of the results}
+\label{sec:prior-art}
+
+Incomplete FCA and attribute exploration already distinguish certain and
+possible implications, reliable counterexamples, background knowledge, and
+expert-dependent completion criteria. Holzer's two-part treatment is a
+particularly close predecessor \cite{HolzerI,HolzerII}; the accessible
+publisher abstracts establish this scope, but do not justify claims about
+uninspected theorem hypotheses or complexity. Borchmann and Ganter give an
+abstract exploration theory with partial object descriptions and explicit
+background constraints \cite{BorchmannGanter}. Its completeness is relative
+to the domain expert and background theory, not a guarantee that a finite
+sample establishes every population law.
+
+Whole-context possible-world semantics is also established. Conditional
+tables and repeated variables retain dependencies that independent missing
+entries cannot express \cite{ImielinskiLipski}. Representation and query
+language affect the complexity of certain answers, including classical
+coNP-completeness phenomena \cite{AbiteboulKanellakisGrahne}. The finite
+Boolean reduction in this note proves the complexity of its own stated
+joint-preservation problem; the database results are precedent for the
+method and the computational warning, not substitutes for that reduction.
+
+Active reconstruction from tests is substantially older than this
+formulation. Angluin's $L^*$ supplies correctness and termination using
+membership queries and an equivalence/counterexample teacher
+\cite{Angluin}. Coalgebra learning via duality explicitly uses formulas as
+tests and proves conditional correctness and termination for richer
+state-based systems \cite{BarloccoKupkeRot}. Their hypotheses provide real
+access to answers and counterexamples; a finite table alone does not
+supply that access. The finite identification results here make different,
+explicit assumptions: a specified candidate family and computable
+candidate responses, together with physically licensed protocols.
+
+Predictive-state representations use success probabilities of future
+action--observation tests as state coordinates \cite{LittmanSuttonSingh}.
+Statistically consistent spectral learning and planning results require
+rank, sampling, and model assumptions \cite{BootsSiddiqiGordon}; nonuniform
+sampling introduces further estimation issues \cite{GrinbergEtAl}. These
+are not captured by noiseless Boolean completion semantics. A predictive
+representation of reachable histories also need not reconstruct every
+latent state or produce a lumpable quotient of the original state space.
+
+The contributions established here are conditional mathematical results
+and worked examples for a specified reconstruction problem. They separate
+worldwise conservativity, identifiable targets, executable experiments,
+and changes of access; give checkable finite certificates and exact
+obstructions; and state the assumptions under which new observations
+support a new coordinate or structural conclusion. No priority claim is
+made for the component constructions or their combination. In particular,
+merely assembling FCA, behavioral quotients, and Dowker complexes is not
+by itself a new unification theorem.
+
+Several limitations remain substantive. The results do not choose a
+correct scientific model family, establish physical laws from syntax,
+create unavailable preparations or resets, infer noiseless outcomes from
+finite noisy data, or justify a topology as intrinsic to a physical
+substrate. General stochastic inference, unbounded model classes,
+quantitative persistence guarantees, and efficient general homotopy
+classification require additional theorems. The positive advance is that
+these obligations are stated separately and the conclusions proved here
+can be traced to explicit evidence and operational assumptions.
+
+
+
+\section{Scope of the formal verification}
+\label{sec:formal-scope}
+
+A companion Lean development, \texttt{EvidenceConservativity.lean}, checks
+45 theorems against the FCA definitions in \texttt{GeneratedTests.lean}.
+It was checked with Lean 4.35.0 and the pinned Mathlib revision
+\texttt{56a005855ea17e0b0958f73ec801ae140b0a1679}. Its axiom audit reports
+only the standard \texttt{propext}, \texttt{Classical.choice}, and
+\texttt{Quot.sound}; it reports no \texttt{sorryAx}.
+
+The checked mathematical scope includes the guaranteed-consequence
+closure and its evidence-refinement law, stabilization of the simultaneous
+closure iteration by $|H|$ for finite $H$ without finiteness assumptions on
+worlds or tests, the least common closed hull and its opposing refinement
+law, the uniform-conjunction criterion, and an explicit correlated-edge
+counterexample. Relevant declarations include
+\texttt{saturation\_stabilizes},
+\texttt{commonClosedHull\_least},
+\texttt{commonClosedHull\_fixed\_iff},
+\texttt{commonClosedHull\_idempotent},
+\texttt{commonClosedHull\_restrict},
+\texttt{guaranteedClosure\_idempotent},
+\texttt{guaranteedClosure\_restrict}, and
+\texttt{uniformConjunction\_iff}.
+
+The declarations \texttt{closed\_extent\_cannot\_split\_rows} and
+\texttt{closurePreserved\_futureEquivalent} also establish that closed
+extensions preserve row comparisons and comparisons after any fixed
+declared family of state maps. They do not formalize monoid action laws
+or the induced quotient construction. The closure theorems are stated in
+Lean for FCA-generated closures; the mathematical proof uses only closure
+operator properties, but the source does not separately package the result
+for arbitrary bundled closure operators.
+
+This is a formal verification of the stated core, not of the entire note.
+The code does not verify SAT solving, the complexity reduction, optimal
+experiment selection, sequential-policy synthesis, the physical oscillator
+model, bounded-error certificates, statistical inference, or homotopy
+claims. Its nerve statements concern finite nonempty faces, not geometric
+realizations. Finite regression and numerical tests support additional
+examples but do not replace their proofs or extend the kernel-checked
+scope. Nonempty compatible evidence and actual-world membership remain
+explicit assumptions for evidential use; the formal definitions also
+cover empty evidence without interpreting its vacuous claims as knowledge.
+
+
+\begin{thebibliography}{99}
+\bibitem{HolzerI}
+R. Holzer, \emph{Knowledge Acquisition under Incomplete Knowledge using
+Methods from Formal Concept Analysis: Part I}, Fundamenta Informaticae
+63(1) (2004), 17--39.
+\url{https://doi.org/10.3233/FUN-2004-63102}.
+
+\bibitem{HolzerII}
+R. Holzer, \emph{Knowledge Acquisition under Incomplete Knowledge using
+Methods from Formal Concept Analysis: Part II}, Fundamenta Informaticae
+63(1) (2004), 41--63.
+\url{https://doi.org/10.3233/FUN-2004-63103}.
+
+\bibitem{BorchmannGanter}
+D. Borchmann and B. Ganter, \emph{Abstract Attribute Exploration with
+Partial Object Descriptions}, 2015.
+\url{https://arxiv.org/abs/1511.06191}.
+
+\bibitem{ImielinskiLipski}
+T. Imieli\'nski and W. Lipski Jr., \emph{Incomplete Information in
+Relational Databases}, Journal of the ACM 31(4) (1984), 761--791.
+\url{https://doi.org/10.1145/1634.1886}.
+
+\bibitem{AbiteboulKanellakisGrahne}
+S. Abiteboul, P. C. Kanellakis, and G. Grahne,
+\emph{On the Representation and Querying of Sets of Possible Worlds},
+Theoretical Computer Science 78 (1991), 159--187.
+\url{https://users.encs.concordia.ca/~grahne/papers/akg91.pdf}.
+
+\bibitem{Angluin}
+D. Angluin, \emph{Learning Regular Sets from Queries and Counterexamples},
+Information and Computation 75 (1987), 87--106.
+\url{https://doi.org/10.1016/0890-5401(87)90052-6}.
+
+\bibitem{BarloccoKupkeRot}
+S. Barlocco, C. Kupke, and J. Rot, \emph{Coalgebra Learning via Duality},
+FoSSaCS 2019, 62--79. See Section 6.3 of the author preprint for
+correctness and termination; theorem numbering differs by version.
+\url{https://doi.org/10.1007/978-3-030-17127-8_4}.
+\url{https://arxiv.org/abs/1902.05762}.
+
+\bibitem{LittmanSuttonSingh}
+M. L. Littman, R. S. Sutton, and S. Singh,
+\emph{Predictive Representations of State}, Advances in Neural Information
+Processing Systems 14 (2001).
+\url{https://proceedings.neurips.cc/paper/2001/file/1e4d36177d71bbb3558e43af9577d70e-Paper.pdf}.
+
+\bibitem{BootsSiddiqiGordon}
+B. Boots, S. M. Siddiqi, and G. J. Gordon,
+\emph{Closing the Learning-Planning Loop with Predictive State
+Representations}, Robotics: Science and Systems, 2010; expanded version,
+International Journal of Robotics Research 30(7) (2011), 954--966.
+\url{https://homes.cs.washington.edu/~bboots/files/RSSclosingtheloop.pdf}.
+
+\bibitem{GrinbergEtAl}
+Y. Grinberg et al., \emph{Learning Predictive State Representations from
+Non-Uniform Sampling}, Proceedings of AAAI, 2018.
+\url{https://ojs.aaai.org/index.php/AAAI/article/view/11744}.
+
+\bibitem{seqLY1994}
+D. Lee and M. Yannakakis, \emph{Testing Finite-State Machines: State
+Identification and Verification}, IEEE Transactions on Computers 43(3)
+(1994), 306--320. \url{https://doi.org/10.1109/12.272431}.
+
+\bibitem{seqLY1996}
+D. Lee and M. Yannakakis, \emph{Principles and Methods of Testing Finite
+State Machines: A Survey}, Proceedings of the IEEE 84(8) (1996),
+1090--1123. \url{https://doi.org/10.1109/5.533956}.
+
+\bibitem{seqYannakakis2006}
+M. Yannakakis, \emph{Testing, Optimization, and Games}, ATVA tutorial,
+2006, slides 8--17.
+\url{https://www-verimag.imag.fr/EVENTS/2006/ATVA/ATVAtutorials/Yannakakis_ATVA2006_Tutorial.pdf}.
+
+\bibitem{seqBosVaandrager2021}
+P. van den Bos and F. Vaandrager, \emph{State Identification for Labeled
+Transition Systems with Inputs and Outputs}, Science of Computer
+Programming 209 (2021), 102678.
+\url{https://doi.org/10.1016/j.scico.2021.102678}.
+\url{https://arxiv.org/abs/1907.11034}.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,13 @@
+# Evolving operational incidence, working outline
+
+Started 5 November 2026. Parent request is to derive, rather than assume, change-of-experimental-interface comparison across predictive states, formal concepts, supported incidence topology, and native composition.
+
+Read sources: common_generation_note.tex (fixed acted Chu context, unique concept lift, maximal partial topology), adaptive_experiment_formation.tex (finite transition-stable refinement, exact belief-image update, native service extraction), contextual_reduction_wiring.tex (realizability image and quotient comparison; adequacy separation), native_operations_across_doctrines.tex (pending closer read).
+
+Provisional construction: native state carrier X; generators A of transformations; seed labelled tests E. Generate experiments by inverse images of seed tests under executable words. New tests or operations enlarge the generated family. Their meet closure is the FCA extent lattice. Adding tests refines observational equality, so Q_new -> Q_old; simultaneously L_old -> L_new is meet preserving with left adjoint old closure. Object marking is preserved by the backward left adjoint, not by forward inclusion. Object nerves include forward. Supported old concepts include forward, but closure retractions commute only up to order inequality. The backward concept projection is supported only on an exact maximal domain.
+
+Composition target: source wiring P with projections to components, generator operations preserving the wiring relation. Compare (i) generate component test theories then pull back to P; (ii) generate joint operational tests from pulled-back seeds. Intertwining determines one inclusion. Exactness requires mixed experiment columns to be definable by component closure, plus enough composite operations to expose all component experiment generators. Derive test language/saturation criterion, then distinguish equality of observational kernel from equality of full FCA closure family. Need native obstruction witnesses and exact commutation checks.
+
+Possible evidence-restriction theorem: changing carrier by a subset and adding tests commute strictly on incidence but the state-quotient square is a pullback only with a lifting/saturation condition. This isolates correlation loss, distinct from transition-stable belief-image update already in adaptive_experiment_formation.
+
+Scope guard: single fixed runtime is a relative envelope, not unrestricted invention. Operation generators must have native witnesses. Boolean conjunction completion is semantic unless an admissible execution contract supplies test combination/reset.

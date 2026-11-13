@@ -1,0 +1,109 @@
+structure ResourceObservation.OrderedAbelianGroupData.{u} (G : Type u) : Type u
+number of parameters: 1
+fields:
+  ResourceObservation.OrderedAbelianGroupData.add.{u} : G → G → G
+  ResourceObservation.OrderedAbelianGroupData.zero.{u} : G
+  ResourceObservation.OrderedAbelianGroupData.neg.{u} : G → G
+  ResourceObservation.OrderedAbelianGroupData.le.{u} : G → G → Prop
+  ResourceObservation.OrderedAbelianGroupData.refl.{u} : ∀ (a : G),
+      ResourceObservation.OrderedAbelianGroupData.le.{u} self a a
+  ResourceObservation.OrderedAbelianGroupData.trans.{u} : ∀ {a b c : G},
+      ResourceObservation.OrderedAbelianGroupData.le.{u} self a b →
+        ResourceObservation.OrderedAbelianGroupData.le.{u} self b c →
+          ResourceObservation.OrderedAbelianGroupData.le.{u} self a c
+  ResourceObservation.OrderedAbelianGroupData.antisymm.{u} : ∀ {a b : G},
+      ResourceObservation.OrderedAbelianGroupData.le.{u} self a b →
+        ResourceObservation.OrderedAbelianGroupData.le.{u} self b a → Eq.{u + 1} a b
+  ResourceObservation.OrderedAbelianGroupData.assoc.{u} : ∀ (a b c : G),
+      Eq.{u + 1}
+        (ResourceObservation.OrderedAbelianGroupData.add.{u} self
+          (ResourceObservation.OrderedAbelianGroupData.add.{u} self a b) c)
+        (ResourceObservation.OrderedAbelianGroupData.add.{u} self a
+          (ResourceObservation.OrderedAbelianGroupData.add.{u} self b c))
+  ResourceObservation.OrderedAbelianGroupData.comm.{u} : ∀ (a b : G),
+      Eq.{u + 1} (ResourceObservation.OrderedAbelianGroupData.add.{u} self a b)
+        (ResourceObservation.OrderedAbelianGroupData.add.{u} self b a)
+  ResourceObservation.OrderedAbelianGroupData.add_zero.{u} : ∀ (a : G),
+      Eq.{u + 1}
+        (ResourceObservation.OrderedAbelianGroupData.add.{u} self a
+          (ResourceObservation.OrderedAbelianGroupData.zero.{u} self))
+        a
+  ResourceObservation.OrderedAbelianGroupData.add_neg.{u} : ∀ (a : G),
+      Eq.{u + 1}
+        (ResourceObservation.OrderedAbelianGroupData.add.{u} self a
+          (ResourceObservation.OrderedAbelianGroupData.neg.{u} self a))
+        (ResourceObservation.OrderedAbelianGroupData.zero.{u} self)
+  ResourceObservation.OrderedAbelianGroupData.translate.{u} : ∀ {a b : G},
+      ResourceObservation.OrderedAbelianGroupData.le.{u} self a b →
+        ∀ (c : G),
+          ResourceObservation.OrderedAbelianGroupData.le.{u} self
+            (ResourceObservation.OrderedAbelianGroupData.add.{u} self a c)
+            (ResourceObservation.OrderedAbelianGroupData.add.{u} self b c)
+constructor:
+  ResourceObservation.OrderedAbelianGroupData.mk.{u} {G : Type u} (add : G → G → G) (zero : G) (neg : G → G)
+    (le : G → G → Prop) (refl : ∀ (a : G), le a a) (trans : ∀ {a b c : G}, le a b → le b c → le a c)
+    (antisymm : ∀ {a b : G}, le a b → le b a → Eq.{u + 1} a b)
+    (assoc : ∀ (a b c : G), Eq.{u + 1} (add (add a b) c) (add a (add b c)))
+    (comm : ∀ (a b : G), Eq.{u + 1} (add a b) (add b a)) (add_zero : ∀ (a : G), Eq.{u + 1} (add a zero) a)
+    (add_neg : ∀ (a : G), Eq.{u + 1} (add a (neg a)) zero)
+    (translate : ∀ {a b : G}, le a b → ∀ (c : G), le (add a c) (add b c)) :
+    ResourceObservation.OrderedAbelianGroupData.{u} G
+def ResourceObservation.BoundedUniversalAgreement : Int →
+  Int → Int → ResourceObservation.Profile.{0} Int → ResourceObservation.Profile.{0} Int → Prop :=
+fun l r C A B =>
+  ∀ (U U' V V' : ResourceObservation.Profile.{0} Int),
+    ResourceObservation.Upward.{0} (fun x1 x2 => LE.le.{0} x1 x2) U →
+      ResourceObservation.Upward.{0} (fun x1 x2 => LE.le.{0} x1 x2) U' →
+        ResourceObservation.Upward.{0} (fun x1 x2 => LE.le.{0} x1 x2) V →
+          ResourceObservation.Upward.{0} (fun x1 x2 => LE.le.{0} x1 x2) V' →
+            ResourceObservation.LowerBounded l U →
+              ResourceObservation.LowerBounded l U' →
+                ResourceObservation.LowerBounded r V →
+                  ResourceObservation.LowerBounded r V' →
+                    ResourceObservation.AgreeOn.{0} A U U' →
+                      ResourceObservation.AgreeOn.{0} B V V' →
+                        ResourceObservation.AgreeOn.{0} (ResourceObservation.IntWindow (HAdd.hAdd.{0, 0, 0} l r) C)
+                          (ResourceObservation.Product.{0} Int.add (fun x1 x2 => LE.le.{0} x1 x2) U V)
+                          (ResourceObservation.Product.{0} Int.add (fun x1 x2 => LE.le.{0} x1 x2) U' V')
+@ResourceObservation.OrderedAbelianGroupData.universal_agreement_iff_nonempty_forces_all.{u_1} : ∀ {G : Type u_1}
+  (g : ResourceObservation.OrderedAbelianGroupData.{u_1} G) (B : ResourceObservation.Profile.{u_1} G),
+  ResourceObservation.UniversalProductAgreement.{u_1} (ResourceObservation.OrderedAbelianGroupData.add.{u_1} g)
+      (ResourceObservation.OrderedAbelianGroupData.le.{u_1} g) B ↔
+    ∀ (b : G), B b → ∀ (x : G), B x
+@ResourceObservation.OrderedAbelianGroupData.universal_agreement_iff_empty_or_all_decidable.{u_1} : ∀ {G : Type u_1}
+  (g : ResourceObservation.OrderedAbelianGroupData.{u_1} G) (B : ResourceObservation.Profile.{u_1} G)
+  [Decidable (Exists.{u_1 + 1} fun b => B b)],
+  ResourceObservation.UniversalProductAgreement.{u_1} (ResourceObservation.OrderedAbelianGroupData.add.{u_1} g)
+      (ResourceObservation.OrderedAbelianGroupData.le.{u_1} g) B ↔
+    (∀ (b : G), ¬B b) ∨ ∀ (b : G), B b
+@ResourceObservation.OrderedAbelianGroupData.universal_agreement_iff_empty_or_all.{u_1} : ∀ {G : Type u_1}
+  (g : ResourceObservation.OrderedAbelianGroupData.{u_1} G) (B : ResourceObservation.Profile.{u_1} G),
+  ResourceObservation.UniversalProductAgreement.{u_1} (ResourceObservation.OrderedAbelianGroupData.add.{u_1} g)
+      (ResourceObservation.OrderedAbelianGroupData.le.{u_1} g) B ↔
+    (∀ (b : G), ¬B b) ∨ ∀ (b : G), B b
+ResourceObservation.bounded_universal_agreement_iff_coverage : ∀ (l r C : Int)
+  (A B : ResourceObservation.Profile.{0} Int),
+  ResourceObservation.BoundedUniversalAgreement l r C A B ↔
+    (∀ (a : Int), ResourceObservation.IntWindow l (HSub.hSub.{0, 0, 0} C r) a → A a) ∧
+      ∀ (b : Int), ResourceObservation.IntWindow r (HSub.hSub.{0, 0, 0} C l) b → B b
+ResourceObservation.bounded_product_agreement_of_coverage : ∀ (l r C : Int)
+  (A B U U' V V' : ResourceObservation.Profile.{0} Int),
+  (∀ (a : Int), ResourceObservation.IntWindow l (HSub.hSub.{0, 0, 0} C r) a → A a) →
+    (∀ (b : Int), ResourceObservation.IntWindow r (HSub.hSub.{0, 0, 0} C l) b → B b) →
+      ResourceObservation.LowerBounded l U →
+        ResourceObservation.LowerBounded l U' →
+          ResourceObservation.LowerBounded r V →
+            ResourceObservation.LowerBounded r V' →
+              ResourceObservation.AgreeOn.{0} A U U' →
+                ResourceObservation.AgreeOn.{0} B V V' →
+                  ResourceObservation.AgreeOn.{0} (ResourceObservation.IntWindow (HAdd.hAdd.{0, 0, 0} l r) C)
+                    (ResourceObservation.Product.{0} Int.add (fun x1 x2 => LE.le.{0} x1 x2) U V)
+                    (ResourceObservation.Product.{0} Int.add (fun x1 x2 => LE.le.{0} x1 x2) U' V')
+'ResourceObservation.OrderedAbelianGroupData.universal_agreement_iff_nonempty_forces_all' does not depend on any axioms
+'ResourceObservation.OrderedAbelianGroupData.universal_agreement_iff_empty_or_all_decidable' does not depend on any axioms
+'ResourceObservation.OrderedAbelianGroupData.universal_agreement_iff_empty_or_all' depends on axioms: [propext,
+ Classical.choice.{u},
+ Quot.sound.{u}]
+'ResourceObservation.integer_refund_counterexample' depends on axioms: [propext]
+'ResourceObservation.bounded_universal_agreement_iff_coverage' depends on axioms: [propext, Quot.sound.{u}]
+'ResourceObservation.preorder_nonempty_proper_compositional' does not depend on any axioms

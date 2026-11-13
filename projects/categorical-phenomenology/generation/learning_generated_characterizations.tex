@@ -1,0 +1,1157 @@
+% Standalone research note. Intentionally supplied as uncompiled TeX.
+% No external input files or bibliography database are required.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,enumitem}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\R}{\mathbb R}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\im}{\operatorname{im}}
+\title{Learning generated characterizations\\
+\large Training responses as a route from compositional learners to operational concepts and topology}
+\author{}\date{5 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+Further learning can distinguish parameters that presently make the same
+predictions. This observation supplies a concrete research direction:
+generate the observations required by allowed training interventions, prove
+when they close to a sufficient state, and ask which conceptual and
+geometric characterizations survive that reduction and its operations.
+For scalar deep linear networks of arbitrary finite depth we prove exact
+finite-step closure, global behavioral classification, finite experimental
+identification, and serial assembly compatible with reverse-mode feedback.
+The resulting state reduction preserves formal concepts and Dowker homology
+for every common family of response tests. Growing that family and executing
+an intervention have different, explicitly proved variances: behavioral
+quotients coarsen under forgetting tests, concept extents include under
+acquisition, and topology carries coherent actions only on its maximal
+witness-supported domains. The same mechanism exposes its own limits.
+Exhaustive threshold tests trivialize the Dowker complex; exact identification
+needs declared access; finite-horizon learning need not control an all-horizon
+DFA, concept lattice, or persistence module. These results form a worked
+research direction rather than a claim of new general realization theory or
+a completed account of theory formation. Close categorical, intrinsic-dynamics,
+observability, and FCA--Dowker predecessors are distinguished throughout.
+\end{abstract}
+
+\section{The question and the proposed advance}
+A useful connection among categorical learning, automata, formal concept
+analysis (FCA), and topological data analysis (TDA) should explain why a
+learning process generates particular distinctions and what those distinctions
+allow us to do. Declaring that four constructions can be applied to the same
+table does not answer that question. The starting point here is a failure of
+a proposed state description: two systems have the same present prediction,
+but one permitted training intervention makes their predictions differ.
+The failure forces a new observable. Its own future behavior can force further
+observables, until a closed state is obtained or a claimed closure fails.
+
+There are three substantive steps in the development below. First, an exact
+family shows that this process can produce a finite, experimentally identifiable
+state, not just a definition involving all possible futures. Second, that state
+supports the actual forward, backward, and update interfaces needed for serial
+assembly. Third, a common response-test family transports the resulting
+operations into behavioral quotients, concept adjunctions, and precisely
+restricted topological actions. The last step makes the bridge more than a
+list of constructions. Its domain restrictions and witness dependence also
+show why those characterizations cannot be identified with one another.
+
+Much of the surrounding theory is established. Learners already form
+compositional state machines: Fong--Spivak--Tuy\'eras and parametrized-lens
+learning supply composition \cite{fong,cruttwell}; Spivak's polynomial
+coalgebra account supplies learner languages and logic
+\cite{spivaklanguages}, and his later adaptive-arrangements work supplies a
+broader composition-to-dynamics framework \cite{spivak2026}. Current-prediction
+closure is directly studied by intrinsic training dynamics
+\cite{marcotte}. Neural tangent hierarchies and nonlinear or polynomial
+observability already generate additional response observables
+\cite{jacot,huang,hermann,boreale,sontag}. The research question is therefore
+not whether learning can be placed in a category, made into an automaton,
+or assigned a topology. It is whether a \emph{specified operational reduction}
+can be generated, obtained, and used across these structures with correct
+composition, evidence, and loss-of-information guarantees.
+
+The exact calculations below are a test of that direction. Their novelty has
+not been established. They go beyond a local failure example by treating all
+depths, finite updates, singular states, access, and composition in one family;
+they do not establish general discovery of an appropriate language or theory.
+Earlier project notes already prove reverse-differentiation compatibility for
+fixed finite evidence, acted concept/Dowker comparisons, and constraints on
+language revision and executable access \cite{project}. Those results are
+retained as foundations, not reintroduced as discoveries.
+
+\paragraph{Which state machine is being characterized.}
+The main machine in this note has a learner's parameters as state and
+\emph{training interventions} as inputs. Optimizer memory would also belong
+to its state if present. This differs from a trained recurrent or weighted
+automaton, whose state changes when it reads a deployment input word while
+its trained parameters remain fixed. The distinction will matter in the
+final horizon counterexample. Neither a finite-dimensional parameter vector
+nor a finite-dimensional linear realization implies a finite-state DFA.
+
+\section{Allowed training generates the tests that a state must answer}
+Let $X$ be a nonempty set, $u_a:X\to X$ a supplied family of total operations,
+and $E_0$ a family of Boolean tests on $X$. Operations can be training steps
+indexed by data, targets, learning rates, or optimizer controls. For a word
+$w=a_1\cdots a_k$, use $u_w=u_{a_k}\cdots u_{a_1}$. Define the generated tests
+by actual precomposition:
+\[
+ E_*=\{e\circ u_w:e\in E_0,\ w\text{ a finite word}\}.
+\]
+Tests may be retained as labelled syntax, so identical columns need not be
+identified. Put $x\sim_E y$ iff $e(x)=e(y)$ for every $e\in E$.
+
+\begin{proposition}[The operationally forced refinement]
+The relation $\sim_{E_*}$ is the largest equivalence relation contained in
+$\sim_{E_0}$ and preserved by every $u_a$. Its quotient carries the unique
+induced operations and the original readouts. Any adequate deterministic
+representation whose equal states have equal future $E_0$ observations
+identifies only $\sim_{E_*}$-equivalent points.
+\end{proposition}
+\begin{proof}
+If $x\sim_{E_*}y$, every continuation test after $u_a$ is another generated
+test, so $u_a x\sim_{E_*}u_a y$. Conversely, a congruence refining
+$\sim_{E_0}$ preserves all finite operation words, so related states satisfy
+the same $e\circ u_w$. The quotient operations are then well defined and
+unique by surjectivity. The last assertion is precisely future-observation
+adequacy.
+\end{proof}
+This is standard behavioral minimization, not a new algorithm. Its useful
+role here is to specify exactly what training forces a characterization to
+retain. Nonlinear observation algebras supply related differential
+constructions \cite{hermann}. A finite representation of the quotient,
+an effective experiment-selection policy, or a finite identification bound
+does not follow from its set-theoretic existence.
+
+\paragraph{Differential warning.}
+For a smooth evaluator $F:P\to B\subseteq\R^m$ which is a surjective
+submersion onto an open set, the vector fields
+$-\nabla(\ell\circ F)$ project through $F$, for every smooth loss $\ell$,
+if and only if
+\[
+ DF_pDF_p^{\mathsf T}=\overline K(F(p))                         
+\]
+for one matrix-valued function $\overline K$. Indeed the pushed vector field
+is $-DF_pDF_p^{\mathsf T}\nabla\ell(F(p))$; testing linear losses proves
+necessity, and the formula proves sufficiency. Local smooth sections of a
+submersion show that the descended matrix is smooth. This is the tangent
+kernel mechanism \cite{jacot}; intrinsic training dynamics and their relation
+to architecture variables and conservation laws have substantial direct
+prior art \cite{marcotte}. It is not a new theorem-level claim here.
+On the positive quadrant, for $F(p,q)=pq$, points $(1,1)$ and $(2,1/2)$ have equal predictions but
+kernel values $2$ and $17/4$. Thus current prediction is not even an
+infinitesimal state for arbitrary future training. The required additional
+observables can be generated by controlled training responses; choosing
+and proving a finite closure is a separate constructive task.
+
+
+\paragraph{A generated test is not yet an acquired observation.}
+The expressions $e\circ u_w$ describe the answers a proposed state must
+support. They do not assert that every experiment is permitted, affordable,
+or repeatable. Measuring several futures from the same starting state
+usually requires reset or reproducible preparation. A learned model can
+predict a column without that column becoming empirical evidence. This
+separation is essential even when all semantic maps are known exactly.
+For real-valued observations, taking all rational threshold predicates
+separates the values and gives the same behavioral equivalence; it does
+not provide a useful topological witness family automatically.
+
+\section{A closed training state at every scalar depth}
+The following family supplies a constructive answer rather than assuming
+that a finite quotient exists. It deliberately keeps the optimizer and
+intervention interface simple enough to admit exact proofs. The expressive
+limitations of scalar chains remain limitations of this example.
+
+\subsection{Architecture and exact training interface}
+Fix an integer $n\ge2$. The architecture is a chain of $n$ scalar linear layers with parameter $w=(w_1,\ldots,w_n)\in\R^n$. Its forward function is
+\[
+ f_w(x)=F(w)x,\qquad F(w)=\prod_{i=1}^n w_i.
+\]
+We initially use the input $x=1$ and squared loss
+\[
+ L_y(w)=\tfrac12(F(w)-y)^2.
+\]
+For a fixed, known step size $\eta>0$, an input symbol $y\in\R$ means one simultaneous Euclidean gradient step
+\begin{equation}\label{eq:update}
+ U_y(w)_i=w_i-\eta(F(w)-y)\prod_{j\ne i}w_j.
+\end{equation}
+All gradients are evaluated at the old parameter. There is no momentum, weight decay, stochastic sampling, clipping, parameter sharing, or per-layer learning rate. Those are different interfaces.
+
+The resulting real-output Moore machine has state $\R^n$, output $F$, and input alphabet $\R$. Define $w\sim v$ if $F(U_{y_k}\cdots U_{y_1}w)=F(U_{y_k}\cdots U_{y_1}v)$ for every finite target word, including the empty word. This is a statement about \emph{learning responses}, not merely equality of present predictions.
+
+Write $s_i=w_i^2$ and let $e_k(s)$ be the elementary symmetric polynomial of degree $k$ in $s_1,\ldots,s_n$, with $e_0=1$. Set
+\begin{equation}\label{eq:q}
+ q_n(w)=(F(w),e_1(s),\ldots,e_{n-1}(s)),\qquad e_n(s)=F(w)^2.
+\end{equation}
+For depth-one blocks we use $q_1(w_1)=F=w_1$ and $E_w(z)=z+F^2$. The optional depth-zero unit has $F=1$ and $E=1$. For computations it is convenient to retain the generating polynomial
+\[
+ E_w(z)=\prod_{i=1}^n(z+s_i)=\sum_{k=0}^n e_k(s)z^{n-k}.
+\]
+
+\subsection{Exact finite-step closure}
+\begin{theorem}[The response polynomial]\label{thm:response}
+Let $t=\eta(F(w)-y)$. For every $w\in\R^n$, including parameters containing zero entries,
+\begin{equation}\label{eq:response}
+ F(U_yw)=F(w)+\sum_{k=1}^n(-t)^k F(w)^{k-1}e_{n-k}(s).
+\end{equation}
+There is a polynomial map $\overline U_y$ on the coordinates in \eqref{eq:q} such that
+\[
+ q_n\circ U_y=\overline U_y\circ q_n.
+\]
+Thus $q_n$ supplies an exact state for every future finite training word.
+\end{theorem}
+\begin{proof}
+Expand the product of the $n$ updated coordinates. Choosing the gradient term at the indices in a subset $S$ of size $k\ge1$ gives
+\[
+ (-t)^k\prod_{i\in S}\prod_{j\ne i}w_j\prod_{i\notin S}w_i
+ =(-t)^kF^{k-1}\prod_{i\notin S}s_i.
+\]
+The identity involves only nonnegative powers for $k\ge1$ and hence does not divide by a weight. Summing over $S$ gives \eqref{eq:response} globally.
+
+For closure, the squared updated coordinates are
+\[
+ s_i'=s_i-2tF+t^2\prod_{j\ne i}s_j.
+\]
+For each $k$, $e_k(s')$ is a symmetric polynomial in $s_1,\ldots,s_n$ with coefficients polynomial in $F$ and $t$. By the fundamental theorem of symmetric polynomials, it is polynomial in $e_1(s),\ldots,e_n(s),F,t$. Substitute $e_n=F^2$ and $t=\eta(F-y)$. Together with \eqref{eq:response}, this gives $\overline U_y$. Induction proves the assertion about arbitrary target words.
+\end{proof}
+
+The first newly required observation is $e_{n-1}$: it multiplies the linear response to $t$. Higher $e_k$ affect the actual finite next step through the higher powers of $t$. They are not decorative invariants attached after reconstruction. At depth $n$, keeping only $F$ and its first-order response is generally insufficient for an exact finite update. For an explicit depth-three witness, take $w=(1,1,2)$ and $v=(\sqrt a,\sqrt a,2/a)$ with $a=(\sqrt{33}-1)/2$. Both have $F=2$ and $e_2=9$, since $a^3-9a+8=0$, but $e_1(w)=6$ and $e_1(v)=2a+4/a^2\ne6$. Their response polynomials therefore differ in the $t^2$ coefficient. At depth two, $(1,1)$ and $(2,1/2)$ already have equal $F=1$ but first-response coefficients $2$ and $17/4$.
+
+\begin{remark}[An independent invariant-theoretic explanation]
+Let $G_n$ consist of permutations and sign changes $w_i\mapsto\epsilon_iw_i$ with $\prod_i\epsilon_i=1$. These are orthogonal symmetries of $F$. A monomial invariant under the even sign changes has either all exponents even or all exponents odd. Hence an invariant polynomial is $A(s)+F B(s)$; permutation invariance makes $A,B$ symmetric. Consequently
+\[
+ \R[w_1,\ldots,w_n]^{G_n}=\R[F,e_1,\ldots,e_{n-1}].
+\]
+The generators are algebraically independent, as follows on a chamber of distinct positive squared weights from the Vandermonde Jacobian. Since Euclidean gradient descent is equivariant under these orthogonal symmetries, it induces polynomial updates on these invariant coordinates. This is familiar finite-reflection-group invariant theory, not a new categorical construction.
+\end{remark}
+
+\subsection{Complete training equivalence, including singular states}
+Define the dead set
+\[
+ D_n=\{w:\text{at least two of the }w_i\text{ are zero}\}.
+\]
+\begin{theorem}[Exact behavioral classification]\label{thm:classification}
+For the interface \eqref{eq:update}, two states are behaviorally equivalent if and only if either
+\begin{enumerate}[label=(\roman*)]
+\item both belong to $D_n$, or
+\item neither belongs to $D_n$ and $q_n(w)=q_n(v)$.
+\end{enumerate}
+Equality of $q_n$ is equivalently equality of the signed product and of the multiset of squared weights. On $F\ne0$, its classes are precisely the $G_n$-orbits. Thus the invariant-coordinate state is behaviorally minimal away from $D_n$, whereas its whole image is not minimal: all dead states must additionally be identified.
+\end{theorem}
+\begin{proof}
+Every gradient term in \eqref{eq:update} vanishes on $D_n$, so all those states are fixed and output zero. Equal $q_n$ implies equivalence by Theorem~\ref{thm:response}.
+
+Conversely, equivalent states have the same current $F$. Suppose $F\ne0$. As $y$ varies, $t=\eta(F-y)$ ranges over $\R$. Equality of their one-step outputs makes the polynomials \eqref{eq:response} equal. Comparing the coefficient of $(-t)^k$ for $1\le k\le n-1$ and dividing by the known nonzero $F^{k-1}$ recovers $e_{n-k}(s)$. Hence $q_n(w)=q_n(v)$.
+
+If $F=0$ but $w\notin D_n$, exactly one weight vanishes. Put $\kappa=e_{n-1}(s)>0$. For any $y_0\ne0$, all initially nonzero weights stay unchanged and the zero weight becomes $\eta y_0\prod_{j\ne i}w_j$. The next output is therefore $F'=\eta y_0\kappa\ne0$, and the newly nonzero squared weight is
+\[
+ c=\eta^2y_0^2\kappa>0.
+\]
+This separates $w$ from every dead state. If two one-zero states are equivalent, they have equal $\kappa$, hence equal $c$; their successors are equivalent with nonzero output. The preceding case gives equal successor generating polynomials. But
+\[
+ E_{U_{y_0}w}(z)=(z+c)E_w(z)/z.
+\]
+Thus equality of successor polynomials implies equality of $E_w$ and $E_v$, and therefore of $q_n(w),q_n(v)$.
+
+Finally, the coefficients of $E_w$ determine its multiset of real roots $-s_i$. When no weight vanishes, equality of squares up to permutation and equality of the signed product give exactly an even-sign-change permutation orbit.
+\end{proof}
+
+\begin{proposition}[No generic low-dimensional state collapse]
+On any chamber with fixed signs and $0<s_1<\cdots<s_n$, $q_n$ is injective and has rank $n$. Any continuous Euclidean-valued statistic that distinguishes all training behaviors on that chamber needs at least $n$ coordinates.
+\end{proposition}
+\begin{proof}
+The elementary symmetric coordinates $(e_1,\ldots,e_n)$ have Jacobian, up to sign, $\prod_{i<j}(s_i-s_j)$, which does not vanish there. Replacing $e_n$ by the fixed-sign square root $F$ and $s_i$ by $w_i$ preserves rank. The chamber is an open $n$-manifold; its continuous injective image cannot lie in $\R^k$ for $k<n$, by invariance of dimension.
+\end{proof}
+Thus arbitrarily large training state can be necessary even when the predictor has only one scalar degree of freedom. The construction derives an operationally adequate state; it does not promise compression.
+
+\subsection{Obtaining the generated observations}
+The following experiment uses exact readout, known architecture and step size, unrestricted targets, and \emph{reset or cloned access to the same starting state}. Reset is an additional access assumption. A single unreset training trajectory does not supply these counterfactual responses.
+
+\begin{theorem}[Finite response identification]\label{thm:identify}
+Suppose $F\ne0$ is known. Choose $n-1$ distinct nonzero scalars $t_1,\ldots,t_{n-1}$ and query one-step targets $y_j=F-t_j/\eta$, always from the same initial state. The resulting $n-1$ output measurements determine $q_n(w)$ exactly.
+
+If $F=0$, one nonzero-target query distinguishes the dead class from the one-zero case. In the latter case, at most $n-1$ further reset protocols of length two identify $q_n(w)$.
+\end{theorem}
+\begin{proof}
+Subtract $F+(-t_j)^nF^{n-1}$ from the $j$th response. The remaining observations satisfy
+\[
+ b_j=\sum_{k=1}^{n-1}(-t_j)^kF^{k-1}a_k,
+ \qquad a_k=e_{n-k}(s).
+\]
+The square matrix $V_{jk}=(-t_j)^kF^{k-1}$ is an invertible Vandermonde matrix after nonzero row and column scalings. Therefore $a=V^{-1}b$.
+
+For $F=0$, use the first query from the proof of Theorem~\ref{thm:classification}. Its output is zero exactly on $D_n$. Otherwise it determines $F'$, $\kappa$ and $c$. Repeatedly reset the original state, apply that same first target, and then use the nonzero-output identification protocol. Recover the original $E_w$ from $E_{w'}$ by $E_w(z)=zE_{w'}(z)/(z+c)$.
+\end{proof}
+
+If the original $F$ and query choices are exact but the vector $b$ has error at most $\varepsilon$ in a chosen norm, then
+\[
+ \|\widehat a-a\|\le\|V^{-1}\|\varepsilon.
+\]
+This is a conditional conditioning bound, not a guarantee for unknown/noisy architecture or uncertain $F$. The factors $F^{k-1}$ expose a genuine instability as $F\to0$ for higher coefficients. Recovering individual squared weights from polynomial roots introduces further instability near repeated roots. Exact behavioral identification therefore does not entail robust parameter identification.
+
+\subsection{The continuous hierarchy and a generated law}
+For gradient flow with a differentiable scalar loss $\ell(F)$, write $a=\ell'(F)$. Directly from $\dot w_i=-a\prod_{j\ne i}w_j$,
+\begin{equation}\label{eq:flow}
+ \dot F=-a e_{n-1},\qquad
+ \dot e_k=-2(n-k+1)aF e_{k-1}\quad(1\le k\le n-1).
+\end{equation}
+Indeed $\dot s_i=-2aF$ for every $i$, and each degree-$(k-1)$ square-free monomial occurs $n-k+1$ times in $\sum_i\partial e_k/\partial s_i$. The equal derivatives of the $s_i$ give the established balancedness conservation laws $s_i-s_j=\mathrm{constant}$; these are standard deep-linear-network facts \cite{saxe,du}.
+
+These flow conservation laws must not be transferred to a finite gradient step. With $t=\eta a$, the exact finite-step identity is
+\[
+ s_i'-s_j'=(s_i-s_j)\left(1-t^2\prod_{k\ne i,j}s_k\right).
+\]
+At depth two this is also visible in the closed update
+\[
+ F'=(1+t^2)F-te_1,\qquad e_1'=(1+t^2)e_1-4tF.
+\]
+Initialization-indexed intrinsic flow and a state supporting all finite updates are therefore distinct requirements.
+
+The hierarchy is finite and triangular: the evolution of the initially forced response $e_{n-1}$ forces $e_{n-2}$, and so on. This is a concrete specialization of response-hierarchy reasoning, not a claim to have invented the neural tangent hierarchy.
+
+There is also an exact constraint between current prediction and trainability:
+\begin{equation}\label{eq:amgm}
+ e_{n-1}(s)\ge n|F|^{2(n-1)/n}.
+\end{equation}
+For nonzero $F$, apply AM--GM to the $n$ positive numbers $\prod_{j\ne i}s_j$; their product is $F^{2(n-1)}$. Equality holds precisely when all $s_i$ coincide. Continuity gives the inequality at zero. For fixed nonzero $F$, $e_{n-1}$ is unbounded above by making one squared weight large and compensating with another. Thus present prediction alone gives a lower bound, but no finite upper bound, on initial response speed at fixed nonzero loss derivative.
+
+This is a usable law generated within the declared model: measured prediction constrains possible response, and a response measurement tests balancedness or the model assumptions. It is not empirically warranted merely because a categorical model exists.
+
+\subsection{Serial composition commutes with the reduced update}
+Consider independent scalar chains $A,B$ of depths $m,n$, with products $F_A,F_B$ and polynomials $E_A,E_B$. Their serial composite has
+\begin{equation}\label{eq:compose}
+ F=F_AF_B,\qquad E=E_AE_B,\qquad
+ e_k=\sum_{i+j=k}e_i^Ae_j^B.
+\end{equation}
+This defines an associative polynomial assembly map $C(q_m,q_n)=q_{m+n}$, with the degree-zero chain as unit if desired.
+
+\begin{theorem}[Compositional response realization]\label{thm:composition}
+Give the composite a scalar cotangent $a$ at its product output and perform one simultaneous gradient step with common step size $\eta$. The backward pass gives $a_A=aF_B$ and $a_B=aF_A$. Updating the two reduced block states with these cotangents and then applying $C$ gives exactly the same result as updating the assembled reduced state with cotangent $a$:
+\[
+ C\bigl(\overline U^{(m)}_{aF_B}(q_m),
+        \overline U^{(n)}_{aF_A}(q_n)\bigr)
+ =\overline U^{(m+n)}_a\bigl(C(q_m,q_n)\bigr).
+\]
+Here $\overline U_a$ denotes the polynomial update induced by $w_i\mapsto w_i-\eta a\prod_{j\ne i}w_j$, and all feedback values use the old states.
+\end{theorem}
+\begin{proof}
+The product rule gives $\partial_{w_i^A}(F_AF_B)=F_B\partial_{w_i^A}F_A$ and its counterpart for $B$. Therefore the original parameter update computed blockwise with the stated cotangents equals the original composite update coordinate by coordinate. Apply $q_{m+n}$ and use Theorem~\ref{thm:response} for each block and \eqref{eq:compose}. This proves the displayed equation on all realizable reduced states. The convolution in \eqref{eq:compose} is associative because polynomial multiplication is associative.
+\end{proof}
+
+For the open function $x\mapsto Fx$, an output cotangent $\lambda$ returns input cotangent $F\lambda$ and drives the parameter update with $a=x\lambda$. Thus the same statement respects the forward, backward, and update interfaces, not just the forward scalar prediction. It is a concrete realization of the compositional discipline supplied by parametrized lenses, rather than a second proof of the general lens framework.
+
+\paragraph{What it cannot preserve.}
+Assembly forgets which block contained which weight. That is valid only when internal boundaries are inaccessible and the optimizer treats weights identically. For depth two, $(1,2)$ and $(2,1)$ have equal $(F,e_1)=(2,5)$. With layer-specific continuous learning rates $r_1,r_2$, however,
+\[
+ \dot F=-(F-y)(r_1w_2^2+r_2w_1^2).
+\]
+The two response coefficients are $4r_1+r_2$ and $r_1+4r_2$, so $r_1\ne r_2$ distinguishes them. Intermediate-layer readout, freezing a named layer, parameter sharing, and optimizer memory likewise require a new analysis. The observation interface determines which architecture information may be discarded.
+The assembly theorem does not assert that component concept lattices or
+Dowker complexes combine by a product or tensor formula. A chosen global
+test pulls back along $C$ to a test on the pair of reduced states; it need
+not separate into independently observed component tests. The theorem
+proves sufficiency for these global responses, not reconstruction from
+arbitrary separate component tables.
+
+
+\section{The response reduction transports concepts and topology}
+\label{sec:comparison}
+We now use the state derived from the specified learning dynamics, rather than attach an
+unrelated relation to a parameter set. Let $X=\R^n$, let $Z=q_n(X)$ be
+its \emph{realizable} reduced state space, and use the induced updates
+$\overline U_y$. Every test of a prediction after a finite training word
+factors through $q_n$. In particular, for a specified predicate $b$ and
+word $w$,
+\[
+ b(F(U_wx))=b(\overline F(\overline U_wq_n(x))).
+\]
+The same holds for any response protocol proved to be determined by $q_n$.
+This factorization is what makes a structural comparison legitimate. It
+would fail for newly allowed layer-specific observations or interventions
+that distinguish parameters in one $q_n$ fibre.
+The full context on $X$ is a semantic consequence of the specified model.
+An experiment samples only selected rows and columns; it does not establish
+a global implication about all initial states without separately warranted
+model assumptions.
+
+\begin{proposition}[A sufficient state preserves the common response context]
+\label{prop:reduction}
+Let $q:X\twoheadrightarrow Z$ be a surjection, and let the same labelled
+family $E$ define relations satisfying
+\[
+ xRe\quad\Longleftrightarrow\quad q(x)\overline R e.
+\]
+Then inverse image along $q$ gives an isomorphism between the two full FCA
+extent lattices, and between their supported concept cores. The induced
+simplicial map from the object Dowker complex on $X$ to that on $Z$ is a
+homotopy equivalence. These comparisons are natural on homology for an
+increasing family of test labels. If $q$ commutes with supplied operations,
+they also intertwine those operations on their witness-supported domains.
+\end{proposition}
+\begin{proof}
+Every column on $X$ is the inverse image of the corresponding column on
+$Z$. Every closed extent is an intersection of columns, including the empty
+intersection. It is therefore $q$-saturated; surjectivity makes inverse
+image a bijection between these intersection families, preserving and
+reflecting inclusion. Nonemptiness of extents and of their common-test
+sets is preserved, giving the supported-core statement.
+
+A finite subset is a Dowker simplex when some test is true at all of its
+vertices. This condition shows that $q$ induces a simplicial map. Choose
+a set-theoretic section $s:Z\to X$. The same condition makes $s$ simplicial,
+with $qs=\id$. For every source simplex $\sigma$, the finite set
+$\sigma\cup sq(\sigma)$ has every common witness of $\sigma$; hence
+$\id$ and $sq$ are contiguous simplicial maps and have homotopic
+realizations. A single section works throughout increasing test families.
+The homology inverse of the induced isomorphism is unique, independently
+of this choice. Finally, $qu_a=\bar u_aq$ makes the forward squares commute;
+the same witness condition identifies the corresponding supported domains.
+\end{proof}
+
+This proposition is a duplicate-row reduction, not a claim that the
+underlying Euclidean spaces $X$ and $Z$ are homotopy equivalent. The section
+need not be continuous in their Euclidean topologies or experimentally
+implementable. It also does not require $q_n$ to be behaviorally minimal:
+its redundant distinctions inside the dead set do not alter any of these
+response-test contexts. One may instead use the behavioral quotient that
+collapses the dead set, with the same conclusion.
+
+The result supplies a precise role for the exact learning theorem. All
+further comparisons can be performed on the reduced response state without
+changing the response distinctions, extent-lattice structure, or Dowker
+homology proved to be preserved here. Object multiplicity and raw simplex
+counts are not preserved by a duplicate-row reduction. It does not
+say that choosing that context, or its topological witnesses, is canonical.
+We next calculate what happens when the tests are acquired or an operation
+is executed. These are different transformations.
+
+\subsection{One explicit family of training success tests}
+To give the witnesses an operational question, fix a desired output $z$,
+a nonempty finite set $A_0\subset\R$ of target controls, a maximum word
+length $t\in\mathbb N$, and a tolerance $r\geq0$. Designate the tests
+\[
+ E_{t,r}=\{e_{w,r}:w\in A_0^*,\ |w|\leq t\},\qquad
+ e_{w,r}(x)=[|F(U_wx)-z|\leq r].
+\]
+For a smooth score version, write the identical test as
+$(F(U_wx)-z)^2\leq r^2$. For each fixed word this score is polynomial
+in $q_n(x)$ by Theorem~\ref{thm:response}, so the later score-drift
+comparison can use radius $r^2$ without differentiating an absolute value.
+Keep word labels even if two tests happen to have equal columns. A common
+witness for a finite set of starting states is now a \emph{single training
+protocol} that brings all of them into the desired output band. The Dowker
+complex records which groups of preparations share such a protocol; it does
+not claim to recover the topology of parameter space. Formal concepts record
+closed sets of preparations together with all protocols that succeed on them.
+The finite-depth row quotient distinguishes preparations by their success
+patterns across exactly these protocols.
+
+Every one of these tests factors through $q_n$. For $y\in A_0$, prepending
+$y$ gives the literal identity
+\[
+ e_{w,r}(U_yx)=e_{yw,r}(x),
+ \qquad v_y:E_{t,r}\to E_{t+1,r}.
+\]
+Thus the next two theorems apply to this same actual response family with
+operation budget one. Their maximal topological domain consists precisely
+of groups for which the prescribed first target $y$ can be followed by a
+common successful continuation. Increasing $t$ adds protocols; increasing
+$r$ changes the success condition. These are separate, meaningful indices.
+
+This restriction to designated controls and success tests is a witness
+policy, not a theorem that these tests determine every future real output.
+Its row quotient can be coarser than full training-behavior equivalence;
+$q_n$ is still sufficient but need not be minimal for it. The earlier
+identification protocol can require targets outside $A_0$. Nothing here
+claims that the resulting topology is nontrivial, optimal, or empirically
+known without executing or otherwise warranting the relevant protocols.
+
+\subsection{Test acquisition produces three diagrams}
+Let $E_t\subseteq E_s$ for $t\leq s$ be a growing family of tests, with
+fixed interpretation $R\subseteq X\times E_\infty$. Write
+\[
+ C_e=\{x:xRe\},\qquad
+ U'_t=\{e\in E_t:U\subseteq C_e\},\qquad
+ c_t(U)=\bigcap_{e\in U'_t}C_e.
+\]
+An empty intersection is $X$. Define
+\begin{align*}
+ Q_t&=X/{\sim_{E_t}},\\
+ L_t&=\{A\subseteq X:c_t(A)=A\},\\
+ C_t&=\{A\in L_t:A\ne\varnothing,\ A'_t\ne\varnothing\},\\
+ K_t&=\{\varnothing\}\cup
+ \{U\subseteq X:0<|U|<\infty,\ U'_t\ne\varnothing\}.
+\end{align*}
+Here $C_t$ is the supported concept core, not the full concept lattice.
+The full lattice always has a least element and hence contractible order
+complex. Empty-support extrema must be treated by their actual support,
+not deleted indiscriminately.
+
+\begin{theorem}[Acquisition comparison, including infinite state carriers]
+\label{thm:acquisition}
+For $t\leq s$, there are canonical surjections $Q_s\to Q_t$ and literal
+inclusions $L_t\subseteq L_s$, $C_t\subseteq C_s$, and $K_t\subseteq K_s$.
+The inclusion $L_t\hookrightarrow L_s$ preserves arbitrary meets, and
+$c_t:L_s\to L_t$ is its left adjoint. For each homological degree $k$ and
+coefficient field, the filtrations $K_t$ and the order complexes of $C_t$
+have naturally isomorphic homology persistence modules. The result holds
+for any set-sized $X$ and test families. Finite-dimensional barcode claims
+require their additional finiteness or tameness hypotheses.
+\end{theorem}
+\begin{proof}
+More tests refine row equivalence, giving the surjections. Every old closed
+extent is an intersection of old columns and hence still an intersection
+of new columns; this gives $L_t\subseteq L_s$. Common witnesses remain
+available, proving the two support inclusions. Intersections are meets in
+both lattices, and for $A\in L_s$, $B\in L_t$,
+$c_t(A)\subseteq B$ iff $A\subseteq B$, proving the adjunction.
+
+For the topology, let $P_t$ consist of all nonempty supported subsets of
+$X$, including infinite subsets. Closure is an extensive idempotent
+monotone map $P_t\to P_t$ whose image is $C_t$: the common-test identity
+$(c_t(U))'_t=U'_t$ preserves support. Inclusion $C_t\to P_t$ is a homotopy
+equivalence on order complexes, since $\id\leq c_t$ and $c_t$ fixes $C_t$.
+These inclusions are strictly natural in $t$.
+
+The inclusion of the nonempty finite face poset $\mathcal F(K_t)$ into
+$P_t$ is also strictly natural. For each $A\in P_t$, its lower fibre is
+the nonempty finite subsets of $A$. This is a nonempty filtered poset,
+since union gives an upper bound to every finite collection, and its
+order complex is contractible. Quillen's Theorem A \cite{quillen}
+therefore makes $|\mathcal F(K_t)|\to|P_t|$ a homotopy equivalence.
+For finite $X$ this inclusion is simply equality. Thus the strictly natural
+span
+\[
+ |\mathcal F(K_t)|\longrightarrow |P_t|\longleftarrow |C_t|
+\]
+consists of objectwise homotopy equivalences. The first space is the
+barycentric subdivision of $|K_t|$. Applying homology gives the claimed
+natural isomorphisms. Empty posets cause no exception.
+\end{proof}
+The use of $P_t$ matters: for infinite $X$, a closed extent can be infinite
+and is not a finite simplex. Writing it directly as an object of the finite
+face poset would be a false proof. This result specializes established
+FCA--Dowker comparisons and their functorial versions
+\cite{ayzenberg,brun,dowker}; no historical novelty is asserted.
+
+\subsection{Operations consume observation budget}
+Suppose an operation $u_a:X\to X$ comes with a test translation $v_a$ and
+a nonnegative budget bound $c_a$ such that, for every $t$,
+\[
+ v_a:E_t\longrightarrow E_{t+c_a},\qquad
+ u_a(x)Re\ \Longleftrightarrow\ xRv_a(e).                       
+\]
+For generated continuation tests, $v_a$ prepends execution of $a$.
+A word $ab$ executes $a$ then $b$, so $u_{ab}=u_bu_a$,
+$v_{ab}=v_av_b$, and we use the accumulated bound $c_a+c_b$.
+A bound need not be optimal. No assertion is made that an arbitrary
+native resource grade admits such a scalar valuation.
+
+For fixed $a,t$, define the maximal supported domains
+\begin{align*}
+ D_{a,t}&=\{\varnothing\}\cup
+ \{U:0<|U|<\infty,\ U\subseteq C_{v_a(e)}\text{ for some }e\in E_t\},\\
+ A_{a,t}&=\{A\in L_{t+c_a}:A\ne\varnothing,
+                  A\subseteq C_{v_a(e)}\text{ for some }e\in E_t\}.
+\end{align*}
+Then $D_{a,t}\subseteq K_{t+c_a}$ and $A_{a,t}\subseteq C_{t+c_a}$.
+Both domains increase with $t$.
+
+\begin{theorem}[Budgeted action and exact-domain transport]
+\label{thm:budget}
+Under the displayed test-translation law:
+\begin{enumerate}
+\item The operation descends to a total map
+$\bar u_{a,t}:Q_{t+c_a}\to Q_t$.
+\item It induces an adjunction
+\[
+ F_{a,t}:L_{t+c_a}\rightleftarrows L_t:u_a^{-1},\qquad
+ F_{a,t}(A)=c_t(u_a[A]),
+\]
+and $F_{a,t}$ preserves all joins. Its intent satisfies
+$(F_{a,t}A)'_t=v_a^{-1}[A'_{t+c_a}]$.
+\item The restriction $u_a:D_{a,t}\to K_t$ is the largest simplicial
+restriction of its vertex map with source in $K_{t+c_a}$.
+The restriction $F_{a,t}:A_{a,t}\to C_t$ is the largest restriction
+whose values remain supported.
+\item The spans
+\[
+ K_{t+c_a}\longleftarrow D_{a,t}\xrightarrow{u_a}K_t,
+ \qquad
+ C_{t+c_a}\longleftarrow A_{a,t}\xrightarrow{F_{a,t}}C_t
+\]
+correspond under natural isomorphisms on homology, simultaneously for all
+$t$. These are maps out of a domain module, not in general endomorphisms
+of the full persistent homology module.
+\item For two operations $a,b$, the domains obey
+\[
+ D_{ab,t}=\{U\in D_{a,t+c_b}:u_a[U]\in D_{b,t}\},
+\]
+\[
+ A_{ab,t}=\{A\in A_{a,t+c_b}:F_{a,t+c_b}(A)\in A_{b,t}\},
+ \qquad F_{ab,t}=F_{b,t}F_{a,t+c_b}.
+\]
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Equal $E_{t+c_a}$ rows agree on all $v_a(e)$, and hence their images agree
+on all $e\in E_t$, proving (1). For a closed target extent
+$B=\bigcap_{e\in J}C_e$, its inverse image is
+$\bigcap_{e\in J}C_{v_a(e)}$, a closed source extent. Thus
+\[
+ c_t(u_a[A])\subseteq B\quad\Longleftrightarrow\quad
+ A\subseteq u_a^{-1}[B].
+\]
+This proves the adjunction. The test-translation law gives
+$(u_a[A])'_t=v_a^{-1}[A'_{t+c_a}]$, and closure leaves intents unchanged.
+It also proves exactly the support conditions in (3) of the theorem.
+
+For (4), form $P_{a,t}$ from all, possibly infinite, nonempty subsets
+having a witness of the form $v_a(e)$ with $e\in E_t$.
+Source closure $c_{t+c_a}$ preserves exactly those witnesses. Its fixed
+points are $A_{a,t}$, so the same natural-span proof as in
+Theorem~\ref{thm:acquisition} gives domain homology comparisons.
+On supported extents the two right-hand maps satisfy
+\[
+ u_a[A]\subseteq c_t(u_a[A])=F_{a,t}(A).
+\]
+This pointwise inequality gives a homotopy of order-complex maps and hence
+equality on homology. The left inclusion squares commute strictly.
+Although $F_{a,t}$ need not be a strictly natural map of core posets as
+$t$ changes, it is natural after homology: its squares agree with those
+of the strictly natural vertex map $u_a$. This proves the assertion
+without claiming nonexistent strictly commuting closure squares.
+
+For (5), a composite-domain witness is precisely some $e\in E_t$ with
+$U\subseteq C_{v_av_b(e)}$, equivalently $u_a[U]\subseteq C_{v_b(e)}$.
+The latter already implies that $U$ is in the first domain. Replace $U$
+by a closed extent and use the intent identity to prove the concept
+domain formula. Composition of inverse-image right adjoints proves the
+formula for left adjoints. This establishes equality of domains, not only
+a lax inclusion.
+\end{proof}
+This is a budgeted version of the established Chu/context-morphism
+mechanism \cite{shen,gratus}. Its force is the matching of variance,
+support, and composition, not the invention of the underlying adjunction.
+A finite-budget quotient $Q_t$ need not itself support autonomous
+endomorphisms: the displayed operation has source $Q_{t+c_a}$ and target
+$Q_t$. The fully continuation-closed quotient is the behavioral machine.
+A total quotient operation does not imply a total topological operation.
+The latter requires every finite source simplex to have a witness in
+$v_a(E_t)$. For finite $X$, this is equivalent to every nonempty source
+column being contained in some precomposed target column. For infinite $X$,
+only every finite subset of each source column must have such a witness;
+one witness for the whole column need not exist. Consequently totality on
+finite Dowker faces need not imply totality on all supported concepts.
+
+
+\section{What the structural characterizations are allowed to claim}
+
+\subsection{A response law can generate a new experiment and an implication}
+The inequality \eqref{eq:amgm} is an example of a useful consequence of
+forming the response state. Put $\kappa=e_{n-1}(s)$. For any $a\geq0$, the
+predicates
+\[
+ P_a=[|F|\geq a],\qquad
+ T_a=[\kappa\geq n a^{2(n-1)/n}]
+\]
+satisfy the FCA implication $P_a\Rightarrow T_a$ on the model's full state
+space. At nonzero $F$, equality in the underlying inequality characterizes
+balanced squared weights. Current predictions constrain trainability even
+though they do not determine it.
+
+The response-identification theorem gives a protocol for evaluating these
+new predicates under its exact reset assumptions. Thus a mathematically
+derived variable leads to an experimentally interpretable question, and a
+law supplies a possible falsification test for the proposed architecture
+and training interface. A discrepancy could also be due to noise or an
+incorrect access model; the calculation alone does not decide among those
+explanations. With noisy responses one needs an interval excluding the law's
+allowed values before claiming a violation. This is a small instance of
+law-directed question formation, not merely an additional arbitrary column.
+
+Choosing to make $P_a$ or $T_a$ a geometric witness is a further decision.
+It changes the common-support question asked by a Dowker complex. A valid
+logical consequence does not by itself justify that geometric decision.
+In particular, a structurally meaningful subset of tests can be too weak
+to recover the full training-behavior quotient, while a complete test
+family can destroy the topology one hoped to measure.
+
+\subsection{Complete distinctions can erase joint witness topology}
+\begin{proposition}[Exhaustive predicates can destroy all Dowker topology]
+Let $f:X\to\R$ be any real-valued readout. If the test family contains
+$e_r(x)=[f(x)\leq r]$ for every $r\in\R$, then its object Dowker complex
+is the full abstract simplex on $X$, hence contractible. This remains true
+after adding every operationally generated continuation test, regardless
+of how informative the resulting behavioral quotient becomes.
+\end{proposition}
+\begin{proof}
+For every finite nonempty $U\subseteq X$, the maximum of the finitely many
+$f(x)$ is finite. The corresponding threshold test is a common witness.
+Thus every finite subset is a face. A full simplex on nonempty $X$ is a
+cone on any chosen vertex. Adding tests cannot remove its faces.
+\end{proof}
+The obstruction is not a claim that all topology is useless. It shows that
+operationally complete distinction and informative joint-witness topology
+have different requirements. One must choose a restricted family of
+witnesses or a radius-dependent quantitative relation, and explain why that
+choice answers the intended question. General logical closure, especially
+a universally true test, cannot silently be imposed on a meaningful nerve.
+This phenomenon is consistent with earlier FCA/nerve work's explicit
+exclusions or support conventions \cite{ayzenberg,gratus}.
+
+
+\subsection{Error transfers differently to prediction concepts and persistence}
+Test acquisition keeps old column values fixed and adds labels. A geometric
+radius changes the truth condition for fixed labels. Training time can
+change the old values themselves. These three indices must not be identified.
+Here is the quantitative comparison available after a score error has
+actually been certified.
+
+Fix finite nonempty sets $H,E$ and real scores $W,\widehat W:H\times E\to\R$
+with $\|W-\widehat W\|_\infty\leq\delta$. Let $R_r$ mean $W(h,e)\leq r$,
+let $c_r$ be its FCA object closure, and put
+\[
+ K(W)_r=\{\varnothing\}\cup
+ \{\varnothing\ne A\subseteq H:\exists e\in E\ 
+                      \forall h\in A,\ W(h,e)\leq r\}.
+\]
+Use hats for the other scores. Write $C_r$ for the nonempty closed extents
+with nonempty intent. For two thresholds define the consequence operator
+\[
+ B_{u,v}(A)=(A'_u)'_v.
+\]
+On the diagonal $u=v$ this is the ordinary FCA closure; off the diagonal
+it need not be a closure. Define the
+finite-test predictive distance
+$d_W(h,k)=\max_{e\in E}|W(h,e)-W(k,e)|$.
+
+\begin{proposition}[Three consequences of one certified score bound]
+\label{prop:error}
+Under these hypotheses:
+\begin{enumerate}[label=(\roman*)]
+\item $|d_W(h,k)-d_{\widehat W}(h,k)|\leq2\delta$. Thus a learned
+separation greater than $2\delta$ certifies a true distinction, whereas
+approximate closeness does not certify exact behavioral equality.
+\item The native closure is bounded by actual score consequences:
+\[
+ \widehat B_{r+\delta,r-\delta}(A)
+ \subseteq c_r(A)
+ \subseteq\widehat B_{r-\delta,r+\delta}(A).
+\]
+If $\min_{h,e}|\widehat W(h,e)-r|>\delta$, the full labelled threshold
+contexts, and hence their concept lattices, agree exactly.
+\item The Dowker homology persistence modules are $\delta$-interleaved
+by identity vertex maps. The homology of the supported concept cores
+carries the same persistence module, with scale maps induced by
+$A\mapsto c_s(A)$ for $r\leq s$. Those closure maps compose up to order
+homotopy, not generally as literal maps of posets or lattices. The
+cross-model concept maps are $A\mapsto\widehat c_{r+\delta}(A)$ and
+the corresponding reverse maps.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+The triangle inequality bounds the change in each difference of two scores
+by $2\delta$; the maximum preserves that bound. For the left consequence
+inclusion, a $W$-test true on $A$ at $r$ is a $\widehat W$-test true there
+at $r+\delta$. A point satisfying all such hatted tests at $r-\delta$
+therefore satisfies the original tests at $r$. For the right inclusion,
+a hatted test true on $A$ at $r-\delta$ is true in $W$ at $r$, and its
+consequent at $r$ in $W$ is true at $r+\delta$ in $\widehat W$.
+The same argument uses prime-operator conventions when $A$ is empty.
+The strict margin assertion follows entry by entry.
+
+The score bound gives $R_r\subseteq\widehat R_{r+\delta}$ and
+$\widehat R_r\subseteq R_{r+\delta}$. Hence it gives literal inclusions
+of the Dowker complexes whose composites are the ordinary $2\delta$
+scale inclusions. For the supported concept comparison, the finite face
+poset of $K(W)_r$ retracts up to order homotopy onto $C_r$ by
+$A\mapsto c_r(A)$: inclusion followed by closure is the identity on
+$C_r$, and the other composite is pointwise above the identity.
+For $r\leq s\leq t$,
+\[
+ c_t(A)\subseteq c_t(c_s(A)),
+\]
+so scale composition agrees after homology. The comparison with face
+inclusion also commutes up to order homotopy, since
+$c_s(A)\subseteq c_s(c_r(A))$. The same reasoning for the two cross-model
+relation inclusions gives the asserted concept interleaving. Thus the
+homology comparison is natural even though the poset maps need not
+strictly compose. Empty face posets are handled by zero ordinary homology.
+\end{proof}
+
+This combines standard closure and functorial Dowker stability
+\cite{ayzenberg,brun,dowker}; it is not a new general stability principle.
+Its use here depends on a justified source for $\delta$. In the exact
+scalar family, response measurements give the conditioning estimate
+$\|\widehat a-a\|\leq\|V^{-1}\|\varepsilon$ under the stated exact-query
+assumptions. On a fixed compact realizable set, a finite collection of
+smooth response scores has a finite Lipschitz constant whenever its
+derivatives are bounded, and converts a coordinate-error bound to such
+a score bound. Neither the compact set nor the derivative bound is
+supplied by low empirical loss alone.
+
+A separate, direct certificate controls changes during a smooth training
+trajectory. Suppose $p(\tau)$ follows gradient flow for $\ell\circ F$ and
+$W(p)$ is a finite smooth score table. If the integrand is integrable, then
+\[
+ \|W(p(t))-W(p(s))\|_\infty
+ \leq\int_s^t
+ \|DW_{p(\tau)}DF_{p(\tau)}^{\mathsf T}
+               \nabla\ell(F(p(\tau)))\|_\infty\,d\tau.
+\]
+This follows by differentiating $W$ and integrating. For a discrete step,
+a valid alternative is
+$\sup_{q\in[p,p']}\|DW_q\|_{2\to\infty}\|p'-p\|_2$ when the segment
+lies in the smooth domain. These are certificates of score drift, not of
+agreement with an unknown environment. To claim environmental accuracy
+requires a separate warranted error bound. Persistence does not stabilize
+the full concept lattice as a lattice, and none of these statements
+recovers the topology of an underlying physical space without additional
+sampling and geometric hypotheses.
+
+
+\section{Why finite learning success does not settle all continuations}
+The exact product-family theorem covered all future training words because
+it proved a closed update law. Finite observations and decreasing loss do
+not normally supply that conclusion. The following stress test makes the
+same missing hypothesis visible in automata, FCA, and TDA at once.
+
+Here the roles are deliberately different. At training iteration $t$,
+$\theta_t$ is the parameter of a \emph{deployment} weighted automaton;
+$a$ is a deployment input, not a training intervention. Gradient descent
+changes $\theta_t$, while residual histories and continuation tests refer
+to the resulting fixed model. This is not the product learner's training
+machine and is not being presented as its special case. It is a control
+against promoting finite-response accuracy to a general all-horizon
+reconstruction claim.
+
+\begin{proposition}[Improving fit can worsen exact global structural complexity]
+\label{cl:obstruction}
+Fix $r\in(0,1)$ and $r<\theta_0<1$. On the unary alphabet,
+consider the target $L(a^k)=1$ and trained one-dimensional models
+\[
+ L_\theta(a^k)=\theta^k.
+\]
+Gradient descent on the observed one-step loss
+$\mathcal J(\theta)=\tfrac12(\theta-1)^2$, with step size
+$\gamma\in(0,1)$, produces
+\[
+ \theta_t=1-(1-\gamma)^t(1-\theta_0).
+\]
+Then all the following hold simultaneously.
+\begin{enumerate}
+\item Training loss tends to zero, every fixed finite word window is
+recovered uniformly, and both target and candidate have linear
+realization dimension one with the perfectly conditioned Hankel
+block at the empty history and empty continuation, $[L(\varepsilon)]
+=[L_{\theta_t}(\varepsilon)]=[1]$.
+\item At every finite iteration,
+$\sup_{k\geq0}|L_{\theta_t}(a^k)-L(a^k)|=1$.
+\item The threshold language
+$\{a^k:L_{\theta_t}(a^k)\leq r\}$ has a minimal DFA with
+$N_t+1$ states, where
+\[
+ N_t=\left\lceil\frac{\log r}{\log\theta_t}\right\rceil
+ \longrightarrow\infty.
+\]
+The target threshold language is empty and has a one-state minimal DFA.
+\item On the fixed history set $P=\{\varepsilon,a\}$ with
+\emph{all} continuation tests, the target FCA extent family at
+threshold $r$ is $\{\varnothing,P\}$, whereas every learned extent
+family is $\{\varnothing,\{a\},P\}$.
+\item On the same histories and all continuation tests, the learned
+Dowker complex is empty at scale $u\leq0$ and is the full edge at
+every $u>0$. The target complex is empty below $u=1$ and is the full
+edge at and above $1$. Their ordinary degree-zero persistence
+modules over a fixed nonzero field have interleaving distance exactly $1$,
+for every finite $t$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+The gradient step is
+$\theta_{t+1}=\theta_t-\gamma(\theta_t-1)$, giving the displayed
+solution. Thus $r<\theta_t<1$ and $\theta_t\to1$. For each fixed
+finite $N$, $\max_{k\leq N}|\theta_t^k-1|\to0$. On the other hand,
+for every finite $t$, $\theta_t^k\to0$ as $k\to\infty$, proving
+assertions 1 and 2.
+
+The first accepted length is exactly $N_t$, so the learned language
+is $\{a^k:k\geq N_t\}$. A DFA counts lengths up to $N_t$ and then
+stays accepting, giving $N_t+1$ states. If $0\leq i<j\leq N_t$,
+the suffix $a^{N_t-j}$ is accepted from history $a^j$ but not from
+$a^i$. These $N_t+1$ residuals are distinct, proving minimality.
+Since $\log\theta_t\to0^-$, $N_t\to\infty$. The target rejects
+every word at threshold $r<1$.
+
+For continuation $a^k$, the learned column on $P$ is determined by
+$\theta_t^k$ and $\theta_t^{k+1}$. It is empty when
+$k\leq N_t-2$, equals $\{a\}$ when $k=N_t-1$, and equals $P$
+when $k\geq N_t$. Since $\theta_t>r$, $N_t\geq2$, so all three
+columns occur. Their intersections give exactly the three stated
+extents. Every target column is empty, yielding only
+$\varnothing,P$.
+
+For any $u>0$, sufficiently large $k$ gives
+$\theta_t^k\leq u$ and $\theta_t^{k+1}\leq u$. Thus one column
+witnesses the whole edge. At $u\leq0$ all entries are positive, so
+there are no vertices. The target's two scores are always $1$,
+proving its filtration statement. A shift of $1$ gives inclusions
+both ways and hence an interleaving. If $\delta<1$, choose
+$0<u<1-\delta$. The learned degree-zero group at $u$ is nonzero,
+the target group at $u+\delta$ is zero, and the learned structure
+map from $u$ to $u+2\delta$ is the identity. The interleaving
+composite would have to be both zero and this identity. Therefore
+no $\delta<1$ interleaving exists.
+\end{proof}
+
+
+The failure uses no noisy observations, failed optimization, or hidden
+increase in linear realization dimension. Its cause is the absence of a
+uniform horizon guarantee. On each fixed finite continuation set, the
+scores converge and Proposition~\ref{prop:error} applies at an error
+tending to zero. On all continuation tests simultaneously it does not.
+Even exact finite-threshold structures can therefore remain wrong forever
+at every finite iteration. A larger minimal DFA need not indicate worse
+finite-window prediction, and a fixed linear realization dimension need
+not bound threshold-DFA complexity.
+
+The example also illustrates the witness issue. Long continuations become
+common low-score witnesses for every finite set of histories, turning the
+learned complex into a simplex at every positive scale. Treating every
+available continuation as a geometric witness is a modeling decision with
+consequences; it is not an automatic reward for having learned more tests.
+
+
+\section{What this contributes to a broader account of characterization}
+
+\subsection{A productive characterization can generate its next questions}
+The chain of reasoning is concrete. Prediction-only characterization fails
+under a permitted training step. The exact response polynomial forces extra
+observables; their closure supports all further allowed updates. The
+identification protocol turns them into obtainable quantities under explicit
+access. They supply a law relating prediction and response, a composition
+rule, and tests capable of refuting the proposed operational model. Once
+these tests are designated, the same continuation identity controls changes
+in behavioral distinctions, concepts, and witness-supported topology.
+
+This develops a broader phenomenological question: how does an organization
+of phenomena become productive enough to support new distinctions,
+operations, and warranted questions? It does not reduce that question to
+robustness, state compression, or one universal kind of representation.
+The characterization here may require as many continuous coordinates as the
+original parameters. Its value is that those coordinates have explicit
+observational and compositional meaning. The present integration is one-way: learning dynamics supplies the
+response coordinates; FCA and TDA compare their designated tests. Neither
+currently discovers these coordinates or chooses an experiment for the
+learner, and no nontrivial homology of the scalar family is claimed here.
+The different constructions answer different questions: which futures distinguish states, which conjunctions
+of predicates imply others, and which sets of states share designated
+witnesses. Their divergence can diagnose the adequacy of a characterization
+rather than count as a failure to make the constructions identical.
+
+There is also a genuine limitation. The model class, optimizer, target
+alphabet, scalar prediction interface, and reset capability were specified.
+The laws generate additional response questions \emph{inside} those choices.
+They do not discover the scalar-chain architecture, decide which new
+interventions are legitimate, or establish that a physical system obeys
+the derived polynomial law. Allowing named-layer control changes behavioral
+equivalence itself. A successful refinement of tests within one presentation
+and a revision of the presentation are different mathematical operations.
+
+\subsection{How native context-dependent computation can enter}
+The operational identity used in Theorem~\ref{thm:budget} has a direct
+interpretation in a category of admitted computations. Fix endpoints $I,A,O$.
+A history $h:I\to A$, continuation $e:A\to O$, and scalar or Boolean
+readout $\chi$ give the observation $\chi(e\circ h)$. For an admitted
+operation $a:A\to B$, instead take a continuation $e:B\to O$; then
+\[
+ u_a(h)=a\circ h,\qquad v_a(e)=e\circ a,
+ \qquad\chi(e\circ u_a(h))=\chi(v_a(e)\circ h).
+\]
+In a bicategorical interpretation, this equality passes through the
+associator and requires $\chi$ to respect the coherence isomorphisms; a
+quotient by more isomorphisms requires the corresponding extra invariance.
+This is the typed counterpart of the earlier endo-operation law: histories
+move from $\operatorname{Hom}(I,A)$ to $\operatorname{Hom}(I,B)$, while
+tests move from $\operatorname{Hom}(B,O)$ to $\operatorname{Hom}(A,O)$.
+The set-endomorphism theorem applies literally when $A=B$; different
+endpoints require its correspondingly indexed formulation.
+This is where the existing relative context/content/effects construction
+can supply an operational source \cite{relative-source}.
+
+The reduction to sets and truth values forgets native noninvertible cells,
+decomposition witnesses, and possibly ownership or resource data. It must
+not claim to reconstruct them. The finite witness fibres of the earlier
+independent-interaction criterion are not smooth parameter spaces
+\cite{o1-source}; a smooth parameter semantics is an additional construction.
+Likewise a real test-budget valuation is not automatically supplied by a
+native rig-valued grade. Theorems about $E_t$ apply once the relevant
+interpretation and budget bounds are actually established.
+
+Context dependence becomes essential when an earlier outcome changes which
+next experiment can be carried out, when a specimen is consumed, or when a
+calibration or permission must be retained. Then one fixed set of total
+operations is insufficient. One needs typed states or indexed admissibility,
+and a composition theorem that retains the relevant dependence. Enlarging
+state to contain all history is a baseline representation, not a proof of
+sufficiency, compression, or discovery. The present reset protocol cannot
+be silently substituted for an executable policy in an irreversible setting.
+
+\subsection{The remaining mathematical frontier}
+For a general smooth learner, a proposed finite response map $q$ must satisfy
+\[
+ h=\bar hq,\qquad Dq\,X_u=\bar X_uq
+\]
+for every admitted continuous input $u$, or $qU_u=\bar U_uq$ for discrete
+updates. When $q$ consists of admitted response observables, a failure of
+closure supplies a separating response. For an arbitrary statistic, failure
+may instead expose an unnecessary internal distinction. A finite successful
+closure is not automatic. A finite ideal defining indistinguishable pairs,
+a finitely generated observable algebra, a finite invariant linear space
+of observables, a smooth quotient, and a robust experimental realization
+are distinct targets. In particular, Noetherianity of an ambient polynomial
+ring does not make every observable subalgebra finitely generated
+\cite{sontag,boreale,kawano}.
+
+The next substantial result should connect generation and revision, not
+just add another structural target. One possible scope is a class of open
+learners where an effective response-generation procedure either produces
+an adequate finite state with an access certificate or returns a concrete
+failure of a proposed closure. Composition must then control the failures
+or approximation defects, while a justified witness policy specifies which
+conceptual and geometric claims survive. Tests derived from rival laws
+should be actual executable protocols, and a counterexample should identify
+whether it forces a state split, a new observable, a changed operation law,
+or rejection of an assumed intervention. Finite horizon and noise must be
+charged in the conclusions rather than hidden in the notation.
+
+A further theory-formation result would let the presentation or test language
+change and prove something about warranted translation or stabilization.
+It would need restrictions on descriptive complexity, experimental cost,
+and distinguishable rivals. The previous project already shows why finite
+samples alone cannot rule out all finite weighted-automaton dimensions, and
+why a low-dimensional smooth state can hide arbitrary complexity in its
+readout \cite{project}. Those obstructions prevent state count alone from
+selecting a language. Mathematical formation through definitions and proofs
+also needs its own account of warrant; it should not be forced into the
+form of a physical experiment merely to keep one diagram.
+
+\subsection{How to read the contribution against its nearest predecessors}
+\begin{itemize}[leftmargin=*]
+\item \textbf{Categorical learning and automata.}
+The general compositional learner, polynomial coalgebra, and internal-logic
+connections are already present in \cite{fong,cruttwell,spivaklanguages,spivak2026}.
+The calculation here asks whether an experimentally meaningful \emph{reduced}
+state preserves the forward, backward, and update interface, and proves it
+for one all-depth family. It does not replace those frameworks. Categorical
+automata learning already separates observation-table correctness from
+termination and finite learnability \cite{calf}.
+\item \textbf{Intrinsic dynamics and response hierarchies.}
+Marcotte--Peyr\'e--Gribonval study intrinsic dynamics and metrics with
+architecture variables and initialization-dependent conservation data
+\cite{marcotte}. The all-starting-state question here must retain such data
+when it affects responses. The finite-step theorem additionally avoids
+transferring flow conservation laws to discrete training. NTK and the neural
+tangent hierarchy already establish the response-generation mechanism
+\cite{jacot,huang}; exact closure and finite reset identification in the
+scalar family do not establish priority for those broader ideas.
+\item \textbf{Observability and algebra.}
+Boreale's observable coalgebra for a fixed polynomial initial-value problem
+and its minimality among linear aggregations have different objects from a
+global quotient of all initial learner states \cite{boreale}. Sontag and
+nonlinear observability provide older realization machinery
+\cite{sontag,hermann,kawano}. The distinctions matter, but they do not license
+calling an application to gradient dynamics a new realization theory.
+\item \textbf{FCA and TDA.}
+The concept/Dowker homotopy comparison, relational naturality, and persistence
+stability have direct predecessors \cite{ayzenberg,brun,dowker,gratus,shen}.
+Their role here is an operational one: a proved learning-state reduction and
+continuation law are used by the same comparison, with the correct budgets
+and maximal domains. No claim is made that a concept lattice without its
+object/attribute markings determines the intended topology.
+\end{itemize}
+
+The supported conclusion is a constructive direction with an exact test
+family and sharp boundaries: learning can force new observations; those
+observations can become a compositional state; and their justified tests
+support coordinated but different characterizations. A comprehensive account
+of how new theories and their experimental languages arise remains open.
+
+\begin{thebibliography}{99}
+\bibitem{cruttwell} G. S. H. Cruttwell, B. Gavranovi\'c, N. Ghani, P. Wilson, F. Zanasi. \emph{Categorical Foundations of Gradient-Based Learning}. ESOP 2022. \url{https://arxiv.org/abs/2103.01931}.
+\bibitem{fong} B. Fong, D. I. Spivak, R. Tuy\'eras. \emph{Backprop as Functor: A compositional perspective on supervised learning}. LICS 2019. \url{https://arxiv.org/abs/1711.10455}.
+\bibitem{spivaklanguages} D. I. Spivak. \emph{Learners' Languages}. EPTCS 372 (2022), 14--28; revised arXiv version June 2025. \url{https://arxiv.org/abs/2103.01189}.
+\bibitem{spivak2026} D. I. Spivak. \emph{Compositional Dynamics in Learning and Mechanics}. arXiv:2606.28984v2, 22 August 2026. \url{https://arxiv.org/abs/2606.28984}.
+\bibitem{jacot} A. Jacot, F. Gabriel, C. Hongler. \emph{Neural Tangent Kernel: Convergence and Generalization in Neural Networks}. NeurIPS 2018. \url{https://arxiv.org/abs/1806.07572}.
+\bibitem{huang} J. Huang, H.-T. Yau. \emph{Dynamics of Deep Neural Networks and Neural Tangent Hierarchy}. ICML 2020, PMLR 119, 4542--4551. \url{https://proceedings.mlr.press/v119/huang20l.html}.
+\bibitem{marcotte} S. Marcotte, G. Peyr\'e, R. Gribonval. \emph{Intrinsic training dynamics of deep neural networks}. ICLR 2026. \url{https://arxiv.org/html/2508.07370v2}; \url{https://proceedings.iclr.cc/paper_files/paper/2026/hash/184b2454410a88c280d29aa95fbac6e2-Abstract-Conference.html}.
+\bibitem{boreale} M. Boreale. \emph{Algebra, coalgebra, and minimization in polynomial differential equations}. Logical Methods in Computer Science 15(1), 14 (2019). \url{https://lmcs.episciences.org/5192}.
+\bibitem{kawano} Y. Kawano, T. Ohtsuka. \emph{Observability at an initial state for polynomial systems}. Automatica (2013). \url{https://research.rug.nl/en/publications/observability-at-an-initial-state-for-polynomial-systems/}.
+\bibitem{saxe} A. M. Saxe, J. L. McClelland, S. Ganguli. \emph{Exact solutions to the nonlinear dynamics of learning in deep linear neural networks}. ICLR 2014. \url{https://arxiv.org/abs/1312.6120}.
+\bibitem{du} S. S. Du, W. Hu, J. D. Lee. \emph{Algorithmic Regularization in Learning Deep Homogeneous Models: Layers are Automatically Balanced}. NeurIPS 2018. \url{https://proceedings.neurips.cc/paper/2018/hash/fe131d7f5a6b38b23cc967316c13dae2-Abstract.html}.
+\bibitem{relative-source}
+Author-supplied manuscript, \emph{One relative construction for context
+content and effects}, 1 November 2026, Theorem 1.1 and the realization
+construction. This is the native source being interpreted, not a published
+priority claim.
+\bibitem{o1-source}
+Author-supplied manuscript, \emph{General Independent Interaction
+Criterion}, November 2026, main theorem and assumption ledger.
+The admitted finite witnesses and actual endpoint carriers have distinct roles.
+\bibitem{hermann}
+R. Hermann and A. J. Krener,
+\emph{Nonlinear controllability and observability}, IEEE Transactions on
+Automatic Control 22 (1977), 728--740.
+\url{https://doi.org/10.1109/TAC.1977.1101601}.
+\bibitem{shen}
+L. Shen and D. Zhang, \emph{The concept lattice functors},
+International Journal of Approximate Reasoning 54 (2013), 166--183.
+\url{https://doi.org/10.1016/j.ijar.2012.07.002}.
+\bibitem{gratus}
+J. Gratus and T. Porter, \emph{A geometry of information, I:
+Nerves, posets and differential forms} (2005), Proposition 1 and its
+refinement discussion. \url{https://arxiv.org/abs/cs/0512010}.
+\bibitem{ayzenberg}
+A. Ayzenberg, \emph{Topology of nerves and formal concepts} (2019),
+Proposition 5.7 and Remark 5.8. \url{https://arxiv.org/abs/1911.05491}.
+\bibitem{brun}
+M. Brun and L. M. Salbu, \emph{The Rectangle Complex of a Relation},
+Mediterranean Journal of Mathematics 20 (2023), article 7.
+\url{https://doi.org/10.1007/s00009-022-02213-0}.
+\bibitem{dowker}
+S. Chowdhury and F. M\'emoli, \emph{A functorial Dowker theorem and
+persistent homology of asymmetric networks}, Journal of Applied and
+Computational Topology 2 (2018), 115--175.
+\url{https://doi.org/10.1007/s41468-018-0020-6}.
+\bibitem{quillen}
+D. Quillen, \emph{Higher Algebraic K-Theory: I}, Lecture Notes in
+Mathematics 341 (1973), 85--147, Theorem A.
+\url{https://doi.org/10.1007/BFb0067053}.
+\bibitem{sontag}
+E. D. Sontag. \emph{Discrete-time polynomial systems with inputs and outputs:
+structure, reachability, observability, and minimal realizations}.
+Revised transcription of the 1976 dissertation, underlying the 1979
+monograph; 2026 arXiv transcription. \url{https://arxiv.org/abs/2609.36423}.
+\bibitem{calf}
+B. van Heerdt, M. Sammartino, A. Silva.
+\emph{CALF: Categorical Automata Learning Framework}. CSL 2017.
+\url{https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.CSL.2017.29}.
+\bibitem{project}
+Earlier project manuscripts, November 2026: the finite-evidence
+learning/automata bridge; capacity and representation-language revision
+modules; the common generation note; and the experimental and sequential
+evidence notes. The present account builds on their fixed-evidence
+compatibility, generated-law tests, acted-incidence comparison, and
+operational-access obstructions; no priority claim is made for this material.
+
+\end{thebibliography}
+\end{document}

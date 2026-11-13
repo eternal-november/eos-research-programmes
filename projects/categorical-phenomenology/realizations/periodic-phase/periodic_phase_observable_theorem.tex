@@ -1,0 +1,318 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools,enumitem}
+\usepackage[margin=1in]{geometry}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\R}{\mathbb R}\newcommand{\one}{\mathbf1}
+\newcommand{\rank}{\operatorname{rank}}\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\supp}{\operatorname{supp}}\newcommand{\St}{\operatorname{St}}
+\newcommand{\Hom}{\operatorname{Hom}}\newcommand{\eps}{\varepsilon}
+\title{Observable periodic phases and exact continuous stochastic width}
+\author{Technical proof draft}
+\date{4 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+We extend the observable exchangeable-family width criterion to temporally nonexchangeable laws. Independent permutation symmetry within each residue class modulo a fixed period, together with constant finite ordinary Hankel rank, determines a finite cover of periodic emission profiles and its cyclic phase advance. Initial phase weights may vanish, and stationarity is not assumed. Observable averaging over initial time shifts fills every phase without increasing any competitor's native width. Two ordinary output blocks then extract the same continuous stochastic splitting as in the exchangeable case. The minimum continuous stochastic width is the section width of the full phase cover, and normalized signed width is the centered predictive bundle's embedding dimension plus one. A stationary variant needs only exchangeability of aligned blocks: stationarity itself forces their directing atoms to factor across coordinates. A genuinely nonexchangeable Moore-space family retains the sharp pointwise/signed/stochastic widths $3/4/5$. Deterministic phase advance introduces no extra compatibility cost in the arbitrary-native convention. No claim about general temporal HMMs or priority is made.
+\end{abstract}
+
+\section{Observable hypotheses and native convention}
+Let $X$ be a nonempty compact Hausdorff space and $Y$ a finite alphabet of size $d$. For every finite word $w$ suppose $x\mapsto p_x(w)$ is continuous and
+\[
+p_x(\varnothing)=1,\qquad p_x(w)\geq0,\qquad
+\sum_{y\in Y}p_x(wy)=p_x(w).
+\]
+Fix an integer $m\geq1$. Write a length-$mn$ word as an $m$-by-$n$ array, whose row $r$ contains positions congruent to $r$ modulo $m$, with $r=0,\ldots,m-1$. Assume \emph{residue-wise exchangeability}: its probability is unchanged by independent permutations of the $n$ positions in each row. This is stronger than merely permuting whole aligned $m$-blocks. Finally assume that the \emph{ordinary}, unblocked Hankel matrix
+\[
+H_x(u,v)=p_x(uv),\qquad u,v\in Y^*,
+\]
+has constant finite rank $p$. For $m=1$ these are precisely the exchangeable hypotheses.
+
+A native stochastic realization of width $k$ consists of a continuous nonnegative probability row $\rho_x\in\R^{1\times k}$ and continuous nonnegative $N_{x,y}\in\R^{k\times k}$ with
+\[
+\rho_x\one_k=1,\quad T_x\one_k=\one_k,\quad
+T_x=\sum_yN_{x,y},\quad p_x(w)=\rho_xN_{x,w}\one_k.
+\]
+The product is chronological. Competitors may be transient, redundant, unreachable, or nonstationary; they are not required to preserve the phase cover. A normalized signed realization allows real entries with the same normalization and terminal vector. The parameter $x$ is fixed throughout each word experiment.
+
+\section{Reconstructing the full phase cover}
+Set $\mathcal V=\Delta(Y)^m$. A profile $s=(s_0,\ldots,s_{m-1})$ specifies the periodic independent law
+\[
+f_s(y_1\cdots y_n)=\prod_{t=0}^{n-1}s_{t\bmod m}(y_{t+1}).
+\]
+Let $R(s_0,\ldots,s_{m-1})=(s_1,\ldots,s_{m-1},s_0)$ be rotation. The profile-to-block map $b:\mathcal V\to\Delta(Y^m)$, $b(s)=s_0\otimes\cdots\otimes s_{m-1}$, is injective, since its coordinate marginals recover $s$.
+
+\begin{proposition}[Observable reconstruction]\label{prop:reconstruct}
+There is a unique weakly continuous probability measure $\mu_x$ on $\mathcal V$ such that
+\[
+p_x(w)=\int f_s(w)\,d\mu_x(s).
+\]
+Each $\mu_x$ has finite support, not necessarily of constant size. Its full rotation closure
+\[
+C_x=\bigcup_{r=0}^{m-1}R^r\supp\mu_x
+\]
+has exactly $p$ elements. These sets form a $p$-sheeted cover $C\to X$, with a continuous fiberwise injective profile map into $\mathcal V$. Rotation restricts to a continuous cover automorphism $\tau:C\to C$ satisfying $\tau^m=\mathrm{id}$.
+
+There are continuous initial weights $w:C\to[0,1]$ with fiber sum one, and continuous strictly positive weights $\bar w:C\to(0,1]$ satisfying $\bar w\circ\tau=\bar w$, such that
+\[
+p_x(w')=\sum_{a\in C_x}w_a f_a(w'),\qquad
+\bar p_x(w')=\sum_{a\in C_x}\bar w_a f_a(w'),
+\]
+where the entirely observable averaged law is
+\begin{equation}\label{eq:stationarize}
+\bar p_x(w')=\frac1m\sum_{r=0}^{m-1}\sum_{u\in Y^r}p_x(uw').
+\end{equation}
+It is stationary. On the ordered-frame cover $P\to X$ the constants
+\[
+\delta=\min_{P,\ a\ne b}\max_{0\leq r<m,\ y\in Y}|s_{a,r}(y)-s_{b,r}(y)|>0,
+\qquad \bar w_*=\min_{P,a}\bar w_a>0
+\]
+exist when $p\geq2$.
+\end{proposition}
+\begin{proof}
+For $n$ cycles, take the empirical distribution in each residue row and let $\mu_{x,n}$ be the law of this profile vector. For a word of $L$ cycles, independent row permutation symmetry identifies its probability with sampling $L$ entries without replacement in each row. Replacing these by samples with replacement costs at most $mL(L-1)/(2n)$. Compactness of $\mathcal V$ therefore supplies a limit measure representing every word. The coordinate monomials are determined by such probabilities and their marginals; polynomial density supplies uniqueness. This is the finite-alphabet multiclass de Finetti argument. The same polynomial approximation proves weak continuity in $x$.
+
+Restrict the Hankel matrix to words whose lengths are multiples of $m$. It is the Gram matrix of monomials in the block probabilities $b(s)$ under $\mu_x$. Polynomial interpolation on distinct support points, and injectivity of $b$, show that its rank equals the number of support points, or is infinite if there are infinitely many. Consequently $\mu_x$ has at most $p$ atoms.
+
+Fix $x$ temporarily. Let $E_x=\operatorname{span}\{p_x(u\,\cdot):u\in Y^*\}$, of dimension $p$. Empirical residue frequencies distinguish any finite collection of distinct profiles with error tending to zero. Classify a prefix of length $mn$ according to an atom $a\in\supp\mu_x$, using nonnegative tests $\varphi_a$ whose sum is one. The functions
+\[
+\sum_{u\in Y^{mn}}\varphi_a(u)p_x(u\,\cdot)
+\]
+converge pointwise to $w_a f_a$. They belong to $E_x$. A finite-dimensional subspace of $\R^{Y^*}$ is closed for pointwise convergence: select $p$ evaluation coordinates injective on that subspace, recover coefficients from them, and pass to every other coordinate. Hence $f_a\in E_x$.
+
+The shift $A_yf(v)=f(yv)$ preserves $E_x$ and satisfies
+\[
+A_yf_s=s_0(y)f_{Rs}.
+\]
+Some $s_0(y)$ is positive, so every rotated phase of each initial atom also belongs to $E_x$. Distinct profiles have linearly independent $f_s$: evaluating finite-block empirical classifiers gives matrices converging to the identity. Thus $|C_x|\leq p$. Conversely every reachable continuation is a nonnegative linear combination of the $f_s$ with $s\in C_x$, giving $p\leq|C_x|$. This proves equality without assuming constant initial support size or positive initial weight on every phase.
+
+Let $\bar\mu_x=m^{-1}\sum_{r=0}^{m-1}R_*^r\mu_x$. It varies weakly continuously, has exactly $p$ atoms, and has support $C_x$. A weakly continuous family of measures with exactly $p$ distinct positive atoms has a continuous support cover: choose disjoint small neighborhoods of the atoms at a base point; positive bump integrals force at least one nearby atom in each; cardinality gives exactly one and none elsewhere. Their weights and coordinates follow by bump integrals. The same local bump functions recover $w_a$ from $\mu_x$; these weights may be zero. Rotation and positive averaged weights are continuous in these charts. Since $R^m=\mathrm{id}$, $\bar\mu$ is rotation invariant, which proves stationarity and \eqref{eq:stationarize}. Compactness of the finite cover gives the positive minima.
+\end{proof}
+
+The predictive bundle $E$ therefore has local frame $(f_1,\ldots,f_p)$ and is the permutation bundle of the full phase cover. Its terminal functional is $\ell(f)=f(\varnothing)$ and $E_0=\ker\ell$ is the centered rank-$(p-1)$ bundle. In a local ordering put
+\[
+v_a=s_{a,0},\quad D_y=\diag(v_a(y)),\quad
+\Pi_{a,b}=\mathbf1_{\{b=\tau(a)\}},\quad M_y=D_y\Pi.
+\]
+Then $\sum_yM_y=\Pi$, $\Pi^m=I$, and
+\[
+p_x(w)=wM_w\one_p.
+\]
+All of this is derived from ordinary word laws, not an assumed hidden phase model.
+
+\begin{proposition}[Intrinsic cone]\label{prop:cone}
+The pointwise nonnegative consistent functions in $E_x$ form exactly the simplicial cone $K_x=\{\sum_a c_af_a:c_a\geq0\}$. It is also the closure of the cone generated by reachable continuations $p_x(u\,\cdot)$.
+\end{proposition}
+\begin{proof}
+Applying nonnegative empirical-profile classifiers to $\sum c_af_a$ and passing to the limit gives $c_a\geq0$. Conversely the generators are probability laws. The prefix classifier argument in Proposition~\ref{prop:reconstruct} puts every initial positive-weight ray in the closed reachable cone. That cone is invariant under each $A_y$. The displayed shift relation, using a positive $s_0(y)$, puts all rotated rays there as well.
+\end{proof}
+
+\section{Exact width, including arbitrary native competitors}
+Write $\St(r,s)$ for the nonnegative $r$-by-$s$ matrices whose rows sum to one. For $k\geq1$ define
+\[
+D_{p,k}=\{Q\in\St(p,k):\supp Q_a\cap\supp Q_b=\varnothing\ (a\ne b)\},
+\]
+\[
+S_{p,k}=\{(Q,L)\in\St(p,k)\times\St(k,p):QL=I_p\}.
+\]
+The space $D_{p,k}$ is the usual $\Hom(K_p,K_k)$. Relabelings $A\in S_p$ act by $Q\mapsto AQ$, $L\mapsto LA^{-1}$, $M_y\mapsto AM_yA^{-1}$ and $w\mapsto wA^{-1}$.
+
+\begin{theorem}[Periodic observable width]\label{thm:width}
+Under the stated observable hypotheses, for every $k$ the following are equivalent:
+\begin{enumerate}
+\item A continuous native stochastic realization of width $k$ exists.
+\item The ordered full-phase cover $P$ admits a continuous equivariant map to $S_{p,k}$.
+\item $P$ admits a continuous equivariant map to $D_{p,k}$.
+\end{enumerate}
+The same minimum width is obtained if one requires an ordinary state-emitting HMM, in either emission/transition convention. The minimum normalized signed width is $g(E_0)+1$, where $g(E_0)$ is the least rank of a trivial real bundle into which $E_0$ embeds. For $p=1$ both widths are one.
+\end{theorem}
+
+\subsection{Uniform ordinary-output classifiers}
+For $p\geq2$ choose a number of cycles
+\begin{equation}\label{eq:cycles}
+t\geq\left\lceil\frac{32}{\delta^2}\log\frac{16md}{\bar w_*}\right\rceil,
+\qquad n=mt,\qquad \eps_t=2md\exp(-t\delta^2/32)\leq\bar w_*/8.
+\end{equation}
+For a length-$n$ observed word let $\widehat s(u)$ be its empirical residue profile. Set $b_a(u)=h(\|\widehat s(u)-s_a\|_\infty)$, with
+\[
+h(z)=\begin{cases}1&z\leq\delta/8,\\2-8z/\delta&\delta/8\leq z\leq\delta/4,\\0&z\geq\delta/4,\end{cases}
+\quad
+\varphi_a(u)=b_a(u)+\frac{1-\sum_b b_b(u)}p.
+\]
+At most one $b_a$ is nonzero. The tests are continuous in the frame, equivariant, nonnegative, and sum to one. Hoeffding's inequality in the $md$ residue coordinates gives
+\[
+C_{ai}=\sum_{u\in Y^n}f_a(u)\varphi_i(u),\qquad C_{aa}\geq1-\eps_t.
+\]
+Since $n$ is a multiple of $m$, adjacent length-$n$ blocks are independent conditional on the same initial phase and return to that same phase. For the averaged target law their classifier marginal and joint table are
+\[
+a=C^T\bar w,\qquad J=C^T\diag(\bar w)C.
+\]
+The weights in these formulas are columns. Exactly as in the exchangeable case,
+\[
+a_i\geq\bar w_*(1-\eps_t),\qquad
+1-J_{ii}/a_i\leq\frac{\eps_t}{\bar w_*(1-\eps_t)}\leq1/7.
+\]
+
+\subsection{Necessity without phase retention}
+Given any native stochastic competitor $(\rho,N_y)$ for the original law, form
+\[
+\bar\rho=\frac1m\sum_{r=0}^{m-1}\rho T^r.
+\]
+This is a continuous probability row and realizes \eqref{eq:stationarize} with the \emph{same} outcome matrices and width. No stationarity of the native hidden chain is needed. Define
+\[
+R_{i,\cdot}=\sum_{u\in Y^n}\varphi_i(u)\bar\rho N_u,
+\quad Q_{i,\cdot}=R_{i,\cdot}/a_i,
+\quad L_{\cdot,j}=\sum_{v\in Y^n}\varphi_j(v)N_v\one_k.
+\]
+Stochasticity implies $Q\in\St(p,k)$, $L\in\St(k,p)$, and the ordinary Markov factorization at the block boundary gives $(QL)_{ij}=J_{ij}/a_i$, so $(QL)_{ii}\geq6/7$. This step treats arbitrary redundant, transient, or unreachable states.
+
+The approximate split has an exact continuous same-width repair. Put
+\[
+U_{ai}=Q_{ai}(L_{ia}-3/4)_+,\qquad Q'_{ai}=U_{ai}/\sum_jU_{aj},
+\]
+\[
+d_{ia}=\min\{1,\max\{0,12(L_{ia}-2/3)\}\},\qquad
+L'_{ia}=d_{ia}+\frac{1-\sum_b d_{ib}}p.
+\]
+The denominator is at least $(QL)_{aa}-3/4\geq3/28$. At most one $d_{ia}$ in a row is positive. If $Q'_{ai}>0$, then $L_{ia}>3/4$, so the $i$th row of $L'$ is $e_a$. Therefore $Q'L'=I_p$. The construction is continuous and equivariant. No hidden intervention, minimality premise, or prescribed retained interface has entered.
+
+\subsection{Sufficiency and why phase advance costs no further slots}
+A stochastic split $QL=I$ forces distinct rows of $Q$ to have disjoint supports. Conversely, given $Q\in D_{p,k}$, set $h=1/(2k)$ and
+\[
+F(Q)_{ai}=\frac{(Q_{ai}-h)_+}{\sum_j(Q_{aj}-h)_+},\quad
+c_{ia}=\min\{1,Q_{ai}/h\},\quad
+L_{ia}=c_{ia}+\frac{1-\sum_b c_{ib}}p.
+\]
+The denominator is at least $1/2$; disjoint supports give stochasticity and $F(Q)L=I$. This continuous buffered repair establishes the equivalence of the two section conditions, without claiming that an arbitrarily prescribed $Q$ already has a continuous decoder.
+
+For an equivariant split use
+\begin{equation}\label{eq:lift}
+\rho=wQ,\qquad N_y=LM_yQ=LD_y\Pi Q,\qquad T=L\Pi Q.
+\end{equation}
+These descend to $X$, are nonnegative and normalized, and satisfy the required word identities by $QL=I$. In particular, there is \emph{no additional dynamic compatibility condition on $Q$}: the phase advance is absorbed into $T=L\Pi Q$. Requiring the native slots themselves to undergo a permutation would be a different competitor convention.
+
+For ordinary state emissions let $e_y=L(v_a(y))_a$, so $Q\diag(e_y)=D_yQ$. The emission-then-transition kernels $\widehat N_y=\diag(e_y)T$ satisfy $Q\widehat N_y=M_yQ$ and hence realize the same law. For transition-then-emission put $\widetilde D_y=\Pi^{-1}D_y\Pi$ and $\widetilde e_y=L\widetilde D_y\one_p$. Then
+\[
+T\diag(\widetilde e_y)=L\Pi\widetilde D_yQ=LD_y\Pi Q=N_y.
+\]
+Both are ordinary same-width HMMs. Initial stationarity holds if $w\Pi=w$; it is not needed otherwise.
+
+\subsection{Normalized signed width}
+Apply the same averaging and finite sums to an arbitrary normalized signed competitor, without positivity assertions. They give
+\[
+R\one_k=C^T\bar w,\qquad RL=C^T\diag(\bar w)C.
+\]
+Since $\|C-I\|_\infty\leq2\eps_t<1$, $C$ is invertible. Thus
+\[
+B=(C^T\diag(\bar w))^{-1}R
+\]
+has $B\one_k=\one_p$, $BL=C$, and row rank $p$. It transforms by row permutation and embeds $E_0$ in the fixed hyperplane $\one_k^\perp$, proving $g(E_0)\leq k-1$.
+
+Conversely, embed $E_0$ in $\one_k^\perp$, choose a continuous left inverse by a bundle metric, and extend using the uniform unit-mass section of $E$ and the uniform row in $\R^k$. This gives equivariant real $Q,L$ with $QL=I$, $Q\one_k=\one_p$, $L\one_p=\one_k$. Formula~\eqref{eq:lift} is a normalized signed realization. This proves the signed claim in Theorem~\ref{thm:width}.
+
+\begin{corollary}[Classical dimensional bound]
+If $X$ is a finite CW complex of dimension $q$, the continuous stochastic width is at most $p+q$. Width $p$ is possible exactly when the full phase cover admits a global labeling. In general compact Hausdorff $X$, some finite continuous stochastic width always exists under the stated symmetry and rank hypotheses.
+\end{corollary}
+\begin{proof}
+For $q\geq1$, the classical result that $D_{p,p+q}$ is $(q-1)$-connected \cite{BK,AGH} extends a section of its associated bundle cell by cell over $X$. The zero-dimensional case is immediate. Since $D_{p,p}$ consists exactly of permutation matrices, its section condition is equivalent to a global labeling. Finally, on any compact Hausdorff base choose a finite trivializing cover of the phase cover and a subordinate partition of unity. Give each chart its own $p$ slots, and give a phase the partition weight in the slot carrying its local label. Extending by zero gives a continuous equivariant disjoint-support map with finitely many slots. The buffered decoder construction completes the realization. These are applications of classical topology, not additional Hom-complex calculations.
+\end{proof}
+
+\section{Finite-horizon robustness}
+\begin{corollary}\label{cor:robust}
+Assume $p\geq2$ and use $n=mt$ from \eqref{eq:cycles}. If a continuous width-$k$ stochastic competitor approximates the original target at horizon
+\[
+H=2n+m-1
+\]
+in total variation by at most $\bar w_*/64$, uniformly on $X$, then the full phase cover admits an equivariant map into $D_{p,k}$. Hence if no such map exists, every continuous width-$k$ competitor has larger error somewhere at that horizon. If the original target is stationary, $H=2n$ suffices by using it directly.
+\end{corollary}
+\begin{proof}
+For each $r<m$, its length-$2n$ law after discarding the first $r$ outputs is a marginal of its length-$H$ law. Averaging therefore preserves the stated total variation bound for the averaged target and candidate. The averaged candidate is realized at the same width by $\bar\rho$, regardless of whether it is stationary.
+
+Writing $\beta\leq\bar w_*/64$, the classifier marginal and diagonal joint entries change by at most $\beta$. The target satisfies
+\[
+J_{ii}-\tfrac34a_i\geq\tfrac3{28}a_i\geq\tfrac3{32}\bar w_*.
+\]
+The perturbation is at most $7\beta/4\leq7\bar w_*/256$. Also the perturbed $a_i$ remains positive. Hence its approximate split has diagonal strictly greater than $3/4$, and the same threshold repair yields an exact split. For a stationary target there is no need to average initial shifts.
+\end{proof}
+The estimate is conservative. It assumes uniform control over the parameter space and is not a finite-sample certificate of rank or symmetry. No regularity of a competitor beyond continuity of its native parameters is imposed.
+
+The period and exact infinite residue symmetry are structural inputs, as is constant ordinary Hankel rank. Observing one long trajectory of a mixture generally identifies its selected phase profile, not the mixing weights or all other profiles. Estimating the full word laws therefore needs replicated experiments or another justified sampling design. Continuity on an arbitrary compact parameter space, by itself, supplies no quantitative guarantee that finitely many parameter samples certify the required uniform error.
+
+\section{A second observable route: stationary exchangeable blocks}
+\begin{proposition}\label{prop:stationaryblocks}
+Suppose the original law is stationary under the one-symbol shift and its aligned $m$-block process is exchangeable. Then it is residue-wise exchangeable. In particular, no separate product-atom assumption is needed. If the aligned block Hankel rank is constantly $p<\infty$, the ordinary Hankel rank is also $p$, and all preceding conclusions apply directly with positive stationary phase weights.
+\end{proposition}
+\begin{proof}
+Ordinary de Finetti for the block alphabet gives a directing measure $\lambda$ on $\Delta(Y^m)$. Conditional on its random atom or directing law $q$, the aligned blocks are IID with law $q$. The one-symbol-shifted blocks join the suffix of one old block to the first symbol of the next. Their empirical distribution converges almost surely to
+\[
+F(q)=q_{1:m-1}\otimes q_0,
+\]
+where coordinates are indexed $0,\ldots,m-1$. To see convergence without invoking an ergodic theorem, split these new blocks into even and odd indices; within either subsequence their constituent old blocks are disjoint, so the ordinary IID strong law applies.
+
+Stationarity makes the law of the empirical limit of the shifted blocks equal to that of the original blocks. Thus $\lambda=F_*\lambda$. Direct calculation gives
+\[
+F^r(q)=q_{r:m-1}\otimes q_0\otimes\cdots\otimes q_{r-1}
+\quad(1\leq r<m),\qquad
+F^m(q)=q_0\otimes\cdots\otimes q_{m-1}.
+\]
+Consequently $\lambda=(F^m)_*\lambda$ is supported on product measures. Their mixture is residue-wise exchangeable. On product measures $F$ is cyclic rotation, so the directing support is already rotation closed. Finite block rank counts its atoms; Proposition~\ref{prop:reconstruct} identifies the ordinary rank with the same number. For $m=1$ the assertion is immediate.
+\end{proof}
+This argument gives a second, weaker-looking set of observable symmetry inputs in the stationary setting. The product conclusion is a proved consequence here, not a claim that arbitrary block exchangeability implies independent coordinates.
+
+\section{A genuinely temporal sharp example}
+\begin{theorem}\label{thm:moore}
+There is a stationary, residue-wise exchangeable modulo three, but nonexchangeable family over the Moore space $X=M(\mathbb Z/3,1)$ on four output symbols. Its pointwise stochastic and signed widths are three, its full rank-three predictive bundle is trivial, its minimum continuous normalized signed width is four, and its minimum continuous stochastic width is five. All output emissions are strictly positive. Every continuous four-state stochastic competitor has a positive uniform finite-horizon error.
+\end{theorem}
+\begin{proof}
+Take the three-sheeted cover with cyclic monodromy $\pi_1(X)=\mathbb Z/3\to S_3$, and let $\tau$ be its cyclic deck transformation. Its centered real permutation bundle $E_0$ is an oriented plane bundle with nonzero Euler class in $H^2(X;\mathbb Z)=\mathbb Z/3$. The class is the integral Bockstein of the nonzero mod-three character. It is therefore nontrivial. However, $H^2(X;\mathbb Z/2)=0$, so the oriented rank-three bundle $\R\oplus E_0$ is trivial: on a two-dimensional CW complex its framing obstruction is $w_2$. These are standard bundle facts; see \cite{Hatcher}.
+
+Choose an isometric embedding $j:E_0\hookrightarrow X\times\R^3$ and identify $\R^3$ with $\one_4^\perp$. In a local frame let $z_a=e_a-\one_3/3$ and choose $0<\eta<1/4$. Set
+\[
+v_a=\one_4^T/4+\eta j(z_a),\qquad
+p_x(y_1\cdots y_n)=\frac13\sum_{a=1}^3\prod_{t=0}^{n-1}v_{\tau^t(a)}(y_{t+1}).
+\]
+These formulas descend to $X$. Emissions are strictly positive because $\|j(z_a)\|_2=\sqrt{2/3}<1$. They are affinely independent. The three profiles $(v_a,v_{\tau a},v_{\tau^2 a})$ are distinct and rotate cyclically; weights are uniform. Thus the full predictive rank is three, the cover is the prescribed one, and the law is stationary and residue-wise exchangeable modulo three.
+
+It is not exchangeable even at length two. Let $V$ be the $3$-by-$4$ matrix whose rows are $v_a$. It has row rank three. Its two-output table is $V^T\Pi V/3$. If that table were symmetric, multiplication by a right inverse of $V$ and its transpose would imply $\Pi=\Pi^T$, impossible for a three-cycle. Thus some $p_x(yz)\ne p_x(zy)$, at every $x$.
+
+Theorem~\ref{thm:width} gives signed width four because $g(E_0)=3$. Pointwise rank gives three, attained by the local phase model. For positivity, $D_{3,4}/S_3$ is the graph $K_4$, and its connected covering $D_{3,4}\to K_4$ has monodromy $F_3\to S_3$. An equivariant map from the present phase-frame cover would make the nontrivial $\mathbb Z/3\to S_3$ factor through the torsion-free free group $F_3$, which is impossible. Hence four states are excluded. The space $D_{3,5}$ is simply connected by the classical Hom-complex connectivity theorem \cite{BK,AGH}; obstruction theory over a two-complex supplies an equivariant section, giving five. The finite-horizon claim is Corollary~\ref{cor:robust}.
+\end{proof}
+The difference from the held-IID example is temporal, not a new topological computation: the canonical shifts now send each predictive ray to its next phase, and the two-output law detects order. Nevertheless the same splitting lifts the phase transition without additional slots.
+
+\section{Failure tests and exact scope}
+\paragraph{Initial atoms are not the full phase cover.}
+For $m=2$, let outputs be independent with success probabilities $a,b,a,b,\ldots$, where $0<a\ne b<1$. The aligned block process is IID and its Hankel rank is one. Its initial profile measure has one atom. But its full rotation closure has two phases and the ordinary Hankel rank and native width are two. It is not stationary. Thus replacing ordinary rank and the full rotation cover by initial block rank would give a false theorem. Averaging initial shifts is the necessary repair, not a hidden intervention.
+
+\paragraph{Whole-block exchangeability alone is insufficient.}
+Let $Z_j$ be IID fair bits and set $Y_{2j+1}=Y_{2j+2}=Z_j$. Aligned two-blocks are IID, but their law $(\delta_{00}+\delta_{11})/2$ is not a product. Independent permutation of the second residue sends $0011$, of probability $1/4$, to $0110$, of probability zero. The process is not one-symbol stationary. A three-state phase-and-bit HMM realizes it, but the present phase-profile reconstruction does not apply. This shows exactly why either residue-wise symmetry or the stationary-block route is needed.
+
+\paragraph{Invisible phases are not observable states.}
+An arbitrary supplied cyclic hidden model can have identical emissions in every phase and hence produce a rank-one IID law. Such a hidden cycle is not the reconstructed cover. Constant rank and distinct observable profiles, not the number of states in a presentation, control this theorem.
+
+\paragraph{No extension to arbitrary temporal dynamics is asserted.}
+The companion probability-clock example has analytic rank-three laws and finite positive realizability at every parameter but unbounded positive width on a compact interval. These facts rule out any inference of a local fixed positive budget from rank and analyticity alone. Here local finite positivity is obtained from the much stronger residue symmetry and its finite observable phase decomposition. General invariant-cone feasibility, cone variation, and arbitrary HMM family topology remain outside the result.
+
+\section{Source comparison and remaining audit}
+Multiclass de Finetti representation and empirical-measure conditioning are classical; Graham's Theorem 3 is a direct reference \cite{Graham}, crediting the all-infinite case to Aldous's Corollary 3.9. The proof above is included so the exact finite-alphabet observable inputs are explicit. Finite-mixture reconstruction after treating an aligned period as a super-symbol is likewise classical. Vandermeulen--Scott \cite{VS}, Theorems 4.1 and 4.3, give respectively $(2r-1)$-grouped-observation identifiability against mixtures with at most $r$ components and $2r$-observation determinedness against arbitrary finite mixtures. Here $r$ counts initial block components and need not equal the full phase count $p$. These results supply an established reconstruction comparison, not the continuous native-width statement.
+
+Prosdocimi--Finesso treat countable partially exchangeable mixtures and recurrent HMM representations \cite{PF}; their successor-array/Markov-exchangeability setting is not the same as fixed residue classes, but is a close reconstruction antecedent. Touron studies periodic time-inhomogeneous seasonal HMMs and their identifiability and estimation \cite{Touron}; that literature already covers periodic transition/emission models, so periodicity itself is not new. The present target is continuous family-level native minimum width from observable laws, with deterministic recovered phase advance and arbitrary stochastic competitors.
+
+Positive realization and invariant polyhedral cones are classical; see Monr\`as--Winter \cite{MW}. Topology of stochastic explanation spaces predates this work, notably Mond--Smith--van Straten \cite{MSV}. The topology of $\Hom(K_p,K_k)$ is also classical \cite{BK,AGH}. The candidate bridge is the observable full-phase reconstruction, same-width averaging, and explicit continuous extraction of an exact split from arbitrary native competitors, followed by the resulting family-level width criterion. These are proofs in this restricted class, not a claim of novelty. A specialist priority audit remains necessary, particularly for stationary block-exchangeability characterizations and parameterized positive realization.
+
+\begin{thebibliography}{9}
+\bibitem{Graham} C. Graham. \emph{Convergence of multi-class systems of fixed possibly infinite sizes}. \href{https://arxiv.org/pdf/0902.0539}{arXiv:0902.0539} (2009), Theorem 3 and its preceding attribution to Aldous (1985), Corollary 3.9, page 25. Primary theorem text inspected; the finite-alphabet representation used here is also proved directly.
+\bibitem{VS} R. A. Vandermeulen and C. D. Scott. \emph{An Operator Theoretic Approach to Nonparametric Mixture Models}. Annals of Statistics 47 (2019), 2704--2733. \href{https://arxiv.org/pdf/1607.00071}{Primary manuscript}, Theorems 4.1 and 4.3.
+\bibitem{PF} C. Prosdocimi and L. Finesso. \emph{Countable Partially Exchangeable Mixtures}. \href{https://arxiv.org/html/1306.5631v2}{arXiv:1306.5631v2}. Sections 3 and 4, especially recurrence and successor-array formulations.
+\bibitem{Touron} A. Touron. \emph{Consistency of the maximum likelihood estimator in seasonal hidden Markov models}. \href{https://arxiv.org/abs/1802.08161}{arXiv:1802.08161}. Primary abstract checked for periodic transition/emission models, identifiability, and consistency; no exact overlap claim is made.
+\bibitem{MW} A. Monr\`as and A. Winter. \emph{Quantum learning of classical stochastic processes: The Completely-Positive Realization Problem}. \href{https://arxiv.org/abs/1412.3634}{arXiv:1412.3634}, Theorem 6 for the classical positive-cone criterion.
+\bibitem{MSV} D. Mond, J. Smith, and D. van Straten. \emph{Stochastic factorizations, sandwiched simplices and the topology of the space of explanations}. Proceedings of the Royal Society A 459 (2003). \href{https://doi.org/10.1098/rspa.2003.1150}{doi:10.1098/rspa.2003.1150}, Theorem 2.4.
+\bibitem{BK} E. Babson and D. N. Kozlov. \emph{Complexes of graph homomorphisms}. \href{https://arxiv.org/abs/math/0310056}{arXiv:math/0310056}.
+\bibitem{AGH} A. Abrams, D. Gay, and V. Hower. \emph{Discretized configurations and partial partitions}. \href{https://arxiv.org/abs/1009.2935}{arXiv:1009.2935}.
+\bibitem{Hatcher} A. Hatcher. \emph{Vector Bundles and K-Theory}, version 2.2. \href{https://pi.math.cornell.edu/~hatcher/VBKT/VB.pdf}{Author text}; rank-three framing on a two-complex and Euler--Chern comparison.
+\end{thebibliography}
+\end{document}

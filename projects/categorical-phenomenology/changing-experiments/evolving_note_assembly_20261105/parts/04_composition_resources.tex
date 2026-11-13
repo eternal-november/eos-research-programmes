@@ -1,0 +1,430 @@
+\section{Changing the formation of composite experiments}\label{sec:decomposition}
+Fix a finite arity $n\geq1$. All indexing categories are small. Supply
+categories $A_0,\ldots,A_n$, $B_0,\ldots,B_n$, functors
+\[
+ W:\prod_{i=1}^n A_i\longrightarrow A_0,\qquad
+ V:\prod_{i=1}^n B_i\longrightarrow B_0,
+ \qquad u_i:A_i\longrightarrow B_i\quad(0\leq i\leq n),
+\]
+and a natural transformation
+\begin{equation}\label{eq:cell}
+ \chi:V\Bigl(\prod_i u_i\Bigr)\Longrightarrow u_0W.
+\end{equation}
+The direction of this cell is essential. No inverse is assumed.
+An arrow $V(u_i a_i)\to u_0W(a_i)$ is an admitted directed comparison,
+not a license to execute its reverse.
+
+A partial-characterization diagram here is a covariant functor
+$X_i:B_i\to\Set$. Its elements may be labelled admitted experiments or
+partial evidence, and arrows transport those elements along admitted
+interface refinements. This variance is a premise. A contravariant
+experiment semantics must be converted explicitly by using opposite
+categories; it is not silently substituted. A model-vocabulary reduct
+$R:\mathcal M_{\rm new}\to\mathcal M_{\rm old}$ has its own variance,
+opposite to an old-to-new program compiler. A model-indexed family of
+these diagrams can be reindexed along $R$ and the results applied pointwise.
+No inverse to a model reduct or noninvertible observation decoder is
+asserted.
+
+Define composition by
+\[
+ \operatorname{Comp}_V(X_1,\ldots,X_n)
+   =\Lan_V(\mathop{\boxtimes}_i X_i),\qquad
+ (\mathop{\boxtimes}_iX_i)(b_1,\ldots,b_n)=\prod_iX_i(b_i).
+\]
+The pointwise formula uses the category $(V\downarrow b)$, whose objects
+are $(b_i,f:V(b_i)\to b)$ and whose arrows $\beta$ satisfy
+$f=f'V(\beta_i)$. Thus
+\[
+ \operatorname{Comp}_V(X_i)(b)
+   =\mathop{\operatorname{colim}}_{(b_i,f)\in(V\downarrow b)}
+            \prod_iX_i(b_i).
+\]
+Composition and its admitted decompositions are source data. This formula
+does not prove physical independence, resource copying, or implementability.
+
+\section{The directed comparison and its exact factorization criterion}
+For $a\in A_0$, define
+\begin{align*}
+ K_a:(W\downarrow a)&\longrightarrow(V\downarrow u_0a),\\
+ (a_i,k)&\longmapsto
+       (u_i a_i,u_0(k)\chi_{(a_i)}).
+\end{align*}
+On arrows it applies each $u_i$. Naturality of $\chi$ verifies the comma
+condition. The source diagram below is exactly the target diagram
+precomposed by $K_a$. Consequently there is a canonical mate
+\begin{equation}\label{eq:mate}
+ \Theta_X:\Lan_W\bigl(\mathop{\boxtimes}_i u_i^*X_i\bigr)
+       \Longrightarrow u_0^*\Lan_V\bigl(\mathop{\boxtimes}_i X_i\bigr).
+\end{equation}
+This is the direction ``change then compose'' to ``compose then change.''
+It exists without exactness assumptions.
+
+For $f:V(b_i)\to u_0a$, define $\Fact_a(b_i,f)$ to have objects
+\[
+ (a_i,h_i:b_i\to u_i a_i,k:W(a_i)\to a),
+ \qquad f=u_0(k)\chi_{(a_i)}V(h_i).
+\]
+A morphism to $(a'_i,h'_i,k')$ is a tuple $\alpha_i:a_i\to a'_i$ with
+\[
+ h'_i=u_i(\alpha_i)h_i,\qquad k=k'W(\alpha_i).
+\]
+This category is exactly $((b_i,f)\downarrow K_a)$. Its connectedness
+means connectedness of the underlying undirected graph; it does not make
+its arrows invertible.
+
+\begin{theorem}[Exactness detected by product representables]\label{thm:set}
+The following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item $\Theta_X$ is an isomorphism for every family $X_i:B_i\to\Set$.
+\item Every $K_a$ is final.
+\item Every $\Fact_a(b_i,f)$ is nonempty and connected.
+\end{enumerate}
+For the representable family $X_i=B_i(b_i,-)$, the fiber of
+$\Theta_X(a)$ over $f$ is exactly $\pi_0\Fact_a(b_i,f)$.
+\end{theorem}
+\begin{proof}
+The equivalence of (ii) and (iii) is the comma-category criterion for
+finality. A final functor preserves colimits of every Set-valued diagram,
+so (ii) implies (i).
+
+Conversely take $X_i=B_i(b_i,-)$. Co-Yoneda gives
+\[
+ \Lan_V(\mathop{\boxtimes}_i B_i(b_i,-))(u_0a)
+       \cong B_0(V(b_i),u_0a).
+\]
+Explicitly, the colimit representative
+$(b'_i,g,x_i:b_i\to b'_i)$ maps to $gV(x_i)$. Every arrow $f$ is
+represented by $(b_i,f,\id)$, and the arrows $x_i$ identify each other
+representative with this canonical one. This establishes the claimed
+bijection with the stated variance.
+
+A source representative is $(a_i,k,h_i:b_i\to u_i a_i)$ and its image
+is $u_0(k)\chi V(h_i)$. The generating identifications in the source
+colimit are precisely the morphisms displayed in $\Fact$. They preserve
+$f$, so the fiber over $f$ is the set of connected components of that
+category. A bijective mate makes each such set a singleton, equivalently
+nonempty and connected. This proves (iii) and the fiber assertion.
+\end{proof}
+
+An empty lift category gives a missing composite experiment. Multiple
+components give distinct realizations of the same changed experiment
+that no admitted refinement connects. Surjectivity alone does not imply
+exactness. Theorem~\ref{thm:set} is standard exact-square mathematics:
+compare the Yoneda and factorization criteria of
+Batanin--Kock--Weber, Lemmas 2.2 and 2.4, and their Day-convolution
+application, Theorem 2.11 \cite{BKW}. The application below, rather than
+a renaming of cofinality, supplies the concrete experimental content.
+
+\section{Truth, elements, and noninvertible witnesses}
+\begin{proposition}[Boolean existence]
+For $\Bool$-valued diagrams, composition by joins of meets is universally
+exact if and only if, for every $a,b_i$, nonemptiness of
+$B_0(V(b_i),u_0a)$ implies nonemptiness of
+\[
+ \coprod_{f\in B_0(V(b_i),u_0a)}\operatorname{Ob}\Fact_a(b_i,f).
+\]
+In thin categories this is exactly nonemptiness of each relevant
+factorization category.
+\end{proposition}
+\begin{proof}
+For necessity use the truth predicates that are true at $b'_i$ exactly
+when $B_i(b_i,b'_i)$ is nonempty. A true target composite is equivalent
+to existence of an arrow $V(b_i)\to u_0a$; a true source composite
+is exactly the displayed existence of a lift. For sufficiency, a true
+target value supplies a tuple of true input values at some $b_i$ and an
+arrow $f$. The hypothesis supplies a lift of some arrow with these
+endpoints. Monotonicity along its $h_i$ transports the input truths and
+produces a true source composite. The mate gives the reverse implication.
+\end{proof}
+
+The qualification ``some arrow'' matters outside thin categories. Boolean
+existence does not distinguish parallel $f$'s. Requiring a lift of every
+individual $f$ would be too strong for this proposition.
+
+For categorical witnesses, supply strict functors $E_i:B_i\to\Cat$ and
+retain the Grothendieck category
+\[
+ \operatorname{WComp}_V(E_i)(b)
+   =\int_{(b_i,f)\in(V\downarrow b)}\prod_iE_i(b_i).
+\]
+Its objects retain a decomposition and actual evidence objects; a morphism
+retains a decomposition arrow $\beta$ and vertical witness arrows
+$E_i(\beta_i)e_i\to e'_i$. These arrows may be noninvertible. The
+functor $K_a$ induces a comparison $J_E(a)$ between the source and target
+Grothendieck categories.
+
+\begin{theorem}[Universal retained-witness exactness]\label{thm:witness}
+For fixed $a$, $J_E(a)$ is an equivalence for every family
+$E_i:B_i\to\Cat$ if and only if $K_a$ is an equivalence.
+\end{theorem}
+\begin{proof}
+With all $E_i$ terminal, the total-category comparison is $K_a$ itself,
+proving necessity. Conversely suppose $K_a$ is an equivalence. Full
+faithfulness of the induced total functor follows from full faithfulness
+on decomposition arrows and the unchanged vertical witness hom-sets.
+For any target evidence object over $d$, choose an isomorphism
+$K_a(c)\to d$. Transporting the evidence along the inverse isomorphism
+provides a source object whose image is isomorphic to the given one.
+Thus the total functor is also essentially surjective.
+\end{proof}
+
+Finality, or even contractibility of the factorization categories, is
+not sufficient for Theorem~\ref{thm:witness}. The Grothendieck construction
+is a specified witness-retaining semantics, not automatically the
+Cat-valued left Kan extension and not a general physical-execution model.
+No groupoid completion or inversion of witness arrows has been used.
+
+\section{A complete classification for integer resource changes}\label{sec:resources}
+Let $m,d\geq1$ and $n\geq2$. The poset category $\N^m$ has an arrow
+$r\to s$ when $r\leq s$ coordinatewise and tensor given by addition.
+A matrix $C\in\N^{d\times m}$ defines a strict symmetric monoidal
+functor $r\mapsto Cr$. Resource units are indivisible. For covariant
+diagrams $X_i:\N^d\to\Set$, set
+\[
+ (\mathop{\star}_iX_i)(s)
+   =\mathop{\operatorname{colim}}_{s_1+\cdots+s_n\leq s}
+      \prod_iX_i(s_i),
+\]
+with componentwise-order arrows among decompositions. The comparison is
+\begin{equation}\label{eq:budget}
+ \mathop{\star}_i(X_i\circ C)(r)
+      \longrightarrow(\mathop{\star}_iX_i)(Cr).
+\end{equation}
+Use joins and meets for Boolean diagrams, or the preceding Grothendieck
+categories for retained witnesses.
+
+\begin{theorem}[Three exact resource criteria]\label{thm:matrix}
+The following classify universal exactness of \eqref{eq:budget}, over
+all budgets and all input diagrams of the stated doctrine.
+\begin{enumerate}[label=(\roman*)]
+\item Boolean exactness holds if and only if every column of $C$ is zero
+or a standard basis vector.
+\item Set-valued exactness holds if and only if, additionally, no two
+nonzero columns are equal. Thus $C$ is a partial coordinate injection,
+with zero columns allowed.
+\item Universal equivalence of retained witness categories holds if and
+only if, additionally, no column is zero. Thus $C$ is a coordinate injection.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+For a physical demand tuple $b_i$ with $\sum_i b_i\leq Cr$, the
+factorization poset is
+\begin{equation}\label{eq:alloc}
+ \{(a_i):\ \sum_i a_i\leq r,\quad b_i\leq Ca_i\text{ for every }i\},
+\end{equation}
+ordered componentwise.
+
+For (i), suppose a column $c=Ce_j$ has coordinate sum at least two.
+Write $c=p+q$ with $p,q$ nonzero. At budget $r=e_j$, choose
+$b_1=p,b_2=q$, and other demands zero. In any source allocation at most
+one $a_i$ is nonzero, because $\sum_i a_i\leq e_j$. Both $b_1,b_2$
+are nonzero, however, so both require nonzero allocations. Thus
+\eqref{eq:alloc} is empty. A nonnegative integer column of coordinate
+sum at most one is exactly zero or a basis vector.
+
+Conversely suppose every column is zero or a basis vector. For each
+output row $\ell$, let $J_\ell=\{j:Ce_j=e_\ell\}$. The demand
+inequality says
+\[
+ \sum_i b_{i,\ell}\leq\sum_{j\in J_\ell}r_j.
+\]
+Distribute these integer supplies among the $n$ bins with prescribed
+integer demands $b_{i,\ell}$, for instance greedily. This gives
+$a_{i,j}\geq0$ with $\sum_i a_{i,j}\leq r_j$ and
+$\sum_{j\in J_\ell}a_{i,j}=b_{i,\ell}$. Put zero in the zero-column
+coordinates. This is an object of \eqref{eq:alloc}; the Boolean criterion
+therefore proves (i).
+
+For (ii), the empty-lift argument still applies. If two distinct columns
+$j,k$ are $e_\ell$, choose $r=e_j+e_k$ and
+$b_1=b_2=e_\ell$, with other demands zero. The lifting poset has exactly
+two objects: give $e_j$ to the first component and $e_k$ to the second,
+or the reverse. All supply is used; the objects are incomparable and
+there are no other objects to connect them. For representables
+$X_1=X_2=\N^d(e_\ell,-)$ and $X_i=\N^d(0,-)$ for $i>2$, the
+comparison has two source elements and one target element.
+
+Conversely, assume $C$ is a partial coordinate injection. A supported
+row $\ell$ has a unique corresponding source coordinate $j$. Set
+$a^{\min}_{i,j}=b_{i,\ell}$ and set every zero-column coordinate to zero.
+Unsupported demand coordinates vanish because $\sum_i b_i\leq Cr$.
+The tuple $a_i^{\min}$ is feasible and is below every other tuple in
+\eqref{eq:alloc}. Hence the lifting poset has a least object and is
+nonempty and connected. Theorem~\ref{thm:set} proves (ii).
+
+For (iii), universal witness equivalence implies that every decomposition
+functor is an equivalence, hence final; thus (ii) is necessary. If column
+$j$ is zero, take $r=e_j$. The target decomposition category at $Cr=0$
+is terminal. The source has the all-zero allocation and the distinct
+allocation that gives $e_j$ to component one, with a noninvertible arrow
+between them. This poset has nonisomorphic distinct objects and is not
+equivalent to a terminal category. Hence zero columns are forbidden.
+
+Conversely, if the columns are distinct basis vectors, each target
+decomposition below $Cr$ has exactly one inverse source decomposition,
+obtained by reading its supported coordinates. Unsupported target
+coordinates are forced zero. The inverse preserves and reflects order,
+so the decomposition functor is a poset isomorphism. The induced total
+witness-category comparison is an isomorphism, up to product conventions.
+\end{proof}
+
+\subsection{Three small experiments and a positive case}
+\paragraph{Batch splitting.}
+For $C=(2)$ at $r=1$, two one-unit experiments fit a total physical budget
+of two. Each changed local interface, however, uses a whole source packet;
+the local packet allocations cannot serve both components. The lifting
+category for $(1,1)$ is empty. A sealed packet of two calibration reagents
+is a physical interpretation only if the source local interface actually
+forbids inter-component splitting and the target global interface permits
+it. Those access conditions, not the numeral two alone, create the example.
+
+\paragraph{Forgotten provenance.}
+For $C=(1\ \ 1)$ and $r=(1,1)$, two labelled stocks become one physical
+reagent type. Two one-unit experiments can always be supplied, but their
+two alternative stock assignments form a discrete two-object lifting
+category. Boolean feasibility agrees; element-level allocation data does not.
+
+\paragraph{Invisible audit resources.}
+For $C=(1\ \ 0)$ at $r=(0,1)$, the target decomposition category is
+terminal. In the source audit coordinate it is the span
+\[
+ (0,0)\longrightarrow(1,0),\qquad
+ (0,0)\longrightarrow(0,1).
+\]
+The constant-diagram colimit is one point and the functor to the terminal
+category is final. It is not an equivalence: the displayed arrows are
+noninvertible and the three objects are not isomorphic. In fact this
+$C$ is exact for every Set-valued diagram, not just for this constant one,
+by Theorem~\ref{thm:matrix}. Thus the witness obstruction survives even
+under universal extensional exactness.
+
+\paragraph{A positive vocabulary change.}
+The map $C(q)=(q,0)$ changes the resource vocabulary by introducing an
+additional target resource unavailable in image budgets. Every decomposition
+of an image budget has zero in that coordinate and lifts uniquely. It is
+exact even at the retained-witness level. The map $C(q,a)=(q,0)$ is a
+nontrivial Set-exact change that additionally forgets an audit coordinate,
+but it is not witness-exact.
+
+\subsection{Not the earlier manufacture theorem}
+The programme's adaptive-manufacture theorem compares
+$\bigvee_h Cd_h$ with $C(\bigvee_h d_h)$; its universal criterion is
+that each row has at most one nonzero entry. That permits arbitrary
+positive weights and permits one source column to use multiple physical
+resources. In contrast, $C=(2)$ satisfies that earlier criterion but
+fails even Boolean convolution exactness. The matrix $C=(1\ \ 1)$
+fails the earlier criterion but satisfies Boolean convolution exactness.
+The new calculation concerns decomposing a fixed budget, whereas the old
+one concerns joining alternative future demands. They are different
+interchanges, not alternative terminology for the same theorem.
+
+\section{The exact response bridge to heterogeneous characterizations}\label{sec:slice}
+Let $S$ be a supplied actual system-state set. Write $\mathcal P(S)$
+for the set of response columns, regarded as a discrete constant diagram.
+Suppose the target decomposition diagram $D$ at an output interface has
+a natural cocone
+\[
+ \epsilon_d:D(d)\longrightarrow\mathcal P(S),
+\]
+and equip the source diagram $DK_a$ with precisely the pulled-back cocone.
+Naturality means that an admitted refinement preserves the response
+column of each transported label. This is an extra semantic requirement;
+a stateful intervention that changes the experiment's meaning does not
+automatically satisfy it.
+
+\begin{proposition}[Response-preserving comparison]\label{prop:slice}
+The induced colimit comparison is a morphism in $\Set/\mathcal P(S)$.
+If it is bijective, it gives an isomorphism of labelled incidence contexts,
+with identity map on $S$. Consequently it preserves the induced behavioral
+state equivalence, the formal-concept lattice, and the supported Dowker
+complexes up to their canonical isomorphisms. For the same supplied deterministic state and program interpretation, if the
+labelled tests carry specified program-precomposition actions and the
+comparison is equivariant, the corresponding quotient and concept actions,
+and the object-nerve action spans with their stated domains, transport as well.
+
+More weakly, equality of the sets of evaluated response columns is enough
+for the behavioral state equivalence, extent-based concept lattice,
+supported concept core, and object-side Dowker complex to agree. In
+particular, surjectivity of the response-preserving comparison suffices
+for these extensional conclusions; injectivity is not needed.
+\end{proposition}
+\begin{proof}
+The universal property of each colimit gives evaluation maps to
+$\mathcal P(S)$, and the pulled-back-cocone hypothesis makes their triangle
+with $\Theta$ commute. A bijection over $\mathcal P(S)$ preserves exactly
+the incidence relation $s\mathrel I t$ defined by $s\in\epsilon(t)$.
+All the stated constructions are invariant under an incidence isomorphism:
+rows have the same equalities, derivation operators correspond under the
+test bijection, and common-test simplices correspond under the same
+bijection and identity on states. Equivariance identifies the induced quotient and concept actions by their
+defined formulas. The common supplied state maps give the same vertex maps
+on the object nerves, and the common response columns give their domains.
+This does not infer equality of raw state maps from nonseparating tests.
+For the weaker conclusion, duplicate labels do not change row equality,
+intersections of response columns, whether a closed extent has a
+nonempty common-test set, or whether a finite state set has a common
+test. Surjectivity over $\mathcal P(S)$ guarantees equality of the
+sets of response columns. It does not give a bijection of labelled tests
+or an isomorphism of their witness categories.
+\end{proof}
+
+For independent parallel tests, a concrete evaluation is
+$\pi_X^{-1}C_e\cap\pi_Y^{-1}C_f$ on the admitted joint state set.
+That example still requires actual independent execution and refinements
+preserving this response. A nonbijective label comparison need not alter
+any state quotient or concept lattice: distinct labels can have equal
+response columns. Thus Theorem~\ref{thm:matrix} does not claim that every
+resource mismatch changes each downstream invariant.
+
+The companion interaction-closure result uses tests pulled back along an
+actual interacting operation, such as a reversible gate. Its native test
+syntax is contravariant under program precomposition, not automatically a
+Day-convolution diagram. Proposition~\ref{prop:slice} is the precise
+conditional bridge; no claim is made that every interacting gate already
+has the Kan-extension composition used here.
+
+
+\paragraph{A response-level realization of the batch obstruction.}
+In the batch example $C=(2)$ and source budget $1$, let each component
+have a single experiment $e_i$, available at physical budget at least $1$.
+Let the actual joint state set be $S=\{0,1\}^2$, and let $e_i$ ask
+whether its component bit is $1$. At physical budget $2$ the joint
+experiment has response column $\{(1,1)\}$, given by the intersection
+of the two cylinders. After local interface change, each experiment needs
+one whole source packet, so no joint label exists at source budget $1$.
+Restrict attention to this prescribed paired-test family: no zero-budget
+no-op test was supplied to either input diagram. Individually executable
+probes on the joint carrier are not being counted. The source paired-test
+family is empty; the target has one response column. Their row quotients have respectively one and two classes, their
+extent families one and two elements, and their object nerves respectively
+no vertices and one vertex. This is an actual incidence consequence of
+an absent decomposition, under the stated independent-test interpretation.
+By contrast, the two disconnected provenance allocations for $C=(1\ \ 1)$
+can evaluate to the same response column. They then obstruct label-level
+Set exactness without changing any of these extensional invariants.
+
+\section{Coherence of successive interface changes}
+For a second comparison $(B,V)\to(D,Z)$ with maps $v_i$ and
+$\psi:Z(\prod_i v_i)\Rightarrow v_0V$, the composite cell is
+\[
+ Z(\prod_i v_i u_i)
+  \xRightarrow{\psi_{(u_i-)}}v_0V(\prod_i u_i)
+  \xRightarrow{v_0\chi}v_0u_0W.
+\]
+Its decomposition functor is exactly
+$K^v_{u_0a}K^u_a$. The induced mates therefore compose after the evident
+reindexings. On a representative, both routes have composite arrow
+$v_0u_0(k)\,v_0\chi\,\psi$. Identities and three-stage associativity
+follow from the same formula. Final functors compose, as do equivalences,
+so exact interface changes compose in the corresponding doctrine.
+
+This is a theorem about a supplied directed composition square. It does
+not manufacture an operad, feedback semantics, contextad, physical
+compiler, native quotient, or resource reset. If those richer structures
+are intended, their units, substitutions, witness transport and coherence
+must be supplied and checked. The prior fixed-interface regular-image
+result starts from a fixed test semantics and compares quotients of state
+carriers; the present result changes which joint experiments can be formed
+before taking any state quotient. The two problems are complementary.
+

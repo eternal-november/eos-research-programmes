@@ -1,0 +1,324 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype,enumitem}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\R}{\mathbb R}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\St}{\operatorname{Stoch}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\clip}{\operatorname{clip}}
+\newcommand{\RP}{\mathbb {RP}}
+\newcommand{\diag}{\operatorname{diag}}
+\setlist{nosep,leftmargin=*}
+\setlength{\parskip}{3pt}
+\title{Stochastic interfaces and exact rank two realization widths}
+\author{Technical research report}
+\date{3 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+A continuously varying stochastic process may require more globally labelled states than its pointwise minimal realization. We prove two statements with distinct scopes. First, the space of row-stochastic split pairs $QL=I_r$ is $S_r$-equivariantly homotopy equivalent to the disjoint-support space $\Hom(K_r,K_k)$. An explicit threshold repairs the continuous-decoder problem without increasing the number of slots. Second, for a time-homogeneous two-state stochastic family on a double cover, with observable Hankel rank two everywhere and a fixed terminal vector, the minimum continuous stochastic and normalized signed native widths both equal $g(\ell)+1$, where $g(\ell)$ is the least trivial-bundle dimension containing the associated line bundle. Necessity applies to arbitrary native competitors and uses only one- and two-letter probabilities. We also obtain an explicit uniform approximation bound and examples over real projective spaces. The topology and pointwise stochastic splitting have classical antecedents; no novelty clearance is claimed.
+\end{abstract}
+\tableofcontents
+
+\section{Models and the scope of the comparison}
+Write $\St(a,b)$ for the nonnegative real $a\times b$ matrices with every row sum equal to one, and $\one_j$ for the all-ones column of length $j$. Nonnegative stochastic matrices may have zeros. \emph{No strict-positivity conclusion is intended for the constructed global models.}
+
+Let $Y$ be a fixed finite nonempty outcome alphabet. A normalized $k$-coordinate realization on a base $X$ consists of a continuous row $\rho:X\to\R^{1\times k}$ and continuous matrices $N_y:X\to\R^{k\times k}$, with
+\[
+ \rho\one_k=1,\qquad \Bigl(\sum_yN_y\Bigr)\one_k=\one_k.
+\]
+Its terminal vector is the fixed $\one_k$, and its word law is
+\[
+ f_x(y_1\cdots y_n)=\rho(x)N_{y_1}(x)\cdots N_{y_n}(x)\one_k.
+\]
+The stochastic class requires nonnegative entries; the normalized signed class allows real entries. The external parameter remains fixed during each word, and the same matrices are used at every stage. State labels on $X$ are globally fixed.
+
+Let $P\to X$ be a locally trivial double cover with involution $\tau$, and let
+\[
+ \ell=P\times_{\mathbb Z_2}\R,\qquad
+ J=\begin{pmatrix}0&1\\1&0\end{pmatrix}.
+\]
+The associated line has the canonical metric $|[p,t]|=|t|$. Define $g(\ell)$ as the least $n\geq1$ for which $\ell$ embeds fiberwise linearly into $\eps^n=X\times\R^n$, or infinity if none exists. Width statements assume $X\ne\varnothing$ and positive integer state counts. The base need not be compact, connected, or paracompact unless a later assertion says so.
+
+\section{The double cover split theorem}
+A stochastic split pair has maps
+\[
+ Q:P\to\St(2,k),\quad L:P\to\St(k,2),\quad QL=I_2,
+\]
+with $Q(\tau p)=JQ(p)$ and $L(\tau p)=L(p)J$.
+
+\begin{theorem}\label{thm:double}
+For every $k\geq1$, a continuous equivariant stochastic split pair exists if and only if $\ell$ embeds in $\eps^{k-1}$. For $k\geq2$ this is equivalent to an odd map $P\to S^{k-2}$.
+\end{theorem}
+\begin{proof}
+Let $q_+,q_-$ be the rows of $Q$. Then $d=q_+-q_-$ is odd and $d\one_k=0$, while $dL=(1,-1)$ shows that $d$ never vanishes. The map $[p,t]\mapsto(x,t d(p))$ embeds $\ell$ in $\one_k^\perp\cong\R^{k-1}$.
+
+Conversely, a bundle embedding supplies an odd nonzero vector in $\one_k^\perp$. Normalize it to a continuous unit vector $u(p)$. Every zero-sum unit vector in $\R^k$ satisfies
+\begin{equation}\label{eq:margin}
+ \max_i u_i\geq c_k,\qquad \min_i u_i\leq-c_k,
+ \qquad c_k=\frac1{\sqrt{k(k-1)}}.
+\end{equation}
+Indeed, put $M=\max_i u_i$ and $S=\sum_{u_i>0}u_i$. There are at most $k-1$ positive entries, so $S\leq(k-1)M$, and
+\[
+ 1=\sum_{u_i>0}u_i^2+\sum_{u_i<0}u_i^2
+ \leq MS+S^2\leq k(k-1)M^2.
+\]
+Apply the same argument to $-u$. Equality is attained by $k-1$ coordinates equal to $c_k$ and one equal to $-(k-1)c_k$.
+
+Choose $0<\eta<c_k$ and define
+\begin{align}
+ q_{+,i}(u)&=\frac{(u_i-\eta)_+}{\sum_j(u_j-\eta)_+},
+ &q_{-,i}(u)&=q_{+,i}(-u),\label{eq:doubleQ}\\
+ L_{i,+}(u)&=\frac{1+\clip(u_i/\eta)}2,
+ &L_{i,-}(u)&=\frac{1-\clip(u_i/\eta)}2,\label{eq:doubleL}
+\end{align}
+where $(t)_+=\max(t,0)$ and $\clip(t)=\max(-1,\min(1,t))$. Both denominators are positive by \eqref{eq:margin}. An occupied plus slot has $u_i>\eta$ and decodes to $(1,0)$; an occupied minus slot has $u_i<-\eta$ and decodes to $(0,1)$. Therefore $QL=I_2$. The formulas are stochastic, continuous and equivariant. For $k=1$ both the split pair and the rank-zero embedding are impossible on a nonempty base.
+\end{proof}
+
+No paracompactness is needed in this proof: normalization uses the target Euclidean norm of a given embedding. Over an empty base all displayed conditions are vacuous; a minimum-width convention for the empty experiment is separate.
+
+\paragraph{Smoothness.}
+For a smooth odd unit $u$, replace $(t-\eta)_+$ by a smooth $\phi(t)\geq0$ that is zero for $t\leq\eta$ and positive for $t>\eta$. Replace $\clip(t/\eta)$ by a smooth odd $h(t)$ with values in $[-1,1]$ and $h(t)=\pm1$ for $\pm t\geq\eta$. The resulting split pair is smooth. On the usual paracompact smooth manifolds, a continuous odd nonzero map can first be smoothly approximated, antisymmetrized and normalized. Otherwise assume a smooth embedding explicitly.
+
+\paragraph{Analytic limitation.}
+This construction is not analytic. More strongly, on connected real-analytic $P$, an analytic equivariant disjoint-support $Q$ cannot exist: for each slot, $q_{+,i}q_{-,i}=0$ and analytic continuation force one factor to vanish identically; equivariance then forces both to vanish. This statement concerns split interfaces, not arbitrary analytic native realizations.
+
+\section{Decoder repair for any number of local states}
+Define
+\begin{align*}
+ D_{r,k}&=\{Q\in\St(r,k):\supp Q_a\cap\supp Q_b=\varnothing\text{ for }a\ne b\},\\
+ S_{r,k}&=\{(Q,L)\in\St(r,k)\times\St(k,r):QL=I_r\}.
+\end{align*}
+A permutation matrix $A\in S_r$ acts by $Q\mapsto AQ$, $L\mapsto LA^{-1}$. The polyhedral space $D_{r,k}$ is the usual realization of $\Hom(K_r,K_k)$.
+
+\begin{lemma}\label{lem:forceddecoder}
+If $(Q,L)\in S_{r,k}$ and $Q_{ai}>0$, then $L_i=e_a$. In particular, $Q\in D_{r,k}$.
+\end{lemma}
+\begin{proof}
+For $b\ne a$, $0=(QL)_{ab}=\sum_iQ_{ai}L_{ib}$. Nonnegativity forces $L_{ib}=0$ on every slot occupied by row $a$, and row normalization gives $L_{ia}=1$. Two distinct rows therefore cannot occupy the same slot.
+\end{proof}
+
+\begin{theorem}[Buffered decoder repair]\label{thm:repair}
+For $1\leq r\leq k$, the projection $\operatorname{pr}:S_{r,k}\to D_{r,k}$ is an $S_r$-equivariant homotopy equivalence. Consequently, on any principal $S_r$-bundle, an equivariant map into $D_{r,k}$ exists if and only if an equivariant stochastic split pair exists.
+\end{theorem}
+\begin{proof}
+Fix $0<\eta<1/k$. Choose continuous $\theta:[0,1]\to[0,1]$ with $\theta(0)=0$ and $\theta(t)=1$ for $t\geq\eta$. Define
+\begin{align}
+ F(Q)_{ai}&=\frac{(Q_{ai}-\eta)_+}{\sum_j(Q_{aj}-\eta)_+},\label{eq:F}\\
+ B(Q)_{ia}&=\theta(Q_{ai})+\frac{1-\sum_b\theta(Q_{bi})}{r}.\label{eq:B}
+\end{align}
+Each row of $Q$ has an entry at least $1/k$, so the denominators are positive. Each column has at most one nonzero entry, hence $0\leq\sum_b\theta(Q_{bi})\leq1$. Thus $B$ is nonnegative and row stochastic. If $F(Q)_{ai}>0$, then $\theta(Q_{ai})=1$ and all other terms in that column vanish. Hence $B_i=e_a$, proving $F(Q)B(Q)=I_r$. The map $s(Q)=(F(Q),B(Q))$ is continuous and equivariant.
+
+The straight homotopy
+\[
+ H_t(Q)=(1-t)Q+tF(Q)
+\]
+remains stochastic and has support contained in that of $Q$. For $t<1$ its support is exactly that of $Q$. Therefore it stays within the same support cell and proves $\operatorname{pr}\circ s\simeq\operatorname{id}_D$.
+
+For any split pair $(Q,L)$, Lemma~\ref{lem:forceddecoder} gives $H_t(Q)L=I_r$. First homotope $(Q,L)$ to $(F(Q),L)$ along this path, then hold $F(Q)$ fixed and interpolate the decoder:
+\[
+ \bigl(F(Q),(1-t)L+tB(Q)\bigr).
+\]
+Both endpoint decoders split $F(Q)$, so every intermediate decoder does also. This concatenation proves $\operatorname{id}_S\simeq s\circ\operatorname{pr}$. Both homotopies are equivariant. Applying the maps fiberwise on a principal bundle gives the final assertion.
+\end{proof}
+
+The statement applies to any subgroup of $S_r$ as well. For $r>k$ both spaces are empty, and $r=1$ causes no exception. No fibration property or locally continuous selection of arbitrary decoders is assumed.
+
+\subsection{Why a prescribed encoder can fail}
+For $t\in[-1/2,1/2]$, take three slots and set
+\[
+ q_+(t)=(-t)_+e_1+[1-(-t)_+]e_2,\qquad
+ q_-(t)=t_+e_1+(1-t_+)e_3.
+\]
+The rows are continuous, stochastic and disjointly supported. Any decoder must satisfy $L_1=e_+$ for $t<0$ and $L_1=e_-$ for $t>0$, so no continuous decoder exists for this exact $Q$. Thresholding leaves slot 1 vacant on an interval around zero, allowing its decoder to change continuously. The existence-level theorem is therefore stronger than, and compatible with the failure of, decoding a prescribed encoder.
+
+\subsection{Smooth repair}
+For smooth $Q$, replace the numerator in \eqref{eq:F} by a smooth cutoff $\phi(Q_{ai})$, zero for $Q_{ai}\leq\eta$ and positive above $\eta$, and choose smooth $\theta$ with the stated properties. The formulas and both homotopies remain valid. Flat step functions smoothly concatenate the stages. This does not assume that an arbitrary continuous map into a singular Hom complex can be smoothed while remaining in that complex.
+
+\section{Transfer of instruments and preparations}
+Use a left action on a principal $S_r$-bundle $E\to X$. Suppose continuous nonnegative matrices $M_y(e)$ and probability rows $\pi(e)$ satisfy
+\[
+ M_y(Ae)=AM_y(e)A^{-1},\qquad
+ \pi(Ae)=\pi(e)A^{-1},\qquad
+ \Bigl(\sum_yM_y\Bigr)\one_r=\one_r.
+\]
+Let $Q(Ae)=AQ(e)$ and $L(Ae)=L(e)A^{-1}$ form an equivariant split pair. Then
+\begin{equation}\label{eq:transfer}
+ \rho=\pi Q,\qquad N_y=LM_yQ
+\end{equation}
+are invariant and descend to $X$. They are nonnegative, $\rho\one_k=1$, and
+\[
+ \Bigl(\sum_yN_y\Bigr)\one_k
+ =L\Bigl(\sum_yM_y\Bigr)Q\one_k=L\one_r=\one_k.
+\]
+Telescoping $QL=I_r$ gives equality of every word probability:
+\[
+ \rho N_{y_1}\cdots N_{y_n}\one_k
+ =\pi M_{y_1}\cdots M_{y_n}\one_r.
+\]
+In addition, $N_yL=LM_y$ and $\rho L=\pi$, so the comparison is statewise.
+
+The same pair transfers any finite set of public actions with kernels $M_{a,y}$ and $\sum_yM_{a,y}\one_r=\one_r$. Arbitrary concatenations of action--outcome labels are allowed, and word equality yields equality for adaptive action policies. There is no asserted cross-parameter relation $Q_xL_{x'}=I_r$ and no parameter-transport operation.
+
+For $r\geq3$, Theorem~\ref{thm:repair} characterizes \emph{split-interface lifts}. It does not by itself bound all arbitrary stochastic native realizations of the same observed law. The next section establishes such a lower bound separately in rank two.
+
+\section{The native lower bound in rank two}
+Suppose $\pi:P\to\St(1,2)$ and nonnegative $2\times2$ matrices $M_y$ satisfy
+\[
+ \pi(\tau p)=\pi(p)J,\qquad M_y(\tau p)=JM_y(p)J,
+ \qquad \Bigl(\sum_yM_y\Bigr)\one_2=\one_2.
+\]
+Define $f_x(w)=\pi(p)M_w(p)\one_2$. For one-letter labels set
+\begin{align}
+ \alpha_y(p)&=\bigl[\pi(p)M_y(p)-f_x(y)\pi(p)\bigr]_+,\label{eq:alpha}\\
+ \beta_z(p)&=\bigl[M_z(p)\one_2\bigr]_+-\bigl[M_z(p)\one_2\bigr]_-,\label{eq:beta}\\
+ C_{yz}(x)&=f_x(yz)-f_x(y)f_x(z).\label{eq:C}
+\end{align}
+In \eqref{eq:alpha}--\eqref{eq:beta}, subscripts $+$ and $-$ name coordinates, not positive parts. The centered row in \eqref{eq:alpha} equals $\alpha_y(1,-1)$, and therefore
+\begin{equation}\label{eq:outer}
+ C=\alpha\beta^T.
+\end{equation}
+Both $\alpha$ and $\beta$ are odd on $P$.
+
+The matrix $C$ is the \emph{centered two-letter Hankel matrix}, or multiplicativity defect. It is not generally a probabilistic consecutive-symbol covariance: without stationarity the second-position marginal is $\pi(\sum_yM_y)M_z\one_2$, not necessarily $f_x(z)$. No stationarity is used below.
+
+\begin{lemma}\label{lem:ranktwo}
+For a normalized two-coordinate, time-homogeneous realization, the observable Hankel rank is two if and only if $C\ne0$.
+\end{lemma}
+\begin{proof}
+If $C=0$, \eqref{eq:outer} implies $\alpha=0$ or $\beta=0$. The first case gives $\pi M_y=f(y)\pi$ for every $y$; the second gives $M_y\one_2=c_y\one_2$, with $c_y=f(y)$. Either identity implies inductively $f(w)=\prod_j f(y_j)$, a rank-one word law. Conversely, $C\ne0$ is a nonzero Schur complement of the empty-word entry in the one-letter Hankel block. Hence that block has rank at least two, while the supplied local realization bounds all Hankel ranks by two.
+\end{proof}
+
+\begin{theorem}[Arbitrary native competitors]\label{thm:native}
+Assume the local observable Hankel rank is two at every point of $X$. If a continuous real $k$-coordinate model on $X$, with fixed terminal $\one_k$ and $\rho\one_k=1$, matches all one- and two-letter target probabilities, then $\ell$ embeds in $\eps^{k-1}$. In particular, the minimum continuous stochastic and normalized signed widths satisfy
+\[
+ w_{\mathrm{stoch}}(f)=w_{\mathrm{sgn}}(f)=g(\ell)+1.
+\]
+\end{theorem}
+\begin{proof}
+The competitor may have signed entries, extra unreachable states, or nonminimal internal dimension. No comparison maps are assumed. Define
+\begin{equation}\label{eq:extractor}
+ d(p)=\sum_y\alpha_y(p)\bigl[\rho(x)N_y(x)-f_x(y)\rho(x)\bigr].
+\end{equation}
+This vector is continuous and odd. Matching one-letter probabilities and $\rho\one_k=1$ give $d\one_k=0$. Matching two-letter probabilities gives, for every $z$,
+\[
+ d(p)N_z(x)\one_k
+ =\sum_y\alpha_y(p)C_{yz}(x)
+ =\|\alpha(p)\|_2^2\beta_z(p).
+\]
+By Lemma~\ref{lem:ranktwo}, both $\alpha$ and $\beta$ are nonzero everywhere, so $d$ never vanishes. It embeds $\ell$ in $\one_k^\perp$. This proves the lower bound for both signed and stochastic competitors. Theorem~\ref{thm:double} and \eqref{eq:transfer} give the matching all-word nonnegative stochastic upper bound.
+\end{proof}
+
+The theorem is specifically about a fixed terminal vector. It does not classify realizations with varying terminal covectors. If the rank-two assumption fails, the cover can be invisible: $M_y=c_yI_2$ produces a globally one-state IID law on any cover.
+
+\subsection{What the observable tables reveal}
+Since $C=\alpha\beta^T$ is everywhere nonzero of rank one, its column-image line bundle is isomorphic to $\ell$ via $[p,t]\mapsto t\alpha(p)$. Its row-image line is similarly represented by $\beta$. Thus the lower-bound line cover can be recovered from one- and two-letter tables. Arbitrary finite tables do not by themselves identify a true all-word process; the all-word upper theorem retains the stated local stochastic-model promise.
+
+\subsection{Outcome capacity and controls}
+Normalization gives $\sum_z\beta_z=0$. Since $\beta$ never vanishes,
+\[
+ \ell\hookrightarrow\eps^{|Y|-1},\qquad
+ g(\ell)\leq |Y|-1.
+\]
+Therefore a finite alphabet automatically makes the widths in Theorem~\ref{thm:native} finite, and bounds them by $|Y|$. One binary-output instrument cannot have a nontrivial cover while remaining rank two everywhere. A single instrument with enough outcomes suffices; a single globally nonvanishing odd scalar discriminator would trivialize the cover.
+
+For finitely many public actions, use the alphabet of labels $(a,y)$ with all finite concatenations permitted. The same factorization and induction proof applies, and
+\[
+ \ell\hookrightarrow\bigoplus_a\one_{|Y_a|}^{\perp},\qquad
+ g(\ell)\leq\sum_a(|Y_a|-1).
+\]
+No added control is required for the uncontrolled rank-two theorem. Restrictions on the permissible action words would require a separate observability argument.
+
+\section{Uniform robustness at two letters}
+\begin{theorem}\label{thm:robust}
+Assume $X$ is compact, put $m=|Y|$ and $c=\min_x\|C_x\|_F>0$. If a continuous stochastic competitor approximates every one- and two-letter probability with uniform absolute error $e<c/(3m)$, then $\ell\hookrightarrow\eps^{k-1}$. For a normalized signed competitor, the same conclusion holds whenever $m(3e+e^2)<c$.
+\end{theorem}
+\begin{proof}
+Let $a(p)=\alpha(p)/\|\alpha(p)\|_2$, write $f'(w)=\rho N_w\one_k$, and set $C'_{yz}=f'(yz)-f'(y)f'(z)$. Use the exactly centered vector
+\[
+ d(p)=\sum_ya_y(p)\bigl[\rho N_y-f'(y)\rho\bigr].
+\]
+Then $d\one_k=0$ and $(dN_z\one_k)_z=a^TC'$. Stochastic one-letter probabilities lie in $[0,1]$, so every entry of $C'-C$ has absolute value at most $3e$. Consequently
+\[
+ \|a^T(C'-C)\|_2\leq\|C'-C\|_F\leq3me,
+ \qquad \|a^TC\|_2=\|C\|_F\geq c.
+\]
+Thus $d$ is odd and nonzero. For signed competitors, approximation gives $|f'(y)|\leq1+e$; the entrywise defect bound becomes $3e+e^2$, proving the second assertion.
+\end{proof}
+No competitor-parameter bound, minimality, or reachable-subspace assumption is imposed. This is uniform robustness over the entire parameter base, not a finite-parameter-sample certificate without coverage and regularity bounds.
+
+\section{Held mixtures and projective examples}
+Suppose $v_+(p),v_-(p)\in\Delta(Y)$ are distinct and swap under $\tau$. Let positive weights $w_+,w_-$ sum to one and swap under $\tau$, and set
+\[
+ M_y=\diag(v_{+,y},v_{-,y}),\qquad \pi=(w_+,w_-).
+\]
+Writing $a=v_+-v_-$ and $\mu=w_+v_++w_-v_-$ gives the genuine covariance identity
+\[
+ C=w_+w_-aa^T.
+\]
+A simpler extractor for any matching native competitor is
+\[
+ d=\sum_ya_y(\rho N_y-\mu_y\rho),\qquad
+ d\one_k=0,\qquad dN_z\one_k=w_+w_-\|a\|_2^2a_z.
+\]
+Thus arbitrary positive continuously varying weights are allowed. Colliding atoms or vanishing weights remove the rank-two hypothesis.
+
+For the antipodal cover $S^d\to\RP^d$, choose a linear isometry $A:\R^{d+1}\to\one_{d+2}^{\perp}$ and define
+\[
+ c_0=\frac{\one_{d+2}^T}{d+2},\qquad
+ v_\pm(u)=c_0\pm\delta(Au)^T,\qquad
+ 0<\delta<\frac1{d+2}.
+\]
+The atoms are distinct strictly positive probability rows. Their uniform held mixture has pointwise width two. The associated line is tautological, with $g(\ell)=d+1$, so its continuous stochastic and normalized signed widths are both $d+2$. The lower bound is the standard Borsuk--Ulam or Stiefel--Whitney calculation; the upper bound is the tautological inclusion into $\R^{d+1}$. For $d=1$ the width is three. This is a topological normalization cost, not a positive-versus-signed gap.
+
+\section{Classical antecedents and limitations}
+\paragraph{Stochastic recovery.}
+The pointwise disjoint-support characterization is classical in the theory of Markov congruent embeddings and sufficient statistics. Ay--Jost--L\^e--Schwachh\"ofer, Proposition~4.7, characterize Markov congruent embeddings by Markov left inverses and explicitly trace the result to Chentsov's Lemmas~6.1 and~9.5 \cite{AJLS}. Our decoder is forced to be deterministic on occupied slots, while unused slots may have arbitrary probability rows. The pointwise notion itself is not new.
+
+\paragraph{Hom complexes and deleted products.}
+Babson--Kozlov, Proposition~4.3, identify $\Hom(K_2,K_k)$ with a centrally symmetric polyhedral sphere, equivariantly for row swapping and central symmetry. Their Remark~4.4 connects complete-graph Hom spaces to deleted products, and Proposition~4.5 gives the wedge-of-$(k-r)$-spheres result for general $r$ \cite{BK}. Abrams--Gay--Hower treat the equivalent discretized configuration spaces \cite{AGH}. These are disjoint-support configurations, not arbitrary configurations of distinct simplex points.
+
+For $r=2$, $Q\mapsto q_+-q_-$ identifies $D_{2,k}$ with
+\[
+ \{z\in\one_k^\perp:\|z\|_1=2\},
+\]
+with inverse given by positive and negative coordinate parts. Radial projection gives the antipodal sphere. Dover--\"Ozayd\i n explicitly state this description in their introduction \cite{DO}. Theorem~\ref{thm:repair} provides the separate, explicit decoder-preserving homotopy; the cited topological identifications do not themselves supply a decoder for a prescribed continuous $Q$.
+
+\paragraph{Genus.}
+For paracompact Hausdorff $X$, $g(\ell)$ equals the \emph{unnormalized} Schwarz genus of the cover: the least number of open sets admitting local sections and covering $X$. An odd nonzero vector in $\R^n$ gives such a cover from its nonzero coordinates, with positive sign selecting a sheet. Conversely a subordinate partition of unity and local sections give $n$ odd coordinate functions with no common zero. This fixes the convention: a trivial nonempty cover has genus one and width two.
+
+Schwarz's fiberwise-join theorem identifies genus at most $n$ with a section of the $n$-fold fiberwise join; for a double cover that join is the sphere bundle of $n\ell$. See Schwarz \cite{Schwarz} and the explicit restatement as Theorem~2.5 in Pave\v{s}i\'c \cite{Pavesic}. On CW bases, the embedding condition is equivalent to a classifying map factoring, up to homotopy, through $\RP^{n-1}$. Hence $w_1(\ell)^n=0$ is necessary; no converse from this cohomological condition alone is asserted.
+
+\paragraph{Relation to the circle classification.}
+The nontrivial two-component circle family has both normalized signed and stochastic width three, as the double-cover theorem predicts. A three-component even-monodromy family can still have different signed and stochastic widths. Nothing here promotes the rank-two extractor to an arbitrary higher-rank native lower bound. The decoder repair does strengthen the existence-level interface statement in all ranks.
+
+\paragraph{Status.}
+The report proves its stated theorems from elementary matrix arguments and classical topology. It does not claim novelty clearance, strict positivity of global lifts, analytic split lifts, arbitrary higher-rank native classification, varying-terminal classification, or cross-parameter transport. Whether the exact buffered homotopy and rank-two native-width formulation already occur elsewhere requires a further specialist source audit.
+
+\section{Reproducibility}
+The accompanying Python regression checks general $r,k$ decoder repair, permutation equivariance, both homotopies, the uniform sphere buffer, normalization, signed coordinate changes, the centered-Hankel extractor, and three-step word transfer. All checks passed with maximum residual $8.88\times10^{-16}$. The script requires NumPy and is a formula regression, not a proof of the topology or bibliographic status. The source archive contains this \LaTeX{} file, the derivation notes, the script, instructions, check output, an independent review, and a SHA-256 manifest.
+
+\begin{thebibliography}{9}
+\bibitem{AJLS} N. Ay, J. Jost, H. V. L\^e and L. Schwachh\"ofer. \emph{Information geometry and sufficient statistics}. Probability Theory and Related Fields 162 (2015), 327--364. \href{https://arxiv.org/pdf/1207.6736}{arXiv:1207.6736}, Proposition 4.7 and Example 3.14.
+\bibitem{BK} E. Babson and D. N. Kozlov. \emph{Complexes of graph homomorphisms}. Israel Journal of Mathematics 152 (2006), 285--312. \href{https://arxiv.org/pdf/math/0310056}{arXiv:math/0310056}, Proposition 4.3, Remark 4.4 and Proposition 4.5.
+\bibitem{AGH} A. Abrams, D. Gay and V. Hower. \emph{Discretized configurations and partial partitions}. \href{https://arxiv.org/pdf/1009.2935}{arXiv:1009.2935}, Theorem 1.1 and Section 2.
+\bibitem{DO} J. Dover and M. \"Ozayd\i n. \emph{Stiefel manifolds and coloring the pentagon}. \href{https://arxiv.org/pdf/1302.2831}{arXiv:1302.2831}, introduction, page 3.
+\bibitem{Schwarz} A. S. Schwarz. \emph{The genus of a fibre space}. Trudy Moskovskogo Matematicheskogo Obshchestva 11 (1962), 99--126. \href{https://www.mathnet.ru/eng/mmo132}{Original publication record}; the join theorem is also stated in the next reference.
+\bibitem{Pavesic} P. Pave\v{s}i\'c. \emph{Monotonicity of the Schwarz genus}. \href{https://arxiv.org/pdf/1901.00652}{arXiv:1901.00652}, Theorem 2.5.
+\end{thebibliography}
+\end{document}

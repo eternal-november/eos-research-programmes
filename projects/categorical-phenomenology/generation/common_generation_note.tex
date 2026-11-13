@@ -1,0 +1,1427 @@
+% Standalone source; no external input, bibliography, figures, or generated files.
+% Intentionally uncompiled, as requested. Established results and derived synthesis are distinguished.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\title{One operational construction for residual automata,
+formal concepts, and topology}
+\author{A standalone technical synthesis}
+\date{4 November 2026}
+\begin{document}
+\maketitle
+\section{What is being unified}
+\label{nb:section}
+
+The shared datum below does more than feed three unrelated constructions.
+Its sequential operations extend uniquely to the concept lattice, and its
+supported concept poset models the Dowker complex in a way that intertwines
+the operations on their exact domains. The operations are generally
+\emph{partial on simplices}, even when the underlying state transition is
+total. This distinction supplies both a transport theorem and a sharp
+obstruction to an unrestricted common action.
+
+The core theorem is finite, deterministic and Boolean; a final section gives
+the set-sized extension. A completed operational
+presentation is required; an arbitrary finite sample does not supply the
+missing continuation operations or identify an unknown global language.
+The ingredients belong to established automata, FCA, Chu-space and Dowker
+theory. The particular integration below is proved directly without a
+priority claim.
+
+
+The central result is not that three procedures accept the same table.
+It is that compatible sequential operations have unique algebraic lifts,
+and that the same closure comparison intertwines their maximal partial
+geometric realizations, including exact domains and word composition
+(Theorem~\ref{nb:partial-bridge}). The marked residual states sit inside
+that algebraic completion. The supported part of the completion has the
+same homotopy type as the native incidence complexes. These are precise
+transport statements; the three unmarked outputs are not equivalent.
+
+\paragraph{Status of the claims.}
+Residual minimization, concept completion, concept adjunctions, and
+FCA--Dowker comparisons are established mathematics. Proofs are included
+because arrow variance, extrema, and action domains matter. The combined
+partial-action comparison is presented as a direct synthesis of those
+constructions, not as a claim of novelty. Reconstruction of an independently
+given space is a separate conditional theorem in
+Section~\ref{sec:reconstruction}, not a consequence of a binary table alone.
+\section{Acted observations and predictive residual states}
+
+For the finite bridge, let $H,E$ be finite sets and let $R\subseteq H\times E$. Write
+\[
+ r(h)=\{e:hRe\},\qquad C_e=\{h:hRe\}.
+\]
+For $U\subseteq H$ and $B\subseteq E$, put
+\[
+ U'=\{e:(\forall h\in U)\ hRe\},\qquad
+ B'=\{h:(\forall e\in B)\ hRe\},\qquad c(U)=U''.
+\]
+The type of the argument determines the direction of the prime. Empty
+intersections are included, so $\varnothing'=E$ on the object side and
+$\varnothing'=H$ on the attribute side.
+
+When discussing an automaton, require $H,E$ to be nonempty.
+Fix a finite alphabet $\Sigma$. A finite acted incidence presentation supplies
+$h_0\in H$, $e_0\in E$, and, for each $a\in\Sigma$, functions
+\[
+ u_a:H\longrightarrow H,\qquad v_a:E\longrightarrow E
+\]
+with the exact compatibility law
+\begin{equation}
+ u_a(h)Re\quad\Longleftrightarrow\quad hRv_a(e).
+ \label{nb:adjoint-incidence}
+\end{equation}
+For $w=a_1\cdots a_k$, use
+\[
+ u_w=u_{a_k}\circ\cdots\circ u_{a_1},\qquad
+ v_w=v_{a_1}\circ\cdots\circ v_{a_k}.
+\]
+Then $u_w(h)Re\Longleftrightarrow hRv_w(e)$,
+$u_{wz}=u_z u_w$, and $v_{wz}=v_wv_z$.
+Here $u_a$ represents appending an action to a history, while $v_a$
+represents prepending that action to a continuation test. Finite sets of
+literal words are not usually closed under these operations; $H$ and $E$
+are finite handles or quotients with supplied operations.
+
+Define $h\sim k$ when $r(h)=r(k)$ and let $Q=H/{\sim}$.
+Equation~\eqref{nb:adjoint-incidence} makes
+\[
+ \delta_a([h])=[u_a(h)],\quad q_0=[h_0],\quad
+ F=\{[h]:hRe_0\}
+\]
+a well-defined DFA. It recognizes
+$L=\{w:u_w(h_0)Re_0\}$.
+
+\begin{proposition}[Exactly when this is the residual DFA]
+\label{nb:residual}
+Assume every $h\in H$ is reachable from $h_0$, and that every test in $E$
+has the form $v_w(e_0)$ for some word $w$. Then $Q$ is the minimal
+reachable DFA for $L$. More generally, retaining reachability, the same conclusion holds whenever
+the tests $\{v_w(e_0):w\in\Sigma^*\}$ separate every pair of distinct rows
+of $R$.
+\end{proposition}
+\begin{proof}
+For a state represented by $h$, its continuation language is
+$L_h=\{w:hRv_w(e_0)\}$. Equal rows have equal continuation languages.
+Under the separation hypothesis the converse holds. Reachability makes
+these exactly the left residuals of $L$. Thus the displayed quotient is
+the Myhill--Nerode quotient, not merely a quotient relative to a sampled
+set of tests.
+\end{proof}
+
+Every finite DFA supplies such data: take its states for $H$, and for $E$
+take the distinct subsets $u_w^{-1}(F)$ of states. Incidence is membership,
+$e_0=F$, and $v_a(C)=u_a^{-1}(C)$. The set $E$ is finite and closed under
+these inverse images. Restricting $H$ to reachable states and quotienting
+its rows gives the minimal DFA. This constructs the finite presentation
+from a known finite machine; it does not infer that machine from a finite
+unstructured sample.
+
+
+\subsection{The full language context and a finite operational presentation}
+For a finite alphabet $\Sigma$ and any language $L\subseteq\Sigma^*$, the native
+history--continuation context is
+\[
+ H=E=\Sigma^*,\qquad hRt\ \Longleftrightarrow\ ht\in L.
+\]
+Its row at $h$ is $h^{-1}L=\{t:ht\in L\}$, and the compatible operations
+are $u_a(h)=ha$ and $v_a(t)=at$. The resulting residual machine has states
+$Q_L=\{h^{-1}L:h\in\Sigma^*\}$, initial state $L$, transitions
+$B\mapsto a^{-1}B$, and accepting states containing $\epsilon$.
+Every state is reached by its defining history, and distinct states are
+separated by a continuation in their symmetric difference. Consequently
+this is the minimal reachable deterministic recognizer. Any other
+reachable deterministic recognizer maps onto it by sending a state to its
+future language; distinct residuals cannot be represented by the same state.
+This proves minimality, not only well-definedness. The machine is finite
+exactly when $L$ is regular.
+
+\begin{proposition}[Finite reduction preserving the native structures]
+For regular $L$, put
+\[
+ Q=\{h^{-1}L:h\in\Sigma^*\},\qquad
+ E_0=\{C_t:t\in\Sigma^*\},\qquad C_t=\{q\in Q:t\in q\}.
+\]
+Let $\bar R\subseteq Q\times E_0$ be membership, $q\bar R C$ iff $q\in C$.
+Then $|E_0|\leq2^{|Q|}$ and the operations
+\[
+ \bar u_a(q)=a^{-1}q,\qquad
+ \bar v_a(C_t)=C_{at}=\bar u_a^{-1}[C_t]
+\]
+are well defined and form a finite acted presentation. The two quotient
+maps $\alpha(h)=h^{-1}L$, $\beta(t)=C_t$ induce a full concept-lattice
+isomorphism preserving support, Dowker homotopy equivalences on both
+sides, and exact compatibility of quotient maps with all action domains.
+\end{proposition}
+\begin{proof}
+The set $Q$ is finite and derivative-closed. The displayed inverse-image
+formula makes $\bar v_a$ independent of the representative $t$. It also
+gives $\bar u_a(q)\bar R C\Longleftrightarrow q\bar R\bar v_a(C)$.
+Both quotient maps are surjective and
+$hRt\Longleftrightarrow\alpha(h)\bar R\beta(t)$.
+For subsets $U\subseteq Q$, $V\subseteq E_0$, surjectivity gives
+\[
+ (\alpha^{-1}[U])'_R=\beta^{-1}[U'_{\bar R}],\qquad
+ (\beta^{-1}[V])'_R=\alpha^{-1}[V'_{\bar R}].
+\]
+Every original closed extent is a union of row classes and every closed
+intent a union of column classes. Hence
+$(U,V)\mapsto(\alpha^{-1}[U],\beta^{-1}[V])$ is a concept-lattice
+isomorphism, inverse to taking direct images. Nonemptiness of both
+coordinates is preserved by surjectivity.
+
+For an original finite object set $S$, being a face is equivalent to
+$\alpha[S]$ being a face, since test witnesses lift along $\beta$.
+Choose one history representing each row. This gives a simplicial section
+of $\alpha$; the composite section--quotient is contiguous to the identity,
+because $S$ and all its chosen representatives have the same common tests.
+Contiguous maps have homotopic realizations by affine interpolation inside
+their common image simplex. Thus $\alpha$ is a homotopy equivalence;
+the same argument applies to $\beta$ on the test nerve.
+Finally $\alpha u_a=\bar u_a\alpha$ and
+$\beta v_a=\bar v_a\beta$. For any word $w$, $u_w[S]$ is a face
+exactly when $\bar u_w[\alpha[S]]$ is, proving equality of the inverse-image
+action domains. The concept statement follows either from the displayed
+prime identities or from closure and image compatibility. The initial
+state is $L$, the acceptance test is $C_\epsilon$, and every test is
+$\bar v_w(C_\epsilon)=C_w$. Representative sections need not commute
+with the operations; the quotient maps do.
+\end{proof}
+Thus the finite bridge applies to every regular language without assuming
+that a closed set of literal histories is finite.
+
+\subsection{What finite observation and learning do not supply}
+The finite subsets of words used in an observation table need not be
+closed under $u_a$ or $v_a$. Row equality relative to sampled tests is not
+necessarily a predictive congruence. For $L=\{a\}$ over $\{a\}$ and the
+single test $E_0=\{\epsilon\}$, histories $\epsilon$ and $aa$ have equal
+empty rows, but successors $a$ and $aaa$ have different rows. Hence no
+function on this row quotient, or on its object concepts, realizes the
+append-$a$ operation on every history.
+
+Active automata learning addresses this defect with structured access to
+more information, rather than declaring the sample complete. Angluin's
+observation-table construction uses closedness and consistency, with
+membership and equivalence queries, to build and refine a conjectured
+DFA~\cite{cg:angluin}. In the notation above, consistency demands that
+row-identical histories have row-identical letter successors; closedness
+ensures that the successor rows have representatives. A genuine positive
+equivalence answer is global information. The construction here explains
+what native structures become available once the required action and test
+completeness are supplied; it is not a new learning algorithm or a proof
+that an arbitrary sample determines its unknown source language.
+\section{Concept completion and its canonical action}
+
+
+The elementary polarity identity is
+\[
+ U\subseteq B'\quad\Longleftrightarrow\quad U\times B\subseteq R
+ \quad\Longleftrightarrow\quad B\subseteq U'.
+\]
+Both prime maps reverse inclusion. Substituting $B=U'$ proves
+$U\subseteq U''$; taking primes gives $U'''\subseteq U'$, and
+extensivity on the test side gives the reverse inclusion. Thus
+$U'''=U'$, and double prime is monotone, extensive and idempotent.
+The same proof applies on the test side. These facts establish the closure
+properties used below, including empty families.
+
+Let $\mathcal L_R=\{A\subseteq H:c(A)=A\}$, ordered by inclusion.
+This is the concept lattice in extent notation: the concept corresponding
+to $A$ is $(A,A')$. Its joins are
+\[
+ \bigvee_i A_i=c\left(\bigcup_i A_i\right),
+\]
+and its meets are intersections. Put $\gamma(h)=c(\{h\})$.
+
+
+\subsection{What the completion is free over, and what it is not}
+Order intents by inclusion and write
+\[
+ \mathcal I_R=\{B\subseteq E:B''=B\}
+ =\left\{\bigcap_{h\in U}r(h):U\subseteq H\right\}.
+\]
+Then $\mathcal L_R\cong\mathcal I_R^{\mathrm{op}}$; suppressing this
+opposite order would reverse every preservation assertion below. Every
+row is an intent by triple-prime equality. The map $h\mapsto\gamma(h)$
+identifies equal rows and is injective on their quotient, and
+\[
+ A=\bigvee_{h\in A}\gamma(h)\quad(A\in\mathcal L_R).
+\]
+Thus residual states form a marked join-generating subset of the extent
+lattice, equivalently a meet-generating subset of the intent lattice.
+The inclusion is generally proper. If there are $n$ distinct rows, then
+$n\leq |\mathcal L_R|\leq2^n$.
+
+\begin{proposition}[A free presentation with incidence equations]
+The powerset $\mathcal P(H)$, under union, is the free complete join
+semilattice on $H$. The surjection $c:\mathcal P(H)\to\mathcal L_R$
+is a complete-join homomorphism, where joins on the codomain are closed
+unions. For a complete lattice $M$ and a map $b:H\to M$, there exists a
+complete-join homomorphism $\bar b:\mathcal L_R\to M$ with
+$\bar b(\gamma(h))=b(h)$ if and only if
+\[
+ c(U)=c(V)\ \Longrightarrow\
+ \bigvee_{h\in U}b(h)=\bigvee_{h\in V}b(h)
+ \quad(U,V\subseteq H).
+\]
+When it exists it is unique. Dually, a specified map $d$ from the distinct
+rows into another intent lattice extends to a complete-meet map from the
+source intent completion exactly when
+\[
+ \bigcap\mathcal U=\bigcap\mathcal V\ \Longrightarrow\
+ \bigcap d[\mathcal U]=\bigcap d[\mathcal V]
+\]
+for all families of rows, including the empty family.
+\end{proposition}
+\begin{proof}
+A complete-join map from $\mathcal P(H)$ must send $U$ to
+$\bigvee_{h\in U}b(h)$, and this formula preserves arbitrary unions by
+flattening the indexing families. The closure identity
+$c(\bigcup_i c(U_i))=c(\bigcup_i U_i)$ proves that $c$ preserves the
+stated joins. Its kernel consists exactly of the displayed closure
+equations. The free map factors through its image precisely when it
+respects those equations; the factor is unique by surjectivity, and its
+join preservation follows from the same closed-union identity. The dual
+argument defines the meet extension by
+$\bigcap\mathcal U\mapsto\bigcap d[\mathcal U]$; equation preservation
+makes it well-defined, and flattening intersections proves the claim.
+\end{proof}
+This is a free presentation \emph{modulo incidence equations}, not a free
+complete lattice on the predictive-state set. Actual test subsets determine
+which intersections coincide. The inclusion order of the row poset alone
+does not retain all that information. In particular one cannot substitute
+an unspecified ``free completion'' for this construction.
+
+A Chu morphism $(f,g):R\longrightarrow S$, with
+$S\subseteq K\times D$, consists of
+\[
+ f:H\longrightarrow K,\qquad g:D\longrightarrow E,
+ \qquad f(h)Sd\ \Longleftrightarrow\ hRg(d).
+\]
+Let $c_S$ denote the closure for $S$.
+
+\begin{theorem}[Canonical algebraic lift]
+\label{nb:lattice-lift}
+A Chu morphism induces an adjoint pair
+\[
+ f_!: \mathcal L_R\rightleftarrows\mathcal L_S:f^*,
+ \qquad f_!(A)=c_S(f[A]),\qquad f^*(B)=f^{-1}[B],
+ \qquad f_!\dashv f^*.
+\]
+In particular, $f_!$ preserves all joins, including the empty join.
+It is the unique join-preserving map satisfying
+\begin{equation}
+ f_!\gamma(h)=\gamma_S(f(h)).
+ \label{nb:generator-equivariance}
+\end{equation}
+These lifts preserve identity and composition. Their intents obey
+\begin{equation}
+ (f_!A)'=g^{-1}[A'].
+ \label{nb:intent-transport}
+\end{equation}
+Consequently every $u_a$ has a canonical join-preserving extension
+$D_a=(u_a)_!$ to the concept lattice, with
+$D_w=D_{a_k}\cdots D_{a_1}$ and $D_{wz}=D_zD_w$.
+The map $[h]\mapsto\gamma(h)$ embeds $Q$ as a distinguished,
+join-generating subset, stable under all $D_a$.
+\end{theorem}
+\begin{proof}
+The inverse image under $f$ of the target extent $B_0'$ is
+$(g[B_0])'$, hence is closed. Thus inverse image restricts to closed
+extents. For closed $A,B$,
+\[
+ c_S(f[A])\subseteq B\ \Longleftrightarrow\ f[A]\subseteq B
+ \ \Longleftrightarrow\ A\subseteq f^{-1}[B],
+\]
+which proves the adjunction. The same inverse-image property gives
+$f[c(U)]\subseteq c_S(f[U])$ for every $U\subseteq H$, hence
+\begin{equation}
+ c_S(f[c(U)])=c_S(f[U]).
+ \label{nb:closure-naturality}
+\end{equation}
+This proves~\eqref{nb:generator-equivariance}. Every closed extent is
+$\bigvee_{h\in A}\gamma(h)$, so that equation forces uniqueness.
+Composition follows from~\eqref{nb:closure-naturality}, or from composition
+of the right adjoints. Finally
+$(f[A])'=g^{-1}[A']$, and closing a set does not change its intent,
+which proves~\eqref{nb:intent-transport}.
+Since $\gamma(h)'=r(h)$, two object concepts coincide exactly when the
+two rows coincide. This gives the claimed embedding of $Q$.
+\end{proof}
+
+
+\paragraph{Exactly what happens to implications.}
+An attribute implication $B\Rightarrow e$ holds in a context precisely
+when $e\in B''$, equivalently $B'\subseteq C_e$. For a Chu morphism
+$(f,g):R\to S$, the map on closed intents is $I\mapsto g^{-1}[I]$.
+It preserves inclusions and arbitrary intersections, so it preserves
+semantic inequalities between intersections of closed intents. This is
+not a claim about arbitrary substitutions in a syntactic implication
+basis. There is also a precise syntactic rule in the opposite direction:
+if $B\Rightarrow d$ holds in $S$, then
+$g[B]\Rightarrow g(d)$ holds in $R$. Indeed a source object satisfying
+all $g(b)$ has image under $f$ satisfying all $b$, hence $d$, and so
+it satisfies $g(d)$. For source-to-target transport, inverse images of
+an arbitrary premise can discard attributes outside $\operatorname{im}(g)$;
+no converse rule without further hypotheses is asserted.
+
+\begin{remark}[A completion, not additional native histories]
+The original automaton is recovered on the marked generators
+$\gamma(Q)$, not by declaring every lattice element to be an observed
+history. A concept may be a new join of several such generators.
+Acceptance is recovered by
+$\gamma(h)\subseteq C_{e_0}$, and the initial point is $\gamma(h_0)$.
+More generally the full row-reduced incidence is recovered from the
+marked lattice using
+$hRe\Longleftrightarrow\gamma(h)\subseteq C_e$.
+Forgetting the object and test markings is a further abstraction, not an
+equivalence of all the native structures.
+\end{remark}
+
+\begin{proposition}[Exact extension obstruction without a Chu witness]
+\label{nb:extension-test}
+For an arbitrary function $f:H\to K$, the following are equivalent:
+\begin{enumerate}
+\item There is a join-preserving $F:\mathcal L_R\to\mathcal L_S$ with
+$F\gamma(h)=\gamma_S(f(h))$ for every $h$.
+\item $f[c(U)]\subseteq c_S(f[U])$ for all $U\subseteq H$.
+\item For each target test $d\in D$, the set $f^{-1}[C_d]$ is a closed
+extent of $R$.
+\item Whenever $c(U)=c(V)$, one has $c_S(f[U])=c_S(f[V])$.
+\end{enumerate}
+When these hold, $F(A)=c_S(f[A])$ and is unique. A Chu witness $g$
+is stronger than these conditions: it requires each inverse test extent
+to be an \emph{existing single test column}, not merely an intersection
+of columns.
+\end{proposition}
+\begin{proof}
+A join extension must send
+$c(U)=\bigvee_{h\in U}\gamma(h)$ to $c_S(f[U])$, giving (4) and
+uniqueness. Taking $V=c(U)$ gives (2). Condition (2) gives
+closure-naturality~\eqref{nb:closure-naturality}, from which the stated
+formula preserves joins and generators, giving (1).
+For completeness, (3) implies that inverse images of all closed extents
+are closed, since each is an intersection of test columns. Then
+$f^{-1}[c_S(f[U])]$ is closed and contains $U$, so it contains $c(U)$,
+which gives (2). Conversely, let $B$ be a closed target extent and put
+$U=f^{-1}[B]$. Condition (2) gives
+$f[c(U)]\subseteq c_S(f[U])\subseteq B$. Thus $c(U)\subseteq U$,
+and extensivity gives equality. This proves (3).
+\end{proof}
+
+\subsection{The language specialization and the universal automaton}
+We now write $\widehat D_a$ for the action on intents, to distinguish it
+from the extent action $D_a$. The pair notation $F_a(A,A')$ expresses the
+same concept action as $D_a(A)$; extent and intent orders are opposite.
+\paragraph{Theorem (canonical deterministic extension).}
+In the full language context, every letter acts on the entire intent lattice by
+\[
+ \widehat D_a(B)=a^{-1}B.
+ 
+\]
+This is an endofunction preserving arbitrary intersections, including the
+empty intersection. It is the unique complete-meet-preserving extension of
+the derivative action on the distinct residual rows $Q_L$. Dually, on the standard concept lattice it is
+\[
+ F_a(A,B)=\bigl((Aa)'',a^{-1}B\bigr),\qquad
+ Aa=\{ha:h\in A\},
+ 
+\]
+and preserves arbitrary joins. It satisfies
+$F_a\gamma(h)=\gamma(ha)$. More generally $\widehat D_w(B)=w^{-1}B$ and
+$\widehat D_v\widehat D_u=\widehat D_{uv}$; equivalently $F_vF_u=F_{uv}$.
+From the initial concept $\gamma(\epsilon)$, the reachable concepts are
+exactly the image of $Q_L$.
+\begin{proof}
+For every $A\subseteq\Sigma^*$,
+\[
+ a^{-1}\left(\bigcap_{h\in A}h^{-1}L\right)
+ =\bigcap_{h\in A}(ha)^{-1}L=(Aa)'.
+ 
+\]
+Thus the derivative is an intent and commutes with all intersections.
+All intents are intersections of residuals, so an extension with this
+preservation property is forced by the displayed intersection identity.
+The extent belonging to $(Aa)'$ is $(Aa)''$, proving the displayed
+concept-pair formula. The remaining identities follow directly from
+concatenation and the initial state.
+\end{proof}
+A stronger blanket assertion that ``the concept lattice has no deterministic
+transition'' is therefore false for the native full language context.
+It has a canonical transition; what can fail is preservation of the other
+lattice operation, restriction to a selected subposet, or descent after
+truncating the tests.
+
+These constructions already occur in automata theory. A concept $(A,B)$ of
+the full language context is exactly a maximal factorization $AB\subseteq L$. These are
+the states of the universal automaton. The identification with intersections
+of left quotients and the universal-automaton definition are explicit in
+Lombardy--Sakarovitch, Proposition 2.1 and Definition 2.4
+\cite{cg:universal}. For regular $L$, equipping these intents with the
+deterministic derivative gives the canonical finite meet automaton of
+Kl\'{\i}ma--Pol\'{a}k, Section 4 \cite{cg:meet}. For arbitrary $L$, the
+theorem gives its complete-meet analogue using arbitrary intersections.
+
+The nondeterministic universal automaton and this deterministic
+complete-meet recognizer have the same underlying concept states but
+different transition structures.
+For concepts $c=(A,B)$ and $d=(C,D)$ its edge relation is
+\[
+ c\xrightarrow{a}_{\mathrm{UA}}d
+ \Longleftrightarrow AaD\subseteq L
+ \Longleftrightarrow D\subseteq a^{-1}B
+ \Longleftrightarrow F_a(c)\leq d.
+ 
+\]
+Its initial states form the upset of $\gamma(\epsilon)$; its final states
+satisfy $\epsilon\in B$. Thus $F_a(c)$ is the least universal-automaton
+$a$-successor in standard concept order. No claim identifying the two
+\emph{automata}, or their reachability structures, follows from identifying
+their state sets.
+
+\subsection{A forced failure of the other lattice operation}
+Take $\Sigma=\{a,b\}$ and $L=\{\epsilon,a,ba\}$, with all tests.
+The distinct residuals and all intents are respectively
+\[
+ Q_L=\{\varnothing,\{\epsilon\},\{a\},L\},\qquad
+ \mathcal I_L=Q_L\cup\{\Sigma^*\}.
+\]
+Indeed the residuals after $\epsilon,a,b$ are $L,\{\epsilon\},\{a\}$;
+every other residual is either $\{\epsilon\}$ or $\varnothing$. Their
+intersections produce no further sets except the empty intersection
+$\Sigma^*$. In the intent lattice,
+\[
+ \{\epsilon\}\vee\{a\}=L,\qquad
+ \widehat D_b(L)=\{a\},\qquad \widehat D_b(\{\epsilon\})=\widehat D_b(\{a\})=\varnothing.
+\]
+All three inputs in this join equation are residual states. Consequently
+\emph{no binary-join-preserving endofunction} of the intent lattice can
+extend the residual $b$-transition. In particular no lattice homomorphism,
+even one not required to preserve extrema, can extend it. The canonical
+complete-meet-preserving derivative $\widehat D_b$ nevertheless exists, as proved
+above. Dually, the standard concept action preserves joins but cannot be
+made meet-preserving while agreeing with the residual transitions.
+This example also separates the FCA completion from the
+Dedekind--MacNeille completion of the residual poset: $Q_L$ is already a
+four-element complete lattice, whereas $\mathcal I_L$ has a fifth element.
+
+\section{The supported core and its Dowker topology}
+
+Let $K_R$ be the object Dowker complex: its nonempty simplices are the
+nonempty $U\subseteq H$ with $U'\ne\varnothing$. Objects with empty rows
+are not vertices. The empty simplex is included by convention. Write
+$\mathcal F(K_R)$ for its poset of nonempty faces. Define
+\[
+ \mathcal C_R=
+ \{A\in\mathcal L_R:A\ne\varnothing,\ A'\ne\varnothing\}.
+\]
+This is the supported concept core. Let $\Delta P$ be the order complex
+of a finite poset $P$, and write $|P|:=|\Delta P|$.
+
+\begin{lemma}[Order homotopy and closure retracts]\label{cg:order-homotopy}
+If monotone maps $u,v:P\to Q$ satisfy $u(p)\leq v(p)$ for every $p$, then
+$|u|$ and $|v|$ are homotopic, relative to the subposet on which they agree.
+If $c:P\to P$ is monotone, extensive, and idempotent, then
+$|c(P)|\subseteq|P|$ is a strong deformation retract.
+\end{lemma}
+\begin{proof}
+Define $H:P\times\{0<1\}\to Q$ by $H(p,0)=u(p)$ and $H(p,1)=v(p)$.
+It is monotone: when $p\leq p'$, the only mixed comparison needed is
+$u(p)\leq u(p')\leq v(p')$.
+The order complex of the product supplies the usual staircase triangulation
+of $|P|\times[0,1]$. Realizing $H$ therefore gives the required homotopy.
+It is stationary on a subposet where $u=v$. For the second assertion take
+$u=\mathrm{id}_P$ and $v=c$. If $i:c(P)\hookrightarrow P$ is inclusion,
+then $c i=\mathrm{id}$, and the homotopy from $\mathrm{id}_P$ to $i c$
+fixes $c(P)$ pointwise. The statement also holds when $P$ is empty. In this note all such posets are finite unless explicitly stated otherwise.
+\end{proof}
+
+\begin{proposition}[Concept closure realizes the Dowker comparison]
+\label{nb:dowker-core}
+The maps
+\[
+ r_R:\mathcal F(K_R)\longrightarrow\mathcal C_R,
+ \quad U\longmapsto c(U),
+ \qquad j_R:\mathcal C_R\hookrightarrow\mathcal F(K_R)
+\]
+satisfy $r_Rj_R=1$ and $1\leq j_Rr_R$. They induce homotopy
+equivalences
+\[
+ |K_R|\simeq|\Delta\mathcal C_R|\simeq|K_{R^{\mathsf T}}|.
+\]
+Here the second comparison uses the order-reversing bijection
+$(A,A')\leftrightarrow(A',A)$ and the corresponding closure on tests.
+\end{proposition}
+\begin{proof}
+A nonempty simplex $U$ has nonempty closure and
+$(c(U))'=U'\ne\varnothing$, so closure stays within the face poset.
+It is an extensive idempotent monotone map whose fixed points are exactly
+$\mathcal C_R$. The displayed poset inequalities yield homotopies of
+order-complex maps and a retraction. The order complex of the face poset
+is the barycentric subdivision of $K_R$. Apply the same argument on the
+test side, where the supported concepts have the opposite order.
+\end{proof}
+
+Deleting the bottom and top elements indiscriminately is incorrect.
+A bottom or top concept must be retained exactly when both its coordinates
+are nonempty. If a supported bottom or top is present, the supported
+poset is contractible. The support definition also handles empty carriers.
+
+
+The full lattice has a least element and hence a contractible order
+complex: its vertex for the least element is a cone point. More exactly,
+writing $\bot=(E',E)$ and $\top=(H,H')$, the exact formula is
+\[
+ \mathcal C_R=\mathcal L_R\setminus
+ \bigl(\{\bot:E'=\varnothing\}\cup\{\top:H'=\varnothing\}\bigr).
+\]
+The braces mean the indicated singleton when its condition holds, and the
+empty set otherwise. Indeed an empty-extent concept must be bottom and
+an empty-intent concept must be top. Both removal conditions apply even
+when bottom and top coincide. The abstract full lattice together with
+these two emptiness flags determines the supported poset and thus the
+homotopy type; without these flags it need not do so.
+For the $1\times1$ all-one relation the one concept has both coordinates
+nonempty. Its nerve is a point; deleting its top and bottom would instead
+give the empty space.
+
+\section{Maximal-domain partial actions and the comparison theorem}
+
+For a Chu morphism $(f,g):R\to S$, define a subcomplex and a subposet by
+\begin{align}
+ K_f&=\{\varnothing\}\cup
+ \{\varnothing\ne U\subseteq H:U'\cap\operatorname{im}(g)\ne\varnothing\},
+ \label{nb:partial-complex}\\
+ \mathcal C_f&=
+ \{A\in\mathcal L_R:A\ne\varnothing,
+                    \ A'\cap\operatorname{im}(g)\ne\varnothing\}.
+ \label{nb:partial-core}
+\end{align}
+Equivalently $K_f$ is the Dowker complex of the relation
+$hR_f d\Longleftrightarrow f(h)Sd$, or of $R$ restricted to the tests
+$\operatorname{im}(g)$. It is a subcomplex of $K_R$.
+
+\begin{theorem}[One coherent partial action in the two native languages]
+\label{nb:partial-bridge}
+Every Chu morphism has the following properties.
+\begin{enumerate}
+\item $K_f$ is the \emph{largest} subcomplex of $K_R$ on which the vertex
+function $f$ is a simplicial map into $K_S$. The restriction
+$f_!:\mathcal C_f\to\mathcal C_S$ is the largest restriction of $f_!$
+to a subposet of $\mathcal C_R$ whose values lie in $\mathcal C_S$.
+\item Original source closure restricts to a retraction
+$r_f:\mathcal F(K_f)\to\mathcal C_f$ with
+$r_fj_f=1$ and $1\leq j_fr_f$. In particular it is a homotopy
+equivalence after taking order complexes. This uses closure in $R$,
+not a silently substituted closure in $R_f$.
+\item The closure retractions commute strictly with both arrows in the
+spans
+\[
+ \mathcal F(K_R)\ \longleftarrow\ \mathcal F(K_f)
+       \ \xrightarrow{\ U\mapsto f[U]\ }\ \mathcal F(K_S),
+ \qquad
+ \mathcal C_R\ \longleftarrow\ \mathcal C_f
+       \ \xrightarrow{\ f_!\ }\ \mathcal C_S.
+\]
+Hence these spans are naturally, objectwise homotopy-equivalent.
+\item If $(p,q):S\to T$ is a second Chu morphism, the domain of their
+composite is exactly the composite partial-map domain:
+\begin{align*}
+ K_{pf}&=\{U\in K_f:f[U]\in K_p\},\\
+ \mathcal C_{pf}&=\{A\in\mathcal C_f:f_!(A)\in\mathcal C_p\},\\
+ (pf)_!&=p_!f_!.
+\end{align*}
+\end{enumerate}
+Thus the bridge respects identities and all finite compositions, rather
+than supplying unrelated homotopy equivalences for individual actions.
+\end{theorem}
+\begin{proof}
+For every $U\subseteq H$,
+\[
+ (f[U])'=g^{-1}[U'].
+\]
+For nonempty $U$, its being nonempty is exactly
+$U'\cap\operatorname{im}(g)\ne\varnothing$.
+This proves maximality on nonempty faces; the empty face is included
+separately by convention. Since $f[A]$ is nonempty for nonempty
+$A$, equation~\eqref{nb:intent-transport} gives the corresponding
+maximality on supported concepts.
+
+The identity $(c(U))'=U'$ proves that original closure preserves and
+reflects the domain. More precisely,
+\[
+ r_R^{-1}(\mathcal C_f)=\mathcal F(K_f).
+\]
+Its fixed points on that domain are precisely $\mathcal C_f$. The closure
+retraction argument applies unchanged. Commutation with inclusion is
+immediate, and commutation with the right arrow is exactly
+$c_S(f[U])=f_!(c(U))$, proved in
+\eqref{nb:closure-naturality}.
+
+The composite Chu morphism is $(pf,gq)$. Its domain condition is
+$U'\cap\operatorname{im}(gq)\ne\varnothing$. Equivalently
+$g^{-1}[U']\cap\operatorname{im}(q)\ne\varnothing$, which says that
+$f[U]$ lies in $K_p$ and already implies $U\in K_f$.
+Replace $U'$ by $A'$ and use~\eqref{nb:intent-transport} to prove the
+concept-domain formula. The lattice composition formula was proved in
+Theorem~\ref{nb:lattice-lift}.
+\end{proof}
+
+
+\paragraph{Functorial content, with the domains retained.}
+Let $\operatorname{ParSimp}$ have simplicial complexes as objects and arrows
+$K\leftarrow D\to L$ with $D$ a specified subcomplex of $K$, the left
+map its inclusion, and the right map simplicial. Compose by restricting
+the first domain to the inverse image of the second domain. This is again
+a subcomplex. Identity arrows have full domain. Theorem~\ref{nb:partial-bridge}
+therefore gives a strict functor from finite Chu contexts to
+$\operatorname{ParSimp}$, and an analogous functor to partial monotone maps
+on supported concept posets with lower-set domains. Closure gives an
+objectwise homotopy equivalence of the corresponding face-poset spans,
+on each full object and each domain, with strictly commuting squares.
+The inverse inclusions of closed extents need not commute with the actions:
+$f[A]$ need not already be closed. Thus no strictly equivariant inverse or
+unspecified coherent choice of homotopy inverses is claimed.
+
+For an acted incidence presentation, let $K_w=K_{u_w}$ and
+$\mathcal C_w=\mathcal C_{u_w}$. The theorem gives, for every word,
+\[
+ K_R\longleftarrow K_w\xrightarrow{u_w}K_R,
+ \qquad
+ \mathcal C_R\longleftarrow\mathcal C_w\xrightarrow{D_w}\mathcal C_R,
+\]
+with
+\[
+ \mathcal C_w=\{A\ne\varnothing:A''=A,
+                  \ A'\cap\operatorname{im}(v_w)\ne\varnothing\}.
+\]
+The exact word laws are
+\[
+ K_{wz}=\{U\in K_w:u_w[U]\in K_z\},\qquad
+ \mathcal C_{wz}=\{A\in\mathcal C_w:D_w(A)\in\mathcal C_z\}.
+\]
+In particular $K_{wz}\subseteq K_w$: a simplex that has lost every
+common test cannot regain one by a later action under this adjunction law.
+This is a partial action with domains that are \emph{subcomplexes}, not
+merely subsets of vertices. All its vertices may remain valid while one
+of its edges ceases to be valid.
+
+More precisely, let $\operatorname{Par}(P)$ consist of partially defined
+monotone self-maps of a poset $P$ whose domains are lower subsets, with
+ordinary partial-function composition. Each domain
+$\mathcal F(K_w)$ is lower in $\mathcal F(K_R)$, and each
+$\mathcal C_w$ is lower in $\mathcal C_R$. The formulas above give
+\emph{strict} right monoid actions of $\Sigma^*$ in these two partial-map
+monoids: the empty word is the everywhere-defined identity, and the
+partial map for $wz$ is exactly the partial map for $w$ followed by that
+for $z$, including equality of domains. Thus ``partial action'' here is
+not an informal statement or merely a one-sided inclusion of domains.
+
+Strict naturality above is asserted at the face-poset level. When a
+simplicial map identifies vertices, the usual geometric identification
+of a barycentric subdivision with its original complex is natural only
+up to homotopy in general. The corresponding comparison of the geometric
+spans therefore lives naturally in the homotopy category. No global
+endomorphism of $H_*(K_R)$ is asserted when the action has a proper domain.
+
+\begin{corollary}[Exact criterion for total topological transport]
+\label{nb:total-criterion}
+For a Chu morphism $(f,g):R\to S$, the following are equivalent:
+\begin{enumerate}
+\item $f$ induces a simplicial map $K_R\to K_S$ on all faces.
+\item $f_!$ sends every supported concept into a supported concept.
+\item Every nonempty source column $C_e$ is contained in some
+$C_{g(d)}$, with $d\in D$.
+\item $K_f=K_R$, or equivalently $\mathcal C_f=\mathcal C_R$.
+\end{enumerate}
+Surjectivity of $g$ is sufficient but not necessary. For a sequential
+presentation, all words act totally on the nerve if and only if this
+criterion holds for every letter.
+\end{corollary}
+\begin{proof}
+Every nonempty simplex is contained in a source column. A nonempty column itself
+is a simplex and is closed. It belongs to $K_f$ precisely when it is
+contained in $C_{g(d)}$ for some $d$, giving the equivalences. Total
+letter actions compose to total word actions; the converse includes
+one-letter words.
+\end{proof}
+
+The minimal test in this criterion is column coverage, not literal
+surjectivity. Repeated or dominated tests can make the latter unnecessary.
+When $D$ is nonempty, one can choose a forward witness $\lambda(e)\in D$ with
+$C_e\subseteq C_{g(\lambda(e))}$ whenever the criterion holds. This
+turns the Chu morphism into a covariant incidence-preserving pair
+$(f,\lambda)$ for purposes of the nerve. The vertex map on the object
+nerve is already determined by $f$ and does not depend on that choice.
+
+
+\paragraph{No automatic linear action on homology.}
+A word gives the pair of maps $H_k(K_w)\to H_k(K_R)$ induced by the
+domain inclusion and by $u_w$. This is a span, not a canonical
+endomorphism of $H_k(K_R)$. If the inclusion induces an isomorphism it
+can be inverted, but that is an extra hypothesis. Homology also need not
+preserve the pullbacks defining composition of partial maps, so these
+spans cannot silently be promoted to a strict monoid representation in
+linear spans. Maximal partial simplicial maps and the use of paired
+homology maps in this situation are established tools in
+Edelsbrunner--Jab\l o\'nski--Mrozek~\cite{cg:selfmap}.
+
+\section{Sharp failures of stronger identifications}
+\subsection{A live minimal automaton whose nerve action is not total}
+
+Take a unary automaton with states $H=\{q,p,r\}$, initial state $q$,
+accepting states $\{q,p\}$, and
+\[
+ u(q)=p,\qquad u(p)=r,\qquad u(r)=p.
+\]
+Its language is $\{\varepsilon\}\cup\{a^{2k+1}:k\geq0\}$.
+Its three distinct suffix tests are represented by
+$e_0=\varepsilon$, $e_1=a$, and $e_2=a^2$, with incidence
+\[
+ \begin{array}{c|ccc}
+       &e_0&e_1&e_2\\\hline
+ q&1&1&0\\
+ p&1&0&1\\
+ r&0&1&0
+ \end{array}
+ \qquad
+ v(e_0)=e_1,\quad v(e_1)=e_2,\quad v(e_2)=e_1.
+\]
+All states are reachable, all have accepting continuations, and all rows
+are different, so this is already the minimal DFA.
+
+The nerve has edges $\{q,p\}$ and $\{q,r\}$. The action sends
+$\{q,p\}$ to $\{p,r\}$, which is not a simplex. This is not a failure
+caused by a dead vertex: both $p$ and $r$ remain vertices.
+The closed extents are
+\[
+ \varnothing,\ \{q\},\ \{p\},\ \{q,p\},\ \{q,r\},\ H.
+\]
+The lattice action is perfectly well defined, but
+$D(\{q,p\})=c(\{p,r\})=H$, whose intent is empty.
+Its exact domain nerve has the edge $\{q,r\}$ together with the isolated
+vertex $p$, and its exact concept domain is
+$\{\{q\},\{p\},\{q,r\}\}$.
+Thus a total native state transition, its total concept-lattice lift,
+and its partial topological action are distinct, explicitly compatible
+objects.
+
+\subsection{The same lattice action can support a circle or a disk}
+
+Let $H=E=\{1,2,3\}$ and use the complement of the identity matrix:
+\[
+ iRj\quad\Longleftrightarrow\quad i\ne j,
+ \qquad
+ R=\begin{pmatrix}0&1&1\\1&0&1\\1&1&0\end{pmatrix}.
+\]
+Every subset of $H$ is a closed extent, so $\mathcal L_R$ is the Boolean
+lattice $B_3$. A nonempty subset has a common test exactly when it is a
+proper subset of $H$. Therefore $K_R$ is the triangle boundary,
+\[
+ |K_R|\cong S^1,
+ \qquad \mathcal C_R=B_3\setminus\{\varnothing,H\}.
+\]
+Now add one universally true test $t$. Intersecting with its column $H$
+adds no closed extents, so the extent lattice remains exactly $B_3$.
+But $H$ now has nonempty intent, and hence
+\[
+ K_{R^+}=\text{the full two-simplex},\qquad
+ \mathcal C_{R^+}=B_3\setminus\{\varnothing\}.
+\]
+The first nerve has first Betti number $1$; the second is contractible
+and has first Betti number $0$.
+
+The example also preserves dynamics. Set $u=(123)$ on objects and
+$v=(132)$ on the original tests, and set $v(t)=t$ after enrichment.
+Then $u(i)Rj\Longleftrightarrow iRv(j)$, and both contexts induce the
+same lattice automorphism $A\mapsto u[A]$. The nerve action rotates a
+circle in the first context and a disk in the second. Thus even the
+unmarked lattice \emph{together with its action} does not determine the
+native topological output.
+
+Taking state $1$ as initial and test $1$ as the acceptance test gives
+the same minimal three-cycle DFA in both contexts. In the original
+context all tests are suffix-generated. The new tautology test is not
+suffix-generated from that acceptance test; it is an enrichment of the
+test interface. It changes no state equivalence and no accepted word,
+but changes common-test topology. This is precisely why an unannounced
+test enrichment is not a harmless change of representation.
+
+
+This example also distinguishes arrow types. The tautology-forgetting
+map $R^+\to R$ with object function $\mathrm{id}_H$ and backward test
+inclusion $E\hookrightarrow E\cup\{t\}$ is a Chu morphism. Its full
+lattice lift is the identity on $B_3$, but its maximal simplicial domain
+is precisely the boundary inside the filled triangle. Conversely the
+enrichment $R\to R^+$ is a covariant incidence-preserving inclusion.
+There is no Chu morphism in this direction with object function
+$\mathrm{id}_H$: the new universal test would have to pull back to an
+old test with column $H$, and none exists.
+
+\subsection{One-bit instability of ordinary homology}
+Even without adding a test, changing the single entry $R(1,1)$ from zero
+to one creates a universally incident column and a universally incident
+row. Both Dowker complexes change from the triangle boundary to a filled
+triangle: pairwise attribute intersections were already nonempty, while
+the triple intersection now becomes nonempty. Thus one bit changes
+$\dim H_1$ from $1$ to $0$. This assertion concerns static topology; the
+old cyclic action need not remain compatible after that change.
+Both matrices do support identity Chu actions, so requiring an action
+alone does not eliminate the instability.
+
+More generally, the complement of the $n\times n$ identity, for $n\geq3$,
+has object nerve the boundary of an $(n-1)$-simplex. Flipping a single
+diagonal entry fills that simplex and changes its $(n-2)$nd Betti number
+from $1$ to $0$, at normalized entrywise Hamming distance $1/n^2$.
+This exact incidence theorem therefore gives no uniform perturbation
+stability for ordinary homology under that metric. A noisy application
+needs its own noise assumptions and, if a filtration is introduced, a
+separately justified persistence or other stability statement.
+
+\subsection{Different native morphism classes really differ}
+
+A covariant relation morphism $(f,\lambda)$ needs only
+$hRe\Rightarrow f(h)S\lambda(e)$. It always induces an object nerve map.
+It need not induce a generator-compatible join map of FCA lattices.
+For example, use the $3\times3$ identity incidence and put
+$f(1)=f(2)=1$, $f(3)=2$, $\lambda=f$. The pair preserves incidence.
+Its concept lattice has three atoms and their common top. If a join map
+extended $f$ on the atoms, the join of atoms $1,2$ would map to atom $1$,
+while the identical top, expressed as the join of atoms $1,3$, would map
+to top. Such an extension is impossible.
+
+Conversely, a Chu morphism always has its FCA adjoint but need not have
+a total nerve map, as the unary example shows. Thus neither native arrow
+class can be silently substituted for the other. The exact-domain
+construction of Theorem~\ref{nb:partial-bridge} handles all Chu arrows;
+Corollary~\ref{nb:total-criterion} identifies the subcategory on which the
+topological action is total.
+
+The finite-reduction proposition also shows precisely why duplicate rows
+and columns are benign: their quotient preserves support and the lattice,
+and is a nerve homotopy equivalence commuting with the actions. It is
+not an isomorphism of the original presented simplicial complexes.
+
+\section{Covariant topology and the distinct Chu variance}
+
+Let $\mathsf{Inc}_{\mathrm{fin}}$ have finite relations as objects and
+morphisms
+\[
+ (f,g):(X,Y,R)\longrightarrow(\bar X,\bar Y,S),\qquad
+ xRy\ \Longrightarrow\ f(x)Sg(y),
+\]
+where $f:X\to\bar X$ and $g:Y\to\bar Y$. Composition is componentwise.
+This is a category of incidence structures, not the category whose objects
+are sets and whose arrows are relations.
+
+
+For use in the naturality proof, define on finite nonempty face posets
+$d_R(\sigma)=\sigma'_R$ from $F(D_X(R))$ to
+$F(D_Y(R))^{\mathrm{op}}$. It is well-defined because $\sigma'$ is
+nonempty and has witness set $\sigma''\supseteq\sigma$. The symmetric
+prime map has composites equal to closure. The order-homotopy lemma
+therefore makes their realizations inverse homotopy equivalences. We use
+$D_X,D_Y$ for the two Dowker complexes in this section, and $F$ for the
+nonempty-face-poset construction.
+\begin{proposition}[Strict Dowker functors and natural homotopy duality]
+\label{cg:covariant-natural}
+The assignments $D_X$ and $D_Y$ are strict functors from
+$\mathsf{Inc}_{\mathrm{fin}}$ to finite simplicial complexes, with maps
+induced by $f$ and $g$. Their geometric realizations are naturally
+isomorphic after passage to the homotopy category of spaces.
+Consequently their homology functors are naturally isomorphic, for every
+fixed coefficient ring and every nonnegative degree.
+\end{proposition}
+\begin{proof}
+If $y$ witnesses $\sigma$, then $g(y)$ witnesses $f(\sigma)$, so $f$
+induces a simplicial map; the other side is symmetric. Images of subsets
+respect identities and composition exactly.
+On face posets the inequality
+\[
+ g(\sigma'_R)\subseteq(f(\sigma))'_S
+\]
+holds because every pair in $\sigma\times\sigma'_R$ is an incidence.
+Viewed in $F(D_Y(S))^{\mathrm{op}}$, it says
+\[
+ d_S\,F(D_X(f,g))\ \leq\ F(D_Y(f,g))^{\mathrm{op}}\,d_R.
+\]
+Lemma~\ref{cg:order-homotopy} gives the homotopy commutativity of the
+naturality square. Each $d_R$ is a homotopy equivalence by the preceding prime-map argument. Its homotopy class therefore
+is a natural isomorphism. For a general simplicial map that identifies vertices, the canonical
+barycentric-subdivision homeomorphism need not commute with that map
+strictly. It commutes up to homotopy: on each subdivided simplex lying in
+an original face $\sigma$, both composites land in the simplex $f(\sigma)$,
+so straight-line interpolation in that simplex gives a compatible homotopy.
+This is precisely the compatibility required in the homotopy category.
+Homotopy-invariant homology sends the homotopies to equal maps and the
+equivalences to isomorphisms.
+\end{proof}
+
+\subsection{A strict natural span using rectangles}
+
+The preceding homotopy-natural equivalence already suffices for persistence.
+For a strict natural span before taking homotopy classes, the rectangle
+complex of Brun--Salbu~\cite{nb:brun-salbu} is useful:
+\[
+ E(R)=\{\varnothing\}\cup
+ \{\varnothing\neq Q\subseteq R:
+           \pi_X(Q)\times\pi_Y(Q)\subseteq R\}.
+\]
+Here the vertices are incidences, and $\pi_X,\pi_Y$ are the coordinate
+projections. The map $(f,g)$ sends $(x,y)$ to $(f(x),g(y))$, defining a
+strict functor $E$. Projections give a strictly natural span
+\[
+ D_X(R)\ \xleftarrow{\pi_X}\ E(R)\ \xrightarrow{\pi_Y}\ D_Y(R).
+\]
+Both projection maps are homotopy equivalences. We give a proof to avoid
+mistaking a strict span for a strict chosen inverse.
+
+\begin{lemma}[Finite-poset fiber lemma]\label{cg:finite-fiber}
+Let $P,Q$ be finite posets. If $p:P\to Q$ is monotone and every
+$P_q=\{a\in P:p(a)\leq q\}$ has contractible realization, then $|p|$
+is a homotopy equivalence.
+\end{lemma}
+\begin{proof}
+Form the poset $M=P\sqcup Q$ retaining both orders and adding
+$a\leq q$ exactly when $p(a)\leq q$. The map $r:M\to Q$ equal to $p$
+on $P$ and the identity on $Q$ is monotone, and
+$\mathrm{id}_M\leq i_Qr$. Thus $i_Q:Q\hookrightarrow M$ is a homotopy
+equivalence. Remove elements of $Q$ from $M$ in a linear extension of $Q$
+from smaller to larger. At the removal of $q$, its strict lower poset is
+exactly $P_q$, since the earlier elements of $Q$ have already been removed.
+The link of the vertex $q$ in the order complex is the join of this lower
+poset complex with the strict upper poset complex; it is contractible
+because $|P_q|$ is nonempty and contractible. Deleting a vertex with
+contractible link is a homotopy equivalence: the old complex is the union
+of the deleted complex with the cone on the link, attached along that link;
+a contractible link and its cone are homotopy equivalent, and the
+subcomplex inclusion is a cofibration, so gluing preserves this homotopy
+equivalence. Induction shows $i_P:P\hookrightarrow M$ is a homotopy
+equivalence. Since $p=r i_P$, so is $p$.
+If $Q$ is empty then $P$ is empty and the result is immediate.
+\end{proof}
+
+\begin{proposition}[Rectangle projections]\label{cg:rectangle}
+Both $|\pi_X|$ and $|\pi_Y|$ in the natural span are homotopy equivalences.
+\end{proposition}
+\begin{proof}
+Consider the face-poset map $p_X:F(E(R))\to F(D_X(R))$ sending $Q$ to
+$\pi_X(Q)$. Fix a nonempty face $\sigma$ of $D_X(R)$ and a witness
+$y\in\sigma'$. Its lower fiber consists of nonempty faces $Q$ with
+$\pi_X(Q)\subseteq\sigma$. Put $A=\pi_X(Q)$ and $B=\pi_Y(Q)$.
+Within this fiber the following are monotone maps and pointwise comparisons:
+\[
+ Q\ \subseteq\ A\times(B\cup\{y\})
+ \ \supseteq\ A\times\{y\}
+ \ \subseteq\ \sigma\times\{y\}.
+\]
+Every displayed set is a nonempty face of $E(R)$, because $A\times B$
+lies in $R$ and $y$ witnesses every element of $\sigma$. The last map is
+constant. Repeated application of the order-homotopy lemma contracts the
+fiber. Apply Lemma~\ref{cg:finite-fiber} and barycentric subdivision.
+The other projection is symmetric. If $R$ is empty, all spaces are empty.
+\end{proof}
+
+Here $E(R)$ denotes a complex, distinct from the test set $E$ used earlier.
+The facets of $E(R)$ are exactly the nonempty maximal rectangles, hence
+exactly the supported concepts viewed as subsets $A\times B$ of $R$.
+This is another literal use of the same data. However, a choice of homotopy
+inverse to $\pi_X$ is generally not strictly natural. It is the span that
+is strictly natural; the induced isomorphism is natural in the homotopy
+category.
+
+
+\paragraph{Ordinary incidence maps do not repair the algebraic variance.}
+The counterexample in the preceding section shows that a covariant
+incidence pair need not admit the generator-compatible join extension.
+The always-defined supported-concept assignment
+$A\mapsto c_S(f[A])$ is then only lax under composition:
+\[
+ c_T(pf[A])\subseteq c_T\bigl(p[c_S(f[A])]\bigr).
+\]
+This follows from extensivity of $c_S$ and monotonicity. The inequality
+becomes a homotopy after order realization, but need not be an equality
+of lattice maps. By contrast, the Chu identity supplies the inverse-image
+closure condition that forces equality. The covariant and contravariant
+morphism classes serve different native purposes.
+
+\paragraph{Compatible filtrations.}
+For $R_s\subseteq R_t$ on fixed finite sets, both Dowker constructions
+are filtrations and the natural homotopy equivalences induce isomorphic
+persistence modules. This is the functorial strengthening associated with
+Chowdhury--M\'emoli~\cite{cg:dowker-persistence}; the rectangle span is
+another strict comparison before passing to homotopy. The concept posets
+need not be nested subposets, and the naive concept maps need not compose
+strictly; use their induced homology maps or the explicit spans instead.
+Pointwise Betti numbers are insufficient: include a circle into a cylinder
+in one two-stage filtration, but fill the original circle by a disk and
+attach a new circle at a point in the other. Both stages in both cases have
+the homotopy type of a circle, while the first $H_1$ structure map is an
+isomorphism and the second is zero. A persistence comparison requires
+compatible maps, not just pointwise equivalences.
+
+\section{When an actual topological space is recovered}
+\label{sec:reconstruction}
+Let $Z$ be a space, let $\{U_e:e\in E\}$ be a finite family of regions,
+and let $q:H\to Z$ be a finite observation map. Impose exact semantics
+\[
+ hRe\quad\Longleftrightarrow\quad q(h)\in U_e.
+\]
+For a nonempty set of labels $B$, write $U_B=\bigcap_{e\in B}U_e$.
+The nerve $N(\mathcal U)$ has face $B$ precisely when $U_B\ne\varnothing$.
+Direct substitution gives
+\begin{equation}\label{cg:detected-intersections}
+ B\in D_E(R)\quad\Longleftrightarrow\quad q(H)\cap U_B\ne\varnothing.
+\end{equation}
+Thus $D_E(R)\subseteq N(\mathcal U)$, with equality exactly when every
+nonempty intersection is hit by a sample. Call this
+\emph{intersection-complete sampling}. Since $E$ is finite, it suffices
+to hit each maximal nerve face's intersection: every other nonempty
+intersection contains one of those intersections. This condition is
+weaker than observing every Boolean atom, but cannot be certified from
+absent witnesses in the observed table alone.
+
+\begin{theorem}[Conditional homotopy recovery]
+Assume exact incidence semantics, $\bigcup_eU_e=Z$, and
+intersection-complete sampling. Assume also either:
+\begin{enumerate}
+\item $Z=|A|$ for a finite simplicial complex $A$, each $U_e=|A_e|$
+for a subcomplex $A_e$, and every intersection of the $A_e$ with
+nonempty realization has contractible realization; or
+\item $Z$ is paracompact Hausdorff, the $U_e$ are open, and every
+nonempty finite intersection $U_B$ is contractible.
+\end{enumerate}
+Then
+\[
+ |K_R|\simeq|\Delta\mathcal C_R|\simeq|D_E(R)|
+       =|N(\mathcal U)|\simeq Z.
+\]
+\end{theorem}
+\begin{proof}
+Equation~\eqref{cg:detected-intersections} proves equality of the observed
+complex and the nerve. Proposition~\ref{nb:dowker-core} proves the first
+two comparisons. We give the remaining argument fully in case (1).
+Use the finite poset
+\[
+ P=\{(\sigma,J):\sigma\text{ a nonempty face of }A,\
+ J\ne\varnothing,\ \sigma\in\bigcap_{j\in J}A_j\},
+\]
+ordered by inclusion of $\sigma$ and reverse inclusion of $J$.
+Projection to $F(A)$ and projection to $F(N(\mathcal U))^{\mathrm{op}}$
+are monotone. For a face $\sigma_0$ of $A$, choose an index $i$ with
+$\sigma_0\in A_i$; such an index exists because the subcomplexes cover.
+In the lower fiber over $\sigma_0$, the comparisons
+\[
+ (\sigma,J)\ \geq\ (\sigma,J\cup\{i\})\
+ \leq\ (\sigma,\{i\})\ \leq\ (\sigma_0,\{i\})
+\]
+contract its realization. All pairs shown are valid because
+$\sigma\subseteq\sigma_0\in A_i$. For a nerve face $J_0$, the lower
+fiber of the other projection consists of pairs with $J\supseteq J_0$.
+The map $(\sigma,J)\mapsto(\sigma,J_0)$ is an extensive retraction onto
+$F(\bigcap_{j\in J_0}A_j)\times\{J_0\}$. Its realization is contractible
+by assumption. The finite-poset fiber lemma
+(Lemma~\ref{cg:finite-fiber}) makes both projections homotopy equivalences.
+Barycentric subdivision and order reversal give
+$|A|\simeq|N(\mathcal U)|$, as required.
+
+In case (2), the last step is precisely the established good-open-cover
+nerve theorem, rather than a new deduction from the matrix. A finite open
+cover of a paracompact Hausdorff space is numerable; the hypotheses are
+those of the good numerable open-cover case of the functorial nerve
+theorem~\cite[Theorem 5.9]{cg:nerve}. Applying that theorem proves the
+remaining equivalence. No assertion here depends on a nerve theorem for
+arbitrary closed covers.
+\end{proof}
+The first proof makes the finite simplicial version independent of an
+unmentioned general cover theorem. Useful additional established classes
+include finite closed convex Euclidean covers; arbitrary finite good
+closed covers are insufficient without tameness or cofibration hypotheses
+\cite[Theorem 3.9 and Remark 5.12]{cg:nerve}.
+
+\subsection{What the additional hypotheses exclude}
+\begin{enumerate}
+\item \emph{Unseen topology.} A single everywhere-true predicate gives
+the same all-one matrix on a finite sample from an interval or a circle.
+More generally, from any realization $(Z,U_e,q)$ form
+$(Z\times W,U_e\times W,h\mapsto(q(h),w_0))$, for a pointed nonempty
+space $W$. The incidence is unchanged, while the latent homotopy type
+can change. Therefore no data-only reconstruction rule works for arbitrary
+spaces and predicate interpretations.
+\item \emph{Missing intersections.} A three-arc good open cover of a
+circle can have all pairwise overlaps and no triple overlap. Observing
+only an exclusive part of its first arc gives rows $(1,0,0)$ and an
+observed point nerve, although the true nerve is a triangle boundary.
+The failure is sampling completeness, even with valid cover topology.
+\item \emph{A different topology generated by the same predicates.}
+On $H=\{1,2,3\}$, use extents $\{1,2\},\{2,3\},\{1,3\}$. The topology
+generated by these sets is discrete, because their intersections isolate
+all three points. The attribute nerve is instead a circle. These are
+both legitimate constructions from the data, but not the same topology.
+\item \emph{Higher-order witnesses.} Nonempty pairwise overlaps do not
+force a nonempty triple overlap. Replacing incidence by a pairwise graph
+and taking its clique complex fills a triangle that the true nerve may
+omit. Such replacement requires an additional flag condition.
+\item \emph{Homotopy is not geometry.} A point and an interval have the
+same homotopy type and the same one-predicate data. The theorem does not
+recover homeomorphism type, metric, dimension, smooth structure, or
+coordinates. If the regions cover only a subset of an ambient space,
+only their union is the possible nerve-theorem target.
+\end{enumerate}
+
+\paragraph{Maps and persistence require semantic compatibility too.}
+For another covered space, a continuous $F:Z\to Z'$ and a label map
+$\lambda:E\to E'$ satisfying $F(U_e)\subseteq U'_{\lambda(e)}$ induce
+a nerve map. If sample maps obey $Fq=q'f$, the observed covariant
+incidence map agrees with that nerve map. Natural nerve comparison spans
+then provide compatible topology comparisons. Applying this at every
+parameter can identify persistence modules under the same sampling and
+cover assumptions at every parameter. Separate pointwise equivalences do
+not suffice, as the two-stage counterexample above demonstrates.
+\section{Scope, limitations, and the contribution of the synthesis}
+
+The common construction retains a finite incidence presentation, its
+action adjunction, and the markings needed to recover native states and
+tests. It produces the residual automaton under the stated completeness
+hypotheses, a canonical generator-compatible lattice action, and a
+coherent Dowker action by exact-domain spans. The closure maps intertwine
+the last two constructions, including all action domains and word
+compositions. This is a substantive common theorem.
+
+It does not show that the three unmarked outputs are equivalent or that
+one is recoverable from either of the others without retained structure.
+It supplies neither an empirical discovery of the interface nor an
+efficient uniform algorithm: concept lattices and nerves may have
+exponentially many elements or faces. A finite sample of word labels
+cannot certify global minimality without additional assumptions or
+queries. If all sampled words have length at most $N$ and label zero,
+both the empty language and $\{a^{N+1}\}$ fit the sample, while their
+minimal complete DFAs have respectively $1$ and $N+3$ states.
+
+
+\paragraph{Finite and infinite scopes.}
+The polarity and complete-lattice action statements hold for arbitrary
+sets. The closure deformation-retraction proof is finite: a finite face
+may have infinite closure in an infinite context. Here is the precise
+set-sized replacement. Assume that both carriers are sets, and define
+Dowker complexes using finite nonempty faces. The monotone map
+$r:\mathcal F(K_R)\to\mathcal C_R$, $S\mapsto S''$, is well defined
+but need not have the earlier inclusion as an inverse. For a supported
+concept $(A,B)$, the lower fiber $r^{-1}(\mathcal C_{R,\leq A})$ is
+exactly the poset of finite nonempty subsets of $A$: since $A$ is closed,
+$S''\subseteq A$ is equivalent to $S\subseteq A$. Every such subset is
+a face, because the nonempty set $B=A'$ witnesses it. Choose $a_0\in A$.
+The monotone comparisons
+$S\subseteq S\cup\{a_0\}\supseteq\{a_0\}$ contract the fiber.
+For a Chu morphism, restrict to $\mathcal F(K_f)\to\mathcal C_f$.
+If $A\in\mathcal C_f$ and $S\subseteq A$, then $A'\subseteq S'$ and
+$A'\cap\operatorname{im}(g)\ne\varnothing$, so $S$ lies in $K_f$.
+The lower fiber is therefore the same contractible poset. All posets
+involved are small because the carriers are sets. Quillen's Theorem A
+in its poset form now makes these maps homotopy equivalences
+\cite{cg:quillen}. The strict closure/action squares and exact domain
+composition are algebraic identities and remain valid. As in the finite
+case, passage from face posets to the original geometric complexes gives
+homotopy naturality, not strict naturality under vertex identifications.
+This is not the ill-typed inclusion of an infinite extent into a finite
+face poset. Regular languages already admit the finite reduction above,
+so no infinitary step is needed for that case.
+
+\paragraph{Boolean predictions are not probability laws.}
+For a binary Markov chain with $\Pr(1\mid0)=1/4$ and
+$\Pr(1\mid1)=3/4$, every finite future word has positive probability
+after either state. The Boolean possibility rows agree, although the
+future distributions differ. Thus this Boolean theory does not identify
+probabilistic predictive states. Adding rational probability-threshold
+tests can recover equality of laws, but the update then uses
+$\Pr(t\mid ha)=\Pr(at\mid h)/\Pr(a\mid h)$ when defined. The simple
+column-shift identity and its algebraic consequences must be proved anew.
+Likewise, a linear Hankel span uses a different free algebraic structure;
+it is not obtained merely by relabeling the Boolean lattice construction.
+
+The unification achieved here is a precise operational and topological
+transport theorem, with an explicit failure boundary. It is neither a
+full phenomenological theory of concept or scientific-law formation nor
+an automatic account of how the history/test interface is discovered.
+\section{Prior work and exact attribution}
+\label{nb:prior}
+
+The elementary ingredients are established and should be credited
+separately. Myhill--Nerode theory supplies residual minimization.
+Clark's discussion of the syntactic concept lattice explicitly compares
+the prefix--suffix relation underlying deterministic quotients and
+universal automata; the construction here is not a new discovery that
+automata and concept lattices share incidence data
+\cite{nb:clark}. Shen and Zhang prove concept-lattice functoriality for
+infomorphisms in a substantially more general enriched setting
+\cite{nb:shen-zhang}. Erne surveys several context-morphism categories and
+their lattice adjunctions \cite{nb:erne}.
+
+Gratus and Porter already restrict source attributes to the image of
+the contravariant component of a Chu morphism to obtain a simplicial
+map, and give surjectivity as a sufficient condition for an unrestricted
+map. Their refinement discussion includes the column-containment
+condition used above \cite{nb:gratus-porter}. Thus neither the restriction
+to $\operatorname{im}(g)$ nor the coverage criterion should be presented
+as new. Brun and Salbu explain prior FCA--Dowker comparisons and give a
+functorial Dowker theorem for covariant relation morphisms
+\cite{nb:brun-salbu}. Their arrow convention must not be confused with
+the contravariant test component of a Chu morphism.
+
+The claim made here is a checked synthesis: one closure retraction
+intertwines all of the exact-domain action spans, with strict formulas
+for composition; the examples identify precisely what totality and
+unmarked-lattice recovery would falsely assert. An exhaustive novelty
+assessment of this synthesis has not been performed.
+
+
+The following distinctions further delimit the established components.
+\begin{itemize}
+\item Lombardy--Sakarovitch, Proposition 2.1 and Definition 2.4, identify
+maximal language factorizations with intersections of residuals and define
+the universal NFA~\cite{cg:universal}. Kl\'{\i}ma--Pol\'{a}k discuss the
+corresponding deterministic meet automaton~\cite[Section 4]{cg:meet}.
+The universal property of the universal NFA is existence of a morphism,
+not generally uniqueness or terminality in an ordinary automaton category.
+\item Clark's \emph{syntactic} concept lattice uses the different relation
+$w\sim(u,v)$ iff $uwv\in L$. Its row equivalence is two-sided syntactic
+congruence, unlike the prefix--suffix context's Myhill--Nerode relation.
+It is relevant prior art, not a license to identify the two lattices.
+\item For a small quantaloid and an enriched distributor, Shen--Zhang's
+Proposition 4.1 gives an Isbell adjunction and Theorem 4.16 characterizes
+its completion through sup/inf-dense maps~\cite{cg:quantaloid}. Boolean
+discrete contexts recover FCA. Their Kan adjunction is a distinct
+construction (Proposition 5.1); its relation to Isbell through negation
+uses the Girard hypothesis (Lemma 5.12). These generalities do not, without
+new hypotheses, identify a field-linear Hankel image with a Boolean nucleus.
+\item Freund--Andreatta--Giavitto explicitly connect lattices and binary
+relation topology, exclude universal rows/columns in their Definition 1,
+and explain the need for extra marking if those are allowed
+\cite{cg:freund}. Ayzenberg's Proposition 5.7 compares proper concept
+parts with the two nerves under exclusions on full simplices and ghost
+vertices~\cite{cg:ayzenberg}. The support convention above handles the
+degenerate cases directly. The universal-test counterexample does not
+contradict their qualified results.
+\item Gratus--Porter's Proposition 1(ii) already supplies the restricted
+Chu nerve map used here. Exact partial composition is a direct consequence
+of its witness formula. The additional compatibility equations in this
+note are proved explicitly; an exhaustive priority search for their exact
+combined formulation has not been performed.
+\item Green--Joslyn--Myers--Rawson--Robinson's 2025 preprint relates
+hypergraph intersection structures, concept lattices, and Dowker cosheaves
+\cite{cg:green}. It is further close prior art to any broad novelty claim,
+not a foundation on which the proofs here rely.
+\end{itemize}
+The proofs, counterexamples, and exact preservation requirements are the
+substance of this note. No claim of new mathematics is inferred from an
+unlocated exact title or from combining familiar terminology.
+\begin{thebibliography}{99}
+\bibitem{nb:clark}
+A. Clark, ``The syntactic concept lattice: Another algebraic theory of the
+context-free languages?'', \emph{Journal of Logic and Computation},
+published online 2013.
+\href{https://doi.org/10.1093/logcom/ext037}{doi:10.1093/logcom/ext037}.
+\href{https://alexc17.github.io/static/pdfs/JLC2013.pdf}{Author PDF}.
+
+\bibitem{nb:shen-zhang}
+L. Shen and D. Zhang, ``The concept lattice functors'',
+\emph{International Journal of Approximate Reasoning} 54 (2013), 166--183.
+\href{https://doi.org/10.1016/j.ijar.2012.07.002}{doi:10.1016/j.ijar.2012.07.002}.
+
+\bibitem{nb:erne}
+M. Ern\'e, ``Categories of contexts'', 2014.
+\href{https://arxiv.org/abs/1407.0512}{arXiv:1407.0512}.
+
+\bibitem{nb:gratus-porter}
+J. Gratus and T. Porter, ``A geometry of information, I: Nerves, posets
+and differential forms'', \emph{Dagstuhl Seminar Proceedings} 04351,
+2005.
+\href{https://arxiv.org/abs/cs/0512010}{arXiv:cs/0512010}.
+\href{https://drops.dagstuhl.de/storage/16dagstuhl-seminar-proceedings/dsp-vol04351/DagSemProc.04351.6/DagSemProc.04351.6.pdf}{Proceedings PDF}.
+Relevant statements: Proposition 1 and Corollary 1, pp.~8--9, and the
+refinement discussion on pp.~11--12.
+
+\bibitem{nb:brun-salbu}
+M. Brun and L. M. Salbu, ``The Rectangle Complex of a Relation'',
+\emph{Mediterranean Journal of Mathematics} 20 (2023), article 7.
+\href{https://doi.org/10.1007/s00009-022-02213-0}{doi:10.1007/s00009-022-02213-0}.
+
+\bibitem{cg:angluin}
+D. Angluin, \emph{Learning Regular Sets from Queries and Counterexamples},
+Information and Computation 75 (1987), 87--106.
+\href{https://doi.org/10.1016/0890-5401(87)90052-6}{doi:10.1016/0890-5401(87)90052-6}.
+
+\bibitem{cg:universal}
+S. Lombardy and J. Sakarovitch, \emph{The Universal Automaton}, in
+\emph{Logic and Automata: History and Perspectives}; author version
+(2007), Propositions 2.1, 2.6, Theorem 2.16, and Definition 2.4.
+\href{https://perso.telecom-paristech.fr/jsaka/PUB/Files/TUA.pdf}{Author PDF}.
+Publisher volume records use 2008; proposition numbering is the locator here.
+
+\bibitem{cg:meet}
+O. Kl\'{\i}ma and L. Pol\'{a}k, \emph{Syntactic Structures of Regular
+Languages}, 2017 version, Section 4.
+\href{https://arxiv.org/abs/1612.06247}{arXiv:1612.06247}.
+
+\bibitem{cg:quantaloid}
+L. Shen and D. Zhang, \emph{Categories enriched over a quantaloid:
+Isbell adjunctions and Kan adjunctions}, Theory and Applications of
+Categories 28(20) (2013), 577--615.
+\href{https://arxiv.org/abs/1307.5625}{arXiv:1307.5625};
+\href{https://emis.de/ft/8978}{Published-paper mirror}.
+
+\bibitem{cg:freund}
+A. Freund, M. Andreatta, and J.-L. Giavitto,
+\emph{Lattice-based and topological representations of binary relations
+with an application to music}, Annals of Mathematics and Artificial
+Intelligence 73 (2015), 311--334.
+\href{https://doi.org/10.1007/s10472-014-9445-3}{doi:10.1007/s10472-014-9445-3}.
+
+\bibitem{cg:ayzenberg}
+A. Ayzenberg, \emph{Topology of nerves and formal concepts} (2019),
+Proposition 5.7 and Remark 5.8.
+\href{https://arxiv.org/abs/1911.05491}{arXiv:1911.05491}.
+
+\bibitem{cg:dowker-persistence}
+S. Chowdhury and F. M\'emoli,
+\emph{A functorial Dowker theorem and persistent homology of asymmetric
+networks}, Journal of Applied and Computational Topology 2 (2018),
+115--175, Theorem 3 and Corollary 20.
+\href{https://doi.org/10.1007/s41468-018-0020-6}{doi:10.1007/s41468-018-0020-6}.
+
+\bibitem{cg:selfmap}
+H. Edelsbrunner, G. Jab\l o\'nski, and M. Mrozek,
+\emph{The Persistent Homology of a Self-Map}, Foundations of Computational
+Mathematics 15 (2015), 1213--1244, Section 4.1.
+\href{https://doi.org/10.1007/s10208-014-9223-y}{doi:10.1007/s10208-014-9223-y}.
+
+\bibitem{cg:nerve}
+U. Bauer, M. Kerber, F. Roll, and A. Rolle,
+\emph{A Unified View on the Functorial Nerve Theorem and its Variations},
+journal publication 2023; arXiv version 6 (2025), Theorems 3.9, 4.8, 5.9
+and Remark 5.12.
+\href{https://arxiv.org/abs/2203.03571}{arXiv:2203.03571}.
+
+\bibitem{cg:quillen}
+D. Quillen, \emph{Higher Algebraic K-Theory: I}, Lecture Notes in
+Mathematics 341 (1973), 85--147, Theorem A.
+\href{https://doi.org/10.1007/BFb0067053}{doi:10.1007/BFb0067053}.
+
+\bibitem{cg:green}
+R. E. Green, C. A. Joslyn, A. Myers, M. G. Rawson, and M. Robinson,
+\emph{The Topological Structures of the Orders of Hypergraphs} (2025),
+preprint version 2.
+\href{https://arxiv.org/abs/2504.11760}{arXiv:2504.11760}.
+\end{thebibliography}
+\end{document}

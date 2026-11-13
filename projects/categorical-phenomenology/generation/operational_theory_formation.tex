@@ -1,0 +1,1770 @@
+% Standalone research note. Intentionally supplied as uncompiled TeX.
+% No external inputs, bibliography files, or generated assets are required.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,enumitem}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\E}{\mathcal E}
+\newcommand{\C}{\mathcal C}
+\newcommand{\N}{\mathbb N}
+\newcommand{\R}{\mathbb R}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\Ker}{\operatorname{Ker}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Th}{\operatorname{Th}}
+\title{Operational Theory Formation Through Interaction\\
+\large Executable law revision, retained meaning, and compositional limits}
+\author{}\date{5 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+Interaction can require changing the equations of an operational theory,
+not merely increasing the state space of one of its models. This note
+connects an asserted law to an executable diagnostic, an explicitly
+revised presentation, and comparison maps which identify retained and
+retracted conclusions. A common raw presentation supports this connection:
+semantic kernels determine operator laws; actual preparations and readouts
+determine which failures are observable; admissible access determines which
+observations can be acquired together. Law retraction reverses the usual
+quotient map, and arbitrary replacement gives a common-law span.
+Composition of these spans has an exact source-lifting obstruction.
+
+A constructive family makes the connection effective. For any finite typed
+quiver of linear operations, a finite family of certified finite-dimensional
+environments yields a finite complete presentation, normal forms, and
+executable counterexamples. A newly admitted countermodel revises the
+operator category and its free-representation monad. Independent controls
+and full Cartesian environment pairing make the construction commute with
+parallel composition; shared controls and correlated pairings need not.
+The fixed-language case recovers contextual state reduction and its least
+repair, but least local repair still need not commute invertibly with
+wiring. The results are proved as a bounded synthesis of established
+algebraic, categorical, and testing methods, not a priority claim.
+They do not invent primitive operations or types, identify an unrestricted
+unknown system from finite data, or reconstruct native witnesses forgotten
+by public semantics.
+\end{abstract}
+\tableofcontents
+
+\section{Why a law can require more than a larger model}
+Suppose two actual commands $a,b$ set a visible bit respectively to $0,1$.
+Execute words from left to right. Then $ab$ finishes at $1$ and $ba$ at
+$0$. A theory asserting $ab=ba$ cannot represent this interaction faithfully.
+Increasing its state space does not help: every action of the commutative
+command monoid sends those two words to the same transition on every state.
+One must retract the law, change the meanings of the commands, or reject
+the claimed source interpretation. These alternatives have different
+semantic commitments.
+
+A fixed-language behavioral state quotient alone does not settle this
+revision problem. It determines which states supplied operations and tests
+can distinguish. With suitable reachability and separation hypotheses, its
+transition action also determines an operational algebra; that construction
+already appears in the earlier programme \cite{observation-note,bridge-note}.
+What still requires specification is how to replace a refuted theory,
+compare its retained meanings, and control the composition of revisions. The present development addresses a bounded but genuine
+part of that larger formation problem: \emph{when interaction invalidates
+an operational equation, construct and compare a revised operational theory,
+and determine how that revision behaves under composition.}
+
+\paragraph{The substantive result and its boundary.}
+The positive algorithm changes the \emph{marked quotient theory} of named
+operations, including its category of linear terms and its monad. It keeps
+the raw types, generators, scalar field, and linear doctrine fixed. Thus it
+is not merely fitting parameters or increasing a state carrier, but it is
+also not unrestricted language invention. The earlier syntactic intervention
+monoid, CALF realization bridge, capacity-refinement spans, and
+characterization-language revision are substantive antecedents
+\cite{observation-note,bridge-note,capacity-note,characterization-note}.
+Section~\ref{sec:prior-programme} compares their exact hypotheses and
+conclusions with this note; Proposition~\ref{prop:wfa-algebra} gives the
+explicit weighted-automaton specialization. A general signature substitution
+below can record a supplied new primitive, new sort, or reinterpretation.
+It does not discover an implementation or meaning for that symbol. Derived
+symbols can be introduced with explicit defining terms; their introduction
+alone adds no primitive experimental capability.
+
+The mathematical progression is
+\[
+\begin{gathered}
+\text{asserted operational law and implemented raw syntax}
+\ \longrightarrow\ \text{executable diagnostic}\\
+\longrightarrow\ \text{evidence-conditioned presentation revision}
+\ \longrightarrow\ \text{retained-meaning comparison}\\
+\longrightarrow\ \text{composition theorem or explicit obstruction}.
+\end{gathered}
+\]
+The links carry different warrants. Semantic interpretation proves what a
+program means; an access certificate says which experiment can be run;
+a calibrated outcome can refute a law; an algebraic construction organizes
+the consequences. No one of these warrants substitutes for the others.
+
+\paragraph{Three meanings of new evidence.}
+They will be kept distinct throughout.
+\begin{enumerate}
+\item If $\mathcal E$ is a family of \emph{certified complete environments},
+      its common laws are $\bigcap_{E\in\mathcal E}\Ker\rho_E$.
+      Admitting another environment can delete common laws.
+\item If $D$ is a record about \emph{one fixed unknown target}, sound new
+      constraints shrink its version space $V(D)$. Therefore
+      $\Th(V(D))$, the equations true in every remaining model, can only
+      increase. Finite records do not normally supply a full model kernel.
+\item A selected \emph{tentative hypothesis} may be refuted by a new record.
+      Its retraction is a revision of defeasible commitments, not a loss of
+      a consequence previously valid in every compatible model.
+\end{enumerate}
+Indeed, both monotonicity assertions follow immediately from intersection:
+if $\mathcal E\subseteq\mathcal E'$, then
+$\Th(\mathcal E')\subseteq\Th(\mathcal E)$; if
+$V(D')\subseteq V(D)$, then $\Th(V(D))\subseteq\Th(V(D'))$.
+Failure to prove a law is neither a counterexample nor a proof of its
+negation. An empty version space means the combined assumptions and records
+are inconsistent, not that every assertion has acquired empirical support.
+
+\section{Presentations and the exact meaning of retaining a law}
+\label{sec:presentations}
+Fix a structural doctrine with free typed syntax $F_\Sigma$ and quotients by compatible congruences with the usual
+factorization property. Computational effectiveness is an additional assumption. Examples are a free
+many-sorted algebra, a free category, or a free $K$-linear category. The
+structural operations, typing, and permitted resource rules belong to the
+doctrine. An \emph{operational presentation} is $F_\Sigma/I$, where $I$ is
+a congruence, or a two-sided linear ideal in the linear case. A raw term is
+implemented before being identified by the proposed equations. Thus a
+refuted quotient does not destroy the ability to execute its two raw sides.
+
+An actual environment supplies an interpretation $\rho_E$ preserving the
+structural operations. Its law relation $\Ker\rho_E$ compares only parallel
+terms, retaining the raw sort or object labels. For a certified
+family, $I_{\mathcal E}=\bigcap_E\Ker\rho_E$ is compatible and
+$F_\Sigma/I_{\mathcal E}$ is the homwise image of the product
+interpretation, retaining those labels even when interpreted objects coincide.
+This is an extensional theory of named executable operations, not a claim
+that every abstract model of the resulting equations is an available
+physical source. Variable equations require the corresponding assignments
+or substitutions to be quantified over; agreement at one initial state is
+not a universal operator identity.
+
+\begin{proposition}[The variance of law transport]\label{prop:variance}
+For quotients $q_I:F_\Sigma\to F_\Sigma/I$ and
+$q_J:F_\Sigma\to F_\Sigma/J$, a structural map $h$ satisfying
+$h q_I=q_J$ exists exactly when $I\subseteq J$, and is then unique.
+Consequently, if an actual diagnostic refutes an old equation, no forward
+map preserving every named raw operation can carry the entire old quotient
+into a revised quotient in which that equation is false. Pure law
+retraction $J\subseteq I$ instead gives $F_\Sigma/J\to F_\Sigma/I$.
+\end{proposition}
+\begin{proof}
+If $h$ exists, every pair identified by $q_I$ is identified by $q_J$.
+Conversely this containment is precisely the quotient factorization
+condition. Surjectivity of $q_I$ proves uniqueness. A refuted old pair
+violates the necessary containment for the forward map.
+\end{proof}
+
+More generally let $\alpha:F_\Sigma\to F_{\Sigma'}$ be a supplied raw
+translation. It may rename symbols, expand them into derived terms, or
+interpret them in an enlarged language. Let $I$ be the old law relation
+and $J$ the revised one. Set
+\[
+ H=I\cap\alpha^{-1}J.
+\]
+Then the honest comparison is
+\begin{equation}\label{eq:common-span}
+ F_\Sigma/I\ \longleftarrow\ F_\Sigma/H
+       \ \xrightarrow{\ [u]\mapsto[\alpha u]\ }\ F_{\Sigma'}/J.
+\end{equation}
+Both arrows exist by the quotient property. The left one is surjective;
+the right one need not be when genuinely new generators or sorts occur.
+Exactly the old equations in $H$ survive with their translated meanings.
+Equations in $I\setminus\alpha^{-1}J$ are retracted under that translation;
+equations in $\alpha^{-1}J\setminus I$ are newly valid comparisons between
+translated old terms. The revised language can also have laws with no old
+preimage. If $\alpha$ reinterprets a symbol, validity of its translated law
+does not assert that the old physical meaning was preserved. If $J$ is an
+exact semantic kernel, nonmembership witnesses failure in that semantics;
+if it is only a deductively generated theory, nonmembership means only
+non-derivability in that theory.
+
+This is comparison, not a canonical choice of revision. If an old axiom
+base contains $a=b$ and $b=c$, and accepted evidence separates $a,c$,
+retaining just the first or just the second gives two different compatible
+repairs. The negative witness does not choose between them. A repair policy,
+additional evidence, or a semantic source class is needed. Below, a specified
+family of certified environments fixes its common law relation uniquely;
+this conditional uniqueness is not uniqueness of scientific explanation.
+
+\begin{proposition}[Naturality of retained meaning]\label{prop:naturality}
+Suppose raw-language maps form a commuting square
+\[
+\begin{array}{ccc}
+F&\xrightarrow{\alpha}&F'\\
+{\scriptstyle\beta}\downarrow&&\downarrow{\scriptstyle\gamma}\\
+G&\xrightarrow{\delta}&G'
+\end{array}
+\]
+and their law relations satisfy $\beta(I)\subseteq L$ and
+$\gamma(J)\subseteq M$. Then $\beta$ induces a comparison
+\[
+ F/(I\cap\alpha^{-1}J)\longrightarrow
+ G/(L\cap\delta^{-1}M)
+\]
+commuting with the two retained-meaning spans. These comparisons preserve
+identities and composites. They reflect the common law relation if
+$\beta^{-1}L=I$ and $\beta^{-1}\delta^{-1}M=\alpha^{-1}J$.
+\end{proposition}
+\begin{proof}
+A pair in $I\cap\alpha^{-1}J$ maps into $L$, and its image under
+$\delta\beta=\gamma\alpha$ lies in $M$. This proves descent. Both span
+squares commute on raw terms, hence on their quotients. Identities and
+composition follow in the same way. The reflection claim follows by taking
+inverse images of the intersection under the two displayed equalities.
+\end{proof}
+This gives a conditional transport theorem, not a method for finding the
+interpretation square. If a fragment $K\subseteq I$ is declared protected,
+retaining it additionally requires $K\subseteq\alpha^{-1}J$. If that fails,
+the protected commitments and proposed semantics conflict; the construction
+does not authorize silently retracting $K$. Accepted experimental records
+likewise remain in the transcript unless their warrant is explicitly
+revised. Proofs transported along these comparisons retain their premises;
+compatibility of arbitrary inference rules requires its own interpretation.
+
+
+\section{From a semantic failure to an executable diagnostic}
+\label{sec:diagnostic}
+The assertion $\rho_E(u)\ne\rho_E(v)$ alone supplies no experiment. Let
+$\C$ be a locally small semantic category. At an input type $A$ supply
+actually allowed preparations $p_i:P\to A$; at an output type $B$ supply
+readouts $e_j:B\to O_j$ and response encodings
+$\chi_j:\C(P,O_j)\to Y_j$ injective on the compared composites. Define
+\[
+ J_{A,B}(f)=\bigl(\chi_j(e_j f p_i)\bigr)_{i,j}.
+\]
+The probes separate a specified class of law pairs precisely when
+$J(f)=J(g)$ implies $f=g$ for those pairs. This is relative separation,
+not an assumed global faithfulness of an experiment interface.
+
+\begin{theorem}[Exactly what accessible probes distinguish]\label{thm:access}
+If the preparations are jointly epic and the readouts jointly monic, $J$
+is injective. More generally suppose $\C$ is regular and the particular
+coproduct and product below exist. Factor
+\[
+ \coprod_iP\twoheadrightarrow R_A\xrightarrow{r_A}A,
+ \qquad B\xrightarrow{q_B}Q_B\hookrightarrow\prod_jO_j
+\]
+as the images of the preparation and readout families. Then
+\[
+ J(f)=J(g)\quad\Longleftrightarrow\quad q_B f r_A=q_B g r_A.
+\]
+Thus injectivity of $f\mapsto q_B f r_A$ on the intended law pairs is
+necessary and sufficient for every semantic failure in that class to have
+an accessible probe discrepancy.
+\end{theorem}
+\begin{proof}
+Equality of encoded profiles gives $e_jfp_i=e_jgp_i$. Joint epicity first
+implies $e_jf=e_jg$, and joint monicity then implies $f=g$.
+For the general statement, factor $p_i=r_A\bar p_i$ and
+$e_j=\bar e_jq_B$. The $\bar p_i$ are jointly epic by the epic image
+factor, and the $\bar e_j$ jointly monic by the monic factor into the
+product. Apply the first argument to $q_Bfr_A,q_Bgr_A$. The reverse
+implication is immediate by composing with these families.
+\end{proof}
+The sandwich is a map of hom-sets. It is not automatically a functor,
+a native realization, or an instruction for measuring an infinite response
+profile. In sets, preparation only at $0$ fails to distinguish the constant
+zero map from the identity of $\{0,1\}$. Even an identity, hence faithful,
+semantic interpretation does not remedy that access failure.
+
+\begin{proposition}[Executable refutation]\label{prop:execution}
+Suppose a candidate environment makes $u=v$ false and a probe in
+Theorem~\ref{thm:access} separates its two sides. Suppose further, uniformly over the currently compatible targets, that:
+\begin{enumerate}
+\item both raw programs and the selected preparation and readout have
+      correct finite implementations that terminate on every licensed run;
+\item there is a joint access plan obtaining both responses with the same
+      relevant environment and input meaning, for example a faithful reset
+      or reproducible preparation;
+\item both arms use the same calibrated response encoding, and their
+      responses are exact or have certified error bounds; exact responses
+      have a terminating discrepancy check for the compared values.
+\end{enumerate}
+With exact responses the plan certifies the candidate violation. When
+executed on an unknown target, an actual unequal exact response excludes
+every compatible target satisfying the law. For real responses with
+absolute errors at most $\epsilon_u,\epsilon_v$, an observed absolute
+difference greater than $\epsilon_u+\epsilon_v$ certifies refutation.
+Such a verdict is guaranteed for all allowed errors if the candidate ideal
+gap exceeds $2(\epsilon_u+\epsilon_v)$; without a sufficient margin the
+execution can be inconclusive.
+\end{proposition}
+\begin{proof}
+Correct implementations realize the separating composites in the candidate.
+In every law-satisfying target the two composites at the shared preparation
+and readout are equal, so unequal exact observations contradict the law.
+In the bounded-error case the triangle inequality bounds a measured
+difference for equal ideal responses by $\epsilon_u+\epsilon_v$. Conversely
+an ideal gap $\delta$ gives measured gap at least
+$\delta-(\epsilon_u+\epsilon_v)$, proving the stated sufficient margin.
+\end{proof}
+The candidate selects the diagnostic; it is not evidence that the unknown
+target is that candidate. A successful plan construction is not an observed
+refutation, and equal measured responses are not proof of a universal law.
+If both probe codes and certified joint plans are effectively enumerable,
+and a candidate discrepancy is semidecidable, dovetailed search eventually
+finds an existing certified separator. This supplies no uniform time or
+execution-cost bound without further hypotheses.
+
+\paragraph{Why joint access is a real condition.}
+Let a one-use device expose commands returning hidden bits $x$ and $y$,
+with either command consuming the sole available specimen. The law that
+their two ideal responses agree holds exactly when $x=y$. Each command
+is individually executable. Nevertheless no deterministic or zero-error
+randomized policy can decide this law on all four worlds: if the first
+command is chosen, worlds $(0,0)$ and $(0,1)$ give the same complete record
+but different verdicts; if the second is chosen, use $(0,0)$ and $(1,0)$.
+Every policy has already exhausted its resource. For a zero-error randomized
+policy correct on the four worlds, the intersection of their four
+probability-one correctness events still has probability one; fixing any
+seed in it would give an impossible deterministic policy. Pairwise mathematical
+separation, or a fresh-experiment semantics, does not give a same-world
+law test under this actual access model.
+
+\section{An effective class of genuinely revised operational theories}
+\label{sec:linear}
+The preceding comparison becomes an algorithm for a substantial class:
+arbitrary finite typed signatures of linear operations, rather than one
+chosen law or one finite-state example. The experiment interface certifies
+the actual matrices, and finite-dimensional linear algebra then constructs
+all operator laws. This is the certified-environment direction of evidence,
+not inference of exact matrices from an arbitrary scalar transcript.
+
+\subsection{The algebraic and experimental interface}
+
+Fix an effective field $K$: arithmetic, equality, and finite Gaussian
+elimination over $K$ are computable. Finite fields and $\mathbb Q$ are
+examples. Fix a finite quiver $Q$ with object set $S$ and generating
+arrows $G$. Let $KQ$ denote the free $K$-linear category on $Q$.
+Its arrows are finite $K$-linear combinations of well-typed paths.
+For paths $p:s\to t$ and $q:t\to u$, write $pq:s\to u$ for execution
+of $p$ followed by $q$. Composition is extended bilinearly.
+
+\begin{definition}[Executable linear environment]
+An environment $E$ assigns a finite-dimensional row-vector space
+$E(s)=K^{n_{E,s}}$ to each $s\in S$ and a matrix
+$M^E_g\in K^{n_{E,s}\times n_{E,t}}$ to each $g:s\to t$.
+Its interpretation $\rho_E:KQ\to\mathbf{Vect}_K$ sends a path
+$g_1\cdots g_r$ to $M^E_{g_1}\cdots M^E_{g_r}$ and preserves linear
+combinations. The matrices are exact executable descriptions, or are
+recovered under the exact access contract stated next.
+\end{definition}
+
+One sufficient access contract is: the dimensions and coordinate bases
+are known; every basis row at every type can be prepared; each primitive
+operation is executable after that preparation; all output coordinates
+can be read exactly; and the primitive is promised to be $K$-linear.
+Then $\sum_{g:s\to t}n_{E,s}$ primitive executions, with full vector
+readout, recover all its matrices. With separate scalar readout queries
+the number of scalar entries is
+$\sum_{g:s\to t}n_{E,s}n_{E,t}$.
+These counts do not certify the linearity promise. Without that promise,
+agreement on a basis does not determine a nonlinear map.
+
+A typed law $p=q:s\to t$ means equality of the interpreted linear maps.
+A concrete refutation consists of an environment $E$, a prepared row
+$v\in E(s)$, and a column readout $\ell\in E(t)^*$ such that
+\begin{equation}\label{ef:eq:witness}
+             v\rho_E(p-q)\ell\ne0.
+\end{equation}
+The full matrices certify the environment; the displayed scalar certifies
+the particular failed law. If $\rho_E(p-q)\ne0$, coordinate basis vectors
+always supply such a witness, effectively. Executing a linear combination
+of paths requires either linear control primitives or reset-and-repeat
+experiments followed by the specified scalar arithmetic. It is not
+silently identified with one physical sequential intervention.
+
+For a finite nonempty environment family $\mathcal E$, define
+\begin{align}
+ I_{\mathcal E}(s,t)&=\bigcap_{E\in\mathcal E}\ker\rho_E(s,t),\\
+ A_{\mathcal E}&=KQ/I_{\mathcal E},\qquad
+ d(\mathcal E)=\sum_{s,t\in S}\dim_K A_{\mathcal E}(s,t).
+ \label{ef:eq:quotient}
+\end{align}
+The kernels form two-sided $K$-linear ideals because interpretation
+preserves composition. Products of categories on the fixed type set $S$
+below mean the fixed-object product, with products of corresponding hom
+spaces. The category $A_{\mathcal E}$ embeds homwise in
+$\prod_E\operatorname{Hom}_K(E(s),E(t))$, so
+\begin{equation}\label{ef:eq:dimension}
+ d(\mathcal E)\leq
+ \sum_{E\in\mathcal E}\Bigl(\sum_{s\in S}n_{E,s}\Bigr)^2.
+\end{equation}
+This quotients operations rather than states: two path-linear programs
+are identified when they act equally on every state in every admitted
+environment. It is distinct from a contextual quotient of state spaces,
+and it does not by itself minimize state dimension or descend an optimizer.
+
+For notational simplicity assume each type has nonzero dimension in at
+least one admitted environment. A type zero in every environment can
+instead be handled by adding $1_s=0$ to the presentation.
+
+\subsection{The operator algebra already determined by a minimal automaton}
+The earlier CALF bridge identifies a finite-table automaton with an exact-fit
+realization under a full observed-rank hypothesis \cite{bridge-note}.
+The connection to the present operator quotient is explicit, rather than
+an analogy between state learning and equation learning.
+
+\begin{proposition}[Minimal weighted automata determine the same operator algebra]
+\label{prop:wfa-algebra}
+Let $f(w)=\alpha M_w\beta$ be a finite-dimensional weighted automaton over
+$K$, in the present row-vector convention. Assume linear reachability and
+observability:
+\[
+ \operatorname{span}\{\alpha M_x:x\in\Sigma^*\}=K^{1\times n},
+ \qquad
+ \operatorname{span}\{M_y\beta:y\in\Sigma^*\}=K^{n\times1}.
+\]
+For $p,q\in K\langle\Sigma\rangle$, extend $M$ linearly. Then
+\begin{equation}\label{eq:wfa-operator-contexts}
+ M_p=M_q\quad\Longleftrightarrow\quad
+ \alpha M_x(M_p-M_q)M_y\beta=0
+ \quad\hbox{for every }x,y\in\Sigma^*.
+\end{equation}
+Consequently the one-type, one-environment algebra
+$K\langle\Sigma\rangle/\ker(p\mapsto M_p)$ is the syntactic algebra of
+$f$: its kernel is precisely the ideal of linear expressions invisible
+in all left and right word contexts.
+
+Finite prefix and suffix sets $P,V$ suffice in
+\eqref{eq:wfa-operator-contexts} if the matrix $R_P$ with rows
+$\alpha M_x$ and the matrix $O_V$ with columns $M_y\beta$ both have
+rank $n$. Equivalently their observation block $H=R_PO_V$ has rank $n$.
+In that case $M_p=M_q$ if and only if
+$R_P(M_p-M_q)O_V=0$.
+\end{proposition}
+\begin{proof}
+The forward implication is immediate. For the converse, bilinearity and
+the two spanning conditions extend the scalar vanishing from word rows
+and columns to every row and column. Every entry of $M_p-M_q$ is therefore
+zero. The same argument uses only $P,V$ when their rows and columns span.
+If both factors have rank $n$, the map $O_V$ is onto and $R_P$ is
+injective in ordinary column-matrix notation, so $R_PO_V$ has rank $n$;
+the converse follows from the rank inequalities. Finally, the syntactic
+ideal consists by definition of those $r$ for which the linear extension
+of $f$ satisfies $f(xry)=0$ for all $x,y$. The equivalence identifies it
+with the operator kernel. This is the standard minimal-realization
+interpretation of a syntactic algebra \cite{reutenauer}, specialized to
+the present construction.
+\end{proof}
+
+The earlier bridge uses column states and blocks $T=OR$,
+$K_a=OM_aR$ \cite[``Finite-data realization compatibility'']{bridge-note}.
+Transposing its state convention gives $T=H^{\mathsf T}$ and
+$K_a=(R_PM_aO_V)^{\mathsf T}$ in the notation above; the transition
+matrices are transposed at the same time. Thus its condition
+$\operatorname{rank}T=n$ is exactly the finite spanning condition used
+here. Equivalently, in its original convention, surjectivity of $R$ and
+injectivity of $O$ give $M_p=M_q$ if and only if $OM_pR=OM_qR$.
+This is the linear instance of Theorem~\ref{thm:access}.
+
+Without reachability and observability, word-context agreement detects
+only the induced action on the reachable observable realization, not all
+operators on a supplied larger state space. Nor does full rank of a finite
+block, by itself, identify an unrestricted unknown target. An already
+identified minimal realization does determine the marked transition algebra
+up to its canonical isomorphism, independently of its choice of basis.
+The state space and that algebra remain different objects: an
+$n$-dimensional state space can have an operator algebra of dimension up to
+$n^2$. A finite family of complete linear environments can instead be
+represented mathematically, typewise, by direct sums with block-diagonal
+generators; the
+kernel of that representation is $\bigcap_E\ker\rho_E$. This explains the
+family formula without equating complete matrix access with scalar queries
+to an unknown target.
+
+\subsection{A finite, complete, executable presentation}
+
+\begin{theorem}[Effective operational presentation]\label{ef:thm:effective}
+From $Q$ and the exact matrices of $\mathcal E$, one can compute:
+\begin{enumerate}
+\item finite sets $B(s,t)$ of actual typed paths whose interpreted tuples
+      are bases for $A_{\mathcal E}(s,t)$;
+\item a finite set $R_{\mathcal E}$ of equations in the original primitive
+      operations which generates the entire ideal $I_{\mathcal E}$;
+\item complete normal forms and the composition structure constants of
+      $A_{\mathcal E}$;
+\item for every false proposed path-linear law, an admitted environment
+      and basis-coordinate experiment refuting it.
+\end{enumerate}
+The basis search makes at most $d(\mathcal E)-|S|$ successful additions
+beyond the identity paths. It terminates without a pre-supplied dimension
+bound. Equality and arbitrary finite compositional consequences in the
+resulting category are decidable.
+\end{theorem}
+\begin{proof}
+Start with $1_s$ in $B(s,s)$ for every type. Maintain the interpreted tuple
+of each basis path as a vector, using fixed coordinates in each finite
+matrix space. For each current $b:s\to t$ and each generator $g:t\to u$,
+form the tuple $\rho_{\mathcal E}(bg)$. If it is independent of the
+current basis in the $(s,u)$ hom space, append the actual path $bg$ to
+that basis. Process each new basis path against every composable
+generator. Gaussian elimination decides all these steps.
+
+Each successful addition increases the dimension of one of the ambient
+finite-dimensional spaces, so the process terminates. Its final spans
+contain identities and are stable under postcomposition by every
+generator. Induction on path length shows that they contain every
+interpreted path, and hence equal all the required hom spaces.
+The maintained independent tuples therefore form bases.
+
+For each final basis path $b:s\to t$ and composable generator $g:t\to u$,
+solve uniquely for coefficients $c_{b,g,c}$ and include the border law
+\begin{equation}\label{ef:eq:border}
+       bg=\sum_{c\in B(s,u)}c_{b,g,c}c.
+\end{equation}
+There are finitely many such laws. Let $J$ be the two-sided linear ideal
+they generate. Every law is true, so $J\subseteq I_{\mathcal E}$.
+Modulo $J$, every path is a linear combination of the selected basis
+paths: begin at its identity path and append one primitive at a time,
+using \eqref{ef:eq:border} after each append. If a linear combination of
+basis paths is in $I_{\mathcal E}$, independence of their evaluated tuples
+forces every coefficient to vanish. Thus every element of
+$I_{\mathcal E}$ is already in $J$, proving completeness.
+
+The same left-to-right accumulation is a deterministic normal-form
+algorithm. It is not necessary to claim that arbitrary orientations of
+the displayed equations form a terminating term-rewriting system.
+To compose two normal forms, evaluate products of their basis paths and
+solve in the target basis, or append their primitive expansions.
+Uniqueness makes both algorithms agree. A nonzero normal form has a
+nonzero interpreted matrix entry in some environment; that entry gives
+the coordinate witness in \eqref{ef:eq:witness}.
+\end{proof}
+
+\begin{remark}[What the equations quantify over]
+These are relations between \emph{named executable operations}; they
+are not polynomial identities obtained by allowing every named generator
+to vary over all elements of an abstract algebra. Equivalently, the law
+$p=0:s\to t$ is the universal typed linear-term equation $xp=0$ for a
+state variable $x$ of sort $s$. The finite presentation is complete for
+these operator laws and their linear/substitution consequences. No
+finite-basis theorem for arbitrary universal algebra is being asserted.
+\end{remark}
+
+\subsection{A counterexample changes the theory, with directed transport}
+
+\begin{theorem}[Witnessed revision and exact consequence transport]
+\label{ef:thm:revision}
+Suppose $p=q:s\to t$ holds in $A_{\mathcal E}$ and an executable
+additional environment $F$ supplies \eqref{ef:eq:witness}.
+Put $\mathcal E^+=\mathcal E\cup\{F\}$ and $A^+=A_{\mathcal E^+}$.
+There is a computable identity-on-objects, homwise-surjective functor
+\begin{equation}\label{ef:eq:revision-map}
+            r:A^+\longrightarrow A_{\mathcal E},\qquad [u]^+\longmapsto[u].
+\end{equation}
+It has the following properties.
+\begin{enumerate}
+\item $I_{\mathcal E^+}=I_{\mathcal E}\cap\ker\rho_F$.
+      The particular old law is absent from $A^+$, and
+      $d(\mathcal E^+)>d(\mathcal E)$.
+\item A new equation is an old consequence. An old equation $u=v$ is
+      retained exactly when $\rho_F(u)=\rho_F(v)$. This is decidable.
+\item The revised presentation and normal forms can be computed by
+      Theorem~\ref{ef:thm:effective}. In chosen bases, $r$ is computed by
+      discarding the new environment coordinate and normalizing in the
+      old bases.
+\item $A^+$ is the image of the diagonal map
+      $KQ\to A_{\mathcal E}\times A_{\{F\}}$. It is the most identified
+      quotient of $KQ$ through which both interpretations factor.
+\item There is no $K$-linear functor $A_{\mathcal E}\to A^+$ which sends
+      each named primitive to its identically named revised primitive.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+The kernel formula follows coordinatewise. It induces the displayed
+surjective functor. The witnessed element $p-q$ is nonzero in $A^+$ but
+zero under $r$, so at least one finite-dimensional hom map has a
+nonzero kernel; total dimension strictly increases. The second and third
+claims follow directly from the kernel formula and the basis algorithm.
+
+The diagonal image has precisely the intersection kernel. If another
+quotient $KQ/J$ admits the two interpretations, then
+$J\subseteq I_{\mathcal E}\cap\ker\rho_F$, giving a unique quotient
+functor $KQ/J\to A^+$ commuting with all primitive interpretations.
+This proves the stated universal property. Finally, a functor in the
+opposite direction preserving every primitive would preserve all their
+linear combinations and composites, carrying the old equality $p=q$
+to the same false equality in $A^+$, a contradiction.
+\end{proof}
+
+The direction is important: there is no general translation carrying
+\emph{all} old laws forward. There is a quotient from revised distinctions
+to the old view, and an exact test for the old laws that survive.
+One need not choose a basis to define this comparison; bases make it
+executable. Successive comparisons compose strictly, because each sends
+$[u]$ to $[u]$.
+
+\subsection{Changing an actual categorical theory and monad}
+
+For a $K$-linear category $A$ on $S$, let $\mathsf{Lin}(A)$ have finite
+lists of types as objects. An arrow from $(s_1,\ldots,s_n)$ to
+$(t_1,\ldots,t_m)$ is a matrix $P=(p_{ij})$ with
+$p_{ij}\in A(s_i,t_j)$. Composition is typed matrix multiplication.
+Its mathematical interpretation on any covariant $K$-linear representation $X$ is
+\begin{equation}\label{ef:eq:term-execution}
+             (x_i)_{i=1}^n\longmapsto
+             \left(\sum_i x_i p_{ij}\right)_{j=1}^m.
+\end{equation}
+Concatenation of lists is a biproduct, hence also a product. This is the
+many-sorted finite-product theory of linear states equipped with the
+specified $A$ operations. Primitive arrows, addition, zero, scalar
+multiplication, projections and copying all have the displayed semantics.
+
+These are executable operations in the stipulated linear-circuit or
+simulation doctrine. Actual physical wiring requires addition, scaling,
+and copying of state coordinates to be admitted source operations.
+Basis preparation and coordinate readout alone do not grant that extra
+access. Without it, only the source-admissible fragment of this theory
+is physically executable; its mathematical comparison functor remains
+well-defined.
+
+On $\mathbf{Vect}_K^S$ the corresponding free-representation monad is
+\begin{equation}\label{ef:eq:monad}
+       (T_A X)_t=\bigoplus_{s\in S}X_s\otimes_K A(s,t).
+\end{equation}
+The unit uses $1_s$, and multiplication sends
+$(x\otimes a)\otimes b$ to $x\otimes ab$. The unit and associativity
+axioms are precisely those of $A$. Its algebras are the covariant
+$K$-linear representations of $A$.
+
+\begin{proposition}[Theory, model, and wiring transport]
+\label{ef:prop:theory}
+The map $r$ of Theorem~\ref{ef:thm:revision} induces:
+\begin{enumerate}
+\item a product-preserving functor
+      $\mathsf{Lin}(r):\mathsf{Lin}(A^+)\to\mathsf{Lin}(A_{\mathcal E})$;
+\item a componentwise-surjective monad morphism
+      $T_{A^+}\to T_{A_{\mathcal E}}$;
+\item a fully faithful restriction functor from old representations to
+      revised representations. Its essential image consists exactly of
+      the representations annihilating every hom space of $\ker r$.
+\end{enumerate}
+Every finite circuit built using typed linear combinations, sequential
+composition, and product wiring commutes with this comparison. A law
+between such circuits holds in the revised theory exactly when each
+entry difference has revised normal form zero.
+\end{proposition}
+\begin{proof}
+Apply $r$ to every matrix entry. For composable matrices,
+\[
+ r((PQ)_{ik})=r\left(\sum_jp_{ij}q_{jk}\right)
+            =\sum_jr(p_{ij})r(q_{jk})
+            =(r(P)r(Q))_{ik}.
+\]
+It preserves identities, block sums, copying, and projection matrices.
+Induction on the syntax of a finite wired circuit gives the claimed
+commutation; this is an actual composition calculation, not an assumed
+compatibility condition. The normal-form characterization is entrywise.
+
+The maps $1_{X_s}\otimes r_{s,t}$ in \eqref{ef:eq:monad} give the monad
+morphism. They commute with its unit and multiplication by preservation
+of identities and $r(ab)=r(a)r(b)$. They are surjective over a field.
+If a hom kernel of $r$ is nonzero, evaluating the monad morphism on the
+family concentrated at its source type exhibits a noninjective component.
+Thus this is a proper quotient-monad change, not merely a larger carrier
+for the same marked operator theory.
+
+Restriction sends an old action of $A_{\mathcal E}$ to its composite with
+$r$. A natural transformation for these restricted actions commutes with
+every old arrow because each old arrow has a lift, proving full
+faithfulness. An $A^+$ action factors uniquely through $r$ exactly when it
+annihilates $\ker r$, proving the essential-image assertion.
+\end{proof}
+
+\begin{remark}[The admitted source image is retained separately]
+The category of all $A_{\mathcal E}$ representations is an equational
+model class; it is not the list of environments actually available for
+execution. Every inspected environment factors through $A_{\mathcal E}$,
+but an arbitrary representation of that quotient need not be a physically
+realizable source. For example the two scalar environments $x=0$ and
+$x=1$ generate the theory $x^2=x$, whose models include arbitrary
+idempotent operators in arbitrary dimensions. The theorem does not turn
+those models into authorized or realizable interventions. Likewise,
+independent product environments used below are an explicit admissibility
+assumption, not a consequence of the existence of a tensor product of
+abstract representations.
+\end{remark}
+
+The base category $\mathbf{Vect}_K^S$, the raw quiver, and the assumption of
+linearity remain fixed. Therefore this is not unrestricted invention of
+an algebraic doctrine. The quotient operational theory and its monad
+nevertheless genuinely change. It would be equally misleading to call
+this merely a new vector-space dimension or to claim that it escapes all
+possible fixed metatheories: the free category $KQ$ is explicit prior
+structure. The wiring theorem covers finite linear circuits. It does
+not include arbitrary feedback, nonlinear state-dependent wiring, tensor
+sharing, inverse operations, or optimization dynamics without additional
+semantics and proofs.
+
+
+
+\subsection{When the refinement process can finish}
+Let $\mathcal U$ be a prescribed family of executable environments and
+$I_{\mathcal U}=\bigcap_{E\in\mathcal U}\Ker\rho_E$. Suppose
+$D=\sum_{s,t}\dim(KQ/I_{\mathcal U})(s,t)<\infty$. Every finite inspected
+subfamily gives a quotient of this target, so its dimension is at most $D$.
+By Theorem~\ref{ef:thm:revision}, each countermodel causes a strict dimension
+increase. There can therefore be at most $D-d_0$ strict revisions from
+initial dimension $d_0$.
+
+This is a mind-change bound, not a stopping certificate. If the environments
+are effectively enumerated and fully inspected, the resulting theories
+stabilize in the limit to the target: after the last dimension increase,
+any purported extra law would be refuted by an eventually inspected
+environment. The stabilization stage need not be recognizable.
+
+A complete law oracle gives a stronger, explicitly conditional algorithm.
+For each current finite border presentation, ask whether every border law
+holds throughout $\mathcal U$; a negative answer must return an inspectable
+environment and its executable witness. Adjoin that environment and repeat.
+All laws certified implies equality of the two ideals, since the border
+laws generate the current ideal. At most $D-d_0$ strict revisions occur,
+and at most $(D-d_0+1)D|G|$ law queries suffice when each round queries all
+border laws afresh. This proves finite termination under the oracle, but
+neither an ordinary finite experiment nor the categorical notation supplies
+that oracle. A known dimension upper bound by itself does not certify an
+intermediate stage of smaller dimension. The same separation between
+rank-increasing repair and finding or excluding further counterexamples
+was explicit in the earlier capacity theorem \cite{capacity-note}; the
+bounded deterministic certificate in \cite{observation-note} uses a
+different, fully specified finite test family. These access contracts
+must not be interchanged.
+
+\subsection{An interaction that retracts idempotence}
+
+Take one type and one primitive $x$. Initially inspect the scalar
+environments $x\mapsto0$ and $x\mapsto1$. Their common ideal and
+operational algebra are
+\[
+ I_0=(x(x-1)),\qquad A_0=K[x]/(x^2-x).
+\]
+The old theory says that the primitive is idempotent on every state.
+Now interaction exposes the exact environment
+\[
+ N=\begin{pmatrix}0&1\\0&0\end{pmatrix}.
+\]
+Preparing $v=(1,0)$ and reading $\ell=(0,1)^{\mathsf T}$ gives
+$v(N^2-N)\ell=-1$, a nonzero refutation over every field. The new ideal is
+\[
+ I_1=(x(x-1))\cap(x^2)=(x^2(x-1)),
+ \qquad A_1=K[x]/(x^3-x^2).
+\]
+The complete revised normal forms are $a+bx+cx^2$; the revised generating
+law is $x^3=x^2$, a retained consequence of the old law $x^2=x$,
+which has been deleted. The new-to-old map
+sends $x^2$ to $x$, so its kernel is the one-dimensional span of
+$x^2-x$. The revised generating law provides reusable future tests, but its validity
+in the inspected environments does not establish its truth in every
+uninspected environment. A third-order nilpotent environment would
+refute it and trigger another strict theory revision.
+
+This example identifies what changes: not only a preferred representation
+of a fixed law, but the actual named-operation equations, their normal
+forms, the associated finite-product theory, and its free-representation
+monad. At the same time the field, type, primitive, and exact linear
+semantics are retained assumptions.
+
+
+
+\section{How revision comparisons compose}
+\label{sec:composition}
+There are two separate composition questions. Sequential revision asks
+whether adjacent retained-law comparisons assemble without inventing
+unrealizable pairs of expressions. Parallel composition asks whether the
+laws of a joint system are determined by its component laws. Neither follows
+merely because the comparison arrows exist. The earlier capacity note
+already constructs an image-refinement span and warns that ordinary
+pullback composition need not recover composite evidence refinement
+\cite[``Canonical comparison span and obstruction to a lift'']{capacity-note}.
+The next theorem computes an exact obstruction for the present
+operator-ideal comparisons; it is not a theorem about every such image span.
+
+\subsection{Sequential histories and the common source obstruction}
+\begin{theorem}[Exact composition of common-law spans]\label{thm:history}
+Let $F$ be any $K$-linear category on a fixed object set, and let
+$J_0,J_1,J_2$ be two-sided linear ideals. Put
+\[
+ A=J_0\cap J_1,\qquad B=J_1\cap J_2,
+ \qquad P=(F/A)\times_{F/J_1}(F/B),
+\]
+where the pullback has the same objects and homwise pullbacks.
+The canonical functor
+\[
+ d:F/(J_0\cap J_1\cap J_2)\longrightarrow P,
+ \qquad [f]\longmapsto([f]_A,[f]_B)
+\]
+is identity on objects and injective on each hom space. Its image consists
+exactly of compatible pairs with a common raw representative. It is an
+isomorphism exactly when
+\begin{equation}\label{eq:ideal-sum}
+       (J_0\cap J_1)+(J_1\cap J_2)=J_1.
+\end{equation}
+More precisely, at every pair of objects there is an exact sequence of
+vector spaces
+\[
+0\longrightarrow F/(J_0\cap J_1\cap J_2)
+ \xrightarrow d P\xrightarrow\Delta J_1/(A+B)\longrightarrow0,
+\quad \Delta([f]_A,[g]_B)=[f-g],
+\]
+with the hom-space arguments suppressed. $\Delta$ is a linear map; it is
+not asserted to be an algebra or category map.
+\end{theorem}
+\begin{proof}
+Compatibility means $f-g\in J_1$. The diagonal kernel is
+$A\cap B=J_0\cap J_1\cap J_2$, proving injectivity. Changing representatives
+changes $f-g$ by an element of $A+B$, so $\Delta$ is well defined.
+Every $j\in J_1$ is the difference of the compatible pair $([j]_A,[0]_B)$,
+so $\Delta$ is onto. A compatible pair has a common lift $h$ precisely
+when $f-g\in A+B$: for $f-g=a+b$ take $h=f-a=g+b$; conversely subtract
+the two lift equations. This proves exactness and the criterion.
+All quotient and diagonal maps preserve composition because the relations
+are two-sided ideals. No commutativity of $F$ is used.
+\end{proof}
+
+\begin{corollary}[Pure accumulation has exact sequential comparison]
+For a nested retraction sequence $J_2\subseteq J_1\subseteq J_0$,
+the comparison in Theorem~\ref{thm:history} is invertible. In particular,
+the certified-environment refinement of Section~\ref{sec:linear} composes
+exactly along its own accumulation history.
+\end{corollary}
+\begin{proof}
+Then $A=J_1$, $B=J_2$, and $A+B=J_1$.
+\end{proof}
+
+Arbitrary replacement need not have this property. With $F=K[x]$,
+$J_0=J_2=(x^2)$ and $J_1=(x)$, the pullback is
+\[
+ K[x]/(x^2)\times_K K[x]/(x^2).
+\]
+It has dimension three, whereas the common-source image has dimension two.
+The compatible pair $([x],[0])$ has no common raw representative, since it
+would have to be simultaneously congruent to $x$ and $0$ modulo $(x^2)$.
+The defect is measured exactly by $(x)/(x^2)$ in the displayed sequence.
+This is not inconsistency of either adjacent comparison; it is failure of
+joint source realization. It is an algebraic example involving nilpotents,
+not an example in a doctrine restricted to reduced real function algebras.
+
+For a longer fixed-language history, $\bigcap_iJ_i$ records laws valid at
+every stage, independently of parentheses. Endpoint agreement
+$J_0\cap J_n$ is different: a law may be lost and later regained.
+Neither formula licenses replacing the realized history by an iterated
+pullback unless the relevant lifting conditions hold. With genuinely
+changing signatures, common raw-language maps must first be declared;
+no unrestricted theory-amalgamation theorem is being asserted.
+
+\subsection{Independent parallel composition}
+
+Let $Q$ and $R$ be finite quivers, with finite nonempty executable families
+$\mathcal E$ and $\mathcal F$. All extensions in this subsection are
+finite families as well. The independent product interface has object pairs
+$(s,t)$, generators $g\otimes1_t$ and $1_s\otimes h$, and the usual
+interchange equations between these two classes. In environment pair
+$(E,F)$ the space is $E(s)\otimes_K F(t)$, with generator matrices
+$M^E_g\otimes I$ and $I\otimes M^F_h$. Admit \emph{all} pairs in
+$\mathcal E\times\mathcal F$. Let $C$ be the $K$-linear category generated
+by those interpreted operations. Write $A\otimes_K B$ for the enriched
+tensor product: its objects are pairs and its hom spaces are
+$A(s,s')\otimes_K B(t,t')$.
+
+\begin{theorem}[Exact independent composition]\label{ef:thm:tensor}
+There is a canonical effective isomorphism
+\begin{equation}\label{ef:eq:tensor}
+ A_{\mathcal E}\otimes_K A_{\mathcal F}
+       \ \cong\ C,
+ \qquad a\otimes b\longmapsto
+       (\rho_E(a)\otimes\rho_F(b))_{(E,F)}.
+\end{equation}
+For extensions $\mathcal E\subseteq\mathcal E'$ and
+$\mathcal F\subseteq\mathcal F'$, this isomorphism intertwines the joint
+revision map with $r_{\mathcal E',\mathcal E}\otimes
+r_{\mathcal F',\mathcal F}$. The same statement holds after passing to
+finite linear wiring. The comparisons are coherent under three or more
+independent components and under permutation of components.
+\end{theorem}
+\begin{proof}
+For a fixed pair of source and target types, the homwise evaluation maps
+\[
+ A_{\mathcal E}(s,s')\hookrightarrow
+ \bigoplus_{E\in\mathcal E}\operatorname{Hom}_K(E(s),E(s')),
+ \quad
+ A_{\mathcal F}(t,t')\hookrightarrow
+ \bigoplus_{F\in\mathcal F}\operatorname{Hom}_K(F(t),F(t'))
+\]
+are injective. Tensoring injections over a field remains injective.
+Distributing the finite direct sums and using the finite-dimensional
+isomorphism
+\[
+ \operatorname{Hom}(V,V')\otimes\operatorname{Hom}(W,W')
+ \cong\operatorname{Hom}(V\otimes W,V'\otimes W')
+\]
+therefore proves faithfulness of the map in \eqref{ef:eq:tensor}.
+Its image is exactly $C$: independent paths generate each $a\otimes1$
+and $1\otimes b$, their composites generate every $a\otimes b$, and
+linear combinations generate the whole tensor hom space. Conversely
+every primitive independent generator lies in that image. Multiplication
+of matrices gives
+$(a\otimes b)(a'\otimes b')=aa'\otimes bb'$, so the faithful, surjective
+hom maps preserve composition and identities.
+
+Dropping environment coordinates sends the displayed tensor evaluation
+to precisely the tensor of the two dropped evaluations; equivalently,
+both routes in the revision square send $a\otimes b$ to
+$r(a)\otimes r(b)$. Elementary tensors span, so the square commutes.
+The matrix-entry calculation in Proposition~\ref{ef:prop:theory} proves
+compatibility with finite linear wiring. For three components both
+parenthesizations act by $a\otimes b\otimes c$ on every triple
+environment, and permutations act by the corresponding tensor
+permutations. Equality on these spanning tensors proves the coherence
+claims.
+\end{proof}
+
+\begin{corollary}[A useful restricted-control comparison]
+\label{ef:cor:wired-image}
+Suppose a finite new quiver of controls is interpreted by typed finite
+linear circuits in the independent composite. Its learned operational
+category is the image category generated by those circuit matrices.
+Under environment extensions, the tensor comparison restricts to a
+homwise-surjective functor from the revised circuit-image category to
+the old one. It is an isomorphism exactly when that restriction has zero
+hom kernels. The image category and these kernels are computable by the
+same finite span-closure algorithm.
+\end{corollary}
+\begin{proof}
+The comparison sends each new circuit generator to the same circuit in
+the old component theories by Proposition~\ref{ef:prop:theory}. Every old
+image arrow is a linear combination of composites of those generators
+and therefore has a corresponding new lift. This proves surjectivity.
+Finite-dimensional linear algebra decides injectivity, and the span
+algorithm applies to their finite matrices.
+\end{proof}
+
+\paragraph{Two sharp failures of an unrestricted tensor claim.}
+Independent controls and Cartesian environment coverage are different
+hypotheses. Neither can be dropped from the general guarantee, although
+particular degenerate systems can satisfy the conclusion without both.
+\begin{enumerate}
+\item Over a field of characteristic different from $2$, put
+$D=\operatorname{diag}(1,-1)$. Each component algebra $K[D]$ has dimension
+$2$. If only the synchronous generator $D\otimes D$ is executable, its
+square is the identity and it is nonscalar, so its generated algebra has
+dimension $2$, whereas $K[D]\otimes K[D]$ has dimension $4$. This is
+restricted control, even with the single product environment available.
+\item Give each one-generator component the scalar environments $0$ and
+$1$. Its operational algebra is $K[x]/(x^2-x)\cong K^2$. If joint
+inspection includes only pairs $(0,0)$ and $(1,1)$, even independent
+named controls satisfy the extra joint law $x=y$. The joint algebra is
+$K^2$, not the $K^4$ obtained from all four environment pairs. This is
+correlated coverage, not a failure of tensor algebra.
+\end{enumerate}
+Thus a theorem about arbitrary shared, hidden, or synchronous interaction
+cannot be inferred from \eqref{ef:eq:tensor}.
+
+
+
+\section{Introducing derived symbols from executable continuations}
+\label{sec:derived}
+The linear result revises laws without changing primitive syntax. There is
+also a restricted way for interaction to generate a new \emph{derived}
+vocabulary. A continuation response can become a coordinate whose update
+is explicitly implemented. This changes a finite presentation while keeping
+its relation to the old experimental meaning visible. It does not create
+an unknown primitive or declare a hidden variable observable by fiat.
+
+The two constructive doctrines in this note are not identified. A linear
+operator category records equality of named state transformations; a
+commutative observable algebra records polynomial combinations of scalar
+response functions and their pullbacks. Their connection is the shared
+law-testing and retained-presentation architecture, not an unproved
+isomorphism of algebras or monads. In the linear doctrine a law $p=q$ holds
+exactly when every basis preparation and coordinate readout agrees on its
+two sides: this is entrywise matrix equality. In the polynomial doctrine
+equality means equality of the specified scalar functions on the source.
+Their separate proofs establish the respective computational guarantees.
+
+
+\subsection{A general polynomial closure construction}
+Let $k$ be the computable real closed field of real algebraic numbers.
+Let $I\subseteq k[x_1,\ldots,x_d]$ be a finitely generated real-radical ideal,
+$S=V_k(I)\ne\varnothing$, and $B=k[x]/I$. Supply finitely many polynomial source updates
+$U_a:S\to S$ and finitely many polynomial readouts $h_j\in B$. Their meanings are exact
+source assumptions; real radicality identifies equality in $B$ with equality
+on $S$. Corresponding structural statements hold over $\R$, but arbitrary
+real coefficients do not provide the effective input representation.
+
+Start with $G=(h_j)$ and its subalgebra $B_G=k[G]\subseteq B$. If some
+$U_a^*g=g\circ U_a$ is not in $B_G$, adjoin that continuation readout and
+repeat. If all such pullbacks belong, record polynomial expressions for
+them in $G$ and stop. Every added symbol therefore has a finite continuation
+recipe in the old source operations.
+
+\begin{theorem}[Effective derived language under a closure certificate]
+\label{thm:polynomial}
+Each membership test and a positive polynomial expression are computable.
+If the construction stops, its algebra $B_*$ is the least subalgebra
+containing the initial readouts and stable under all $U_a^*$. It has an
+exact finite presentation and realized state set
+\[
+ I_G=(I,z_1-g_1(x),\ldots,z_m-g_m(x))\cap k[z],\qquad
+ B_*\cong k[z]/I_G,
+\]
+\[
+ Q=\{z\in k^m:\exists x\in S,\ z_i=g_i(x)\}.
+\]
+The quotient state map $q_G:S\twoheadrightarrow Q$ supports the induced
+polynomial updates. A supplied finite-dimensional space $W\subseteq B$
+containing $1,h_j$ and invariant under every $U_a^*$ certifies termination:
+at most $\dim W-\dim\operatorname{span}(1,h_j)$ symbols are adjoined.
+The ideal $I_G$, the semialgebraic set $Q$, and whether any failed closure
+step separates two states with equal current coordinates are computable.
+\end{theorem}
+\begin{proof}
+For a proposed $p\in B$, eliminate $x$ from
+$(I,z_i-g_i(x),t-p(x))$. The resulting ideal in $k[z,t]$ is the kernel of
+evaluation. Membership $p\in k[G]$ means exactly that this ideal contains
+$t-P(z)$. A reduced Gr\"obner basis in an elimination order with $t$ ahead
+of $z$ detects this by a leading monomial $t$, and gives the expression
+$P$. These are finite symbolic procedures over the effective field.
+
+Every adjoined function is a continuation of an initial readout, hence
+belongs to every invariant subalgebra containing those readouts. At
+termination the pullbacks of all generators belong to $B_G$; as pullback
+is an algebra homomorphism, this proves invariance and minimality.
+Elimination gives the exact kernel $I_G$, and the first isomorphism theorem
+gives the presentation. The existential formula describes exactly $Q$;
+real closed field quantifier elimination computes its semialgebraic form.
+The recorded expressions $P_a$ satisfy $q_GU_a=P_aq_G$, so preserve $Q$.
+
+Every adjoined function lies in $W$ and is not in $B_G$, hence not in
+$\operatorname{span}(1,G)$. It strictly increases that span's dimension,
+proving the bound. Invariance of a supplied basis of $W$ is checked by
+finitely many identities modulo $I$. Finally a genuine state split is
+exactly the satisfiability of
+\[
+ \exists x,y\in S:\quad g_i(x)=g_i(y)\ (\text{all }i),\qquad p(x)\ne p(y),
+\]
+which is decidable by the same quantifier-elimination procedure.
+\end{proof}
+The theorem proves no unconditional termination. Nor does failure of
+polynomial membership always mean loss of state information: $g=x^3$
+determines $p=x$ as a set function over $\R$, although $x\notin k[x^3]$.
+This calls for a new expression language or coordinate, not necessarily a
+new state distinction. Conversely a stopped algorithm need not have any
+finite-dimensional invariant linear span: $h=x$, $U(x)=x^2$ already closes
+the algebra $k[x]$, although $x,x^2,x^4,\ldots$ are linearly independent.
+
+The certificate class includes nonlinear systems on infinite carriers.
+For positive integer coordinate weights $w_i$, if every monomial in $U_i$ has
+weighted degree at most $w_i$, the finite-dimensional space of polynomials
+of weighted degree at most $D$ is invariant under substitution. Thus any
+readouts in it have the stated termination certificate. This follows by
+adding the weights in each substituted monomial. The inequalities are
+checkable assumptions on the supplied source, not discoveries from data.
+
+Quantifier elimination produces mathematical witness states. Their physical
+preparation still requires the access conditions of
+Proposition~\ref{prop:execution}. The source's exact equations need their
+own warrant. Likewise $Q$ cannot be replaced by the variety of $I_G$:
+the latter may add states which have no source realization.
+
+\subsection{Stationarity gives way to a new derived state variable}
+Take $S=\R^2$, visible readout $y$, and exact source update
+\[
+ U(x,y)=(x/2,y+x^2).
+\]
+All coefficients are rational, so the effective construction applies over
+real algebraic points and extends structurally to these real states.
+A tentative one-coordinate theory asserts stationarity. Writing $y_n$ for
+the result of $n$ updates, its ideal in $F=\R[y_0,y_1,\ldots]$ is
+\[
+ J=(y_{n+1}-y_n:n\ge0),
+\]
+stable under the shift $y_n\mapsto y_{n+1}$. Preparation at $(1,0)$ and
+one update refute stationarity: the response is $1$ rather than $0$.
+This assumes the preparation and update are actually available.
+
+Polynomial closure starts with $y$ and encounters $y+x^2\notin\R[y]$.
+The added response $g=y+x^2$ supports the defining symbol
+$z=g-y=x^2$. The revised state and update are
+\[
+ Q=\R\times[0,\infty),\qquad \bar U(y,z)=(y+z,z/4).
+\]
+Both updates and the recipe for $z$ are explicit. Acquisition of $z$ uses
+current and next responses with the required access plan; calling it a
+coordinate does not make it a primitive measurement. The invariant space
+$\operatorname{span}(1,y,x^2)$ certifies closure. States $(0,0)$ and $(1,0)$
+show that the old $y$ really omitted an operational distinction.
+
+Direct induction gives
+\[
+ y_n=y+\frac43z(1-4^{-n}),\qquad
+ 4y_{n+2}-5y_{n+1}+y_n=0.
+\]
+The exact operated equation ideal $I$ is generated by these recurrences.
+They express every $y_n$ linearly in $y_0,y_1$, while the image
+$(y_0,y_1)=(y,y+z)$ for $z\ge0$ has nonempty interior, so admits no further
+polynomial relations. This proves the assertion about $I$.
+Each recurrence equals
+$4(y_{n+2}-y_{n+1})-(y_{n+1}-y_n)$, hence $I\subseteq J$.
+Thus the old stationarity assertion is retracted but a nontrivial old
+consequence survives. The retained comparison is
+\[
+ F/J\longleftarrow F/I\cong\R[y,z],
+\]
+with the algebra shift on the right given by $y\mapsto y+z$,
+$z\mapsto z/4$, dual to the displayed state update.
+The right-hand polynomial algebra alone forgets $z\ge0$; retaining $Q$
+is necessary for source realizability.
+
+On the finite expression language $\R[y_0,y_1,y_2,z]$ the defining ideal is
+\[
+ (y_1-y_0-z,\ 4(y_2-y_1)-z),
+\]
+whose contraction to the old three symbols is
+$(4y_2-5y_1+y_0)$. Substitution eliminates $z$ and proves this contraction.
+This is an actual derived-symbol extension with an explicit comparison,
+not just a renamed observation table. It still does not invent a new
+primitive operation or justify the global source law from the single
+refuting measurement. For example that measurement selects $\theta=1$
+within the declared family $U_\theta(x,y)=(x/2,y+\theta x^2)$,
+$\theta\in\{0,1\}$; it does not rule out unlisted dynamics.
+
+\section{Recovering fixed language contextual reduction}
+\label{sec:contextual}
+The same distinction between source and quotient recovers the preceding
+state-reduction theory \cite{learning-note,contextual-note}. The unary
+construction below is the earlier ``operationally forced refinement''
+\cite{learning-note}, not a new minimization principle. Here the operations and their meanings are fixed;
+what changes is the state description needed for the admitted tests.
+This is a specialization of the present presentation-and-access account,
+not itself proof of primitive-language formation.
+
+For a deterministic source $X$ with updates $U_a$ and readouts $h_j$, set
+\[
+ x\sim y\quad\Longleftrightarrow\quad
+ h_j(U_wx)=h_j(U_wy)\quad\text{for all }j,w.
+\]
+It is the largest update-stable equivalence on which the readouts are
+constant. Stability follows by prefixing an update to a continuation;
+maximality follows because any stable readout-preserving relation preserves
+every continuation. Hence $Q=X/{\sim}$ supports the updates and is the
+coarsest surjective adequate state description. If
+Theorem~\ref{thm:polynomial} stops, equality on its generators is exactly
+this relation: its algebra is generated by the continuation readouts.
+Thus $Q=q_G(S)$ is the earlier fixed-language contextual quotient.
+
+\subsection{The least repair after a newly admitted diagnostic}
+The many-sorted statement also handles assembly operations. Supply an actual
+algebra $X=(X_c)$ for a finitary signature $\Omega$, retained old quotients
+$q^0_c:X_c\twoheadrightarrow Q^0_c$, and diagnostic seeds
+$\delta:X_c\to O_\delta$. New sorts and source operations, if present,
+are supplied rather than inferred. A one-hole context is a composite, including the identity, of
+operations with all other inputs fixed at arbitrary elements of the
+supplied source carriers. All such partners are included for the congruence
+theorem; which can be experimentally prepared is checked separately.
+Old operations whose preservation is claimed have specified translations
+into the admitted $\Omega$-terms.
+Let $B_c$ consist of $q^0_c$ and the diagnostic seeds. Define
+\[
+ x\equiv^*_cy\quad\Longleftrightarrow\quad
+ b(C[x])=b(C[y])\quad\text{for every typed one-hole context }C:c\to e
+ \text{ and }b\in B_e.
+\]
+\begin{theorem}[Least context-stable repair]\label{thm:repair}
+The relation $\equiv^*$ is the largest $\Omega$-congruence contained in
+\[
+ x\equiv^0_cy\quad\Longleftrightarrow\quad
+ q^0_cx=q^0_cy\text{ and }\delta(x)=\delta(y)\text{ for every seed}.
+\]
+It therefore constructs the coarsest sufficient refined state description
+$Q^*=X/{\equiv^*}$ and canonical surjections
+$X\twoheadrightarrow Q^*\twoheadrightarrow Q^0$.
+Every surjective algebra representation $X\twoheadrightarrow Y$ supporting
+all seeds and old quotients factors uniquely as
+$Y\twoheadrightarrow Q^*$.
+\end{theorem}
+\begin{proof}
+The defining relation is an intersection of test kernels, hence an
+equivalence contained in $\equiv^0$. To check compatibility with an operation,
+change its inputs one at a time. Each change, followed by any output context
+and seed, is another one-hole context, so its response is unchanged. Thus
+$\equiv^*$ is a congruence. Conversely any congruence contained in
+$\equiv^0$ is preserved by every context and every seed is constant on it,
+so it is contained in $\equiv^*$. The quotient property gives all maps and
+uniqueness; surjectivity follows from that of the maps out of $X$.
+\end{proof}
+The last map preserves old descended operations and readouts; new operations
+need not even be defined on $Q^0$. The old quotient suffices without change
+exactly when its kernel is a congruence for the enlarged operations and all
+new seeds are constant on its classes. If a new test splits an old class,
+there is no map $s:Q^0\to Q^*$ with $q^*=s q^0$: such a map would be
+constant on the very pair the new test separates. Lost source distinctions
+cannot be reconstructed from the old quotient by a formal comparison alone.
+
+With finitely many sorts, finite carriers, finitely many operation
+tables, and an effectively given exact seed partition $E_0$, this
+construction is algorithmic. Start at $E_0=\equiv^0$ and set
+\[
+ E_{n+1,c}=E_{n,c}\cap
+ \bigcap_{e:X_c\to X_d\ \mathrm{elementary\ context}}
+ (e\times e)^{-1}(E_{n,d}).
+\]
+Induction shows that $E_n$ is equality under contexts of depth at most $n$.
+Each strict round increases the total number of blocks. With
+$N=\sum_c|X_c|$ and $b_0=\sum_c|X_c/E_{0,c}|$, at most $N-b_0$ strict
+rounds occur. A stable round is a congruence and hence equals $\equiv^*$.
+Recording which elementary context caused each split gives a finite
+witness context for every distinct final pair, relative to supplied
+separating-seed certificates for the initially distinct classes. The
+partition alone does not compute a named readout from an arbitrary
+infinite seed family. This proves construction
+and a diagnostic-depth bound, not a cheap complexity bound on succinctly
+given source programs.
+
+Those contexts are executable only when their fixed partners, preparations,
+domains, readouts, and joint access are executable. The use of one-hole
+contexts in a congruence proof does not authorize copying a physical
+resource. An old quotient coordinate may itself require a stored old
+separating-test certificate. Exact finite tables do not arise merely by
+rounding noisy measurements. This is established syntactic-congruence and
+partition-refinement machinery with an explicit interaction-repair role.
+
+\subsection{Why least repair still need not commute with wiring}
+For any fixed wire let $X$ be its joint source states, $A$ its wired local
+quotient states, and $q:X\twoheadrightarrow Q$ its exterior contextual
+quotient. If the component-profile map $a:X\to A$ is sound, meaning
+$\Ker a\subseteq\Ker q$, then with $L=\im a$ the quotient property gives
+\begin{equation}\label{eq:state-span}
+                 A\longleftarrow L\twoheadrightarrow Q.
+\end{equation}
+The first leg is inclusion. It is invertible exactly when every nominally
+compatible local profile has a joint source realization; the second is
+invertible exactly when the exterior tests separate the realized local
+profiles. In a regular category the identical proof uses image
+factorization, kernel pairs, and regular epimorphisms, provided these maps
+and the soundness inclusion exist. This recovers the earlier realized-image
+comparison. It does not infer source/compiler compatibility with a changed
+wire from local laws alone. Lax comparison of minimization and composition
+already has a direct predecessor in Rosebrugh--Sabadini--Walters \cite{rsw}.
+
+Least repair does not supply the second condition. Let $G$ be any nontrivial
+finite group, with component sorts $X=Y=G$, composite sort $P=G^2$, pairing
+$w:X\times Y\to P$, and all old readouts constant. The old comparison is
+$1\times1\cong1$. Admit the new exterior diagnostic $d(x,y)=xy$ and
+preparation of every group element. Contexts $d(w(-,1))$ and $d(w(1,-))$
+force the least repaired component quotients to be $G$ and $G$. With no
+further operations out of $P$, its least repaired exterior quotient is
+only the product value $G$. The revised comparison is
+\[
+             G\times G\twoheadrightarrow G,\qquad(x,y)\mapsto xy.
+\]
+Every fiber has $|G|$ elements, namely $(x,x^{-1}z)$ for a fixed output $z$.
+All tables and diagnostic plans are finite and available; joint lifting
+holds. The failure is exterior information loss, not bad access or an
+unnecessarily fine local repair. Therefore no unconditional strong
+revise--then--wire interchange follows from taking least repairs.
+
+The two comparison spans have related but different domains. Equation
+\eqref{eq:common-span} compares laws of expressions; equation
+\eqref{eq:state-span} compares state descriptions. Both retain the realized
+common source rather than all formally compatible pairs, but they must not
+be conflated. The exact ideal condition in Theorem~\ref{thm:history} and
+the two conditions in \eqref{eq:state-span} discharge different obligations.
+
+
+\section{What the construction does not recover from public semantics}
+\label{sec:native}
+The constructions compare presented expressions and their operational
+meaning. Source descriptions, native systems, and public observations can
+still be different categories. Write
+\[
+ \mathsf P_d\xrightarrow{V_d}\mathsf N_d\xrightarrow{U_d}\mathsf C_d.
+\]
+A covariant source compiler $T:\mathsf P_d\to\mathsf P_{d'}$ is additional
+data. A signature translation normally induces a model reduct in the
+opposite direction. Neither is supplied merely by the existence of a
+quotient map between public observations. For a claim that source compilation
+commutes with wiring one must construct its actual comparison to wiring
+compiled components, including shared resources and domains, before applying
+\eqref{eq:state-span}.
+
+\begin{proposition}[A sufficient native lifting condition]
+If $U$ identifies the native category with a full subcategory of the
+semantic category closed under the particular constructed quotients and
+admitted wires, then these quotient and comparison maps lift to native
+maps, and compatible semantic isomorphisms lift to native isomorphisms.
+\end{proposition}
+\begin{proof}
+Closure supplies native objects, fullness lifts the arrows, and faithfulness
+reflects their equations and inverses.
+\end{proof}
+Neither closure nor fullness follows from naming a native doctrine.
+For the admitted linear-circuit fragment, native implementation is proved
+directly by the normal forms and generator formulas; no fullness in the
+entire ambient matrix category is asserted. For a smooth optimizer, smooth quotient
+existence and descent of the actual update are separate requirements;
+descent of a gradient flow does not by itself prove finite-step descent.
+For stochastic native mechanisms one must retain their probability laws,
+occurrence constraints, and coupling obligations, rather than regard every
+semantic set quotient as a native implementation.
+
+A small source-level obstruction makes the issue concrete. Suppose a native
+realization must carry a finite set $V$, a probability row $A$, and a
+deterministic occurrence map $f:V\to\{0,1\}$ with
+$f_*A=(1/2,1/2)$, where $f_*$ is pushforward of probabilities. Positive mass at both occurrences forces $|V|\ge2$.
+All public channels may nevertheless be constant, so the public behavioral
+quotient has one state. That quotient is sufficient for the declared public
+questions, but cannot realize the retained occurrence specification.
+A one-state model has only one deterministic occurrence value and violates
+the required marginal. This proves the distinction without an artificial
+ban on quotients.
+
+Contextads organize context-dependent arrows and their composition
+\cite{contextads}. The programme's native context/content constructions
+additionally retain endpoint squares, occurrences, noninvertible cells, and
+witnessed factorizations \cite{contextual-note}. None of the present
+set-valued images or operator-law quotients reconstructs those data. A
+comparison at that level requires native functors or pseudofunctors and
+actual unit, composition, and base-change cells. The preceding proposition
+is one sufficient case, not an assertion that every contextad has it.
+
+\section{Identification limits and relation to existing results}
+\subsection{Why a bounded theorem is necessary}
+The positive exact algorithms have independently specified finite-dimensional
+or finite-closure hypotheses. They cannot be extended to arbitrary finite
+records by changing the notation.
+
+For scalar one-letter queries let $L$ be the greatest queried length and
+choose $d>L+1$. The nilpotent Jordan blocks $N_d,N_{d+1}$, with initial row
+$e_1$ and last-coordinate readout, both return zero on all those queries;
+they have different operator ideals $(x^d)$ and $(x^{d+1})$. For an adaptive
+procedure that stops on the all-zero transcript, choose $d$ after its
+finite branch is fixed. Both worlds realize that branch, so a common answer
+cannot identify both operator theories. Even complete scalar behavior can
+hide operator laws: $1\oplus N_d$, observed only at the first coordinate
+and prepared only there, always returns $1$ although its full operator
+algebra is $K[x]/((x-1)x^d)$, of dimension $d+1$.
+
+Thus all basis preparations and coordinate readouts in
+Section~\ref{sec:linear} are substantive, not cosmetic. Nor does finiteness
+of each current theory guarantee stabilization: inspecting
+$N_1,\ldots,N_m$ gives ideal $(x^m)$ and dimension $m$, and $N_{m+1}$
+always causes another strict revision. Their infinite common ideal is zero.
+Ascending-chain Noetherianity does not stop this descending ideal chain.
+
+Exact laws also need exact warrants. Over $\mathbb Q$,
+$D_\epsilon=\operatorname{diag}(0,\epsilon)$ has generated unital algebra
+of dimension one at $\epsilon=0$ and two at every $\epsilon\ne0$.
+The law $x=0$ and the dimension jump under arbitrarily small perturbations.
+A residual larger than a certified error bound can refute a law; generic
+noisy samples do not certify an exact ideal or matrix rank. A statistical
+version needs its own sampling, identifiability, and error guarantees.
+
+\subsection{Comparison with earlier programme results}
+\label{sec:prior-programme}
+The programme manuscripts cited here are earlier research notes, not
+external priority claims. Their named results are the relevant comparison
+points; the present note retains their hypotheses rather than silently
+strengthening finite evidence into complete source semantics.
+
+\paragraph{Operational algebra was already inferred from observations.}
+\emph{When observations warrant new structure} constructs the residual
+states $Q_f$ and the syntactic intervention monoid
+\[
+ M_f=\Sigma^*/{\equiv_f},\qquad
+ u\equiv_f v\ \Longleftrightarrow\quad
+ f(xuy)=f(xvy)\quad\hbox{for all }x,y\in\Sigma^*.
+\]
+Its ``Canonical quotient property'' identifies the generated recognizer
+quotient, and its faithful action on $Q_f$ identifies $M_f$ with the
+transition monoid \cite{observation-note}. Thus the earlier work already
+quotients operations, not just states. Its ``Bounded exact identification''
+uses all word responses through length $2N-2$, a known bound of $N$ states,
+and the specified deterministic binary terminal-output convention to
+identify the complete behavior and hence this monoid. That finite test
+horizon is not asserted for arbitrary weighted or inaccessible systems.
+The present $K$-linear category replaces this deterministic word monoid by
+typed linear programs and a family of full operator interpretations.
+Theorem~\ref{ef:thm:effective} makes a complete border presentation and
+normal forms explicit; Theorem~\ref{ef:thm:revision} and
+Proposition~\ref{ef:prop:theory} compute law retraction and the resulting
+free-representation monad. They are a bounded continuation of operational
+algebra formation, not its first occurrence in the programme.
+
+\paragraph{What the CALF realization bridge had already identified.}
+\emph{Finite Evidence and Differentiable Realizations} proves that linear
+transitions descend to $\im T$ exactly when
+$\im K_a\subseteq\im T$ and $\ker T\subseteq\ker K_a$; prefix and suffix
+closure then give sampled-word reproduction. Its ``Finite-data realization
+compatibility'' identifies an exact-fit $n$-dimensional candidate with the
+inferred automaton when $\operatorname{rank}T=n$ \cite{bridge-note}.
+Proposition~\ref{prop:wfa-algebra} shows that a globally identified reachable
+observable realization already determines the present one-environment
+operator algebra. The earlier theorem alone identifies the candidate and
+finite-table automaton, not the unknown whole target. The present matrix
+algorithm starts from certified complete linear environments, or known
+bases and dimensions with exact basis preparation, coordinate readout,
+and a linearity promise. Those premises are stronger than an arbitrary
+finite scalar word transcript. A valid realization-identification theorem
+can supply such matrices up to isomorphism; the matrix algorithm does not
+supply the missing identification theorem or physical access on its own.
+
+\paragraph{Two evidence orders and two progress bounds.}
+\emph{Evidence-Driven Capacity Change}, ``Exact reconstruction and
+witness-directed rank progress'', supplies a rank-one repair of coherent
+exact, prefix- and suffix-closed tables when closedness or consistency
+fails. With a true WFA dimension bound $N$, its
+``Finite exact repair'' gives at most $N-k$ such repairs from rank $k$,
+while explicitly separating repair from counterexample discovery and
+certified stopping \cite{capacity-note}. Those observations concern one
+fixed unknown target. Here adjoining a complete environment intersects
+operator kernels and deletes common laws. Sound extra constraints on one
+fixed target instead shrink its version space and increase its universal
+consequences; refutation of a selected tentative hypothesis is a third
+operation. The $D-d_0$ bound and complete-law-oracle algorithm above apply
+to the certified-environment order. Neither bound converts arbitrary finite
+agreement into unrestricted identification.
+
+\paragraph{Reverse comparison and the earlier composition warning.}
+The bridge's ``Mixed image diagram'' has prefix inclusions and reverse
+suffix surjections, explicitly as a vector-space specialization of
+Colcombet--Petri\c{s}an--Stabile, Definition~29 and Lemma~31
+\cite{bridge-note,funl}. The capacity note then gives the canonical span
+\[
+ Q_{S,E}\ \longleftarrow\ \im h_{S,E'}
+ \longrightarrow\ Q_{S',E'}
+\]
+and shows that an old-to-new map compatible with the represented prefixes
+exists exactly when
+$\ker h_{S,E}\subseteq\ker h_{S,E'}$. A strict rank increase under suffix
+refinement forbids that map. It explicitly leaves ordinary pullback
+composition uncertified and notes the possible need to retain generators
+and observational presentations \cite{capacity-note}.
+Theorem~\ref{ef:thm:revision} uses the same quotient-factorization logic
+for operator ideals and identically named primitives. Theorem~\ref{thm:history}
+then computes the specific defect
+\[
+ J_1/\bigl((J_0\cap J_1)+(J_1\cap J_2)\bigr)
+\]
+and the exact common-source lifting criterion. The compared objects are
+operator theories here and observational state images there; no equivalence
+of the two classes of spans is assumed. This calculation addresses the
+earlier composition issue within a stated linear doctrine, not in every
+native realization category.
+
+\paragraph{Generated tests and language revision were already present.}
+\emph{Learning generated characterizations}, ``The operationally forced
+refinement'', forms $E_* =\{e\circ u_w\}$ and proves that its kernel is
+the largest update-stable equivalence refining the initial tests
+\cite{learning-note}. Section~\ref{sec:contextual} recovers that statement;
+Theorem~\ref{thm:repair} expresses the corresponding least repair for a
+supplied many-sorted finitary signature and new diagnostic seeds. The
+context-congruence construction itself is established. The same earlier
+note proves finite-step polynomial closure, finite identification under
+its reset-experiment contract, and serial assembly for its specified
+scalar deep linear training dynamics. Those training states and interventions
+are not the deployment states and input words of a fixed trained WFA.
+
+\emph{Evidence Driven Revision of Characterization Languages} already
+separates coordinate change from expressive expansion: the reciprocal
+trajectory has no finite WFA realization but admits a one-dimensional
+rational realization. Its ``Least shift-stable reciprocal extension'' is
+\[
+ \mathbb R[z,(z+n)^{-1}:n\in\mathbb N],
+\]
+with the stated localization universal property; it is not finitely
+generated as an ordinary commutative algebra, although shift supplies
+finite generation in the enlarged signature \cite{characterization-note}.
+Theorem~\ref{thm:polynomial} adds an effective polynomial subalgebra-closure
+procedure, conditional termination, elimination presentation, and realized
+semialgebraic image for its own effective polynomial source class. It does
+not subsume arbitrary rational localization, discover a primitive, or
+replace the earlier training and gradient results.
+
+\paragraph{Incidence, topology, and optimization retain separate obligations.}
+\emph{A predictive and incidence bridge for choosing further experiments}
+proves its ``Finite generator criterion for incidence saturation'' only
+with exhaustive finite preparation coverage, successor closure, a finite
+current test family containing the base terminal tests, and fully measured
+or independently justified current and one-step generator columns. Its ``Incidence
+warrant without predictive identification'' leaves $2^k$ distinct labelled
+transitions compatible with a $3k-2$-query certificate
+\cite{predictive-note}. Knowing the family of test supports is therefore
+not the same as identifying the named future tests or their action.
+The residual-automaton, concept-lattice, and exact-domain Dowker transports
+in \emph{One operational construction for residual automata, formal
+concepts, and topology} \cite{common-note}, and the distinct preservation
+criteria in \emph{Generated Observations and Conservative Characterization
+Formation} \cite{generated-note}, are not all transported through the
+operator-law revisions proved here.
+
+Likewise, the reverse-differentiation compatibility and gradient-active
+capacity extensions in \cite{bridge-note,capacity-note} concern additional
+smooth and optimizer structure. The independent-control tensor theorem
+below the sequential comparison uses every Cartesian environment pair;
+it is different from the earlier scalar learner's serial assembly with
+reverse-mode feedback \cite{learning-note}. Neither composition theorem
+implies the other. The present results establish neither optimizer
+commutation across law revision nor a general oracle-free CALF learner.
+These earlier achievements and remaining obligations make the current
+note a branch of the programme, not a replacement for all of it.
+
+\subsection{What has already been established elsewhere}
+The constructions here are a proved synthesis, with the following direct
+overlap rather than a claim that their ingredients are new.
+
+\paragraph{Theory change and retained meaning.}
+Institutions already formalize satisfaction under signature change
+\cite{institutions}. The comorphism satisfaction condition compares
+translated sentences with model reducts; it is not an automatically
+executable covariant compiler \cite{institution-morphisms}.
+Diaconescu's $3/2$-institutions, Section~3.7, explicitly represent theory
+changes by a signature change and a partial inclusion recording retained
+translated axioms. The section supplies compositional theory-change
+bookkeeping and a negative result on lifting signature pushouts to theory
+changes \cite{diaconescu}. Thus equation deletion, partial retention, and
+categorical organization of revisions are established concerns. Theorem
+\ref{thm:history} is the explicit ideal-sum/source-lifting calculation for
+this algebraic doctrine, closely related to ordinary Chinese-remainder
+arguments; it is not an institution-independent amalgamation result.
+AGM theory already makes the choice of contraction depend on a selection
+policy \cite{agm}; neither its postulates nor the intersection construction
+chooses a scientifically meaningful new primitive.
+
+\paragraph{Learning and executable testing.}
+CALF connects categorical learning, testing, and minimization, including
+weighted automata \cite{calf}. Generalized tree-automata learning and
+algebraic language theory provide direct background for the largest
+context-stable congruence used here \cite{treecalf,blumensath}.
+Kocsis and Rot prove complete test-suite results for automata in monoidal
+closed categories: their theorem uses a minimal specification, a weak
+state cover of the implementation, and a characterization morphism
+\cite{kocsis-rot}. Those hypotheses make test completeness substantive.
+They do not say that an arbitrary unknown system supplies an executable
+cover or that a categorical test object is physically runnable.
+
+CoalA learns synchronization structure by counterexample-driven alphabet
+refinement over a fixed global alphabet \cite{coala}. A counterexample can
+revise the distribution of actions between components, rather than just a
+local state machine. Its convergence uses exact teacher and local-learner
+assumptions; it does not invent global actions or guarantee recovery of the
+original decomposition. Aarts and collaborators refine executable,
+history-sensitive abstraction mappers \cite{aarts}. Classical CEGAR changes
+an abstraction of a supplied concrete semantics after checking a proposed
+counterexample \cite{cegar}. These are serious existing mechanisms, not
+merely notation for a future learning theory.
+
+Caulfield learns restricted shallow equational theories with membership
+and equivalence queries \cite{caulfield}. QuickSpec conjectures equations
+from executable libraries and tests \cite{quickspec}; passing such tests is
+distinct from a proof of universal validity. The finite complete law
+presentation here obtains its warrant from exact linear representation
+semantics, not from treating an arbitrary finite test set as complete.
+Matrix-generated algebra closure and structure-constant computations are
+standard computational algebra \cite{gap}; syntactic algebras are a direct
+background \cite{reutenauer}. Their scalar-behavior and full-operator
+interpretations coincide only with the appropriate access hypotheses.
+
+\paragraph{Polynomial observability and theory formation.}
+Sontag's polynomial realization and observability theory predates the
+present programme \cite{sontag}; algebraic minimization of polynomial
+systems has further developments \cite{boreale}. Elimination and real
+quantifier elimination supply the actual computational steps of
+Theorem~\ref{thm:polynomial} \cite{cox,bpr}. The distinction between a
+coordinate algebra and its realized semialgebraic image is essential to
+using these methods correctly, not a newly proposed replacement for them.
+
+Broader mathematical discovery systems also introduce definitions and
+conjectures: HR uses typed concept-production rules and proof/countermodel
+backends \cite{hr}. Recent scientific edit--experiment and categorical
+regime-change proposals overlap the present motivation
+\cite{ma2026,wang2026}. The former uses a bounded edit grammar and stated
+statistical testing assumptions; the latter explicitly transports evidence
+and provenance with conditional composition of verified transitions.
+Neither is used here as a proof of unrestricted discovery, and their
+existence prevents claiming that revisable languages or categorical
+regime changes are an untouched research direction.
+
+\subsection{The resulting answer to the formation problem}
+A law can now be followed through a concrete mathematical chain. It is an
+equation in implemented raw syntax; separating preparations and readouts
+plus joint access turn a failure into an executable diagnostic; accepted
+results constrain a target family or justify admitting a certified
+countermodel; exact kernels then determine a revised presentation and its
+retained-law comparison. In the linear class this produces finite normal
+forms, changed quotient monads, and decidable circuit laws. In the polynomial
+class it can introduce derived response symbols with implemented updates.
+Sequential and parallel composition have explicit sufficient conditions
+and counterexamples. Fixed-language reduction is recovered, with its state
+and native-realization limits retained.
+
+What remains unresolved is correspondingly specific. There is no general
+algorithm here for selecting the right primitive, type, scientific mechanism,
+or revision policy; no finite-data guarantee outside the declared source
+and access classes; and no blanket preservation theorem for shared-state,
+feedback, noisy, smooth, or proof-relevant native systems. These are not
+asserted as conjectures supported by the present results. They are additional
+problems requiring new hypotheses or constructions. The bounded results
+address the programme's dependence on access, warranted distinction,
+revisable meaning, and composition without proposing one universal
+mathematical foundation for phenomenology.
+
+\begin{thebibliography}{99}
+\bibitem{observation-note} Earlier programme manuscript.
+\emph{When observations warrant new structure}. 3 November 2026.
+Sections ``Canonical states and the intervention algebra'' and
+``What a finite body of evidence can identify''.
+Source: \texttt{Observation\_and\_Structure.tex}.
+\bibitem{predictive-note} Earlier programme manuscript.
+\emph{A predictive and incidence bridge for choosing further experiments}.
+3 November 2026. ``Finite generator criterion for incidence saturation''
+and ``Incidence warrant without predictive identification''.
+Source: \texttt{Predictive\_Incidence\_Bridge.tex}.
+\bibitem{bridge-note} Earlier programme manuscript.
+\emph{Finite Evidence and Differentiable Realizations: A categorical
+interface between automata learning and gradient learning}.
+4 November 2026. ``Mixed image diagram'', ``Linear closedness and
+consistency'', and ``Finite-data realization compatibility''.
+Source: \texttt{phenomenology\_bridge.tex}.
+\bibitem{capacity-note} Earlier programme manuscript.
+\emph{Evidence-Driven Capacity Change: Certificates, Reconstruction, and
+Live Gradient Extensions}. 4 November 2026.
+``Exact reconstruction and witness-directed rank progress'' and
+``Canonical comparison span and obstruction to a lift''.
+Source: \texttt{capacity\_expansion\_note.tex}.
+\bibitem{characterization-note} Earlier programme manuscript.
+\emph{Evidence Driven Revision of Characterization Languages}.
+4 November 2026. ``No finite WFA realizes the reciprocal trajectory'' and
+``The least shift-stable reciprocal extension''.
+Source: \texttt{characterization\_revision\_note.tex}.
+\bibitem{common-note} Earlier programme manuscript.
+\emph{One operational construction for residual automata, formal concepts,
+and topology}. 4 November 2026.
+Source: \texttt{common\_generation\_note.tex}.
+\bibitem{generated-note} Earlier programme manuscript.
+\emph{Generated Observations and Conservative Characterization Formation}.
+4 November 2026. ``Three extension criteria'' and ``Generation by bounded
+future experiments''.
+Source: \texttt{generated\_characterizations\_note.tex}.
+\bibitem{learning-note} Earlier programme manuscript.
+\emph{Learning generated characterizations: Training responses as a route
+from compositional learners to operational concepts and topology}.
+5 November 2026. ``The operationally forced refinement'', ``The response
+polynomial'', ``Finite response identification'', and ``Compositional
+response realization''.
+Source: \texttt{learning\_generated\_characterizations.tex}.
+\bibitem{funl} T. Colcombet, D. Petri\c{s}an, and R. Stabile.
+\emph{Learning Automata and Transducers: A Categorical Approach}.
+CSL 2021; extended version, arXiv:2010.13675, Definition 29 and Lemma 31.
+\url{https://arxiv.org/abs/2010.13675}.
+\bibitem{contextual-note} Prior programme manuscript.
+\emph{Contextual Reduction and Wiring for Open Learners}.
+5 November 2026. The fixed-language reduction, realized-image comparison,
+and native occurrence distinction used here are stated and proved again
+at the required scope.
+\bibitem{institutions} J. A. Goguen and R. M. Burstall.
+Institutions: Abstract model theory for specification and programming.
+\emph{Journal of the ACM} 39(1) (1992), 95--146.
+\url{https://doi.org/10.1145/147508.147524}.
+\bibitem{institution-morphisms} J. Goguen and G. Ro\c{s}u.
+Institution morphisms. \emph{Formal Aspects of Computing} 13 (2002), 274--307.
+\url{https://doi.org/10.1007/s001650200013}.
+\bibitem{diaconescu} R. Diaconescu.
+\emph{$3/2$-Institutions: An institution theory for conceptual blending}.
+arXiv:1708.09675, especially Section 3.7.
+\url{https://arxiv.org/abs/1708.09675}.
+\bibitem{agm} C. E. Alchourr\'on, P. G\"ardenfors, and D. Makinson.
+On the logic of theory change: Partial meet contraction and revision functions.
+\emph{Journal of Symbolic Logic} 50(2) (1985), 510--530.
+\url{https://fitelson.org/piksi/piksi_22/agm.pdf}.
+\bibitem{calf} G. van Heerdt, M. Sammartino, and A. Silva.
+CALF: Categorical Automata Learning Framework. \emph{CSL 2017},
+LIPIcs 82, 29:1--29:24.
+\url{https://doi.org/10.4230/LIPIcs.CSL.2017.29}.
+\bibitem{treecalf} G. van Heerdt, T. Kapp\'e, J. Rot, M. Sammartino,
+and A. Silva. A categorical framework for learning generalised tree automata.
+\emph{CMCS 2022}, 67--87.
+\url{https://doi.org/10.1007/978-3-031-10736-8_4}.
+\bibitem{blumensath} A. Blumensath.
+Algebraic language theory for Eilenberg--Moore algebras.
+\emph{Logical Methods in Computer Science} 17(2) (2021), article 6.
+\url{https://doi.org/10.23638/LMCS-17(2:6)2021}.
+\bibitem{kocsis-rot} B. Kocsis and J. Rot.
+Complete test suites for automata in monoidal closed categories.
+\emph{FoSSaCS 2025}.
+\url{https://doi.org/10.1007/978-3-031-90897-2_10}.
+\bibitem{coala} L. Henry, M. R. Mousavi, T. Neele, and M. Sammartino.
+Compositional active learning of synchronizing systems through automated
+alphabet refinement. \emph{CONCUR 2025}, LIPIcs 348, article 20.
+\url{https://doi.org/10.4230/LIPIcs.CONCUR.2025.20}.
+\bibitem{aarts} F. Aarts, F. Heidarian, H. Kuppens, P. Olsen, and F. Vaandrager.
+Automata learning through counterexample guided abstraction refinement.
+\emph{FM 2012}.
+\url{https://www.sws.cs.ru.nl/publications/papers/fvaan/CEGAR12/FM.pdf}.
+\bibitem{cegar} E. Clarke, O. Grumberg, S. Jha, Y. Lu, and H. Veith.
+Counterexample-guided abstraction refinement. \emph{CAV 2000}, 154--169.
+\url{https://doi.org/10.1007/10722167_15}.
+\bibitem{caulfield} B. Caulfield.
+\emph{Learning and Logic for Formal Synthesis}.
+Berkeley PhD thesis, UCB/EECS-2021-113, Chapter 3.
+\url{https://www2.eecs.berkeley.edu/Pubs/TechRpts/2021/EECS-2021-113.html}.
+\bibitem{quickspec} N. Smallbone, M. Johansson, K. Claessen, and M. Algehed.
+Quick specifications for the busy programmer.
+\emph{Journal of Functional Programming} 27 (2017), e18.
+\url{https://doi.org/10.1017/S0956796817000090}.
+\bibitem{gap} The GAP Group. \emph{GAP Reference Manual}, Chapter 62,
+Algebras. Matrix algebra generation, structure constants, and quotients.
+\url{https://gap-system.github.io/gap/doc/ref/chap62.html}.
+\bibitem{reutenauer} C. Reutenauer.
+S\'eries formelles et alg\`ebres syntactiques.
+\emph{Journal of Algebra} 66 (1980).
+\url{https://doi.org/10.1016/0021-8693(80)90097-6}.
+\bibitem{sontag} E. D. Sontag. \emph{Polynomial Response Maps}.
+Lecture Notes in Control and Information Sciences 13, Springer, 1979.
+\url{https://sontaglab.org/PUBDIR/Year/1979.html}.
+\bibitem{boreale} M. Boreale.
+Algebra, coalgebra, and minimization in polynomial differential equations.
+\emph{Logical Methods in Computer Science} 15(1) (2019), article 14.
+\url{https://lmcs.episciences.org/5192}.
+\bibitem{cox} D. Cox, J. Little, and D. O'Shea.
+\emph{Ideals, Varieties, and Algorithms}. 4th edition, Springer, 2015.
+\bibitem{bpr} S. Basu, R. Pollack, and M.-F. Roy.
+\emph{Algorithms in Real Algebraic Geometry}. 2nd edition, Springer, 2006.
+\bibitem{hr} S. Colton and S. Muggleton.
+Mathematical applications of inductive logic programming.
+\emph{Machine Learning} 64 (2006).
+\url{https://www.doc.ic.ac.uk/crg/papers/colton_mlj06.pdf}.
+\bibitem{ma2026} S. Ma et al.
+\emph{Learning to Outgrow a Theory: Experimental Discovery Beyond the
+Initial Hypothesis Space}. arXiv:2610.07627v1, 2026.
+\url{https://arxiv.org/abs/2610.07627}.
+\bibitem{wang2026} F. Y. Wang and M. J. Buehler.
+\emph{Self-Revising Discovery Systems for Science: A Categorical Framework
+for Agentic Artificial Intelligence}. arXiv:2606.01444v2, 2026.
+\url{https://arxiv.org/abs/2606.01444}.
+\bibitem{rsw} R. Rosebrugh, N. Sabadini, and R. F. C. Walters.
+Minimal realization in bicategories of automata.
+\emph{Mathematical Structures in Computer Science} 8(2) (1998), 93--116.
+\url{https://doi.org/10.1017/S0960129597002454}.
+\bibitem{contextads} M. Capucci and D. J. Myers.
+\emph{Contextads as Wreaths; Kleisli, Para, and Span Constructions as
+Wreath Products}. arXiv:2410.21889, 2024.
+\url{https://arxiv.org/abs/2410.21889}.
+\end{thebibliography}
+\end{document}

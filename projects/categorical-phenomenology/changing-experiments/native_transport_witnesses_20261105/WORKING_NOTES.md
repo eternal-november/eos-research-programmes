@@ -1,0 +1,5 @@
+# Native transport and synchronized resource reconstruction
+
+Working direction: interface coarsening of native trace languages, where composing first retains a shared concrete trace, while local interface change optimizes/existentially chooses concrete traces separately. Exact obstruction is the failure to synchronize fiberwise optimal native executions, with an independent resource gap even when Boolean feasibility is exact. Aim: a theorem for arbitrary trace sets, constructive canonical-normalization class checked on generators, finite weighted-automaton algorithms with explicit execution extraction, and examples that remain infinite in trace depth. This is not the old free-path section theorem.
+
+Sources inspected: restored native_operations_across_doctrines.tex (native/semantic/resource distinction and free-path limitation); contextual_reduction_wiring.tex (span and joint-lifting/exterior-separation baseline); common_generation_note.tex (continuation closure and residual characterization); adaptive_experiment_formation.tex (actual residual state and uniform policy constraints).

@@ -1,0 +1,42 @@
+{
+  "review_date": "2026-11-03",
+  "verdict": "PASS; all seven new declarations match their stated mathematical scope",
+  "source_sha256": {
+    "ResourceObservation.lean": "2bce2dd651117adf12e29edf967f91422cf0aea422549552063ec4a1e8f1e57a",
+    "ResourceObservationIff.lean": "b607a2ee5b7a2420d52acdb0022cdc491654b353a9d9e4127d7dcad4513df08b"
+  },
+  "reproduction": {
+    "method": "Fresh temporary directory; copied only both Lean source files; rebuilt base .olean before importing it. No preexisting .olean was trusted.",
+    "base_command": "lean -o ResourceObservation.olean ResourceObservation.lean",
+    "extension_command": "LEAN_PATH=. lean ResourceObservationIff.lean",
+    "base_exit_code": 0,
+    "extension_exit_code": 0,
+    "base_no_axiom_reports": 10,
+    "extension_no_axiom_reports": 7,
+    "source_stable_during_compilation": true
+  },
+  "proof_review": [
+    "Principal le x is the principal upward profile; transitivity proves it is upward.",
+    "ObservedPrincipal is the upward saturation of the observed part of the principal profile; its agreement at B uses reflexivity and transitivity.",
+    "The universal agreement premise in the necessity lemma is exactly the antecedent being derived from, not circularly assumed in the final iff.",
+    "Applying agreement to principal profiles and their observed saturations produces intermediate factor witnesses. Joint monotonicity lowers their sum to the observed generators; transitivity preserves feasibility.",
+    "The universal restriction identity gives observed principal factors directly; its necessity direction genuinely does not require monotonicity.",
+    "The two iff theorems and their combination establish all three equivalent predicates corresponding to Section 7.",
+    "Reflexivity/transitivity and joint monotonicity are sufficient. No finiteness, identity, associativity, commutativity, or antisymmetry is silently used."
+  ],
+  "scope": "Manually formalized Theorem 1 core equivalences, under weaker preorder/monotone-operation assumptions than the ordered commutative monoid statement. Not literal generated-certificate replay. Nucleus/quantale consequences, group/refund corollaries, and selector results are not formalized here.",
+  "necessary_corrections": [],
+  "explicit_final_preorder_audit": {
+    "verdict": "PASS: necessity is valid for every reflexive/transitive relation, with no antisymmetry or B-saturation hypothesis.",
+    "reason": "Principal profiles and their observed upward saturations remain upward and agree at B in any preorder. The proof recovers observed representatives a,c with x <= a and y <= c, not equalities a=x or c=y. Therefore no antisymmetry, quotient representatives, or saturation of B is needed.",
+    "nonantisymmetric_unsaturated_control": "On a two-element set with the universal preorder, every pair is related and B may be a singleton. Upward profiles are only empty or full; observing that singleton distinguishes them. Factor-domination holds using that singleton representative for both factors, despite B not being saturated. This corroborates the theorem and shows why a literal B=whole-group corollary would need separate antisymmetry/saturation assumptions.",
+    "closure_scope": "product_upward_of_trans explicitly takes only a transitivity hypothesis on le; it asserts closure for arbitrary input profiles. The base agreement theorem does not itself assert closure for an arbitrary relation. No antisymmetry is used.",
+    "implicit_parameter_and_flag_audit": "Both source files have autoImplicit=false. Elaborated @ theorem types were printed and checked: only M, add, le, B and the displayed reflexivity/transitivity/monotonicity or universal-agreement premises occur. Ordinary Profile/Upward/Product/restriction/criterion definitions add no assumptions. No custom axiom, sorry/admit, unsafe declaration, partial definition, or implementation override occurs.",
+    "axiom_scope": "The kernel dependency audits report no axioms. This does not erase theorem hypotheses; the hypotheses are the explicit parameters shown by the accompanying type audit. Importing Std adds no extra proof assumption to these checked declarations.",
+    "evidence": [
+      "independent_type_audit.lean",
+      "independent_type_audit.log"
+    ],
+    "source_hash_unchanged": true
+  }
+}

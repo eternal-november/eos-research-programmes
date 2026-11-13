@@ -1,0 +1,37 @@
+[
+  {
+    "id": "v1",
+    "time_utc": "2026-11-03T19:19:00Z",
+    "made_after_initial_outcomes": true,
+    "changes": [
+      "Preserve all initially specified held-out equations unchanged, but label the test exactly matching a discovered lemma as overlap rather than compositional transfer. Report both the original 12-case figure and the 11-case nonoverlap figure; do not claim complete structural holdout.",
+      "Retain the successfully proved training theorem in all library-retention methods rather than discarding it. This is the natural symmetric comparison to training-theorem-only cache.",
+      "Add full generic completion, which does not stop at training success, as the stronger automatic baseline.",
+      "Make the cold no-retention baseline discover for each actual target, not always rediscover the training theorem.",
+      "Add adversarial checker tests and CPU-time-limited runs; document proxy omissions and report all-in CPU and wall time.",
+      "Candidate grammar, finite test assignments, theory, induction scheme, and all theorem equations stay fixed. No result from these changes is externally preregistered."
+    ],
+    "reason": "Correct comparison design weaknesses identified in the initial run; all initial code and raw results are retained under snapshots/v0."
+  },
+  {
+    "id": "v2",
+    "time_utc": "2026-11-03T19:21:09.137738+00:00",
+    "made_after_initial_outcomes": true,
+    "changes": [
+      "Report a common eight-case compositional subset determined only by frozen candidate-grammar size: at least one equation side has more than five AST nodes. Preserve every original equation and all 12-case results. This excludes four equations that fall inside the discovery grammar, independently of which library is learned.",
+      "Retain the already proved training target immediately during full completion to avoid accumulating redundant consequences while postponing its own candidate. This improves the strongest automatic baseline; other methods unchanged.",
+      "Reject reserved names at the bundle boundary and add independently specified adversarial kernel tests."
+    ],
+    "reason": "Make exact-caching exclusions uniform across algorithms and strengthen automatic completion. Exploratory amendments are disclosed, with v0 and v1 snapshots retained."
+  },
+  {
+    "id": "v3",
+    "time_utc": "2026-11-03T19:22:36.395503+00:00",
+    "made_after_initial_outcomes": true,
+    "changes": [
+      "Add guided full completion with identical stopping/retention rules to ordinary full completion, isolating proposal ranking from early stopping.",
+      "Measure five fresh runs per principal automatic method and CPU caps 0.05, 0.25, 0.5 seconds with three repetitions, without changing algorithms after these measurements. CPU limits are checked every 128 counted operations; any overrun is reported, not hidden."
+    ],
+    "reason": "Isolate ranking contribution and distinguish proxy counts from actual execution time; no theorem or candidate grammar changes."
+  }
+]

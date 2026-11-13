@@ -1,0 +1,1449 @@
+% Standalone TeX research note. Intentionally not compiled.
+% Bibliography is inline; there are no external input or bibliography files.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\title{Evidence Driven Revision of Characterization Languages}
+\author{}
+\date{4 November 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A failed characterization can call for more capacity in the current language,
+a different coordinate system, different transition or observation operations,
+or a different task interface. These responses have different proof obligations.
+This note connects a certified semantic-operation obstruction to a concrete
+rational recurrence, separates exact and approximate weighted-automaton
+expressivity, and proves what finite evidence can and cannot justify.
+Under explicit degree, noise, and domain assumptions, rational identification
+supplies a verified candidate. A true-error comparison against an entire
+bounded linear class then licenses a dynamically realized, initially active
+replacement gate with endpoint compression. The gate need not decrease loss
+monotonically all the way to its endpoint. A least shift-stable localization
+specifies the observable extension needed by the recurrence and distinguishes
+that extension from general reciprocal closure. These results form a
+conditional interface for a task-specific elaborator; they neither discover
+the right language automatically nor impose one universal categorical
+presentation of elaboration.
+\end{abstract}
+
+\section{The question and the dependency between the results}
+
+The question is how evidence can justify changing the language in which a
+phenomenon is characterized, its interpretation, and the operations that can
+legitimately be performed, while retaining a checkable account of what the
+previous characterization meant. Evidence can include observations, supplied
+mathematical laws, proofs, and resource constraints. It is not restricted to
+active experiments or numerical fitting.
+
+The central running case is the positive-domain recurrence
+$x_{n+1}=x_n/(1+x_n)$ with $x_0=1$. Its reciprocal coordinate has the affine
+update $z_{n+1}=z_n+1$, but the readout becomes $1/z_n$. This is an exact
+coordinate transport within a suitable rational language. The behavior
+$1/(n+1)$ has infinite Hankel rank, so moving from finite weighted automata
+with linear readouts to this rational language is instead a strict expressive
+expansion. These two changes must not be conflated.
+
+The arguments form the following conditional chain:
+\[
+ \begin{gathered}
+ \text{declared task semantics and certified operation domains}\\
+ \Downarrow\\
+ \text{expressive obstruction and a verified alternative candidate}\\
+ \Downarrow\\
+ \text{validated evidence bounds and class-relative true-error comparison}\\
+ \Downarrow\\
+ \text{realizable gated replacement and exact endpoint removal}.
+ \end{gathered}
+\]
+Every arrow has substantive premises. Finite observations alone cannot
+refute the union of all finite WFA sizes, and the exact expressive separation
+does not imply poor approximation at a nonzero absolute tolerance.
+Candidate discovery, the choice of error metric and resources, and the
+scientific warrant for a governing law remain additional questions.
+
+All results below are mathematical proofs or explicitly conditional
+constructions, not claims of formal verification. The individual ingredients have close prior art, discussed in
+Section~\ref{sec:prior}; no novelty or priority claim is made. The trace
+semantics used for the example does not account for first-person significance,
+relevance, attention, or the choice of what counts as a phenomenon. It is a
+bounded test of characterization revision, not a reduction of the broader
+phenomenological programme to prediction.
+
+\section{Task semantics and certified operations}
+\label{sec:semantics}
+
+Write $\mathbb N=\{0,1,2,\ldots\}$. Let $\mathcal C$ be a category of task contexts. A map $u:c'\to c$ specifies an
+admissible restriction or substitution of context. Let
+\[
+  \mathcal B:\mathcal C^{\mathrm{op}}\longrightarrow\mathbf{Cat}
+\]
+be the chosen semantic interface. The objects of $\mathcal B(c)$ are the
+behaviors, mathematical structures, or answers whose meaning the task requires
+us to preserve. In the sequence example, $c=N$ is an observation horizon,
+$\mathcal B(N)$ is the discrete category on $\mathbb R^{N+1}$, and
+$u^*$ truncates a longer sequence. At an additional context $\infty$,
+take $\mathcal B(\infty)$ to be the discrete category on $\mathbb R^{\mathbb N}$.
+Other applications may use parameter
+substitutions, domain restrictions, theorem contexts, or changes of available
+questions. These alternatives require their own explicit $\mathcal B$.
+
+A characterization $D$ has an indexed category of descriptions
+$\mathcal M_D:\mathcal C^{\mathrm{op}}\to\mathbf{Cat}$ and an interpretation
+\[
+  b_D:\mathcal M_D\Longrightarrow\mathcal B.
+\]
+For readability, the framework uses strict indexed categories and strictly commuting
+squares. Specified coherent isomorphisms give the usual pseudofunctor version.
+The description category is not just a parameter space. Its objects may carry
+syntax, types, laws, interpretations, partial-operation domains, and proof
+certificates. Its arrows say which translations of these data are admissible.
+Where only extensional results are required, discrete description categories
+suffice and prevent stronger categorical claims being inferred accidentally.
+
+Evidence is a context-indexed collection of accepted constraints. Write
+$\mathcal E(c)\subseteq\mathcal B(c)$ for the full replete subcategory satisfying
+them, with $u^*\mathcal E(c)\subseteq\mathcal E(c')$. The compatible-description
+category is the inverse image
+\[
+  \mathcal R_D(E)(c)=b_D(c)^{-1}\mathcal E(c).
+\]
+Evidence provenance is additional data, not erased by this notation. A finite
+measurement with a justified error interval, a hypothesis about a governing
+law, and a checked proof under stated premises give different warrants.
+For example, accepting an equation for every time index is stronger than
+observing finitely many instances. The notation records the resulting
+constraint; it does not manufacture its epistemic justification.
+
+\paragraph{Verification languages.}
+If the characterization also supplies an institution, its signature category,
+sentence functor, model functor, and satisfaction relation must satisfy the
+usual change-of-signature condition. With a signature map
+$\sigma:\Sigma\to\Sigma'$, this condition has the orientation
+\[
+ M'\models_{\Sigma'}\operatorname{Sen}(\sigma)(\varphi)
+ \quad\Longleftrightarrow\quad
+ \operatorname{Mod}(\sigma)(M')\models_\Sigma\varphi.
+\]
+The model reduct is contravariant. A compiler from old programs to new programs
+is instead often covariant. It must not be called an institution comorphism
+merely because both constructions preserve something called meaning.
+Institution theory already supplies the central abstract treatment of
+satisfaction under vocabulary change \cite{cc-goguen-burstall,cc-goguen-rosu}.
+The additional issue here is whether a proposed characterization change
+actually has compatible descriptions and operation implementations.
+
+A semantics-preserving compilation $T:D\to D'$ over the fixed interface is an
+indexed functor $T:\mathcal M_D\to\mathcal M_{D'}$ with
+$b_{D'}T=b_D$. It therefore restricts to
+\[
+ T:\mathcal R_D(E)\longrightarrow\mathcal R_{D'}(E).
+\]
+This last statement is a useful but elementary consequence of the equation;
+it is not by itself a theory of learning. If the interface itself changes,
+one must give a comparison functor between the two interfaces and state
+which old assertions are preserved or forgotten. Equality on a small common
+interface does not prove equality of all meanings in either language.
+
+Available operations require more than names in a signature. An operation
+has a domain of admissible inputs, a semantic effect, and a proof obligation
+establishing applicability. At a fixed context write
+\[
+  o:U\longrightarrow B,\qquad U\subseteq B=\operatorname{Ob}\mathcal B(c).
+\]
+An implementation in $D$ sends every description $m$ supplied with a valid
+certificate that $b_D(m)\in U$ to a description $O_D(m)$ and satisfies
+$b_D(O_D(m))=o(b_D(m))$. The verification theory must explain how the
+certificate is checked. Operations and their domains must commute with the
+declared context restrictions, when both sides are defined.
+
+Transporting an old operation along $T$ requires both a map on its
+applicability certificates and a commuting semantic square. Requiring actual
+syntactic equality $TO_D=O_{D'}T$ is stronger than necessary; a specified
+behavior-preserving isomorphism or verified equivalence may suffice. That
+choice must be fixed before claiming coherence of repeated translations.
+
+\begin{proposition}[An operation has an expressive obstruction]
+\label{prop:cc-operation-obstruction}
+Let the semantic image at the context under consideration be
+\[
+ I_D=\{b_D(m):m\in\operatorname{Ob}\mathcal M_D(c)\}\subseteq B.
+\]
+Let $C_D$ be the set of pairs $(m,\pi)$ consisting of a description and an
+accepted applicability certificate, and put
+$J_D=\{b_D(m):(m,\pi)\in C_D\}\subseteq I_D\cap U$.
+If $b\in J_D$ but $o(b)\notin I_D$, no implementation of $o$ in $D$
+can be correct on every certified applicable input. In particular, neither
+an optimizer nor a different parameterization of the same description class
+can supply it. Conversely, if $o(J_D)\subseteq I_D$, a set-theoretic
+implementation on $C_D$ exists after choosing representatives. This converse
+makes no claim about computability, new proof production, functoriality, or
+coherent reindexing.
+\end{proposition}
+\begin{proof}
+Choose a certified pair $(m,\pi)$ with $b_D(m)=b$.
+A correct output $O_D(m,\pi)$ would have denotation
+$o(b)$ and hence put $o(b)$ in $I_D$, a contradiction. Conversely, choose
+one description for each behavior in $o(J_D)$ and use that choice
+after applying $o$ to the input's denotation. The construction is only a
+set-theoretic one, which explains the stated limitations.
+\end{proof}
+
+This result turns the semantic diagram into a falsifiable requirement. A
+purported transport fails if a required operation on a certified input leaves
+the old semantic image. A semantically valid but uncertified applicability
+condition does not suffice when the verification theory is incomplete.
+Conversely, equal semantic images do not establish an effective or
+canonical translation: different descriptions can implement a behavior in
+incompatible ways, and checking equality may itself be undecidable.
+
+\paragraph{Three different claims.}
+A definitional change has specified inverse translations, with the appropriate
+round-trip and obligation-preservation proofs. An expressive expansion has a
+semantics-preserving inclusion and strictly more possible behaviors. A change
+of task changes the interface or what evidence is accepted. These can occur
+together, but one must not use a proof of one as a proof of another.
+Equivalence of model categories alone is not the definition of a syntactic
+definitional extension; the designated definitions and proof translations
+matter.
+
+\section{The operational interface and positive-domain transport}
+\label{sec:operational}
+
+Fix a finite nonempty alphabet $\Sigma$. A globally defined deterministic
+real-valued presentation consists of a set $X$, an initial point $x_0\in X$,
+maps $T_a:X\to X$ for $a\in\Sigma$, and an observation map $o:X\to\mathbb R$.
+For a word $w=a_1\cdots a_k$, put
+\[
+ T_w=T_{a_k}\circ\cdots\circ T_{a_1},\qquad
+ f(w)=o(T_wx_0).
+\]
+The empty-word transition is the identity. The word ``presentation'' here
+does not prescribe a universal syntax or category of presentations. It
+records only the semantic interface used by the following theorems.
+Different typed, contextual, dependent, or diagrammatic elaboration
+infrastructures can discharge the required existence and preservation
+obligations in different ways.
+
+Real weighted finite automata (WFAs) are one presentation language: use
+row-vector states, $x_0=\alpha^{\mathsf T}$, $T_a(x)=xA_a$, and
+$o(x)=x\beta$. Writing $A_w=A_{a_1}\cdots A_{a_k}$ for
+$w=a_1\cdots a_k$ gives $f(w)=\alpha^{\mathsf T}A_w\beta$. Rational state updates with a specified
+forward-invariant domain form another. A mathematical formula with a pole
+on a reachable state is \emph{not} a globally defined presentation.
+A trajectory-certified rational description can be interpreted on its
+forward-invariant reachable state set. A language requiring a finitely
+presented invariant domain has a further obligation to construct and verify
+that domain; the extensional presentation alone does not discharge it.
+
+For finite prefix and suffix sets $S,E\subseteq\Sigma^*$, write
+\[
+ H_f[S,E]_{s,e}=f(se).
+\]
+For a WFA of dimension $r$, this block factors as
+\[
+ H_f[S,E]=P Q,\qquad
+ P_{s,:}=\alpha^{\mathsf T}A_s,\quad Q_{:,e}=A_e\beta,
+\]
+where $P$ has $r$ columns and $Q$ has $r$ rows.
+Thus every such block has rank at most $r$.
+Every block comparison below uses the same $S,E$ and scalar observations
+for the two languages being compared.
+Repeated occurrences of a word must have the same predicted value.
+An alternative language that changes the observations or interventions
+needs an explicit comparison map; its raw loss is not automatically
+comparable with the one used here.
+
+\begin{remark}[Two distinct meanings of a global assertion]
+A candidate presentation can define $f(w)$ for \emph{all} words, and the
+coexistence construction below preserves its semantic equations for all
+words. Neither fact proves that the candidate agrees with an unknown
+target on all words. A finite-block comparison is a statement about that
+block. Extending its statistical or scientific interpretation is a
+separate obligation.
+\end{remark}
+
+Consider the recurrence already motivating the comparison:
+\begin{equation}
+\label{eq:cc-rational}
+ x_0=1,\qquad x_{n+1}=\frac{x_n}{1+x_n},\qquad y_n=x_n.
+\end{equation}
+Its state domain is $(0,\infty)$. The transition maps this domain into itself,
+so every division is defined. The reciprocal coordinate $z=1/x$ is a bijection
+of the positive domain with itself, with the same formula for its inverse.
+It yields
+\begin{equation}
+\label{eq:cc-affine}
+ z_0=1,\qquad z_{n+1}=z_n+1,\qquad y_n=\frac1{z_n}.
+\end{equation}
+In particular $z_n=n+1$ and $y_n=1/(n+1)$ by induction.
+
+\begin{proposition}[Conjugacy transports the readout and operations]
+\label{prop:cc-conjugacy}
+Let $X,Z$ be state domains, $\phi:X\to Z$ a bijection, $F:X\to X$ a
+transition, and $q:X\to Y$ a readout. Set
+\[
+ F'=\phi F\phi^{-1},\qquad q'=q\phi^{-1},\qquad z_0=\phi(x_0).
+\]
+Then $q'(F'^n(z_0))=q(F^n(x_0))$ for all $n\ge0$. Every partial state
+operation $g:P\to X$ transports to
+$g'=\phi g\phi^{-1}:\phi(P)\to Z$. Conjugacy preserves identities,
+defined composition, and equations of operations; readout predicates
+transport by inverse image. These identities commute with restriction to
+every finite horizon.
+\end{proposition}
+\begin{proof}
+Induction gives $F'^n=\phi F^n\phi^{-1}$, after which the readout identity
+follows by cancellation. The corresponding cancellation proves the
+composition identities for partial operations, with transported domains.
+A predicate $q(x)\in V$ becomes $q'(z)\in V$, so truth is unchanged.
+Horizon restriction discards some already equal readout values.
+\end{proof}
+
+For \eqref{eq:cc-rational}, the old observable $x$ must become $1/z$.
+Leaving the readout equal to $z$ would produce $n+1$, a different sequence.
+The old operation $x\mapsto x/(1+x)$ becomes $z\mapsto z+1$, and its positive
+domain proof transports. More general old observables $p(x)$ become
+$p(1/z)$. These may be rational even when $p$ was polynomial. Thus the
+transformation is a definitional equivalence in a language allowing the
+displayed rational operations and their domain predicates, but not an
+equivalence inside a language restricted to linear readouts. The claimed
+equivalence depends on the expressive profile of both transitions and
+observations, not only on the state dimension.
+
+There are two distinct uses of reciprocal here. A reciprocal \emph{state
+coordinate} with a transported readout preserves the phenomenon. Taking
+the reciprocal of an \emph{output sequence} deliberately changes the
+phenomenon. The next obstruction concerns the second operation.
+
+\begin{proposition}[A parameterized rational presentation]
+\label{lr:rational-family}
+For $c\geq0$ and $x_0>0$, the map
+\[
+ R_c(x)=\frac{x}{1+cx},\qquad x\in(0,\infty),
+\]
+with identity readout defines the behavior
+\[
+ b_c(a^n)=\frac{x_0}{1+ncx_0}.
+\]
+Reciprocal coordinates transport it to $z\mapsto z+c$, with initial state
+$z_0=1/x_0$ and readout $z\mapsto1/z$.
+\end{proposition}
+\begin{proof}
+The denominator is positive on the stated domain, and $R_c$ preserves
+positivity. The identity $1/R_c(x)=1/x+c$ proves the transport and the
+behavior formula by induction.
+\end{proof}
+
+This transport preserves the observed behavior. It does not identify the
+underlying physical mechanism. In particular, the transition being affine
+in the new coordinate does not make the complete presentation a linear WFA:
+its reciprocal readout must also be charged to the language.
+
+\begin{proposition}[The revised language generates composition laws and tests]
+\label{lr:generated-tests}
+For the family $R_c$ with $c\geq0$ on $(0,\infty)$,
+\[
+ R_0=\operatorname{id},\qquad R_c\circ R_d=R_{c+d}.
+\]
+Suppose each actually available action $a\in\Sigma$ is hypothesized
+to act as $R_{c_a}$ for some $c_a\geq0$, with the same state coordinate
+and observation $o(x)=x$. The hypothesis predicts
+\[
+ b(w)=\frac{x_0}{1+x_0\sum_{i=1}^{|w|}c_{a_i}}
+ \quad(w=a_1\cdots a_{|w|}),
+ \qquad b(hab)=b(hba)
+\]
+for every history $h$ and every pair of actions $a,b$.
+If the two word experiments $hab,hba$ are executable from the same
+initial preparation, and their measured outputs have absolute error
+at most $\eta$, an observed difference greater than $2\eta$ refutes
+this \emph{entire common-coordinate rational-action family}, regardless
+of the fitted parameter values.
+\end{proposition}
+\begin{proof}
+Direct substitution gives
+$R_c(R_d(x))=x/(1+(c+d)x)$. Equivalently, reciprocal coordinates
+transport composition to addition of translation increments. Iterating
+proves the word formula; addition is commutative. Under the hypothesis
+the two true outputs coincide, so their measured difference is at most
+the sum of their two error bounds.
+\end{proof}
+
+The point is the direction of dependence: a proposed language yields an
+operation law, that law yields a test of the whole language, and a failed
+test can send the learner back to representation revision. This is not
+merely another parameter fit. It does not assert that experiment design
+is solved: other alternatives may satisfy the same identity, and the
+requisite actions and common preparation must actually be available.
+Nor does the equality claim follow from finitely many arbitrary
+observations without the rational-family hypothesis. It is a derived
+obligation of that hypothesis, suitable for the verification and
+elaboration infrastructure chosen for the task.
+
+\section{Exact and approximate expressive separation}
+\label{sec:expressivity}
+
+A real one-letter weighted finite automaton of dimension $r$ computes
+\[
+ f_n=\alpha^{\mathsf T}A^n\beta,
+ \quad A\in\mathbb R^{r\times r},\quad \alpha,\beta\in\mathbb R^r.
+\]
+Write $\mathrm{WFA}_{\mathrm{fin}}$ for the union over finite $r$.
+A rational state-space language permits a finite-dimensional state domain,
+rational transition and readout expressions, and certificates that the
+trajectory remains where all denominators are nonzero. This language
+contains the WFA descriptions by taking row states, $F(v)=vA$, $v_0=\alpha^{\mathsf T}$, and
+$q(v)=v\beta$. This inclusion preserves every sequence value,
+the shift operation, and finite-horizon restriction. Its existence does not
+provide a converse compilation. For $m\geq1$, use the consistent
+square-block notation
+\[
+ H_m=\left(\frac1{i+j+1}\right)_{0\leq i,j<m}.
+\]
+
+\begin{theorem}[No finite WFA realizes the reciprocal trajectory]
+\label{thm:cc-hilbert}
+The sequence $f_n=1/(n+1)$ has no finite-dimensional real WFA realization.
+For every $r$, its values $f_0,\ldots,f_{2r}$ already exclude all WFA
+realizations of dimension at most $r$.
+\end{theorem}
+\begin{proof}
+For any $r$-state WFA, the $(r+1)\times(r+1)$ Hankel block factors as
+\[
+ H_{ij}=f_{i+j}
+  =(\alpha^{\mathsf T}A^i)(A^j\beta),\quad 0\le i,j\le r,
+\]
+so its rank is at most $r$. For the specified sequence and any nonzero
+$v\in\mathbb R^{r+1}$,
+\[
+ v^{\mathsf T}Hv
+ =\sum_{i,j=0}^r\frac{v_iv_j}{i+j+1}
+ =\int_0^1\left(\sum_{i=0}^r v_i t^i\right)^2dt>0.
+\]
+A nonzero polynomial is nonzero on some open subinterval, proving strict
+positivity. Thus $H$ has rank $r+1$, contradicting any such realization.
+Since $r$ was arbitrary, no finite WFA realizes the whole sequence.
+\end{proof}
+
+This is an elementary instance of the classical connection between WFA
+realizations and finite Hankel rank; it is not a new realization theorem
+\cite{cc-balle-mohri}. With an observed block $\widehat H$ and a justified
+operator-norm error bound $\|H-\widehat H\|_2\le\epsilon$, the stronger
+condition $\sigma_{r+1}(\widehat H)>\epsilon$ gives a noise-robust exclusion.
+The exact integral proof does not supply that measurement bound.
+
+\begin{corollary}[Reciprocal is unavailable in the finite WFA language]
+\label{cor:cc-reciprocal}
+The class $\mathrm{WFA}_{\mathrm{fin}}$ is not closed under pointwise
+reciprocal of nowhere-zero sequences. The rational state-space language
+implements this operation whenever its nonzero-output obligation is proved.
+Hence a semantics-preserving implementation of this operation cannot be
+transported back to all finite WFA descriptions, even with unbounded but
+finite dimension chosen separately for each input.
+\end{corollary}
+\begin{proof}
+The sequence $g_n=n+1$ is realized by
+\[
+ A=\begin{pmatrix}1&1\\0&1\end{pmatrix},\quad
+ \beta=\begin{pmatrix}1\\1\end{pmatrix},\quad
+ \alpha=\begin{pmatrix}1\\0\end{pmatrix}.
+\]
+The identity $g_n=n+1$ and its positivity have elementary induction proofs,
+taken here as accepted applicability certificates for this example.
+Its pointwise reciprocal is the sequence excluded by
+Theorem~\ref{thm:cc-hilbert}. Proposition~\ref{prop:cc-operation-obstruction}
+therefore applies. In a rational realization with readout $q$, replace the
+readout by $1/q$ and retain the state dynamics. The operation is defined
+on the reachable trajectory exactly when the stated obligation holds.
+\end{proof}
+
+Consequently the WFA-to-rational inclusion is a genuine expressive expansion.
+The $x$-to-$z$ transformation within the rational language is a definitional
+change. Conflating these two arrows would hide precisely the distinction
+that a theory of characterization change needs to expose.
+
+\begin{proposition}[Uniform absolute error bounds]
+\label{prop:cc-approximation}
+For every $k\ge1$, the $k$-state diagonal WFA
+\[
+ g_n^{(k)}=\frac1k\sum_{j=1}^k\left(\frac jk\right)^n
+\]
+satisfies $\sup_{n\ge0}|g_n^{(k)}-1/(n+1)|\le1/k$.
+Conversely, for every $r$-state WFA sequence $g$,
+\[
+ \sup_{n\ge0}|g_n-1/(n+1)|
+ \ \ge\ \frac{\sigma_{r+1}(H_{r+1})}{r+1}>0,
+ \qquad (H_{r+1})_{ij}=\frac1{i+j+1}\quad(0\le i,j\le r).
+\]
+\end{proposition}
+\begin{proof}
+For $n\ge1$, the function $t^n$ is increasing on $[0,1]$. Its right and
+left Riemann sums on the uniform $k$-interval partition bracket its integral
+and differ by $1/k$. The right sum is $g_n^{(k)}$, while the integral is
+$1/(n+1)$. At $n=0$, both the target and the approximation equal one.
+The diagonal realization uses eigenvalues $j/k$ and weights $1/k$.
+
+For the lower bound, the corresponding $(r+1)$-square block $G_{r+1}$ of $g$
+has rank at most $r$. Choose a unit vector $v\in\ker G_{r+1}$. Then
+$\|H_{r+1}-G_{r+1}\|_2\ge\|H_{r+1}v\|_2\ge\sigma_{r+1}(H_{r+1})$. If the uniform
+entrywise error is $\epsilon$, the block's Frobenius norm and hence its
+operator norm are at most $(r+1)\epsilon$. Combine these inequalities and
+use the positive definiteness proved above.
+\end{proof}
+
+The upper construction is elementary rather than optimal. Braess and
+Hackbusch prove uniform approximation of $1/x$ on $[1,\infty)$ by
+$k$-term exponential sums with error $O(\exp(-c\sqrt{k}))$ for a positive
+constant $c$ \cite{cc-braess-hackbusch}. Sampling a sum
+$\sum_j w_j e^{-a_jx}$ at $x=n+1$ gives a $k$-state diagonal WFA with
+eigenvalues $e^{-a_j}$ and weights $w_je^{-a_j}$, so their bound applies
+to this sequence as well. Their conjectured optimal constant in the exponent
+is not treated as a proved bound.
+
+Thus the exact infinite-rank obstruction is compatible with useful
+finite-state approximation, even uniformly over all time indices in
+absolute error. The fixed-rank lower bound above can be very small because
+Hilbert matrices are poorly conditioned. A practical choice of language
+must therefore specify accuracy, metric, resource cost, and which symbolic
+operations or explanations the task requires. A claim about exact equality
+does not establish practical inferiority at a chosen nonzero tolerance;
+uniform absolute and uniform relative error are also different requirements.
+
+\begin{proposition}[Global relative error gives a different obstruction]
+\label{prop:relative-obstruction}
+For every finite real WFA sequence $g$,
+\[
+ \sup_{n\geq0}\frac{|g_n-1/(n+1)|}{1/(n+1)}\geq1.
+\]
+Thus no finite WFA achieves a uniform relative error strictly below one,
+even though finite WFAs achieve arbitrarily small uniform absolute error.
+The lower bound is sharp: the zero behavior has relative error exactly one.
+\end{proposition}
+\begin{proof}
+Suppose instead that $|g_n-1/(n+1)|\leq\varepsilon/(n+1)$ for every
+$n$, where $0\leq\varepsilon<1$. The power series
+$G(t)=\sum_{n\geq0}g_nt^n$ converges absolutely for $|t|<1$, and for
+$0<t<1$ obeys
+\[
+ (1-\varepsilon)\frac{-\log(1-t)}t
+ \leq G(t)\leq
+ (1+\varepsilon)\frac{-\log(1-t)}t.
+\]
+A finite WFA has the rational formal generating function
+$\alpha^{\mathsf T}(I-tA)^{-1}\beta$. The power-series identity near
+zero, followed by analytic continuation, identifies its reduced rational
+function with $G$ on the unit disk; any apparent poles there are removable.
+At $t=1$, a rational function is either bounded or has a pole of some
+positive integer order. Boundedness contradicts the lower logarithmic
+bound, while a pole cannot satisfy the two logarithmic bounds. This rules
+out every such $\varepsilon$ and proves the assertion.
+\end{proof}
+
+The absolute/relative distinction is a change in the comparison interface,
+not a contradiction between approximation results. A claim that one
+language is adequate must state which of these requirements the task uses.
+
+\section{Finite evidence and the inverse-limit obstruction}
+\label{sec:finite}
+
+\begin{proposition}[Finite non-refutation and an unseen-test obstruction]
+\label{lr:finite-obstruction}
+Let $D\subset\Sigma^*$ be finite.
+\begin{enumerate}
+\item Every assignment $y:D\to\mathbb R$ is the restriction of a
+      finite real WFA behavior.
+\item For any behavior $b$, any $v\notin D$, and any $M>0$, the
+      behaviors $b$ and $b+M\mathbf1_{\{v\}}$ agree on $D$ but differ
+      by $M$ at $v$. Any common prediction at $v$ has absolute error at
+      least $M/2$ for one of them.
+\item If $b$ has a finite WFA realization, so does the modified behavior.
+      Thus the unseen-test obstruction persists even within the union
+      of all finite WFA sizes.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+Extend the finite assignment by zero outside $D$. A trie automaton with
+state set $\{\varepsilon\}\cup\operatorname{Pref}(D)$, where
+$\operatorname{Pref}(D)$ contains the prefixes of words in $D$, initial state the empty
+prefix, transitions following trie edges and otherwise to zero, and
+terminal readout $y(w)$ on $w\in D$, realizes the extension. The same
+construction realizes $\mathbf1_{\{v\}}$. Direct sums realize sums of
+WFA behaviors. The prediction lower bound follows from the triangle
+inequality: two real values distance $M$ apart cannot both be within
+less than $M/2$ of the same prediction.
+\end{proof}
+
+The argument also applies to finitely many adaptively selected exact
+queries: choose an unqueried word after the finite transcript, and the
+two completions are indistinguishable on that transcript. Consequently,
+finite evidence can refute a \emph{fixed} linear dimension budget without
+refuting the entire language of finite WFAs. It can certify a candidate's
+advantage on a specified block without identifying its unseen behavior
+against unrestricted alternatives.
+
+\begin{corollary}[Semantic image does not commute with the horizon limit]
+\label{thm:cc-finite-prefix}
+Let the description set at every horizon be the same set of complete
+finite unary WFA descriptions, with identity restriction maps between
+description sets. Interpret a description at horizon $N$ by its prefix of
+length $N+1$, and at infinity by its complete sequence. If $I_N$ and
+$I_\infty$ denote these semantic images, then
+\[
+ I_N=\mathbb R^{N+1},\qquad
+ I_\infty\subsetneq\varprojlim_N I_N=\mathbb R^{\mathbb N}.
+\]
+\end{corollary}
+\begin{proof}
+Proposition~\ref{lr:finite-obstruction} realizes every finite prefix,
+so $I_N=\mathbb R^{N+1}$. The inverse limit under truncation is the set
+of all infinite sequences. Its element $1/(n+1)$ is absent from
+$I_\infty$ by Theorem~\ref{thm:cc-hilbert}. A compatible family in the
+constant description system, in contrast, is one fixed finite WFA.
+Thus taking the semantic image after the limit of descriptions differs
+from taking the limit of the finite semantic images.
+\end{proof}
+
+An explicit interpolant for $a_0,\ldots,a_N$ uses a shift register of
+dimension $N+1$: in column notation take $Ae_i=e_{i+1}$ for $i<N$,
+$Ae_N=0$, initial vector $e_0$, and readout $e_i\mapsto a_i$.
+This realizes the specified prefix and is zero thereafter. Transposition
+converts it to the row-state convention used above. The obvious inclusion
+into the next register fails to intertwine the last transition, while the
+obvious truncation projection fails to preserve the full readout when
+$a_{N+1}\ne0$, as in the harmonic example. Compatible finite behaviors
+therefore do not automatically supply compatible full model transports.
+
+These obstructions do not prevent preferring a rational characterization.
+Rejecting every finite WFA from finitely many values requires
+something besides those values: a dimension or resource constraint, a supplied
+law with an accepted universal scope, or an explicitly stated inductive
+criterion. Four observed values do not turn a rational recurrence into an
+established law of the target.
+
+If the accepted evidence instead includes the finite \emph{presentation}
+\[
+ f_0=1,\qquad
+ \forall n\in\mathbb N:\ f_n>0\quad\text{and}\quad
+ f_{n+1}(1+f_n)=f_n,
+\]
+ordinary induction identifies its unique sequence as $1/(n+1)$. The
+presentation is finite syntax with infinite scope; it is not a finite table
+of measurements. Under that premise, the WFA characterization has an empty
+compatible fiber, while the rational characterization has the verified
+realization \eqref{eq:cc-rational}. This is a solved conditional problem.
+Whether observed data justify accepting the premise remains a different,
+statistical or scientific inference problem.
+
+\section{Assumption-relative rational identification}
+\label{sec:identification}
+
+The input coordinate and its interpretation are fixed in this section.
+For the running recurrence with identity readout, consecutive outputs supply
+transition pairs. With an unknown hidden-state coordinate or unknown
+readout, identifying the following rational map from given pairs does not
+solve joint state and observation identification.
+
+Let $\mathcal R_{p,q}$ be the rational functions representable as $P/Q$
+with $\deg P\leq p$, $\deg Q\leq q$, $Q\not\equiv0$. Evaluations are
+only made where the denominator is nonzero.
+
+\begin{theorem}[Finite uniqueness of a bounded-degree rational function]
+\label{lr:rational-unique}
+If $R,\widetilde R\in\mathcal R_{p,q}$ agree on $p+q+1$ distinct
+inputs at which both are defined, then they are the same rational
+function. This is a uniqueness statement, not an existence statement.
+\end{theorem}
+\begin{proof}
+Write $R=P/Q$ and $\widetilde R=\widetilde P/\widetilde Q$.
+The polynomial $P\widetilde Q-\widetilde P Q$ has degree at most
+$p+q$ and has $p+q+1$ distinct roots. It is identically zero.
+\end{proof}
+
+For example the three pairs
+\[
+ (1,1/2),\qquad(1/2,1/3),\qquad(1/3,1/4)
+\]
+uniquely identify $x/(1+x)$ \emph{among degree-$(1,1)$ rational
+functions}. The existence of an unconstrained continuation outside that
+language is not excluded. In particular, this inference must not be
+described as recovering an assumption-free law from three observations.
+
+\paragraph{Coefficient charts and a hidden degeneracy.}
+For numerical recovery, choose a chart with $Q(0)\ne0$ and normalize
+\[
+ P_\theta(x)=\sum_{j=0}^{p}a_jx^j,
+ \quad Q_\theta(x)=1+\sum_{k=1}^{q}c_kx^k,
+ \quad\theta=(a_0,\ldots,a_p,c_1,\ldots,c_q)^T.
+\]
+This normalization does not cover rational functions whose reduced
+denominator vanishes at zero; another chart is needed there.
+For exact pairs $(x_i,y_i)$, put
+\[
+ A_{i,:}=(1,x_i,\ldots,x_i^p,-y_ix_i,\ldots,-y_ix_i^q),
+ \qquad y=(y_i)_{i=1}^{N}.
+\]
+The coefficient equations are $A\theta=y$. Function uniqueness does
+not always imply coefficient uniqueness: common factors or slack degree
+bounds can give different coefficient vectors for the same rational
+function.
+
+\begin{proposition}[An identifiable normalized coefficient chart]
+\label{lr:coefficient-identifiable}
+Suppose $P,Q$ are coprime, $Q(0)=1$, $\deg P=p$, and $\deg Q=q$.
+At $N\geq p+q+1$ distinct inputs away from the poles, with
+$y_i=P(x_i)/Q(x_i)$, the matrix $A$ has full column rank.
+\end{proposition}
+\begin{proof}
+A null vector gives polynomials $\delta P,\delta Q$ of degrees at most
+$p,q$, with $\delta Q(0)=0$, and
+$\delta P(x_i)Q(x_i)-P(x_i)\delta Q(x_i)=0$.
+The polynomial identity argument makes this equality global.
+Coprimality implies $Q$ divides $\delta Q$. Since $\deg Q=q$,
+$\delta Q=tQ$ for a constant $t$. Its zero constant coefficient gives
+$t=0$, and then $\delta P=0$.
+\end{proof}
+
+The degree assumptions are sufficient, not necessary. Rank should be
+checked in the actual chart. If a larger degree bound is used than the
+data-generating rational function needs, redundant common-factor
+directions may destroy coefficient conditioning without destroying
+uniqueness of the represented function.
+
+\begin{theorem}[Conditioned noisy interpolation]
+\label{lr:noisy-interpolation}
+Assume exact data satisfy $A\theta_*=y$, with
+$\|\theta_*\|_2\leq M$. Let measured pairs produce
+$\widehat A=A+E_A$ and $\widehat y=y+e_y$, with justified bounds
+\[
+ \|E_A\|_2\leq\delta_A,
+ \qquad\|e_y\|_2\leq\delta_y.
+\]
+If $\widehat A$ has full column rank and
+$\widehat\theta=\widehat A^\dagger\widehat y$, then
+\begin{equation}
+ \|\widehat\theta-\theta_*\|_2
+ \leq\kappa:={\delta_y+\delta_A M\over
+                     \sigma_{\min}(\widehat A)}.
+ \label{lr:kappa}
+\end{equation}
+If additionally $\sigma_{\min}(\widehat A)>\delta_A$, the exact
+matrix $A$ is also certified to have full column rank.
+\end{theorem}
+\begin{proof}
+Full column rank gives $\widehat A^\dagger\widehat A=I$. Therefore
+\[
+ \widehat\theta-\theta_*
+ =\widehat A^\dagger(e_y-E_A\theta_*).
+\]
+Taking norms proves \eqref{lr:kappa}. The final assertion follows from
+singular-value perturbation.
+\end{proof}
+
+The error bounds can include noise in \emph{both} coordinates of each
+pair. For example suppose $|x_i|,|\widehat x_i|\leq R$ with $R\geq1$,
+$|y_i|\leq B_y$, $|\widehat x_i-x_i|\leq\eta_x$, and
+$|\widehat y_i-y_i|\leq\eta_y$. Then valid choices are
+\begin{align}
+ \delta_y&=\sqrt N\eta_y,\\
+ \delta_A&=\sqrt N\left[
+ \sum_{j=1}^{p}(jR^{j-1}\eta_x)^2+
+ \sum_{k=1}^{q}(R^k\eta_y+B_y kR^{k-1}\eta_x)^2
+ \right]^{1/2}.
+ \label{lr:design-noise}
+\end{align}
+Indeed the mean-value theorem bounds monomial perturbations, and
+\[
+ |\widehat y_i\widehat x_i^k-y_ix_i^k|
+ \leq R^k\eta_y+B_y kR^{k-1}\eta_x.
+\]
+The resulting Frobenius bound controls the operator norm. Correlations
+between consecutive noisy transition pairs do not affect this
+deterministic calculation; they do matter when establishing the noise
+event probabilistically.
+
+\begin{proposition}[From coefficients to a safe rational function]
+\label{lr:safe-domain}
+Let $I\subseteq[-R,R]$, and suppose on $I$ the true normalized
+rational function obeys
+\[
+ |Q_{\theta_*}(x)|\geq\gamma>0,
+ \qquad |R_{\theta_*}(x)|\leq B.
+\]
+Put
+\[
+ V_p(R)=\left(\sum_{j=0}^{p}R^{2j}\right)^{1/2},
+ \qquad W_q(R)=\left(\sum_{k=1}^{q}R^{2k}\right)^{1/2},
+\]
+with $W_0=0$. If $\|\widehat\theta-\theta_*\|_2\leq\kappa$
+and $\kappa W_q(R)<\gamma$, then $\widehat R$ has no pole on $I$
+and
+\begin{equation}
+ \sup_{x\in I}|\widehat R(x)-R_{\theta_*}(x)|
+ \leq\zeta:={\kappa\sqrt{V_p(R)^2+B^2W_q(R)^2}
+                       \over\gamma-\kappa W_q(R)}.
+ \label{lr:rational-error}
+\end{equation}
+\end{proposition}
+\begin{proof}
+The denominator perturbation is at most $\kappa W_q(R)$.
+Writing $\delta P=\widehat P-P$ and $\delta Q=\widehat Q-Q$ gives
+\[
+ \widehat R(x)-R_{\theta_*}(x)
+ ={\delta P(x)-R_{\theta_*}(x)\delta Q(x)\over\widehat Q(x)}.
+\]
+The numerator is the inner product of the coefficient error with
+$(1,x,\ldots,x^p,-R_{\theta_*}(x)x,\ldots,-R_{\theta_*}(x)x^q)$,
+whose norm is bounded by the
+square root in \eqref{lr:rational-error}.
+\end{proof}
+
+No-pole control alone is not forward invariance. One must separately
+verify $\widehat R(I)\subseteq I$, enforce it in a candidate family, or
+prove that the particular reachable orbit stays in a safe domain.
+For an interval $I$, a sufficient condition is that $R_{\theta_*}(I)$ has distance
+greater than $\zeta$ from the complement of $I$. That sufficient condition
+does not apply when the true dynamics touch the boundary. These are real
+verification obligations, not consequences of a low interpolation loss.
+
+\begin{proposition}[Conditional rollout control]
+\label{lr:rollout}
+Suppose $R,\widehat R:I\to I$, $R$ is $K$-Lipschitz on $I$, and
+$\sup_I|\widehat R-R|\leq\zeta$. For their trajectories from
+$x_0,\widehat x_0\in I$,
+\[
+ |\widehat x_n-x_n|
+ \leq K^n|\widehat x_0-x_0|+
+       \zeta\sum_{j=0}^{n-1}K^j.
+\]
+If instead $R=R_c$, $\widehat R=R_{\widehat c}$ have the same
+$x_0>0$ and $c,\widehat c\geq c_{\min}>0$, then
+\begin{equation}
+ \sup_{n\geq0}|b_c(a^n)-b_{\widehat c}(a^n)|
+ \leq {x_0\over4c_{\min}}|c-\widehat c|.
+ \label{lr:uniform-special-family}
+\end{equation}
+\end{proposition}
+\begin{proof}
+Add and subtract $R(\widehat x_n)$ to obtain the one-step error
+recursion $e_{n+1}\leq Ke_n+\zeta$, then iterate it. For the special
+family the exact difference is
+\[
+ {n x_0^2|c-\widehat c|\over
+ (1+ncx_0)(1+n\widehat c x_0)}
+ \leq {x_0|c-\widehat c|\over c_{\min}}
+       {t\over(1+t)^2},\qquad t=nc_{\min}x_0.
+\]
+Use $t/(1+t)^2\leq1/4$.
+\end{proof}
+
+The uniform estimate is stronger than generic finite-horizon control
+because it uses the special rational family. Within that narrower family,
+one exact nonzero transition pair determines
+$c=1/y-1/x$; this statement carries a correspondingly stronger language
+assumption than degree-$(1,1)$ rational interpolation. If both observed
+and true $x,y$ are bounded below by $a>0$, coordinatewise errors at most
+$\eta$ give $|\widehat c-c|\leq2\eta/a^2$. Positivity of
+$\widehat c$ must still be checked.
+
+\section{From a true-error certificate to a realized language change}
+\label{sec:gate}
+
+Let $H_*\in\mathbb R^{m\times n}$ be a true observation block and let
+$Y$ be its measured version. Assume justified bounds
+\begin{equation}
+ \|Y-H_*\|_2\leq\epsilon_2,
+ \qquad \|Y-H_*\|_F\leq\epsilon_F.
+ \label{lr:noise-event}
+\end{equation}
+If only the first bound is known, one may set
+$\epsilon_F=\sqrt{k}\epsilon_2$, where $k=\min(m,n)$.
+Let $0\leq r<k$, and define
+\begin{equation}
+ L_r(Y)=\left(\sum_{j=r+1}^{k}
+        (\sigma_j(Y)-\epsilon_2)_+^2\right)^{1/2}.
+ \label{lr:lower}
+\end{equation}
+For any proposed globally defined behavior $b$, set
+\begin{equation}
+ B=H_b[S,E],\qquad U_b(Y)=\|Y-B\|_F+\epsilon_F.
+ \label{lr:upper}
+\end{equation}
+
+\begin{theorem}[Evidence-certified representation-language advantage]
+\label{lr:class-comparison}
+On the event \eqref{lr:noise-event}, every real WFA $\mathcal A$ with
+at most $r$ states satisfies
+\[
+ \|H_{f_{\mathcal A}}[S,E]-H_*\|_F\geq L_r(Y),
+ \qquad \|B-H_*\|_F\leq U_b(Y).
+\]
+Consequently $U_b(Y)<L_r(Y)$ certifies that $b$ has strictly lower true
+block squared loss than \emph{every} WFA with at most $r$ states.
+The behavior $b$ may have been chosen using the same data $Y$.
+\end{theorem}
+\begin{proof}
+Every such WFA block has rank at most $r$. Singular-value perturbation
+gives $\sigma_j(H_*)\geq(\sigma_j(Y)-\epsilon_2)_+$, and the
+Eckart--Young inequality bounds its distance from every rank-at-most-$r$
+matrix below by $L_r(Y)$. The candidate upper bound is the triangle
+inequality. Both statements hold simultaneously for all candidate
+matrices on the fixed noise event, so selecting $b$ after seeing $Y$
+does not invalidate this deterministic implication.
+\end{proof}
+
+\begin{remark}[What the certificate does not select]
+The theorem does not discover $b$, compare the description lengths of
+arbitrary languages, or prove that $r$ is a scientifically privileged
+budget. It certifies a specific inequality between operationally
+comparable behaviors. If $S,E$ or a stopping time are selected adaptively,
+a fixed-block concentration theorem cannot simply be reused without
+checking that its noise event remains valid. Confidence sequences,
+simultaneous bounds, a valid union bound, or a fresh verification sample
+are possible ways to discharge that separate statistical obligation.
+\end{remark}
+
+\begin{theorem}[Certified gated language replacement]
+\label{lr:replacement}
+Let $f_0$ be the behavior of an old real WFA with at most $r$ states, and
+let $b$ be any globally defined presentation for which
+$U_b(Y)<L_r(Y)$. Put
+\[
+ \Delta=L_r(Y)^2-U_b(Y)^2>0,
+ \quad H_0=H_{f_0}[S,E],\quad D=B-H_0,
+ \quad f_g=(1-g)f_0+gb.
+\]
+Then:
+\begin{enumerate}
+\item The family $f_g$ has a globally defined product-state realization
+      for every real $g$. At $g=0$ it agrees with $f_0$ on every word.
+\item For $\ell(H)=\tfrac12\|H-H_*\|_F^2$ and $0\leq g\leq1$,
+\begin{equation}
+ \ell(H_0+gD)-\ell(H_0)
+ \leq-\frac{g\Delta}{2}
+       -\frac{g(1-g)}{2}\|D\|_F^2.
+ \label{lr:gate-bound}
+\end{equation}
+In particular every $0<g\leq1$ improves the true block loss, and
+\[
+ \left.\frac{d}{dg}\ell(H_0+gD)\right|_{g=0}
+ \leq-\frac{\Delta+\|D\|_F^2}{2}<0.
+\]
+\item If the old presentation depends differentiably on parameters
+      $\theta$, keeping the candidate fixed gives
+      $\partial_\theta f_g=(1-g)\partial_\theta f_0$.
+      Thus old derivatives are unchanged at initialization.
+\item At $g=1$, projection to the candidate state preserves every
+      transition and the observation map. The old subsystem may be
+      discarded with no change to the resulting behavior on any word.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Let $(X_0,x_0,T_a^0,o_0)$ and $(X_b,z_0,T_a^b,o_b)$ realize $f_0$ and
+$b$. On $X_0\times X_b$, use the initial state $(x_0,z_0)$, transitions
+$(x,z)\mapsto(T_a^0x,T_a^bz)$, and readout
+$(x,z)\mapsto(1-g)o_0(x)+go_b(z)$. Induction on word length proves the
+behavior formula. The candidate domain is forward invariant by the
+global-presentation assumption.
+
+For any two matrices the squared-norm identity gives
+\[
+ \ell((1-g)H_0+gB)
+ =(1-g)\ell(H_0)+g\ell(B)
+  -\tfrac12g(1-g)\|B-H_0\|_F^2.
+\]
+Theorem~\ref{lr:class-comparison} implies
+$\ell(B)-\ell(H_0)\leq-\Delta/2$, proving
+\eqref{lr:gate-bound}. Differentiating the exact identity gives the
+stated gate derivative. The parameter identity follows by differentiation
+with $b$ held fixed. Finally, at $g=1$ the readout ignores the old state
+and the product transitions commute with projection onto $X_b$.
+\end{proof}
+
+\begin{corollary}[The initial descent direction is visible in measured loss]
+\label{lr:observed-descent}
+Under Theorem~\ref{lr:replacement}, put
+$\widehat\ell(H)=\tfrac12\|H-Y\|_F^2$. Then
+\[
+ \left.\frac{d}{dg}\widehat\ell(H_0+gD)\right|_{g=0}
+ \leq-\frac{\Delta+\|D\|_F^2}{2}<0.
+\]
+The inequality \eqref{lr:gate-bound} also holds with $\ell$ replaced by
+$\widehat\ell$.
+\end{corollary}
+\begin{proof}
+Since $H_0$ has rank at most $r$, the Eckart--Young inequality applied
+to $Y$ gives
+$\|H_0-Y\|_F\geq(\sum_{j>r}\sigma_j(Y)^2)^{1/2}\geq L_r(Y)$.
+Also $\|B-Y\|_F\leq U_b(Y)$. Their squared-loss difference is at
+most $-\Delta/2$. The same exact quadratic identity used in the
+replacement theorem proves the assertions.
+\end{proof}
+
+\begin{remark}[The exact claim about new gradients]
+The new gate is active. If $b$ also has trainable internal parameters,
+their derivatives in this particular construction are multiplied by $g$
+and vanish at $g=0$. This theorem does not claim simultaneous nonzero
+gradients for every new parameter. The candidate may instead be fitted
+before insertion, after which the gate supplies the initially active
+direction. Nor does function preservation at $g=0$ mean that old
+predictions remain fixed throughout the path: changing them is the
+purpose of a successful revision. The stated line-loss bounds hold with
+both branch behaviors fixed. Jointly training either branch changes that
+path and requires a new argument or certificate.
+\end{remark}
+
+\begin{proposition}[Endpoint improvement is not path monotonicity]
+\label{lr:monotonicity}
+Under Theorem~\ref{lr:replacement}, $D\ne0$. The true unconstrained
+line minimizer is
+\[
+ g_*={\langle H_*-H_0,D\rangle_F\over\|D\|_F^2}
+ \geq{\Delta+\|D\|_F^2\over2\|D\|_F^2}.
+\]
+Consequently the true loss is nonincreasing on
+\[
+ 0\leq g\leq g_{\rm safe}:=
+ \min\left\{1,{\Delta+\|D\|_F^2\over2\|D\|_F^2}\right\}.
+\]
+It is nonincreasing on the entire interval $[0,1]$ if and only if
+$\langle B-H_*,D\rangle_F\leq0$. A sufficient observed condition
+for the latter is
+\[
+ \langle B-Y,D\rangle_F+\epsilon_F\|D\|_F\leq0.
+\]
+\end{proposition}
+\begin{proof}
+Strict candidate advantage excludes $B=H_0$. The line loss is a
+strictly convex quadratic with derivative
+$\langle H_0-H_*,D\rangle_F+g\|D\|_F^2$. Its initial derivative
+bound from Theorem~\ref{lr:replacement} gives the stated lower bound
+on $g_*$. The derivative is increasing, so its sign at $g=1$ gives
+the necessary and sufficient condition. The observed sufficient
+condition is Cauchy--Schwarz and the Frobenius noise bound.
+\end{proof}
+
+For example, scalar target $0$, old prediction $2$, and candidate $-1$
+give squared error $(2-3g)^2$: every $0<g\leq1$ beats the old
+endpoint, but the error rises after $g=2/3$. Thus a safe initial gate
+step and full endpoint compression are distinct decisions. Stopping
+before $g=1$ generally retains a genuine dependence on the old subsystem.
+
+\begin{remark}[A small extension can cross a language boundary]
+If the candidate has a one-dimensional rational state space, an
+$r$-dimensional old WFA needs only one additional recurrent coordinate
+during coexistence. The combined presentation can leave the linear-WFA
+language through its transitions, its readout, or both. For the specific
+$R_c$ candidate with $c>0$ and identity readout, the extra transition
+coordinate is nonlinear. At the endpoint the realization reduces to the
+candidate's one-dimensional state space. Thus the mechanism can decrease
+the final state dimension while escaping a certified linear rank budget.
+This does not compare total descriptive, computational, or numerical
+complexity; those resources must be specified separately.
+\end{remark}
+
+\begin{corollary}[A nonvacuous certificate and replacement instance]
+\label{lr:nonvacuous}
+For any fixed $r\geq0$, choose $m>r$. Observe the behavior $b_1(a^n)=1/(n+1)$, with $x_0=1$, on all words
+needed for this block. With exact evidence,
+the candidate $b_1$ has $U_{b_1}=0<L_r(H_m)$. Therefore
+Theorem~\ref{lr:replacement} applies to every old WFA with at most $r$
+states. For fixed $m,r$, the same conclusion remains true for sufficiently
+small noise whenever the candidate upper bound tends to zero.
+\end{corollary}
+\begin{proof}
+Positive definiteness gives $\sigma_j(H_m)>0$ for all $j$, so
+$L_r(H_m)>0$. The noisy assertion follows by continuity of singular
+values and of the candidate upper bound at this strict inequality.
+\end{proof}
+
+\begin{corollary}[The harmonic mixture genuinely leaves the finite WFA language]
+\label{lr:genuine-exit}
+Let $b(a^n)=1/(n+1)$ and let $f_0$ have any finite WFA realization.
+For every $g\ne0$, the behavior $f_g=(1-g)f_0+gb$ has no finite WFA
+realization.
+\end{corollary}
+\begin{proof}
+Finite WFA behaviors are closed under finite linear combinations by
+block-diagonal direct sums and scalar changes of readout. If $f_g$ had
+a finite realization, then $b=(f_g-(1-g)f_0)/g$ would as well, contrary
+to Theorem~\ref{thm:cc-hilbert}.
+\end{proof}
+
+This structural conclusion concerns the specified candidate behavior.
+The finite evidence certificate still establishes a target-relative
+advantage only on its stated block and against its stated budget.
+
+\begin{remark}[A real robustness limitation]
+The qualification ``for fixed $m,r$'' matters. Hilbert matrices are
+ill-conditioned, and higher exact Hankel rank is not automatically
+observable above a fixed noise floor. The example does not establish a
+uniformly robust certificate against arbitrarily large linear budgets.
+Its strongest claim is a compact exact law plus budget-specific,
+noise-qualified comparisons.
+\end{remark}
+
+\paragraph{A numerical certificate with its norm convention stated.}
+Take $r=1$, $S=E=\{\varepsilon,a\}$, the measured block
+\[
+ Y=\begin{pmatrix}1&1/2\\1/2&1/3\end{pmatrix},
+ \qquad B=Y,
+\]
+and suppose only that its unknown true block satisfies
+$\|Y-H_*\|_F\leq\delta=10^{-3}$. This also gives the operator-norm
+bound $\epsilon_2=\delta$. The singular values of $Y$ are
+$(4\pm\sqrt{13})/6$, so
+\[
+ L_1={4-\sqrt{13}\over6}-10^{-3}
+     \approx0.0647414540893,
+ \qquad U_b=0.001,
+\]
+\[
+ \Delta=L_1^2-U_b^2\approx0.00419045587760.
+\]
+Thus the candidate has strictly smaller true block loss than every
+one-state WFA for every true block in the stated uncertainty ball. The
+guaranteed half-squared-loss reduction at $g=1$ is at least
+$\Delta/2\approx0.00209522793880$. If instead $10^{-3}$ is an
+\emph{operator}-norm radius only, take $\epsilon_F=\sqrt2\,10^{-3}$;
+then $U_b\approx0.00141421356237$ and
+$\Delta\approx0.00418945587760$. No unobserved-word or physical-law
+conclusion is part of this numerical certificate.
+
+\section{The least observable extension and its precise scope}
+\label{sec:localization}
+
+The reciprocal coordinate also exposes the distinction between a small
+state description and a small linear observable space. Work with rational
+functions of $z$ on $(0,\infty)$ and the shift pullback
+$\sigma(p)(z)=p(z+1)$. Let $S$ be the multiplicative set in $\mathbb R[z]$
+generated by $z+n$ for $n\in\mathbb N$. Define
+\[
+ A=S^{-1}\mathbb R[z]
+   =\mathbb R\bigl[z,(z+n)^{-1}:n\in\mathbb N\bigr].
+\]
+Every denominator is nonzero on the positive domain. The localization's
+universal property is standard \cite{cc-stacks-localization}; the following
+consequences give the exact extension required in this case.
+
+\begin{theorem}[The least shift-stable reciprocal extension]
+\label{thm:cc-localization}
+The algebra $A$ is the least subalgebra of $\mathbb R(z)$ containing $z$
+and $1/z$ and closed under $\sigma$. The shift extends uniquely to $A$.
+More generally, for a commutative $\mathbb R$-algebra $B$ with $\mathbb R$-algebra endomorphism
+$\tau$ and an element $b$ satisfying $\tau(b)=b+1$ and $b+n$ invertible
+for all $n\ge0$, there is a unique $\mathbb R$-algebra homomorphism
+$A\to B$ carrying $z$ to $b$ and commuting with the shifts.
+The algebra $A$ is not finitely generated as a commutative
+$\mathbb R$-algebra, although it is generated by $z$ and $1/z$ when the
+shift operation is included in the signature.
+\end{theorem}
+\begin{proof}
+Any shift-stable algebra containing $1/z$ contains
+$\sigma^n(1/z)=1/(z+n)$, hence contains $A$. Conversely $\sigma(z)=z+1$
+and $\sigma((z+n)^{-1})=(z+n+1)^{-1}$ lie in $A$, so $A$ is stable.
+The universal property of localization extends $z\mapsto b$ uniquely,
+because every member of $S$ maps to a unit. The extension commutes with
+shift on $z$ and each inverse generator, hence on the algebra they generate.
+
+For finite generation, every finite collection of rational functions has
+poles in a finite union of finite sets. Polynomial combinations of those
+functions cannot acquire a pole outside that union. But $A$ contains
+$1/(z+N)$ for every nonnegative integer $N$, which has a pole at $-N$.
+No finite set of algebra generators can produce them all. Finally, repeated
+shift of the one generator $1/z$ produces every reciprocal generator, so
+the enlarged operation signature has the claimed two-element generating set.
+\end{proof}
+
+The poles used in this proof lie outside the positive execution domain.
+This is legitimate: equality of rational functions on the positive interval
+implies equality as rational functions, so an identity on the execution
+domain cannot manufacture a missing pole. No physical interpretation of
+negative-state execution is required.
+
+\paragraph{The specified observable and general reciprocal closure.}
+The theorem adjoins the \emph{particular observable} $1/z$ and closes under
+shift and algebra operations. It does not make $A$ closed under reciprocal
+of every nowhere-zero observable. For example, $z+\tfrac12$ belongs to $A$
+and is positive on the execution domain, but $(z+\tfrac12)^{-1}$ does not
+belong to $A$: it has a pole at $-\tfrac12$, whereas members of $A$ can have
+finite poles only at nonpositive integers. Thus $A$ is not the full rational
+language used in Corollary~\ref{cor:cc-reciprocal}.
+
+If closure under reciprocal of every function that is nowhere zero on the
+\emph{whole positive domain} is required, use instead
+\[
+ P=\{p\in\mathbb R[z]:p(t)\ne0\text{ for every }t>0\},
+ \qquad B=P^{-1}\mathbb R[z].
+\]
+This is the least algebra containing $\mathbb R[z]$ with that closure:
+the requirement forces each $p\in P$ to be inverted, and a nowhere-zero
+element $p/q\in B$ has $p\in P$, so its inverse $q/p$ again lies in $B$.
+It is shift-stable because $p(z+1)\in P$ whenever $p\in P$.
+Other certified execution domains give different localizations or partial
+operations. In particular, an obligation holding only on one reachable
+trajectory must not be silently strengthened to the whole positive domain.
+
+This theorem makes a concrete point about changing available operations.
+A countably generated ordinary observable algebra can have a finite
+generating set once iteration of a specified operation is admitted. This
+does not by itself assert a finite presentation by generators and relations. The new
+language is economical in a different sense from a finite-dimensional linear
+observable space. Neither economy is an invariant that can be identified
+with all the others. For the running sequence, a one-dimensional
+rational realization and infinite WFA dimension coexist without contradiction.
+
+\section{Why state dimension alone cannot measure language cost}
+\label{sec:cost}
+
+\begin{proposition}[One smooth state can hide an arbitrary sequence]
+\label{lr:smooth-one-state}
+For every real sequence $(y_n)_{n\geq0}$ there is a smooth function
+$g:\mathbb R\to\mathbb R$ such that the one-dimensional smooth
+presentation
+\[
+ z_0=0,\qquad T(z)=z+1,\qquad o(z)=g(z)
+\]
+has unary behavior $f(a^n)=y_n$. If the sequence is bounded, $g$ can
+be chosen so that each derivative of every fixed order is bounded on
+$\mathbb R$.
+\end{proposition}
+\begin{proof}
+Choose $\phi\in C_c^\infty((-1/3,1/3))$ with $\phi(0)=1$, and put
+\[
+ g(z)=\sum_{n=0}^{\infty}y_n\phi(z-n).
+\]
+The sum is locally finite and its summands have disjoint supports, so
+it is smooth and $g(n)=y_n$. If $|y_n|\leq M$, then
+$\|g^{(k)}\|_\infty\leq M\|\phi^{(k)}\|_\infty$ for every fixed
+$k\geq0$.
+\end{proof}
+
+This construction stores the sequence in the readout. Its assertion is
+existential and does not provide a finite description for an arbitrary
+sequence. It shows why dimension and smoothness, even with bounded
+readout derivatives for bounded sequences, are not by themselves a useful
+cross-language complexity measure on this unbounded state domain.
+A finite description language, numerical precision, computational cost,
+and appropriate domain or regularity constraints are possible resources
+to charge. Choosing them is part of the learning problem, not a
+consequence of rank.
+
+\section{Interaction with the whole task-specific elaborator}
+\label{sec:elaboration}
+
+A diagram of displayed categories can present the entire task-specific
+elaborator: contextual input presentations, verification theories and their
+models, syntax, telescopes, typed holes, admissibility obligations, evidence
+provenance, interpretations, and proof-carrying transports. Such diagrams
+need not be alternatives to that infrastructure; they can be its presentation.
+Neither the scalar interface used here nor a chosen layering of displayed
+structure is asserted to be a universal representation of all tasks. The companion note
+\emph{A Task Specific Elaboration Situation for Changing Model Languages}
+develops that wider presentation separately as a conditional specification
+with typed records and telescopes, not an implemented full elaborator.
+Displayed categories supply the modular categorical machinery
+\cite{cc-displayed}; additional mathematical results must justify the
+particular elaborator's existence, coherence, and any claimed canonicity.
+
+This note contributes concrete nonvacuity tests to such a presentation.
+For an input whose accepted law uniquely specifies $1/(n+1)$, the
+finite-WFA compatible-description fiber is empty, while the rational fiber
+contains the verified positive-domain recurrence. No section returning a
+finite WFA on every such input can exist. Under only finite measurements,
+the unrestricted WFA fiber is instead nonempty; a bounded-capacity
+certificate can still rule out an explicitly budgeted class or prefer a
+candidate on the tested block. The same categorical organization therefore
+contains different successful and obstructed situations rather than
+assuming that every hole can be filled.
+
+Context restriction and language synthesis also have different roles.
+Reindexing a verified description can be a cartesian lift when its syntax,
+interpretation, and certificates reindex. Choosing a new characterization
+that repairs an empty or inadequate fiber is an additional synthesis step;
+it is not automatically a cartesian or opcartesian lift. The localization
+of Section~\ref{sec:localization} is canonical only relative to its declared
+operation, domain, and equations. It does not choose reciprocal as the
+scientifically appropriate operation.
+
+The interaction is testable in both directions. Verification constrains
+which proposals count as globally defined candidates, which observations
+are comparable, and which bounds may be used. A successfully elaborated
+candidate then generates consequences such as the action-commutation test
+of Proposition~\ref{lr:generated-tests}; a failed consequence can require a
+new proposal. Canonicity of elaborated syntax, uniqueness of a represented
+rational function, uniqueness of its coefficient chart, and empirical
+identifiability of the target are distinct claims. Theorems above establish
+only the particular claims whose premises they state.
+
+\section{Close prior work and what remains unresolved}
+\label{sec:prior}
+
+Institution theory already supplies satisfaction-preserving vocabulary
+change \cite{cc-goguen-burstall,cc-goguen-rosu}, and displayed categories
+supply modular presentations of dependent categorical structure
+\cite{cc-displayed}. Categorical automata learning and coalgebra learning
+connect states, tests, and minimization \cite{lr:calf,lr:coalgebra-duality}.
+The classical finite-Hankel-rank theory and its spectral learning methods
+underlie the WFA obstruction and class comparison
+\cite{cc-balle-mohri,lr:denis2016}. Localization provides the universal
+algebraic construction \cite{cc-stacks-localization}. Braess and Hackbusch
+already provide the substantially stronger exponential-sum approximation
+rate discussed above \cite{cc-braess-hackbusch}.
+
+Representation and law discovery are also established research subjects.
+Symbolic regression searches equation forms as well as parameters
+\cite{lr:schmidt2009}. SINDy selects sparse dynamics from a candidate
+library and explicitly depends on coordinates and basis \cite{cc-sindy}.
+Joint coordinate and equation discovery is addressed by Champion et al.
+\cite{cc-sindy-coordinates}, and SINDy-PI addresses implicit dynamics and
+rational nonlinearities \cite{cc-sindy-pi}. Crutchfield's hierarchical
+machine reconstruction explicitly concerns innovation of computational
+model classes \cite{cc-emergence}. These are relevant sources of candidate
+proposals, not missing problems solved merely by redescribing them
+categorically. Function-preserving architectural changes also have close
+antecedents such as Net2Net \cite{lr:net2net}; the product-state mixture
+used here is an elementary construction.
+
+Two recent preprints are particularly close comparison targets.
+Ma et al. jointly propose typed structural edits and diagnostic experiments,
+include rational saturation and observation-map changes in their grammar,
+and use anytime-valid evidence for class rejection \cite{lr:ma2026}.
+Wang and Buehler develop verified regime transitions, evidence transport,
+and proof-carrying provenance, including a Builder/Breaker example with a
+description-length gate \cite{lr:wang2026}. Accordingly, this note does
+not claim to introduce integrated representation revision, evidence
+transport, or acceptance gates. Any priority claim even for the particular
+sufficient-condition theorem would require a deeper literature audit.
+
+What is proved here is a bounded synthesis: certified semantic-operation
+nonclosure; positive-domain coordinate transport; exact, absolute-error,
+and relative-error distinctions for the harmonic behavior; finite-data and
+inverse-limit obstructions; conditional rational recovery with explicit
+conditioning and domain obligations; a true-error class comparison that
+licenses an executable gate and endpoint compression; and a precisely
+scoped least observable extension. The common error and observation
+interface makes these results depend on one another rather than merely
+coexist in adjacent formalisms.
+
+What remains unresolved is an effective and broadly useful procedure that
+proposes an appropriate grammar, coordinate system, readout, or verification
+theory from realistic evidence; compares their descriptive, numerical,
+statistical, and computational costs; selects informative available tests;
+and maintains the relevant certificates affordably. The finite-evidence
+obstruction rules out an unrestricted finite-data decision that a failure
+requires more width rather than a language change. The conditional positive
+results license a specified change once its candidate and obligations are
+available. Failure of a sufficient certificate does not prove that no useful
+revision exists, and exact equality in a trace interface does not settle
+all meanings relevant to a richer task.
+
+\begin{thebibliography}{99}
+\bibitem{cc-goguen-burstall}
+J. A. Goguen and R. M. Burstall, Institutions: Abstract model theory for
+specification and programming, \emph{Journal of the ACM} 39(1) (1992), 95--146.
+\url{https://doi.org/10.1145/147508.147524}.
+
+\bibitem{cc-goguen-rosu}
+J. Goguen and G. Ro\c{s}u, Institution morphisms,
+\emph{Formal Aspects of Computing} 13 (2002), 274--307.
+\url{https://doi.org/10.1007/s001650200013}.
+
+\bibitem{cc-displayed}
+B. Ahrens and P. LeFanu Lumsdaine, Displayed categories,
+\emph{Logical Methods in Computer Science} 15(1) (2019), article 20.
+\url{https://lmcs.episciences.org/5252}.
+
+\bibitem{cc-balle-mohri}
+B. Balle and M. Mohri, Spectral learning of general weighted automata via
+constrained matrix completion, \emph{Advances in Neural Information Processing
+Systems} 25 (2012).
+\url{https://papers.nips.cc/paper/2012/hash/700fdb2ba62d4554dc268c65add4b16e-Abstract.html}.
+
+\bibitem{cc-stacks-localization}
+The Stacks Project Authors, Localization, Section 10.9, especially
+Proposition 10.9.3 (tag 00CM).
+\url{https://stacks.math.columbia.edu/tag/00CM}.
+
+\bibitem{cc-sindy}
+S. L. Brunton, J. L. Proctor, and J. N. Kutz, Discovering governing equations
+from data by sparse identification of nonlinear dynamical systems,
+\emph{PNAS} 113(15) (2016), 3932--3937.
+\url{https://doi.org/10.1073/pnas.1517384113}.
+
+\bibitem{cc-sindy-coordinates}
+K. Champion, B. Lusch, J. N. Kutz, and S. L. Brunton, Data-driven discovery
+of coordinates and governing equations, \emph{PNAS} 116(45) (2019),
+22445--22451.
+\url{https://doi.org/10.1073/pnas.1906995116}.
+
+\bibitem{cc-sindy-pi}
+K. Kaheman, J. N. Kutz, and S. L. Brunton, SINDy-PI: A robust algorithm
+for parallel implicit sparse identification of nonlinear dynamics,
+\emph{Proceedings of the Royal Society A} 476 (2020), 20200279.
+\url{https://doi.org/10.1098/rspa.2020.0279}.
+
+\bibitem{cc-emergence}
+J. P. Crutchfield, The calculi of emergence: Computation, dynamics and
+induction, \emph{Physica D} 75 (1994), 11--54.
+\url{https://csc.ucdavis.edu/~dynlearn/papers/CalcEmerg1_46.pdf}.
+
+\bibitem{cc-braess-hackbusch}
+D. Braess and W. Hackbusch, Approximation of $1/x$ by exponential sums in
+$[1,\infty)$, \emph{IMA Journal of Numerical Analysis} 25(4) (2005), 685--697.
+\url{https://doi.org/10.1093/imanum/dri015}.
+Preprint: \url{https://www.mis.mpg.de/publications/preprint-repository/article/2004/issue-75}.
+
+
+\bibitem{lr:denis2016}
+F. Denis, M. Gybels, and A. Habrard, Dimension-free concentration bounds on
+Hankel matrices for spectral learning, \emph{Journal of Machine Learning
+Research} 17(31) (2016), 1--32.
+\url{https://jmlr.org/papers/v17/14-501.html}.
+
+\bibitem{lr:net2net}
+T. Chen, I. Goodfellow, and J. Shlens, Net2Net: Accelerating learning via
+knowledge transfer, arXiv:1511.05641 (2015).
+\url{https://arxiv.org/abs/1511.05641}.
+
+\bibitem{lr:schmidt2009}
+M. Schmidt and H. Lipson, Distilling free-form natural laws from experimental
+data, \emph{Science} 324 (2009), 81--85.
+\url{https://doi.org/10.1126/science.1165893}.
+
+\bibitem{lr:calf}
+G. van Heerdt, M. Sammartino, and A. Silva, CALF: Categorical automata
+learning framework, \emph{Computer Science Logic} (2017), article 29.
+\url{https://doi.org/10.4230/LIPIcs.CSL.2017.29}.
+
+\bibitem{lr:coalgebra-duality}
+S. Barlocco, C. Kupke, and J. Rot, Coalgebra learning via duality,
+\emph{Foundations of Software Science and Computation Structures} (2019),
+62--79. \url{https://doi.org/10.1007/978-3-030-17127-8_4}.
+
+\bibitem{lr:ma2026}
+SiYuan Ma, Albert Gao, Chunzheng Zhu, Xin Yan, Wenlong Zhang, Wenxin Zhang,
+Luqi Gong, Tianlin Li, and Qixin Zhang, Learning to outgrow a theory: Experimental discovery beyond
+the initial hypothesis space, arXiv:2610.07627v1 (6 October 2026).
+\url{https://arxiv.org/abs/2610.07627}.
+
+\bibitem{lr:wang2026}
+F. Y. Wang and M. J. Buehler, Self-revising discovery systems for science:
+A categorical framework for agentic artificial intelligence,
+arXiv:2606.01444v2 (revised 21 August 2026).
+\url{https://arxiv.org/abs/2606.01444}.
+\end{thebibliography}
+\end{document}

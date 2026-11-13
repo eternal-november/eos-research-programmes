@@ -1,0 +1,63 @@
+def ResourceObservation.Product.{u} : {M : Type u} →
+  (M → M → M) → (M → M → Prop) → ResourceObservation.Profile.{u} M → ResourceObservation.Profile.{u} M → M → Prop :=
+fun {M} add le U V b => Exists.{u + 1} fun x => Exists.{u + 1} fun y => U x ∧ V y ∧ le (add x y) b
+def ResourceObservation.ObservedFactorDomination.{u} : {M : Type u} →
+  (M → M → M) → (M → M → Prop) → ResourceObservation.Profile.{u} M → Prop :=
+fun {M} add le B =>
+  ∀ (b : M),
+    B b →
+      ∀ (x y : M),
+        le (add x y) b → Exists.{u + 1} fun a => Exists.{u + 1} fun c => B a ∧ B c ∧ le x a ∧ le y c ∧ le (add a c) b
+def ResourceObservation.UniversalProductAgreement.{u} : {M : Type u} →
+  (M → M → M) → (M → M → Prop) → ResourceObservation.Profile.{u} M → Prop :=
+fun {M} add le B =>
+  ∀ (U U' V V' : ResourceObservation.Profile.{u} M),
+    ResourceObservation.Upward.{u} le U →
+      ResourceObservation.Upward.{u} le U' →
+        ResourceObservation.Upward.{u} le V →
+          ResourceObservation.Upward.{u} le V' →
+            ResourceObservation.AgreeOn.{u} B U U' →
+              ResourceObservation.AgreeOn.{u} B V V' →
+                ResourceObservation.AgreeOn.{u} B (ResourceObservation.Product.{u} add le U V)
+                  (ResourceObservation.Product.{u} add le U' V')
+def ResourceObservation.UniversalRestrictionExact.{u} : {M : Type u} →
+  (M → M → M) → (M → M → Prop) → ResourceObservation.Profile.{u} M → Prop :=
+fun {M} add le B =>
+  ∀ (U V : ResourceObservation.Profile.{u} M),
+    ResourceObservation.Upward.{u} le U →
+      ResourceObservation.Upward.{u} le V →
+        ∀ (b : M),
+          B b →
+            (ResourceObservation.Product.{u} add le U V b ↔
+              ResourceObservation.Product.{u} add le (ResourceObservation.Restrict.{u} B U)
+                (ResourceObservation.Restrict.{u} B V) b)
+@ResourceObservation.product_upward_of_trans.{u_1} : ∀ {M : Type u_1} (add : M → M → M) (le : M → M → Prop),
+  (∀ ⦃a b c : M⦄, le a b → le b c → le a c) →
+    ∀ (U V : ResourceObservation.Profile.{u_1} M),
+      ResourceObservation.Upward.{u_1} le (ResourceObservation.Product.{u_1} add le U V)
+@ResourceObservation.universal_product_agreement_iff_factor.{u_1} : ∀ {M : Type u_1} (add : M → M → M)
+  (le : M → M → Prop),
+  (∀ (x : M), le x x) →
+    (∀ ⦃a b c : M⦄, le a b → le b c → le a c) →
+      (∀ ⦃a a' c c' : M⦄, le a a' → le c c' → le (add a c) (add a' c')) →
+        ∀ (B : ResourceObservation.Profile.{u_1} M),
+          ResourceObservation.UniversalProductAgreement.{u_1} add le B ↔
+            ResourceObservation.ObservedFactorDomination.{u_1} add le B
+@ResourceObservation.universal_restriction_exact_iff_factor.{u_1} : ∀ {M : Type u_1} (add : M → M → M)
+  (le : M → M → Prop),
+  (∀ (x : M), le x x) →
+    (∀ ⦃a b c : M⦄, le a b → le b c → le a c) →
+      ∀ (B : ResourceObservation.Profile.{u_1} M),
+        ResourceObservation.UniversalRestrictionExact.{u_1} add le B ↔
+          ResourceObservation.ObservedFactorDomination.{u_1} add le B
+@ResourceObservation.universal_agreement_iff_restriction_exact.{u_1} : ∀ {M : Type u_1} (add : M → M → M)
+  (le : M → M → Prop),
+  (∀ (x : M), le x x) →
+    (∀ ⦃a b c : M⦄, le a b → le b c → le a c) →
+      (∀ ⦃a a' c c' : M⦄, le a a' → le c c' → le (add a c) (add a' c')) →
+        ∀ (B : ResourceObservation.Profile.{u_1} M),
+          ResourceObservation.UniversalProductAgreement.{u_1} add le B ↔
+            ResourceObservation.UniversalRestrictionExact.{u_1} add le B
+'ResourceObservation.universal_product_agreement_iff_factor' does not depend on any axioms
+'ResourceObservation.universal_restriction_exact_iff_factor' does not depend on any axioms
+'ResourceObservation.universal_agreement_iff_restriction_exact' does not depend on any axioms

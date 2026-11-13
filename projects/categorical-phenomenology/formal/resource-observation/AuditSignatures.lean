@@ -1,0 +1,15 @@
+-- Inspect elaborated definitions and complete theorem types, including
+-- implicit parameters. This file introduces no assumptions or theorems.
+import ResourceObservationIff
+set_option pp.universes true
+#print ResourceObservation.Product
+#print ResourceObservation.ObservedFactorDomination
+#print ResourceObservation.UniversalProductAgreement
+#print ResourceObservation.UniversalRestrictionExact
+#check @ResourceObservation.product_upward_of_trans
+#check @ResourceObservation.universal_product_agreement_iff_factor
+#check @ResourceObservation.universal_restriction_exact_iff_factor
+#check @ResourceObservation.universal_agreement_iff_restriction_exact
+#print axioms ResourceObservation.universal_product_agreement_iff_factor
+#print axioms ResourceObservation.universal_restriction_exact_iff_factor
+#print axioms ResourceObservation.universal_agreement_iff_restriction_exact
