@@ -1,0 +1,92 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{proposition}{Proposition}
+\title{Stochastic Checkpointing in Contextual Composition: a Finite Worked Test}
+\author{}\date{13 November 2026}
+\begin{document}\maketitle
+\paragraph{Status.} An explicit finite example and elementary proofs, not a new general categorical theorem or a novelty claim. Ten exact rational assertions were executed in the accompanying Python script. No Lean replay or complete audit of the existing construction was performed.
+
+\section{A typed adaptive history}
+Write $X=\{0,1\}$, $Y_0=\{*\}$, $Y_1=\{0,1\}$. First sample a fair $x\in X$, then sample $y\in Y_x$, deterministically for $x=0$ and fairly for $x=1$. The history grade
+\[
+ H=\sum_{x\in X}Y_x,\qquad
+ p(0,*)=\tfrac12,\quad p(1,0)=p(1,1)=\tfrac14
+\]
+is a finite full-support probability space. The checkpoint $q:H\to X$, $q(x,y)=x$, preserves measure when $X$ carries the fair law. It discards $y$, not $x$. A full checkpoint instead retains $(x,y)$.
+
+A continuation is asked to supply a value $z\in Y_x$. In the retained implementation it returns $z=y$. In the resampled implementation it samples a new $z$ from the conditional law on $Y_x$, independently of $y$ given $x$. The two declared interfaces are:
+\begin{itemize}
+\item weak: the observer sees $(x,z)$ only;
+\item correlated: the observer also retains a read-only reference $y$, and sees $(x,y,z)$.
+\end{itemize}
+The reference belongs to the external observer, not the checkpointing algorithm. Without stating this distinction, the assertion that resampling ``changes nothing'' is ambiguous.
+
+\section{The complete joint laws}
+The correlated output space is $T=\sum_x(Y_x\times Y_x)$. Its laws are
+\[
+\begin{array}{c|cc}
+(x,y,z)&\text{retained}&\text{resampled}\\\hline
+(0,*,*)&1/2&1/2\\
+(1,0,0)&1/4&1/8\\
+(1,0,1)&0&1/8\\
+(1,1,0)&0&1/8\\
+(1,1,1)&1/4&1/8
+\end{array}
+\]
+After forgetting the reference $y$, both laws on $(x,z)$ are exactly $p$. But $\Pr[y=z]$ is respectively $1$ and $3/4$, and their total variation distance is $1/4$. Conditional on $x=1$, the distance is $1/2$. The equality test attains the unconditional distance. Thus no observer of the weak output alone distinguishes these two laws, whereas one elementary correlated observation does.
+
+This agreement uses the specified initial law. For initial history concentrated on $(1,0)$, the retained weak output is $(1,0)$ surely; resampling is fair on $(1,0),(1,1)$. Therefore the equality is not a transformation valid for arbitrary initial history states.
+
+\section{Exact placement in the existing construction}
+The retained manuscript \emph{One relative construction for context content and effects}, Section ``Dependent probability and lists in one nonthin object'', defines
+\[
+\mathcal H(A,B)=\{(P,f:\coprod_aP_a\to\operatorname{List}(B))\}
+\]
+with deterministic measure-preserving grade maps $\alpha$ satisfying $f'\alpha=f$. It retains these maps rather than quotienting by output laws. Its composition is
+\[
+\sum_{u\in P_a}\prod_{i=1}^nR_{b_i},\qquad
+p_a(u)\prod_i r_{b_i}(v_i),
+\quad\text{if }f(a,u)=[b_1,\ldots,b_n].
+\]
+The present example instantiates this directly. A first arrow $1\Rightarrow X$ has fair grade $X$ and output $[x]$. A second arrow $X\Rightarrow H$ has grade family $Y_x$ and output $[(x,y)]$. Their composite has grade $H$ and singleton history output. This is a length-two dependent telescope evaluated by the already-established accumulation operation, with weights multiplying as above. No new comprehension equivalence for weighted families is asserted.
+
+From $H$, the retained continuation has singleton grade and output $[(x,y,y)]\in\operatorname{List}(T)$. The resampled continuation has grade $Y_x$ at $(x,y)$ and output $[(x,y,z)]$. Consequently its composite grade is
+\[
+ R=\sum_{(x,y)\in H}Y_x,\qquad p_R(x,y,z)=p_H(x,y)p_{Y_x}(z).
+\]
+All grade weights are strictly positive. Zero entries in the table are absent outputs, not zero-weight grade elements.
+
+For the weak interface, define the canonical arrow $J:1\Rightarrow H$ with grade $H$ and output the singleton identity. The retained weak arrow is $J$. The map
+\[
+ \beta:R\longrightarrow H,\qquad (x,y,z)\longmapsto(x,z)
+\]
+is measure preserving and satisfies the output equation. Hence the weak resampled arrow has a genuine native 2-cell to $J$, not merely an equality asserted after taking distributions. It is noninvertible: $R$ has five points and $H$ three.
+
+For the correlated interface, no native 2-cell exists in either direction between the two arrows. Any such cell would preserve output laws, contradicting the table. In particular, the perfectly legitimate measure-preserving projection $R\to H$, $(x,y,z)\mapsto(x,y)$, is not output-compatible here. Nor can they have a common output-compatible refinement, for that too would force equal output laws.
+
+The weak cell is for the composite with its fixed initial sampler. It is not a cell between the two continuation arrows over every input history: at input $(1,0)$, a two-point fair grade cannot collapse to a singleton while preserving the varying output $z$.
+
+\section{Where content interaction matters}
+Singleton output lists suffice for the calculations above, but the occurrence-sensitive crossing identifies an additional important distinction. Compare
+\[
+ \text{sample }h\text{ once and output }[h,h]
+ \quad\text{with}\quad
+ \text{output }[*,*]\text{ and sample a fair bit at each occurrence}.
+\]
+The first law gives $[0,0],[1,1]$ probability $1/2$ each. The existing probability/list crossing gives two independent coordinates in the second, yielding all four length-two lists with probability $1/4$ each. Their total variation distance is $1/2$. Repeating the same label does not identify occurrences. A valid shared-randomness implementation must sample before duplication and carry the sampled value, not silently replace the product crossing by a diagonal coupling. These two programs are not two parenthesizations of the same composite, so their difference contradicts no associativity or coherence law.
+
+\section{The exact checkpoint boundary}
+For finite histories $E$, a surjection $q:E\to B$, and a kernel $K:E\to\operatorname{Dist}(Z)$:
+\begin{proposition}
+A checkpoint-only kernel $\bar K$ reproduces $K$ for every initial history distribution, while preserving an arbitrary reference correlated with history, if and only if $K$ is constant on every fibre of $q$.
+\end{proposition}
+\begin{proof}
+Fibrewise constancy is equivalent to the factorization $K=\bar Kq$. For any joint initial law $\mu(e,r)$, the resulting joint output law is $\sum_{e:q(e)=b}\mu(e,r)K(e,z)$; substitution of the factorization proves preservation. Conversely choose a point-mass initial history and a trivial reference. Preservation yields $K(e,z)=\bar K(q(e),z)$ for every $e,z$.
+\end{proof}
+This is an elementary kernel factorization criterion, not a general theorem about native categorical lifting. In the example $K(x,y)=\delta_y$ is not constant on the $x=1$ fibre. Keeping $x$ is sufficient for a continuation that genuinely uses only $x$ (for example $\delta_x$), but insufficient to reproduce arbitrary access to $y$. Fresh sampling succeeds only for the weak observation and chosen initialization described above.
+
+\section{What is new here, and a bounded next obligation}
+Telescope evaluation, the probability/list crossing, native grade maps, and sensitivity to the declared observation interface are already present in retained work. The present contribution is their assembly into a completely specified checkpoint test, including a native weak-interface cell, a correlated-interface obstruction, and a precise distinction between fixed-initialization equality and input-uniform preservation. It is not evidence that these elementary probability facts are new mathematics.
+
+The next worthwhile obligation is a typed checkpoint rule in the existing language: give its permitted reference interface and input class, prove its native comparison cell, and verify stability under the allowed surrounding compositions. For deterministic output depending only on the checkpoint this follows directly from the grade-map output equation and existing horizontal composition. A wider rule for randomized kernel factorization needs a chosen presentation and possibly common refinements; it should not be claimed to follow merely from equality of probability laws. This note does not establish that general lifting theorem or an optimization/minimal-checkpoint theorem.
+\end{document}
