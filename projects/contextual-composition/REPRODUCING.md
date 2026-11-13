@@ -2,7 +2,7 @@
 
 Use Python 3 and a disposable checkout; several checks write result files. These are finite diagnostics and structural source checks, not proof-assistant certification or a fresh mathematical review.
 
-From `projects/contextad`:
+From `projects/contextual-composition`:
 
 ```sh
 python foundations/finite-contextads/check_expected_outputs.py
