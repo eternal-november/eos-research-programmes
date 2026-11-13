@@ -1,0 +1,155 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\usepackage[margin=1in]{geometry}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}\newtheorem{definition}{Definition}
+\newcommand{\id}{\mathrm{id}}
+\title{Robot Transactions under Interference:\\Exact Compensation and the Observation Boundary}
+\author{Contextual Composition programme}\date{13 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+A robot may undo a manipulation exactly in isolation and still fail to undo it correctly in an evolving environment. We give an exact finite-state cancellation criterion in terms of conjugated interference, a sharp test for independently admissible interruptions, and a capability-scoped atomic-observation theorem. A worked controller uses genuine exclusive environment authority and result-dependent recovery interfaces. It distinguishes physical restoration, preservation of outside changes, and observational atomicity. These are mathematical models under explicit actuator and environment semantics, not safety guarantees for deployed robots or claims of a new theory of transactions.
+\end{abstract}
+
+\section{Question and the new example's scope}
+The motivating question is not whether a robot can annotate a program with ``begin'' and ``rollback.'' It is whether actual commands, observations, recovery authority, and external evolution support a transaction-like change of realization. There are three separate demands:
+\begin{enumerate}
+\item Undo our changes when no outside change occurs.
+\item Undo our changes while preserving the outside changes that would have occurred without us.
+\item Prevent admitted observers from distinguishing intermediate manipulation from one atomic change or an abort.
+\end{enumerate}
+None of these implies the next. We prove exactly what suffices in a finite, known-semantics regime and exhibit failures when it is weakened.
+
+The earlier O5 \emph{Contextual Refinement and Controlled Recovery} example already restores a deployment service's functional interface while retaining an audit bit and spent resources. Its theorem deliberately begins \emph{after} rollback and is not whole-run atomicity. Here the additional issue is \emph{interference during a physical manipulation}, including during compensation. We give a full-run comparison only in an explicitly restricted observation channel. This is not another retry/deduplication example, and it does not revise O5's conclusions. The initial finite-contextad examples already treated a miswired latch with no common recovery policy, calibrated routing with retained correlations, and parcel return with an irreversible notification. We do not count those again: the new axis is independently selectable environmental evolution during a multi-step manipulation and its compensation.
+
+\section{Finite environment semantics and exact cancellation}
+Let $X$ be a finite set of physical configurations. A reversible robot primitive is a permutation $a:X\to X$. An external action $e:X\to X$ need not be reversible. Composition $fg$ means first $g$, then $f$. Fix a robot word $a_1,\ldots,a_m$ and prefixes
+\[
+ P_0=\id,\qquad P_k=a_k\cdots a_1.
+\]
+External action $e_k$ occurs after primitive $a_k$. An absent interruption is $\id$; several at a position can be composed into one $e_k$. Actual execution ends in
+\[
+ A(x)=e_m a_m\cdots e_1a_1(x).
+\]
+The reference external history is the \emph{same labelled sequence}, with the same functions, applied to an unmanipulated environment. This is a counterfactual semantics assumption, not a conclusion about arbitrary reactive physical environments.
+
+\begin{theorem}[Exact interruption factorization]\label{thm:factor}
+Put $E_k=P_k^{-1}e_kP_k$. Then
+\[
+ A=P_m E_m\cdots E_1.
+\]
+Consequently a final undo $P_m^{-1}$ leaves precisely $E_m\cdots E_1(x)$. It preserves the counterfactual external changes for every $x$ if and only if
+\[
+ E_m\cdots E_1=e_m\cdots e_1.
+\]
+\end{theorem}
+\begin{proof}
+After the first interruption the state map is $P_1E_1$. If after $k-1$ it is $P_{k-1}E_{k-1}\cdots E_1$, then applying $a_k$ and $e_k$ gives
+$e_kP_kE_{k-1}\cdots E_1=P_kE_k\cdots E_1$.
+Induction and left composition with $P_m^{-1}$ prove both assertions.
+\end{proof}
+
+\begin{theorem}[Independent interruption boundary]\label{thm:local}
+At each position $k$ let $\mathcal E_k$ be a set of permitted external actions containing $\id$. Correct final undo for every independent selection $e_k\in\mathcal E_k$ and every $x$ holds if and only if
+\[
+ eP_k=P_ke\qquad(e\in\mathcal E_k,\ 1\leq k\leq m).
+\]
+Under this condition, every prefix after its interruptions equals
+$P_k e_k\cdots e_1$.
+\end{theorem}
+\begin{proof}
+Sufficiency follows from Theorem~\ref{thm:factor} and $E_k=e_k$. For necessity choose a single nonidentity interruption at position $k$, setting all the others to identity. Correct undo gives $P_k^{-1}eP_k=e$, equivalent to the displayed equation. Apply the same proof to each prefix for the final claim.
+\end{proof}
+The independence and identity hypotheses matter. Two noncommuting interruptions can cancel their errors; we do not claim individual commutation is necessary for one fixed composite history. Also the tested object is the \emph{whole prefix}, not just the most recent primitive.
+
+These statements extend to partial bijections only after every actual, inverse, and counterfactual composition is defined on a declared domain. An equality of expressions at undefined inputs is not a recovery guarantee. Our finite checks and concrete example use total permutations to avoid hiding this issue. A jammed actuator with no guaranteed inverse is outside this model; the interface below reports an unrecovered fault, rather than relabelling it an abort.
+
+\section{A robot fixture with genuine and nontrivial interference}
+Consider a four-orientation fixture carrying an object, with a three-state environmental counter:
+\[
+ X=\mathbb Z/4\mathbb Z\times\mathbb Z/3\mathbb Z,
+ \qquad x=(q,h).
+\]
+The robot rotates the fixture by $a(q,h)=(q+1,h)$. A two-stage manipulation has prefixes $P_1=a$ and $P_2=a^2$. An allowed external displacement and clock update is
+\[
+ e_{r,s}(q,h)=(q+r,h+s).
+\]
+These act on the \emph{same} pose coordinate as the robot, not just disjoint storage, and commute with every robot prefix. After any finite such interruptions, reversing the robot's rotations preserves their total displacement and clock updates exactly.
+
+For an abort after two stages the robot word can be
+$a,a,a^{-1},a^{-1}$, so $P_4=\id$. Theorem~\ref{thm:local} then proves that interruptions even during the two recovery stages are preserved. For commit the word $a,a$ ends at $a^2$. This represents a known kinematic fixture, not arbitrary grasping or an assertion that physical motion is perfectly reversible. An adaptive controller may rotate once, inspect the permitted clock value, then either undo or perform the second rotation and commit. It may instead inspect again and choose full compensation. The current journal selects the legal inverse; there is no one fixed return operation for all prefixes. The theorem below compares each such observation-adapted path, not merely one preselected word.
+
+\paragraph{A sharp failure.}
+Let the environment instead execute a calibrated reset $z(q,h)=(0,h)$. Rotate once, reset, and undo. The final pose is $3$, while the reference reset without the robot gives $0$. Exact isolated undo does not help. A second example is reflection $r(q,h)=(-q,h)$: $a^{-1}ra(q,h)=(-q-2,h)$, not $r(q,h)$, even though both participants are reversible. Disjointness is sufficient for commutation but not necessary; reversibility of both parties is not sufficient.
+
+\paragraph{A prefix, not a step test.}
+On any state space take a first primitive $a_1=p$, a second $a_2=\id$, and interference $e$ not commuting with $p$. It commutes with the last primitive but fails at prefix $P_2=p$. Checking only the actuator currently executing misses the accumulated change of coordinates.
+
+\section{Typed contextual composition, rather than an untyped simulator}
+An actual token $\ell$ grants exclusive observer access to the fixture; a second token $j$ is the controller's linear recovery journal. These are owned identities, not public names. A finite bound $N$ on physical steps and a finite catalogue of permutations make all interfaces finite. The public controller index records a word $w$ of length at most $N$, with semantic prefix $P_w$. Its typestate records \emph{the robot commands}, not the unknown true pose.
+
+The primitive signatures include:
+\begin{align*}
+ \mathsf{acquire}:&\quad \ell:\mathsf{Free}\ \longrightarrow\
+       (\mathsf{busy},\ell:\mathsf{Free})
+       +(\mathsf{owned},\ell:\mathsf{Held},j:\mathsf{Journal}_{\epsilon}),\\
+ \mathsf{step}_a:&\quad (\ell:\mathsf{Held},j:\mathsf{Journal}_w)
+       \longrightarrow (\ell:\mathsf{Held},j:\mathsf{Journal}_{wa}),\\
+ \mathsf{undo}:&\quad (\ell:\mathsf{Held},j:\mathsf{Journal}_{wa})
+       \longrightarrow (\ell:\mathsf{Held},j:\mathsf{Journal}_w),\\
+ \mathsf{abort}:&\quad (\ell:\mathsf{Held},j:\mathsf{Journal}_{\epsilon})
+       \longrightarrow (\mathsf{aborted},\ell:\mathsf{Free}),\\
+ \mathsf{commit}_w:&\quad (\ell:\mathsf{Held},j:\mathsf{Journal}_w)
+       \longrightarrow (\mathsf{committed},\ell:\mathsf{Free}).
+\end{align*}
+Acquire transfers $j$ from a declared finite controller reserve; it does not create an identity from nothing. Failed acquisition transfers no journal. Step applies $a$ and undo applies $a^{-1}$; each costs one. Commit/abort consume the journal authority back into the manager reserve. Ordinary observers can read pose only with $\ell:\mathsf{Free}$. While held, admitted observers may read $h$ and observe outside labels, but not pose or controller micro-events. The environment still performs the stated $e_{r,s}$, so this is observation exclusion, not a claim that all physical interference is locked away.
+
+A failure extension has result branches
+$\mathsf{step}_a:\cdots\to\mathsf{ok}(\mathsf{Journal}_{wa})+
+\mathsf{fault}(\mathsf{Quarantine})$.
+The fault branch retains the lock under manager authority and exposes an unrecovered fault, never $\mathsf{aborted}$. Its actual state update must be separately specified. Our recovery theorem applies to the successful reversible branch, not to all faults. Bounds prevent an infinite controller from being mistaken for a terminating transaction.
+
+For the existing O1 instantiation, retain base Set, terminal grade fibres, finite addressed causal-tree content, and probability--cost coefficients. Each deterministic robot method has one witness of mass one and its stated cost; finite randomized controller choices have normalized witness fibres. A mixed arrow has the existing type
+\[
+ (P,\theta:e_EP\longrightarrow TF)\in(e_E\downarrow TF).
+\]
+For prefix witness $u$ and its \emph{actual} result leaves $b$, continuation witnesses form
+\[
+ \Omega_{t;s}(x)=\coprod_{u\in\Omega_t(x)}
+       \prod_{b\in\mathrm{leaves}(\theta_t(u))}\Omega_s(b),
+ \quad p=p_t(u)\prod_b p_s(v_b),\quad c=c_t(u)+\sum_b c_s(v_b).
+\]
+Bodies compose by addressed grafting. A busy result has no usable journal, whereas an acquired result does. An aborted result cannot later undo, and a quarantined result cannot use the successful commit continuation. Thus the continuation fibres really depend on outcomes and authority. The finite word controller, rollback, and disjoint batches are genuine instances of this composition, not a separate categorical analogy. Normalization and associative grafting are inherited from O1; the physical commutation hypotheses are additional application data, not consequences of O1.
+
+\section{Exactly which atomicity follows}
+Let $o:X\to Y$ be the observations available while the lock is held. In the fixture $o(q,h)=h$. We stipulate $oP_k=o$ for each controller prefix, and permit only external actions commuting with the current $P_k$. The scheduler/controller may depend on common outside labels, $o$-observations, public data, and coupled random coins, but \emph{not} secretly inspect pose to choose different external functions in the two executions. Controller branching on pose would require a new relational proof. This restriction is essential even when every available external primitive commutes: starting at pose zero, let the outside policy choose no displacement at zero and a one-step displacement otherwise. The robot rotates, the policy now displaces once, and undo leaves pose one; without the robot the policy leaves pose zero. The chosen primitive catalogue was harmless, but the hidden-state-dependent selection was not.
+
+The abstract execution retains exactly the same acquire outcome, external labels and $o$-observations, and commit/abort response. It performs no visible physical update until release. At commit it applies the final $P_m$ atomically; at abort it applies identity, requiring the actual robot word to finish with $P_m=\id$. Controller micro-events and real-time duration are erased from this particular comparison. This abstract abort retains the acquisition and abort labels; it is not compared to a silent no-op that never called the controller.
+
+\begin{theorem}[Observation-scoped atomic refinement]\label{thm:atomic}
+For every finite successful reversible execution satisfying the preceding assumptions, the abstract and concrete observations agree throughout the locked interval and their entire physical states agree at release. The equality is preserved by every admitted post-release continuation using the same declared environment semantics. It also holds in law for adaptive finite clients and schedules whose choices are functions only of the common observations and shared random coins.
+\end{theorem}
+\begin{proof}
+After position $k$, let the reference state be $y_k=e_k\cdots e_1(x)$. Theorem~\ref{thm:local} gives concrete state $P_ky_k$, hence $o(P_ky_k)=o(y_k)$. Before an interruption the same argument applies to the current prefix; primitive steps preserve the reference state and its observation. Thus all admitted decision inputs coincide and inductively the same actions and coins can be used. At release the abstract commit applies $P_m$ and the abort case has $P_m=\id$, giving identical physical states. Ownership and response interfaces also coincide. Subsequent identical method kernels admit the diagonal coupling, preserved by finite addressed grafting, proving the continuation and distribution assertions.
+\end{proof}
+This is a trace comparison after a stated observation projection. It is \emph{not} a native O1 cell equating different unprojected causal trees: the native body equation would fail when one contains extra actuator nodes. Exact cost is retained separately; an abort after $n$ forward and $n$ inverse rotations costs $2n$ physical steps, not zero. There is no time, energy, audit-log, heat-generation, or actuator-wear refund. If such quantities are part of $X$, the permutation/invariance assumptions must include them and will often fail.
+
+\begin{proposition}[Undo alone cannot establish atomic observations]
+If an admitted observer can probe a function $f$ at an intermediate state $P_kx$ with $f(P_kx)\ne f(x)$ in an execution having no external actions and eventually aborting to $x$, that execution is distinguishable from an abstract aborted transaction which never changes physical state before release.
+\end{proposition}
+\begin{proof}
+The single intermediate probe returns different values. Later restoration cannot remove that recorded observation.
+\end{proof}
+For the fixture, starting at pose zero, a probe after one quarter turn sees one, while an atomic abort sees zero. The lock is therefore substantive semantic authority. In an open room with an uncontrolled camera or a human watching, the observation assumption is false; software locking does not establish physical invisibility.
+
+\section{Finite decision procedure, tests, and limitations}
+For finite tables compute each prefix and its inverse. For each permitted interruption at that position test $e(P_kx)=P_k(e x)$ for every $x$. Theorem~\ref{thm:local} makes this a necessary and sufficient test for the \emph{independently selectable} interruption policy under full-state final recovery. Testing observational invariance additionally decides the sufficient hypotheses of Theorem~\ref{thm:atomic}; it is not asserted necessary for every possible abstract observational model. Straight table testing costs $O(|X|\sum_k|\mathcal E_k|)$ after prefix computation. This is not a decision procedure for unknown, continuous or learned physical dynamics.
+
+The accompanying standard-library Python script exhausts all $3$-state permutation prefixes and all external functions for the one-interruption equivalence, checks arbitrary two-interruption factorization, runs all $12^4$ interruption histories for the four-step fixture abort on all twelve initial states, checks intermediate observations and terminal preservation, exhausts two-decision clock-adapted controllers with clock-adapted environment policies, and tests the stated negative examples. These checks corroborate finite instances; the proofs above cover arbitrary finite sizes. They are not Lean proofs or physical experiments.
+
+For uncertain semantics, a robust certificate can require these table equations for every model in a declared finite model family. Passing one nominal model is not a certificate for the others. A real deployment additionally needs authenticated ownership, calibrated motion domains, collision/safety invariants, recovery feasibility, and an observation specification. We have established none of those empirically.
+
+\section{Relation to established ideas and assessment}
+Atomicity, isolation, compensation, and commutation-based concurrency control are established ideas. For a primary baseline, Korth, Levy and Silberschatz, \emph{A Formal Approach to Recovery by Compensating Transactions} (VLDB 1990, pp.~95--106, \url{https://www.vldb.org/conf/1990/P095.PDF}) explicitly distinguish semantic compensation from restoration to a no-transaction state and discuss dependent effects. Our exact counterfactual criterion is one restricted choice, not the definition of compensation in general. The conjugacy calculation is elementary algebra; no novelty claim is made for it. The contribution here is a worked, compositional application boundary: the exact interference policy under which a reversible robot journal preserves outside change, the capability-indexed client class for an atomic observation quotient, and an explicit failure interface. It gives the motivating example more content than merely attaching transactional names to an actuator API.
+
+The example completes a scoped finite robot-transaction case, not the whole mixed context--content construction direction, not general robotics, and not a synthesis of safe controllers from observational data. The old O5 post-recovery theorem remains useful when isolation fails: successful restoration may support future functional use even though the full history is distinguishable.
+\end{document}
