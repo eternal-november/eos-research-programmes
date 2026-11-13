@@ -30,9 +30,12 @@ Additional scoped worked examples:
 - [Quantitative doctrine descent](applications/quantitative-doctrine/README.md): lower expectations and capability-preserving finite refinement.
 - [Adaptive receipt parallelism](applications/adaptive-receipt-parallelism/README.md): when buffered task executions admit receipt-preserving serial replay.
 
+- [Resource-aware graph witnesses](applications/resource-aware-paths/README.md): Pareto-profile quotients for availability/budget tests, with an exponential representation boundary.
+
 These integrate established ideas with the existing framework; they make no new general categorical theorem claim.
 
 The manuscripts contain written proofs at their stated scope. Python checks are finite diagnostics or source checks, not proof-assistant certification. Run checks with Python 3 in their containing directory. Use a disposable copy because several scripts write diagnostic outputs. TeX source checks may require the local manuscript filename as an argument; these do not compile TeX.
+
 
 
 

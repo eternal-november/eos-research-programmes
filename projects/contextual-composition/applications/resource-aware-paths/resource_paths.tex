@@ -1,0 +1,66 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\title{Resource-aware graph witnesses: an exact boundary between spans and relations}
+\author{Contextual Composition research programme}
+\date{13 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+A graph path can witness reachability while also consuming a one-use capability and spending a budget. Forgetting its witness is harmless for ordinary reachability but not for composition under these additional constraints. For finite collections of paths we give an exact, compositional quotient by Pareto profiles, characterize precisely the tests it preserves, and exhibit an exponential-size boundary. This is a worked finite example, not a new general contextad construction or a novelty claim about Pareto dynamic programming.
+\end{abstract}
+\section{The problem and its scope}
+Suppose a route planner joins independently generated path fragments. Edges may consume one-use resources (a reserved corridor slot, a credential, or a selected shared component) and have nonnegative rational costs. An admissible path must never consume a resource twice. A client supplies an available resource set and a budget. Different paths with the same endpoints need not be interchangeable for this client.
+
+We work with finite sets of witnesses, finite interfaces, a fixed finite resource universe $R$, and costs in $\mathbb Q_{\geq0}$. Finite acyclic graphs provide one concrete source of witnesses. All costs and resource labels are fixed and observable to the semantics. We do not address continuous motion, uncertain execution, probabilistic failure, negative costs, replenishable resources, or unrestricted cyclic path enumeration.
+
+A span $X\leftarrow W\rightarrow Y$ retains each path witness and its endpoints. Attach to each $w\in W$ a resource set $S_w\subseteq R$ and cost $c_w$. Internally inadmissible paths are discarded before they enter $W$. Two composable witnesses $u,v$ can be joined only when $S_u\cap S_v=\varnothing$; the joined profile is
+\[
+ (S_u,c_u)\star(S_v,c_v)=(S_u\cup S_v,c_u+c_v).
+\]
+Thus our join is the compatible subspan of the ordinary pullback, not the ordinary unfiltered composition of spans. Equivalently, make the currently available set $K$ part of the interface and let a witness carry $K$ to $K\setminus S_w$ when $S_w\subseteq K$. On this expanded interface the resource bookkeeping is ordinary relational composition. The first presentation is a compact symbolic representation of that state-indexed semantics.
+
+Associativity follows because three witnesses can be joined exactly when their endpoints match and their resource sets are pairwise disjoint. Their cost is the same sum in either bracketing. Empty paths have profile $(\varnothing,0)$ and are identities. We identify the usual bracketings of path tuples, not different paths with equal profiles.
+\section{An exact quotient}
+For profiles write
+\[
+ (S,c)\preceq(T,d)\quad\Longleftrightarrow\quad S\subseteq T\text{ and }c\leq d.
+\]
+The smaller profile is no worse: it uses fewer resources and costs no more. For each endpoint pair, let $P$ be the finite set of profiles of witnesses, and let $\min P$ delete duplicates and all strictly dominated profiles. Empty profile sets are permitted.
+
+A test $(K,B)$, with $K\subseteq R$ and $B\in\mathbb Q_{\geq0}$, accepts $P$ exactly when some $(S,c)\in P$ satisfies $S\subseteq K$ and $c\leq B$. These are existential availability/budget observations, not path counts or probabilities.
+\begin{theorem}[Exact observational quotient]
+Two finite profile sets $P,Q$ pass the same tests $(K,B)$ if and only if $\min P=\min Q$.
+\end{theorem}
+\begin{proof}
+Deleting a dominated profile preserves all tests because its dominator passes every test it passes. Conversely, use the test $(S,c)$ for each $(S,c)\in P$. If $P,Q$ are indistinguishable, some $q\in Q$ satisfies $q\preceq(S,c)$, and symmetrically each member of $Q$ is dominated by a member of $P$. For $p\in\min P$, choose $q\preceq p$ and $p'\preceq q$ with $p'\in P$. Minimality and antisymmetry force $p'=q=p$. There cannot be a strictly smaller member of $Q$, by the same argument. Hence $p\in\min Q$; interchange $P,Q$.
+\end{proof}
+
+Define union and composition of profile matrices by ordinary union and the above compatible product, summing over intermediate endpoints, then take minima. No choice of a witness is needed to compute these operations, though an implementation may retain a pointer to a representative for route extraction.
+\begin{theorem}[Pruning is a congruence]
+For finite profile sets, pruning before union or compatible composition gives the same final antichain as pruning only after it. Consequently these antichain matrices have associative composition and identity, and preserve every finite expression made from choice and compatible sequencing followed by an availability/budget test.
+\end{theorem}
+\begin{proof}
+Every deleted profile has a minimal dominator because the set is finite. If $p'\preceq p$ and $q'\preceq q$ and $p\star q$ is defined, then $p'\star q'$ is defined and dominates $p\star q$: shrinking resource sets preserves disjointness and adding smaller costs preserves the cost inequality. Every unpruned composite therefore has a dominator in the pruned composite; the latter is a subset of the former. These two facts imply equality of minima. Union is immediate by the same domination argument. Apply this lemma to either bracketing of raw associative compatible composition and induct on expressions.
+\end{proof}
+
+This is an exact restricted abstraction, not a claim of full abstraction for all clients. A client observing the path identity, intermediate vertex, multiplicity, exact resource consumption, exact expenditure, or probability can distinguish witnesses that we collapse. A client requiring a resource to be consumed, rather than merely allowing it, is outside the monotone test language. A positive reward for consuming a resource likewise breaks the domination order. Dynamic resource creation would require a different interface semantics.
+\section{Why two tempting summaries fail}
+Let two alternative fragments from $x$ to $y$ have profiles $(\{r\},0)$ and $(\varnothing,1)$. A continuation from $y$ to $z$ has profile $(\{r\},0)$. With availability $\{r\}$ and budget $1$, the second fragment followed by the continuation succeeds. Keeping only the cheapest fragment loses this solution. Keeping only endpoint reachability gives no way to tell which fragment can be used: if only the first fragment exists, endpoint relations still compose to $(x,z)$ but there is no resource-admissible composite. This is a failure of forgetting an interface requirement, not a failure of the standard existential functor from ordinary spans to relations.
+
+Retaining only the minimum cost for each resource set is safe. Retaining only one overall minimum cost is not. Retaining the full Pareto antichain is both sufficient and, for the specified tests, exact. Boolean reachability is recovered by ignoring resources and budgets; ordinary minimum-cost reachability is recovered when $R$ is empty.
+\section{A sharp size boundary}
+\begin{proposition}
+For $m=|R|$, a profile antichain has at most $2^m$ members. This bound is attained by a layered acyclic graph with $m+1$ vertices and $2m$ edges.
+\end{proposition}
+\begin{proof}
+For each resource set only its least cost can be minimal. For the lower bound, put two parallel edges at layer $i$: one consumes $r_i$ at cost zero, and one consumes nothing at cost one. The $2^m$ paths have profiles $(S,m-|S|)$. If $S\subsetneq T$, then $m-|S|>m-|T|$, so neither profile dominates the other. Every profile is minimal.
+\end{proof}
+Every member is indispensable as an explicitly listed profile: deleting $(S,m-|S|)$ changes the result of the test $(S,m-|S|)$. This is \emph{not} an exponential lower bound on every representation or algorithm. The layered graph itself is a linear-size symbolic representation, and structure can make its tests easy. The boundary is between an explicit canonical summary and a succinct witness generator. No complexity-class separation is claimed.
+
+For a different finite family, a reduced antichain may be far smaller than all witnesses. It preserves feasible continuation choices while shedding duplicate and dominated routes. This is the operational reason to enrich a reachability interface: not to retain every proof of reachability, but precisely the tradeoffs a budget/resource client can still exploit.
+\section{Relation to the programme and validation}
+The catalogue calls out both relations (existence rather than individual witnesses) and graph computations with hidden intermediate witnesses (spans). This example supplies a resource-indexed bridge between them. Context is the available resource set and budget; the retained content includes the resource/cost profile and optionally a route witness. Later admissibility depends on earlier consumption. We have established the concrete finite semantics and its quotient, not supplied the distributive-law data for arbitrary mixed contextads or a new recognition theorem.
+
+The accompanying Python script uses integer costs, exhaustive small profile families, and fixed-seed larger samples. It checks observation equivalence, compositional pruning, associativity, the counterexamples, and the exponential family. Executable checks are regressions, not substitutes for the proofs above. The mathematical ingredients are standard Pareto dominance, labelled paths, and relational composition; the contribution here is the explicit interface, exact scope of forgetting, and examples for this research programme. No literature-priority claim is made.
+\end{document}
