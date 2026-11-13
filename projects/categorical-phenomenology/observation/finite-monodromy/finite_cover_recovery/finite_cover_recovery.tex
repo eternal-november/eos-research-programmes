@@ -1,0 +1,256 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools,enumitem}
+\usepackage[margin=1in]{geometry}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\TV}{\operatorname{TV}}
+\newcommand{\KL}{\operatorname{KL}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\id}{\mathrm{id}}
+\title{Exact recovery of mixture monodromy from finitely many restarted experiments}
+\author{Proof draft: explicit conditional guarantees, not an optimality or novelty claim}
+\date{4 November 2026}
+\begin{document}\maketitle
+
+\begin{abstract}
+For a separated continuous family of held IID mixtures over a known parameter circle, independent restarted trajectories at a sufficiently fine known mesh recover the full component monodromy, up to conjugacy, with explicit confidence and sample counts. A deterministic matching lemma separates statistical local estimation from topological assembly. An elementary long-trajectory estimator makes every constant explicit; existing short-snapshot mixture estimators can replace it. A periodic extension uses independent randomized initial offsets to sample every phase, even when initial phase weights vanish. The assumptions on the model, minimum mass, separation, parameter access, and regularity are promises, not conclusions certified from the finite observations. Elementary lower bounds concern the monodromy task itself.
+\end{abstract}
+
+\section{Model promises and access}
+Let $X$ be an oriented metric circle of circumference $\ell$, $Y$ a finite alphabet of size $d$, and $C\to X$ a $p$-sheeted cover. A continuous fiberwise injective map $v:C\to\Delta(Y)$ and continuous weights $w:C\to(0,1]$, summing to one in every fiber, specify
+\[
+ P_x(y_1\cdots y_n)=\sum_{a\in C_x}w_a\prod_{j=1}^n v_a(y_j).
+\]
+A \emph{restart at $x$} independently draws $A\in C_x$ with probabilities $w_a$ and then produces IID outputs with distribution $v_A$. Parameter $x$ remains fixed during that trajectory. Separate restarts are independent, including at the same parameter. The observer sees only $x$ and the outputs, never $A$. One long uninterrupted held-mixture trajectory is not a replacement for these restarts.
+
+The following are supplied promises, not inferred from a finite data set:
+\begin{enumerate}[label=(P\arabic*)]
+\item The displayed held-mixture model is exact, with constant finite $p$. Equivalently, the all-length observable exchangeability and constant-Hankel-rank assumptions of the companion theorem may be promised; that theorem then derives this representation and cover.
+\item Known constants $\delta>0$, $w_0>0$ satisfy
+\[
+ \|v_a-v_b\|_\infty\geq\delta\quad(a\ne b),\qquad w_a\geq w_0
+\]
+for every fiber. A lower mass bound is intended, not pairwise separation between the weights. Pairwise distinct weights throughout a connected base would globally order the sheets and force trivial monodromy.
+\item A known $L\geq0$ bounds continuation speed: for every lifted oriented arc $\widetilde\gamma$ above an arc $\gamma$,
+\[
+ \|v(\widetilde\gamma(1))-v(\widetilde\gamma(0))\|_\infty\leq L\,\operatorname{length}(\gamma).
+\]
+It suffices that this hold on the individual mesh arcs used below. No smoothness or regularity of the weights beyond the stated model is needed for the sampling bound.
+\item The circle, its orientation, and a cyclic mesh $x_0,\ldots,x_{V-1}$ with $V\geq3$ are known. Every consecutive arc, including the last-to-first arc, has length at most $h$. The experimenter can query each specified $x_i$ exactly and independently restart there.
+\end{enumerate}
+The target is the monodromy permutation $\sigma\in S_p$ obtained by continuing the sheets once around the oriented circle, up to conjugacy. This is the full monodromy representation of $\pi_1(X)\cong\mathbb Z$, since the image of $k$ is $\sigma^k$. Its conjugacy class determines the cover over the circle.
+
+\section{The deterministic step}
+\begin{lemma}[Local atom estimates determine monodromy]\label{lem:match}
+Suppose that at each $x_i$ there are $p$ estimated atoms $\widehat v_{i,1},\ldots,\widehat v_{i,p}$. Assume there exist bijections $\lambda_i:\{1,\ldots,p\}\to C_{x_i}$ with
+\[
+ \|\widehat v_{i,a}-v_{\lambda_i(a)}\|_\infty\leq r,
+ \qquad Lh+2r<\delta/2.
+\]
+Join $a$ at $x_i$ to $b$ at $x_{i+1}$ exactly when
+$\|\widehat v_{i,a}-\widehat v_{i+1,b}\|_\infty<\delta/2$.
+These relations are bijections $T_i$ and agree with true sheet continuation in the estimated labelings. Therefore
+\[
+ \widehat\sigma=T_{V-1}\circ\cdots\circ T_0
+\]
+is conjugate to the true monodromy. No statistical independence is needed in this lemma.
+\end{lemma}
+\begin{proof}
+Let $b$ be the destination of the true lift starting at $\lambda_i(a)$. Its two estimated endpoints are within $Lh+2r<\delta/2$. Any other true destination is at least $\delta$ from that destination; hence its estimate is at least $\delta-Lh-2r>\delta/2$ from the source estimate. Thus each source has exactly its true destination and the relation is bijective. Composing around the circle gives the claimed conjugacy.
+\end{proof}
+
+\section{An explicit finite-data algorithm}
+Fix $0<\alpha<1$, known $p\geq2$, and a mesh with $Lh\leq\delta/8$. Put
+\begin{equation}\label{eq:counts}
+ N=\left\lceil\frac1{w_0}\log\frac{2Vp}{\alpha}\right\rceil,
+ \qquad
+ n=\left\lceil\frac{32}{\delta^2}\log\frac{4VNd}{\alpha}\right\rceil.
+\end{equation}
+At every $x_i$, take $N$ independent restarted trajectories of length $n$ and compute their empirical frequency vectors $Z_{i,j}\in\Delta(Y)$.
+\begin{enumerate}
+\item At each vertex form the graph on its $N$ empirical vectors, with an edge when their $\ell^\infty$ distance is less than $\delta/2$. Take the graph's connected components as clusters.
+\item Estimate each component atom by the arithmetic mean of the empirical vectors in its cluster. If there are not exactly $p$ clusters at a vertex, report failure.
+\item Form the edge matches in Lemma~\ref{lem:match}. If any relation is not a bijection, report failure. Otherwise multiply the match permutations around the circle.
+\end{enumerate}
+
+\begin{theorem}[Exact finite-sample monodromy recovery]\label{thm:main}
+Under the model promises, this algorithm uses $VN$ independent restarts and exactly $VNn$ observed symbols. With probability at least $1-\alpha$, it recovers every cluster correctly, estimates every atom within $\delta/8$ in $\ell^\infty$, and returns the true monodromy up to conjugacy. Thus it recovers the entire cover's isomorphism class, not merely the sign of its monodromy.
+
+If $p$ is unknown, replace $p$ in the definition of $N$ by $P=\lfloor1/w_0\rfloor$. Use the number of clusters as the estimated $p$, and reject if those numbers differ between vertices. The same guarantee recovers $p$ and its monodromy.
+\end{theorem}
+\begin{proof}
+Set $r=\delta/8$. Conditional on any trajectory's latent atom, coordinatewise Hoeffding and a union bound give
+\[
+ \mathbb P(\|Z_{i,j}-v_{A_{i,j}}\|_\infty>r\mid A_{i,j})
+ \leq2d\exp(-2nr^2).
+\]
+This bound is uniform in the latent atom. A union bound over the $VN$ trajectories bounds the probability of any inaccurate empirical vector by
+\[
+ 2VNd\exp(-n\delta^2/32)\leq\alpha/2.
+\]
+For any fixed atom at any vertex, the probability that none of the $N$ restarts selects it is $(1-w_a)^N\leq e^{-Nw_0}$. Hence the probability that some atom is missing somewhere is at most
+\[
+ Vp e^{-Nw_0}\leq\alpha/2.
+\]
+On the intersection of the two good events, all empirical vectors from the same atom are at distance at most $2r=\delta/4$, whereas empirical vectors from different atoms are at distance at least $\delta-2r=3\delta/4$. Every atom occurs. Thus the graph components are exactly the latent-component classes, each cluster mean lies within $r$ of its atom, and
+$Lh+2r\leq3\delta/8<\delta/2$.
+Lemma~\ref{lem:match} finishes the proof. Since $pw_0\leq1$, the unknown-$p$ version has $p\leq P$ and the same union bound applies.
+\end{proof}
+
+The dominant symbol bound is
+\[
+ O\!\left(\frac{V}{w_0\delta^2}
+ \log\frac{Vp}{\alpha}\,
+ \log\left[\frac{Vd}{\alpha w_0}\log\frac{Vp}{\alpha}\right]\right).
+\]
+For a uniform mesh one may take
+$V=\max\{3,\lceil8L\ell/\delta\rceil\}$.
+The exact count formulas, rather than this display, cover small values and ceilings. All logarithms are natural. Computing empirical vectors costs $O(VNn)$ operations; a direct all-pairs graph construction costs $O(VN^2d)$, and edge matching costs $O(Vp^2d)$. These are conservative sufficient counts, not optimality claims.
+
+\begin{corollary}[Conditional exact width decision on a circle]
+Combining Theorem~\ref{thm:main} with the established arbitrary-native width classification gives, on the same probability-$1-\alpha$ event,
+\[
+ k_{\rm stoch}=\begin{cases}p&\widehat\sigma=\id,\\p+1&\widehat\sigma\ne\id,\end{cases}
+ \qquad
+ k_{\rm signed}=\begin{cases}p&\operatorname{sgn}(\widehat\sigma)=+1,\\p+1&\operatorname{sgn}(\widehat\sigma)=-1.\end{cases}
+\]
+The signed convention fixes the terminal vector and normalization. For $p=1$ both widths are one. The classification theorem is an input to this corollary; this data argument does not independently reprove arbitrary-native necessity.
+\end{corollary}
+
+\section{Other local estimators and bounded observation error}
+\begin{lemma}[Transportation error to atom matching]\label{lem:wasserstein}
+Let $\mu=\sum_{a=1}^p w_a\delta_{v_a}$ have $w_a\geq w_0$ and distinct atoms separated by at least $\delta$ in $\ell^\infty$. Let $\nu$ be a probability measure with at most $p$ support points. If
+\[
+ 0<r<\delta/2,\qquad W_1^{\infty}(\mu,\nu)<w_0r,
+\]
+then $\nu$ has exactly $p$ support points and a unique bijection with the atoms of $\mu$ whose paired distances are less than $r$.
+\end{lemma}
+\begin{proof}
+If the open $r$-ball around some $v_a$ contained no support point of $\nu$, every transport plan would move mass $w_a$ distance at least $r$, costing at least $w_0r$. Thus every such ball contains a support point. The balls are disjoint because $2r<\delta$, so the support-size bound forces exactly one point in every ball and none elsewhere. This also gives uniqueness.
+\end{proof}
+Consequently, any vertexwise mixture learner producing at most $p$ atoms with transportation error $<w_0\delta/8$, jointly with probability $1-\alpha$, can replace long-trajectory clustering. An $\ell^1$ transportation guarantee suffices since $W_1^{\infty}\leq W_1^1$.
+
+This local estimation problem is established literature. Fan and Li's COLT 2023 paper proves separation-free transportation recovery for sparse mixtures. Its Lemma 49 learns a categorical $p$-component mixture from $(2p-1)$-snapshots with constant success probability and sample count $(pd/\varepsilon)^{O(p)}$; the paper includes other refinements. Thus long trajectories are not necessary for local identification. Our elementary estimator deliberately trades longer trajectories for a transparent concentration-and-coverage proof. The deterministic matching lemma is compatible with such prior estimators, and no new or optimal local mixture-learning claim is made.\footnote{\url{https://proceedings.mlr.press/v195/fan23b.html}; Lemma 49 in \url{https://proceedings.mlr.press/v195/fan23b/fan23b.pdf}. No confidence amplification bound for that black box is asserted here.}
+
+For a bounded-corruption version, suppose the reported empirical vector for each trajectory differs from its uncorrupted empirical vector by at most $\eta$ in $\ell^\infty$, where $0\leq\eta<\delta/8$ is known. Replace the length bound by
+\[
+ n\geq\left\lceil\frac1{2(\delta/8-\eta)^2}\log\frac{4VNd}{\alpha}\right\rceil.
+\]
+The same proof and recovery guarantee hold. For example, changing at most an $\eta$ fraction of the symbols in each trajectory gives this coordinatewise error bound. This does not cover an arbitrary fraction of completely corrupted trajectories, model misspecification, an unknown calibration error, or a failure of independent restart access.
+
+\section{Periodic extension: randomized offsets reveal initially absent phases}
+Fix known $m\geq1$ and let $\mathcal V=\Delta(Y)^m$. A profile $s=(s_0,\ldots,s_{m-1})$ has the independent periodic law
+\[
+ f_s(y_1\cdots y_q)=\prod_{t=0}^{q-1}s_{t\bmod m}(y_{t+1}).
+\]
+Write $R(s_0,\ldots,s_{m-1})=(s_1,\ldots,s_{m-1},s_0)$.
+Promise an exact continuous family $P_x=\int f_s\,d\mu_x(s)$, with full rotation closure
+\[
+ C_x=\bigcup_{r=0}^{m-1}R^r\supp\mu_x
+\]
+forming a $p$-sheeted cover, fiberwise separated by $\delta$ in profile $\ell^\infty$ norm and obeying the lifted-profile speed bound $L$. These facts also follow from the all-length observable periodic hypotheses in the companion theorem, if those are promised.
+
+Initial masses may be zero on some full phases. The required known lower bound is instead
+\[
+ \bar\mu_x=\frac1m\sum_{r=0}^{m-1}R_*^r\mu_x,
+ \qquad \bar\mu_x(\{s\})\geq w_0\quad(s\in C_x).
+\]
+It is a bound on the rotation-averaged phase masses. An initial-mass bound on only the initially visible phases is not the same assumption.
+
+\begin{corollary}[Exact phase cover and phase advance]\label{cor:periodic}
+Use the same $N$ as in \eqref{eq:counts} and
+\[
+ t=\left\lceil\frac{32}{\delta^2}\log\frac{4VNmd}{\alpha}\right\rceil.
+\]
+At each vertex and on each restart independently, choose $U$ uniformly from $\{0,\ldots,m-1\}$, independently of every latent draw and every other experiment. Request an ordinary original-law trajectory of length $U+mt$, discard its first $U$ outputs, and compute the $m$ residue frequency vectors from the retained $mt$ outputs. Apply the same clustering and edge matching to these profile vectors.
+
+With probability at least $1-\alpha$, this recovers the full phase cover and its monodromy. At every vertex it also recovers the exact phase-advance permutation $\tau:s\mapsto Rs$ by matching $R\widehat s_a$ to the unique estimated profile within $\delta/2$. In particular $\widehat\tau^m=\id$, and edge transports satisfy $T_i\widehat\tau_i=\widehat\tau_{i+1}T_i$. There are $VN$ restarts and at most $VN(mt+m-1)$ observed symbols, including discarded prefixes.
+\end{corollary}
+\begin{proof}
+Given initial profile $S$ and offset $U$, the retained word has independent periodic profile $R^US$. Its unconditional profile law is exactly $\bar\mu_x$. Because each restart and offset is independently generated, these retained profiles are independent draws at their respective vertices. In each of their $md$ coordinates, empirical frequency is based on $t$ independent Bernoulli observations. Thus the previous proof applies with $d$ replaced by $md$ and $n$ by $t$.
+
+On the good event every estimated profile is within $r=\delta/8$. Coordinate rotation is an isometry, so $R\widehat s_a$ is within $2r=\delta/4$ of the estimate for $Rs_a$. Every other estimate is at distance at least $\delta-2r=3\delta/4$. Hence phase-advance matching is exact. The recovered identities follow because the true phase advance is a cover automorphism and $R^m=\id$. No independent observation of a latent phase or intervention on its value is used.
+\end{proof}
+
+\section{Why the assumptions are substantive: lower bounds}
+All examples below concern ordinary IID held mixtures ($m=1$), so they are also lower bounds for the larger periodic class. They prove necessity of important dependencies, not matching optimality for every upper-bound factor.
+
+\subsection{Finite parameter coverage cannot replace a known modulus}
+Let $X=\mathbb R/(2\pi\mathbb Z)$ and take four symbols. Define
+\[
+ u=(1/4,1/4,1/4,1/4),\quad e_1=(1,-1,0,0),\quad e_2=(0,0,1,-1),
+\]
+\[
+ v_\pm(\phi)=u\pm a(\cos\phi\,e_1+\sin\phi\,e_2),\qquad
+ 0<a\leq1/8.
+\]
+These are probability vectors, uniformly positive, and their separation is at least $\sqrt2a$. The unordered pair at $\phi=0$ equals that at $\phi=\pi$.
+For any prescribed finite set of query parameters, choose an open complementary arc $I$. The constant unordered pair, and a pair which makes the change $\phi:0\to\pi$ entirely inside $I$ and is constant outside $I$, have identical all-length word laws at every query point and weights $1/2,1/2$. The first cover is trivial and the second has transposition monodromy. A smooth transition flat at its endpoints makes the second family smooth while retaining separation. Thus finite noisy or even exact data at these points cannot distinguish the covers without quantitative regularity.
+
+If $I$ has length $g$ and $\phi$ is linear there, the profile speed is at most $a\pi/g$. For $0<\delta\leq\sqrt2/8$ and $L>0$, setting $a=\delta/\sqrt2$ gives an admissible hidden twist whenever
+\[
+ g\geq\frac{\pi\delta}{\sqrt2L}.
+\]
+Hence a sufficiently large unsampled arc makes exact recovery impossible even with a known Lipschitz bound. This establishes the $\delta/L$ mesh scale up to constants for prescribed designs. It is not a proof of an optimal adaptive-design complexity.
+
+\subsection{Rare sheets force restarts and a symbol budget}
+Use five symbols, the same $u,e_1,e_2$ in the first four coordinates with fifth coordinate zero, and a common atom $c=(0,0,0,0,1)$. Let $0<w\leq1/3$ and $0<\delta\leq\sqrt2/8$, and set $a=\delta/\sqrt2$. Compare two families with weights $(1-2w,w,w)$:
+\begin{align*}
+ H_0:\quad& c,\ u+ae_1,\ u-ae_1,\\
+ H_1:\quad& c,\ u+a(\cos(\theta/2)e_1+\sin(\theta/2)e_2),\
+ &\hspace{22mm}u-a(\cos(\theta/2)e_1+\sin(\theta/2)e_2).
+\end{align*}
+Their pointwise rank is three, their minimum weight is $w$, their atom separation is at least $\delta$, and lifted rare profiles are Lipschitz with constant $a/2$. The $H_0$ cover is trivial. The $H_1$ cover fixes the common sheet and exchanges the two rare sheets around the circle.
+
+\begin{proposition}[Lower bounds for monodromy, not just parameter estimation]\label{prop:lower}
+Consider any possibly randomized procedure making at most $S$ restarted experiments in these families, at parameters chosen adaptively from earlier observations. Each experiment's length and parameter are chosen before its outputs are seen. Suppose the total number of observed symbols is almost surely at most $B$. If the procedure has error at most $\alpha$ under each hypothesis, then
+\[
+ \alpha\geq\tfrac12(1-2w)^S,
+ \qquad
+ \alpha\geq\tfrac14\exp(-64w\delta^2B).
+\]
+In particular, for the indicated logarithms to be positive,
+\[
+ S\geq\frac{\log(1/(2\alpha))}{-\log(1-2w)},
+ \qquad
+ B\geq\frac{\log(1/(4\alpha))}{64w\delta^2}.
+\]
+The first bound remains meaningful for arbitrarily long trajectories. With only one restart there is an error floor at least $(1-2w)/2$.
+\end{proposition}
+\begin{proof}
+Couple the procedure's random seed and the latent common/rare choices in both hypotheses. When all at most $S$ choices select the common atom, every output equals symbol five and both transcripts coincide. The probability of this common event is at least $(1-2w)^S$; pad with unused latent choices if the procedure stops early. This gives transcript overlap at least that much and minimax testing error at least half the overlap.
+
+For the second bound, first augment one trajectory's observations by its latent label, using the same weights and matching the two displayed rare labels. Every rare-coordinate probability is at least $1/8$. For corresponding rare categorical distributions $p,q$,
+\[
+ \KL(p\|q)\leq\sum_{j=1}^4\frac{(p_j-q_j)^2}{q_j}
+ \leq8\cdot8a^2=64a^2=32\delta^2.
+\]
+The common distributions agree. Thus a length-$q$ experiment has KL divergence at most $2wq\cdot32\delta^2=64w\delta^2q$, by IID additivity in the augmented experiment and data processing after hiding its label. The choice of a rare labeling at each queried parameter need not be continuous; it is used only to bound the two observed mixture laws. Conditional on any common past transcript, the procedure uses the same next design kernel under both hypotheses. The chain rule for KL, followed by the almost-sure symbol bound, gives
+$\KL(P_0^{\rm transcript}\|P_1^{\rm transcript})\leq64w\delta^2B$.
+
+For completeness, if $A=\int\sqrt{dP_0\,dP_1}$ is the Hellinger affinity, Jensen gives $A\geq e^{-\KL(P_0\|P_1)/2}$, while Cauchy--Schwarz gives
+$\TV(P_0,P_1)\leq\sqrt{1-A^2}$.
+Consequently the optimal equal-prior testing error is
+\[
+ \frac{1-\TV(P_0,P_1)}2\geq\frac{A^2}{4}
+ \geq\tfrac14e^{-\KL(P_0\|P_1)}.
+\]
+Correct monodromy distinguishes these hypotheses, so its worst-case error is at least this testing error.
+\end{proof}
+
+\section{Scope and interpretation}
+\begin{itemize}
+\item The upper theorem is nonvacuous for nontrivial covers: the rotating pair $v_\pm(\theta/2)$ above has separation $\delta=\sqrt2a$, speed $L=a/2$, and mass bound $w_0=1/2$. A uniform mesh with $V=18$ already meets $Lh\leq\delta/8$, independently of $a>0$. The sample counts remain conservative and diverge as $a\downarrow0$, as they should.
+\item The result is a confidence statement conditional on model promises, not a finite-data proof of exchangeability, finite rank at all parameters, a global weight or separation margin, or the supplied regularity bound.
+\item Topological recovery is exact while emission and weight estimation is statistical. Exact monodromy does not require exactly recovering real-valued atom coordinates.
+\item The circle's topology and parameter access are supplied. The theorem does not discover the topology of an unknown base from a point cloud, does not infer unobserved phase masses without a bound, and does not cover general temporal HMMs.
+\item The width corollary classifies the target under its exact model promise. It does not exclude an arbitrary highly oscillatory lower-width competitor on the strength of a finite vertex fit; controlling such a competitor between sampled parameters requires its own regularity information.
+\item The lower bounds give $w^{-1}\log(1/\alpha)$ restart and $(w\delta^2)^{-1}\log(1/\alpha)$ symbol necessities in an explicit subclass, and a $\delta/L$ mesh scale for prescribed designs. They do not prove that the upper bound's vertexwise coupon-collection factors or two logarithms are unavoidable.
+\end{itemize}
+\end{document}

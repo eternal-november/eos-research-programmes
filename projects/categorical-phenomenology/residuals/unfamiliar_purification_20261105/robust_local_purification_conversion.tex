@@ -1,0 +1,210 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,geometry,hyperref}
+\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newcommand{\Id}{\mathbb I}
+\newcommand{\F}{\mathrm F}
+\newcommand{\Tr}{\operatorname{Tr}}
+\title{A robust locality obstruction between two finite tensor purifications}
+\date{Research checkpoint, 5 November 2026}
+\begin{document}\maketitle
+\paragraph{Status and scope.}
+This is an independently derived candidate specialization, not a historical-priority claim. It concerns the locality radius of an environment conversion between two supplied purifications. It does not prove that arbitrary size-dependent bounded-bond matrix-product unitaries fail to approximate the conversion. The exact LPDO counterexample of Yauk--Liu--Cirac motivates the construction, and the strict-light-cone theorem for homogeneous periodic MPUs is established prior art. A complete novelty audit remains open.
+
+\section{Typed input, semantic output, and native output}
+For a ring of $N$ sites let
+$H_N=(\mathbb C^2)^{\otimes N}$, $D_N=2^N$, and let $S_N$ be the right cyclic shift: an input bit at site $j$ moves to site $j+1$ (indices modulo $N$). Set
+\[
+ A_N=\Id+2S_N,\qquad B_N=A_N^\dagger=\Id+2S_N^{-1}.
+\]
+There are two labelled copies of $H_N$: the physical/reference register $P_N$ and the environment register $E_N$. Define
+\[
+ |M\rangle\!\rangle=\sum_{x\in\{0,1\}^N}|x\rangle_{P_N}\otimes M|x\rangle_{E_N},\qquad
+ |a_N\rangle=\frac{|A_N\rangle\!\rangle}{\|A_N\|_\F},\quad
+ |b_N\rangle=\frac{|B_N\rangle\!\rangle}{\|B_N\|_\F}.
+\]
+The semantic output is the reduced density matrix on $P_N$.
+Because $A_N,B_N$ are commuting normal matrices with $A_N^\dagger=B_N$,
+\[
+ A_N^\dagger A_N=B_N^\dagger B_N
+ =5\Id+2(S_N+S_N^{-1}),\qquad \|A_N\|_\F=\|B_N\|_\F.
+\]
+Consequently $\Tr_{E_N}|a_N\rangle\langle a_N|=\Tr_{E_N}|b_N\rangle\langle b_N|$ exactly for every $N$.
+The transpose in the standard formula for this marginal is harmless because both matrices agree.
+
+These are fixed homogeneous periodic matrix-product purifications, with bond dimension $5$. In the tensor convention
+$W^{ia}_{\alpha\beta}=\delta_{a\alpha}\delta_{i\beta}$,
+the conventional contraction $\operatorname{tr}(W^{i_1a_1}\cdots W^{i_Na_N})$ enforces $a_j=i_{j-1}$ and hence yields precisely the right shift $S_N$. The local block tensor
+\[
+ T^{ia}=\operatorname{diag}(\delta_{ia},W^{ia},W^{ia})
+\]
+yields $A_N$. Swapping $i,a$ and complex conjugating yields $B_N$.
+The coefficient $2$ is a sector multiplicity, not a local weight raised to the $N$th power. All entries are rational. This does not assert bounded-depth deterministic preparation of these purifications: the native task takes the purifications as supplied witness states.
+
+\paragraph{Noninjectivity and supplied long-range resources.}
+These particular purifications are not injective MPS, even after any finite blocking: all products of the local $5\times5$ matrices remain block diagonal, and so cannot span $\mathcal M_5$. This is genuine long-range order rather than merely a redundant presentation. For $N\ge3$, $D=2^N$, distinct $j,l$, and $Q_j=Z_{P,j}Z_{E,j+1}$, direct evaluation gives
+\[
+ \langle Q_j\rangle_{a_N}=\langle Q_jQ_l\rangle_{a_N}
+ =q_N:=\frac{4D+8}{5D+8},\qquad
+ \operatorname{Cov}_{a_N}(Q_j,Q_l)=q_N(1-q_N)\longrightarrow\frac4{25}.
+\]
+Indeed the diagonal identity-sector contribution vanishes, the shift-sector contribution is $4D$, and both interference terms total $8$. The analogous backward-pair observables show the same fact for $|b_N\rangle$. Thus the native input already contains coherent long-range sector information; we do not obtain a counterexample among uniformly clustering, injective, or primitive supplied purifications.
+
+Ordinary MPS injectivity is different from the step-injectivity of Yauk--Liu--Cirac, Definition 6. Viewed as a map $(a,\beta)\mapsto(i,\alpha)$, our corrected $T$ for $A_N$ is $I_2\oplus\mathrm{SWAP}\oplus\mathrm{SWAP}$ and is step-injective. Their Theorem III.2 concerns sequential LPDOs with the final memory leg retained, not the periodic trace closure used here, and promises a finite-bond matrix-product isometry rather than a bounded spatial propagation radius. Its hypotheses and conclusion must not be silently replaced by the ones here. Their periodic counterexample in Section V.1 does not impose ordinary MPS injectivity or primitivity. No conflict with their positive theorem is claimed.
+
+The requested native output is an environment unitary $V_N:E_N\to E_N$ that approximately converts $|b_N\rangle$ to $|a_N\rangle$. Define its phase-insensitive error by
+\[
+ e_N(V_N)=\min_{\theta\in\mathbb R}
+ \big\||a_N\rangle-e^{i\theta}(\Id_{P_N}\otimes V_N)|b_N\rangle\big\|_2
+ =\min_\theta\frac{\|A_N-e^{i\theta}V_NB_N\|_\F}{\|B_N\|_\F}.
+\]
+This measures the supplied pure-state conversion. Approximation of the reduced physical state would be vacuous, since those states already agree.
+
+A unitary has backward locality radius $R$ if $V_N^\dagger O_jV_N$ is supported in the circular $R$-neighborhood of site $j$ for every one-site observable $O_j$. A QCA family has such a bound independent of $N$ (and conventionally the analogous bound for its inverse). Our proof only uses the displayed backward bound. A depth-$t$ circuit of gates of diameter at most $\ell$ has radius at most $t\ell$. Fixed homogeneous periodic unitary-MPO families are QCAs under the established MPU theorem, but arbitrary boundary-dependent or site-dependent MPO unitaries need not be.
+
+\section{The exact Uhlmann conversion and its correlations}
+Since every singular value of $A_N$ and $B_N$ lies in $[1,3]$, both are invertible, their condition numbers are at most $3$, and
+\[
+ U_N=A_NB_N^{-1}=B_N^{-1}A_N
+\]
+is the unique exact environment unitary, up to an irrelevant global phase when matching rays. Indeed $U_NB_N=A_N$ and
+$U_N^\dagger U_N=(B_N^{-1})^\dagger A_N^\dagger A_NB_N^{-1}=\Id$.
+Let
+\[
+ |\chi_N\rangle=D_N^{-1/2}|U_N\rangle\!\rangle,
+ \quad Q_j=Z_{P,j}Z_{E,j+1}.
+\]
+Here $Z|0\rangle=|0\rangle$, $Z|1\rangle=-|1\rangle$.
+
+\begin{lemma}
+For odd prime $N\ge3$ and distinct sites $j,l$,
+\[
+ \langle Q_j\rangle_{\chi_N}=\langle Q_l\rangle_{\chi_N}
+ =\langle Q_jQ_l\rangle_{\chi_N}=p_N,
+ \qquad
+ p_N=\left(\frac{2^{N-1}+2}{2^N+1}\right)^2.
+\]
+In particular the connected covariance is $p_N(1-p_N)\ge3/16$.
+\end{lemma}
+\begin{proof}
+Write $U_N=\sum_{k=0}^{N-1}u_kS_N^k$. The shift has all $N$th roots of unity as eigenvalues: its restriction to the one-excitation subspace is an $N$-cycle. Unitarity and discrete Parseval therefore give $\sum_k|u_k|^2=1$, while evaluation at the eigenvalue $1$ gives $\sum_k u_k=1$.
+The absolutely convergent expansion
+\[
+ (\Id+2S_N^{-1})^{-1}
+ =\sum_{r\ge1}(-1)^{r-1}2^{-r}S_N^r
+\]
+shows, after multiplication by $\Id+2S_N$ and reduction modulo $S_N^N=\Id$, that for odd $N$
+\[
+ u_1=\frac{2^{N-1}+2}{2^N+1}.
+\]
+Let $|\chi(S^k)\rangle=D_N^{-1/2}|S_N^k\rangle\!\rangle$.
+In a diagonal term $k=k'$, expectation of $Q_j$ is the average of $z_jz_{j+1-k}$ over independent uniform signs $z_i$. It is $1$ if $k=1$ and $0$ otherwise. For $Q_jQ_l$, all signs must be paired. For distinct $j,l$ and odd $N$, the only possibility is again $k=1$: the alternative pairing would require $2(k-1)=0$ modulo $N$ and hence $k=1$.
+
+For $k\ne k'$, a nonzero computational-basis contribution requires $S_N^kx=S_N^{k'}x$. Since $N$ is prime, the only such strings are all zeros and all ones. Both $Q_j$ and $Q_jQ_l$ take value $1$ on these strings. Thus every off-diagonal matrix element in either expectation is $2^{1-N}$, and its total contribution is
+\[
+ 2^{1-N}\sum_{k\ne k'}\overline{u_k}u_{k'}
+ =2^{1-N}\left(\left|\sum_ku_k\right|^2-\sum_k|u_k|^2\right)=0.
+\]
+All three expectations are consequently $|u_1|^2=p_N$.
+For $N\ge3$, $1/2\le u_1\le2/3$, so $1/4\le p_N\le4/9$. The minimum of $p(1-p)$ on this interval is $3/16$.
+\end{proof}
+
+\begin{lemma}
+If $V_N$ has backward locality radius $R$ and the circular separation of $j,l$ is greater than $2R+2$, then the covariance of $Q_j,Q_l$ in the normalized Choi state $D_N^{-1/2}|V_N\rangle\!\rangle$ is zero. The same conclusion holds when $V_N$ acts on environment sites enlarged by arbitrary finite local auxiliary spaces, initialized in a product state, and $Q_j$ ignores these auxiliaries.
+\end{lemma}
+\begin{proof}
+The input Choi state is a product of Bell pairs, one pair per site, together with the optional product auxiliary state. Pulling $Q_j,Q_l$ backwards through $\Id_P\otimes V_N$ gives operators supported on disjoint sets of these sites. Expectations therefore factor. No translation invariance is required.
+\end{proof}
+
+\begin{theorem}[Robust local conversion obstruction]
+For every odd prime $N\ge3$ and every environment unitary $V_N$ of backward locality radius
+\[
+ R<(N-5)/4,
+\]
+one has $e_N(V_N)\ge1/96$. Thus a family of conversions with error strictly below $1/96$ requires a locality radius linear in $N$ along the odd primes. In particular no fixed-radius QCA family, nor a fixed homogeneous periodic unitary-MPO family, gives arbitrarily accurate uniform conversion. The same bound holds after adding any finite local auxiliaries in product states, provided the target auxiliaries are returned to a specified product state.
+\end{theorem}
+\begin{proof}
+Choose $j,l$ at circular distance $(N-1)/2$. Their covariance in $|\chi_N\rangle$ is at least $3/16$, and in the Choi state of $V_N$ it is zero.
+If unit vectors $|\psi\rangle,|\phi\rangle$ have phase-adjusted Euclidean distance $\Delta$, the difference of expectations of a norm-one observable is at most $2\Delta$. Applying this to $Q_j,Q_l,Q_jQ_l$, and using that all one-point expectations have absolute value at most one, bounds the covariance difference by $6\Delta$. Therefore
+\[
+ \min_\theta\frac{\|U_N-e^{i\theta}V_N\|_\F}{\sqrt{D_N}}\ge\frac1{32}.
+\]
+Because $A_N=U_NB_N$, $\sigma_{\min}(B_N)\ge1$, and $\|B_N\|_\F\le3\sqrt{D_N}$,
+\[
+ e_N(V_N)=\min_\theta\frac{\|(U_N-e^{i\theta}V_N)B_N\|_\F}{\|B_N\|_\F}
+ \ge\frac13\min_\theta\frac{\|U_N-e^{i\theta}V_N\|_\F}{\sqrt{D_N}}
+ \ge\frac1{96}.
+\]
+For product auxiliaries, let $|\tau_U\rangle=|\chi_N\rangle\otimes|a_{\rm out}\rangle$ and let $|\tau_V\rangle$ be the state obtained by acting with $V_N$ on product Bell pairs and the prescribed auxiliary product input. The covariance argument still gives phase-adjusted distance at least $1/32$. Applying $B_N^T$ on the untouched physical/reference register changes these Choi states into the corresponding supplied-purification conversion states, up to the common factor $\sqrt{D_N}/\|B_N\|_\F$. The least singular value of $B_N^T$ is at least one. Hence the same factor-$1/3$ lower bound applies.
+\end{proof}
+
+\paragraph{What the ancilla statement does not allow.}
+An initially correlated or entangled catalyst is not covered. Nor are unrestricted classical feed-forward, postselection, or arbitrarily long sequential sweeps. Such resources can invalidate the finite-correlation argument and must be separately priced. The theorem does allow any finite-dimensional on-site pure product auxiliary resources. It makes no claim about arbitrary catalysts.
+
+\paragraph{Trace-distance reading.}
+For pure states, phase-adjusted vector distance $e$ and trace distance $T$ obey $T\ge e/\sqrt2$. Thus the theorem also gives the conservative pure-state trace-distance lower bound $1/(96\sqrt2)$. Allowing auxiliaries to be discarded also admits a robust bound, in trace distance, as follows.
+
+\begin{theorem}[Local channels with discarded product ancillas]
+Let $N$ be an odd prime and $R<(N-5)/4$. Let $\Lambda_N$ be an environment channel implemented by a backward-radius-$R$ unitary on the environment and arbitrary finite on-site auxiliary systems, initialized in a product state, after which the auxiliary systems may be discarded. Set
+\[
+ \sigma_N=(\Id_{P_N}\otimes\Lambda_N)(|b_N\rangle\langle b_N|),\qquad
+ \tau_N=|a_N\rangle\langle a_N|.
+\]
+With trace distance $T(\rho,\sigma)=\tfrac12\|\rho-\sigma\|_1$,
+\[
+ T(\sigma_N,\tau_N)\ge\frac1{192}.
+\]
+The product auxiliary state can be mixed. The claim requires a local product-state dilation, not merely a no-signalling or causal channel.
+\end{theorem}
+\begin{proof}
+Let $|\Phi_N\rangle=D_N^{-1/2}|\Id\rangle\!\rangle$ and
+$J_\Lambda=(\Id_P\otimes\Lambda_N)(|\Phi_N\rangle\langle\Phi_N|)$,
+$J_U=|\chi_N\rangle\langle\chi_N|$.
+The same disjoint-light-cone calculation shows that the distant $Q_j,Q_l$ covariance in $J_\Lambda$ is zero, even after tracing out the auxiliaries. Since the difference of expectations of a norm-one observable is bounded by $2T$, covariance is $6T$-Lipschitz. Hence $T(J_\Lambda,J_U)\ge1/32$.
+
+Put $K_N=B_N^{-T}$, acting on $P_N$, and tensor it with identity on $E_N$ without changing notation. Vectorization and the fact that physical filtering commutes with the environment channel give the exact identity
+\[
+ J_\Lambda-J_U=\frac{\|B_N\|_\F^2}{D_N}
+ K_N(\sigma_N-\tau_N)K_N^\dagger.
+\]
+Both filtered states have the same trace $D_N/\|B_N\|_\F^2$, so no state-dependent normalization enters this identity. Since $\|K_N\|_{\rm op}\le1$ and
+$\|B_N\|_\F^2/D_N=5+8/D_N\le6$ for $N\ge3$, the Schatten norm inequality yields
+\[
+ \frac1{32}\le T(J_\Lambda,J_U)\le6T(\sigma_N,\tau_N).
+\]
+This proves the claim. Local mixed auxiliaries can alternatively be purified by an extra inert system at the same site.
+\end{proof}
+
+\section{Why the earlier exact example does not supply this conclusion}
+For $A_N=\Id+\epsilon^NS_N$, $B_N=A_N^\dagger$, put $r=|\epsilon|$. If $r<1$, identity conversion has normalized vector error at most $2r^N/(1-r^N)$. If $r>1$, a phase times the two-step shift gives error at most $2/(r^N-1)$. At $r=1$, a phase times a one-step shift converts exactly. Thus for every fixed tolerance, sufficiently large sizes have a bounded-simple conversion; finitely many small sizes can be handled separately. That exact Schmidt-rank obstruction is not by itself a fixed-error obstruction; the authors already explicitly identify its thermodynamic trivialization in Section V.1. The displayed finite-error estimates only quantify their observation. Its condition numbers nevertheless stay bounded for fixed $r\ne1$, by $(1+r)/|1-r|$.
+
+The new witness uses a multiplicity $2$ rather than an $N$th power. Both purifications retain comparable identity and shift components at every size. The lower bound is on the radius of a genuinely unitary native operation, not on the rank of an arbitrary linear approximation.
+
+\section{Limits and the remaining question}
+The theorem does not settle the more permissive assertion
+\[
+ \forall\alpha>0\;\exists D(A,B,\alpha)\;\forall N\;\exists V_N:
+ \quad V_N\text{ unitary MPO of bond}\le D,\quad e_N(V_N)\le\alpha,
+\]
+where $V_N$ may have arbitrary size-dependent/site-dependent tensors or modified boundary conditions. Such MPUs can be nonlocal. A bounded-bond linear approximation to $U_N$ also does not answer the assertion: truncating a geometric series or approximating an inverse polynomially need not produce an exactly unitary operator, and polar normalization need not preserve its bond bound.
+
+\paragraph{Nearest approximation results and their metrics.}
+Ranard--Walter--Witteveen \cite{ApproxQCA}, Theorem 3.1, rounds an $\epsilon$-locality-preserving automorphism on a finite circle of at least eight coarse sites to an exact range-three QCA, with error $O(\epsilon)$ in
+$\sup_{\|O\|_{\rm op}=1,\,O\text{ one-site}}\|\alpha(O)-\tilde\alpha(O)\|_{\rm op}$.
+This starts from approximate spatial locality and controls local observable action, not global supplied-state conversion. Huang--Sang--Wang--Zou \cite{Canonical} obtain local isometries between canonical purifications under local reversibility/recovery hypotheses. Our two mixed states have the same canonical purification; the task is transporting arbitrary supplied noncanonical witnesses. Approximate Uhlmann construction and rigidity are already subjects in their own right \cite{Algorithms,Rigidity}. None of these comparisons licenses a new general semantic-versus-operational principle. The possible residual is only the explicit periodic witness and its persistent, quantitatively bounded spatial conversion cost.
+
+At the level of categorical phenomenology, the witnessed distinction is precise: forgetting the environment identifies the two objects at every size, but this semantic equality does not lift even approximately to the declared bounded-propagation native equivalences. This is a source-level failure of native witness transport, not a new universal property of the semantic quotient. The field already studies Uhlmann transformations, LPDO equivalence, and QCA locality; significance and priority of this specialization need independent expert assessment.
+
+\begin{thebibliography}{99}
+\bibitem{YLC} Y. Yauk, Y. Liu, J. I. Cirac, \emph{Structure of matrix product locally purifiable density operators}, arXiv:2608.02724v1 (2026), Sections V.1 and VII. \url{https://arxiv.org/html/2608.02724v1}.
+\bibitem{MPU} J. I. Cirac, D. Perez-Garcia, N. Schuch, F. Verstraete, \emph{Matrix Product Unitaries: Structure, Symmetries, and Topological Invariants}, J. Stat. Mech. (2017) 083105. \url{https://arxiv.org/pdf/1703.09188}.
+\bibitem{Beyond} G. Styliaris, R. Trivedi, D. Perez-Garcia, J. I. Cirac, \emph{Matrix-product unitaries: Beyond quantum cellular automata}, arXiv:2406.10195. \url{https://arxiv.org/html/2406.10195v2}.
+\bibitem{Uhlmann} J. Bostanci et al., \emph{Unitary Complexity and the Uhlmann Transformation Problem}, ITCS 2026, article 24. \url{https://doi.org/10.4230/LIPIcs.ITCS.2026.24}.
+\bibitem{ApproxQCA} D. Ranard, M. Walter, F. Witteveen, \emph{Approximate QCAs in one dimension using approximate algebras}, arXiv:2603.08702v1 (2026). \url{https://arxiv.org/html/2603.08702v1}.
+\bibitem{Canonical} X. Huang, S. Sang, C. Wang, Y. Zou, \emph{Lifting the mixed to the pure: quantum phases of matter from canonical purification}, arXiv:2610.41926v1 (2026). \url{https://arxiv.org/html/2610.41926v1}.
+\bibitem{Algorithms} T. Utsumi, Y. Nakata, Q. Wang, R. Takagi, \emph{Quantum algorithms for Uhlmann transformation}, arXiv:2509.03619v1. \url{https://arxiv.org/html/2509.03619v1}.
+\bibitem{Rigidity} J. Bostanci, T. Metger, H. Yuen, \emph{Local transformations of bipartite entanglement are rigid}, arXiv:2509.05257v1; ITCS 2026, article 26. \url{https://arxiv.org/html/2509.05257v1}.
+\end{thebibliography}
+\end{document}

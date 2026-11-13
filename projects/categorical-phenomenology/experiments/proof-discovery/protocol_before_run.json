@@ -1,0 +1,39 @@
+{
+  "created_utc": "2026-11-03T19:17:47.673206+00:00",
+  "scope": "Constructed mechanistic diagnostic in a small equational list theory; not an established benchmark and not mathematical novelty.",
+  "claim_tested": "Can a generic checked lemma enumerator reuse intermediate lemmas not supplied in its initial library, and does failure-guided ranking help beyond ordinary completion?",
+  "initial_axioms": [
+    "append(nil,y)=y",
+    "append(cons(a,x),y)=cons(a,append(x,y))",
+    "reverse(nil)=nil",
+    "reverse(cons(a,x))=append(reverse(x),cons(a,nil))"
+  ],
+  "candidate_grammar": "List variables X,Y,Z, nil, unary reverse, binary append; at most five AST nodes per term; pairs with equal finite-test signatures; canonical variable renaming; well-founded lexicographic path ordering.",
+  "counterexample_screen": "All assignments of X,Y,Z to lists of length at most two on alphabet {0,1}; only a screen, never an acceptance certificate.",
+  "proof_acceptance": "Separate structural-induction/rewrite checker; primitive definitions plus previously checked equations; no finite-model acceptance.",
+  "training": "reverse(reverse(X))=X; record failed normal forms from its direct and induction attempts; no held-out equation used to construct or rank candidates.",
+  "baselines": [
+    "definition-only induction",
+    "training-theorem-only cache",
+    "generic completion with retention",
+    "failure-guided completion with retention",
+    "cold generic completion per held-out theorem",
+    "human-designed normalization oracle (non-competing diagnostic upper bound)"
+  ],
+  "held_out": "Fixed compositional reverse/append equations, plus definition-only equations as a distribution-shift control. No within-test library updates in the retention comparisons.",
+  "accounting": "Charge grammar construction, all finite evaluations, candidate construction/ranking, all search attempts including failures, and kernel checks. Report component counts and elapsed seconds separately. Proxy-operation budgets are not FLOP or hardware equivalence.",
+  "budgets_proxy_operations": [
+    100000,
+    1000000,
+    10000000
+  ],
+  "randomness": "Deterministic execution; random-order candidate control uses fixed seeds 11, 23, 47.",
+  "success_threshold": "No predeclared expected winner. Report failure-guided ranking advantage only if it beats retained generic completion at matched all-in budgets. A positive reuse-only result is proof-library learning, not evidence of a new mathematical or phenomenological principle.",
+  "limitations": [
+    "Hand-chosen elementary theory and grammar",
+    "One training target",
+    "Compositional, not semantic-OOD generalization",
+    "Small trusted custom checker rather than Lean",
+    "Selection/design choices precede this run but are not independent external preregistration"
+  ]
+}

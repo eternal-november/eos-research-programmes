@@ -1,0 +1,1531 @@
+% Standalone uncompiled research note. No external TeX inputs are required.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,enumitem}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Pow}{\mathcal P}
+\newcommand{\Gen}{\operatorname{Gen}}
+\newcommand{\Meet}{\operatorname{Meet}}
+\newcommand{\cl}{\operatorname{cl}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Bool}{\mathbf{2}}
+\newcommand{\N}{\mathbb N}
+\newcommand{\NN}{\mathbb N}
+\newcommand{\Cost}{\mathbb N\cup\{\infty\}}
+\newcommand{\Lan}{\operatorname{Lan}}
+\newcommand{\Fact}{\operatorname{Fact}}
+\newcommand{\id}{\mathrm{id}}
+\title{Changing experiments and composing characterizations}
+\author{A research note with exact criteria and native witnesses}
+\date{5 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Changing the experiments or operations available to a system can alter its
+behavioral quotient, concept completion, and incidence topology in different
+directions and at different times. We derive these changes from native
+continuation tests, prove the least simultaneous operational repair, and
+characterize when repair commutes with an actual wiring. A two-bit gate
+example leaves the state quotient fixed while forcing a larger concept
+lattice; a subsequent native reset changes only the witness topology.
+For experiment formation by declared decompositions, the comparison between
+changing interfaces and composing is a pointwise Kan-extension mate.
+Its established exact-square criterion leads to a complete classification
+for integer resource translations: Boolean feasibility, set-valued exactness,
+and equivalence of retained allocation categories require successively
+stronger matrix conditions. A response-preserving cone states the precise
+bridge from these experiment comparisons to the heterogeneous invariants.
+Finally, synchronized weighted native machines show that complete Boolean
+agreement can hide an unbounded resource defect; a common endpoint-preserving
+primitive normalization gives an effective witness compiler for arbitrary
+finite runs. General categorical machinery and previous project results are
+credited explicitly. The concrete classifications and their integration are
+proved here without a claim of historical priority.
+\end{abstract}
+
+\section{The question and the level of the answer}\label{sec:question}
+An experimental characterization is relative to what can be done and what
+can be observed. Suppose an old repertoire is enlarged by a gate, an
+instrument, a continuation, or a changed interface. Does the old
+characterization still support the new operations? If components are then
+wired, does changing their characterizations first give the same result as
+changing the complete system? The answer depends on both the composition
+and the information retained in the characterization.
+
+The first part of this note uses actual deterministic programs and their
+Boolean responses. It derives an enlarged test doctrine, rather than
+postulating a refinement map, and compares predictive states, formal
+concepts and supported topology. The second part studies experiment
+formation by a supplied category of decompositions. Here the relevant
+Beck--Chevalley comparison can fail through an absent lift, disconnected
+lifts, or a noninvertible witness that an extensional colimit forgets.
+The third part makes native implementation explicit in finite weighted
+machines. It separates independently optimal local implementations from
+one jointly executable implementation and supplies a finite primitive
+certificate for their agreement.
+
+These are different presentations of a common problem, not interchangeable
+names for one construction. In particular, FCA completion is not asserted
+to be Day convolution, and CNOT is not assumed to be a Kan-extension
+composition. The bridge is an evaluation map from generated experiment
+labels to their actual response columns; its hypotheses are proved or
+stated where it is used.
+
+\paragraph{Reading route.}
+Sections~\ref{sec:source}--\ref{sec:cnot} derive the mixed changes and a
+fully computed interaction. Sections~\ref{sec:decomposition}--\ref{sec:slice}
+give the categorical comparison, resource classification and response
+bridge. Section~\ref{sec:native} supplies native witness conditions.
+Section~\ref{sec:contextads} gives the exact contextad connection, and
+Sections~\ref{sec:prior}--\ref{sec:limits} delimit the increment and the
+remaining question. The source is deliberately self-contained and
+uncompiled. Finite checks and intermediate research files accompany it.
+
+
+\section{Native programs generate the experimental doctrine}\label{sec:source}
+The question is not merely how three invariants of one table differ.
+An interaction can make a new experiment executable, and a new operation
+can turn an old observation into a new experiment by precomposition.
+We derive the resulting comparisons from these source operations. There
+are two comparison directions and an essential distinction between
+strict, lax, and partial transport.
+
+Let $\mathcal C$ be a small category of admitted native programs and
+$X:\mathcal C\to\mathsf{Set}$ their deterministic state semantics.
+Objects are experimental interfaces. At interface $i$, supply a set
+$O_i$ of labelled seed observations, with their actual Boolean response
+columns $C_e\subseteq X_i$. A label includes a native observation
+witness; a morphism of $\mathcal C$ includes its native program witness.
+The functor $X$ need not be faithful: two different native programs may
+have the same state transformation.
+
+This is a relative source model, not a theorem that finitely many
+observations determine all physical laws or all possible programs.
+Actual residual stock, damaged specimens, and installed devices belong
+in the source state when they affect subsequent execution. A partial
+command can be represented on a \emph{certified domain interface} on
+which it is total; this does not turn unsafe disabledness into an
+observable outcome. A measurement may have a state-changing native
+implementation even though its final Boolean response alone supplies
+an incidence column. In particular, intersections of columns below are
+semantic conjunctions, not automatically jointly executable tests on
+one destructive specimen.
+
+\begin{definition}[Generated experiments]
+A generated experiment at $i$ is a labelled pair $(p,e)$ with
+$p:i\to j$ and $e\in O_j$, evaluated by
+\[
+ C_{(p,e)}=X(p)^{-1}(C_e).
+\]
+Write $G_i$ for the family of its distinct response columns, while
+retaining the pairs as native witness annotations. Define
+\[
+ M_i=\Meet(G_i)
+ =\left\{\bigcap\mathcal U:\mathcal U\subseteq G_i\right\},
+ \qquad
+ \cl_i(A)=\bigcap\{C\in G_i:A\subseteq C\}.
+\]
+Empty intersections are $X_i$. Define $x\sim_i y$ when all columns of
+$G_i$ have the same membership value at $x$ and $y$, and put
+$Q_i=X_i/{\sim_i}$.
+\end{definition}
+The family $G$ is the least family containing the seeds and stable
+under preimage along admitted programs. Precomposition acts on
+\emph{labels} by $(q,e)\mapsto(qp,e)$, so the semantic construction has
+actual native witnesses, not selected endpoint arrows.
+
+\section{Generated state and concept actions}
+\begin{theorem}[The source-derived operational doctrine]
+For every $p:i\to j$:
+\begin{enumerate}
+\item $X(p)$ descends uniquely to $\bar p:Q_i\to Q_j$. These maps
+make $Q$ a functor, with quotient maps $q_i:X_i\twoheadrightarrow Q_i$
+natural in $i$.
+\item Preimage restricts to a complete-meet map
+$p^*:M_j\to M_i$. Its left adjoint is
+\[
+ p_!(A)=\cl_j(X(p)[A]).
+\]
+It preserves all joins and satisfies
+$p_!\gamma_i(x)=\gamma_j(X(p)x)$, where
+$\gamma_i(x)=\cl_i(\{x\})$.
+\item The maps $p_!$ preserve identities and composition. They are the
+unique complete-join actions agreeing with native state operations on
+all marked object concepts $\gamma_i(x)$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+A target generated column is $X(r)^{-1}(C_e)$, whose preimage under
+$X(p)$ is $X(rp)^{-1}(C_e)\in G_i$. Consequently source-row equality
+implies target-row equality. Surjectivity of $q_i$ gives uniqueness and
+functoriality of the quotient operations.
+
+Every extent is an intersection of generated columns; preimage preserves
+arbitrary intersections, including the empty intersection. It therefore
+restricts as claimed. For extents $A\in M_i,B\in M_j$,
+\[
+ \cl_j(X(p)[A])\subseteq B
+ \quad\Longleftrightarrow\quad
+ A\subseteq X(p)^{-1}(B),
+\]
+which proves the adjunction. Since $X(p)^{-1}(\cl_j(X(p)[U]))$ is a
+closed set containing $U$, it contains $\cl_i(U)$. Thus
+\begin{equation}
+ \cl_j(X(p)[\cl_i(U)])=\cl_j(X(p)[U]).\tag{CN}
+\end{equation}
+This yields the marking equation and the composition law.
+Finally $A=\bigvee_{x\in A}\gamma_i(x)$, with joins given by closed
+unions. Every complete-join map agreeing on these generators is forced.
+\end{proof}
+
+For a one-object category this is a deterministic action of a monoid,
+and generated tests are continuations. For a DFA with accepting set $F$,
+$G=\{u_w^{-1}(F):w\in\Sigma^*\}$. The quotient is the predictive
+row quotient; after retaining only reachable states it is the usual
+minimal DFA. The lattice is its FCA/complete-meet completion, not the
+state set itself. These fixed-interface facts are established automata,
+FCA and Chu-space theory and were already proved in the preceding
+\emph{common generation} manuscript.
+
+\section{Growth forces a mixed variance comparison}\label{sec:growth}
+Let $J:\mathcal C\hookrightarrow\mathcal D$ extend the admitted
+program category, possibly by adding interface objects as well as
+programs. Let $Y:\mathcal D\to\mathsf{Set}$ extend the source semantics,
+with $YJ=X$. Old seed observations are retained at old interfaces;
+new seeds may be supplied at any interface of $\mathcal D$. Decorate
+new generated columns, lattices, closures and quotients by $+$.
+At every old interface,
+\[
+ G_i\subseteq G_i^+,\qquad M_i\subseteq M_i^+.
+\]
+The new experiments can pass through newly introduced interfaces.
+They need not be old experiments with renamed labels.
+
+\begin{theorem}[Two directions, and strict backward coherence]
+At each old interface the extension induces:
+\begin{enumerate}
+\item a unique surjection $\rho_i^Q:Q_i^+\twoheadrightarrow Q_i$
+with $\rho_i^Qq_i^+=q_i$;
+\item a complete-meet inclusion $j_i:M_i\hookrightarrow M_i^+$,
+whose left adjoint is the surjective complete-join map
+\[
+ \rho_i^M:M_i^+\twoheadrightarrow M_i,
+ \qquad \rho_i^M(A)=\cl_i(A);
+\]
+\item strict naturality for every \emph{shared} native program $p:i\to j$:
+\begin{align*}
+ \rho_j^Q\bar p^+&=\bar p\rho_i^Q,\\
+ \rho_j^M p_!^+&=p_!\rho_i^M,\\
+ \rho_i^M\gamma_i^+(x)&=\gamma_i(x);
+\end{align*}
+\item forward lax naturality, in the opposite direction,
+\begin{align*}
+ p_!^+j_i&\leq j_jp_!,\\
+ \gamma_i^+(x)&\subseteq j_i\gamma_i(x).
+\end{align*}
+All backward comparisons compose strictly under successive extensions.
+The forward inequalities are compatible with identities, composition
+of shared programs, and successive extensions.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Equality on more tests implies equality on fewer, proving (1).
+For $A\in M_i^+$ and $B\in M_i$,
+$\cl_i(A)\subseteq B$ iff $A\subseteq B$, so
+$\rho_i^M\dashv j_i$. It is surjective because it fixes $M_i$.
+The state square follows by evaluating it on all $x\in X_i$.
+On right adjoints there is an equality
+$j_i p^*=p^{*+}j_j$, since both sides are the same set-theoretic
+inverse image. Taking left adjoints gives the second square. The
+marking square follows from
+$\cl_i\cl_i^+=\cl_i$.
+
+New closure is smaller: $\cl_j^+(U)\subseteq\cl_j(U)$.
+Apply this to $U=X(p)[A]$ to obtain the forward action inequality;
+the marking inequality is the singleton case. For two shared programs,
+monotonicity gives
+\[
+ q_!^+p_!^+j_i\leq q_!^+j_jp_!
+                  \leq j_kq_!p_!.
+\]
+These are precisely the unique order comparisons between their
+specified endpoints, so they respect the strict program composition
+law. For successive growth stages $0\subseteq1\subseteq2$,
+$\cl_0\cl_1=\cl_0$ and the inclusions compose literally;
+the quotient comparison is unique on source-state representatives.
+This proves all stated coherences.
+\end{proof}
+A newly added program need not act on the old quotient or lattice at all.
+The theorem asserts naturality for shared operations, not an impossible
+old action for every newly executable operation.
+
+\begin{theorem}[Least simultaneous operational repair]
+The generated extent family is the least Moore family containing its
+seed columns for which every admitted source program has a
+complete-join action agreeing with that program on marked object
+concepts. Relative to an old interface, it is the least such extension
+of the old extent family and all new seed columns. Independently, its
+row equivalence is the largest program-stable equivalence refining the
+seed distinctions, hence the coarsest adequate deterministic quotient.
+\end{theorem}
+\begin{proof}
+For any Moore families $N_i$, a source map $f:X_i\to X_j$ has a
+marking-compatible complete-join extension iff
+\[
+ f^{-1}(B)\in N_i\quad\text{for every }B\in N_j.\tag{E}
+\]
+For necessity, a join extension implies
+$f[\cl_{N_i}(U)]\subseteq\cl_{N_j}(f[U])$, because
+$\cl_{N_i}(U)$ is the join of the generators of $U$. Set
+$U=f^{-1}(B)$: its closure still maps into $B$, so $U$ is closed.
+For sufficiency, condition (E) proves (CN) and the adjunction exactly
+as above. If every native primitive satisfies (E), induction on
+programs forces every generated seed preimage into $N_i$; closure
+under intersections forces $M_i\subseteq N_i$. Conversely $M$ itself
+satisfies (E).
+
+If an equivalence respects seeds and is stable under every native
+program, equivalent states have equal membership in every generated
+column, so it refines the constructed row equivalence. The latter is
+itself stable by the first theorem. Neither part asserts that the
+coarsest row quotient already supplies the least concept repair.
+\end{proof}
+
+\section{Three distinct tests for an unchanged characterization}\label{sec:repair}
+For clarity take a finite carrier $X$, old columns $F\subseteq\Pow(X)$,
+new seed columns $N$, and the \emph{entire resulting} native generator
+set $A$, including old operations acting on newly introduced tests.
+Old columns can already have been generated by the old operation set,
+but that does not make old operations redundant on $N$. Write
+\[
+ F^+=\Gen_A(F\cup N),\quad M=\Meet(F),\quad M^+=\Meet(F^+).
+\]
+The object nerve $K_F$ has nonempty faces the nonempty subsets of an
+actual column of $F$. Include the empty simplex separately.
+
+\begin{proposition}[Exact repair tests]
+\begin{enumerate}
+\item $Q_{F^+}\to Q_F$ is bijective iff every new seed is constant on
+old row classes and every $a\in A$ respects old row equality.
+\item $M=M^+$ iff $N\subseteq M$ and
+$a^{-1}(B)\in M$ for all $a\in A,B\in M$. It suffices to check
+$B\in F$.
+\item $K_F=K_{F^+}$ iff every nonempty new seed and every nonempty
+$a^{-1}(C)$, for $a\in A,C\in F$, is contained in an old column.
+\end{enumerate}
+The second condition implies the first. Neither forces the third.
+The third need not imply either of the others.
+\end{proposition}
+\begin{proof}
+For (1), old-class constancy and operation stability propagate through
+all words; conversely an unchanged row quotient is stable for all
+new operations and observes all new seeds. For (2), inverse image
+preserves intersections, so the stated generator check gives closure
+of $M$ under all $A$-words. Minimality then gives equality. Necessity
+follows from the stability of $M^+$.
+
+For (3), a nonempty column is itself a face because $X$ is finite.
+Thus unchanged complexes force each indicated column to be covered.
+Conversely let $D(F)$ be the family of subsets covered by old columns,
+together with the empty set. The one-step covering condition implies
+$a^{-1}(S)\in D(F)$ whenever $S\in D(F)$, by choosing a column
+$C\supseteq S$ and using
+$a^{-1}(S)\subseteq a^{-1}(C)$. The extra seeds are in $D(F)$;
+induction gives $F^+\subseteq D(F)$ and therefore equal nerves.
+
+Every old extent is a union of old row classes, proving the implication.
+The CNOT example below separates (1) from (2), and its reset stage
+separates (2) from (3). Conversely, an old universal column already
+makes the nerve a simplex; adding arbitrary separating columns can
+change both rows and the lattice without changing that nerve.
+\end{proof}
+For infinite carriers, the nerve criterion must say that every finite
+subset of each added column is old-covered. A single whole-column
+cover need not follow. The exactness assertion here concerns equality
+of simplicial complexes, not an equivalence of their homotopy types.
+
+
+
+\section{Supported topology retains its own direction and domains}
+\label{sec:supported}
+For a finite context with column family $F$, let $K_F$ have the nonempty
+faces $U$ contained in some actual column of $F$, and include the empty
+simplex. Define the supported concept poset
+\[
+ \mathcal C_F=\{B\in\Meet(F): B\ne\varnothing,
+                         \ \exists C\in F\ (B\subseteq C)\}.
+\]
+This is not obtained by deleting lattice extrema indiscriminately. The
+nonempty face poset $\mathcal F(K_F)$ retracts onto $\mathcal C_F$ by
+$U\mapsto\cl_F(U)$: the inclusion $s$ and closure $r$ satisfy
+$rs=1$ and $1\leq sr$. Their order complexes are therefore homotopy
+equivalent. This is the established supported FCA--Dowker bridge
+\cite{Common,GP,BS}.
+
+\begin{proposition}[Growth and partial operational transport]
+For generated doctrines $G\subseteq G^+$, the forward comparisons are
+$K_G\subseteq K_{G^+}$ and $\mathcal C_G\subseteq\mathcal C_{G^+}$.
+On old faces the closures satisfy $\cl_{G^+}(U)\subseteq\cl_G(U)$;
+this supplies an order homotopy, not an equality of the two closure routes.
+For a shared program $p:i\to j$, its maximal supported domain is
+\[
+ K_p=\{\varnothing\}\cup
+ \{\varnothing\ne U\subseteq X_i:X(p)[U]\in K_{G_j}\}.
+\]
+It is a subcomplex of $K_{G_i}$, and growth enlarges this domain.
+For composable programs $p,q$ one has exactly
+\[
+ K_{qp}=\{U\in K_p:X(p)[U]\in K_q\}.
+\]
+The corresponding concept domain consists of nonempty $B\in M_i$ for
+which $p_!(B)$ is supported. Closure intertwines these action spans,
+including their domains. Backward projection $\rho^M$ is supported
+only on new supported extents having an old common-test witness.
+\end{proposition}
+\begin{proof}
+Old columns remain available and old extents remain closed, proving the
+forward inclusions. New closure is smaller; both sides are nonempty and
+have an old common witness, so they lie in the new supported poset.
+An inequality of monotone maps induces the asserted order homotopy.
+If $X(p)[U]\subseteq C\in G_j$, then
+$U\subseteq X(p)^{-1}C\in G_i$, proving domain inclusion and also
+showing that closing $U$ does not leave its domain. Equation (CN) gives
+strict commutation with the concept action. If $X(qp)[U]$ has a
+common column, pulling that column back along $q$ shows that $X(p)[U]$
+already has a common column. This proves the domain composition formula;
+the converse follows immediately. The concept version uses the same
+argument and $q_!p_!=(qp)_!$. Finally $\cl_G(B)$ is old-supported
+if and only if $B$ is contained in an old column. This is the exact
+domain of the backward supported comparison.
+\end{proof}
+Growth yields commuting simplicial action spans and lax concept-action
+inclusions. It need not yield partial maps with identical domains: an old
+face may acquire a newly supported image. Nor does a partial action give
+a global homology endomorphism. The rich-to-poor quotient and lattice
+projection must not be confused with the poor-to-rich nerve inclusion.
+
+\paragraph{A different mixed square can be strict.}
+Evidence restriction is also distinct from language growth. If $E\subseteq F$
+are columns on $H$ and $U\subseteq H$ is retained evidence, then for an
+$F$-closed extent $A$,
+\[
+ \cl_E(A\cap U)\cap U\ \subseteq\ \cl_E(A)\cap U.
+\]
+Take $H=\{a,b,c\}$, $U=\{a,b\}$, old columns $\{a\},H$, and new
+column $A=\{a,c\}$. The two sides are $\{a\}$ and $\{a,b\}$.
+Both are supported and nonempty. If $U$ contains a representative of
+every $F$-row, equality holds for every $F$-closed $A$: each member of
+$A$ has a row-equivalent representative in $A\cap U$, so the two sets
+have the same old common tests. This mixed right/left-adjoint comparison
+is separate from the strict backward naturality proved above.
+
+
+\section{When generated completion commutes with actual wiring}\label{sec:wiring}
+Let $P\subseteq X\times Y$ be the \emph{actual} compatible joint-state
+carrier, with projections $\pi_X,\pi_Y$. Component seed columns are
+$E_X,E_Y$, and their native completions are $G_X,G_Y$.
+Let $T$ be specified joint native generators $t:P\to P$; these may
+be interacting operations, not products. Wire only the seeds first:
+\[
+ F_0=\{\pi_X^{-1}(C):C\in E_X\}
+       \cup\{\pi_Y^{-1}(D):D\in E_Y\}.
+\]
+Completing separately before wiring gives
+\[
+ F_{\mathrm{loc}}=\{\pi_X^{-1}(C):C\in G_X\}
+       \cup\{\pi_Y^{-1}(D):D\in G_Y\}.
+\]
+Completing the joint system gives $F_{\mathrm{joint}}=\Gen_T(F_0)$.
+The relation between these families must be proved from native
+capabilities, not inferred from a prospective product of quotients.
+
+\begin{definition}[Component experiment liftability]
+For each native component program $u$ on $X$ there is an admitted
+joint word $\widetilde u$ with
+$\pi_X\widetilde u=u\pi_X$; likewise for $Y$.
+The equality concerns actual source transformations on all of $P$.
+The lifting words and their resource admissibility are supplied native
+certificates. They need not leave the other component unchanged.
+\end{definition}
+\begin{theorem}[Exact operational completion--wiring comparison]
+Assume component experiment liftability. Then
+\[
+ F_{\mathrm{loc}}\subseteq F_{\mathrm{joint}}
+ =\Gen_T(F_{\mathrm{loc}}).
+\]
+Consequently joint completion has the forced comparison directions
+of the growth theorem. In particular put
+\[
+ L=\im\bigl(P\xrightarrow{(q_X\pi_X,q_Y\pi_Y)}Q_X\times Q_Y\bigr).
+\]
+The local row quotient is $L$, not an assumed entire product. Then:
+\begin{enumerate}
+\item The map $Q_{\mathrm{joint}}\twoheadrightarrow L$ is an
+isomorphism iff every joint primitive respects the fibers of the
+displayed profile map.
+\item The local extent family is
+\[
+ M_{\mathrm{loc}}=
+ \{P\cap(A\times B):A\in M_X,\ B\in M_Y\}.
+\]
+Full FCA completion commutes with wiring iff every joint primitive
+pulls every such closed rectangle back to another such rectangle.
+It suffices to check the two kinds of generating local columns.
+\item The local and joint object nerves are equal iff every nonempty
+one-step inverse image $t^{-1}(C)$ of a local column is contained in
+a local column. Here the carriers are finite.
+\end{enumerate}
+If every joint primitive is componentwise native,
+$t(x,y)=(u(x),v(y))$ on $P$, then the literal column families themselves
+are equal. Combined with liftability this supplies a sufficient
+source-level commutation theorem for all the characterizations.
+\end{theorem}
+\begin{proof}
+For a generated component experiment $u^{-1}(C)$, its local cylinder
+is $\widetilde u^{-1}(\pi_X^{-1}(C))$, hence belongs to the joint
+completion. This proves the first inclusion. Since
+$F_0\subseteq F_{\mathrm{loc}}\subseteq\Gen_T(F_0)$, applying the
+idempotent generation operator gives the asserted equality.
+
+Two joint states agree on all local tests exactly when their two
+component quotient profiles coincide. This proves the description of
+$L$ and (1) by the repair criterion. Intersecting any family of local
+cylinders yields $P\cap(A\times B)$, and every such rectangle is an
+intersection of local cylinders. This proves the displayed formula;
+(2) and (3) now follow from the respective repair criteria. Finally a
+componentwise native primitive pulls an $X$-column back along $u$ and
+a $Y$-column back along $v$. Both are again local generated columns.
+Thus $F_{\mathrm{loc}}$ is already $T$-stable, proving literal equality.
+\end{proof}
+The liftability assumption is substantive with shared stock, ownership,
+feedback, or compatibility constraints. If it fails, even the displayed
+inclusion of local experiments in joint experiments is not automatic.
+Separate component characterizations may posit experiments that cannot
+be executed together on the actual compatible carrier. That is a native
+source obstruction, not a failure repaired by declaring a quotient map.
+
+\section{A two bit interaction separates the three changes}\label{sec:cnot}
+Take $X=Y=\{0,1\}$ and $P=X\times Y$, ordered $00,01,10,11$.
+The component observations test $0$ and $1$; their initial native
+operation categories contain only identities. The four local columns
+are
+\[
+ x=0,\quad x=1,\quad y=0,\quad y=1.
+\]
+There are four distinct rows. The full extent family has ten sets:
+$\varnothing$, four singleton sets, these four two-element columns,
+and $P$. The object nerve is a square.
+
+Now admit the actual reversible native operation
+\[
+ T(x,y)=(x,x\oplus y).
+\]
+Since $T^2=1$, all generated columns are exactly the four local columns
+and
+\[
+ x\oplus y=0,\qquad x\oplus y=1.
+\]
+No additional column is concealed in a longer word. These six columns
+are all six two-element subsets of $P$. The row quotient still has
+four states, but the full extent family now has twelve sets: empty,
+all four singletons, all six pairs, and $P$. The nerve is the graph
+$K_4$, with no triangular faces, so
+\[
+ \beta_1(K_{\mathrm{local}})=1,
+ \qquad \beta_1(K_{\mathrm{new}})=6-4+1=3.
+\]
+These are Betti numbers over $\mathbb F_2$, and also over every field.
+
+The FCA obstruction is explicit. For $U=\{00,11\}$,
+\[
+ \cl_{\mathrm{local}}(U)=P,
+ \qquad
+ T[U]=\{00,10\},
+ \qquad
+ \cl_{\mathrm{local}}(T[U])=\{00,10\}.
+\]
+Thus $T[\cl_{\mathrm{local}}(U)]\not\subseteq
+\cl_{\mathrm{local}}(T[U])$. No complete-join action on the old
+concept lattice can agree with CNOT on its four marked object states.
+The old state quotient is already discrete, so CNOT acts on it without
+any repair. The twelve-element lattice is the least operational FCA
+repair. This is a source-derived separation between the state and
+concept versions of completion--wiring commutation.
+
+Next admit the native reset $R(x,y)=(x,0)$. Closing under all mixed
+$T,R$ words gives exactly
+\[
+ \{x=0,x=1,y=0,y=1,x\oplus y=0,x\oplus y=1,\varnothing,P\}.
+\]
+Indeed $R^{-1}(y=0)=P$, $R^{-1}(y=1)=\varnothing$;
+$R^{-1}(x\oplus y=b)=\{x=b\}$;
+$R^{-1}(x=b)=\{x=b\}$; and $T$ permutes the six pair-columns
+and fixes $\varnothing,P$. Hence this eight-column family is closed
+under both primitive inverse images and contains all one-step new
+columns, proving exact all-word closure. The row quotient and extent
+family remain four and twelve respectively: $\varnothing$ and $P$
+were already extents. But the actual universal test $P$ makes the
+nerve a full $3$-simplex, so $\beta_1$ drops from $3$ to $0$.
+
+The prior common-generation manuscript already showed that a universal
+column can change support topology without changing an unmarked full
+lattice. The added content here is not that elementary phenomenon.
+It is the independently specified native interaction, its complete
+mixed-word experiment generation, the minimal FCA repair, and the
+exact source-level separation between the three commutation criteria.
+
+
+
+\section{Changing the formation of composite experiments}\label{sec:decomposition}
+Fix a finite arity $n\geq1$. All indexing categories are small. Supply
+categories $A_0,\ldots,A_n$, $B_0,\ldots,B_n$, functors
+\[
+ W:\prod_{i=1}^n A_i\longrightarrow A_0,\qquad
+ V:\prod_{i=1}^n B_i\longrightarrow B_0,
+ \qquad u_i:A_i\longrightarrow B_i\quad(0\leq i\leq n),
+\]
+and a natural transformation
+\begin{equation}\label{eq:cell}
+ \chi:V\Bigl(\prod_i u_i\Bigr)\Longrightarrow u_0W.
+\end{equation}
+The direction of this cell is essential. No inverse is assumed.
+An arrow $V(u_i a_i)\to u_0W(a_i)$ is an admitted directed comparison,
+not a license to execute its reverse.
+
+A partial-characterization diagram here is a covariant functor
+$X_i:B_i\to\Set$. Its elements may be labelled admitted experiments or
+partial evidence, and arrows transport those elements along admitted
+interface refinements. This variance is a premise. A contravariant
+experiment semantics must be converted explicitly by using opposite
+categories; it is not silently substituted. A model-vocabulary reduct
+$R:\mathcal M_{\rm new}\to\mathcal M_{\rm old}$ has its own variance,
+opposite to an old-to-new program compiler. A model-indexed family of
+these diagrams can be reindexed along $R$ and the results applied pointwise.
+No inverse to a model reduct or noninvertible observation decoder is
+asserted.
+
+Define composition by
+\[
+ \operatorname{Comp}_V(X_1,\ldots,X_n)
+   =\Lan_V(\mathop{\boxtimes}_i X_i),\qquad
+ (\mathop{\boxtimes}_iX_i)(b_1,\ldots,b_n)=\prod_iX_i(b_i).
+\]
+The pointwise formula uses the category $(V\downarrow b)$, whose objects
+are $(b_i,f:V(b_i)\to b)$ and whose arrows $\beta$ satisfy
+$f=f'V(\beta_i)$. Thus
+\[
+ \operatorname{Comp}_V(X_i)(b)
+   =\mathop{\operatorname{colim}}_{(b_i,f)\in(V\downarrow b)}
+            \prod_iX_i(b_i).
+\]
+Composition and its admitted decompositions are source data. This formula
+does not prove physical independence, resource copying, or implementability.
+
+\section{The directed comparison and its exact factorization criterion}
+For $a\in A_0$, define
+\begin{align*}
+ K_a:(W\downarrow a)&\longrightarrow(V\downarrow u_0a),\\
+ (a_i,k)&\longmapsto
+       (u_i a_i,u_0(k)\chi_{(a_i)}).
+\end{align*}
+On arrows it applies each $u_i$. Naturality of $\chi$ verifies the comma
+condition. The source diagram below is exactly the target diagram
+precomposed by $K_a$. Consequently there is a canonical mate
+\begin{equation}\label{eq:mate}
+ \Theta_X:\Lan_W\bigl(\mathop{\boxtimes}_i u_i^*X_i\bigr)
+       \Longrightarrow u_0^*\Lan_V\bigl(\mathop{\boxtimes}_i X_i\bigr).
+\end{equation}
+This is the direction ``change then compose'' to ``compose then change.''
+It exists without exactness assumptions.
+
+For $f:V(b_i)\to u_0a$, define $\Fact_a(b_i,f)$ to have objects
+\[
+ (a_i,h_i:b_i\to u_i a_i,k:W(a_i)\to a),
+ \qquad f=u_0(k)\chi_{(a_i)}V(h_i).
+\]
+A morphism to $(a'_i,h'_i,k')$ is a tuple $\alpha_i:a_i\to a'_i$ with
+\[
+ h'_i=u_i(\alpha_i)h_i,\qquad k=k'W(\alpha_i).
+\]
+This category is exactly $((b_i,f)\downarrow K_a)$. Its connectedness
+means connectedness of the underlying undirected graph; it does not make
+its arrows invertible.
+
+\begin{theorem}[Exactness detected by product representables]\label{thm:set}
+The following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item $\Theta_X$ is an isomorphism for every family $X_i:B_i\to\Set$.
+\item Every $K_a$ is final.
+\item Every $\Fact_a(b_i,f)$ is nonempty and connected.
+\end{enumerate}
+For the representable family $X_i=B_i(b_i,-)$, the fiber of
+$\Theta_X(a)$ over $f$ is exactly $\pi_0\Fact_a(b_i,f)$.
+\end{theorem}
+\begin{proof}
+The equivalence of (ii) and (iii) is the comma-category criterion for
+finality. A final functor preserves colimits of every Set-valued diagram,
+so (ii) implies (i).
+
+Conversely take $X_i=B_i(b_i,-)$. Co-Yoneda gives
+\[
+ \Lan_V(\mathop{\boxtimes}_i B_i(b_i,-))(u_0a)
+       \cong B_0(V(b_i),u_0a).
+\]
+Explicitly, the colimit representative
+$(b'_i,g,x_i:b_i\to b'_i)$ maps to $gV(x_i)$. Every arrow $f$ is
+represented by $(b_i,f,\id)$, and the arrows $x_i$ identify each other
+representative with this canonical one. This establishes the claimed
+bijection with the stated variance.
+
+A source representative is $(a_i,k,h_i:b_i\to u_i a_i)$ and its image
+is $u_0(k)\chi V(h_i)$. The generating identifications in the source
+colimit are precisely the morphisms displayed in $\Fact$. They preserve
+$f$, so the fiber over $f$ is the set of connected components of that
+category. A bijective mate makes each such set a singleton, equivalently
+nonempty and connected. This proves (iii) and the fiber assertion.
+\end{proof}
+
+An empty lift category gives a missing composite experiment. Multiple
+components give distinct realizations of the same changed experiment
+that no admitted refinement connects. Surjectivity alone does not imply
+exactness. Theorem~\ref{thm:set} is standard exact-square mathematics:
+compare the Yoneda and factorization criteria of
+Batanin--Kock--Weber, Lemmas 2.2 and 2.4, and their Day-convolution
+application, Theorem 2.11 \cite{BKW}. The application below, rather than
+a renaming of cofinality, supplies the concrete experimental content.
+
+\section{Truth, elements, and noninvertible witnesses}
+\begin{proposition}[Boolean existence]
+For $\Bool$-valued diagrams, composition by joins of meets is universally
+exact if and only if, for every $a,b_i$, nonemptiness of
+$B_0(V(b_i),u_0a)$ implies nonemptiness of
+\[
+ \coprod_{f\in B_0(V(b_i),u_0a)}\operatorname{Ob}\Fact_a(b_i,f).
+\]
+In thin categories this is exactly nonemptiness of each relevant
+factorization category.
+\end{proposition}
+\begin{proof}
+For necessity use the truth predicates that are true at $b'_i$ exactly
+when $B_i(b_i,b'_i)$ is nonempty. A true target composite is equivalent
+to existence of an arrow $V(b_i)\to u_0a$; a true source composite
+is exactly the displayed existence of a lift. For sufficiency, a true
+target value supplies a tuple of true input values at some $b_i$ and an
+arrow $f$. The hypothesis supplies a lift of some arrow with these
+endpoints. Monotonicity along its $h_i$ transports the input truths and
+produces a true source composite. The mate gives the reverse implication.
+\end{proof}
+
+The qualification ``some arrow'' matters outside thin categories. Boolean
+existence does not distinguish parallel $f$'s. Requiring a lift of every
+individual $f$ would be too strong for this proposition.
+
+For categorical witnesses, supply strict functors $E_i:B_i\to\Cat$ and
+retain the Grothendieck category
+\[
+ \operatorname{WComp}_V(E_i)(b)
+   =\int_{(b_i,f)\in(V\downarrow b)}\prod_iE_i(b_i).
+\]
+Its objects retain a decomposition and actual evidence objects; a morphism
+retains a decomposition arrow $\beta$ and vertical witness arrows
+$E_i(\beta_i)e_i\to e'_i$. These arrows may be noninvertible. The
+functor $K_a$ induces a comparison $J_E(a)$ between the source and target
+Grothendieck categories.
+
+\begin{theorem}[Universal retained-witness exactness]\label{thm:witness}
+For fixed $a$, $J_E(a)$ is an equivalence for every family
+$E_i:B_i\to\Cat$ if and only if $K_a$ is an equivalence.
+\end{theorem}
+\begin{proof}
+With all $E_i$ terminal, the total-category comparison is $K_a$ itself,
+proving necessity. Conversely suppose $K_a$ is an equivalence. Full
+faithfulness of the induced total functor follows from full faithfulness
+on decomposition arrows and the unchanged vertical witness hom-sets.
+For any target evidence object over $d$, choose an isomorphism
+$K_a(c)\to d$. Transporting the evidence along the inverse isomorphism
+provides a source object whose image is isomorphic to the given one.
+Thus the total functor is also essentially surjective.
+\end{proof}
+
+Finality, or even contractibility of the factorization categories, is
+not sufficient for Theorem~\ref{thm:witness}. The Grothendieck construction
+is a specified witness-retaining semantics, not automatically the
+Cat-valued left Kan extension and not a general physical-execution model.
+No groupoid completion or inversion of witness arrows has been used.
+
+\section{A complete classification for integer resource changes}\label{sec:resources}
+Let $m,d\geq1$ and $n\geq2$. The poset category $\N^m$ has an arrow
+$r\to s$ when $r\leq s$ coordinatewise and tensor given by addition.
+A matrix $C\in\N^{d\times m}$ defines a strict symmetric monoidal
+functor $r\mapsto Cr$. Resource units are indivisible. For covariant
+diagrams $X_i:\N^d\to\Set$, set
+\[
+ (\mathop{\star}_iX_i)(s)
+   =\mathop{\operatorname{colim}}_{s_1+\cdots+s_n\leq s}
+      \prod_iX_i(s_i),
+\]
+with componentwise-order arrows among decompositions. The comparison is
+\begin{equation}\label{eq:budget}
+ \mathop{\star}_i(X_i\circ C)(r)
+      \longrightarrow(\mathop{\star}_iX_i)(Cr).
+\end{equation}
+Use joins and meets for Boolean diagrams, or the preceding Grothendieck
+categories for retained witnesses.
+
+\begin{theorem}[Three exact resource criteria]\label{thm:matrix}
+The following classify universal exactness of \eqref{eq:budget}, over
+all budgets and all input diagrams of the stated doctrine.
+\begin{enumerate}[label=(\roman*)]
+\item Boolean exactness holds if and only if every column of $C$ is zero
+or a standard basis vector.
+\item Set-valued exactness holds if and only if, additionally, no two
+nonzero columns are equal. Thus $C$ is a partial coordinate injection,
+with zero columns allowed.
+\item Universal equivalence of retained witness categories holds if and
+only if, additionally, no column is zero. Thus $C$ is a coordinate injection.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+For a physical demand tuple $b_i$ with $\sum_i b_i\leq Cr$, the
+factorization poset is
+\begin{equation}\label{eq:alloc}
+ \{(a_i):\ \sum_i a_i\leq r,\quad b_i\leq Ca_i\text{ for every }i\},
+\end{equation}
+ordered componentwise.
+
+For (i), suppose a column $c=Ce_j$ has coordinate sum at least two.
+Write $c=p+q$ with $p,q$ nonzero. At budget $r=e_j$, choose
+$b_1=p,b_2=q$, and other demands zero. In any source allocation at most
+one $a_i$ is nonzero, because $\sum_i a_i\leq e_j$. Both $b_1,b_2$
+are nonzero, however, so both require nonzero allocations. Thus
+\eqref{eq:alloc} is empty. A nonnegative integer column of coordinate
+sum at most one is exactly zero or a basis vector.
+
+Conversely suppose every column is zero or a basis vector. For each
+output row $\ell$, let $J_\ell=\{j:Ce_j=e_\ell\}$. The demand
+inequality says
+\[
+ \sum_i b_{i,\ell}\leq\sum_{j\in J_\ell}r_j.
+\]
+Distribute these integer supplies among the $n$ bins with prescribed
+integer demands $b_{i,\ell}$, for instance greedily. This gives
+$a_{i,j}\geq0$ with $\sum_i a_{i,j}\leq r_j$ and
+$\sum_{j\in J_\ell}a_{i,j}=b_{i,\ell}$. Put zero in the zero-column
+coordinates. This is an object of \eqref{eq:alloc}; the Boolean criterion
+therefore proves (i).
+
+For (ii), the empty-lift argument still applies. If two distinct columns
+$j,k$ are $e_\ell$, choose $r=e_j+e_k$ and
+$b_1=b_2=e_\ell$, with other demands zero. The lifting poset has exactly
+two objects: give $e_j$ to the first component and $e_k$ to the second,
+or the reverse. All supply is used; the objects are incomparable and
+there are no other objects to connect them. For representables
+$X_1=X_2=\N^d(e_\ell,-)$ and $X_i=\N^d(0,-)$ for $i>2$, the
+comparison has two source elements and one target element.
+
+Conversely, assume $C$ is a partial coordinate injection. A supported
+row $\ell$ has a unique corresponding source coordinate $j$. Set
+$a^{\min}_{i,j}=b_{i,\ell}$ and set every zero-column coordinate to zero.
+Unsupported demand coordinates vanish because $\sum_i b_i\leq Cr$.
+The tuple $a_i^{\min}$ is feasible and is below every other tuple in
+\eqref{eq:alloc}. Hence the lifting poset has a least object and is
+nonempty and connected. Theorem~\ref{thm:set} proves (ii).
+
+For (iii), universal witness equivalence implies that every decomposition
+functor is an equivalence, hence final; thus (ii) is necessary. If column
+$j$ is zero, take $r=e_j$. The target decomposition category at $Cr=0$
+is terminal. The source has the all-zero allocation and the distinct
+allocation that gives $e_j$ to component one, with a noninvertible arrow
+between them. This poset has nonisomorphic distinct objects and is not
+equivalent to a terminal category. Hence zero columns are forbidden.
+
+Conversely, if the columns are distinct basis vectors, each target
+decomposition below $Cr$ has exactly one inverse source decomposition,
+obtained by reading its supported coordinates. Unsupported target
+coordinates are forced zero. The inverse preserves and reflects order,
+so the decomposition functor is a poset isomorphism. The induced total
+witness-category comparison is an isomorphism, up to product conventions.
+\end{proof}
+
+\subsection{Three small experiments and a positive case}
+\paragraph{Batch splitting.}
+For $C=(2)$ at $r=1$, two one-unit experiments fit a total physical budget
+of two. Each changed local interface, however, uses a whole source packet;
+the local packet allocations cannot serve both components. The lifting
+category for $(1,1)$ is empty. A sealed packet of two calibration reagents
+is a physical interpretation only if the source local interface actually
+forbids inter-component splitting and the target global interface permits
+it. Those access conditions, not the numeral two alone, create the example.
+
+\paragraph{Forgotten provenance.}
+For $C=(1\ \ 1)$ and $r=(1,1)$, two labelled stocks become one physical
+reagent type. Two one-unit experiments can always be supplied, but their
+two alternative stock assignments form a discrete two-object lifting
+category. Boolean feasibility agrees; element-level allocation data does not.
+
+\paragraph{Invisible audit resources.}
+For $C=(1\ \ 0)$ at $r=(0,1)$, the target decomposition category is
+terminal. In the source audit coordinate it is the span
+\[
+ (0,0)\longrightarrow(1,0),\qquad
+ (0,0)\longrightarrow(0,1).
+\]
+The constant-diagram colimit is one point and the functor to the terminal
+category is final. It is not an equivalence: the displayed arrows are
+noninvertible and the three objects are not isomorphic. In fact this
+$C$ is exact for every Set-valued diagram, not just for this constant one,
+by Theorem~\ref{thm:matrix}. Thus the witness obstruction survives even
+under universal extensional exactness.
+
+\paragraph{A positive vocabulary change.}
+The map $C(q)=(q,0)$ changes the resource vocabulary by introducing an
+additional target resource unavailable in image budgets. Every decomposition
+of an image budget has zero in that coordinate and lifts uniquely. It is
+exact even at the retained-witness level. The map $C(q,a)=(q,0)$ is a
+nontrivial Set-exact change that additionally forgets an audit coordinate,
+but it is not witness-exact.
+
+\subsection{Not the earlier manufacture theorem}
+The programme's adaptive-manufacture theorem compares
+$\bigvee_h Cd_h$ with $C(\bigvee_h d_h)$; its universal criterion is
+that each row has at most one nonzero entry. That permits arbitrary
+positive weights and permits one source column to use multiple physical
+resources. In contrast, $C=(2)$ satisfies that earlier criterion but
+fails even Boolean convolution exactness. The matrix $C=(1\ \ 1)$
+fails the earlier criterion but satisfies Boolean convolution exactness.
+The new calculation concerns decomposing a fixed budget, whereas the old
+one concerns joining alternative future demands. They are different
+interchanges, not alternative terminology for the same theorem.
+
+\section{The exact response bridge to heterogeneous characterizations}\label{sec:slice}
+Let $S$ be a supplied actual system-state set. Write $\mathcal P(S)$
+for the set of response columns, regarded as a discrete constant diagram.
+Suppose the target decomposition diagram $D$ at an output interface has
+a natural cocone
+\[
+ \epsilon_d:D(d)\longrightarrow\mathcal P(S),
+\]
+and equip the source diagram $DK_a$ with precisely the pulled-back cocone.
+Naturality means that an admitted refinement preserves the response
+column of each transported label. This is an extra semantic requirement;
+a stateful intervention that changes the experiment's meaning does not
+automatically satisfy it.
+
+\begin{proposition}[Response-preserving comparison]\label{prop:slice}
+The induced colimit comparison is a morphism in $\Set/\mathcal P(S)$.
+If it is bijective, it gives an isomorphism of labelled incidence contexts,
+with identity map on $S$. Consequently it preserves the induced behavioral
+state equivalence, the formal-concept lattice, and the supported Dowker
+complexes up to their canonical isomorphisms. For the same supplied deterministic state and program interpretation, if the
+labelled tests carry specified program-precomposition actions and the
+comparison is equivariant, the corresponding quotient and concept actions,
+and the object-nerve action spans with their stated domains, transport as well.
+
+More weakly, equality of the sets of evaluated response columns is enough
+for the behavioral state equivalence, extent-based concept lattice,
+supported concept core, and object-side Dowker complex to agree. In
+particular, surjectivity of the response-preserving comparison suffices
+for these extensional conclusions; injectivity is not needed.
+\end{proposition}
+\begin{proof}
+The universal property of each colimit gives evaluation maps to
+$\mathcal P(S)$, and the pulled-back-cocone hypothesis makes their triangle
+with $\Theta$ commute. A bijection over $\mathcal P(S)$ preserves exactly
+the incidence relation $s\mathrel I t$ defined by $s\in\epsilon(t)$.
+All the stated constructions are invariant under an incidence isomorphism:
+rows have the same equalities, derivation operators correspond under the
+test bijection, and common-test simplices correspond under the same
+bijection and identity on states. Equivariance identifies the induced quotient and concept actions by their
+defined formulas. The common supplied state maps give the same vertex maps
+on the object nerves, and the common response columns give their domains.
+This does not infer equality of raw state maps from nonseparating tests.
+For the weaker conclusion, duplicate labels do not change row equality,
+intersections of response columns, whether a closed extent has a
+nonempty common-test set, or whether a finite state set has a common
+test. Surjectivity over $\mathcal P(S)$ guarantees equality of the
+sets of response columns. It does not give a bijection of labelled tests
+or an isomorphism of their witness categories.
+\end{proof}
+
+For independent parallel tests, a concrete evaluation is
+$\pi_X^{-1}C_e\cap\pi_Y^{-1}C_f$ on the admitted joint state set.
+That example still requires actual independent execution and refinements
+preserving this response. A nonbijective label comparison need not alter
+any state quotient or concept lattice: distinct labels can have equal
+response columns. Thus Theorem~\ref{thm:matrix} does not claim that every
+resource mismatch changes each downstream invariant.
+
+The companion interaction-closure result uses tests pulled back along an
+actual interacting operation, such as a reversible gate. Its native test
+syntax is contravariant under program precomposition, not automatically a
+Day-convolution diagram. Proposition~\ref{prop:slice} is the precise
+conditional bridge; no claim is made that every interacting gate already
+has the Kan-extension composition used here.
+
+
+\paragraph{A response-level realization of the batch obstruction.}
+In the batch example $C=(2)$ and source budget $1$, let each component
+have a single experiment $e_i$, available at physical budget at least $1$.
+Let the actual joint state set be $S=\{0,1\}^2$, and let $e_i$ ask
+whether its component bit is $1$. At physical budget $2$ the joint
+experiment has response column $\{(1,1)\}$, given by the intersection
+of the two cylinders. After local interface change, each experiment needs
+one whole source packet, so no joint label exists at source budget $1$.
+Restrict attention to this prescribed paired-test family: no zero-budget
+no-op test was supplied to either input diagram. Individually executable
+probes on the joint carrier are not being counted. The source paired-test
+family is empty; the target has one response column. Their row quotients have respectively one and two classes, their
+extent families one and two elements, and their object nerves respectively
+no vertices and one vertex. This is an actual incidence consequence of
+an absent decomposition, under the stated independent-test interpretation.
+By contrast, the two disconnected provenance allocations for $C=(1\ \ 1)$
+can evaluate to the same response column. They then obstruct label-level
+Set exactness without changing any of these extensional invariants.
+
+\section{Coherence of successive interface changes}
+For a second comparison $(B,V)\to(D,Z)$ with maps $v_i$ and
+$\psi:Z(\prod_i v_i)\Rightarrow v_0V$, the composite cell is
+\[
+ Z(\prod_i v_i u_i)
+  \xRightarrow{\psi_{(u_i-)}}v_0V(\prod_i u_i)
+  \xRightarrow{v_0\chi}v_0u_0W.
+\]
+Its decomposition functor is exactly
+$K^v_{u_0a}K^u_a$. The induced mates therefore compose after the evident
+reindexings. On a representative, both routes have composite arrow
+$v_0u_0(k)\,v_0\chi\,\psi$. Identities and three-stage associativity
+follow from the same formula. Final functors compose, as do equivalences,
+so exact interface changes compose in the corresponding doctrine.
+
+This is a theorem about a supplied directed composition square. It does
+not manufacture an operad, feedback semantics, contextad, physical
+compiler, native quotient, or resource reset. If those richer structures
+are intended, their units, substitutions, witness transport and coherence
+must be supplied and checked. The prior fixed-interface regular-image
+result starts from a fixed test semantics and compares quotients of state
+carriers; the present result changes which joint experiments can be formed
+before taking any state quotient. The two problems are complementary.
+
+
+
+\section{Native synchronization exposes the missing resource correlation}
+\label{sec:native}
+The decomposition category in the preceding theorem retains formal
+allocation witnesses. A separate operational interpretation is required
+before such a witness is an executable run. We now give one concrete
+native class, its sharp obstruction, and a primitive certificate that
+compiles local witnesses into joint witnesses. Its composition is
+synchronization, not the additive-budget Day convolution above.
+
+Let $B,A$ be finite concrete and visible alphabets, and let
+$\alpha:B\twoheadrightarrow A$ be a letterwise, nonerasing interface
+map. A component is a finite directed multigraph of actual configurations,
+with current state $x$, terminal set $F$, and edges
+$e:s\xrightarrow{b}t$ carrying costs in $\N$. Edges are controllably
+selectable, terminating native commands or certified single-event macros.
+Endpoints retain residual resources and installed state. A run is a
+composable edge sequence; its cost is the sum of edge costs.
+Define its concrete trace profile
+\[
+ f_{M,x}(w)=\min\{c(p):p:x\leadsto F,\ \ell(p)=w\}\in\Cost,
+ \qquad \min\varnothing=\infty.
+\]
+Finite values have native run witnesses, found by finite-word dynamic
+programming. This is complete-table controllable planning, not sure
+control against adversarial outcomes or empirical identification of an
+unknown machine.
+
+Independent parallel components synchronize the same concrete letter at
+each step and add their costs. Independence here is an actual product
+runtime with separately accounted resources; shared stock must instead
+be represented once in a joint state. For profiles $f_1,\ldots,f_m$,
+interface change gives
+\[
+ (\alpha_!f_i)(v)=\min_{\alpha(w)=v}f_i(w).
+\]
+Changing each component first and then adding its local optimum yields
+$L(v)$, while changing an actual synchronized composite yields $J(v)$:
+\[
+ L(v)=\sum_i\min_{\alpha(w)=v}f_i(w),\qquad
+ J(v)=\min_{\alpha(w)=v}\sum_i f_i(w).
+\]
+Their difference is the requirement of a common concrete word.
+The abstract number $L(v)$ is not itself an executable joint witness.
+
+\begin{theorem}[Exact optimal-witness obstruction]\label{thm:native-gap}
+For every visible word $v$, $L(v)\leq J(v)$. If all local minima are
+finite, put
+\[
+ A_i(v)=\{w:\alpha(w)=v,\ f_i(w)=(\alpha_!f_i)(v)\}.
+\]
+Then $J(v)=L(v)$ if and only if $\bigcap_iA_i(v)\ne\varnothing$.
+A common minimizing word together with its native component runs gives
+a synchronized witness of cost $L(v)$. If any local minimum is infinite,
+both sides are infinite.
+\end{theorem}
+\begin{proof}
+For each eligible $w$, every $f_i(w)$ is at least its own fiber minimum.
+This proves the inequality. Since $B$ is finite and the map is letterwise,
+the fiber over $v$ is finite. When equality is finite a minimum is attained;
+the sum of the nonnegative differences from the local minima is zero,
+so every difference is zero. Conversely a common minimizer attains $L(v)$.
+The runs synchronize step by step because they have the same concrete
+word and independent actual endpoints. If one fiber has no finite run,
+no jointly finite run exists.
+\end{proof}
+
+The trace-and-budget predicate $(v,r)$ says that a terminal native run
+of visible word $v$ exists with cost at most $r$. Treat these as semantic
+feasibility predicates unless an admitted decision readout is supplied,
+for example a public current configuration with complete certified tables
+and permitted decision computation. An existential success has a native
+run witness; failure of a search is not automatically a physical observation
+on an unknown state. Under this declared test doctrine, evaluate the
+predicates on actual state tuples to obtain response columns. Values in $\Cost$ are determined
+by all their natural-number thresholds. Therefore the two routes have
+exactly the same budget-test incidence if and only if $J=L$ on every
+state tuple and word. A discrepancy $L(v)<J(v)$ is witnessed by the
+single threshold $(v,L(v))$. Under equality, the response-column lemma
+of Section~\ref{sec:slice} gives equality of the resulting row, concept
+and object-nerve constructions. Under inequality, the incidence differs;
+not every downstream invariant must detect that difference.
+
+\begin{example}[Boolean exactness and unbounded budget error]
+Let $B=\{0,1\}$, $A=\{a\}$, and hide both letters as $a$.
+Two one-state cyclic components have both loops, with their sole state
+terminal. The costs of $0,1$ are $1,K+1$ in the first component and
+$K+1,1$ in the second, where $K\geq1$. Then for every $n\geq0$,
+\[
+ L(a^n)=2n,\qquad J(a^n)=(K+2)n.
+\]
+Every visible trace is feasible by both routes. Locally optimal witnesses
+are $0^n$ and $1^n$; for $n>0$ they cannot synchronize. Every common
+concrete word instead has total cost $(K+2)n$. Thus feasibility, terminal
+conditions and even complete unbounded visible language agree while the
+budget defect grows without bound. This is neither a missing-state
+artifact nor a failed heuristic search for a witness.
+\end{example}
+
+\begin{proposition}[Sequencing is exact for the same interface change]
+For weighted profiles, define
+\[
+ (f*g)(w)=\min_{w=uz}(f(u)+g(z)),\qquad
+ (f\wedge g)(w)=\min(f(w),g(w)).
+\]
+Then $\alpha_!$ preserves $*$, $\wedge$, the sequential unit and
+finite iteration $f^*=\min_{n\geq0}f^{*n}$.
+These equalities retain native witnesses when concatenation uses the same
+actual intermediate endpoint. For variable endpoints the exact formula is
+\[
+ (F*G)_{s,t}(w)=\min_{r,\,w=uz}
+                      (F_{s,r}(u)+G_{r,t}(z));
+\]
+entrywise pushforward preserves it as well.
+\end{proposition}
+\begin{proof}
+Both convolution routes minimize $f(u)+g(z)$ over concrete words with
+$\alpha(u)\alpha(z)=v$. A concrete split gives a visible split,
+and lifts of a visible split concatenate. The intermediate-state minimum
+can be exchanged in the same way when that state is retained. Choice
+exchanges minima; the unit is preserved because $\alpha$ is nonerasing.
+Iterate convolution and exchange the minima over words and iteration
+number. Every finite optimum has a finite native run witness.
+\end{proof}
+Thus the synchronization failure remains even though the same interface
+change preserves choice, native sequencing and arbitrary finite repetition.
+
+\begin{theorem}[Universal synchronization contexts]\label{thm:universal-native}
+For $f:B^*\to\Cost$, the identity
+\[
+ \alpha_!(f+g)=\alpha_!f+\alpha_!g
+\]
+holds for every $g:B^*\to\Cost$ if and only if $f$ is constant on
+each fiber of $\alpha$. It suffices to test the identity against the
+finite native exact-word testers $\delta_z$, with value $0$ at $z$
+and $\infty$ elsewhere.
+\end{theorem}
+\begin{proof}
+A finite zero-cost chain spelling $z$, with only its final state terminal,
+realizes $\delta_z$. At $v=\alpha(z)$ the stated identity reads
+$f(z)=(\alpha_!f)(v)$. Requiring this for every $z$ says exactly that
+$f$ is fiberwise constant, including infinite values. Conversely a
+constant value $c$ on the fiber can be taken outside the minimum of
+$c+g(w)$; if $c=\infty$ both sides are infinite.
+\end{proof}
+This is stronger than saturation of a Boolean trace language. It identifies
+precisely what information must be retained for arbitrary concrete
+synchronization contexts. A selected compatible class of components can
+satisfy the weaker constructive condition that follows.
+
+\begin{definition}[Common endpoint-preserving normalization]
+Choose one section $\kappa:A\to B$ of $\alpha$, shared by every
+component. For every native edge $e:s\xrightarrow{b}t$, supply an
+effective selectable native edge or certified single-event macro
+\[
+ N(e):s\xrightarrow{\kappa\alpha(b)}t,
+ \qquad c(N(e))\leq c(e).
+\]
+Source and target are the same actual configurations. Internal macro steps
+introduce no extra synchronization events, and their termination, cost
+and endpoint are separately certified. No hidden information is required
+to choose the replacement.
+\end{definition}
+
+\begin{theorem}[A primitive native compiler for exact change and wiring]
+\label{thm:native-normal}
+Under common endpoint-preserving normalization, for every state tuple,
+visible word and finite number of independent components,
+\[
+ (\alpha_!f_i)(v)=f_i(\kappa(v)),\qquad J(v)=L(v).
+\]
+Every family of locally chosen native witnesses with visible word $v$
+compiles to synchronized native witnesses with concrete word $\kappa(v)$,
+the same individual endpoints and no larger individual costs. The compiler
+commutes with concatenation and works for arbitrary finite runs in cyclic
+machines.
+\end{theorem}
+\begin{proof}
+Replace every edge and concatenate. Identical actual endpoints make the
+result a legal run from the same initial configuration to the same final
+configuration. Its word is $\kappa\alpha(w)$ and its cost does not
+increase. Hence $f_i(\kappa(v))\leq f_i(w)$ for every lift $w$ of $v$.
+Since $\kappa(v)$ itself is such a lift, it realizes the fiber minimum.
+All components now share a minimizing word, proving equality by
+Theorem~\ref{thm:native-gap}. Occurrencewise replacement commutes with
+concatenation. Normalized runs synchronize because their canonical letters
+match at every step. None of these arguments bounds the number of loop
+iterations or identifies merely observationally equivalent endpoints.
+\end{proof}
+
+For finite graphs without internal macros, this is checked by a finite
+scan of actual edges. More sharply, put
+$M_b(s,t)=\min\{c(e):e:s\xrightarrow b t\}$. With every actual state
+allowed as a named terminal endpoint, canonical words realize every fiber
+minimum if and only if
+\[
+ M_{\kappa\alpha(b)}(s,t)\leq M_b(s,t)\quad\text{for all }s,t,b.
+\]
+Likewise every endpoint-specific profile is fiberwise constant if and only
+if $M_b=M_{b'}$ whenever $\alpha(b)=\alpha(b')$.
+Necessity uses one-letter tests. Sufficiency follows by replacing each
+witnessed edge, or by monotonicity and equality of the corresponding
+min-plus matrix products. Thus both the restricted common-normalization
+class and the universal-context class have independent finite primitive
+certificates.
+
+The two cyclic machines above have different cost-reducing canonical
+letters, so their separate normalizers do not compose. Exact endpoint
+preservation and a \emph{common} section are the substantive conditions.
+Vector resource costs admit the same constructive theorem when every
+replacement is componentwise no more expensive. A scalar minimum cannot
+otherwise represent a Pareto frontier, and pooling total budget does not
+by itself preserve each component's contractual allocation.
+
+
+\section{The precise contextad connection}\label{sec:contextads}
+Contextads organize the operational side of this comparison, provided their
+actual structural hypotheses are supplied. They do not extract an
+observation doctrine from a table. In the current source, Capucci--Myers
+\cite[Definition 5.25, Examples 5.33--5.35]{CM2}, a contextad has indexed
+grades $K:C^{\mathrm{op}}\to\Cat$, extension $e:\int K\to C$,
+unit grades and coherent accumulation. A contextual arrow $(P,f):A\Rightarrow B$
+has body $f:e_AP\to B$. The grade of a composite with $(R,g):B\Rightarrow D$
+is $P\otimes f^*R$.
+
+A strong contextad morphism supplies $F:C\to C'$, a cartesian functor
+$G:\int K\to\int K'$ over $F$, and a natural lineator
+\[
+ \ell_{A,P}:e'_{FA}(G_AP)\longrightarrow F(e_AP),
+\]
+together with coherent invertible unit and multiplication comparisons
+\[
+ G_AI_A\cong I'_{FA},\qquad
+ G_A(P\otimes Q)\cong
+ G_AP\otimes'\ell_{A,P}^*G_{e_AP}Q.
+\]
+The cartesian condition means preservation of cartesian lifts and hence
+$G(u^*R)\cong(Fu)^*G(R)$; it does not say that the entire square of
+categories is a pullback. Compatibility with the extension structure,
+units and associativity is required. The lineator itself need not be
+invertible. The resulting strong operational comparison is
+\[
+ T(P,f)=(G_AP,F(f)\ell_{A,P}).
+\]
+Indeed the displayed grade comparison and cartesian property identify
+$G_A(P\otimes f^*R)$ with
+$G_AP\otimes'(F(f)\ell_{A,P})^*G_BR$; the lineator compatibility
+identifies the bodies. Unit and associativity are the stated coherences.
+This is the established construction of \cite[equations (5.6.20)--(5.6.21)]{CM2}.
+
+For the characterization bridge, an additional interpreted state map
+$f_a:X_a\to Y_{Fa}$ must intertwine each admitted source operation $u$
+with its translated operation $\widetilde u$:
+$f_bu=\widetilde u f_a$. There must also be a backward translation of
+\emph{admitted} labelled tests $g_a:D_{Fa}\to E_a$, satisfying
+\[
+ f_a(x)\models d\ \Longleftrightarrow\ x\models g_a(d),
+ \qquad g_a\widetilde v_u=v_ug_b,
+\]
+where the continuation maps are required to be response-correct:
+\[
+ u(x)\models e\ \Longleftrightarrow\ x\models v_u(e),\qquad
+ \widetilde u(y)\models d\ \Longleftrightarrow\ y\models\widetilde v_u(d).
+\]
+These acted-incidence identities make the operational lifts well-defined.
+The preceding equations are the exact Chu condition with operation coherence.
+It requires every pulled-back target column to be represented by an
+actual source test, not merely by a semantic intersection of source columns.
+Coherent label choices are stronger than columnwise representability.
+
+\begin{proposition}[Operational and observational hypotheses together]
+Under these state and test equations, $[x]\mapsto[f_a(x)]$ is a
+well-defined operation-equivariant row map. Inverse image of extents has
+the canonical left adjoint
+\[
+ (f_a)_!(A)=\cl_D(f_a[A]),\qquad (f_a)^*(B)=f_a^{-1}B.
+\]
+It preserves marked object concepts and intertwines the lifted operations.
+The simplicial comparison has exactly the domain
+\[
+ K_{f_a}=\{\varnothing\}\cup
+ \{\varnothing\ne U\in K_E:\exists d\in D_{Fa},\ U\subseteq C_{g_a(d)}\}.
+\]
+These comparisons compose, with the composite domain equal to the domain
+of the first map whose image lies in the domain of the second.
+\end{proposition}
+\begin{proof}
+Source-row equality implies equality on every $g_a(d)$, hence on every
+target test after $f_a$. Preimages of target extents are intersections
+of the columns $C_{g_a(d)}$, so they are source extents. This proves the
+adjunction and its marked-generator property as in (CN). State and test
+coherence give operation equivariance. A finite image $f_a[U]$ has a
+common target witness precisely when the displayed domain condition holds.
+For a second test translation $h$, the composite condition is the
+existence of a witness in $\im(gh)$; this is exactly membership in the
+successive domains. Closing a face preserves its common witnesses,
+so the corresponding supported concept comparison has the same domain.
+\end{proof}
+
+In the display-map instance, contextual composition is an actual pullback
+of spans. A functor $F$ must preserve the required display pullbacks for
+a strong comparison. Otherwise the canonical map is only
+\[
+ F(X\times_BY)\longrightarrow FX\times_{FB}FY.
+\]
+With forward apex maps as span cells, this is the \emph{oplax} direction.
+Neither finality of an unrelated Set-valued decomposition functor nor a
+row quotient supplies its inverse. This is the exact point at which a
+contextad-based application needs a new source-level proof.
+
+The cited v2 is dated 3 November 2026 and is titled \emph{Contextful
+Arrows via Wreath Products}. It is not the earlier v1 with its earlier
+title and numbering. Its Section 5.4 and Remark 5.20 retain qualifications
+about the free Kleisli tricocompletion and higher wreath formula. The
+concrete grade calculation above does not declare those qualifications
+settled, and none of the main results in this note depends on doing so.
+
+
+\section{What is inherited and what this note establishes}\label{sec:prior}
+The distinction matters both mathematically and historically. A general
+cofinality theorem, an ordinary partition refinement, or a renamed Chu
+adjunction would not by itself advance the present question.
+
+\paragraph{Exact squares.}
+Theorem~\ref{thm:set} is the standard Guitart exactness criterion.
+Batanin--Kock--Weber \cite[Lemmas 2.2 and 2.4]{BKW} prove the Yoneda
+and connected-factorization tests; their Theorem 2.11 gives the related
+Day-convolution and monoidal Kan-extension theorem under its stated
+hypotheses. They attribute the underlying criterion to Guitart (1980).
+That original paper was not independently checked here. The present
+contribution at this level is the explicit integer-budget classification,
+its three different failure mechanisms, and its response-semantic and
+native-execution boundaries. No new general categorical exactness principle
+is claimed, and historical priority for the matrix specialization has not
+been established.
+
+\paragraph{Concepts and topology.}
+Ern\'e \cite[Theorem 7.1]{Erne} gives marked-context representation via
+doubly based lattices; the markings are essential. Gratus--Porter
+\cite[Proposition 1(ii), Corollary 1]{GP} already restrict Chu nerve maps
+to transported attribute witnesses. Brun--Salbu \cite[Definition 3.2,
+Theorem 4.3]{BS} give the natural rectangle-complex comparison for
+covariant relation maps. Chowdhury--M\'emoli \cite[Theorem 3,
+Corollary 20, Proposition 15]{DowkerPersistence} establish functorial
+Dowker persistence and a metric stability theorem. Arbitrary test changes
+are not automatically their filtrations or satisfy their metric hypotheses.
+The audit verified these antecedents, not an exhaustive literature on
+incremental concept-lattice algorithms.
+
+\paragraph{Recognition and vocabulary change.}
+Clarke et al. \cite[Lemma 4.12]{Optics} state enriched double Yoneda;
+Theorem 4.14 applies it to generalized Tambara modules and optics.
+Recognition by all copresheaf evaluations is therefore not a new principle.
+Finite available probes or a restricted native grammar need their own
+completeness theorem. Institutions \cite[Definition 1, Theorem 11]{Institutions}
+already make sentences covariant, models contravariant and translated
+theories compositional. Neither institution satisfaction nor a contextad
+morphism alone proves physical probe availability.
+
+\paragraph{Learning with changed interfaces.}
+CALF \cite[Theorems 16 and 20]{CALF} gives hypothesis and testing
+criteria under explicit closedness, consistency, reachability and
+observability assumptions. Henry et al. \cite[Theorem 5.3]{CoalA}
+construct compositional active learning with alphabet refinement under
+teacher and local-learner assumptions. Their Remark 5.4 does not guarantee
+recovery of the original component count or each original component.
+Rosebrugh--Sabadini--Walters \cite[Propositions 43 and 46,
+Corollary 47]{MinimalRealization} already organize minimization after
+composition by an idempotent lax construction. The present finite-source
+calculations do not supersede these learning or minimization results.
+
+\paragraph{The three preceding project manuscripts.}
+The common-generation note \cite{Common} already proves the fixed acted
+incidence construction, the canonical marked concept action, the supported
+FCA--Dowker comparison and its exact partial domains. It already includes
+the universal-test obstruction. The wiring note \cite{Wiring} retains
+the actual realizability image and separates joint lifting from exterior
+separation. Its later three-level adequacy theorem separates row coverage,
+intersection generation and support, with a separate result for operation
+domains. The adaptive-experiment note \cite{Adaptive} already proves
+manufacture-stable partition refinement and native resource-preserving
+policy transfer from the same residual configurations. Its resource
+interchange compares a join of alternative future demands with resource
+translation, not a decomposition of one fixed budget.
+
+Accordingly, the present note does not rebrand their fixed-interface
+conclusions. It derives simultaneous changes of tests and operations,
+compares their backward and forward transport, and computes a native
+interaction where the state, concept and support criteria separate.
+The general exact-square theorem is then applied to a different upstream
+question: which joint experiments can be formed after a budget vocabulary
+change? The matrix trichotomy answers that question exactly. The native
+trace results refine the old existence obstruction by distinguishing
+common feasible witnesses from common optimal witnesses and by providing
+a primitive, endpoint-preserving compiler. These are proved mathematical
+increments and a synthesis; no exhaustive novelty certification is asserted.
+
+\section{Scope and the next concrete question}\label{sec:limits}
+The supplied state semantics, admitted programs, initial observations,
+resource vocabulary and wiring are part of the experimental contract.
+The results do not infer those promises from a finite sample, invent an
+unrestricted operational language, or identify every row by one destructive
+experimental policy. Extensional conjunctions are not free resource-sharing
+instructions. New observations may also require old operations to be
+reanalyzed on new tests: simultaneous closure is under the \emph{entire}
+resulting signature. A one-pass separate repair need not suffice.
+
+The sharp hypotheses are deliberately at different levels. Rectangle
+preimage stability concerns the concept semantics. Finality concerns
+Set-valued colimits of supplied experiment diagrams. Equivalence of their
+Grothendieck categories concerns retained formal witnesses. Native
+normalization concerns actual run endpoints and costs. A proof at one
+level must pass through a response-preserving evaluation or an explicit
+compiler before it can be used at another.
+
+A focused next problem is to weaken the common-section certificate in
+Theorem~\ref{thm:native-normal} while retaining finite checkability and an
+actual endpoint-preserving compiler. The desired class would allow the
+choice of a common concrete letter to depend on a finite, publicly known
+synchronization state, rather than one fixed $\kappa$. It should prove
+optimal budget preservation for every finite run, retain the residual
+state after each step, and identify when local certificates compose over
+cycles. The cyclic counterexample supplies a nonnegotiable regression
+case, and Theorem~\ref{thm:universal-native} identifies the stronger
+arbitrary-partner boundary. This is a specific native synthesis question,
+not a claim already discharged by categorical exactness.
+
+\section{Verification and accompanying sources}\label{sec:verification}
+All universal claims used in the note have proofs above. Independent finite
+checks are regression evidence, not proofs of the unrestricted statements.
+The accompanying scripts check:
+\begin{itemize}
+\item all distinct-column contexts on at most three objects with all unary
+maps: 6,980 cases, 20,940 exactness comparisons and 173,796 refinement/action
+squares; the all-word CNOT/reset closures, counts and homology;
+\item 614 integer matrices in the stated bounded families, 5,696 budgets
+and 146,466 factorization fibers for the Boolean/Set/witness trichotomy;
+\item 85,219 scalar synchronization cases, 4,096 finite partner tests,
+480 convolution values and cyclic trace families through length 20;
+\item adversarial examples involving mixed evidence/language changes,
+shared resources, cyclic joint feasibility and topology under logical closure.
+\end{itemize}
+A separate Lean 4.35.0/mathlib check proves only the elementary
+row-quotient surjection for test inclusion, its naturality for a shared
+stable operation, and an explicit strictness obstruction. Its reported
+axioms are \texttt{Quot.sound} and \texttt{propext}; it has no
+\texttt{sorry}. This does not mechanize the concept, topology,
+Kan-extension, resource or native-normalization theorems.
+
+The TeX source has been checked for balanced environments, label/citation
+references and ordinary source integrity. It has intentionally not been
+compiled. The companion archive preserves the component research drafts,
+correction notes, source audits, scripts, check outputs, recovered preceding
+manuscripts and assembly checkpoints. Internal access receipts and unrelated
+files are not required to understand or reproduce the mathematics.
+
+
+\begin{thebibliography}{99}
+\bibitem{BKW} M. Batanin, J. Kock and M. Weber,
+\emph{Regular patterns, substitudes, Feynman categories and operads},
+Theory and Applications of Categories 33(7) (2018), 148--192.
+\url{https://webercat.au/rpfc.pdf}.
+\bibitem{Optics} B. Clarke, D. Elkins, J. Gibbons, F. Loregian,
+B. Milewski, E. Pillmore and M. Rom\'an,
+\emph{Profunctor Optics: a Categorical Update}, Compositionality 6(1) (2024).
+\url{https://doi.org/10.32408/compositionality-6-1}.
+\bibitem{Erne} M. Ern\'e, \emph{Categories of Contexts},
+arXiv:1407.0512v1 (2014).
+\url{https://arxiv.org/html/1407.0512v1}.
+\bibitem{GP} J. Gratus and T. Porter, \emph{A geometry of information, I},
+Dagstuhl Seminar Proceedings 04351 (2005).
+\url{https://drops.dagstuhl.de/storage/16dagstuhl-seminar-proceedings/dsp-vol04351/DagSemProc.04351.6/DagSemProc.04351.6.pdf}.
+\bibitem{BS} M. Brun and M. Salbu, \emph{The Rectangle Complex of a Relation},
+Mediterranean Journal of Mathematics (2023).
+\url{https://doi.org/10.1007/s00009-022-02213-0}.
+Primary manuscript: \url{https://arxiv.org/pdf/2207.02018}.
+\bibitem{DowkerPersistence} S. Chowdhury and F. M\'emoli,
+\emph{A functorial Dowker theorem and persistent homology of asymmetric networks},
+Journal of Applied and Computational Topology (2018).
+\url{https://doi.org/10.1007/s41468-018-0020-6}.
+\bibitem{Institutions} J. A. Goguen and R. M. Burstall,
+\emph{Institutions: Abstract Model Theory for Specification and Programming},
+Journal of the ACM (1992).
+\url{https://doi.org/10.1145/147508.147524}.
+\bibitem{CM2} M. Capucci and D. J. Myers,
+\emph{Contextful Arrows via Wreath Products}, arXiv:2410.21889v2,
+3 November 2026.
+\url{https://arxiv.org/pdf/2410.21889v2}.
+\bibitem{CALF} G. van Heerdt, M. Sammartino and A. Silva,
+\emph{CALF: Categorical Automata Learning Framework}, CSL 2017.
+\url{https://doi.org/10.4230/LIPIcs.CSL.2017.29}.
+\bibitem{CoalA} M. Henry, M. R. Mousavi, T. Neele and M. Sammartino,
+\emph{Compositional Active Learning of Synchronizing Systems Through
+Automated Alphabet Refinement}, CONCUR 2025.
+\url{https://drops.dagstuhl.de/storage/00lipics/lipics-vol348-concur2025/LIPIcs.CONCUR.2025.20/LIPIcs.CONCUR.2025.20.pdf}.
+\bibitem{MinimalRealization} R. Rosebrugh, N. Sabadini and R. F. C. Walters,
+\emph{Minimal Realization in Bicategories of Automata},
+Mathematical Structures in Computer Science (1998).
+\url{https://doi.org/10.1017/S0960129597002454}.
+\bibitem{Common} Previous project manuscript,
+\emph{One operational construction for residual automata, formal concepts,
+and topology}, 4 November 2026.
+Recovered source \texttt{common\_generation\_note.tex}, included in the archive.
+\bibitem{Wiring} Previous project manuscript,
+\emph{Contextual Reduction and Wiring for Open Learners}, 5 November 2026.
+Recovered source \texttt{contextual\_reduction\_wiring.tex}, included in the archive.
+\bibitem{Adaptive} Previous project manuscript,
+\emph{Evidence Guided Native Experiment Formation}, 5 November 2026.
+Recovered source \texttt{adaptive\_experiment\_formation.tex}, included in the archive.
+\end{thebibliography}
+\end{document}

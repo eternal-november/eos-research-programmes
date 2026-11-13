@@ -1,0 +1,374 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\TV}{\operatorname{TV}}
+\newcommand{\KL}{\operatorname{KL}}
+\newcommand{\kl}{\operatorname{kl}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\R}{\mathbb R}
+\newcommand{\one}{\mathbf 1}
+\title{Finite evidence for monodromy: rigorous lower bounds and their scope}
+\author{Research note}
+\date{4 November 2026}
+\begin{document}\maketitle
+
+\section{Experiment and target}
+The parameter space is the circle $\R/\mathbb Z$, of circumference one. At parameter $t$, a restart draws $Z$ with probabilities $w_i(t)>0$ and then returns a group of $\ell$ conditionally IID observations from a probability vector $v_Z(t)\in\Delta^{d-1}$. The parameter remains fixed within that group. Different restarts are independent conditional on their requested parameters. Thus
+\[
+ P_{t,\ell}=\sum_{i=1}^p w_i(t)v_i(t)^{\otimes\ell}.
+\]
+The unordered atoms are continuous and distinct. Continuing their labels around the circle gives a permutation, well defined up to conjugacy. Recovering whether it is the identity is already a necessary subproblem of recovering the monodromy. All lower bounds below address this actual topological distinction, not merely different numerical component parameters.
+
+An exact query may return the entire held-mixture law at one parameter. An atom oracle is equivalent for the present identifiability discussion, under a known finite-mixture promise: grouped laws through length $2p-1$ determine a mixture with at most $p$ atoms \cite{VS,VSoperator}. This is a sufficient reconstruction horizon. Its worst-case pointwise-identifiability lower bound is \emph{not} automatically a monodromy lower bound. For example, distinct scalar Bernoulli parameters are globally sortable, and have no nontrivial monodromy.
+
+Algorithms may select parameters adaptively, use internal randomness, and stop adaptively. Their transcript contains the selected parameters, responses, stopping decision, and output. We write
+\[
+ \kl(a,b)=a\log\frac ab+(1-a)\log\frac{1-a}{1-b}.
+\]
+For two transcript laws $\mathsf P_0,\mathsf P_1$, every binary decision has maximum error at least $(1-\TV(\mathsf P_0,\mathsf P_1))/2$. If both errors are at most $\delta<1/2$, data processing gives
+\begin{equation}\label{eq:testing}
+ \KL(\mathsf P_0\Vert\mathsf P_1)\geq\kl(1-\delta,\delta)
+ =(1-2\delta)\log\frac{1-\delta}{\delta}.
+\end{equation}
+These facts follow respectively by applying the definition of total variation to the decision event, and by grouping the likelihood into that event and its complement.
+
+\section{A localized braid with fixed geometry}
+Fix
+\[
+ c=\tfrac13(1,1,1),\quad
+ a=\tfrac1{\sqrt2}(1,-1,0),\quad
+ b=\tfrac1{\sqrt6}(1,1,-2),\qquad
+ u(\theta)=a\cos\theta+b\sin\theta.
+\]
+The vectors $a,b$ are orthonormal and orthogonal to $\one$. For $0<r\leq1/12$, the two atoms
+\begin{equation}\label{eq:pair}
+ c+r u(\theta),\qquad c-r u(\theta)
+\end{equation}
+are probability vectors with every coordinate at least $1/4$, separation exactly $2r$, and constant equal weights $1/2$.
+
+For any open circle arc $I$ of length $h<1$, choose a nonnegative smooth density $g$ on $(0,1)$, supported in $[1/8,7/8]$, with integral one and $\|g\|_\infty\leq2$. Such a density is obtained by convolving the density $2\mathbf1_{[1/4,3/4]}$ with a smooth probability density supported in $[-1/8,1/8]$. Set
+\[
+ \Theta(s)=\pi\int_{-\infty}^{s}g(q)\,dq.
+\]
+Across $I=(\alpha,\alpha+h)$ use $\theta(t)=\Theta((t-\alpha)/h)$, and continue its lift with angle zero before the arc and angle $\pi$ after it. Its unordered atoms define a smooth circle family. It equals the constant family $\theta=0$ outside $I$, but its two labels are transposed after one circuit. Every lifted atom has speed at most $2\pi r/h$.
+
+\begin{remark}[Conditioning is not what fails]
+All pairwise inner products of the atoms in \eqref{eq:pair} are independent of $\theta$. For a feature vector containing all ordered words of lengths zero through $k$, the inner product of the feature vectors for two atoms is $\sum_{s=0}^k(v_i\cdot v_j)^s$. Consequently the nonzero singular values of the corresponding weighted Hankel Gram matrix are constant under this rotation. Thus the hidden-braid construction preserves not just atom separation and weights, but the nonzero finite-Hankel conditioning for every fixed such block. Fixed spectral conditioning alone does not rule it out.
+\end{remark}
+
+\section{Unknown modulus: deterministic and randomized impossibility}
+\begin{theorem}\label{thm:unknown}
+Fix $0<r\leq1/12$. Let an adaptive randomized algorithm make finitely many parameter queries almost surely on the constant family \eqref{eq:pair}. Queries can return exact all-horizon laws, or sampled groups. For every $\zeta>0$ there is one fixed smooth transposition family, with the same weights, atom separation, and finite-Hankel conditioning as the constant family, for which the transcript laws have total variation at most $\zeta$.
+
+In particular, no such algorithm is uniformly correct with error bounded by any fixed $\delta<1/2$ over this smooth class. A deterministic algorithm with a finite exact transcript has an alternative with exactly the same transcript.
+\end{theorem}
+\begin{proof}
+Let $N$ be the number of queried parameters under the constant family. Choose $m$ with $\Pr_0\{N>m\}<\zeta/2$. Independently choose the start of an arc of length $h<\zeta/(2m)$ uniformly around the circle (if $m=0$, any sufficiently small $h$ works). Couple the algorithm's seed and responses under the two models until its first query in that arc. Before such a query all entire response laws coincide, so the adaptive query lists coincide. Conditional on the constant-family query list, each of its first $m$ query points lies in the random arc with probability $h$. Hence
+\[
+ \Pr\{\text{coupled transcripts disagree}\}
+ \leq\Pr_0\{N>m\}+mh<\zeta.
+\]
+Averaging over arc locations supplies one fixed arc attaining this bound. The coupling inequality gives the claimed total variation bound. If both classification errors were at most $\delta$, the transcript total variation would have to be at least $1-2\delta$, contradicting arbitrarily small $\zeta$.
+
+For a deterministic finite transcript, the finitely many query points leave an open arc. Hide the half rotation in that arc. The oracle responses, all later queries, stopping, and output then agree exactly.
+\end{proof}
+
+\paragraph{Relation to the existing moving-seam result.}
+The local report \emph{Continuous stochastic realization over a parameter circle}, the section on finite data (source \texttt{Monodromy\_Realization.tex}, ``Finite data and a moving seam''), already proves the randomized statement in the reverse orientation: for an arbitrary smooth nontrivial target and every finite-query algorithm, it constructs a globally labelled alternative by retracing the target in a small seam. Theorem~\ref{thm:unknown} is a self-contained identity-versus-transposition subclass with fixed geometry. It does not supersede or claim originality for that stronger target-specific seam construction.
+
+\subsection{The analytic distinction is real}
+\begin{proposition}\label{prop:analytic}
+Deterministic finite exact queries cannot uniformly determine monodromy even among real-analytic held-mixture families without quantitative bounds. However, any \emph{fixed pair} of distinct analytic held-mixture families with at most $p$ atoms is distinguished almost surely by a single uniformly random exact query of the full separating vector through length $2p-1$. This second assertion is pairwise distinguishability, not a recovery algorithm for an unspecified analytic class.
+\end{proposition}
+\begin{proof}
+Run the deterministic algorithm on the constant family and collect its distinct query representatives $t_1,\ldots,t_n\in[0,1)$. There is a real trigonometric polynomial $R$ with $R(t_j)=-t_j$. For example, with
+\[
+ L_j(t)=\prod_{k\ne j}
+ \frac{1-\cos 2\pi(t-t_k)}{1-\cos2\pi(t_j-t_k)},
+ \qquad R(t)=-\sum_jt_jL_j(t),
+\]
+we have $L_j(t_k)=\mathbf1_{j=k}$. Set $f(t)=t+R(t)$ and $\theta(t)=\pi f(t)$. Then $f(t+1)=f(t)+1$, so \eqref{eq:pair} defines an analytic circle family with transposition monodromy; at every query, $f(t_j)=0$, giving exactly the constant-family law. This proves the deterministic claim. The empty-query case is immediate.
+
+For the second assertion, distinct families cannot have identical separating vectors at every parameter. Some coordinate difference is therefore a nonzero real-analytic function on the circle, whose zero set has measure zero. At almost every queried parameter the exact vectors differ. The known pair can be classified without error. Equivalently, their query-response transcript measures are mutually singular. The quantifier ``fixed pair'' cannot be dropped.
+\end{proof}
+
+\begin{proposition}[Finite noisy evidence does not acquire the analytic advantage]\label{prop:noisy-analytic}
+Suppose an algorithm obtains only finitely many parameter queries and finitely many sampled output symbols almost surely on the constant family. Then the conclusion of Theorem~\ref{thm:unknown} also holds with an analytic nontrivial alternative, allowing an arbitrarily small total variation error, while retaining fixed separation and weights. No known derivative/modulus bound is imposed.
+\end{proposition}
+\begin{proof}
+Truncate the constant-family execution at a deterministic bound $K$ on both parameter queries and sampled symbols, losing probability less than $\zeta/3$. Choose a random localized smooth half rotation of arc length $h<\zeta/(3K)$. Its lifted angle can be written $\pi(t+R(t))$ with $R$ smooth and periodic. Approximate $R$ uniformly by a real trigonometric polynomial $R_n$. The new angle has the same endpoint increment $\pi$, so it has transposition monodromy and constant atom separation. Uniform approximation makes each conditional emission vector within arbitrarily small total variation $\epsilon$ of the smooth one; this follows also directly from $\|u(\theta)-u(\phi)\|_2\leq|\theta-\phi|$ and $\|z\|_1\leq\sqrt3\|z\|_2$.
+
+Couple latent choices and individual symbols, and keep using the same algorithm seed. Until the first differing symbol the requested parameters and lengths agree. On the truncated constant-family execution, the probability of a seam query is at most $Kh$, averaged over the seam; outside the seam, the analytic model's per-symbol deviation is at most $\epsilon$. Thus the total disagreement probability is at most $\zeta/3+Kh+K\epsilon<\zeta$ for $\epsilon<\zeta/(3K)$. Averaging again selects a fixed seam and its analytic approximation. The argument is for sampled finite data, not exact real-valued law evaluations.
+\end{proof}
+
+\section{A known modulus changes the answer}
+We first use a pathwise atom modulus: every continued atom along an arc of length at most $h$ moves by at most $\omega(h)$. Assume minimum Euclidean atom separation $\Delta>0$ everywhere. An observable-moment modulus is different; converting it into an atom modulus requires a quantitative inverse bound for the chosen moment map.
+
+\begin{theorem}[Certified matching]\label{thm:matching}
+At a cyclic mesh of maximum gap $h$, suppose reconstructed unordered atoms have bottleneck error at most $\varepsilon$ at every vertex. If
+\begin{equation}\label{eq:mesh}
+ \omega(h)+2\varepsilon<\Delta/2,
+\end{equation}
+nearest-neighbor matching between successive reconstructed configurations is unique and recovers the true label transport. Composing around the mesh recovers monodromy up to its initial labeling.
+\end{theorem}
+\begin{proof}
+Fix the true continuation of atom $i$ across an interval. The distance between its two reconstructed representatives is at most $\omega(h)+2\varepsilon$. For a wrong representative $j$, its distance from the left representative of $i$ is at least $\Delta-\omega(h)-2\varepsilon$, by comparing at the left endpoint and applying the triangle inequality. Condition \eqref{eq:mesh} makes the correct distance strictly smaller than every wrong distance. The same argument applies to every atom and every mesh edge, including the last edge to the initial configuration. Composing these true transports gives the monodromy.
+\end{proof}
+
+\begin{theorem}[Sharp order of exact parameter-query complexity]\label{thm:lipschitz}
+For $L$-Lipschitz continued atoms with minimum separation $\Delta$, exact atom queries on a uniform mesh with
+\[
+ n=\max\{2,\lceil4L/\Delta\rceil\}
+\]
+suffice to recover monodromy deterministically. The following lower bound already holds for two atoms on a three-symbol alphabet. For $0<\Delta\leq1/6$ and $L\geq2\pi\Delta$, let $M=\lfloor L/(\pi\Delta)\rfloor$. Every randomized adaptive exact-query procedure with maximum classification error at most $\delta<1/2$ on this class satisfies
+\begin{equation}\label{eq:q-lower}
+ \mathbb E_0 N\geq M(1-2\delta)
+\end{equation}
+on a fixed constant two-atom family. In particular, for fixed error below $1/2$ and $L/\Delta$ sufficiently large, the optimal order is $\Theta(L/\Delta)$. Including a baseline query gives the usual $O(1+L/\Delta)$ upper bound; a nonzero lower bound in the small-$L/\Delta$ regime is not asserted when the entire admissible class has trivial monodromy.
+\end{theorem}
+\begin{proof}
+The upper bound is Theorem~\ref{thm:matching} with $\varepsilon=0$, $\omega(h)=Lh$.
+
+For the lower bound, set $r=\Delta/2$ in \eqref{eq:pair}. Pack $M$ disjoint arcs $I_j$ of length $h=\pi\Delta/L$ into the circle. The localized half rotation has speed at most $2\pi r/h=L$. Let model $j$ insert a half rotation in $I_j$, and let model zero be constant. Couple model zero and model $j$ until a parameter query enters $I_j$. The total variation of their transcripts is at most the constant-model probability of visiting $I_j$, which is at most the expected number $\mathbb E_0N_j$ of queries there. Correctness requires this total variation to be at least $1-2\delta$. Summing over the disjoint arcs gives
+\[
+ M(1-2\delta)\leq\sum_j\mathbb E_0N_j\leq\mathbb E_0N.
+\]
+This proves \eqref{eq:q-lower}, including adaptive stopping. If $\mathbb E_0N=\infty$, the lower bound is automatic.
+\end{proof}
+
+\begin{remark}[H\"older version and unknown separation]
+For known $\omega(h)=Hh^\alpha$, $0<\alpha\leq1$, the mesh bound is $O((H/\Delta)^{1/\alpha})$. The same localized construction has displacement bounded by $\min\{\Delta,\pi\Delta s/h\}\leq\Delta\pi^\alpha(s/h)^\alpha$. Taking $h=\pi(\Delta/H)^{1/\alpha}$ gives the matching lower order whenever this length is small enough to pack many arcs. No claim of a sharp inverse-modulus formula is made for arbitrary functions $\omega$.
+
+A known modulus can be useful even if $\Delta$ is not supplied. With exact atoms, successively refine the mesh until its observed minimum separation $\widehat\Delta$ exceeds $4\omega(h)$. The true global separation is at least $\widehat\Delta-2\omega(h)>2\omega(h)$, since each true atom is tracked from a neighboring mesh vertex. Thus \eqref{eq:mesh} holds. Compactness and collision-freeness imply a positive actual minimum separation, so this procedure eventually terminates. Without a known modulus, no finite stopping certificate follows merely from finer meshes.
+\end{remark}
+
+\section{A genuine finite-horizon monodromy counterexample}
+\begin{theorem}[Regular polygons]\label{thm:polygon}
+For every $p\geq2$ there are two analytic, strictly positive, uniformly separated $p$-atom held-mixture families on a three-symbol alphabet, with equal weights $1/p$, such that one has identity monodromy and the other has a $p$-cycle, while their entire word-law vectors through length $p-1$ agree at \emph{every} parameter. Consequently no amount of data restricted to independent groups of length at most $p-1$ distinguishes them, even with adaptive parameter selection. At least one length-$p$ word distinguishes these particular families.
+\end{theorem}
+\begin{proof}
+Choose $0<r\leq1/12$. The constant family has angles $2\pi j/p$, $0\leq j<p$. The rotating family has atoms
+\[
+ v_j(t)=c+r\big[a\cos(2\pi t/p+2\pi j/p)+b\sin(2\pi t/p+2\pi j/p)\big].
+\]
+All atoms have coordinates at least $1/4$ and pairwise separation at least $2r\sin(\pi/p)>0$. Their endpoint permutation is a $p$-cycle.
+
+For a fixed word of length $\ell$, its product probability as a function of an atom's angle is a trigonometric polynomial with Fourier frequencies $k$ satisfying $|k|\leq\ell$. Averaging it over the $p$ angles multiplies frequency $k$ by
+\[
+ \frac1p\sum_{j=0}^{p-1}e^{2\pi i kj/p}
+ =\begin{cases}1,&p\mid k,\\0,&p\nmid k.\end{cases}
+\]
+When $\ell<p$, only frequency zero remains, and the word probability is independent of $t$. It equals the constant-polygon probability. Hence every response kernel for all allowed experiments is identical under the two families; adaptivity changes nothing.
+
+For a symbol $y$ whose projection onto the $(a,b)$ plane is nonzero, $v_j(t)_y$ has a nonzero frequency-one coefficient. Its $p$th power has a nonzero frequency-$p$ coefficient, which survives averaging. Thus the word $y^p$ has a nonconstant probability and separates the families at some parameter.
+\end{proof}
+This proves a monodromy-specific worst-case horizon lower bound of $p$, and a generic sufficient horizon of $2p-1$ was cited above. It does \emph{not} close that gap for unrestricted $p$-atom mixtures. For $p=3$, the construction is precisely the rotating triangle whose second-order Hankel block is constant in the existing monodromy report. When $p$ is odd the $p$-cycle is even, so the example can change the positive-width obstruction while leaving the signed parity obstruction unchanged.
+
+\section{Exact statistical rates for a topologically distinct pair}
+Fix $0<w\leq1/4$ and $0<\Delta\leq1/12$. Use three atoms with weights $1-2w,w,w$:
+\begin{equation}\label{eq:rare}
+ c,\qquad c+\Delta u(\theta(t)),\qquad c-\Delta u(\theta(t)).
+\end{equation}
+The minimum atom separation is exactly $\Delta$, and the minimum weight is $w$. The null family has $\theta_0(t)=0$; the alternative has $\theta_1(t)=\pi t$. The former has identity monodromy and the latter transposes the two rare atoms while fixing $c$. Both have analytic observable laws.
+
+\begin{theorem}[Two-symbol groups]\label{thm:stat-pair}
+For the pair \eqref{eq:rare}:
+\begin{enumerate}
+\item All one-symbol laws equal $c$, so one-symbol restarts have zero distinguishing information, regardless of their number or queried parameters.
+\item Any procedure using two-symbol restarts and having both errors at most $\delta<1/2$ satisfies
+\begin{equation}\label{eq:statlower}
+ \mathbb E_0N\geq\frac{\kl(1-\delta,\delta)}{128w^2\Delta^4}.
+\end{equation}
+This includes adaptive parameter queries and stopping, whenever $\mathbb E_0N<\infty$ (otherwise it is automatic).
+\item Conversely, for this known two-point problem, query only $t=1/2$. A nonadaptive test using
+\begin{equation}\label{eq:statupper}
+ N\geq\frac{\log(1/\delta)}{2w^2\Delta^4}
+\end{equation}
+two-symbol restarts has both errors at most $\delta$.
+\end{enumerate}
+Thus its two-symbol restart complexity is $\Theta(w^{-2}\Delta^{-4}\log(1/\delta))$ for, say, $0<\delta\leq1/4$. This is a sharp rate for the specified genuine monodromy pair, not a universal rate for arbitrary group lengths or arbitrary mixture classes.
+\end{theorem}
+\begin{proof}
+The rare atoms' linear perturbations cancel. For an ordered pair $(y,z)$ the law at angle $\theta$ is
+\begin{equation}\label{eq:q2}
+ q_\theta(y,z)=c_yc_z+2w\Delta^2u(\theta)_yu(\theta)_z.
+\end{equation}
+Every component emission coordinate is at least $1/4$, so every $q_\theta(y,z)\geq1/16$. Since for unit vectors $u,v$,
+\[
+ \|uu^T-vv^T\|_F^2=2[1-(u^Tv)^2]\leq2,
+\]
+we obtain, in either direction,
+\begin{align*}
+ \KL(q_\theta\Vert q_\phi)
+ &\leq\sum_{y,z}\frac{[q_\theta(y,z)-q_\phi(y,z)]^2}{q_\phi(y,z)}\\
+ &\leq16\,(2w\Delta^2)^2\cdot2
+ =128w^2\Delta^4.
+\end{align*}
+The first inequality follows from $\log x\leq x-1$.
+
+In an adaptive transcript the algorithm's randomization, query-selection, and stopping kernels are the same conditional on the past under the two hypotheses. Their likelihood factors therefore cancel. Conditioning sequentially gives
+\[
+ \KL(\mathsf P_0\Vert\mathsf P_1)
+ =\mathbb E_0\sum_{k=1}^{N}\KL(q_0\Vert q_{\pi t_k})
+ \leq128w^2\Delta^4\mathbb E_0N.
+\]
+For a stopping time, the identity follows first for truncated stopping, then by the likelihood-ratio chain rule and integrability; the individual log likelihood ratios are uniformly bounded and $\mathbb E_0N<\infty$. Combining with \eqref{eq:testing} proves \eqref{eq:statlower}. This is the standard adaptive change-of-measure argument used, for example, in \cite{KCG}.
+
+For the upper bound, put $F(y,z)=a_ya_z-b_yb_z$. The symmetric matrix $aa^T-bb^T$ has operator norm one, so $F\in[-1,1]$. At $t=1/2$, the null has direction $a$ and the alternative direction $b$. Because $a,b$ are orthogonal to $c$,
+\[
+ \mathbb E_0F=2w\Delta^2,\qquad \mathbb E_1F=-2w\Delta^2.
+\]
+Classify by the sign of the empirical average of $F$. Hoeffding's bound for variables in $[-1,1]$ gives either error at most $\exp(-2Nw^2\Delta^4)$, proving \eqref{eq:statupper}.
+\end{proof}
+
+\begin{theorem}[Spatial coverage and statistical precision multiply]\label{thm:spatialstat}
+Suppose the continued atoms have known Lipschitz bound $L$, and experiments are restricted to two-symbol restarts. For \eqref{eq:rare}, assume $L\geq4\pi\Delta$ and set
+\[
+ M=\left\lfloor\frac{L}{2\pi\Delta}\right\rfloor.
+\]
+Every procedure with error at most $\delta<1/2$ uniformly over this class satisfies, on the constant null,
+\begin{equation}\label{eq:productlower}
+ \mathbb E_0N\geq
+ \frac{M\,\kl(1-\delta,\delta)}{128w^2\Delta^4}.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Pack $M$ disjoint arcs of length $h=2\pi\Delta/L$. In alternative $j$, insert the localized half rotation only in arc $I_j$. Its atom speed is at most $2\pi\Delta/h=L$, and its monodromy is the rare-atom transposition. The two-symbol responses coincide with the null outside $I_j$ and have KL divergence at most $128w^2\Delta^4$ inside. If $N_j$ counts queries in $I_j$, the preceding adaptive argument gives
+\[
+ 128w^2\Delta^4\mathbb E_0N_j
+ \geq\KL(\mathsf P_0\Vert\mathsf P_j)
+ \geq\kl(1-\delta,\delta).
+\]
+Sum over the disjoint arcs and use $\sum_jN_j\leq N$.
+\end{proof}
+\paragraph{Fixed-weight scaling.}
+For fixed $w>0$ and fixed confidence $0<\delta<1/2$, the lower bound is $\Omega(L\Delta^{-5})$ in the regime $L/\Delta\geq4\pi$; retaining confidence gives $\Omega(L\Delta^{-5}\log(1/\delta))$ for $\delta\leq1/4$. If the confidence error is denoted $\alpha$ instead of $\delta$, simply replace $\delta$ by $\alpha$ in the exact binary-KL expression. These statements count two-symbol independent restarts, not individual points on a long correlated trajectory.
+
+For an atom H\"older bound $H|s-t|^\beta$, $0<\beta\leq1$, a rare-atom half rotation satisfies
+\[
+ \|v(t)-v(s)\|_2\leq
+ \min\{2\Delta,2\pi\Delta|t-s|/h\}
+ \leq2\Delta\pi^\beta(|t-s|/h)^\beta.
+\]
+Thus one may instead pack arcs of length $h=\pi(2\Delta/H)^{1/\beta}$. In \eqref{eq:productlower}, replace the number of arcs by
+\[
+ M=\left\lfloor\pi^{-1}(H/(2\Delta))^{1/\beta}\right\rfloor.
+\]
+When many arcs fit, the resulting algebraic lower scaling is
+$H^{1/\beta}w^{-2}\Delta^{-(4+1/\beta)}\log(1/\delta)$.
+
+\begin{proposition}[An explicit matching upper bound in the symmetric subclass]
+Suppose $c,w,\Delta$ are known, and the entire unknown family has the form \eqref{eq:rare} with continued-atom Lipschitz bound $L$. Let
+\[
+ m=\max\{2,\lceil8L/\Delta\rceil\},\qquad
+ R=\left\lceil\frac{1152}{w^2\Delta^4}\log\frac{18m}{\delta}\right\rceil.
+\]
+Then $R$ independent two-symbol restarts at each of $m$ uniformly spaced parameters suffice to recover monodromy with error at most $\delta$.
+\end{proposition}
+\begin{proof}
+Let $\widehat q$ be the empirical $3\times3$ ordered-pair frequency matrix at a mesh point. By coordinatewise Hoeffding and a union bound over the $9m$ frequencies, with probability at least $1-\delta$ every matrix obeys
+\[
+ \|\widehat q-q\|_F\leq3\max_{y,z}|\widehat q(y,z)-q(y,z)|
+ \leq e:=w\Delta^2/16.
+\]
+Indeed, it is enough that the coordinate errors are at most $w\Delta^2/48$, and the failure probability is at most $18m\exp[-2R(w\Delta^2/48)^2]$.
+
+At each point, fit a matrix $2w\Delta^2\widehat u\widehat u^T$ nearest in Frobenius norm to $\widehat q-cc^T$, with $\widehat u$ a unit vector in $\one^\perp$. The true matrix is feasible, so the fitted and true matrices are within $2e$. For unit vectors $u,v$,
+\[
+ \min_{s=\pm1}\|u-sv\|_2^2=2(1-|u^Tv|)
+ \leq2(1-(u^Tv)^2)=\|uu^T-vv^T\|_F^2.
+\]
+Consequently the unordered estimated atoms $c,c\pm\Delta\widehat u$ have bottleneck error at most $e/(w\Delta)=\Delta/16$. Since $L/m\leq\Delta/8$, the matching condition is strict: $L/m+2(\Delta/16)\leq\Delta/4<\Delta/2$. Apply Theorem~\ref{thm:matching}.
+\end{proof}
+This direct upper bound has an extra $\log m$ relative to \eqref{eq:productlower}. We do not claim to have removed this logarithm or proved it necessary. Nor does second-moment recovery of this special symmetric model imply identifiability of arbitrary three-atom mixtures from two observations.
+
+\section{Independent restarts are a separate resource}
+\begin{proposition}[A common component prevents one-path consistency]\label{prop:onepath}
+For the rare-pair models \eqref{eq:rare}, one fixed-parameter trajectory, of any length including an infinite trajectory, has maximum testing error at least $(1-2w)/2$. For at most $N$ independent restarted trajectories, even allowing each one arbitrary length, the maximum error is at least
+\begin{equation}\label{eq:rare-miss}
+ \tfrac12(1-2w)^N.
+\end{equation}
+Thus error at most $\delta$ requires
+\[
+ N\geq\frac{\log(1/(2\delta))}{-\log(1-2w)}
+ =\Omega(w^{-1}\log(1/\delta))
+\]
+uniformly for $0<\delta\leq1/4$ as $w\downarrow0$ (and for each fixed $\delta<1/2$). The bound holds under adaptive parameter selection and for a procedure that stops no later than its $N$th restart.
+\end{proposition}
+\begin{proof}
+Couple each restart's latent component choice under the two models. With probability $1-2w$ both choose the common atom $c$, on which the entire trajectory laws agree at every parameter. For $N$ restarts, pre-generate $N$ independent latent choices. The event that all are common has probability $(1-2w)^N$, and on it couple all observations and the algorithm seed identically. The complete adaptive transcripts coincide on that event. Hence their total variation is at most $1-(1-2w)^N$, giving \eqref{eq:rare-miss}.
+\end{proof}
+This is an existence obstruction, not a claim that one trajectory never distinguishes monodromy. For example, in a known two-point two-atom problem whose supports are disjoint at a selected parameter, one sufficiently long trajectory can identify the alternative. In the general held-mixture model an infinite trajectory identifies its selected component, not the whole mixing measure. Treating consecutive blocks of that trajectory as independent restarts is incorrect.
+
+\subsection{A general long-group upper bound}
+For completeness, suppose there are $M$ mesh points, $p$ atoms, $d$ output symbols, weights at least $w_*$, separation at least $\Delta$, and an available atom modulus. Choose an accuracy $0<\varepsilon<\Delta/4$ satisfying \eqref{eq:mesh}, and take at each mesh point
+\begin{equation}\label{eq:restartupper}
+ N=\left\lceil w_*^{-1}\log\frac{2Mp}{\delta}\right\rceil,
+ \qquad
+ \ell=\left\lceil\frac{d}{2\varepsilon^2}
+ \log\frac{4dMN}{\delta}\right\rceil
+\end{equation}
+independent groups of length $\ell$.
+
+A union bound shows that every atom appears at every mesh point with probability at least $1-\delta/2$, because the missing probability is at most $Mp\exp(-Nw_*)$. For each group, coordinatewise Hoeffding and a union bound give
+\[
+ \Pr\{\|\widehat v-v_Z\|_2>\varepsilon\}
+ \leq2d\exp(-2\ell\varepsilon^2/d).
+\]
+Hence all $MN$ empirical vectors are accurate with probability at least $1-\delta/2$. On this event, two groups from the same atom are at distance at most $2\varepsilon<\Delta/2$, whereas groups from different atoms are at least $\Delta-2\varepsilon>\Delta/2$ apart. Clustering with threshold $\Delta/2$ gives exactly the $p$ components, with any cluster representative accurate to $\varepsilon$. Theorem~\ref{thm:matching} then recovers monodromy. This is a computationally elementary sufficient bound, not an optimal general mixture-estimation rate.
+
+With $\varepsilon$ a fixed small multiple of $\Delta$ and $M=O(1+L/\Delta)$, its total-symbol cost is
+\[
+ O\!\left(\frac{Md}{w_*\Delta^2}
+ \log\frac{Mp}{\delta}\,
+ \log\frac{dM w_*^{-1}\log(Mp/\delta)}{\delta}\right).
+\]
+It illustrates why restart count and within-restart length must both be specified. The $w^{-2}\Delta^{-4}$ rate of Theorem~\ref{thm:stat-pair} concerns two-symbol groups and cannot be imposed on experiments allowed to use these much longer groups.
+
+\paragraph{Periodic or primitive dynamics.}
+The periodic-phase companion report reconstructs a phase cover, closed under rotation, from all-word laws. One long periodic trajectory can explore its selected phase orbit, but need not visit other phase orbits. The held model ($m=1$) is already a subclass, so the common-component impossibility above persists. For a primitive-transition model a long trajectory may eventually explore all states, but a uniform statistical guarantee needs a quantitative mixing or regeneration bound. Strict positivity or primitivity alone gives none: a model that refreshes with probability $\eta$ per step has probability $(1-\eta)^{T-1}$ of no refresh in $T$ steps. Under a common-atom start, coupling gives an additional identical-transcript event of probability at least $(1-2w)(1-\eta)^{T-1}$. No cross-parameter state-transport convention is assumed by any result here.
+
+\section{What is and is not established}
+\begin{itemize}
+\item Smoothness, positive separation, positive weights, and finite-Hankel conditioning do not replace known parameter regularity. The finite exact-query impossibility is already valid under all those qualitative promises.
+\item With known Lipschitz (or H\"older) atom regularity, exact parameter-query order is sharp in its nontrivial regime. No unknown candidate-family modulus is needed to reconstruct the true cover by certified continuation. In contrast, extending a \emph{candidate's} pointwise approximation error between samples requires that candidate's own modulus or another restriction.
+\item The polygon example is a real monodromy lower bound for observation horizon. The general $2p-1$ grouped-mixture threshold is sufficient, but no sharp general monodromy horizon is established here.
+\item The statistical pair has a sharp two-symbol rate, and the disjoint-seam argument gives a spatial/statistical product lower bound. General mixture recovery may have different conditioning and rates; arbitrary group lengths change the problem.
+\item One-path and restart experiments are different. Nonergodic held mixtures and periodic families cannot be treated as if time averages across a single trajectory estimate independent-restart mixture laws.
+\item These results assume the held-mixture or other appropriate all-word model promise. Finite measured tables alone do not establish that the true process remains in that class at longer horizons.
+\item The arguments combine elementary topology, Fourier cancellation, coupling, and standard statistical testing/change-of-measure tools. No novelty certification is claimed.
+\end{itemize}
+
+\begin{thebibliography}{9}
+\bibitem{VS}
+R. A. Vandermeulen and C. Scott,
+\emph{On the Identifiability of Mixture Models from Grouped Samples},
+arXiv:1502.06644 (2015, revised 2022).
+\url{https://arxiv.org/abs/1502.06644}.
+General grouped-mixture identification and its pointwise horizon lower bounds; not by itself a monodromy lower bound.
+\bibitem{VSoperator}
+R. A. Vandermeulen and C. Scott,
+\emph{An Operator Theoretic Approach to Nonparametric Mixture Models},
+Annals of Statistics 47(5) (2019); arXiv:1607.00071.
+\url{https://arxiv.org/abs/1607.00071}.
+\bibitem{VSa}
+R. A. Vandermeulen and R. Saitenmacher,
+\emph{Generalized Identifiability Bounds for Mixture Models with Grouped Samples},
+arXiv:2207.11164 (2022).
+\url{https://arxiv.org/abs/2207.11164}.
+Shows that stronger linear-independence hypotheses can reduce the group-size requirement.
+\bibitem{KCG}
+E. Kaufmann, O. Capp\'e, and A. Garivier,
+\emph{On the Complexity of Best-Arm Identification in Multi-Armed Bandit Models},
+Journal of Machine Learning Research 17(1) (2016), 1--42, especially Lemma 1 and Appendix A.
+\url{https://www.jmlr.org/papers/volume17/kaufman16a/kaufman16a.pdf}.
+The adaptive KL calculation here is the same general change-of-measure principle, applied to parameterized mixture experiments.
+\end{thebibliography}
+\end{document}

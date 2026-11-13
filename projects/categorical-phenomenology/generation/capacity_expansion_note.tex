@@ -1,0 +1,1034 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\title{Evidence-Driven Capacity Change\\Certificates, Reconstruction, and Live Gradient Extensions}
+\author{}
+\date{4 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+A broad structural account of learning would explain how evidence changes
+representations across automata and other reconstruction settings. The
+concrete question addressed here is narrower. Finite evidence can prove
+that a fixed representation is too small without
+showing how to enlarge it constructively. This note proves a bounded bridge:
+Hankel rank certificates; witness-directed repair and exact reconstruction;
+function-preserving gated automaton extensions with explicit loss laws;
+noise-robust optimal rank-one births in an explicitly unstructured matrix
+relaxation; and reverse-mode compatibility across changing parameter spaces.
+Counterexamples separate matrix rank from automaton consistency, reverse
+transport from optimizer commutation, and linear realization dimension from
+intrinsic nonlinear state complexity. The statements are proved as a synthesis
+of established ideas, with no claim of priority or domain-general unification.
+\end{abstract}
+\tableofcontents
+\bigskip
+% Standalone-content module. No documentclass or document environment.
+% Requires amsmath, amssymb, amsthm, hyperref; theorem environments
+% theorem, proposition, lemma, corollary, definition, remark.
+% All labels are prefixed ce:. This source is intentionally uncompiled.
+
+\section{Evidence-driven changes of representational capacity}
+\label{ce:section}
+
+\paragraph{Scope and status.}
+The motivating objective is a structural account of how evidence changes
+what counts as a state or representation, potentially connecting automata,
+formal-concept analysis, and topological reconstruction. The results here
+address a specific obstruction to that broader objective: changing capacity
+inside a differentiable learner. They establish no general equivalence of
+those reconstruction domains.
+
+The useful question is not simply whether a learner can differentiate its
+parameters. It is whether observations can certify the inadequacy of its
+current representation, and whether one can then enlarge the representation
+without discarding its learned behavior or creating parameters that gradients
+cannot activate. Three mathematically different operations must be separated:
+\begin{enumerate}
+\item certify that a given capacity is insufficient;
+\item optimize within a fixed-capacity family;
+\item introduce new, behaviorally effective directions and transport the old
+      reverse-mode calculation into the enlarged family.
+\end{enumerate}
+The results below are mathematical derivations and a synthesis of established
+ideas, not claims of priority. Hankel realization and categorical automata
+learning already explain exact state discovery; low-rank optimization already
+studies rank-increasing steps; function-preserving network transformations and
+parametric lenses already study their respective interfaces. The contribution
+of this section is a precise separation and integration of these ingredients,
+including limitations that prevent a false unification.
+
+\subsection{Finite evidence can certify an inadequate state dimension}
+
+Fix a finite alphabet $\Sigma$. A real weighted finite automaton (WFA) with
+$n$ states is a tuple
+\[
+ \mathcal A=(\alpha,(A_a)_{a\in\Sigma},\beta),\qquad
+ \alpha\in\mathbb R^{1\times n},\quad A_a\in\mathbb R^{n\times n},
+ \quad\beta\in\mathbb R^{n\times1}.
+\]
+Write $A_\varepsilon=I$ and $A_w=A_{a_1}\cdots A_{a_k}$ for
+$w=a_1\cdots a_k$. Its behavior is $f_{\mathcal A}(w)=\alpha A_w\beta$.
+For finite prefix and suffix sets $S,E\subseteq\Sigma^*$, its observed
+Hankel block is
+\[
+ H_f[S,E]_{s,e}=f(se),\qquad H_f[S,E]\in\mathbb R^{|S|\times|E|}.
+\]
+It factors as $H_f[S,E]=R_SO_E$, where the row indexed by $s$ of $R_S$
+is $\alpha A_s$ and the column indexed by $e$ of $O_E$ is $A_e\beta$.
+Consequently $\operatorname{rank}H_f[S,E]\leq n$. This is a state-dimension
+bound, not a statement about the rank of an arbitrary neural-network weight
+matrix.
+
+\begin{theorem}[Exact and noise-robust capacity certificates]
+\label{ce:certificate}
+Let $H_*\in\mathbb R^{m\times n}$ be a true Hankel block and let
+$Y\in\mathbb R^{m\times n}$ satisfy
+$\|Y-H_*\|_2\leq\epsilon$, where $\|\cdot\|_2$ is the operator norm and
+$\epsilon\geq0$ is a justified error bound. Put $p=\min(m,n)$ and take
+$0\leq r<p$. Then:
+\begin{enumerate}
+\item If $\sigma_{r+1}(Y)>\epsilon$, no WFA with at most $r$ states
+      realizes the true behavior.
+\item Every rank-at-most-$r$ prediction matrix $X$ obeys
+\[
+ \|H_*-X\|_2\geq(\sigma_{r+1}(Y)-\epsilon)_+,
+ \qquad
+ \|H_*-X\|_F^2\geq
+ \sum_{j=r+1}^{p}(\sigma_j(Y)-\epsilon)_+^2.
+\]
+Here $a_+=\max(a,0)$.
+\item Thus $\sigma_{r+1}(Y)>\epsilon+\tau$ certifies that an $r$-state
+      WFA cannot attain operator-norm error at most $\tau$ on this block.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Singular-value perturbation gives
+$\sigma_j(H_*)\geq\sigma_j(Y)-\epsilon$. The best rank-$r$
+approximation error in operator norm is $\sigma_{r+1}(H_*)$, and its
+squared Frobenius error is $\sum_{j>r}\sigma_j(H_*)^2$. Applying these
+bounds to $X$ proves the inequalities. A WFA with at most $r$ states has
+block rank at most $r$, which proves the remaining claims.
+\end{proof}
+
+The certificate is only as sound as its noise bound. An empirical singular
+value is not itself evidence of an additional true state when the error scale
+is unknown. Under a specified sampling model, concentration results for
+empirical Hankel matrices can supply such bounds
+\cite{ce:denis2016}. The theorem uses no sampling assumptions beyond the
+stated event $\|Y-H_*\|_2\leq\epsilon$.
+The spectral criterion is sufficient for the structured WFA problem. Its
+failure is not a proof that a consistent WFA of order $r$ exists: arbitrary
+low-rank matrices need not satisfy the repeated-word equalities or transition
+conditions of a Hankel realization.
+
+\begin{proposition}[What exhaustive exact evidence eventually reveals]
+\label{ce:eventual}
+Suppose a nonzero behavior has a minimal $d$-state real WFA. Then
+\[
+ \operatorname{rank}H_f[\Sigma^{\leq d-1},\Sigma^{\leq d-1}]=d.
+\]
+Ranks of nested exact observation blocks are nondecreasing and bounded by
+$d$. However, an observed plateau below $d$ is not a certificate of
+completion when $d$ is unknown.
+\end{proposition}
+\begin{proof}
+Let $V_k$ be the span of reachable rows $\alpha A_w$ with $|w|\leq k$.
+If $V_k=V_{k+1}$, then $V_kA_a\subseteq V_k$ for every $a$, so the
+reachable span never grows thereafter. In a minimal realization it is all
+of $\mathbb R^{1\times d}$. Since $V_0$ is one-dimensional, either full
+reachability is attained earlier or its dimension strictly increases at each
+step through $d-1$. The analogous argument for columns $A_w\beta$ proves
+full observability by length $d-1$. The resulting $R_S$ and $O_E$ have
+column and row rank $d$, respectively, so their product has rank $d$.
+Nested blocks are submatrices of larger blocks, giving monotonicity.
+Without a bound on $d$, an unseen longer word can still expose an additional
+direction; monotonicity alone supplies no stopping rule.
+\end{proof}
+
+
+\subsection{From a witnessed table defect to a repaired realization}
+\label{ce:exact-interface}
+
+The next result makes the categorical image construction operational. It is
+an exact linear instance of the closedness/consistency method underlying
+CALF \cite{ce:calf2017}, not a replacement for that literature.
+Assume $S$ is prefix-closed, $E$ is suffix-closed, and both contain
+$\varepsilon$. All queried words have coherent, exact real values: the same
+word appearing in different entries has the same value. Define
+\[
+ T:\mathbb R^S\to\mathbb R^E,\quad
+ Te_s=(f(se))_{e\in E},\qquad
+ K_a e_s=(f(sae))_{e\in E},\qquad I=\operatorname{im}T.
+\]
+Thus the matrix of $T$ is the transpose of the earlier row-indexed Hankel
+block. The observed word set is the set of distinct words
+$D=SE\cup S\Sigma E$. Missing entries are not assigned zero.
+
+\begin{theorem}[Exact reconstruction and witness-directed rank progress]
+\label{ce:repair}
+Put $k=\operatorname{rank}T$.
+\begin{enumerate}
+\item If for every $a\in\Sigma$,
+\[
+ \operatorname{im}K_a\subseteq I,
+ \qquad \ker T\subseteq\ker K_a,
+\]
+then there is a unique linear operator $D_a:I\to I$ with $D_aT=K_a$.
+Starting at $q_0=Te_\varepsilon$ and reading output coordinate
+$\varepsilon$ yields a $k$-dimensional WFA that reproduces every queried
+word in $D$. Its minimal realization dimension is exactly $k$.
+\item If $\operatorname{im}K_a\not\subseteq I$, some $s\in S$ has
+$K_ae_s\notin I$. Appending the prefix $sa$ increases the rank of the
+unshifted table by exactly one.
+\item If $\ker T\not\subseteq\ker K_a$, choose $v\in\ker T$ and
+$e\in E$ with $(K_av)_e\ne0$. Appending the suffix $ae$ increases
+that rank by exactly one.
+\end{enumerate}
+Both repairs preserve the respective word closures. Their new unshifted
+entries have already been queried in $S\Sigma E$; completing the enlarged
+shifted blocks can require additional queries.
+\end{theorem}
+\begin{proof}
+The kernel condition makes the assignment $D_a(Tv)=K_av$ well-defined;
+the image condition makes its values lie in $I$. Surjectivity onto $I$
+gives uniqueness. For a word $w=a_1\cdots a_j$, write
+$D_w=D_{a_j}\cdots D_{a_1}$, so states evolve in reading order.
+Prefix closure and induction give $D_sq_0=Te_s$ for every $s\in S$.
+Let $o:I\to\mathbb R$ be coordinate $\varepsilon$. Suffix closure gives
+\[
+ oD_e(q)=q_e\quad(e\in E,\ q\in I).
+\]
+Indeed the empty suffix is immediate; for $e=av$ with $v\in E$, induction
+reduces the assertion on $q=Te_s$ to
+$(D_aTe_s)_v=f(sav)=(Te_s)_{av}$, and these $q$ span $I$.
+Consequently the realized values on $se$ and $sae$ are respectively
+$(Te_s)_e$ and $(K_ae_s)_e$. Choosing a basis on $I$, with row transitions
+$A_a=D_a^T$, puts this realization in the earlier WFA convention. Its
+observed block has rank $k$, so no smaller realization has its behavior.
+In the zero-rank case, the reconstructed hypothesis is the zero series,
+with a zero-dimensional realization
+or, if required by a convention, a one-state zero realization.
+
+For the second claim, if every column of $K_a$ lay in $I$, its image
+would lie there. The chosen independent column consists of the values
+$f(sae')$ and becomes the column for $sa$ in the new $T$. The prefix
+$sa$ is genuinely new; its proper prefixes already belong to $S$.
+For the third claim, the $e$-row of $K_a$ does not annihilate $v$, while
+every row of $T$ does. It is therefore independent of the existing rows,
+and it is precisely the new row indexed by $ae$. Its proper suffixes
+already lie in $E$. Adding one independent column or row raises rank by
+exactly one.
+\end{proof}
+
+\begin{corollary}[Finite exact repair and the meaning of a counterexample]
+\label{ce:repair-termination}
+If the true target has some WFA of dimension at most $N$, repeated
+witness-directed repairs, with each enlarged query set completed, make at
+most $N-k$ repairs before all operators descend. The resulting hypothesis
+fits its finite query set, not necessarily the global target.
+If a tested word $w$ refutes an already repaired rank-$k$ hypothesis,
+append all prefixes of $w$ to $S$ and complete the new queries. Either
+the table rank already exceeds $k$, or it has a defect whose repair raises
+the rank beyond $k$.
+\end{corollary}
+\begin{proof}
+Every true observation table has rank at most $N$, and every repair
+strictly increases rank. For the counterexample claim, suppose the enlarged
+table instead has the same rank and no defect. Since $E$ is unchanged,
+the old image is a subspace of the new image of the same dimension, hence
+they are equal. The two descended transition operators agree on the old
+spanning columns because their shifted entries agree. Their start and
+output maps also agree. Thus the new and old hypotheses have the same
+behavior. Reconstruction at the new table must, however, reproduce the
+observed value at $w$, contradicting the counterexample.
+\end{proof}
+
+The query semantics are explicit: for an enlarged context $(S',E')$,
+query only the previously unknown distinct words in
+$S'E'\cup S'\Sigma E'$. No equivalence oracle is needed to perform a
+witness repair. Finding a counterexample, or knowing that none exists, is
+a separate experimental obligation. Noisy kernel or image residuals can
+suggest queries but are not exact rank-progress proofs. The noisy
+certificate of Theorem~\ref{ce:certificate} must be checked on the
+resulting block using a justified error bound for that block.
+
+\begin{theorem}[A repaired-hypothesis path with empirical no-forgetting]
+\label{ce:reconstructed-gate}
+Let $C\subseteq D$ be finite coherent exact observation sets. Suppose an
+$n$-state model $f$ fits $C$, and a repaired table constructs an $m$-state
+model $h$ fitting $D$ by Theorem~\ref{ce:repair}. There is a smooth
+one-parameter family of $(n+m)$-state WFAs with behavior
+\[
+ f_t=(1-t)f+th.
+\]
+It has the following properties:
+\begin{enumerate}
+\item $f_0=f$ on all words.
+\item Every old observed value on $C$ is preserved for all $t$.
+\item For positive weights on $D$ and squared loss,
+$\mathcal L_D(f_t)=(1-t)^2\mathcal L_D(f)$.
+If $f$ fails the refined evidence, the gate derivative at zero is
+$-2\mathcal L_D(f)<0$, and $t=1$ reaches zero refined loss.
+\item The endpoint at $t=1$ can be compressed to the $m$-state model
+$h$ without changing any word output.
+\end{enumerate}
+If the refined table has rank $m>n$, its evidence proves that the old
+capacity is insufficient. The temporary dimension bound $n+m$ is an
+upper bound, not a minimal extension theorem.
+\end{theorem}
+\begin{proof}
+For $f=(\alpha,(A_a),\beta)$ and
+$h=(\gamma,(B_a),\delta)$, take
+\[
+ \alpha_t=((1-t)\alpha,t\gamma),\quad
+ M_{a,t}=\operatorname{diag}(A_a,B_a),\quad
+ \beta_t=\binom\beta\delta.
+\]
+Block multiplication gives the wordwise affine combination. Both endpoint
+models agree with the same labels on $C$, proving retention there.
+Since $h$ fits $D$, every refined residual is $(1-t)$ times the old
+residual. At $t=1$ the old block has zero initial weight and can be
+removed. The rank obstruction follows from Theorem~\ref{ce:certificate}
+with zero noise.
+\end{proof}
+
+This theorem gives an explicit safe one-dimensional path with endpoints
+held fixed. It is not a no-forgetting guarantee for unconstrained updates
+of all enlarged parameters. Unlike finite-support memorization, its new
+endpoint comes from a repaired realization whose dimension is the evidence
+image dimension. Nevertheless its agreement on unqueried words remains
+unverified, and noisy exact interpolation remains unjustified.
+
+\subsection{A robust, optimal rank-one birth in the matrix relaxation}
+
+This subsection concerns matrices, not automatically WFA realizations. Its
+strength is that a new direction is selected from evidence and yields a
+quantified improvement even for the unknown noise-free table.
+
+Let $X\in\mathbb R^{m\times n}$ have rank $r<\min(m,n)$, and write a
+compact SVD as $X=U\Lambda V^T$. Put $P=UU^T$, $Q=VV^T$. The normal
+space to the rank-$r$ manifold at $X$ is
+\[
+ \mathcal N_X=\{Z:PZ=0,\ ZQ=0\}.
+\]
+Given an observed matrix $Y$, define its normal innovation
+\[
+ N=(I-P)(Y-X)(I-Q)=(I-P)Y(I-Q),\qquad\rho=\|N\|_2.
+\]
+When $\rho>0$, choose unit vectors $u\perp\operatorname{im}U$ and
+$v\perp\operatorname{im}V$ with $u^TNv=\rho$.
+
+\begin{theorem}[Noise-robust, minimax normal birth]
+\label{ce:robust-birth}
+Suppose $\|Y-H_*\|_2\leq\epsilon$ and $\rho>\epsilon$. Define
+$t=\rho-\epsilon$ and
+\[
+ X_+=X+tuv^T,\qquad
+ \mathcal L_T(Z)=\tfrac12\|Z-T\|_F^2.
+\]
+Then:
+\begin{enumerate}
+\item $\operatorname{rank}X_+=r+1$.
+\item The unknown true table loss improves by the certified amount
+\[
+ \mathcal L_{H_*}(X)-\mathcal L_{H_*}(X_+)
+ \ \geq\ \tfrac12(\rho-\epsilon)^2.
+\]
+\item This guaranteed improvement is optimal among all nonnegative step
+      sizes and unit normal rank-one atoms under the unstructured
+      operator-norm uncertainty ball. Precisely,
+\[
+ \sup_{\substack{a,b\ {\mathrm{unit}}\\ Pa=0,\ Qb=0}}\ \sup_{s\geq0}
+ \inf_{\|T-Y\|_2\leq\epsilon}
+ \bigl[\mathcal L_T(X)-\mathcal L_T(X+sab^T)\bigr]
+ =\tfrac12(\rho-\epsilon)_+^2.
+\]
+The displayed construction attains the supremum when $\rho>\epsilon$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+In orthonormal bases extending $U,u$ and $V,v$, the nonzero part of
+$X+tuv^T$ is block diagonal with blocks $\Lambda$ and $t$. This proves
+its rank.
+For any unit $a,b$ and any $s\geq0$, direct expansion gives
+\[
+ \mathcal L_T(X)-\mathcal L_T(X+sab^T)
+ =s\langle T-X,ab^T\rangle_F-\tfrac12s^2.
+\]
+The least possible value of $\langle T-Y,ab^T\rangle_F$ over
+$\|T-Y\|_2\leq\epsilon$ is $-\epsilon$: the lower bound follows from
+operator/nuclear norm duality and is attained by
+$T-Y=-\epsilon ab^T$. For a normal atom,
+$\langle Y-X,ab^T\rangle_F=a^TNb$. Consequently its worst-case
+improvement is exactly
+\[
+ s(a^TNb-\epsilon)-\tfrac12s^2.
+\]
+The greatest $a^TNb$ is $\rho$. Maximization of the remaining scalar
+quadratic over $s\geq0$ gives $s=(\rho-\epsilon)_+$ and value
+$\tfrac12(\rho-\epsilon)_+^2$. The actual $H_*$ is in the uncertainty
+ball, which proves the claimed guarantee.
+\end{proof}
+
+The minimax qualification matters: the uncertainty set in the equality above
+contains all matrices in the norm ball, including matrices that are not
+Hankel. The same bound remains valid if the true table is Hankel, but
+optimality relative to a smaller structured uncertainty set is not claimed.
+Nor is this an out-of-sample generalization bound.
+
+\begin{corollary}[A capacity certificate forces birth after fixed-rank stationarity]
+\label{ce:stationary-birth}
+Assume $X$ is stationary for
+$\frac12\|X-Y\|_F^2$ on the smooth manifold of rank-exactly-$r$ matrices.
+Then $Y-X=N$ and
+\[
+ \rho=\|Y-X\|_2\geq\sigma_{r+1}(Y).
+\]
+In particular, $\sigma_{r+1}(Y)>\epsilon$ forces the birth in
+Theorem~\ref{ce:robust-birth} and guarantees true loss decrease at least
+$\frac12(\sigma_{r+1}(Y)-\epsilon)^2$.
+\end{corollary}
+\begin{proof}
+The tangent space consists of matrices of the form $UK^T+LV^T$.
+Orthogonality of $X-Y$ to every such tangent vector implies
+$U^T(X-Y)=0$ and $(X-Y)V=0$. Hence $Y-X$ is its own normal projection.
+Every rank-$r$ approximation has operator-norm error at least
+$\sigma_{r+1}(Y)$.
+\end{proof}
+
+At an arbitrary iterate a rank certificate does not imply $N\ne0$:
+some error may first require movement tangent to the existing rank stratum.
+For example $X=\left(\begin{smallmatrix}1&0\\0&0\end{smallmatrix}\right)$
+and $Y=\left(\begin{smallmatrix}1&1\\1&0\end{smallmatrix}\right)$ have
+$\operatorname{rank}Y=2$ but $N=0$ at $X$. This is why fixed-capacity
+optimization and certified expansion must not be conflated.
+
+
+Normal descent and intrinsic rank insufficiency remain different claims.
+Even stationarity together with $\rho>\epsilon$ does not by itself certify
+true rank greater than $r$ under noise. For example, let
+\[
+ r=1,\quad X=\operatorname{diag}(0.05,0),\quad
+ Y=\operatorname{diag}(0.05,1),\quad
+ H_*=\operatorname{diag}(0,1),\quad\epsilon=0.1.
+\]
+The point $X$ is stationary on the rank-one manifold, and $\rho=1$,
+but the true table has rank one. The birth improves a poor stationary
+representation; it does not prove that all rank-one representations fail.
+The separate criterion $\sigma_{r+1}(Y)>\epsilon$ is sufficient.
+At a best rank-$r$ truncated SVD, $\rho=\sigma_{r+1}(Y)$, but that
+equality need not hold at other stationary points.
+
+\begin{proposition}[Dead symmetric padding and live asymmetric padding]
+\label{ce:factor-padding}
+Let $X=AB^T$, where $A\in\mathbb R^{m\times r}$ and
+$B\in\mathbb R^{n\times r}$ have full column rank, and let $F$ be a
+continuously differentiable function of $X$ with gradient $G$.
+For the enlarged factorization
+$\Phi(A_+,B_+)=A_+B_+^T$:
+\begin{enumerate}
+\item At $A_+=[A,0]$, $B_+=[B,0]$, both new-column gradients are zero.
+      Gradient descent initialized there cannot activate either new column.
+\item At $A_+=[A,u]$, $B_+=[B,0]$, the represented matrix is still $X$,
+      but the new-column gradient in $B_+$ is $G^Tu$.
+\item For $F(Z)=\frac12\|Z-Y\|_F^2$ and the normal singular vectors
+      above, the path $B_+(s)=[B,sv]$ has
+\[
+ \left.\frac{d}{ds}F(A_+B_+(s)^T)\right|_{s=0}=-\rho.
+\]
+      Its matrix is $X+suv^T$ and has rank $r+1$ for every $s\ne0$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+The factor gradients are $\nabla_{A_+}(F\circ\Phi)=GB_+$ and
+$\nabla_{B_+}(F\circ\Phi)=G^TA_+$. These give the first two claims,
+and the all-zero new columns remain zero under each gradient-descent step.
+For the last claim, $u^TGv=-u^T(Y-X)v=-\rho$; orthogonality to the old
+column and row spaces proves the rank statement.
+\end{proof}
+
+\paragraph{Worked numerical example.}
+Take $Y=\operatorname{diag}(2,0.8)$, $X=\operatorname{diag}(2,0)$,
+$r=1$, and $\epsilon=0.1$. The old rank-one point is stationary,
+$u=v=(0,1)^T$, and $\rho=0.8$. The robust step gives
+$X_+=\operatorname{diag}(2,0.7)$ and guarantees a reduction of at least
+$0.245$ in the unknown true half-squared Frobenius loss. This is attained
+by the admissible target $H_*=\operatorname{diag}(2,0.7)$.
+The observed loss drops from $0.32$ to $0.005$.
+Appending two zero factor columns would instead produce zero gradient in
+both new columns. Appending $u$ to one factor and a zero column to the other
+preserves the starting matrix while making the scalar gate derivative
+$-0.8$.
+
+\paragraph{An explicit obstruction to interpreting the step as an automaton.}
+For a unary alphabet and $S=E=\{\varepsilon,a,a^2\}$, consider
+\[
+ X=\begin{pmatrix}1&0&0\\0&0&0\\0&0&0\end{pmatrix},\qquad
+ Y=\begin{pmatrix}1&0&1\\0&1&0\\1&0&0\end{pmatrix}.
+\]
+Both are valid finite Hankel blocks. At $X$, the top normal innovation is
+$uv^T=e_2e_2^T$. But $X+te_2e_2^T$ is not Hankel for $t\ne0$:
+its $(a,a)$ entry differs from its $(\varepsilon,a^2)$ and
+$(a^2,\varepsilon)$ entries, although all three must evaluate $f(a^2)$.
+Projecting this atom onto the Hankel subspace gives
+\[
+ \tfrac13\begin{pmatrix}0&0&1\\0&1&0\\1&0&0\end{pmatrix},
+\]
+which has rank three, not one. Thus imposing the linear observation
+constraints can destroy the very rank-one structure used in the birth
+argument. A genuine low-order automaton extension must also respect
+repeated-word identities and transition consistency. Constrained Hankel
+completion is therefore relevant prior art, rather than an optional
+implementation detail \cite{ce:balle2012}.
+
+\subsection{Reverse-mode compatibility is not optimizer commutation}
+
+\begin{proposition}[The correct compatibility equation]
+\label{ce:pullback}
+Let $P\subseteq\mathbb R^d$ and $P'\subseteq\mathbb R^{d'}$ be open,
+let $e:P\to P'$ be smooth, and let $F:P\times\mathcal X\to\mathbb R^k$
+and $F':P'\times\mathcal X\to\mathbb R^k$ be smooth in their parameter
+arguments. Suppose
+\[
+ F(p,x)=F'(e(p),x)\quad\hbox{for every }p,x.
+\]
+Then parameter reverse derivatives satisfy, for every output covector
+$\bar y\in\mathbb R^k$,
+\[
+ D_pF(p,x)^T\bar y
+ =De(p)^T D_{p'}F'(e(p),x)^T\bar y.
+\]
+For any common differentiable loss, the corresponding parameter-loss
+covectors therefore obey $dL_p=De(p)^T dL'_{e(p)}$.
+\end{proposition}
+\begin{proof}
+Differentiate $F(-,x)=F'(-,x)\circ e$ and transpose the chain rule.
+Apply the same argument after composing with the loss.
+\end{proof}
+
+This is the relevant reverse-derivative/lens compatibility. It transports
+old covectors correctly without requiring the enlarged optimizer to stay in
+the old parameter subspace. Turning covectors into update vectors requires
+additional choices of metric or optimizer, as in parametric-lens treatments
+\cite{ce:lenses2024}. No Euclidean-gradient invariance under arbitrary
+non-isometric coordinate changes is asserted.
+
+\begin{theorem}[Exact failure of optimizer commutation enables escape]
+\label{ce:noncommutation}
+Suppose specifically that $e(p)=Jp+c$, where
+$J\in\mathbb R^{d'\times d}$ has $J^TJ=I$. Let $L=L'\circ e$.
+At a point $p$, write
+\[
+ g=\nabla L(p),\qquad G=\nabla L'(e(p)),\qquad
+ n=(I-JJ^T)G.
+\]
+Then $G=Jg+n$, $J^Tn=0$, and for equal-step Euclidean gradient descent,
+\[
+ \bigl(e(p)-\eta G\bigr)-e(p-\eta g)=-\eta n.
+\]
+Thus the two updates commute at this point, for $\eta\ne0$, if and only
+if $n=0$. If $n\ne0$, the new normal direction is a strict first-order
+loss-descent direction:
+\[
+ \left.\frac{d}{dt}L'(e(p)-tn)\right|_{t=0}=-\|n\|^2.
+\]
+If $\nabla L'$ is $K$-Lipschitz on the relevant line segment, $K>0$,
+then moving only in that direction with $0<t<2/K$ gives
+\[
+ L'(e(p)-tn)\leq L'(e(p))
+ -t(1-Kt/2)\|n\|^2.
+\]
+\end{theorem}
+\begin{proof}
+Proposition~\ref{ce:pullback} gives $g=J^TG$. Orthogonal decomposition
+then gives the formula for $G$, and the affine form of $e$ gives the exact
+update identity. Finally $\langle G,n\rangle=\|n\|^2$; the descent
+lemma proves the finite-step bound.
+\end{proof}
+
+Insisting on optimizer commutation would therefore remove precisely the
+normal component by which the larger learner can depart from the smaller
+one. Conversely, parameter-space departure alone does not certify increased
+functional capacity: redundant parametrizations can contain normal
+parameters without representing genuinely new behaviors. A separate
+behavioral witness such as Theorem~\ref{ce:certificate} is needed.
+
+\subsection{A genuine automaton extension with a live gradient}
+
+The matrix construction is economical but may be dynamically inconsistent.
+The following construction is dynamically consistent but can be expensive.
+Together they separate the real problem from a merely formal bridge.
+
+\begin{proposition}[The WFA version of the zero-padding obstruction]
+\label{ce:wfa-dead}
+Pad an $r$-state WFA by $q$ extra coordinates as
+\[
+ \alpha'=(\alpha,0),\quad
+ A'_a=\begin{pmatrix}A_a&0\\0&C_a\end{pmatrix},\quad
+ \beta'=\binom\beta0,
+\]
+where the $C_a$ are arbitrary. For every word, the derivative of its
+prediction with respect to every new initial/output coordinate, every
+cross-block transition coordinate, and every coordinate of the $C_a$ is
+zero. Consequently all these coordinates have zero gradient for every
+differentiable loss depending on finitely many word predictions. Pure
+gradient descent starting on this padded submanifold cannot activate the
+new states.
+\end{proposition}
+\begin{proof}
+The prediction derivative is a sum of an initial-vector variation, an
+output-vector variation, and terms
+$\alpha'A'_u(\delta A'_a)A'_v\beta'$.
+A variation in a new initial coordinate must terminate through the zero new
+output vector; a new output variation must begin through the zero new
+initial vector. A single cross-block transition cannot both enter and leave
+the new block. A new-block internal variation cannot be reached from the
+old block. All the stated derivatives vanish. The same structure persists
+after an update of the old coordinates alone.
+\end{proof}
+
+
+\begin{theorem}[An economical one-state birth, conditional on correlation]
+\label{ce:one-state}
+Let $f=(\alpha,(A_a),\beta)$ be a minimal $r$-state WFA, $r\geq1$,
+over a nonempty alphabet. Choose a letter $a_0$ and a real
+$\lambda\notin\operatorname{spec}(A_{a_0})$. Define
+\[
+ \alpha^+=(\alpha,1),\quad
+ A_a^+=\operatorname{diag}(A_a,\lambda),\quad
+ \beta^+(t)=\binom\beta t.
+\]
+Then $f_t(w)=f(w)+t\lambda^{|w|}$, and every $t\ne0$ gives a behavior
+of minimal dimension exactly $r+1$. For finitely many weighted observations,
+put $e_i=y_i-f(w_i)$,
+$C_\lambda=\sum_i\omega_i e_i\lambda^{|w_i|}$ and
+$G_\lambda=\sum_i\omega_i\lambda^{2|w_i|}$. If $C_\lambda\ne0$,
+the gate derivative is $-C_\lambda$, and its exact squared-loss minimizer
+is $t=C_\lambda/G_\lambda$, with loss reduction
+$C_\lambda^2/(2G_\lambda)>0$.
+\end{theorem}
+\begin{proof}
+Block multiplication proves the behavior identity. Let
+$p(z)=\det(zI-A_{a_0})$. Cayley--Hamilton gives
+\[
+ \alpha^+p(A_{a_0}^+)=(0,p(\lambda)),\qquad
+ p(A_{a_0}^+)\beta^+(t)=\binom0{t p(\lambda)}.
+\]
+These are linear combinations of reachable rows and observable columns,
+respectively. Since $p(\lambda)\ne0$, they isolate the new coordinate
+when $t\ne0$. Subtracting that coordinate from every reachable row
+$(\alpha A_w,\lambda^{|w|})$ and every observable column
+$\binom{A_w\beta}{t\lambda^{|w|}}$ recovers the old reachable and observable
+spans. Minimality of the original model makes both enlarged spans have
+dimension $r+1$. Finite bases of those spans yield a Hankel block of rank
+$r+1$, proving minimality. Finally the gate loss is
+$L(t)=L(0)-C_\lambda t+G_\lambda t^2/2$.
+\end{proof}
+
+This one-state construction need not preserve old observed values after
+the gate moves. With one fresh nonzero error and all prior samples exactly
+fitted, any positive admissible $\lambda$ gives $C_\lambda\ne0$.
+For a batch, cancellation can make every such gate ineffective: the
+polynomial $C_\lambda$ vanishes identically when the weighted residual
+sums vanish within each word-length class. Even allowing one scalar
+$\lambda_a$ per letter cannot distinguish $ab$ from $ba$; opposite
+residuals on those words cancel for all scalar-state branches. This is a
+limitation of the stated additive branch, not a proof that all coupled
+$(r+1)$-state architectures fail.
+
+A small coupled example shows what a more structured repair can accomplish.
+For the unary old behavior $f(a^j)=1$, keep the old observations
+$f(\varepsilon)=f(a)=1$ and add the label $y(a^2)=2$. Its observed
+Hankel block is $\left(\begin{smallmatrix}1&1\\1&2\end{smallmatrix}\right)$,
+which forces dimension two. The two-state family
+\[
+ \alpha=(1,0),\quad\beta=(1,0)^T,\quad
+ A(t)=\begin{pmatrix}1&1\\t&0\end{pmatrix}
+\]
+preserves the whole old constant behavior at $t=0$, preserves the two old
+observations for every $t$, and has $f_t(a^2)=1+t$. Its fresh-observation
+loss is $(t-1)^2/2$, with nonzero gate derivative at zero. The same
+$2\times2$ Hankel block has determinant $t$, so $t\ne0$ activates
+exactly one genuinely necessary state. This example is constructive, not a
+universal one-state no-forgetting theorem.
+
+\begin{lemma}[A finite behavioral residual has an explicit realization]
+\label{ce:trie}
+Let $D\subseteq\Sigma^*$ be finite and nonempty, with one real coefficient
+$c_w$ for each distinct word $w\in D$. Let
+$g(w)=c_w$ for $w\in D$ and $g(w)=0$ otherwise.
+Then $g$ has a WFA with $q=|\operatorname{Pref}(D)|$ states, including
+the empty prefix. Its initial row is the basis row $e_\varepsilon^T$;
+its transition matrix $B_a$ has an entry $1$ from $p$ to $pa$ when both
+are prefixes of $D$, and zero entries elsewhere; its output entry at $p$
+is $c_p$ if $p\in D$ and $0$ otherwise.
+\end{lemma}
+\begin{proof}
+After reading $w$, the initial row is exactly the basis row at $w$ if $w$
+is a prefix of a word in $D$, and is zero otherwise. Multiplication by the
+output column returns exactly the specified coefficient, including when
+one observed word is a prefix of another.
+\end{proof}
+
+\begin{theorem}[Behavior-preserving, gradient-active automaton expansion]
+\label{ce:residual-extension}
+Let $f_\theta$ be an $r$-state WFA. Fix a finite nonempty labeled set
+$D$ with labels $y_w$ and weights $\omega_w>0$, and fix the current
+parameter $\theta_0$. Define
+\[
+ \mathcal L(\theta)=\tfrac12\sum_{w\in D}\omega_w
+       (f_\theta(w)-y_w)^2,
+ \qquad
+ g(w)=\begin{cases}y_w-f_{\theta_0}(w),&w\in D,\\0,&w\notin D.
+ \end{cases}
+\]
+Hold this residual function fixed during the following expansion. Let
+$(\gamma,(B_a),\delta)$ be its trie realization, or any exact smaller
+realization. Define
+\[
+ \widetilde\alpha=(\alpha,t\gamma),\qquad
+ \widetilde A_a=\operatorname{diag}(A_a,B_a),\qquad
+ \widetilde\beta=\binom\beta\delta.
+\]
+Then:
+\begin{enumerate}
+\item This is an $(r+q)$-state WFA with behavior
+      $\widetilde f_{\theta,t}=f_\theta+tg$.
+\item At $t=0$ it preserves $f_\theta$ on every word, not just observed
+      words. For every $t$, it preserves the current behavior outside $D$
+      if $\theta=\theta_0$ is held fixed.
+\item With $\theta=\theta_0$ held fixed,
+\[
+ \widetilde{\mathcal L}(\theta_0,t)
+ =(1-t)^2\mathcal L(\theta_0),\qquad
+ \partial_t\widetilde{\mathcal L}(\theta_0,0)
+ =-2\mathcal L(\theta_0).
+\]
+      Thus any nonzero residual yields a live gate gradient; every
+      $0<t<2$ strictly improves the empirical loss, and $t=1$
+      interpolates the labels.
+\item At the embedding $e(\theta)=(\theta,0)$, the old parameter-loss
+      gradient is exactly preserved. At the reference point $\theta_0$,
+      the additional gate component is nonzero whenever
+      $\mathcal L(\theta_0)>0$. No such claim is made for arbitrary
+      $\theta$ against the frozen residual.
+\item Suppose $SE\subseteq D$ for some finite $S,E$, and the label block
+      $Y_{s,e}=y_{se}$ has rank greater than $r$. Then there is $\eta>0$
+      such that $\widetilde f_{\theta_0,t}$ has minimal state dimension
+      greater than $r$ for every $0<t<\eta$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Block-diagonal multiplication gives $\widetilde f=f+tg$, proving the
+first two claims. On every labeled word the new residual is $(1-t)$ times
+the old residual, which proves the loss identity and its derivative.
+Since $\widetilde f_{\theta,0}=f_\theta$, the chain rule proves old-gradient
+preservation. In the coordinates $(\theta,t)$ this is an isometric affine
+embedding, so the nonzero gate component is also an explicit instance of
+Theorem~\ref{ce:noncommutation}.
+
+For the last claim, let $X=H_{f_{\theta_0}}[S,E]$, so
+$\operatorname{rank}X\leq r$. The new block is
+$X(t)=(1-t)X+tY$. Since $\operatorname{rank}Y>r$, some
+$(r+1)\times(r+1)$ minor has determinant $p(t)$ with $p(1)\ne0$.
+This polynomial is not identically zero and has only finitely many roots.
+There is therefore $\eta>0$ such that $p(t)\ne0$ for all
+$0<t<\eta$. The new block, hence every realization of its behavior, has
+rank greater than $r$ on that interval.
+\end{proof}
+
+
+\begin{corollary}[One fresh word can be repaired without forgetting]
+\label{ce:single-word}
+For a fresh word $w_*$ of length $j$, absent from the old sample set,
+there is an extension with at most $j+1$ additional states and behavior
+$f_t=f+t\mathbf1_{\{w_*\}}$. It preserves every other word output for
+all $t$ and fits the fresh label at $t=y_*-f(w_*)$.
+\end{corollary}
+\begin{proof}
+Apply the trie construction to the singleton support $\{w_*\}$, which
+has $j+1$ prefixes. Its output coefficient is the scalar gate $t$.
+\end{proof}
+
+\paragraph{A general differentiable loss.}
+The construction is not restricted to squared error. Let $z_0$ be the
+vector of current predictions on distinct words in $D$, and let
+$\ell:\mathbb R^{|D|}\to\mathbb R$ be differentiable. If
+$h=\nabla\ell(z_0)\ne0$, realize the finitely supported residual
+$g(w)=-h_w$ on $D$. Then
+\[
+ \left.\frac{d}{dt}\ell(z_0+t\,g|_D)\right|_{t=0}=-\|h\|^2<0.
+\]
+A nonzero prediction-space gradient is the necessary assumption here:
+positive loss alone does not imply that property for an arbitrary loss.
+
+\paragraph{Why this is an upper bound, not the research problem solved.}
+The trie proves that a consistent and live expansion always exists on a
+finite dataset. It may merely memorize, use many extra states, and provide
+no improvement outside the evidence. Exact realization minimization can
+replace the trie by an automaton of dimension $\operatorname{rank}H_g$,
+but does not make that residual dimension small. Under noise, interpolation
+can overfit even when a separate robust certificate correctly says that
+$r$ states are insufficient. One must not describe this theorem as a
+minimal or statistically optimal capacity-selection algorithm.
+
+A particularly sharp example is unary $f(a^k)=1$ for all $k$, with
+$D=\{\varepsilon,a,a^2\}$ and labels $(1,1,0)$. The residual is
+$g=-\mathbf1_{\{a^2\}}$. The amended series equals $1$ except at
+$a^2$, where it equals $1-t$. Its $4\times4$ Hankel block has determinant
+$t^3$, and its direct-sum construction has four states. Thus for every
+$t\ne0$ its minimal dimension is exactly four, although the observed
+$2\times2$ block only certifies dimension at least two. This exhibits the
+gap between a rigorous lower certificate and a conservative but potentially
+wasteful constructive upper bound.
+
+\subsection{Evidence refinement produces quotients as well as inclusions}
+
+There is also a categorical reason that capacity change cannot simply be
+modeled as a canonical chain of embeddings. For a real behavior $f$, put
+\[
+ h_{S,E}:\mathbb R^S\longrightarrow\mathbb R^E,
+ \qquad e_s\longmapsto(f(se))_{e\in E},\qquad
+ Q_{S,E}=\operatorname{im}h_{S,E}.
+\]
+These are precisely finite observational image spaces of the kind used in
+linear instances of CALF \cite{ce:calf2017}.
+
+\begin{proposition}[Canonical comparison span and obstruction to a lift]
+\label{ce:refinement-span}
+For $S\subseteq S'$ and $E\subseteq E'$, set
+$K=\operatorname{im}h_{S,E'}$. There is a canonical span
+\[
+ Q_{S,E}\ \xleftarrow{\ p\ }\ K\ \xrightarrow{\ i\ }\ Q_{S',E'},
+\]
+where $p$ is surjective coordinate restriction and $i$ is inclusion.
+For a pure suffix refinement ($S'=S$), an old-to-new linear map
+$j:Q_{S,E}\to Q_{S,E'}$ satisfying
+$j h_{S,E}=h_{S,E'}$ exists if and only if
+\[
+ \ker h_{S,E}\subseteq\ker h_{S,E'}.
+\]
+Because the opposite kernel inclusion always holds, such a compatible lift
+cannot exist when the suffix refinement strictly increases rank.
+\end{proposition}
+\begin{proof}
+Restriction from $E'$ to $E$ takes every new observed row of an old prefix
+to its old observed row. It therefore maps $K$ onto $Q_{S,E}$.
+Adding prefixes includes its image in $Q_{S',E'}$. A linear map through
+the quotient by $\ker h_{S,E}$ exists precisely when $h_{S,E'}$
+annihilates that kernel. Finally, coordinate restriction implies
+$\ker h_{S,E'}\subseteq\ker h_{S,E}$.
+\end{proof}
+
+For example, take the unary behavior with values
+$f(\varepsilon)=f(a)=1$ and $f(a^k)=0$ for $k\geq2$.
+With $S=\{\varepsilon,a\}$ and $E=\{\varepsilon\}$, both observed
+rows equal $1$. Adding the suffix $a$ produces rows $(1,1)$ and $(1,0)$.
+No function, let alone linear map, can send their single common old state
+to both new states while respecting the represented prefixes.
+Finite-dimensional surjections admit linear sections, but choosing a
+section does not restore the impossible prefix compatibility.
+
+There is a natural backward operation: the dual map
+$p^*:Q_{S,E}^*\to K^*$ pulls old covectors back. Its image annihilates
+$\ker p$, so it cannot supply the new error information in the directions
+that newly added tests distinguish. Those directions require new evidence
+and an initialization or refinement rule, not merely reverse transport of
+old gradients. The span above is a comparison construction; there is no
+claim that ordinary pullback composition of such spans automatically
+recovers the span of a composite evidence refinement. Retaining generators
+and observational presentations may be necessary for a compositional
+framework.
+
+
+\subsection{A model-language obstruction: unbounded rank with one real state}
+\label{ce:nonlinear-scope}
+
+\begin{proposition}[Linear Hankel dimension is not intrinsic state dimension]
+\label{ce:hilbert}
+The unary behavior $f(a^j)=1/(j+1)$ has no finite-dimensional real linear
+WFA realization, yet has a one-dimensional smooth nonlinear realization on
+the positive state domain:
+\[
+ x_0=1,\qquad x_{j+1}=\frac{x_j}{1+x_j},\qquad f(a^j)=x_j.
+\]
+Equivalently, in the coordinate $z=1/x$, the state update is
+$z_{j+1}=z_j+1$ and the output is $1/z_j$.
+\end{proposition}
+\begin{proof}
+Induction gives $x_j=1/(j+1)$. Its $m\times m$ Hankel block, with
+indices $0,\ldots,m-1$, has entries $H_{i,j}=1/(i+j+1)$. For every
+nonzero $v\in\mathbb R^m$,
+\[
+ v^THv=\int_0^1\left(\sum_{i=0}^{m-1}v_i t^i\right)^2\,dt>0,
+\]
+since a nonzero real polynomial is nonzero on an open subinterval.
+Thus every such block has rank $m$, excluding all finite linear WFA
+realizations. The coordinate change is smooth on the positive domain and
+transforms the displayed update as claimed.
+\end{proof}
+
+The sequence itself is not a new separating example; Gastin and Monmege
+use $1/(|u|+1)$ in Remark~2 of their study of weighted automata
+\cite{ce:gastin2014}, in a different comparison of model classes. The
+argument above directly proves the required real-linear rank statement.
+Nonlinear weighted automata are also an existing formalism
+\cite{ce:nonlinear2018}.
+
+This countermodel materially changes the interpretation of a rank-growth
+policy. Ever more WFA states can reflect a mismatch in the allowed
+transition or output language rather than an increasingly complicated
+latent mechanism. A behavioral rank certificate is relative to its chosen
+representation class. It is not a domain-general explanation of complexity,
+and changing coordinates cannot make its conclusion stronger than that.
+No finite exact word dataset can refute the entire class of finite WFAs:
+the finite-support trie construction always supplies a fitting finite WFA.
+Longer horizons can refute a fixed dimension budget, but cannot turn finite
+non-refutation into a proof of the full target language.
+
+Nor can word observations distinguish implementations with identical word
+behavior. Additional interventions, alternative initial conditions, or new
+observation channels can only be invoked when the experimental setting
+actually permits them. The objective of predicting word outputs, the
+objective of learning a minimal linear realization, and the objective of
+identifying a physical or cognitive mechanism are different stakeholder
+objectives, even when they use some of the same data.
+
+\subsection{What has been obtained, and what would constitute a next theorem}
+
+The results give a rigorous, bounded integration rather than a universal
+identification of learning and reconstruction:
+\begin{enumerate}
+\item \emph{Evidence:} a finite Hankel singular value above a justified
+      noise floor certifies insufficient behavioral state dimension.
+\item \emph{Within a matrix relaxation:} after fixed-rank stationarity,
+      the certificate forces a normal innovation. Its leading singular
+      vectors produce a rank-one, worst-case optimal noise-robust birth
+      with an explicit true-table descent guarantee.
+\item \emph{Within actual automata:} a finite residual has an explicit
+      realization. A gated direct sum preserves all old behavior at
+      initialization, preserves old gradients, and creates a live new
+      gradient. It is a constructive upper bound, not a minimal solution.
+\item \emph{Across parameter spaces:} reverse-mode compatibility is a
+      pullback law; exact optimizer commutation would prohibit the normal
+      directions needed for escape.
+\item \emph{Across evidence spaces:} adding generators gives inclusions,
+      while adding tests refines quotients. There is no general canonical
+      old-state embedding consistent with newly distinguished histories.
+\end{enumerate}
+
+The substantive next problem is to close the demonstrated gap: construct
+\emph{small, Hankel-consistent, transition-consistent residual extensions}
+whose data-selected gates enjoy a robust descent bound, and identify the
+conditions under which their dimension is controlled by the observed
+innovation rather than by a memorizing trie. The unconstrained leading
+singular vector does not solve this, and the explicit counterexample shows
+why. This target is more concrete than asserting a universal common
+reconstruction theorem for automata, formal concepts, and topology: it asks
+for an actual controlled operation and a theorem that fails without its
+structural hypotheses.
+
+A principled first enlargement of scope is from real WFAs to linear
+second-order recurrent networks, where a precise spectral equivalence is
+already available \cite{ce:rabusseau2019}. The WFA-specific Hankel rank
+certificate does not automatically measure the intrinsic dimension of a
+general nonlinear recurrent state space. Likewise, rank-adaptive matrix or
+tensor training already exists \cite{ce:tan2014,ce:lottery2022}; claiming
+that adaptive capacity alone is new would be incorrect.
+
+\paragraph{Primary-source positioning.}
+CALF supplies the categorical image, closedness, and consistency viewpoint
+\cite{ce:calf2017}. Parametric lenses supply compositional reverse-mode and
+optimizer semantics \cite{ce:lenses2024}. Net2Net supplies prior examples
+of function-preserving architecture changes \cite{ce:net2net2016}.
+Riemannian pursuit already alternates fixed-rank optimization and rank
+increase \cite{ce:tan2014}; GradMax explicitly preserves old network
+outputs while choosing new weights through gradient maximization and an
+SVD \cite{ce:gradmax2022}; dynamical low-rank methods already adapt ranks
+during neural training \cite{ce:lottery2022}. Constrained Hankel completion
+and Hankel concentration address two essential statistical/structural
+issues \cite{ce:balle2012,ce:denis2016}. The robust minimax calculation,
+the explicit dead/live gate comparison, and the refinement-span analysis
+above are proved here so their exact scope can be checked; they are not
+presented as a literature-verified novelty claim.
+
+\begin{thebibliography}{99}
+\bibitem{ce:calf2017}
+G. van Heerdt, M. Sammartino, and A. Silva.
+\emph{CALF: Categorical Automata Learning Framework}. CSL 2017,
+LIPIcs 82, 29:1--29:24.
+\url{https://doi.org/10.4230/LIPIcs.CSL.2017.29}.
+
+\bibitem{ce:lenses2024}
+G. S. H. Cruttwell, B. Gavranovic, N. Ghani, P. Wilson, and F. Zanasi.
+\emph{Deep Learning with Parametric Lenses}. 2024.
+\url{https://arxiv.org/abs/2404.00408}.
+
+\bibitem{ce:tan2014}
+M. Tan, I. W. Tsang, L. Wang, B. Vandereycken, and S. J. Pan.
+\emph{Riemannian Pursuit for Big Matrix Recovery}.
+ICML 2014, PMLR 32(2), 1539--1547.
+\url{https://proceedings.mlr.press/v32/tan14.html}.
+
+\bibitem{ce:net2net2016}
+T. Chen, I. Goodfellow, and J. Shlens.
+\emph{Net2Net: Accelerating Learning via Knowledge Transfer}.
+2015 preprint, revised 2016.
+\url{https://arxiv.org/abs/1511.05641}.
+
+\bibitem{ce:balle2012}
+B. Balle and M. Mohri.
+\emph{Spectral Learning of General Weighted Automata via Constrained
+Matrix Completion}. NeurIPS 25, 2012.
+\url{https://papers.neurips.cc/paper_files/paper/2012/hash/700fdb2ba62d4554dc268c65add4b16e-Abstract.html}.
+
+\bibitem{ce:denis2016}
+F. Denis, M. Gybels, and A. Habrard.
+\emph{Dimension-free Concentration Bounds on Hankel Matrices for Spectral
+Learning}. JMLR 17(31), 1--32, 2016.
+\url{https://jmlr.org/papers/v17/14-501.html}.
+
+\bibitem{ce:rabusseau2019}
+G. Rabusseau, T. Li, and D. Precup.
+\emph{Connecting Weighted Automata and Recurrent Neural Networks through
+Spectral Learning}. AISTATS 2019, PMLR 89, 1630--1639.
+\url{https://proceedings.mlr.press/v89/rabusseau19a.html}.
+
+\bibitem{ce:lottery2022}
+S. Schotth\"ofer, E. Zangrando, J. Kusch, G. Ceruti, and F. Tudisco.
+\emph{Low-rank lottery tickets: finding efficient low-rank neural networks
+via matrix differential equations}. 2022.
+\url{https://arxiv.org/abs/2205.13571}.
+
+\bibitem{ce:gradmax2022}
+U. Evci, B. van Merri\"enboer, T. Unterthiner, M. Vladymyrov, and F. Pedregosa.
+\emph{GradMax: Growing Neural Networks using Gradient Information}.
+ICLR 2022. \url{https://arxiv.org/abs/2201.05125}.
+
+\bibitem{ce:gastin2014}
+P. Gastin and B. Monmege.
+\emph{Adding Pebbles to Weighted Automata: Easy Specification and Efficient
+Evaluation?} Theoretical Computer Science, 2014. In particular Remark~2.
+\url{https://lsv.ens-paris-saclay.fr/Publis/PAPERS/PDF/GM-tcs14.pdf}.
+
+\bibitem{ce:nonlinear2018}
+T. Li, G. Rabusseau, and D. Precup.
+\emph{Nonlinear Weighted Finite Automata}.
+AISTATS 2018, PMLR 84, 679--688.
+\url{https://proceedings.mlr.press/v84/li18a.html}.
+
+\end{thebibliography}
+
+\end{document}

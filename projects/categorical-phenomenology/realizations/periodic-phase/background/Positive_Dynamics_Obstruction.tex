@@ -1,0 +1,198 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,geometry,hyperref}
+\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newcommand{\R}{\mathbb R}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\rhoo}{\operatorname{spr}}
+\title{Positive dynamics beyond a trivial predictive bundle}
+\author{Technical verification note}
+\date{3 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+A normalized probability-clock family gives an elementary observable obstruction to finite positive realization. Its exact positive width is the reduced rotation denominator, or infinity at irrational rotations, while its signed width is three. A damped modification has a stronger consequence: a real-analytic constant-rank-three law family on a compact interval can have a finite positive realization at every parameter, yet unbounded positive width near a parameter with width four. Thus pointwise positive realizability does not supply the local uniform realization promise needed before any global bundle or monodromy comparison. The clock mechanism and spectral inequalities are classical; no novelty claim is made for them or for the assembled refinement.
+\end{abstract}
+
+\section{A valid normalized family}
+Native row conventions are
+\[
+ p(y_1\cdots y_n)=\alpha N_{y_1}\cdots N_{y_n}\one,
+ \quad \alpha\one=1,
+ \quad (N_0+N_1)\one=\one.
+\]
+Nonnegative entries are required for positive realizations and not for signed ones. The external parameter stays fixed within each experiment. We first use transposed column conventions for convenience.
+
+Fix $q=1/4$, $0<r\leq1$, and a real angle $\theta$. Write
+\[
+ R_\theta=\begin{pmatrix}\cos\theta&-\sin\theta\\ \sin\theta&\cos\theta\end{pmatrix},
+ \quad A_0=q\operatorname{diag}(1,rR_\theta),\quad
+ \ell=(1,1/2,0),\quad b=(2/3,2/3,0)^T,
+\]
+\[
+ d=\ell(I-A_0),\qquad A_1=bd.
+\]
+Then $\ell b=1$ and $\ell(A_0+A_1)=\ell$. Define
+\[
+ s_n=\ell A_0^n b=\frac{q^n}{3}\bigl(2+r^n\cos(n\theta)\bigr),
+ \qquad f_n=s_n-s_{n+1}.
+\]
+For all $n\geq0$,
+\[
+ q^n/3\leq s_n\leq q^n,\qquad f_n\geq q^n(1/3-q)=q^n/12>0.
+\]
+For a binary word written uniquely as $w=0^{n_0}1\cdots1 0^{n_k}$, set
+\begin{equation}\label{eq:renewal}
+ p(w)=\left(\prod_{j=0}^{k-1}f_{n_j}\right)s_{n_k}.
+\end{equation}
+This equals $\ell A_{y_n}\cdots A_{y_1}b$, since each $1$ resets the column state to a multiple of $b$. It is strictly positive. Furthermore $p(\emptyset)=1$ and $p(w0)+p(w1)=p(w)$, either directly from \eqref{eq:renewal} or from $\ell(A_0+A_1)=\ell$. Thus these are all-word probabilities of a stochastic process, not merely a nonnegative zero-run sequence. Every word probability is real analytic in $(r,\theta)$.
+
+To obtain exactly the fixed-terminal convention, take the constant invertible matrix
+\[
+ S=\begin{pmatrix}2/3&2&1\\2/3&-2&0\\0&0&1\end{pmatrix},
+ \qquad \ell S=\one_3^T,\quad S^{-1}b=e_1.
+\]
+Then
+\[
+ N_y=(S^{-1}A_yS)^T,\qquad \alpha=e_1^T
+\]
+is a real-analytic normalized signed three-state realization, with the same fixed terminal $\one_3$ and the same fixed initial row throughout the parameter family.
+
+For $r>0$ and $0<\theta<\pi$, the sequence $s_n$ is a sum of three distinct exponentials with nonzero coefficients:
+\begin{equation}\label{eq:poles}
+ s_n=\tfrac23q^n+\tfrac16(qre^{i\theta})^n+\tfrac16(qre^{-i\theta})^n.
+\end{equation}
+The zero-word Hankel matrix $[s_{i+j}]_{i,j=0}^2$ is consequently invertible, by its Vandermonde factorization. The process therefore has Hankel rank exactly three. In particular, on any compact parameter interval staying in $r>0$, $0<\theta<\pi$, this fixed observable block gives a global predictive frame and has a uniform positive smallest-singular-value bound.
+
+\section{The reachable-state spectral step}
+\begin{lemma}\label{lem:spectral}
+Suppose a nonnegative $k$-state native model realizes the above law. Its zero-output matrix, after restricting to the states reachable from its initial distribution by zero-output edges, has spectral radius $q$ and has every distinct base appearing in \eqref{eq:poles} as an eigenvalue.
+\end{lemma}
+\begin{proof}
+Let $B$ be the restricted zero-output matrix and $\alpha$ its initial row, so $\alpha B^n\one=s_n$. Restriction loses no zero-run probability; the retained state set is closed under positive $B$ edges. For every retained state $i$, choose $t_i$ and $a_i>0$ with $(\alpha B^{t_i})_i\geq a_i$. Positivity gives
+\[
+ a_i(B^n\one)_i\leq s_{n+t_i}\leq q^{n+t_i}.
+\]
+There are finitely many states, so $\|B^n\|_\infty\leq Cq^n$, proving $\rhoo(B)\leq q$. On the other hand,
+\[
+ \sum_{n\geq0}s_nz^n=\alpha(I-zB)^{-1}\one
+\]
+has distinct uncancelled poles at the reciprocals of the bases in \eqref{eq:poles}. These bases must therefore be eigenvalues of $B$. The pole at $1/q$ establishes $\rhoo(B)=q$. This argument explicitly prevents unobservable larger Perron roots from invalidating the inference.
+\end{proof}
+
+\section{Exact width in the undamped clock}
+\begin{theorem}\label{thm:clock}
+For $r=1$, the minimum positive width is $m$ if $\theta/(2\pi)=a/m$ is rational in lowest terms, and is infinite if $\theta/(2\pi)$ is irrational. The signed width is three except at angles congruent to $0$ or $\pi$, where it is respectively one or two.
+\end{theorem}
+\begin{proof}
+In the rational case let $j\in\{0,\ldots,m-1\}$ record the number of zeros since the last $1$, modulo $m$. Put
+\[
+ g_j=q\frac{2+\cos((j+1)\theta)}{2+\cos(j\theta)},\qquad
+ N_0(j,j+1\bmod m)=g_j,\qquad N_1(j,0)=1-g_j,
+\]
+with all other entries zero and initial state $0$. We have $1/12\leq g_j\leq3/4$, so this is a native stochastic model. The product of its successive zero probabilities is $s_n$; after every $1$ it resets to state $0$. It therefore realizes \eqref{eq:renewal} at every horizon.
+
+For the lower bound, Lemma~\ref{lem:spectral} and Perron--Frobenius theory imply that $e^{i\theta}$, if nonreal, is a peripheral eigenvalue ratio of an irreducible nonnegative block. Such ratios are roots of unity whose orders divide the period of the block. The period is at most the block size and hence at most $k$. For reduced denominator $m\geq3$, this forces $k\geq m$; irrational angles are impossible. The cases $m=1,2$ follow directly from ranks one and two. The signed claims follow from the exponential ranks and the explicit signed construction above.
+\end{proof}
+
+This is a normalized variant of Jaeger's probability clock, not a new non-HMM mechanism. The 2012 addendum explicitly repairs the original parameter choice to ensure validity at every angle and retains irrational-angle nonrealizability \cite{Jaeger,Addendum}. The exact rational denominator computation here is included to make the family consequences transparent, not as a priority claim.
+
+An immediate compact-base caution is $X=\{0\}\cup\{1/j:j\geq1\}$ and $\theta(x)=\pi/2+\pi x/8$. All pointwise positive widths are finite: four at $0$ and $16j$ at $1/j$, since $(4j+1)/(16j)$ is reduced. All predictive ranks are three. Nevertheless there is no fixed finite native width on $X$, even without continuity of the native parameters.
+
+\section{A stronger analytic interval counterexample}
+\begin{lemma}\label{lem:polygon}
+For every $0<r<1$ and every $\theta$, the above process has a finite positive realization. One may use
+\[
+ m=\max\left\{6,\left\lceil\frac{\pi}{\arccos r}\right\rceil\right\}
+\]
+states.
+\end{lemma}
+\begin{proof}
+Let $P_m\subset\R^2$ be a regular $m$-gon circumscribed about the unit disk. Its circumradius is $R_m=\sec(\pi/m)$. Since $rR_m\leq1$, the map $u\mapsto rR_\theta u$ takes $P_m$ into the unit disk and hence into $P_m$. Consequently
+\[
+ K_m=\{t(1,u):t\geq0,\ u\in P_m\}
+\]
+is invariant under $A_0$ and contains $b$. The functional $\ell$ is strictly positive on its nonzero elements. The planar coefficient of $d$ has norm at most $(1+qr)/2\leq5/8$, while its first coefficient is $3/4$. Thus for $u\in P_m$,
+\[
+ d(1,u)\geq\tfrac34-\tfrac58 R_m
+ \geq\tfrac34-\tfrac5{4\sqrt3}>0.
+\]
+Therefore $A_1=bd$ also preserves $K_m$.
+
+For completeness this gives actual native matrices as follows. Normalize each extreme generator $g_j$ of $K_m$ so $\ell g_j=1$, and write $G=[g_1\cdots g_m]$. There is a probability column $\beta$ with $b=G\beta$. Choose nonnegative coefficients in each equality $A_0g_j=G(B_0)_{:j}$, and put $(B_1)_{:j}=\beta\,dg_j$. Then
+\[
+ GB_y=A_yG,\qquad \one^T(B_0+B_1)=\ell(A_0+A_1)G=\one^T.
+\]
+Taking row matrices $N_y=B_y^T$ and initial row $\beta^T$ gives the required native realization by telescoping. No abstract cone is substituted for the actual normalization or comparison maps.
+\end{proof}
+
+We use the classical sector bound for nonnegative $k\times k$ matrices:
+\begin{equation}\label{eq:sector}
+ |\operatorname{Im}\lambda|\leq
+ \bigl(\rhoo(C)-\operatorname{Re}\lambda\bigr)\cot(\pi/k),\qquad k\geq3.
+\end{equation}
+This is the Dmitriev--Dynkin bound; the graph-sensitive refinement is due to Kellogg--Stephens \cite{KS}. A directly inspected statement for phase-type generators appears in Commault--Mocanu, Theorem 6, equation (27) \cite{CM}. To pass from that version to \eqref{eq:sector}, diagonal-scale each irreducible nonnegative block by its positive Perron vector to make its row sums equal its spectral radius, then subtract $(\rhoo(C_{\rm block})+\varepsilon)I$. The result is a transient phase-type generator with constant exit rate $\varepsilon>0$. Apply their theorem and let the block size be at most $k$ and its spectral radius be at most $\rhoo(C)$. Blocks of size at most two have real spectrum. Thus reducibility and lack of stochastic row sums in $C$ cause no gap.
+
+\begin{theorem}\label{thm:interval}
+Let $x\in[0,1/4]$ and set
+\[
+ r(x)=1-x^2,\qquad \theta(x)=\pi/2+x.
+\]
+The resulting all-word law family is real analytic, full support, and constant Hankel rank three, with a global normalized signed three-state realization and trivial predictive bundle. Each individual law has a finite positive realization. At $x=0$ its minimum positive width is four; as $x\downarrow0$ its minimum positive width $k_+(x)$ diverges as $\Theta(1/x)$. In particular no fixed finite positive realization exists on the interval, regardless of continuity of its native coordinates.
+\end{theorem}
+\begin{proof}
+All claims except the lower bound follow from the earlier formulas, Theorem~\ref{thm:clock} at zero, and Lemma~\ref{lem:polygon} at $x>0$. In any positive realization at $x>0$, Lemma~\ref{lem:spectral} supplies a zero-output matrix $B$ with spectral radius $q$ and eigenvalue $qr e^{i\theta}$. The nonnegative matrix $C=(B/q)^4$ therefore has spectral radius one and eigenvalue
+\[
+ \mu=r^4e^{i4\theta}=r^4e^{i4x}.
+\]
+Applying \eqref{eq:sector}, with $0<4x\leq1$, gives
+\begin{equation}\label{eq:lower}
+ k_+(x)\ \geq\
+ \frac{\pi}{\arctan\!\left(\dfrac{1-r^4\cos(4x)}{r^4\sin(4x)}\right)}.
+\end{equation}
+The numerator inside the arctangent is $12x^2+O(x^4)$ and its denominator is $4x+O(x^3)$. The right side is asymptotic to $\pi/(3x)$. The polygon upper bound is asymptotic to $\pi/(\sqrt2 x)$, proving the stated order.
+\end{proof}
+
+\paragraph{What this establishes.}
+Even an analytic, uniformly conditioned finite-rank predictive bundle and finite positive realizability at every parameter do not imply a locally bounded native state budget. This is a local positive-dynamics obstruction on a contractible base, logically prior to monodromy or bundle gluing. A theorem about a global extra-state cost must assume or prove locally continuous realizations with bounded finite width, or another comparably strong positive feasibility condition. This result does not disprove any theorem which already assumes such local realizations.
+
+\section{What finite horizons can and cannot witness}
+\begin{proposition}\label{prop:finite}
+Fix any one of the above target laws and an integer $k$. If a $k$-state native candidate matches its zero-run probabilities for $n=0,\ldots,k+2$, then it matches them for every $n$. Consequently whenever the spectral arguments above rule out width $k$, those finitely many zero-run probabilities already rule it out. Moreover their distance from the compact set of $k$-state candidates has a strictly positive minimum.
+\end{proposition}
+\begin{proof}
+The difference sequence is a matrix coefficient of $\operatorname{diag}(B,A_0)$, a matrix of dimension $k+3$. Cayley--Hamilton supplies a homogeneous recurrence of order at most $k+3$. Its first $k+3$ zero terms, namely indices $0$ through $k+2$, force all later terms to vanish. The space of stochastic initial rows and nonnegative outcome matrices with stochastic sum is compact; the finite moment map is continuous. If exact equality is impossible, the minimum maximum-coordinate error is therefore positive.
+\end{proof}
+
+There is no single finite horizon that excludes all finite widths. For each $L$, take states $0,\ldots,L$ to record zero age, use $g_j=s_{j+1}/s_j$ for $j<L$, reset to $0$ on $1$, and choose any valid outgoing probabilities at state $L$. Starting at $0$, this time-homogeneous $(L+1)$-state model matches \emph{every} word of length at most $L$. The parameters depend continuously and analytically on the target parameters. Thus finite-horizon realizability, bounded-width exclusion, and all-width all-horizon realizability are distinct claims. An exact rank/closure promise can make finite data determine an all-word law; finite data alone do not supply that promise. The compactness margin above is an existence result, not a numerically evaluated error threshold or a statistical procedure.
+
+\paragraph{Optional stationarity.}
+The initial process above starts just after a reset. If stationary laws are required, replace $b$ only as the initial column by
+\[
+ b_*=(I-A_0)^{-1}b\,/\,\ell(I-A_0)^{-1}b.
+\]
+Then $(A_0+A_1)b_*=b_*$, while the reset map $A_1=bd$ is unchanged. All word probabilities remain positive and analytic. Its zero-run sequence is
+\[
+ \ell A_0^n b_* = \frac{\sum_{j\geq n}s_j}{\sum_{j\geq0}s_j},
+\]
+with the same three nonzero spectral modes. The same positive-width obstructions apply, and the finite positive models admit stationary initial distributions. In signed coordinates the stationary initial row is now $\alpha_*=(S^{-1}b_*)^T$, which generally varies with the parameter and is not $e_1^T$. The coordinate matrix $S$, terminal vector $\one_3$, and identities $\alpha_*\one_3=1$ and $(N_0+N_1)\one_3=\one_3$ remain fixed as normalization conventions. This observation is not needed for Theorem~\ref{thm:interval}.
+
+\section{Prior art, limitations, and reproducible checks}
+The undamped construction is the classical probability-clock idea \cite{Jaeger,Addendum}. The polyhedral-cone realization criterion and cone-generator intertwiners are standard positive-realization theory; a precise stochastic formulation is Monr\`as--Winter, Theorem 6 \cite{MW}. The spectral sector constraint is classical, and phase-type literature already emphasizes that positive realization order can increase without an increase in rational degree \cite{CM}. The present note assembles these tools into an explicit analytic interval example and an exact fixed-width finite-horizon argument. No search-based priority or novelty claim is justified.
+
+The retained observable law is an outcome-labelled HMM law, as in the companion reports; a stricter state-emission factorization convention can alter exact state counts and is not asserted here. The external parameter is fixed during each word. No cross-parameter state transport is inferred. The native models are nonnegative, not required entrywise strictly positive. Numerical checks test formulas, not the spectral inequalities or the impossibility proofs.
+
+The accompanying script checks normalized signed coordinates, renewal word formulas and probability sums, rational native lifts, stationary initial states, polygon inclusion and positivity bounds, rank and conditioning on sampled intervals, and the asymptotic spectral lower bound. It does not compute the optimal positive width of the damped examples.
+
+\begin{thebibliography}{9}
+\bibitem{Jaeger} H. Jaeger. Observable operator models for discrete stochastic time series. \emph{Neural Computation} 12 (2000), 1371--1398. \href{https://publica-rest.fraunhofer.de/server/api/core/bitstreams/c5799916-b434-4186-94ab-717cb74db946/content}{Author report with probability-clock construction}.
+\bibitem{Addendum} H. Jaeger. \emph{An improved probability clock: addendum to the original OOM article from the year 2000}, 28 February 2012. \href{https://www.ai.rug.nl/minds/uploads/addendumProbClock.pdf}{Author PDF}. Explicitly corrects validity for all rotation angles.
+\bibitem{KS} R. B. Kellogg and A. B. Stephens. Complex eigenvalues of a non-negative matrix with a specified graph. \emph{Linear Algebra and its Applications} 20 (1978), 179--187. \href{https://doi.org/10.1016/0024-3795(78)90049-6}{DOI}. Publisher abstract inspected; full PDF was not fetched.
+\bibitem{CM} C. Commault and S. Mocanu. Phase-type distributions and representations: some results and open problems for system theory. \emph{International Journal of Control} 76 (2003), 566--580. \href{https://people.smp.uq.edu.au/YoniNazarathy/AMSIschool2016/CommaultMocanu_forAssignment.pdf}{Inspected article PDF}; Theorem 6, equation (27).
+\bibitem{MW} A. Monr\`as and A. Winter. Quantum learning of classical stochastic processes: The Completely-Positive Realization Problem. \href{https://arxiv.org/abs/1412.3634}{arXiv:1412.3634}, Definition 5, Theorem 6, and Section 4.
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,795 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{microtype}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\R}{\mathbb R}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\rk}{\operatorname{rank}}
+\newcommand{\Mat}{\operatorname{Mat}}
+\newcommand{\Smooth}{\mathbf{Smooth}}
+\newcommand{\Vect}{\mathbf{Vect}_{\R}}
+\newcommand{\Lens}{\mathbf{Lens}}
+\newcommand{\Para}{\mathbf{Para}}
+\newcommand{\Fit}{\operatorname{Fit}}
+\newcommand{\Fact}{\mathbf{Fact}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\rev}{\mathcal R}
+
+\title{Finite Evidence and Differentiable Realizations\\
+\large A categorical interface between automata learning and gradient learning}
+\author{}
+\date{Research note \quad 4 November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We give a self-contained interface between exact categorical automata learning and
+reverse-differentiable learning, using real weighted automata. Finite observations
+form a contravariant diagram of Euclidean spaces, while their image hypotheses
+form a different, mixed-variance diagram of vector spaces. Polynomial evaluation
+of parameterized automata is compatible with observation restriction. Applying
+reverse differentiation proves an exact lens-composition law: restriction of
+observations is paired with zero-extension of cotangents. An exact-fit,
+full-observed-rank realization is isomorphic to the automaton inferred from the
+same finite observations. We prove these claims, calculate a two-dimensional
+example, and show why rank changes and optimizer updates prevent a stronger
+identification. The result is an interface, not a generalization of all of
+$\Para(\Lens(\mathcal C))$ or a new active-learning algorithm. It is a limited
+technical test for a broader theory of phenomenology, including mathematical
+and scientific theory formation; it does not define that broader project.
+\end{abstract}
+
+\section{Scope and prior work}
+
+CALF uses wrappers and image factorizations to reconstruct automata from finite
+observations, with closedness and consistency governing whether transitions
+descend to the inferred state space. Its correctness results additionally use
+reachability, observability, and the applicable learning protocol. Its real
+weighted instance is presented in $\mathbf{Vect}^{\mathrm{op}}$ and interpreted
+in vector spaces; the opposite category accounts for the orientation of its
+coalgebraic transitions \cite{calf}.
+
+The image-refinement diagram used below is already present in
+Colcombet--Petri\c{s}an--Stabile: their Definition 29 forms the relevant
+factorization objects, and Lemma 31 establishes the canonical monomorphisms,
+epimorphisms, commuting rectangles, and composition laws. Their FunL$^*$
+framework treats automata as functors and covers field-weighted automata
+\cite{cps}. We give the elementary finite-dimensional proof because it fixes all
+types needed for the differentiable interface. This diagram is not a novelty
+claim.
+
+Cruttwell et al. compose parameterized maps, lenses, and reverse differentiation
+to describe gradient-based learning. The reverse chain rule supplies a functor
+$\rev:\mathcal C\to\Lens(\mathcal C)$ in a Cartesian reverse differential
+category \cite{gradient}. We specialize this machinery to the polynomial
+evaluation maps of weighted automata.
+
+Two further precedents constrain the interpretation. Spivak already interprets
+learners as generalized Moore machines using polynomial functors
+\cite{spivak}. Rabusseau, Li, and Precup relate weighted automata to linear
+second-order recurrent networks, recover realizations spectrally, and study
+gradient-based refinement \cite{rabusseau}. Consequently, neither putting
+learners into a dynamical category nor combining spectral identification with
+gradient optimization is introduced here.
+
+The results below are an explicit synthesis with proofs. A scoped literature
+check is insufficient to establish research novelty, including novelty of the
+finite-data compatibility theorem. We distinguish established ingredients,
+their proved compatibility in this setting, and questions not resolved by that
+compatibility.
+
+\section{Finite observations and their types}
+
+Fix a finite alphabet $A$, its free monoid $A^*$, the empty word $\varepsilon$,
+and a target behavior
+\[
+L:A^*\longrightarrow\R.
+\]
+The target need not initially be assumed to have finite realization dimension.
+All observations in this note are exact real numbers. Approximate oracle
+answers require additional theory.
+
+\begin{definition}[Evidence contexts]
+An evidence context is a pair $c=(S,E)$ of finite subsets of $A^*$ containing
+$\varepsilon$. Let $\mathcal C$ be their poset under componentwise inclusion.
+The names ``prefix samples'' and ``suffix tests'' describe their roles; closure
+of $S$ under prefixes and of $E$ under suffixes is not assumed for the elementary
+matrix results below. Such closure is imposed when an algorithm requires it.
+\end{definition}
+
+For a finite set $S$, $\R^S$ denotes its free vector space with basis
+$(e_s)_{s\in S}$. Define the target observation and shifted observation maps
+\begin{align}
+T_c &: \R^S\longrightarrow\R^E,
+& (T_c)_{e,s}&=L(se),\label{eq:target}\\
+K_{a,c} &: \R^S\longrightarrow\R^E,
+& (K_{a,c})_{e,s}&=L(sae)\qquad(a\in A).
+\end{align}
+Thus columns are prefix samples and rows are suffix tests. These are data,
+not parameter-dependent predictions.
+
+Let $\Mat(E,S)=\R^{E\times S}$, with its coordinate Euclidean structure, and set
+\[
+B_c=\Mat(E,S)\times\prod_{a\in A}\Mat(E,S),
+\qquad y_c=(T_c,(K_{a,c})_{a\in A})\in B_c.
+\]
+For $c=(S,E)\leq d=(S',E')$, write
+\[
+i_{SS'}:\R^S\hookrightarrow\R^{S'},\qquad
+p_{EE'}:\R^{E'}\twoheadrightarrow\R^E
+\]
+for basis inclusion and coordinate restriction. Define
+\begin{equation}\label{eq:restriction}
+r_{cd}:B_d\longrightarrow B_c,
+\qquad
+(X,(X_a)_a)\longmapsto
+\bigl(p_{EE'}Xi_{SS'},(p_{EE'}X_ai_{SS'})_a\bigr).
+\end{equation}
+
+\begin{proposition}[Observation presheaf]\label{prop:presheaf}
+The assignments $c\mapsto B_c$ and $(c\leq d)\mapsto r_{cd}$ define a functor
+$B:\mathcal C^{\mathrm{op}}\to\Smooth$. The target data satisfy
+$r_{cd}(y_d)=y_c$.
+\end{proposition}
+\begin{proof}
+For $c\leq d\leq f$, the inclusions and projections compose, giving
+$r_{cf}=r_{cd}\circ r_{df}$. Identity inclusions and projections give
+$r_{cc}=\id$. All these maps are linear, hence smooth. Every retained target
+entry is the value of the same concatenated word in both contexts.
+\end{proof}
+
+\begin{remark}[Repeated words]
+Coordinates of $B_c$ are indexed by $(e,s)$ and $(a,e,s)$, not by distinct words.
+Different coordinates can therefore encode the same word. Equation
+\eqref{eq:restriction} selects coordinates, so repeated words do not spoil
+functoriality. An unweighted Euclidean loss on $B_c$ counts these repetitions
+with multiplicity. Alternatively, one may use the finite set
+$D_c=SE\cup SAE$ of distinct queried words, its coordinate restriction maps,
+and a linear map that duplicates word values into blocks. The convention must
+be fixed before choosing a loss.
+\end{remark}
+
+\section{Image hypotheses and mixed variance}
+
+Write
+\[
+I(S,E)=\im(T_{S,E})\subseteq\R^E,
+\qquad
+\R^S\xrightarrow{\overline T_{S,E}}I(S,E)
+\xrightarrow{m_{S,E}}\R^E
+\]
+for the canonical image factorization. Here $\overline T$ is surjective and
+$m$ is inclusion. This is the finite linear instance of a wrapper
+factorization. If the target has a realization with state space $Q$, the
+wrapper is the sampled reachability map $\R^S\to Q$ followed by restricted
+observation $Q\to\R^E$. The image remains defined even when that realization
+is unknown.
+
+\begin{proposition}[Mixed image diagram]\label{prop:mixed}
+Prefix enlargement at fixed $E$ induces an inclusion
+\[
+j_{SS'}^E:I(S,E)\hookrightarrow I(S',E).
+\]
+Suffix enlargement at fixed $S$ induces a surjection in the reverse direction
+\[
+q_{EE'}^S:I(S,E')\twoheadrightarrow I(S,E).
+\]
+For $S\subseteq S'$ and $E\subseteq E'$, the square
+\[
+\begin{tikzcd}
+I(S,E')\arrow[r,hook,"j_{SS'}^{E'}"]\arrow[d,two heads,"q_{EE'}^S"']&
+I(S',E')\arrow[d,two heads,"q_{EE'}^{S'}"]\\
+I(S,E)\arrow[r,hook,"j_{SS'}^E"']&I(S',E)
+\end{tikzcd}
+\]
+commutes. Both kinds of arrows preserve identities and compose in the evident
+way. Thus $I$ is a strict functor in $S$ covariantly and $E$ contravariantly.
+\end{proposition}
+\begin{proof}
+At fixed $E$, enlarging $S$ adds columns to $T$, so the old image is a subspace
+of the new image. At fixed $S$,
+$p_{EE'}T_{S,E'}=T_{S,E}$, so restriction maps the former image onto the latter.
+Both composites in the square take a vector to its restriction to $E$ in
+$\R^E$. Inclusions and coordinate restrictions compose strictly.
+\end{proof}
+
+This is the vector-space specialization of \cite[Definition 29 and Lemma
+31]{cps}. It can also be read as a double diagram: horizontal maps are
+injections, vertical maps are surjections, and two-dimensional cells are
+commuting squares. Horizontal and vertical composition are ordinary pasting;
+the interchange law follows from composition of linear maps. No failure of
+functoriality is being asserted. Nor is a commuting square automatically a
+pullback square.
+
+The two diagrams $B$ and $I$ have different variance. Increasing both samples
+and tests restricts the available observation \emph{coordinates} from $B_d$ to
+$B_c$, but on image \emph{state spaces} the two operations induce arrows in
+opposite directions. This distinction is essential when discussing refinement.
+
+\section{When the observed dynamics descend}
+
+Fix a context and abbreviate $T=T_c$, $K_a=K_{a,c}$, and $I=\im(T)$.
+
+\begin{proposition}[Linear closedness and consistency]\label{prop:descent}
+There exists a unique linear transition $U_a:I\to I$ satisfying
+\begin{equation}\label{eq:descent}
+mU_a\overline T=K_a
+\end{equation}
+if and only if
+\begin{equation}\label{eq:cc}
+\im(K_a)\subseteq\im(T),\qquad \ker(T)\subseteq\ker(K_a).
+\end{equation}
+\end{proposition}
+\begin{proof}
+Necessity follows by factoring $K_a$ as in \eqref{eq:descent}. Conversely,
+define $U_a(Tv)=K_av$, interpreting the right-hand side as an element of $I$.
+The image condition makes the codomain correct. If $Tv=Tw$, then
+$v-w\in\ker(T)\subseteq\ker(K_a)$, so the definition is independent of the
+representative. It is linear. Since $\overline T$ is surjective, the defining
+equation determines $U_a$ uniquely.
+\end{proof}
+
+When these conditions hold for every $a$, define initial state and output by
+\[
+\alpha_I=T e_\varepsilon\in I,
+\qquad o_I:I\to\R,\quad o_I(x)=x_\varepsilon.
+\]
+This produces an inferred weighted automaton. The presence of $\varepsilon$
+in both indexing sets supplies these two maps without further choices.
+The conditions \eqref{eq:cc} are the image and kernel forms of the relevant
+CALF closedness and consistency requirements \cite{calf}.
+
+\begin{remark}[Block dynamics need not reproduce arbitrary word samples]
+For arbitrary finite $S,E$, Proposition~\ref{prop:descent} proves an algebraic
+factorization of the shifted blocks. It does not by itself prove that the
+resulting initial state and output reproduce all sampled words. For example,
+take $A=\{a\}$, $S=\{\varepsilon,aa\}$, $E=\{\varepsilon\}$ and target
+values $L(\varepsilon)=1$, $L(a)=3$, $L(aa)=2$, $L(aaa)=6$. Then
+$T=[1\;2]$, $K=[3\;6]$ satisfy both image and kernel conditions, but the
+descended automaton has transition $3$, initial value $1$, and identity
+output. It predicts $9$, not $2$, on $aa$. The missing intermediate prefix
+$a$ matters. The next proposition supplies sufficient closure conditions.
+Alternatively, the exact-fit hypothesis of
+Theorem~\ref{thm:compatibility} supplies reproduction through the candidate
+realization itself.
+\end{remark}
+
+\begin{proposition}[Reproduction under word closure]\label{prop:reproduction}
+Suppose $S$ is prefix-closed, $E$ is suffix-closed, both contain
+$\varepsilon$, and the blocks are coherent word observations as in
+\eqref{eq:target}. If the conditions \eqref{eq:cc} hold for every $a$, the
+inferred automaton reproduces $L$ on $SE\cup SAE$.
+\end{proposition}
+\begin{proof}
+Use $U_{a_1\cdots a_k}=U_{a_k}\cdots U_{a_1}$. Prefix closure and induction
+give $U_s\alpha_I=T e_s$ for each $s\in S$: if $s=ta$, then
+$U_aT e_t=K_a e_t=T e_{ta}$, as vectors indexed by $E$.
+
+Suffix closure gives $o_IU_e x=x_e$ for all $x\in I$ and $e\in E$.
+For $e=\varepsilon$ this is the definition. Write $e=av$, with $v\in E$,
+and $x=Tz$. By induction,
+\[
+o_IU_e x=o_IU_vU_a x=(U_a x)_v
+=(K_a z)_v=\sum_{s\in S}z_sL(sav)=(Tz)_{av}=x_e.
+\]
+Consequently $o_IU_eU_s\alpha_I=(T e_s)_e=L(se)$ and
+$o_IU_eU_aU_s\alpha_I=(K_a e_s)_e=L(sae)$.
+\end{proof}
+
+\begin{proposition}[Compatibility of valid adjacent hypotheses]\label{prop:intertwine-grid}
+If both endpoints of a horizontal or vertical arrow in
+Proposition~\ref{prop:mixed} admit descended transitions, that arrow is a
+homomorphism of their inferred automata.
+\end{proposition}
+\begin{proof}
+For a vertical arrow $q:I(S,E')\to I(S,E)$, coordinate restriction gives
+$q\overline T'=\overline T$ and maps the corestriction of $K'_a$ to that of
+$K_a$. Hence
+\[
+qU'_a\overline T'=q\overline K'_a
+=\overline K_a=U_a\overline T=U_aq\overline T'.
+\]
+Cancel the surjection $\overline T'$. Initial states are preserved by the same
+restriction identity, and the $\varepsilon$ coordinate is retained. For a
+horizontal inclusion $j$, use
+$j\overline T=\overline T'i_{SS'}$ and the identical relation for shifted
+blocks. Then $U'_aj\overline T=jU_a\overline T$; cancel $\overline T$.
+Initial state and output are again preserved.
+\end{proof}
+
+This assertion applies only where both hypotheses exist. A refinement needed
+to repair a defect passes through a cell at which a transition may not descend.
+It does not make successive, disagreeing conjectures globally equivalent.
+
+\section{Differentiable realization charts}
+
+For $n\geq1$, let
+\[
+\Theta_n=\R^n\times\prod_{a\in A}\R^{n\times n}\times\R^n.
+\]
+Write $\theta=(\alpha,(M_a)_a,\beta)$ and use the convention
+\[
+M_\varepsilon=I_n,\qquad
+M_{a_1\cdots a_k}=M_{a_k}\cdots M_{a_1},\qquad
+L_\theta(w)=\beta^{\mathsf T}M_w\alpha.
+\]
+Thus $M_{uv}=M_vM_u$, so $L_\theta(sae)=\beta^{\mathsf T}M_eM_aM_s\alpha$.
+Replacing $L$ by $L_\theta$ in \eqref{eq:target} defines predicted blocks
+$\widehat T_{\theta,c},\widehat K_{a,\theta,c}$ and a polynomial evaluator
+\[
+\Phi_{n,c}:\Theta_n\longrightarrow B_c,
+\qquad
+\theta\longmapsto
+(\widehat T_{\theta,c},(\widehat K_{a,\theta,c})_a).
+\]
+Words index the family of polynomial computations. We do not regard the
+unbounded discrete set $A^*$ as a Euclidean object of $\Smooth$.
+
+\subsection{The relevant lens operations}
+
+An object of $\Lens(\Smooth)$ is a pair $(X,X')$. A lens
+$(f,f^*):(X,X')\to(Y,Y')$ consists of
+$f:X\to Y$ and $f^*:X\times Y'\to X'$. Composition is
+\[
+(g,g^*)\circ(f,f^*)
+=\bigl(g\circ f,(x,z')\mapsto f^*(x,g^*(f(x),z'))\bigr).
+\]
+For a smooth map $f:X\to Y$ between Euclidean spaces,
+\[
+\rev(f)=(f,R[f]),\qquad R[f](x,v)=Jf(x)^{\mathsf T}v.
+\]
+The identity and chain rules make $\rev$ a functor. The Euclidean inner products
+identify cotangent vectors with coordinate vectors; this does not mean
+cotangents have the same semantic role as forward values.
+
+A morphism in $\Para(\Lens(\Smooth))$ adds a parameter pair $(P,P')$ to such
+a lens. Therefore $\Phi_{n,c}$ defines a parametric lens from $(1,1)$ to
+$(B_c,B_c)$ with parameter pair $(\Theta_n,\Theta_n)$, where $1=\R^0$:
+its backward computation is $(\theta,v)\mapsto J\Phi_{n,c}(\theta)^{\mathsf T}v$.
+
+\begin{theorem}[Observation restriction and reverse differentiation]\label{thm:bridge}
+For every $c\leq d$ and every fixed $n$,
+\begin{align}
+\Phi_{n,c}&=r_{cd}\circ\Phi_{n,d},\label{eq:forwardbridge}\\
+\rev(\Phi_{n,c})&=\rev(r_{cd})\circ\rev(\Phi_{n,d}),\label{eq:lensbridge}\\
+R[\Phi_{n,c}](\theta,v)
+&=R[\Phi_{n,d}](\theta,r_{cd}^{\mathsf T}v).\label{eq:backbridge}
+\end{align}
+Here $r_{cd}^{\mathsf T}:B_c\to B_d$ extends indexed coordinate vectors by
+zero. These identities compose consistently along all chains of refinements.
+\end{theorem}
+\begin{proof}
+Each retained predicted entry is given by the same word polynomial in the two
+contexts, proving \eqref{eq:forwardbridge}. The Jacobian of $r_{cd}$ is the
+constant coordinate projection $r_{cd}$. Transposing the chain rule gives
+\eqref{eq:backbridge}, which is exactly the backward part of
+\eqref{eq:lensbridge}. For $c\leq d\leq f$, Proposition~\ref{prop:presheaf}
+gives $r_{cf}^{\mathsf T}=r_{df}^{\mathsf T}r_{cd}^{\mathsf T}$, so the two
+routes agree. Identities follow in the same way.
+\end{proof}
+
+\begin{corollary}[Masked loss compatibility]\label{cor:masked}
+For $\ell_c(\theta)=\tfrac12\|\Phi_{n,c}(\theta)-y_c\|^2$,
+\[
+\nabla\ell_c(\theta)=J\Phi_{n,d}(\theta)^{\mathsf T}
+r_{cd}^{\mathsf T}r_{cd}\bigl(\Phi_{n,d}(\theta)-y_d\bigr).
+\]
+The full $d$-loss gradient equals this vector plus the contribution of the
+new coordinates.
+\end{corollary}
+\begin{proof}
+Substitute \eqref{eq:forwardbridge} and $y_c=r_{cd}y_d$ into the derivative of
+the squared Euclidean norm. The matrix $r_{cd}^{\mathsf T}r_{cd}$ is the
+orthogonal coordinate mask. Its complement supplies the other summand.
+\end{proof}
+
+The local primitive behind this construction is
+$F(M,x)=Mx$, whose reverse derivative is
+\[
+R[F](M,x,v)=(vx^{\mathsf T},M^{\mathsf T}v).
+\]
+Lens composition handles sequential transitions. When a symbol occurs several
+times, a diagonal reparameterization shares its matrix; the reverse map of
+that diagonal adds its separate gradient contributions. Thus the construction
+uses composition, not merely an independently differentiated final formula.
+
+\section{Exact fit and the factorization category}
+
+\begin{definition}[Factorizations of one observed matrix]
+For $T:\R^S\to\R^E$, the category $\Fact(T)$ has objects
+\[
+\R^S\xrightarrow{R}V\xrightarrow{O}\R^E,
+\qquad OR=T,
+\]
+where $V$ is finite-dimensional. A morphism to $(V',R',O')$ is a linear map
+$h:V\to V'$ such that $hR=R'$ and $O'h=O$. Composition and identities are
+ordinary linear composition and identities.
+\end{definition}
+
+\begin{proposition}[Universal properties of the observed image]\label{prop:universal}
+The image factorization is terminal in the full subcategory where $R$ is
+surjective and initial in the full subcategory where $O$ is injective.
+\end{proposition}
+\begin{proof}
+If $R$ is surjective, $\im(O)=\im(OR)=\im(T)$. Corestricting $O$ therefore
+gives the unique map $h:V\to\im(T)$ with $mh=O$ and
+$hR=\overline T$. If $O$ is injective, define
+$h:\im(T)\to V$ by $h(Tv)=Rv$. If $Tv=Tw$, injectivity of $O$ implies
+$Rv=Rw$. This is a linear map satisfying $h\overline T=R$ and $Oh=m$.
+Surjectivity of $\overline T$ proves uniqueness.
+\end{proof}
+
+Define the exact-fit set
+\[
+\Fit_n(c)=\{\theta\in\Theta_n:\Phi_{n,c}(\theta)=y_c\}.
+\]
+Theorem~\ref{thm:bridge} makes $\Fit_n$ a presheaf on $\mathcal C$ with
+restriction given by inclusion $\Fit_n(d)\subseteq\Fit_n(c)$.
+Its category of elements has objects $(c,\theta)$ and an arrow
+$(c,\theta)\to(d,\theta')$ when $c\leq d$ and $\theta'=\theta$ survives the
+additional equations. This records refinement of exact evidence. Gradient
+steps need not lie in this category, since intermediate parameters generally
+fail exact-fit equations.
+
+For any candidate define
+\begin{align*}
+R_{\theta,S}:\R^S&\to\R^n,
+&R_{\theta,S}e_s&=M_s\alpha,\\
+O_{\theta,E}:\R^n&\to\R^E,
+&(O_{\theta,E}x)_e&=\beta^{\mathsf T}M_ex.
+\end{align*}
+Then always
+\begin{equation}\label{eq:candidatefactor}
+\widehat T_{\theta,c}=O_{\theta,E}R_{\theta,S},
+\qquad
+\widehat K_{a,\theta,c}=O_{\theta,E}M_aR_{\theta,S}.
+\end{equation}
+These factor the \emph{target} blocks only when exact agreement holds.
+
+\begin{theorem}[Finite-data realization compatibility]\label{thm:compatibility}
+Let $T_c,(K_{a,c})_a$ be target observations and suppose
+$\theta\in\Fit_n(c)$ with $\rk(T_c)=n$. Then the target blocks satisfy
+\eqref{eq:cc}; the inferred automaton exists; and the corestriction
+\[
+\overline O:\R^n\longrightarrow I_c=\im(T_c)
+\]
+of $O_{\theta,E}$ is an isomorphism of the candidate automaton with that
+inferred automaton. In particular,
+\[
+\overline OM_a=U_a\overline O,
+\qquad \overline O\alpha=\alpha_I,
+\qquad o_I\overline O=\beta^{\mathsf T}.
+\]
+\end{theorem}
+\begin{proof}
+Abbreviate $R=R_{\theta,S}$ and $O=O_{\theta,E}$. Exact fit gives
+$T_c=OR$ and $K_{a,c}=OM_aR$. Since $\rk(T_c)=n$ and the intermediate space
+has dimension $n$, $R$ is surjective and $O$ injective. Thus
+$\im(O)=\im(T_c)$, making $\overline O$ an isomorphism, and
+$\ker(T_c)=\ker(R)\subseteq\ker(K_{a,c})$. Also
+$\im(K_{a,c})\subseteq\im(O)=\im(T_c)$. Proposition~\ref{prop:descent}
+therefore supplies $U_a$. Corestricting the defining equations gives
+\[
+\overline OM_aR=\overline K_{a,c}
+=U_a\overline T_c=U_a\overline OR.
+\]
+Cancel the surjection $R$ to obtain the transition identity. Since
+$R e_\varepsilon=\alpha$, the initial-state identity follows. Since
+$M_\varepsilon=I_n$, the $\varepsilon$ coordinate of $Ox$ is
+$\beta^{\mathsf T}x$, proving the output identity.
+\end{proof}
+
+\begin{corollary}[A conditional dimension certificate]
+Every candidate matching $T_c$ has dimension at least $\rk(T_c)$. Any two
+exact-fit candidates of dimension exactly $\rk(T_c)$ are isomorphic as
+automata if they also match all the shifted blocks.
+\end{corollary}
+\begin{proof}
+The rank bound follows from $T_c=OR$. The second assertion follows by
+composing the two isomorphisms of Theorem~\ref{thm:compatibility} through $I_c$.
+\end{proof}
+
+\paragraph{Boundary of this theorem.}
+It identifies the candidate with the automaton inferred from the finite table.
+It does not prove that either agrees with the unknown target on every word.
+For that conclusion one needs an appropriate complete sampling condition,
+known bounds with a complete test, or a sound equivalence oracle. A sufficient
+concrete condition is that the target itself has dimension $n$ and the
+sampled reachability and observation maps have full rank; applying the same
+argument to the target identifies it with $I_c$. Finite rank of one block
+alone does not establish that condition.
+
+\section{A complete two-dimensional example}
+
+Let $A=\{a\}$ and
+\[
+L(a^k)=1+2^k\quad(k\geq0).
+\]
+The first values are $2,3,5,9,17$. A realization is
+\[
+\alpha=\beta=\begin{pmatrix}1\\1\end{pmatrix},
+\qquad M=\begin{pmatrix}1&0\\0&2\end{pmatrix}.
+\]
+
+\subsection{Refinement and its two distinct defects}
+For $S=E=\{\varepsilon\}$,
+\[
+T=[2],\qquad K=[3].
+\]
+The inferred one-state automaton has transition $3/2$, initial value $2$, and
+output the identity. It predicts $2(3/2)^k$, hence predicts $9/2$ rather than
+$5$ at $a^2$. An exact test of $a^2$ therefore refutes it. An equivalence
+oracle could return that word, but merely constructing the table does not
+provide such an oracle.
+
+If prefixes are enlarged first to $S'=\{\varepsilon,a\}$, then
+\[
+T=[2\;3],\qquad K=[3\;5].
+\]
+The vector $(3,-2)^{\mathsf T}$ lies in $\ker(T)$ but is sent to $-1$ by $K$.
+Consistency fails. If suffixes are enlarged first to
+$E'=\{\varepsilon,a\}$, then
+\[
+T=\begin{pmatrix}2\\3\end{pmatrix},
+\qquad K=\begin{pmatrix}3\\5\end{pmatrix}.
+\]
+The second vector is not in the span of the first, so closedness fails.
+
+With both enlarged,
+\[
+T=\begin{pmatrix}2&3\\3&5\end{pmatrix},
+\quad
+K=\begin{pmatrix}3&5\\5&9\end{pmatrix},
+\quad
+T^{-1}=\begin{pmatrix}5&-3\\-3&2\end{pmatrix}.
+\]
+Now $\det(T)=1$ and $I=\R^2$. The canonical observed-state automaton is
+\[
+U=KT^{-1}=\begin{pmatrix}0&1\\-2&3\end{pmatrix},
+\qquad \alpha_I=\begin{pmatrix}2\\3\end{pmatrix},
+\qquad o_I=\begin{pmatrix}1&0\end{pmatrix}.
+\]
+It implements $L(a^{k+2})=3L(a^{k+1})-2L(a^k)$.
+
+The image rectangle is explicitly
+\[
+\begin{tikzcd}
+\operatorname{span}\{(2,3)^{\mathsf T}\}
+\arrow[r,hook]\arrow[d,two heads,"\mathrm{pr}_1"']&
+\R^2\arrow[d,two heads,"\mathrm{pr}_1"]\\
+\R\arrow[r,equal]&\R.
+\end{tikzcd}
+\]
+Thus the categorical rectangle commutes even though its two intermediate
+cells do not both support valid inferred transitions.
+
+\subsection{Exact compatibility with the differentiable realization}
+For the diagonal realization,
+\[
+R=\begin{pmatrix}1&1\\1&2\end{pmatrix},
+\qquad
+O=\begin{pmatrix}1&1\\1&2\end{pmatrix},
+\qquad T=OR,\qquad K=OMR.
+\]
+Direct multiplication gives
+\[
+OM=\begin{pmatrix}1&2\\1&4\end{pmatrix}=UO.
+\]
+The matrix $O$ sends $\alpha$ to $(2,3)^{\mathsf T}$ and its first row is
+$\beta^{\mathsf T}$, verifying every part of
+Theorem~\ref{thm:compatibility}.
+
+A one-state realization has behavior $cr^k$ with $c=\alpha\beta$.
+Matching the first two values forces $c=2$ and $r=3/2$, contradicting the
+third value. The rank-two block certifies the obstruction independently of
+optimization. The displayed two-state parameters achieve zero loss on the
+observed blocks. The fact that a zero-loss point exists does not prove that
+gradient descent reaches it.
+
+\section{Why this is an interface rather than an identification}
+
+\subsection{Rank changes obstruct a single smooth minimal-state bundle}
+
+\begin{proposition}[Rank-jump obstruction]\label{prop:rankjump}
+There is no vector bundle over an interval containing $0$ whose fiber at $t$
+is isomorphic to $\im(H(t))$ for every
+\[
+H(t)=\begin{pmatrix}1&0\\0&t\end{pmatrix}.
+\]
+Consequently, exact minimal image extraction for arbitrary smooth matrix
+families cannot always be represented by a fixed-rank smooth state bundle.
+\end{proposition}
+\begin{proof}
+At $t=0$ the image has dimension one; at every nonzero $t$ it has dimension
+two. A vector bundle has locally constant fiber dimension, giving a
+contradiction in every neighborhood of zero.
+\end{proof}
+
+This is not a no-go theorem for stratified spaces, variable-dimensional
+semantics, padded state spaces, or more general categories. It identifies the
+extra structure needed beyond a fixed Euclidean chart. It also explains a
+numerical warning: $H(t)^{-1}=\operatorname{diag}(1,1/t)$ for $t\ne0$, so
+inverse-based coordinates need not remain bounded near a rank drop.
+
+\subsection{The lens law does not make gradient updates natural}
+
+Theorem~\ref{thm:bridge} compares derivatives with the correct transformed
+cotangent seed. It does not identify the full losses before and after adding
+evidence. Likewise, a behavior-preserving change of coordinates need not
+preserve a Euclidean gradient step. For a scalar realization with prediction
+$\alpha\beta$, consider
+\[
+\ell(\alpha,\beta)=\tfrac12(\alpha\beta)^2,
+\qquad g_c(\alpha,\beta)=(c\alpha,\beta/c).
+\]
+The loss is invariant under $g_c$, but at $(1,1)$ its gradient is $(1,1)$.
+For $c=2$, the gradient at $g_2(1,1)=(2,1/2)$ is $(1/2,2)$, whereas
+$Dg_2|_{(1,1)}[(1,1)]=(2,1/2)$. Thus pushing a gradient update through this realization
+isomorphism gives a different update. A choice of metric or compatible
+optimizer geometry is additional data.
+
+\subsection{An observed quotient can preserve dynamics but lose gradient form}
+
+Consider $f_p=p^2$ with target $b$ and squared loss
+$\ell(p)=\tfrac12(p^2-b)^2$. A gradient step is
+\[
+F_{b,\eta}(p)=p-2\eta p(p^2-b).
+\]
+The readout $q(p)=p^2$ yields an exact quotient:
+\[
+q\circ F_{b,\eta}=\overline F_{b,\eta}\circ q,
+\qquad
+\overline F_{b,\eta}(q)=q\bigl(1-2\eta(q-b)\bigr)^2,
+\quad q\geq0.
+\]
+The equality follows by squaring $F_{b,\eta}(p)$. For a Moore machine whose
+inputs are the chosen pairs $(b,\eta)$ and visible output is $p^2$, the relation
+$p\sim p'$ iff $p^2=(p')^2$ is a behavioral congruence: updates are odd and
+therefore preserve sign-related pairs. Its quotient generally has infinitely
+many states. The quotient update is not ordinary Euclidean gradient descent
+on $\tfrac12(q-b)^2$: expanding it gives
+$q-4\eta q(q-b)+4\eta^2q(q-b)^2$. This example concerns observed training
+dynamics, not direct identification of an unknown predictor. It illustrates
+why observational quotienting and differentiable learning are different
+operations.
+
+\section{What has been constructed and what is still required}
+
+The mathematical object assembled here consists of the observation presheaf
+$B$, the target section $y$, the mixed image diagram $I$, polynomial candidate
+cones $\Phi_{n,-}$, their reverse-derivative lens images, and categories of
+factorizations and exact-fit realizations. Its composition laws and the
+interface theorem are explicit. On valid image cells it also carries inferred
+automata and intertwining maps. This is more than an analogy, but does not
+identify all these morphisms with each other.
+
+Fixing $c,n$ recovers ordinary reverse-differentiable fitting of one weighted
+automaton chart. Forgetting the charts recovers finite image hypotheses and
+their exact refinement data. At a full-observed-rank exact fit,
+Theorem~\ref{thm:compatibility} identifies the two descriptions of the
+finite-data hypothesis. These are recovered cases, not a claim that arbitrary
+CALF instances are reverse differential categories or that all parametric
+lenses are automata learners.
+
+A full combined learning theory still needs:
+\begin{enumerate}[leftmargin=*,itemsep=3pt]
+\item A teacher or experiment interface and an authorized rule for choosing
+new samples, tests, or counterexamples. An update of parameters is not itself
+an equivalence query.
+\item A termination or convergence argument with stated finiteness,
+observability, optimization, and noise assumptions. The two original
+frameworks do not supply these assumptions for one another.
+\item A semantics for changing realization dimension and preserving useful
+witnesses when a quotient or rank changes.
+\item An appropriate differential or metric structure on realization
+isomorphism classes if coordinate-independent optimizer behavior is wanted.
+\end{enumerate}
+Witness-based automata learning is already developed in the apartness-based
+$L^{\#}$ approach \cite{apartness}; learners and teachers themselves have also
+been treated coalgebraically for formalized complexity analysis
+\cite{coalgebraic}. Those are relevant existing structures, not gaps created
+by an absence of categorical work on interaction or evidence.
+
+\section{Implications for a broader theory of phenomenology}
+
+The broader motivation includes how partial characterizations support the
+formation and revision of mathematical and scientific theories. This note
+offers one technical test of that motivation. It does not define phenomenology
+by automata learning, observation functions, or gradient descent.
+
+The finite context $(S,E)$ determines a partial characterization of the target.
+The image $I(S,E)$ is structure generated from that characterization through
+an explicit universal factorization. The refinement diagram records how that
+generated structure changes when samples or tests change. A differentiable
+realization supplies coordinates and a mechanism for adjusting a candidate
+description. The exact-fit theorem states when such a description and the
+generated structure agree up to isomorphism. These are precise statements in
+the weighted-automaton setting, not assertions that every scientific or
+mathematical theory has this form.
+
+The construction separates evidence, generated structure, and transport.
+Restriction transports observation coordinates. Mixed-variance maps transport
+image hypotheses. The reverse derivative transports covectors through a
+chosen realization. Their relations are proved by the bridge law and the
+finite-data compatibility theorem; their differences remain visible in their
+types. In particular, an update within an existing description is different
+from an enlargement of the distinctions that a description can represent.
+The rank-jump example makes this difference mathematically unavoidable in a
+fixed-rank smooth setting.
+
+For a broader application one would have to specify what counts as evidence,
+which presentations and equivalences are relevant, how new tests or concepts
+are generated, and what justifies a claim beyond the finite characterization.
+The present results neither supply those choices universally nor show that
+their mechanisms are shared by all domains. Their contribution is a worked
+instance in which partial characterization, generated structure, and
+differentiable adjustment can be compared without identifying them, together
+with explicit conditions under which information passes between them.
+
+\begin{thebibliography}{9}
+
+\bibitem{calf}
+Gerco van Heerdt, Matteo Sammartino, and Alexandra Silva.
+\emph{CALF: Categorical Automata Learning Framework}.
+CSL 2017; arXiv:1704.05676, version 3.
+\url{https://arxiv.org/abs/1704.05676}.
+The weighted-automaton construction is in Appendix A of this version.
+
+\bibitem{gradient}
+G.~S.~H. Cruttwell, Bruno Gavranovi\'{c}, Neil Ghani, Paul Wilson, and Fabio Zanasi.
+\emph{Categorical Foundations of Gradient-Based Learning}.
+arXiv:2103.01931, version 2, 2021.
+\url{https://arxiv.org/abs/2103.01931}.
+
+\bibitem{cps}
+Thomas Colcombet, Daniela Petri\c{s}an, and Riccardo Stabile.
+\emph{Learning Automata and Transducers: A Categorical Approach}.
+CSL 2021; arXiv:2010.13675.
+\url{https://arxiv.org/abs/2010.13675}.
+Definition 29 and Lemma 31 in the extended version:
+\url{https://www.irif.fr/~colcombe/Publications/CSL21-colcombet-petrisan-stabile-long.pdf}.
+
+\bibitem{spivak}
+David I. Spivak.
+\emph{Learners' Languages}.
+Electronic Proceedings in Theoretical Computer Science 372 (2022), 14--28.
+arXiv:2103.01189; version 3, 2025.
+\url{https://arxiv.org/abs/2103.01189}.
+\href{https://doi.org/10.4204/EPTCS.372.2}{doi:10.4204/EPTCS.372.2}.
+
+\bibitem{rabusseau}
+Guillaume Rabusseau, Tianyu Li, and Doina Precup.
+\emph{Connecting Weighted Automata and Recurrent Neural Networks through
+Spectral Learning}.
+Proceedings of AISTATS, PMLR 89 (2019), 1630--1639.
+\url{https://proceedings.mlr.press/v89/rabusseau19a.html}.
+
+\bibitem{apartness}
+Frits Vaandrager, Bharat Garhewal, Jurriaan Rot, and Thorsten Wi\ss mann.
+\emph{A New Approach for Active Automata Learning Based on Apartness}.
+arXiv:2107.05419, version 4, 2022.
+\url{https://arxiv.org/abs/2107.05419}.
+
+\bibitem{coalgebraic}
+Thorsten Wi\ss mann.
+\emph{Formalized Run-Time Analysis of Active Learning --- Coalgebraically in Agda}.
+arXiv:2602.16427, version 2, 2026.
+\url{https://arxiv.org/abs/2602.16427}.
+
+\end{thebibliography}
+\end{document}

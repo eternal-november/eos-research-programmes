@@ -16,3 +16,5 @@ The [proposal](contracts/proposal/proposal.tex), [revised contract](contracts/re
 Python scripts next to each development provide finite exact checks and source checks. Run them with Python 3 from their own directory; use a disposable copy because some write outputs. The fixed-budget checks also use their adjacent `native_encoding.py` and `exact_polynomial.py` modules. TeX checks are not compilation or mathematical proof checks.
 
 These are scoped written results and investigations. Several positive constructions specialize established mathematics; novelty and practical utility are not implied by successful checks. Later monodromy, generative-characterization and changing-experiment developments are separate from this initial reading path.
+
+Continue with [realizations, resource boundaries, and changing experiments](continuation.md).

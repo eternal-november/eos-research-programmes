@@ -1,0 +1,670 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{remark}[definition]{Remark}
+\newcommand{\Cat}[1]{\mathsf{#1}}
+\newcommand{\R}{\mathbb R}
+\newcommand{\N}{\mathbb N}
+\newcommand{\Ty}{\operatorname{Ty}}
+\newcommand{\Tm}{\operatorname{Tm}}
+\newcommand{\El}{\operatorname{El}}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\ev}{\operatorname{ev}}
+\setlength{\emergencystretch}{2em}
+\title{A Task Specific Elaboration Situation for Changing Model Languages}
+\author{}
+\date{4 November 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The problem is to turn a proposed change from a bounded linear weighted
+finite automaton class to a rational recurrence into a checkable mathematical
+and evidential claim. An interface for the whole relevant elaborator is organized as a diagram
+of displayed categories: verification contexts and dependent syntax, task
+data and model denotations, claims and proofs, dependency telescopes and typed
+holes, transformations, and optional canonicity witnesses all occur within
+one diagram. A conditional construction from supplied task-record presheaves and a
+category with families makes substitution and hole-filling laws precise. A two-by-two Hankel example
+then supplies an end-to-end comparison with a rational certificate and
+an explicit residual empirical assumption. The record signatures and checker interface are schematic where a concrete
+encoding has not been supplied. The categorical template and the numerical
+comparison have proved fragments; this is not an implemented elaborator
+or a theorem that every useful representation change has this shape.
+\end{abstract}
+
+\section{The actual claim to be elaborated}
+
+A linear Hankel rank obstruction is relative to a linear realization class.
+The behavior
+\[
+ g(a^n)=\frac1{n+1},\qquad x_0=1,\qquad
+ x_{n+1}=\frac{x_n}{1+x_n},\qquad g(a^n)=x_n
+\]
+has a one-coordinate rational realization on $x>0$, but no finite real
+linear WFA realization. Thus a change to this recurrence is not a
+behavior-preserving compilation of the target into a finite WFA. A useful
+elaborator must distinguish:
+\begin{enumerate}
+\item an exact interpretation or coordinate change preserving a stated
+      denotation;
+\item a model replacement supported by a comparison on specified evidence;
+\item an identification of the true mechanism or a canonical realization.
+\end{enumerate}
+The first two have concrete constructions below. Neither entails the third.
+
+The proposed intermediate representation retains exactly the distinctions
+needed to prevent those conflations. Dependency graphs, verification
+judgments, and contextual syntax are not substitutes for the categorical
+diagram. They are the data represented by its displayed categories.
+
+\section{A diagram schema for this elaboration situation}
+
+\subsection{Verification theory and contextual syntax}
+
+For the categorical template, assume a verification theory $T$ whose
+chosen contextual representation is a split category with families
+\[
+ (\Cat C_T,\Ty_T,\Tm_T,1,(-).(-),p,q).
+\]
+An object $\Gamma$ of $\Cat C_T$ is a context. When this is the
+syntactic category of $T$, it is a well-formed syntactic context. An arrow
+$\sigma:\Delta\to\Gamma$ is a typed substitution, so
+\[
+ A[\sigma]\in\Ty_T(\Delta),\qquad
+ t[\sigma]\in\Tm_T(\Delta,A[\sigma])
+ \quad\text{if }t\in\Tm_T(\Gamma,A).
+\]
+Substitution preserves identities and composition. Context extension
+$\Gamma.A$ includes its projection and generic variable, with the usual
+comprehension universal property. This is where dependent hypotheses and context extension live. Binders
+require the corresponding type formers and their substitution laws;
+context extension alone does not supply them. The mathematical fragment requires natural numbers,
+real arithmetic, finite matrices, sequences, norms, propositions,
+quantification, and the relevant proved linear-algebra lemmas.
+
+An abstract semantic category with families does not by itself provide
+a grammar, a typing derivation system, or an executable checker. A
+syntactic implementation needs those data, including a specified checker $V_T$ for the
+judgment $\Gamma\vdash t:A$, a semantic interpretation of the theory,
+and its soundness theorem. The template below assumes the chosen contextual laws; it does not
+construct or verify a syntactic category for a particular proof assistant. Merely drawing its nodes does not build
+that checker or prove its soundness. Checker soundness means that an
+accepted judgment is derivable in $T$; semantic soundness of $T$ is a
+separate assertion about its interpretation. A small Lean-checked fragment is
+provided separately; it does not certify the entire diagram.
+
+For any presheaf $F:\Cat C_T^{\mathrm{op}}\to\Cat{Set}$, use its
+category of elements $\El(F)$. An object is $(\Gamma,x)$ with
+$x\in F(\Gamma)$; a morphism over $\sigma:\Delta\to\Gamma$ exists
+exactly when $x'=F(\sigma)(x)$. Its identity and composition are inherited
+from substitution. This gives an explicit displayed category, not just a
+name for a box. Dependent record fields are formed by iterating this
+construction over the appropriate total category.
+
+\subsection{The task tower}
+
+The following task-record list is a signature schema. For the categorical
+result, \emph{assume supplied} a presheaf of data records, a dependent
+presheaf of model records over it, a dependent presheaf of goals, and a
+substitution-stable family of theory-admitted proof terms, including
+any requested canonicity witnesses. Transformation records and their
+packaging maps must also be supplied. All displayed
+record fields and maps must be natural under the chosen substitution.
+Once these data are supplied, iterated categories of elements give:
+\[
+\begin{array}{ccccccccc}
+ \Cat{Can} &\longrightarrow& \Cat{Prf} &\longrightarrow&
+ \Cat{Goal} &\longrightarrow& \Cat{Rep} &\longrightarrow& \Cat{Data}\\
+ &&&&&&&&\downarrow\\[-2pt]
+ &&&&&&&&\Cat C_T .
+\end{array}                                                     \tag{D1}
+\]
+Each horizontal projection forgets the final dependent record field.
+The field descriptions below do not alone prove that a concrete encoding
+exists or that its operations are natural. Those are explicit implementation
+obligations. The intended fibers have the following content.
+\begin{description}
+\item[$\Cat{Data}$] A finite observation context, an observation matrix,
+a norm and normalization, an uncertainty specification, the competitor
+class and its resource budget, and a stakeholder objective. A latent true
+behavior can be a variable. Noise bounds are propositions in context,
+not truths manufactured from the observation matrix.
+\item[$\Cat{Rep}$] A finite ordered tuple of model records, each carrying a language tag,
+a well-typed presentation, its state domain and initial condition, and a denotation in the behavior
+space. Rational denominators require domain obligations. Candidate
+semantics must factor through an actual model; an arbitrary low-rank
+matrix is not a realization witness.
+\item[$\Cat{Goal}$] A proposition with all these data in scope. Typical
+fibers are robust class-relative comparison, exact interpretation,
+approximate interpretation with a stated error budget, or realization
+uniqueness under a specified equivalence relation.
+\item[$\Cat{Prf}$] A theory-admitted term at the preceding proposition; in the syntactic
+case this means a typing derivation. Checker acceptance is separate. An
+assumption is represented by a variable in the context; it is not silently
+converted into an unconditional theorem. Every conclusion retains the
+context on which its proof depends.
+\item[$\Cat{Can}$] An optional proof of a \emph{stated} canonicity property,
+such as uniqueness up to a specified isomorphism among admissible outputs.
+Its fiber can be empty. An unfilled witness is not a proof that no witness
+exists. The projection never creates this proof merely because an
+elaboration succeeded.
+\end{description}
+Transformations and interpreters form another displayed branch:
+\[
+\begin{array}{ccccc}
+ \Cat{TransPrf}&\longrightarrow&\Cat{TransGoal}
+   &\longrightarrow&\Cat{Rep}\mathbin{\times_{\Cat{Data}}}\Cat{Rep}\\
+ \downarrow&&\downarrow&&\downarrow\\
+ \Cat{Prf}&\longrightarrow&\Cat{Goal}&\longrightarrow&\Cat{Data}.
+\end{array}                                                     \tag{D2}
+\]
+A transformation record gives the input and output languages/models,
+its map or interpreter, its domain, and its exact semantic equation or
+approximation bound. For the vertical map to $\Cat{Goal}$, concatenate the two ordered tuples
+of endpoint records and retain the transformation equation as the goal.
+Thus the underlying $\Cat{Rep}$ record of that ordinary goal is exactly
+the ordered concatenation, which is natural under componentwise substitution.
+This packaging, and the map forgetting a transformation certificate to
+its underlying proof, are required to commute with substitution. Thus the
+left square is the forgetful square for that declared proposition; it
+is not an unspecified choice of one endpoint.
+Composition is available only under the conditions in Section~\ref{sec:transport}.
+
+\subsection{Telescopes, holes, and solutions are in the same diagram}
+
+Let $\Cat{Tel}_T$ be the category of labeled telescope projections
+$\pi_\Delta:\Gamma.\Delta\to\Gamma$, where
+$\Delta=(x_1:A_1,\ldots,x_k:A_k)$ is a finite dependent telescope over
+$\Gamma$. A morphism from $(\Gamma',\Delta')$ to $(\Gamma,\Delta)$
+is a pair
+\[
+ \sigma:\Gamma'\to\Gamma,\qquad
+ u:\Gamma'.\Delta'\to\Gamma.\Delta,
+ \qquad \pi_\Delta u=\sigma\pi_{\Delta'}.
+\]
+Identities and composition are componentwise. Equivalently this is the
+category of the selected labeled objects of the arrow category of
+$\Cat C_T$, with all commuting squares between them. Define functors
+\[
+ p(\Gamma,\Delta)=\Gamma,\quad p(\sigma,u)=\sigma,\qquad
+ e(\Gamma,\Delta)=\Gamma.\Delta,\quad e(\sigma,u)=u.
+\]
+Thus $p$ forgets the local telescope and $e$ extends the context.
+Pulling the judgment and proof categories back along $e$ yields the
+open-goal and open-proof vertices. A solution is a section
+$s:\Gamma\to\Gamma.\Delta$ of the telescope projection.
+Define $\Cat{Sol}$ to have these section-equipped objects, with a
+morphism above $(\sigma,u)$ precisely when
+\[u s'=s\sigma.\]
+This condition is preserved by identities and composition. The projection
+$\Cat{Sol}\to\Cat{Tel}_T$ is a displayed category, but is not
+asserted to be a discrete fibration or to have a lift over every square.
+The split category with families supplies reindexing along its chosen
+cartesian squares only. These definitions give
+three pullback constructions:
+\[
+\begin{array}{ccccc}
+ \Cat{OpenPrf}&\longrightarrow&\Cat{Prf}
+ &\qquad&\Cat{Filled}\longrightarrow\Cat{Sol}\\
+ \downarrow&&\downarrow&&\downarrow\qquad\qquad\downarrow\\
+ \Cat{Tel}_T&\xrightarrow{\ e\ }&\Cat C_T
+ &&\Cat{OpenPrf}\longrightarrow\Cat{Tel}_T .
+\end{array}                                                     \tag{D3}
+\]
+The analogous left-hand square with $\Cat{OpenGoal}$ and $\Cat{Goal}$
+defines the open goals. Explicitly,
+\begin{align*}
+\Cat{OpenPrf}&=\Cat{Tel}_T\times_{e,\Cat C_T}\Cat{Prf},\\
+\Cat{OpenGoal}&=\Cat{Tel}_T\times_{e,\Cat C_T}\Cat{Goal},\\
+\Cat{Filled}&=\Cat{OpenPrf}\times_{\Cat{Tel}_T}\Cat{Sol}.
+\end{align*}
+The filling functor sends a morphism above $(\sigma,u)$ to substitution
+by $\sigma$. It is a further arrow in the same diagram:
+\[
+\begin{array}{ccc}
+ \Cat{Filled}&\xrightarrow{\ \mathrm{fill}\ }&\Cat{Prf}\\
+ \downarrow&&\downarrow\\
+ \Cat{Tel}_T&\xrightarrow{\ p\ }&\Cat C_T,
+\end{array}\qquad
+ (\Gamma,\Delta,A,t,s)\longmapsto(\Gamma,A[s],t[s]).             \tag{1}
+\]
+Equation (1) abbreviates the full task record: every data, model, and
+goal field is substituted by $s$, not only the displayed type and term.
+The proof projection in (D3) has context $e(\Gamma,\Delta)$;
+the filled proof in (1) has context $p(\Gamma,\Delta)$.
+They are related by the natural section $s:p\to e$ after both functors
+are pulled back to solution records, not by equating these different contexts. Thus a dependent output type
+is not treated as fixed before its holes are solved.
+
+The vertical arrows of $\Cat{Tel}_T$ above $\mathrm{id}_\Gamma$
+are precisely the partial-solution substitutions. Thus a partial solution
+to $\Delta$ is a substitution
+$s:\Gamma.\Delta'\to\Gamma.\Delta$ over $\Gamma$. Composition of
+partial solutions is substitution composition. The operational step
+from an old obligation to a residual one has the opposite direction to
+this semantic substitution. A dependency graph is an acyclic presentation
+of the telescope: an edge records actual free-variable dependence.
+Different topological orders are interchangeable only by the appropriate
+exchange substitutions; arbitrary dependent declarations cannot be reordered.
+A cycle needs an explicitly justified recursive or fixed-point type,
+not a topological sort.
+
+\begin{proposition}[Conditional categorical template and filling]
+Assume the split category with families and the substitution-stable task
+presheaves and natural maps specified above have been supplied. Construct
+$\Cat{Tel}_T$ and $\Cat{Sol}$ by the commuting-square and section
+constructions. Then (D1)--(D3) are diagrams of categories and functors,
+and the filling map (1) is a functor. A theory-admitted open term $t:A$
+in $\Gamma.\Delta$ and a section $s$ give a theory-admitted term
+$t[s]:A[s]$ in $\Gamma$. Staged filling agrees with composite filling.
+If the theory has a sound semantic interpretation, the resulting
+judgment is valid under its remaining assumptions. If an executable
+checker is additionally to accept the filled term, its acceptance must
+be proved closed under this substitution operation or its completeness
+for these derivations must be supplied; checker soundness alone is
+insufficient.
+\end{proposition}
+\begin{proof}
+Categories of elements construct the task tower from the supplied
+presheaves. Commuting squares give the category laws for
+$\Cat{Tel}_T$. The equation $us'=s\sigma$ is preserved by composition,
+so it defines the section category. Ordinary categorical pullbacks give
+the open and filled vertices. A morphism of open proofs has
+$t'=t[u]$ and $A'=A[u]$. Hence
+\[
+ t'[s']=t[u][s']=t[us']=t[s\sigma]=t[s][\sigma],
+\]
+and likewise for types and all dependent record fields. This proves
+that filling is a functor. The substitution rule proves the filled
+judgment, and its composition law proves staged filling. Semantic
+soundness applies without erasing the remaining context. The statement
+about actual checker acceptance explicitly requires its additional
+interface, rather than deriving completeness from soundness.
+\end{proof}
+
+\paragraph{Elaboration control and proof status.}
+The elaborator is a possibly branching search through these typed partial
+solutions, not a presumed total function from prose to a canonical answer.
+An untrusted proposal becomes a certified step only after its substitution
+and proof obligations pass $V_T$. Operational paths run from an old obligation to a residual one; their
+functor therefore targets the \emph{opposite} of the semantic
+partial-solution category above. It does not reverse the substitution
+arrows inside that semantic category. Failed proposals are retained as failed
+attempts, not as morphisms. Proof status has its own displayed audit branch over the goal and
+partial-solution records. A fiber contains the exact source judgment,
+its open fields and assumptions, the proposed or accepted proof artifact,
+the checker and library version when applicable, and the status
+``open'', ``proved on paper'', or ``kernel checked''.
+\[
+ \Cat{Audit}\longrightarrow\Cat{Goal},\qquad
+ \Cat{Check}\longrightarrow\Cat{ProposedStep}\longrightarrow\Cat{OpenGoal}.
+                                                               \tag{D4}
+\]
+All arrows in (D4) use the semantic substitution direction. Operational
+logs use the opposite categories over the opposite base categories, just
+as the control paths above do. Untrusted proposals are objects carrying
+strings and goals, not automatically base-category morphisms.
+An accepted-check fiber contains a checker acceptance witness for that
+exact proposal; other fibers can be empty. An audit morphism must supply
+the valid proof transport or replay record for the changed judgment.
+These displayed categories are not asserted to be discrete fibrations:
+there need not be an audit lift over every proposed substitution.
+Identities retain the artifact and composition concatenates valid
+transport records. The soundness interface connects accepted artifacts
+to $\Cat{Prf}$; no arrow upgrades a paper proof or an empirical claim
+solely by changing its status label. These provenance fields are outside
+the proposition being proved, but inside the elaboration diagram.
+Formally, first supply a graph of accepted primitive records with exact
+source and target judgments and a valid semantic-direction base morphism
+label on each edge. The free path category then has the induced functor
+to that judgment category. For operational-direction edges, use the
+opposite base instead. A morphism above a substitution is a path whose substitutions
+compose to it. Empty paths and concatenation give the category laws.
+This constructs the audit category relative to an acceptance relation;
+it does not implement or prove sound that relation.
+
+The diagram is an interface schema for the whole \emph{relevant} ad hoc
+elaborator, including its verification theory, syntax, semantics,
+dependencies, search state, and output certificates. The exact theorem is
+about the categorical template \emph{when its stated data are supplied}.
+It does not establish that the full task signature has been encoded as
+those presheaves in an implemented theory, or supply a parser, tactic
+scheduler, or decision procedure for its open goals. Across verification
+theories it is a family of such diagrams. Transport between two family
+members requires an actual interpretation preserving contexts,
+substitution, judgments, and the required semantics; none is assumed here.
+
+\section{Models and observations}
+
+Fix a finite alphabet $\Sigma$. Put $\Cat B=\R^{\Sigma^*}$.
+For finite prefix and suffix sets $c=(S,E)$ define
+\[
+ B_c=\R^{S\times E},\qquad
+ (\ev_c f)_{s,e}=f(se).
+\]
+The repeated-word equalities are part of the image of $\ev_c$.
+An arbitrary matrix in $B_c$ need not lie in that image, much less arise
+from a transition-consistent WFA.
+
+The WFA language of budget $r$ denotes tuples
+$(\alpha,(A_a),\beta)$ of dimension at most $r$ with
+$f(w)=\alpha A_w\beta$. The rational-recurrence language denotes a
+state domain $D$, an initial state in $D$, rational update maps $R_a$,
+a rational readout $o$, and proofs that denominators do not vanish on
+$D$ and that $R_a(D)\subseteq D$. Its word behavior is defined by
+iteration. Presentations without these proofs remain in an open telescope.
+The proof obligations can be difficult or undecidable; the language tag
+is not an automatic discharge mechanism.
+
+For $c\subseteq d$, coordinate restriction
+$\rho_{dc}:B_d\to B_c$ satisfies
+$\rho_{dc}\ev_d=\ev_c$. For nonnegative radii $\epsilon_c,\epsilon_d$ and a nonnegative
+certified Lipschitz constant $K$,
+\[
+ \norm{\rho_{dc}Y_d-Y_c}+K\epsilon_d\leq\epsilon_c             \tag{2}
+\]
+suffices to transport the uncertainty ball at $d$ into that at $c$.
+For operator norm on rectangular submatrices $K=1$ is valid.
+For $m\times m$ matrices with normalized Frobenius norm
+$\norm{X}_{\nu,m}=\norm{X}_F/m$, restriction from size $m'$ to size
+$m$ has bound $K=m'/m$, not generally $1$.
+Morphisms carrying $(\rho,K)$ compose with constants multiplied.
+The triangle inequality proves that certificates (2) compose.
+
+The category of evidence states has objects $(c,Y,\epsilon)$ with
+$\epsilon\geq0$. An arrow from $(d,Y_d,\epsilon_d)$ to $(c,Y_c,\epsilon_c)$ is
+$(\rho_{dc},K)$, where $K\geq0$ is a valid Lipschitz bound for the
+stated restriction and (2) holds, with a fixed norm at each context. Treat certificate
+validity here as a property, rather than keeping arbitrary proof terms
+as unequal parallel arrow data. The identity has $K=1$; composition
+multiplies constants, and associativity is ordinary multiplication
+associativity. Proof artifacts can be retained separately in the audit
+path category. This category need not have an arrow for every proposed update. In particular,
+small residual on old observations supplies no certificate on newly
+added observations. New evidence is an extension of the task data,
+followed by a new proof obligation.
+
+\section{Exact and approximate transformations}
+\label{sec:transport}
+
+\begin{definition}[Exact semantic interpretation]
+For model languages $L,K$ with denotations $d_L,d_K$, a certified
+interpretation consists of a map $F:M_L\to M_K$ and a proof
+$d_K(F(m))=d_L(m)$ for each allowed $m$. Composition is function
+composition with the composed equality proof. Restricted-domain
+interpretations state and prove the domain and image conditions.
+\end{definition}
+
+For state presentations a sufficient witness is a map $h:D\to D'$
+with
+\[
+ h(x_0)=x'_0,\qquad hR_a=R'_a h,\qquad o=o'h.
+\]
+Induction on words proves behavioral preservation. If $h$ is invertible
+with these properties it is a presentation isomorphism. For the example,
+$h(x)=1/x$ is an isomorphism on the positive domain between
+$x'=x/(1+x),\ o(x)=x$ and $z'=z+1,\ o'(z)=1/z$.
+It preserves the dynamics and readout; it does not turn the readout into
+a linear one. A WFA does embed into a same-dimensional rational state
+language using linear updates and readout, but this has no general inverse.
+
+At a fixed observation context, an approximate interpretation may instead
+carry
+\[\norm{\ev_c d_K(F(m))-\ev_c d_L(m)}\leq\delta.\]
+Two such interpretations compose with error at most
+$\delta_1+\delta_2$ in the same observation norm, provided the first
+map lands in the second map's admissible domain and the second bound
+holds at that actual intermediate model. A uniform bound on that domain
+is sufficient; a bound for an unrelated input is not. An observation map with Lipschitz
+constant $K$ multiplies that budget by $K$. Approximate agreement within
+a fixed tolerance is not transitive and must not be silently quotiented
+as an equivalence relation.
+
+A comparison certificate does not supply any of these maps. If it asserts
+that a candidate $g$ has lower loss than every model of a bounded class,
+it is a proof in $\Cat{Goal}$ relating two denotations on the given task.
+Selecting $g$ is a new model choice, not a semantic equality between $g$
+and the previous model. A further valid rule is a strict language exit:
+if $g$ is not finite-WFA realizable, $h$ is WFA realizable, and $t\ne0$,
+then $(1-t)h+tg$ is not finite-WFA realizable. Otherwise linear closure
+would realize $g=((1-t)h+tg-(1-t)h)/t$. A rational product-state
+construction can realize the mixture when both components are rational
+recurrences. This rule preserves neither the old behavior nor its
+language; its proper type records the changed output and the exit proof.
+
+\paragraph{Compatibility with existing capacity operations.}
+The original WFA note's gated direct sum, evidence-image span, and
+reverse-mode pullback have different types in this diagram. A gated
+extension is a parameterized model construction with a specified equality
+at initialization. The observational span retains generators and tests;
+it is not an old-state embedding. A differentiable parameter map
+$i:\Theta\to\Theta'$ transports covectors by $Di^*$ when its semantic
+square commutes. It does not imply optimizer commutation. These records
+can coexist, but a successful proof of one cannot fill a hole of another
+type.
+
+\section{The comparison rule and its dependency telescope}
+
+Let $m\geq1$ and $0\leq r<m$. Let $Y$ be an $m\times m$ observed Hankel matrix and use
+$\norm{X}_\nu=\norm{X}_F/m$. Let $f_*$ be the unknown target and
+$G=\ev_c g$ the block of an actual candidate model. Define
+\[
+ b_r(Y)=\frac1m\left(\sum_{j>r}\sigma_j(Y)^2\right)^{1/2}.
+\]
+The elaborator uses certified bounds $\beta\leq b_r(Y)$ and
+$c_g\geq\norm{Y-G}_\nu$, rather than treating a floating-point SVD
+as a proof. The essential telescope is
+\begin{align*}
+ &c,m,r,Y,f_*,g,\eta,\beta,c_g;\\
+ &h_{\mathrm{model}}:g\text{ has the declared well-defined denotation};\\
+ &h_{\mathrm{noise}}:\norm{Y-\ev_c f_*}_\nu\leq\eta;\\
+ &h_{\mathrm{spectral}}:\beta\leq b_r(Y);\qquad
+ h_{\mathrm{fit}}:\norm{Y-G}_\nu\leq c_g;\\
+ &h_{\mathrm{nonnegative}}:0\leq\eta\ \wedge\ 0\leq c_g;\qquad
+ h_{\mathrm{margin}}:c_g+2\eta<\beta .
+\end{align*}
+All later fields depend on their preceding parameters. The mathematical
+rule also consumes proved WFA factorization and low-rank approximation
+lemmas from the verification theory.
+
+\begin{theorem}[Conditional class-relative robust replacement]
+Under these premises every WFA $A$ of dimension at most $r$ satisfies
+\[
+ L_{f_*}(A)-L_{f_*}(g)\geq
+ \Gamma:=(\beta-\eta)^2-(c_g+\eta)^2>0,
+ \qquad L_{f_*}(h)=\norm{\ev_c h-\ev_c f_*}_\nu^2.
+                                                               \tag{3}
+\]
+\end{theorem}
+\begin{proof}
+The WFA block has rank at most $r$. The best rank-$r$ approximation
+bound gives
+\[\norm{Y-\ev_c A}_\nu\geq b_r(Y)\geq\beta.\]
+The triangle inequality implies
+\[\norm{\ev_c f_*-\ev_c A}_\nu\geq\beta-\eta,\qquad
+\norm{\ev_c f_*-G}_\nu\leq c_g+\eta.\]
+The margin makes both comparison bounds nonnegative, with the former
+strictly larger. Squaring and subtracting proves (3).
+\end{proof}
+
+No independence between $g$ and $Y$ was used: this deterministic theorem
+holds simultaneously for any fitted candidate satisfying its premises.
+A probabilistic claim still needs a justified event containing
+$h_{\mathrm{noise}}$ and its probability. Reusing data for candidate
+selection does not by itself invalidate the deterministic conclusion,
+but a pointwise statistical noise guarantee cannot silently be promoted
+to a simultaneous or optional-stopping guarantee.
+
+The comparison is relative to the norm, horizon, and WFA budget in its
+type. Changing any of them creates a new goal. It does not prove global
+superiority, minimal physical state dimension, or that a rational language
+was the only sensible enlargement.
+
+\section{An end to end finite check}
+
+Take the unary alphabet, $S=E=\{\varepsilon,a\}$, $m=2$, $r=1$, and
+\[
+ Y=G=\begin{pmatrix}1&1/2\\1/2&1/3\end{pmatrix},
+ \qquad g(a^n)=1/(n+1),\qquad \eta=1/256.
+\]
+The candidate is supplied by the positive-domain recurrence in Section~1.
+Induction checks its denotation; positivity verifies all denominators.
+Its observed residual is zero, so choose $c_g=0$.
+
+The spectral lower-bound hole can be discharged without approximate
+numerical arithmetic. For all $u,v\in\R$,
+\[
+ \begin{pmatrix}u&v\end{pmatrix}
+ (Y-I/16)\binom uv
+ =\frac{15}{16}\left(u+\frac8{15}v\right)^2+\frac{v^2}{240}\geq0.
+                                                               \tag{4}
+\]
+Thus $Y\succeq I/16$, so $\sigma_2(Y)\geq1/16$ and
+$b_1(Y)=\sigma_2(Y)/2\geq1/32$. Choose $\beta=1/32$.
+The remaining empirical hypothesis is exactly
+\[
+ h_{\mathrm{noise}}:\quad
+ \norm{Y-\ev_c f_*}_F/2\leq1/256.                              \tag{5}
+\]
+Conditional on (5), the margin is positive and (3) gives
+\[
+ \forall A\in\mathrm{WFA}_{\leq1},\qquad
+ L_{f_*}(A)-L_{f_*}(g)\geq
+ \left(\frac7{256}\right)^2-\left(\frac1{256}\right)^2
+ =\frac3{4096}.                                                \tag{6}
+\]
+The output of this elaboration is a proof of (5)$\Rightarrow$(6),
+plus the candidate and its domain proof. For this export, (5) is kept
+in the outer context or abstracted as an argument; it is not falsely
+filled as a solved empirical hole. Without experimental or modeling
+support for (5), it is not an unconditional empirical result.
+
+This check also exposes what remains unresolved. The sequence equal to
+$1,1/2,1/3$ at lengths $0,1,2$ and zero afterward has a three-state
+nilpotent WFA realization and gives exactly the same $Y$.
+Consequently the observed data do not canonically select the rational
+recurrence over all finite WFAs. On the full infinite behavior, every
+Hilbert Hankel block is positive definite because
+\[
+ v^TH_mv=\int_0^1\left(\sum_{i=0}^{m-1}v_it^i\right)^2dt>0
+ \quad(v\ne0),
+\]
+so no finite WFA realizes $g$ exactly. This global proof depends on the
+specified sequence, not on extrapolating the three observations.
+
+\section{What canonicity and forgetting would mean here}
+
+A canonicity field must name its admissible outputs and equivalence.
+For example, minimal reachable and observable finite linear realizations
+of a fixed full behavior are unique up to state-space isomorphism.
+That theorem is available only when the full behavior has finite Hankel
+rank. A canonical image realization of a repaired finite table is relative
+to that table and its closure and consistency data. Neither statement
+makes the proposed rational model a canonical scientific mechanism.
+Likewise, uniqueness of an elaborated proof term, uniqueness of a model's
+behavior, uniqueness of its state presentation, and minimum description
+cost are different propositions and require different fibers of
+$\Cat{Can}$.
+
+The diagram's forgetful maps have identifiable losses.
+\begin{enumerate}
+\item Model to full behavior forgets implementation, hidden state,
+      precision, and resource costs. Its kernel identifies observationally
+      equivalent implementations.
+\item Behavior to finite observations forgets all untested words. Its
+      kernel is equality on the tested outputs, much coarser than global
+      behavioral equality.
+\item A finite observational image quotients prefix combinations by
+      the kernel of their observation map. With fixed prefix generators,
+      adding tests gives $K_{\mathrm{new}}\subseteq K_{\mathrm{old}}$
+      and a canonical new-to-old quotient map. The identity on prefix
+      generators descends in the old-to-new direction only if
+      $K_{\mathrm{old}}\subseteq K_{\mathrm{new}}$, hence only if the
+      kernels are equal in this setting. Arbitrary linear maps, such as
+      the zero map, are not excluded; the obstruction is to this
+      generator-compatible map.
+\item Proof to proposition forgets the proof object. Further erasing
+      its context would also lose assumptions and is not a sound
+      promotion to an unconditional conclusion.
+\item Language-tag erasure loses the class-relative resource measure.
+      A coordinate count in one language cannot be compared as a universal
+      complexity measure without a common cost model.
+\end{enumerate}
+The task objective decides which losses are acceptable. Prediction on a
+fixed horizon can tolerate much more forgetting than mechanism discovery
+under interventions. Such interventions are additional experimental
+structure and are not introduced by a proof of word-behavior equality.
+
+\section{Status and next obligations}
+
+\paragraph{Proved mathematical fragments.}
+The category-of-elements, commuting-square, and section constructions
+give the displayed categories and their substitution/filling laws
+conditional on the \emph{supplied} task presheaves, natural maps, and
+contextual interface. The field schema is not a proof that this complete
+encoding exists in a specific proof assistant. Exact semantic transports compose.
+Approximate transports compose with explicit norm-dependent budgets.
+The robust comparison theorem, rational recurrence, rational spectral
+certificate, and finite-evidence countermodel have proofs above.
+
+\paragraph{Kernel-checked fragment.}
+The companion \texttt{ComparisonKernel.lean} checks the norm-gap inference,
+the scalar squared-gap inference, additive approximation transport,
+positivity and recurrence arithmetic for $1/(n+1)$, its reciprocal
+coordinate equation, identity (4) and its quadratic lower bound, and the
+rational value $3/4096$. These checks do not include the WFA/Hankel rank
+factorization, low-rank approximation theorem, spectral interpretation
+of (4), the categorical construction, or the empirical premise (5).
+They are a small verified consumer of the typed premises, not a full
+formalization of this note.
+
+\paragraph{Specified but not implemented.}
+The task signature as concrete substitution-stable presheaves, its natural
+transformation packaging, the complete proof-producing elaborator,
+extraction of its contextual syntax into this displayed diagram,
+checker acceptance under substitution, tactic search and dependency tracking,
+validated matrix certificate generation, and a sound statistical
+noise-evidence producer remain to be built. None is implied by the
+presence of a checked scalar inference rule.
+
+\paragraph{A bounded useful next implementation.}
+Implement the displayed task record and partial-solution telescope in
+one chosen proof assistant; connect the existing matrix lemmas; accept
+rational LDL certificates like (4); and make every exported comparison
+retain its noise-event premise and exact language/norm/horizon.
+A successful run should reject three specific category errors:
+using a relaxed matrix as a realization, presenting a replacement as an
+exact transport, and erasing an empirical assumption during export.
+A canonicity claim should remain an unfilled goal unless its stated
+uniqueness theorem is supplied.
+
+This is one elaboration situation for this problem. Another scientific
+setting may need intervention semantics, stochastic processes, or a
+new comparison objective and a different diagram. The construction earns
+its use here by making the actual proof dependencies and prohibited
+compositions inspectable, rather than by asserting a universal form for
+theory formation.
+
+\begin{thebibliography}{9}
+\bibitem{displayed}
+B. Ahrens and P. L. Lumsdaine.
+\emph{Displayed Categories}. Logical Methods in Computer Science
+15(1:20), 2019.
+\url{https://doi.org/10.23638/LMCS-15(1:20)2019}.
+The source supplies the general displayed-category framework; the task
+records and comparison instance here are a separate construction.
+\bibitem{cwf}
+P. Dybjer. \emph{Internal Type Theory}.
+TYPES 1995, LNCS 1158, pp.~120--134, 1996.
+\url{https://www.cse.chalmers.se/~peterd/papers/InternalTT.pdf}.
+This supplies the category-with-families background used for contextual
+syntax and substitution, not a pre-existing implementation of this task.
+\end{thebibliography}
+\end{document}

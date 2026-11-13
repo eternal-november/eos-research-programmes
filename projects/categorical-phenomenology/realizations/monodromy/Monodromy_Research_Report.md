@@ -1,0 +1,259 @@
+# Continuous stochastic realization over a parameter circle
+
+Technical research report · 3 November 2026
+
+**Reading copy.** The byte-identical TeX source is canonical. Equation references use stable names; all proofs and citations are retained. TeX compilation and PDF visual QA have not been performed for this package.
+
+# Abstract
+
+A continuously varying family of observable laws can require more globally labelled stochastic states than each individual law, even when its observable vector bundle is trivial. For a circle family of uniform mixtures of $p$ distinct IID component laws, let $\sigma$ be the permutation acquired by continuing the component labels once around the circle. We prove that the minimum continuous stochastic width is $p$ for trivial monodromy and $p+1$ otherwise. The minimum continuous signed width, with fixed terminal vector and normalized preparations, is $p$ for even monodromy and $p+1$ for odd monodromy. A rotating three-component family therefore has signed width three and stochastic width four, although a finite observable Hankel block is constant and invertible. An explicit stochastic lift uses one spare state. We also give finite-horizon uniform robustness, a small primitive-transition extension, and a finite-query impossibility result without quantitative regularity. These are proved comparisons assembled from established realization, mixture-identifiability, covering-space, and configuration-space ideas. No novelty certification is claimed.
+
+# The question and the exact conventions
+
+The comparison is between native realizations of the *same* observable law family. It is not merely a change in the number of coordinates used for one fitted matrix. The topological parameter base and the requirement of continuous globally fixed state labels are part of the modelling specification. They are not inferred from a finite collection of isolated measurements.
+
+::: definition
+**Definition 1.1**. For a finite output alphabet $Y$, a $k$-state stochastic realization at parameter $x$ consists of a probability row $\rho(x)$, nonnegative $k\times k$ matrices $N_y(x)$, and the fixed terminal column $\mathbf 1_k$, with $$T(x)=\sum_{y\in Y}N_y(x),\qquad T(x)\mathbf 1_k=\mathbf 1_k.$$ It assigns word probabilities $p_x(y_1\cdots y_\ell)=\rho(x)N_{y_1}(x)\cdots N_{y_\ell}(x)\mathbf 1_k$. A continuous realization has all these coordinates continuous on the base. A *normalized signed* realization allows real entries while retaining $\rho\mathbf 1_k=1$ and $T\mathbf 1_k=\mathbf 1_k$. An unconstrained real realization may instead use an arbitrary continuous terminal covector.
+:::
+
+Here "positive realization" means entrywise *nonnegative*; strict positivity is stated separately. General outcome-labelled kernels are permitted, but the explicit stochastic lifts below also have ordinary state-emitting HMM forms. For the stationary hold model, the constructed initial distribution is stationary.
+
+#### Fixed parameter within an experiment.
+
+The external parameter $x$ stays fixed throughout each word. Public actions, when present, can change within a word and can depend on past outputs. There is no assumed transport of an unobserved state when $x$ changes. In particular, a formula $Q_xL_x=I$ does not imply $Q_xL_{x'}=I$.
+
+# The circle classification
+
+Let $Y$ be finite and let a circle family specify an unordered set of $p\geq2$ distinct probability vectors in $\Delta(Y)$. Take their uniform mixture and hold the chosen component for the duration of an experiment. Lift the component labels to the interval $t\in[0,1]$: $$v_1(t),\ldots,v_p(t),\qquad V(1)=PV(0),$$ where $V$ has these rows and $P$ is the permutation matrix of $\sigma\in S_p$. Distinctness makes this a covering-space lift; changing the initial labels conjugates $\sigma$. Put $\pi=\mathbf 1_p^T/p$ and [$$M_y(t)=\operatorname{diag}(v_1(t)_y,\ldots,v_p(t)_y),\qquad
+ p_t(w)=\frac1p\sum_{i=1}^p\prod_{y\text{ in }w}v_i(t)_y.$$]{#eq:hold .equation} The product in the last expression follows the symbols of $w$, with repetitions. These laws descend to the circle because $M_y(1)=PM_y(0)P^{-1}$ and $\pi P=\pi$.
+
+::: {#thm:classification .theorem}
+**Theorem 2.1** (Exact widths). *Every individual law in [(eq:hold)](#eq:hold) has minimum real and stochastic width $p$. The global continuous widths are $$\begin{array}{c|cc}
+\text{monodromy}&\text{stochastic}&\text{normalized signed}\\ \hline
+\sigma=\mathrm{id}&p&p\\
+\sigma\ne\mathrm{id},\ \operatorname{sgn}(\sigma)=+1&p+1&p\\
+\operatorname{sgn}(\sigma)=-1&p+1&p+1.
+\end{array}$$ The unconstrained real width equals the normalized signed width for these families. For $p=1$, all widths are one. The stochastic upper constructions are continuous; smooth component families admit smooth upper constructions.*
+:::
+
+## Finite continuation features and minimality
+
+::: {#lem:rank .lemma}
+**Lemma 2.2**. *The Hankel block with prefixes and suffixes of lengths at most $p-1$ has rank $p$. Word probabilities through length $2p-1$ force every $p$-state stochastic realization to have total transition $I_p$ and diagonal outcome matrices whose joint diagonal tuples are precisely the component vectors, up to permutation.*
+:::
+
+::: proof
+*Proof.* At a fixed parameter, for each $i$ and each $j\ne i$, choose an affine linear function $\ell_{ij}$ on the output-probability space that vanishes at $v_j$ but not $v_i$. The normalized product over $j\ne i$ has degree at most $p-1$ and interpolates the $i$th coordinate vector on the $p$ atoms. Monomials of this degree are probabilities of words of length at most $p-1$, with the empty word supplying constants. Thus their evaluation matrix $O$ has row rank $p$. For the uniform held mixture, the matching prefix matrix is $R=O^T/p$, so $H=RO$ has rank $p$.
+
+For another $p$-state realization, write its corresponding matrices as $R',O'$. The same rank-$p$ factorization $H=R'O'$ gives an invertible $S$ with $R'=RS$ and $O'=S^{-1}O$. For every inserted symbol, the observed blocks satisfy $$RM_yO=R'N_yO'=RSN_yS^{-1}O.$$ Left and right cancellation give $M_y=SN_yS^{-1}$. These blocks use lengths at most $2p-1$. Summing yields $\sum_yN_y=I_p$. Nonnegativity forces every off-diagonal entry of every $N_y$ to vanish. The joint eigenvalue tuples of the diagonal $M_y$ are distinct, since the $v_i$ are distinct. Their common eigenspaces are exactly the coordinate lines. Consequently the joint diagonal tuples of the $N_y$ are the same $p$ vectors in some order. Matching $H$ then forces the initial component weights to be uniform. ◻
+:::
+
+The pointwise rank lower bound and the displayed diagonal model prove pointwise optimality. A continuous stochastic model of width $p$ would continuously enumerate every component. Such an enumeration exists exactly when $\sigma=\mathrm{id}$.
+
+## One spare state gives the stochastic upper bound
+
+Let $Q$ be $p\times(p+1)$ and $L$ be $(p+1)\times p$, both row stochastic, with $QL=I_p$. Start with $$Q_0=[I_p\ 0],\qquad L_0=\begin{bmatrix}I_p\\\pi\end{bmatrix}.$$ Think of the $p+1$ columns of $Q$ as native slots. Occupied slots decode under $L$ to the appropriate component unit vector. A vacant slot can change its decoder row freely.
+
+Any permutation can be performed with one vacancy. For each nontrivial permutation cycle, move one component into the spare slot, move the other components successively into the vacated slots, and return the buffered component to its final slot. Before a move, recolor the vacant decoder row to the moving component; during a move, interpolate its $Q$ row between the old and new slots. Only vacant slots are recolored, and both slots involved in a move have the same decoder. Hence $QL=I_p$ throughout. At the end restore the spare decoder to $\pi$. The endpoints satisfy [$$Q_1=PQ_0,\qquad L_1=L_0P^{-1}.$$]{#eq:glue .equation} Define [$$X_y(t)=L(t)M_y(t)Q(t),\qquad \rho(t)=\pi Q(t).$$]{#eq:lift .equation} These are nonnegative; $\sum_yX_y=LQ$ is stochastic. Equation [(eq:glue)](#eq:glue) makes them periodic. Moreover, [$$X_yL=LM_y,\qquad \rho L=\pi.$$]{#eq:intertwine .equation} Telescoping $QL=I_p$ proves equality of every word law. Piecewise linear moves give continuity. Flat smooth step functions on the finitely many move intervals give smoothness, with matching endpoint jets. No analytic lift is asserted by this construction.
+
+## Parity distinguishes the real and positive costs
+
+If $\sigma$ is even, $P$ fixes $\mathbf 1_p$ and restricts to $SO(p-1)$ on $\mathbf 1_p^\perp$. Choose a continuous orthogonal path $S(t)$ fixing $\mathbf 1_p$, from $I_p$ to $P$. Then [$$N_y^{\mathrm{sgn}}(t)=S(t)^{-1}M_y(t)S(t)$$]{#eq:signed .equation} is periodic, has total transition $I_p$, and realizes the law with the fixed initial row $\pi$ and fixed terminal vector $\mathbf 1_p$.
+
+For odd $\sigma$, the full observable response bundle has monodromy $P$. Indeed, the component continuation functions are locally independent by Lemma [2.2](#lem:rank), and their frames transform by the component permutation. Its determinant line has monodromy $-1$, so this real rank-$p$ bundle over the circle is nonorientable. A continuous minimal real realization on $p$ fixed coordinates would trivialize it, which is impossible. This argument also excludes a varying-terminal unconstrained real model of size $p$. The stochastic $p+1$ construction supplies the matching real upper bound. This finishes the proof of Theorem [2.1](#thm:classification).
+
+# An explicit three versus four example
+
+Take three fixed public output labels and set $$c=\tfrac13(1,1,1),\quad a=\tfrac1{\sqrt2}(1,-1,0),\quad
+ b=\tfrac1{\sqrt6}(1,1,-2),\quad 0<\delta<\tfrac13.$$ With $\theta(t)=2\pi t/3$, let [$$v_i(t)=c+\delta\left[\cos\!\left(\theta(t)+\tfrac{2\pi(i-1)}3\right)a
+ +\sin\!\left(\theta(t)+\tfrac{2\pi(i-1)}3\right)b\right].$$]{#eq:triangle .equation} All emissions are strictly positive. The endpoint permutation has rows $e_2,e_3,e_1$, a nonidentity even permutation. Every word law is real analytic and periodic.
+
+## The observable vector bundle is already trivial
+
+Here single-symbol prefixes and suffixes suffice: $$R=V^T/3,\qquad O=V,\qquad
+ H=V^TV/3=\tfrac19\mathbf 1\mathbf 1^T+\tfrac{\delta^2}{2}(aa^T+bb^T).$$ The matrix $H$ is constant and positive definite, with eigenvalues $1/3,\delta^2/2,\delta^2/2$. It gives an explicit global frame for the rank-three response bundle. Its centered rank-two summand is also trivial. Thus the extra positive state cannot be attributed to failure of a continuous linear frame or to a varying terminal vector.
+
+In this example, $S(t)=V(t)V(0)^{-1}$ is orthogonal, fixes $\mathbf 1_3$, preserves $\pi$, and has endpoints $I_3,P$. Formula [(eq:signed)](#eq:signed) therefore gives an analytic signed three-state realization with fixed normalization. The third-order moments carry the rotating extreme-state configuration; the second-order block does not.
+
+## The four-state schedule
+
+Write the components as $A,B,C$. Starting with $Q_0=[e_1;e_2;e_3]$ and $L_0=[e_A;e_B;e_C;\pi]$, use these nine stages:
+
+1.  Recolor vacant slot $4$ from $\pi$ to $e_A$.
+
+2.  Move $A$ from slot $1$ to slot $4$.
+
+3.  Recolor vacant slot $1$ from $e_A$ to $e_C$.
+
+4.  Move $C$ from slot $3$ to slot $1$.
+
+5.  Recolor vacant slot $3$ from $e_C$ to $e_B$.
+
+6.  Move $B$ from slot $2$ to slot $3$.
+
+7.  Recolor vacant slot $2$ from $e_B$ to $e_A$.
+
+8.  Move $A$ from slot $4$ to slot $2$.
+
+9.  Recolor vacant slot $4$ from $e_A$ to $\pi$.
+
+Each stage changes only the stated row, by convex interpolation. The endpoint equations [(eq:glue)](#eq:glue) hold exactly. This supplies the optimal four-state positive realization and the statewise comparisons [(eq:intertwine)](#eq:intertwine).
+
+## Ordinary HMM form and controlled experiments
+
+The lift is exactly an ordinary state-emitting HMM in the transition-then-emission convention. Set $$T=LQ,\qquad E=LV.$$ Since $Q$ uses only slots decoded to the matching component, $$Q\operatorname{diag}(E_{:y})=\operatorname{diag}(V_{:y})Q,\qquad
+ T\operatorname{diag}(E_{:y})=X_y.$$ This holds even on the spare slot. The emissions $E$ are strictly positive, while the transition has structural zeros.
+
+One may also include public actions with local transitions $$T_{\mathrm{hold}}=I_3,\qquad T_{\mathrm{cycle}}=P,\qquad
+ T_{\mathrm{refresh}}=J:=\mathbf 1_3\mathbf 1_3^T/3,$$ performed before emission. All commute with $P$, so $M_{a,y}=T_a\operatorname{diag}(V_{:y})$ descends. Their global transitions are $LT_aQ$, with the same emission matrix $E$. The statewise comparisons hold for every action and outcome and hence for adaptive action protocols. The hold subexperiment alone proves the lower bound. Refresh destroys persistence, whereas cycle changes which component emits. These interventions do not change the external parameter.
+
+# Reconstructing the component cover from observed moments
+
+The triangle construction exhibits the mechanism, but the relevant cover need not be supplied as a hidden object. The following sufficient criterion is stated directly on moment tables.
+
+::: {#prop:moments .proposition}
+**Proposition 4.1** (A finite moment criterion). *Let $H$ and $B_1,B_2,B_3$ be real symmetric positive-definite $3\times3$ matrices, continuously parameterized, with $$\mathbf 1^TH\mathbf 1=1,\qquad \sum_yB_y=H,\qquad B_y\mathbf 1=He_y.$$ Put $q=H\mathbf 1$ and $D_y=H^{-1}B_y$. Assume the $D_y$ commute pairwise. Then $$\widehat p(w)=q^TD_w\mathbf 1$$ constructs a normalized held mixture of three distinct strictly positive probability vectors with positive weights. It matches the proposed moments $$\widehat p(a)=q_a,\qquad \widehat p(ab)=H_{ab},\qquad
+ \widehat p(ayb)=(B_y)_{ab}.$$ The joint eigenvalue triples form a continuously varying unordered component cover. Its monodromy is therefore an invariant reconstructed from these tables.*
+:::
+
+::: proof
+*Proof.* The operators $D_y$ are self-adjoint and positive for the inner product $\langle u,v\rangle_H=u^THv$. They commute and sum to $I$, so simultaneous spectral decomposition gives joint eigenvalue tuples in the strictly positive probability simplex. Moreover, $D_y\mathbf 1=e_y$. Thus $\mathbf 1$ is cyclic: its images span all of $\mathbb R^3$. Every joint eigenspace is consequently one-dimensional, and the projection of $\mathbf 1$ onto it is nonzero. There are exactly three distinct joint tuples $v_i$. Their weights are $w_i=\|\Pi_i\mathbf 1\|_H^2>0$, summing to $\|\mathbf 1\|_H^2=1$. This gives $\widehat p(w)=\sum_iw_i\prod_{y\text{ in }w}(v_i)_y$.
+
+The moment identities follow from $q^T=\mathbf 1^TH$, $D_y\mathbf 1=e_y$, and self-adjointness. For example, $\widehat p(ayb)=e_a^THD_ye_b=(B_y)_{ab}$. Local separated spectral projections vary continuously, giving the component cover. ◻
+:::
+
+The weights in this proposition need not be uniform. To apply the uniform formulation of Theorem [2.1](#thm:classification), check that the three reconstructed weights are $1/3$; the rotating example has this property. The same proof of the width theorem extends to positive component weights carried continuously with their atoms, with a possibly varying normalized initial row in the signed model.
+
+#### What finite moments do not determine.
+
+The proposition constructs a canonical *compatible* mixture law. An arbitrary true process can agree with all these length-three tables and differ at longer horizons. Identifying the true all-word law requires an independently supplied rank/closure or held-mixture promise, or additional experimental tests. Moment reconstruction, model validation, and native resource comparison are separate steps. Spectral mixture reconstruction itself has strong classical antecedents \[[AMR](#ref-AMR); [VS](#ref-VS)\].
+
+# Uniform robustness at a finite horizon
+
+::: {#thm:robust .theorem}
+**Theorem 5.1**. *For any nontrivial monodromy family in Theorem [2.1](#thm:classification), there is a constant $\kappa>0$ such that no continuous $p$-state stochastic model family can approximate every target word probability of length at most $2p-1$, uniformly over the circle, with error below $\kappa$. For the triangle, length three suffices. No rank or quantitative regularity condition is imposed on the competitor.*
+:::
+
+::: proof
+*Proof.* Let $Z$ be the compact set of $p$-state stochastic parameters $(\rho,(N_y)_y)$. For each circle parameter $t$, let $F_t\subset Z$ be the exact fiber for the specified finite moments. Lemma [2.2](#lem:rank) shows that $F_t$ consists of precisely the $p!$ permuted diagonal models with uniform initial weights. These points are distinct and uniformly separated, since the component family is continuous and collision-free on a compact base. Their covering has no section when $\sigma\ne\mathrm{id}$.
+
+Choose $\eta$ less than one third of the minimum separation. On the compact set of pairs $(t,z)$ with $\operatorname{dist}(z,F_t)\geq\eta$, the maximum finite-word error has a strictly positive minimum $\kappa$. A continuous competitor with error below $\kappa$ would therefore be within $\eta$ of a unique element of $F_t$. This element varies continuously, producing a forbidden section. The triangle uses its invertible single-symbol block, so the same proof uses only lengths two and three. ◻
+:::
+
+This is an existence bound, not an evaluated or optimal constant. No effectiveness claim is made for arbitrary continuous input data. For algebraic presentations an effective bound would require a separate certified optimization argument.
+
+## The gap survives small primitive perturbations
+
+The exact hold model is nonmixing, but this is not essential to the family-width gap. Replace its transition by $$A_\varepsilon=(1-\varepsilon)I_p+\varepsilon J_p,\qquad 0<\varepsilon<1,
+ \qquad M_y^{\varepsilon}=A_\varepsilon\operatorname{diag}(V_{:y}).$$ If the emissions are strictly positive, all local outcome kernels are strictly positive and the local hidden transition is primitive. The monodromy commutes with $A_\varepsilon$, so the family descends and the same $QL$ construction gives a global $p+1$-state positive realization.
+
+Couple this process to hold by using the same component unless a refresh occurs. For each word of length $\ell$, $$|p_t^{\varepsilon}(w)-p_t^0(w)|\leq \ell\varepsilon.$$ For sufficiently small $\varepsilon$, Theorem [5.1](#thm:robust) therefore excludes any global $p$-state positive realization. The fixed finite Hankel rank remains $p$ for small $\varepsilon$ by its uniform singular-value margin. For even monodromy the same signed conjugation gives a global normalized signed $p$-state model. Thus the positivity gap persists in a family whose pointwise minimal kernels are strictly positive. The displayed global $p+1$ lift still has structural zeros; no globally strictly positive lift is claimed.
+
+# Finite data and a moving seam
+
+Uniform robustness is not a finite-sample certificate without coverage and regularity. In fact the monodromy obstruction admits a sharp finite-query limitation.
+
+::: {#prop:seam .proposition}
+**Proposition 6.1** (Randomized finite-query limitation). *Assume a smooth nontrivial-monodromy held-mixture family. For every adaptive randomized algorithm that makes finitely many parameter queries almost surely on the target, and every $\zeta>0$, there is a single smooth globally labelled $p$-state alternative whose transcript law is within total variation $\zeta$ of the target transcript law. Queries may ask for exact word laws or sample outputs, at fixed parameters. The alternative preserves the original pointwise atom separation and finite-Hankel conditioning bounds.*
+:::
+
+::: proof
+*Proof.* Lift the labelled atoms to the real line, with $V(t+1)=PV(t)$. Choose a fundamental interval $[a,a+1]$ and seam $[a+1-h,a+1]$. Let $s$ be zero before the seam and rise smoothly to one across it, flat at both seam endpoints. Define $g(t)=t-s(t)$. Then $g(a)=g(a+1)=a$, both endpoint first derivatives are one, and the higher endpoint derivatives vanish. Thus $g$ is a smooth real-valued function on the circle, and $V(g(t))$ is a globally labelled $p$-state model. Outside the seam it has exactly the target law at every horizon. Inside it retraces the original labelled curve. Since every alternative table is some original table, uniform separation, rank, and conditioning are retained.
+
+Choose the seam location uniformly. Every fixed parameter lies in it with probability $h$. Couple algorithm randomness and observations until the first seam query. If $T$ is the target query count, choose $N$ with $\Pr(T>N)<\zeta/2$, then choose $h$ with $Nh<\zeta/2$. Pad the target query list after stopping with a fixed location. Its first $N$ locations depend on the target random seed and target observations, not on the independently chosen seam. A union bound bounds the coupled disagreement probability by $\zeta$. Averaging over seam locations gives one fixed alternative with this bound, and coupling bounds total variation. ◻
+:::
+
+The alternative can have derivatives of order $1/h$ or larger. A common modulus of continuity blocks this construction; smoothness or a spectral-gap promise alone does not. The external parameter is fixed within each queried experiment, as elsewhere in this report.
+
+#### Analytic and noisy oracles.
+
+The localized seam is smooth, not analytic. Deterministic finite transcripts admit analytic interpolants under suitable embedded-manifold coordinates, but that does not imply a fixed analytic alternative fools a randomized exact-real oracle. Once a word on which two analytic law families differ is specified, its difference vanishes only on a measure-zero set, so a random exact query of that word distinguishes them almost surely. Within the competing $p$-state class here, a query returning the full separating vector of words through length $2p-1$ (length three for the triangle) also suffices. An arbitrary preselected single word need not distinguish distinct families. No analogous analytic randomized impossibility is claimed. With noise or finite precision, different arguments and error models are needed.
+
+For a metric circle, if an $h$-net has measured finite-word errors at most $e$ and truth and candidate have known moduli $\omega,\omega'$, then the uniform error is at most $e+\omega(h)+\omega'(h)$. Comparing this quantity with a certified lower bound for $\kappa$ yields a valid exclusion test. A modulus of the truth alone does not control the candidate between samples.
+
+# Comparison with the observable bundle law
+
+A companion static construction starts with a centered bundle $E\subset X\times\mathbf 1_m^\perp$ and the positive response rows $$H_0=c,\qquad H_i=c+\beta P_Ea_i,\qquad
+ c=\mathbf 1_m^T/m,\quad 0<\beta<\frac1{m(m-1)},$$ where the $a_i$ form an orthonormal basis of $\mathbf 1_m^\perp$. If $g(E)$ is the minimum dimension of a trivial bundle into which $E$ embeds, its continuous stochastic factor width is $g(E)+1$, whereas unconstrained real width is $g(\mathbb R\oplus E)$. For $E=TS^2$, these are four and three. However, a real three-coordinate trivialization uses a varying terminal covector; fixing normalization imposes the four-state lower bound even with signed coefficients. That comparison is therefore a normalization distinction, not positivity alone.
+
+The present circle example removes that ambiguity: both signed and stochastic models have the same fixed terminal vector, and the observable bundle is trivial. Its additional cost belongs to the identifiable extreme-state cover. A constant three-component mixture and the rotating triangle have the same pointwise width and trivial response bundle, but different continuous stochastic widths. This proves that the centered vector-bundle invariant is incomplete for general temporal native realization.
+
+The companion projection theorem has quantitative uniform approximation bounds and an all-horizon contracting construction, but neither it nor this circle theorem proves arbitrary multistage assembly or cross-parameter state transport. They address different, explicitly typed comparisons.
+
+# Strongest prior art and the remaining claim
+
+#### Realization and fixed normalization.
+
+Classical Hankel minimality and similarity underpin Lemma [2.2](#lem:rank). Anderson's positive-realization paper and Vidyasagar's survey develop all-word realization through invariant polyhedral cones \[[Anderson](#ref-Anderson); [Vidyasagar](#ref-Vidyasagar)\]. Monràs--Winter Definition 5 explicitly uses a stochastic sum, nonnegative outcome matrices, and terminal vector $(1,\ldots,1)$; their Theorem 6 gives the stable polyhedral-cone criterion and Section 4 gives minimal quotient comparisons \[[MW](#ref-MW)\]. The basic cone-generator intertwiner is therefore not a new construction here.
+
+#### Finite mixture identification.
+
+Allman--Matias--Rhodes Theorem 8 and Corollary 11 give three-variable identification under linear-independence or marginal-rank assumptions, up to permutation \[[AMR](#ref-AMR)\]. Vandermeulen--Scott give $(2p-1)$-identifiability for general $p$-component grouped-sample mixtures and three-sample identifiability under linear independence \[[VS](#ref-VS)\]. These directly precede the finite-moment thresholds. Label switching is itself classical \[[Stephens](#ref-Stephens)\]; continuing labels around a loop is a covering-space manifestation of that symmetry.
+
+#### Parameter topology and spare-state geometry.
+
+Hazewinkel and Byrnes explicitly study continuous families of Hankel data, failures of global minimal matrix realizations, and bundle-valued state spaces, including circle examples \[[Hazewinkel](#ref-Hazewinkel); [Byrnes](#ref-Byrnes)\]. Swan gives the classical projective-bundle generator obstruction used in the companion line \[[Swan](#ref-Swan)\]. None of these ideas should be presented as a newly discovered local/global phenomenon.
+
+The admissible $Q$ rows have pairwise disjoint supports. Their space is the discretized configuration space $D_p(\Delta^{k-1})$, equivalently the standard complete-graph Hom complex. Abrams--Gay--Hower prove a wedge-of-$(k-p)$-spheres description; Babson--Kozlov obtain the corresponding Hom-complex result \[[AGH](#ref-AGH); [BK](#ref-BK)\]. In particular, $k=p$ gives discrete labelings and $k=p+1$ gives a connected graph. Thus spare-slot connectivity is established topology. Our explicit schedule additionally retains a continuous decoder $L$ with $QL=I$; an arbitrary $Q$ map must not silently be assumed to admit such an $L$ at empty slots.
+
+Mond--Smith--van Straten study topology of stochastic factorization spaces through sandwiched simplices \[[MSV](#ref-MSV)\]. Their work is another direct warning against claiming that topological constraints on stochastic factors are new.
+
+#### Conservative status.
+
+The deliverable is the exact family-width comparison, explicit native repair, finite-horizon robustness, and careful evidence boundary. The inspected sources establish most ingredients and closely related frameworks. The exact parity classification and its packaging were not located as statements in this targeted review, but absence from a search is not novelty evidence. A specialist source audit remains necessary before any priority claim.
+
+# Reproducibility and next tests
+
+The accompanying regression script checks 287 parameter values for the triangle, including every move endpoint. It verifies $QL=I$, endpoint permutation gluing, the constant Hankel block, signed normalization, ordinary state-emitting form, hold/cycle/refresh statewise equations, and seven-step word products. Maximum residual is below $8\times10^{-16}$ for $\delta=0.2$; the minimum sampled emission entry exceeds $0.17$. These computations validate formulas, not the covering obstruction or novelty.
+
+The next substantive question is whether observable cone or component-cover data admit an exact native-width law over higher-dimensional bases. It should distinguish the ordinary response bundle from the positive cone and retain actual stochastic comparison maps. The configuration-space literature is a starting point, not a theorem that every equivariant $Q$ map automatically extends to a split stochastic pair. A separate question is how an explicitly supplied parameter-transport operation changes the cost; no conclusion about that operation follows from fixed-parameter words.
+
+# References {#references .unnumbered}
+
+## Anderson {#ref-Anderson .unnumbered}
+
+B. D. O. Anderson. The Realization Problem for Hidden Markov Models. *Mathematics of Control, Signals, and Systems* 12 (1999), 80--120. [doi:10.1007/PL00009846](https://doi.org/10.1007/PL00009846). Institutional abstract inspected; detailed comparison also uses the following primary survey.
+
+## Vidyasagar {#ref-Vidyasagar .unnumbered}
+
+M. Vidyasagar. *The Complete Realization Problem for Hidden Markov Models: A Survey and Some New Results*. Inspected manuscript dated 23 March 2009, especially Theorem 6.1 and proof of Theorem 9.2. [Indexed author manuscript](https://personal.utdallas.edu/~mxv091000/Research/hmm-full.pdf#page=1) (direct link may redirect). An accessible primary precursor is [The Complete Realization Problem, CDC 2005](https://skoge.folk.ntnu.no/prost/proceedings/cdc-ecc05/pdffiles/papers/0862.pdf).
+
+## MW {#ref-MW .unnumbered}
+
+A. Monràs and A. Winter. Quantum learning of classical stochastic processes: The Completely-Positive Realization Problem. [arXiv:1412.3634](https://arxiv.org/abs/1412.3634); inspected Definition 5, Theorem 6, and Section 4.
+
+## AMR {#ref-AMR .unnumbered}
+
+E. S. Allman, C. Matias, and J. A. Rhodes. Identifiability of parameters in latent structure models with many observed variables. *Annals of Statistics* 37 (2009), 3099--3132. [Author PDF](https://jarhodesuaf.github.io/papers/Latent.pdf); Theorem 8 and Corollary 11.
+
+## VS {#ref-VS .unnumbered}
+
+R. A. Vandermeulen and C. D. Scott. *An Operator Theoretic Approach to Nonparametric Mixture Models*. [Author manuscript](https://web.eecs.umich.edu/~cscott/pubs/aos_mixture.pdf); grouped-sample identifiability results.
+
+## Stephens {#ref-Stephens .unnumbered}
+
+M. Stephens. Dealing with label switching in mixture models. *Journal of the Royal Statistical Society B* 62 (2000), 795--809. [Author PDF](https://stephenslab.uchicago.edu/assets/papers/Stephens2000b.pdf).
+
+## Hazewinkel {#ref-Hazewinkel .unnumbered}
+
+M. Hazewinkel. *Moduli and Canonical Forms for Linear Dynamical Systems II: The Topological Case* (1977). [CWI primary text](https://ir.cwi.nl/pub/10022/10022D.pdf). See also [1979 account](https://ir.cwi.nl/pub/10385/10385D.pdf), Section 5.2, Theorem 5.2.2.
+
+## Byrnes {#ref-Byrnes .unnumbered}
+
+C. I. Byrnes. On certain problems of arithmetic arising in the realization of linear systems with symmetries. *Astérisque* 75--76 (1980), 57--65. [Primary text](https://www.numdam.org/article/AST_1980__75-76__57_0.pdf), Section 1.
+
+## Swan {#ref-Swan .unnumbered}
+
+R. G. Swan. Vector Bundles and Projective Modules. *Transactions of the AMS* 105 (1962), 264--277. [doi:10.1090/S0002-9947-1962-0143225-6](https://doi.org/10.1090/S0002-9947-1962-0143225-6); Example 2.
+
+## AGH {#ref-AGH .unnumbered}
+
+A. Abrams, D. Gay, and V. Hower. Discretized configurations and partial partitions. [arXiv:1009.2935](https://arxiv.org/abs/1009.2935).
+
+## BK {#ref-BK .unnumbered}
+
+E. Babson and D. N. Kozlov. Complexes of graph homomorphisms. *Israel Journal of Mathematics* 152 (2006), 285--312. [arXiv:math/0310056](https://arxiv.org/abs/math/0310056).
+
+## MSV {#ref-MSV .unnumbered}
+
+D. Mond, J. Smith, and D. van Straten. Stochastic factorizations, sandwiched simplices and the topology of the space of explanations. *Proceedings of the Royal Society A* 459 (2003). [doi:10.1098/rspa.2003.1150](https://doi.org/10.1098/rspa.2003.1150).

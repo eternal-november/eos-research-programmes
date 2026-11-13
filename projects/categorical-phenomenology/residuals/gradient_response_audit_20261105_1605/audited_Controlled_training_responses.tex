@@ -1,0 +1,501 @@
+% Standalone uncompiled research note. No external TeX inputs are required.
+% Preserve this draft as an intermediate backup.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,enumitem}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Id}{\mathrm I}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\op}{\mathrm{op}}
+\title{Controlled training responses in two layer matrix models}
+\author{}
+\date{5 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+For two-factor real matrix models, we classify equality of full output
+responses under changing squared-loss targets. Except when both external
+dimensions are one, simultaneous gradient descent at any fixed nonzero
+step size distinguishes exactly the full block Gram state; target words
+of length at most two suffice. Controlled gradient flow retains a scalar
+Gram-shift ambiguity. For nonscalar interfaces at fixed hidden width, the distinction exists
+exactly when that width is at least the larger external dimension. A concrete pair is
+indistinguishable under every stationary target but distinguishable after
+one target change. Its optimal two-update separation under bounded targets
+is cubic in the step size, giving a sharp adversarial-noise boundary for
+restarted experiments of that depth. The proof uses established covariance,
+mobility and conservation-defect identities. This is a self-contained
+corollary-level refinement with precise experimental quantifiers, not a
+claim of historical novelty, a new optimization theory, or empirical benefit.
+\end{abstract}
+
+\section{The model and the experiment}
+Fix $m,n\geq1$. A state consists of real matrices
+$A\in\R^{m\times h}$ and $B\in\R^{h\times n}$ at a finite positive hidden
+width $h$. Its observed output is the \emph{whole} matrix $F=AB$.
+Each target $Y\in\R^{m\times n}$ specifies the loss
+$\tfrac12\|AB-Y\|_F^2$ and the simultaneous update
+\begin{equation}\label{eq:factor-step}
+ A^+=A-\eta EB^{\mathsf T},\qquad
+ B^+=B-\eta A^{\mathsf T}E,\qquad E=F-Y,
+\end{equation}
+where the known step size $\eta\ne0$ is fixed and the same in both layers.
+Ordinary descent uses $\eta>0$; the algebra below holds for either sign.
+Both gradients use the old factors. No bias, momentum, weight decay,
+projection or alternating update is included.
+
+Write $F_0$ for the initial output and $F_k$ for the output after $k$
+updates. Two states, possibly with different widths, are \emph{response
+equivalent} if they give the same $F_k$ for every finite common target
+word $(Y_0,\ldots,Y_{k-1})$, including $k=0$. The phrase ``through two
+updates'' means equality of $F_0,F_1,F_2$ under every target word of length
+at most two. It does not mean that one pair of probes identifies every
+unknown state. The target can change within a word. Targets and output
+matrices are unrestricted unless a later statement imposes a norm bound.
+
+These are exact-model comparisons. Quantifying over all hypothetical
+experiments does not supply reset access, calibrated interventions,
+noiseless readings, or evidence that an application follows
+\eqref{eq:factor-step}.
+
+\section{The closed Gram state}
+Set
+\begin{equation}\label{eq:gram}
+ L=AA^{\mathsf T},\quad R=B^{\mathsf T}B,\quad
+ C=\begin{pmatrix}A\\B^{\mathsf T}\end{pmatrix},\quad
+ G=CC^{\mathsf T}=\begin{pmatrix}L&F\\F^{\mathsf T}&R\end{pmatrix},
+ \quad J=\diag(\Id_m,-\Id_n).
+\end{equation}
+The realizable states at width $h$ are precisely $G\succeq0$ with
+$\rank G\leq h$: a Gram factorization constructs $C$, and its two blocks
+recover $A,B$. In particular, full positivity of $G$, not just positivity
+of $L$ and $R$, is required.
+
+Direct multiplication of \eqref{eq:factor-step} gives
+\begin{align}
+ F^+&=F-\eta(LE+ER)+\eta^2EF^{\mathsf T}E,\label{eq:Fstep}\\
+ L^+&=L-\eta(EF^{\mathsf T}+FE^{\mathsf T})+\eta^2ERE^{\mathsf T},
+ \label{eq:Lstep}\\
+ R^+&=R-\eta(E^{\mathsf T}F+F^{\mathsf T}E)+\eta^2E^{\mathsf T}LE.
+ \label{eq:Rstep}
+\end{align}
+Equivalently, for
+$S_E=\left(\begin{smallmatrix}0&E\\E^{\mathsf T}&0\end{smallmatrix}\right)$,
+\begin{equation}\label{eq:congruence}
+ C^+=(\Id-\eta S_E)C,\qquad
+ G^+=(\Id-\eta S_E)G(\Id-\eta S_E).
+\end{equation}
+These identities need no balancedness, full-rank or genericity assumption.
+They include $F=0$ and singular Gram matrices. They are established
+covariance dynamics; Section~\ref{sec:prior} specifies the close sources.
+
+\begin{lemma}[Exactly what one update reveals]\label{lem:one}
+Two states have equal initial and one-update responses for every target
+if and only if $G_2-G_1=cJ$ for some $c\in\R$.
+\end{lemma}
+\begin{proof}
+Initial equality fixes $F$. As $Y$ varies, $E=F-Y$ is arbitrary.
+Equation~\eqref{eq:Fstep} therefore gives
+$\Delta L E+E\Delta R=0$ for every $E$, where $\Delta$ means state 2
+minus state 1. For $E=e_i e_j^{\mathsf T}$ the $(k,\ell)$ entry is
+$\Delta L_{ki}\delta_{j\ell}+\delta_{ki}\Delta R_{j\ell}$.
+Taking $k\ne i,\ell=j$ and then $k=i,\ell\ne j$ kills all off-diagonal
+entries. Taking $k=i,\ell=j$ shows
+$\Delta L_{ii}=-\Delta R_{jj}$ for every $i,j$. Hence
+$\Delta L=c\Id_m$, $\Delta R=-c\Id_n$. Conversely these differences
+cancel in \eqref{eq:Fstep}.
+\end{proof}
+
+\section{Two updates and the scalar exception}
+\begin{theorem}[Complete discrete response classification]\label{thm:discrete}
+If $mn>1$, the following conditions are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item the two states are response equivalent;
+\item their responses agree through two updates;
+\item their initial Gram matrices $G$ agree.
+\end{enumerate}
+If $m=n=1$, response equivalence is instead equality of
+$(f,s)=(F,L+R)$ and is already determined by initial and one-update
+responses.
+\end{theorem}
+\begin{proof}
+For $mn>1$, (i) implies (ii). By Lemma~\ref{lem:one}, (ii) gives an
+initial difference $cJ$. After any first residual $E$, the outputs agree
+and the other differences are
+\[
+ \Delta L_1=c(\Id_m-\eta^2EE^{\mathsf T}),\qquad
+ \Delta R_1=-c(\Id_n-\eta^2E^{\mathsf T}E).
+\]
+For any second residual $Z$, choose the common second target $Y_1=F_1-Z$.
+The terms depending only on $F_1$ cancel in \eqref{eq:Fstep}, leaving
+\begin{equation}\label{eq:cubic}
+ \Delta F_2=\eta^3c\bigl(EE^{\mathsf T}Z-ZE^{\mathsf T}E\bigr).
+\end{equation}
+If $n>1$, choose the rectangular elementary matrices
+$E=e_1e_1^{\mathsf T}$ and $Z=e_1e_2^{\mathsf T}$; the parenthesis is $Z$.
+If $n=1,m>1$, choose $E=e_1,Z=e_2$; it is $-Z$.
+Since $\eta\ne0$, equality forces $c=0$, proving (iii).
+The closed equations \eqref{eq:Fstep}--\eqref{eq:Rstep} prove
+(iii)$\Rightarrow$(i) by induction.
+
+When $m=n=1$, write $e=f-y$. The equations reduce to
+\begin{equation}\label{eq:scalar}
+ f^+=(1+\eta^2e^2)f-\eta es,\qquad
+ s^+=(1+\eta^2e^2)s-4\eta ef.
+\end{equation}
+Thus $(f,s)$ is sufficient for every future response, and any first
+residual $e\ne0$ recovers $s$ from $f,f^+$. The cubic parenthesis is
+identically zero in this case.
+\end{proof}
+
+\begin{remark}[The target quantifier]
+The separating word in the proof is a legitimate common \emph{fixed}
+word once the two candidate states and $E$ have been fixed: their shared
+$F_1$ determines the same matrix $Y_1$. No adaptive policy is needed for
+the equivalence theorem. A procedure can instead choose $Y_1$ after
+observing $F_1$, but then exact access or an appropriate error analysis
+is an additional assumption. A bound on distinguishing-word depth is
+not a bound of two measurements for reconstructing every unknown Gram
+matrix.
+\end{remark}
+
+\section{Controlled flow and global existence}
+Consider the actual controlled gradient flow
+\begin{equation}\label{eq:flow}
+ \dot A=-EB^{\mathsf T},\qquad \dot B=-A^{\mathsf T}E,
+ \qquad E=AB-Y(t),
+\end{equation}
+with a common locally bounded piecewise-continuous target $Y(t)$.
+Flow equivalence means equality of the entire output path for every
+such target signal on every finite time interval.
+
+\begin{theorem}[Complete controlled-flow classification]\label{thm:flow}
+Every initial state has a unique global forward solution to
+\eqref{eq:flow} for the stated controls. Two states are flow equivalent
+if and only if $G_2-G_1=cJ$ for some $c\in\R$.
+\end{theorem}
+\begin{proof}
+The Gram equations are
+\begin{align*}
+ \dot F&=-LE-ER,\\
+ \dot L&=-EF^{\mathsf T}-FE^{\mathsf T},&
+ \dot R&=-E^{\mathsf T}F-F^{\mathsf T}E.
+\end{align*}
+Local existence and uniqueness hold piecewise, or in the usual
+Carath\'eodory formulation. For
+$V=(\|A\|_F^2+\|B\|_F^2)/2$, almost everywhere,
+\[
+ \dot V=-2\|F\|_F^2+2\langle F,Y\rangle_F
+          \leq \tfrac12\|Y\|_F^2.
+\]
+Hence $V$ is bounded on every finite interval. The locally Lipschitz
+parameter system cannot have finite-time blowup, giving global existence.
+
+Equal initial output and equal initial derivatives for every constant
+target imply $\Delta LE+E\Delta R=0$ for every $E$.
+Lemma~\ref{lem:one}'s matrix argument gives necessity.
+For sufficiency, the shift $\Delta L=c\Id_m$, $\Delta R=-c\Id_n$
+leaves $\dot F$ unchanged, while the other two equations preserve this
+constant difference whenever $F$ agrees. Uniqueness of the closed system
+therefore gives equal outputs globally. Equivalently,
+$\dot G=-S_EG-GS_E$ and $S_EJ+JS_E=0$.
+\end{proof}
+
+Flow equivalence is a feasible Gram-shift relation, not the hidden
+orthogonal gauge: a nonzero shift changes $G$ and can change its rank.
+Theorems~\ref{thm:discrete} and \ref{thm:flow} compare exact equivalence
+relations. They do not contradict convergence of small-step numerical
+trajectories: the separating signal in \eqref{eq:cubic} tends to zero.
+If finite gradient descent is the admitted operation, the difference is
+an actual response of that operation. If Euler is only an approximation
+to a physical flow, its extra distinction is an approximation artifact,
+not evidence that the physical states are distinguishable.
+
+\section{A concrete pair and the need to change targets}
+For $m=1,n=2$, take
+\[
+ P:\quad A=(1),\ B=(0\ \ 0),\qquad
+ Q:\quad A=(0\ \ 0),\ B=\Id_2.
+\]
+Both have $F_0=0$, while
+$G_P=\diag(1,0,0)$ and $G_Q=\diag(0,1,1)$.
+Thus $G_Q-G_P=-J$, and every controlled flow gives identical outputs.
+For the two discrete targets
+\[
+ Y_0=(-1,0),\qquad Y_1=(-\eta,-1),
+\]
+straight substitution gives
+\begin{align*}
+ F_1(P)=F_1(Q)&=(-\eta,0),\\
+ F_2(P)&=(-\eta,-\eta),&
+ F_2(Q)&=(-\eta,-\eta-\eta^3).
+\end{align*}
+The same example has a common installed width two by padding $P$ to
+$A=(1\ \ 0)$, $B=0_{2\times2}$.
+
+\begin{proposition}[Stationary targets do not distinguish this pair]
+For each single target $Y\in\R^{1\times2}$, held fixed throughout a run,
+$P$ and $Q$ have identical discrete output sequences for every finite
+number of updates. This holds for every nonzero step size.
+\end{proposition}
+\begin{proof}
+For $Y=0$ both states remain at zero output. Otherwise an orthogonal
+input-coordinate change carries $Y$ to $(y,0)$, $y>0$. In $Q$ a hidden
+orthogonal change restores $B=\Id_2$; it does not change any output.
+Along the first coordinate, $P$ starts with scalar factors $(a,b)=(1,0)$
+and $Q$ with $(a,b)=(0,1)$. The perpendicular column in $Q$ remains
+orthogonal to the active hidden coordinate and contributes zero output.
+The active factors in both states follow the scalar update with target
+$y$. Swapping them preserves their output and their update law, or use
+\eqref{eq:scalar} with common $(f,s)=(0,1)$. Induction proves the result.
+\end{proof}
+Thus even trying arbitrarily many stationary targets on reset copies
+misses this pair. The successful depth-two word changes the target within
+one run. The larger pair
+$\diag(\Id_m,0_n)$, $\diag(0_m,\Id_n)$ has the same stationary-target
+property: an SVD of a fixed target splits it into swapped scalar systems
+and unexcited directions.
+
+\section{Width, quotients and finite access}
+\begin{proposition}[The exact fixed-width boundary]\label{prop:width}
+At a common fixed hidden width $h$, a nonzero feasible Gram shift can
+occur if and only if $h\geq\max(m,n)$. Consequently, for $mn>1$:
+\begin{enumerate}[label=(\roman*)]
+\item if $h<\max(m,n)$, initial and one-update response equality already
+forces full response equivalence;
+\item if $h\geq\max(m,n)$, the two-update bound is sharp and controlled
+flow is strictly less discriminating than discrete training.
+\end{enumerate}
+For $m=n=1$ the two regimes have the same $(f,s)$ quotient at every width.
+\end{proposition}
+\begin{proof}
+If $G_2-G_1=cJ$ with $c>0$, then
+$L_2=L_1+c\Id_m\succ0$ and $R_1=R_2+c\Id_n\succ0$.
+Their ranks force $h\geq m,n$. Reverse the states for $c<0$.
+Conversely $\diag(\Id_m,0_n)$ and $\diag(0_m,\Id_n)$ have ranks
+$m,n$, admit width-$h$ realizations when $h\geq\max(m,n)$, and differ
+by $-J$. Lemma~\ref{lem:one} and Theorem~\ref{thm:discrete} then give
+both assertions and sharpness.
+\end{proof}
+
+At fixed width, two factors have the same $G$ exactly when they differ
+by a hidden orthogonal transformation
+$A\mapsto AU$, $B\mapsto U^{\mathsf T}B$.
+Indeed equal Gram matrices give an isometry between the spans of the
+rows of $C$, which extends to an orthogonal map of the hidden
+space. Across widths first pad by zero hidden coordinates. Thus, when
+$mn>1$, the behavioral quotient agrees with this familiar Gram orbit
+quotient. Its universal factorization property for invariant functions
+is not a new universal construction.
+
+Among all realizations of a nonscalar \emph{discrete} behavior, the minimum
+hidden width is $\rank G$, allowing width zero; if widths must be positive
+it is $\max(1,\rank G)$. Necessity is the rank bound; sufficiency is a Gram
+factorization. Installed width is not identifiable because zero hidden
+coordinates can always be appended. For flow the corresponding minimum
+is instead
+\[
+ \min\{\rank(G+cJ):c\in\R,\ G+cJ\succeq0\},
+\]
+with the same positive-width convention. This target is constant on each
+flow class. The example shows that flow observations cannot determine
+the minimum width needed to reproduce all \emph{discrete} responses.
+For scalar interfaces, feasibility gives $s\geq2|f|$ and every such
+$(f,s)$ has a width-one realization: choose $a,b$ with
+$a^2+b^2=s$, $ab=f$.
+
+\begin{proposition}[A finite reset reconstruction]
+For $mn>1$, exact full-matrix observations and reproducible copies of an
+initial state permit recovery of $G$ using a finite family of one-update
+experiments and one two-update experiment.
+\end{proposition}
+\begin{proof}
+Observe $F$ and, for a chosen residual $E$, recover
+\[
+ K(E)=LE+ER=\frac{F-F^+(E)+\eta^2EF^{\mathsf T}E}{\eta}.
+\]
+Use $E=e_i e_1^{\mathsf T}$ for $1\leq i\leq m$ and
+$E=e_1e_j^{\mathsf T}$ for $2\leq j\leq n$.
+The entry formula in Lemma~\ref{lem:one} recovers all off-diagonal
+entries of $L,R$ and their diagonal sums. It determines the representative
+$L^0=L-a\Id_m$, $R^0=R+a\Id_n$ with $L^0_{11}=0$, where $a=L_{11}$.
+This formal representative need not be positive semidefinite; it is
+used only for polynomial calculation. Compare the actual second output
+for the elementary $E,Z$ of Theorem~\ref{thm:discrete} with the output
+predicted from $(L^0,F,R^0)$. Equation~\eqref{eq:cubic} recovers $a$
+by division by $\eta^3$ in the selected entry, with its known sign.
+\end{proof}
+This procedure is not asserted to minimize the number of resets or
+physical resources. Without reset or reproducible preparation, it does
+not establish identification from one unknown training trajectory.
+
+\section{A sharp bounded-depth noise boundary}
+\begin{lemma}\label{lem:norm}
+For rectangular $E,Z\in\R^{m\times n}$,
+\[
+ \|EE^{\mathsf T}Z-ZE^{\mathsf T}E\|_F
+       \leq\|E\|_{\op}^2\|Z\|_F.
+\]
+\end{lemma}
+\begin{proof}
+An SVD $E=U\Sigma V^{\mathsf T}$ makes the $(i,j)$ entry of
+$U^{\mathsf T}ZV$ acquire the multiplier $\lambda_i-\mu_j$, where
+$\lambda_i,\mu_j$ are squared singular values, with zeros in the extra
+dimensions. Both lie in $[0,\|E\|_{\op}^2]$. Sum the squared entry bounds.
+\end{proof}
+
+\begin{theorem}[Exact two-update discrimination threshold]\label{thm:noise}
+For the concrete pair $P,Q$ above and target bound $M>0$,
+\begin{equation}\label{eq:maxgap}
+ \sup_{\|Y_0\|_F,\|Y_1\|_F\leq M}
+     \|F_2(Q)-F_2(P)\|_F=|\eta|^3M^3.
+\end{equation}
+Suppose every output observation may have arbitrary additive error of
+Frobenius norm at most $\varepsilon\geq0$, while targets, step size and
+reset preparation are exact. Guaranteed discrimination of this declared
+pair by reset experiments of depth at most two is possible if and only if
+$|\eta|^3M^3>2\varepsilon$. Above the threshold one trial suffices;
+at or below it no number of such trials, even adaptively chosen, guarantees
+discrimination.
+\end{theorem}
+\begin{proof}
+For this pair $F_0=0$, $E=-Y_0$ and the common $F_1=-\eta E$.
+The next residual is $Z=-\eta E-Y_1$.
+Since $(EE^{\mathsf T})E=E(E^{\mathsf T}E)$, the term proportional to $E$
+in \eqref{eq:cubic} cancels. With $c=-1$, the difference is
+$\eta^3(EE^{\mathsf T}Y_1-Y_1E^{\mathsf T}E)$.
+Lemma~\ref{lem:norm} gives the upper bound in \eqref{eq:maxgap};
+$Y_0=-M(1,0)$, $Y_1=-M(0,1)$ attains it. These target norms are $M$
+independently of $\eta$.
+
+Two closed radius-$\varepsilon$ norm balls intersect exactly when their
+centers have distance at most $2\varepsilon$. The initial and first
+outputs of the pair coincide. Above the threshold the maximally separating
+second-output balls are disjoint. At or below it an adversary can report
+a common point in the intersecting second-output balls for every trial.
+An adaptive protocol receives identical possible histories and therefore
+chooses identical next targets and reset experiments. Repeating this
+argument preserves ambiguity for any number of permitted trials.
+\end{proof}
+This is a worst-case bounded-error result for one candidate pair and
+observation depth at most two. It is not an all-horizon impossibility:
+longer changing-target runs can have different separation. It does not
+apply unchanged to independent stochastic noise, which may average down,
+or to uncertain target calibration. At fixed $M,\varepsilon>0$, exact
+nonzero-step distinguishability therefore fails to imply warranted
+identification in this experiment class as $\eta\to0$.
+
+\section{What is inherited and what the comparison establishes}
+\label{sec:prior}
+The original project manuscript \emph{Learning generated characterizations}
+\cite{ProjectLearning} treats training interventions as inputs and already
+proves exact response closure and finite identification for scalar chains
+of arbitrary depth. Its distinction between generated tests and acquired
+observations remains in force. The present two-factor matrix model varies
+hidden width and is not that scalar-chain theorem renamed. The common
+operational construction and the changing-experiments note
+\cite{ProjectCommon,ProjectChanging} supply the broader behavioral,
+concept and supported-topology setting; no new FCA or topological result
+is asserted here.
+
+The closest algebraic antecedent is Zhang--Peyr\'e \cite{ZP}:
+Proposition 2.1, equation (9), and Appendix C.5, equation (41) and
+Lemma C.14, contain the covariance closure, discrete predictor update
+and transported-indefinite-form defect used here, after adjusting
+normalizations and block order. These are not new mechanisms.
+Their stated results concern convergence and support margins; the
+all-target two-initial-state classification is a different conclusion.
+
+Tao \cite{Tao}, equations (3)--(4), Appendix B.2 and Section 7, uses the
+same block Gram state, scalar-identity mobility ambiguity and constant
+$J$-shift of continuous covariance dynamics. Lemma 3.8 treats effective
+width reduction. The principal quantifier there concerns all autonomous
+losses from one initialization. The present comparison is between two
+initial states under target sequences; its stationary-target counterexample
+makes the difference substantive. It should not be described as a new
+continuous Gram-shift principle.
+
+Marcotte--Peyr\'e--Gribonval \cite{MPG}, Theorems 3.8--3.9,
+Proposition 3.10 and Appendix I, equations (26)--(27), give the close
+intrinsic-dynamics, scalar and mobility-kernel antecedents.
+Kunin et al.\ \cite{NeuralMechanics}, Sections 4--6 and Appendix I,
+already establish the broad phenomenon that finite learning rates break
+conservation laws of gradient flow. Pang et al.\ \cite{Pang}, Sections
+3--5 and Appendix C, analyze early finite-step linear-network updates
+and losses. Neither a Gram closure nor a two-step expansion alone is an
+originality claim.
+
+The narrow result is the proved response-equivalence classification,
+its scalar and fixed-width boundary, the switched-target requirement,
+and the stated rank and bounded-depth noise consequences. A targeted
+primary-source audit did not locate that exact combination, but absence
+from an inspected set is not priority evidence strong enough to certify
+novelty. The proof is a short refinement of known identities. No new
+optimizer, optimization rate, practical training advantage or general
+universal property has been established.
+
+\section{Verification and retained research files}
+The universal statements above are justified by their proofs, not by
+finite tests. The companion \texttt{check\_gram\_behavior.py} uses
+SymPy exact arithmetic and checks 108 factor-versus-Gram identities,
+108 cubic shift identities, 96 finite reconstructions, 12 scalar cases,
+108 rank and congruence cases, symbolic separation and bounded-target
+witnesses, eight scalar-ambiguity steps, and 30 stationary-target cases.
+Its result is preserved in \texttt{check\_results.json}.
+
+An independent \texttt{verify.py} additionally checks exact observation
+ranks for all $1\leq m,n\leq3$, the symbolic concrete witness and scalar
+closure, numerical update identities and exponential-flow shifts, and
+120 stationary-target updates in four rectangular or square dimensions.
+The largest reported numerical discrepancy is below $3\times10^{-15}$;
+this is numerical regression evidence, not an exact proof.
+Its proof, results and primary-source audit are retained alongside the
+original working note, script and intermediate TeX draft. No formal
+proof-assistant verification is claimed. This standalone TeX source has
+been checked for source integrity and deliberately remains uncompiled.
+
+\begin{thebibliography}{99}
+\bibitem{ZP} S. Zhang and G. Peyr\'e,
+\emph{Global Exponential Convergence of Two-Layer Linear Network Training},
+arXiv:2610.09356v1, 7 October 2026.
+\url{https://arxiv.org/html/2610.09356v1}.
+\bibitem{Tao} S. Tao,
+\emph{When Parameter Gradient Flows Close in Representation Space},
+arXiv:2610.27474v1, 20 October 2026.
+\url{https://arxiv.org/html/2610.27474v1}.
+\bibitem{MPG} S. Marcotte, G. Peyr\'e and R. Gribonval,
+\emph{Intrinsic training dynamics of deep neural networks}, ICLR 2026,
+arXiv:2508.07370v2, 12 March 2026.
+\url{https://arxiv.org/html/2508.07370v2}.
+\bibitem{NeuralMechanics} D. Kunin, J. Sagastuy-Brena, S. Ganguli,
+D. L. K. Yamins and H. Tanaka,
+\emph{Neural Mechanics: Symmetry and Broken Conservation Laws in Deep
+Learning Dynamics}, ICLR 2021, arXiv:2012.04728v2.
+\url{https://arxiv.org/html/2012.04728}.
+\bibitem{Pang} T. Pang, V. Kothapalli, S. Deng, H. Wang, D. Zhou and Y. Yang,
+\emph{Balancing Learning Rates Across Layers: Exact Two-Step Dynamics and
+Optimal Scaling in Linear Neural Networks}, arXiv:2606.00340v1,
+29 May 2026. \url{https://arxiv.org/html/2606.00340v1}.
+\bibitem{ProjectLearning} Previous project manuscript,
+\emph{Learning generated characterizations}, 5 November 2026.
+Recovered source \texttt{learning\_generated\_characterizations.tex}.
+\bibitem{ProjectCommon} Previous project manuscript,
+\emph{One operational construction for residual automata, formal concepts,
+and topology}, 4 November 2026.
+Recovered source \texttt{common\_generation\_note.tex}.
+\bibitem{ProjectChanging} Previous project manuscript,
+\emph{Changing experiments and composing characterizations},
+5 November 2026. Source
+\texttt{Changing\_experiments\_and\_composing\_characterizations.tex}.
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,212 @@
+\section{Native synchronization exposes the missing resource correlation}
+\label{sec:native}
+The decomposition category in the preceding theorem retains formal
+allocation witnesses. A separate operational interpretation is required
+before such a witness is an executable run. We now give one concrete
+native class, its sharp obstruction, and a primitive certificate that
+compiles local witnesses into joint witnesses. Its composition is
+synchronization, not the additive-budget Day convolution above.
+
+Let $B,A$ be finite concrete and visible alphabets, and let
+$\alpha:B\twoheadrightarrow A$ be a letterwise, nonerasing interface
+map. A component is a finite directed multigraph of actual configurations,
+with current state $x$, terminal set $F$, and edges
+$e:s\xrightarrow{b}t$ carrying costs in $\N$. Edges are controllably
+selectable, terminating native commands or certified single-event macros.
+Endpoints retain residual resources and installed state. A run is a
+composable edge sequence; its cost is the sum of edge costs.
+Define its concrete trace profile
+\[
+ f_{M,x}(w)=\min\{c(p):p:x\leadsto F,\ \ell(p)=w\}\in\Cost,
+ \qquad \min\varnothing=\infty.
+\]
+Finite values have native run witnesses, found by finite-word dynamic
+programming. This is complete-table controllable planning, not sure
+control against adversarial outcomes or empirical identification of an
+unknown machine.
+
+Independent parallel components synchronize the same concrete letter at
+each step and add their costs. Independence here is an actual product
+runtime with separately accounted resources; shared stock must instead
+be represented once in a joint state. For profiles $f_1,\ldots,f_m$,
+interface change gives
+\[
+ (\alpha_!f_i)(v)=\min_{\alpha(w)=v}f_i(w).
+\]
+Changing each component first and then adding its local optimum yields
+$L(v)$, while changing an actual synchronized composite yields $J(v)$:
+\[
+ L(v)=\sum_i\min_{\alpha(w)=v}f_i(w),\qquad
+ J(v)=\min_{\alpha(w)=v}\sum_i f_i(w).
+\]
+Their difference is the requirement of a common concrete word.
+The abstract number $L(v)$ is not itself an executable joint witness.
+
+\begin{theorem}[Exact optimal-witness obstruction]\label{thm:native-gap}
+For every visible word $v$, $L(v)\leq J(v)$. If all local minima are
+finite, put
+\[
+ A_i(v)=\{w:\alpha(w)=v,\ f_i(w)=(\alpha_!f_i)(v)\}.
+\]
+Then $J(v)=L(v)$ if and only if $\bigcap_iA_i(v)\ne\varnothing$.
+A common minimizing word together with its native component runs gives
+a synchronized witness of cost $L(v)$. If any local minimum is infinite,
+both sides are infinite.
+\end{theorem}
+\begin{proof}
+For each eligible $w$, every $f_i(w)$ is at least its own fiber minimum.
+This proves the inequality. Since $B$ is finite and the map is letterwise,
+the fiber over $v$ is finite. When equality is finite a minimum is attained;
+the sum of the nonnegative differences from the local minima is zero,
+so every difference is zero. Conversely a common minimizer attains $L(v)$.
+The runs synchronize step by step because they have the same concrete
+word and independent actual endpoints. If one fiber has no finite run,
+no jointly finite run exists.
+\end{proof}
+
+The trace-and-budget predicate $(v,r)$ says that a terminal native run
+of visible word $v$ exists with cost at most $r$. Treat these as semantic
+feasibility predicates unless an admitted decision readout is supplied,
+for example a public current configuration with complete certified tables
+and permitted decision computation. An existential success has a native
+run witness; failure of a search is not automatically a physical observation
+on an unknown state. Under this declared test doctrine, evaluate the
+predicates on actual state tuples to obtain response columns. Values in $\Cost$ are determined
+by all their natural-number thresholds. Therefore the two routes have
+exactly the same budget-test incidence if and only if $J=L$ on every
+state tuple and word. A discrepancy $L(v)<J(v)$ is witnessed by the
+single threshold $(v,L(v))$. Under equality, the response-column lemma
+of Section~\ref{sec:slice} gives equality of the resulting row, concept
+and object-nerve constructions. Under inequality, the incidence differs;
+not every downstream invariant must detect that difference.
+
+\begin{example}[Boolean exactness and unbounded budget error]
+Let $B=\{0,1\}$, $A=\{a\}$, and hide both letters as $a$.
+Two one-state cyclic components have both loops, with their sole state
+terminal. The costs of $0,1$ are $1,K+1$ in the first component and
+$K+1,1$ in the second, where $K\geq1$. Then for every $n\geq0$,
+\[
+ L(a^n)=2n,\qquad J(a^n)=(K+2)n.
+\]
+Every visible trace is feasible by both routes. Locally optimal witnesses
+are $0^n$ and $1^n$; for $n>0$ they cannot synchronize. Every common
+concrete word instead has total cost $(K+2)n$. Thus feasibility, terminal
+conditions and even complete unbounded visible language agree while the
+budget defect grows without bound. This is neither a missing-state
+artifact nor a failed heuristic search for a witness.
+\end{example}
+
+\begin{proposition}[Sequencing is exact for the same interface change]
+For weighted profiles, define
+\[
+ (f*g)(w)=\min_{w=uz}(f(u)+g(z)),\qquad
+ (f\wedge g)(w)=\min(f(w),g(w)).
+\]
+Then $\alpha_!$ preserves $*$, $\wedge$, the sequential unit and
+finite iteration $f^*=\min_{n\geq0}f^{*n}$.
+These equalities retain native witnesses when concatenation uses the same
+actual intermediate endpoint. For variable endpoints the exact formula is
+\[
+ (F*G)_{s,t}(w)=\min_{r,\,w=uz}
+                      (F_{s,r}(u)+G_{r,t}(z));
+\]
+entrywise pushforward preserves it as well.
+\end{proposition}
+\begin{proof}
+Both convolution routes minimize $f(u)+g(z)$ over concrete words with
+$\alpha(u)\alpha(z)=v$. A concrete split gives a visible split,
+and lifts of a visible split concatenate. The intermediate-state minimum
+can be exchanged in the same way when that state is retained. Choice
+exchanges minima; the unit is preserved because $\alpha$ is nonerasing.
+Iterate convolution and exchange the minima over words and iteration
+number. Every finite optimum has a finite native run witness.
+\end{proof}
+Thus the synchronization failure remains even though the same interface
+change preserves choice, native sequencing and arbitrary finite repetition.
+
+\begin{theorem}[Universal synchronization contexts]\label{thm:universal-native}
+For $f:B^*\to\Cost$, the identity
+\[
+ \alpha_!(f+g)=\alpha_!f+\alpha_!g
+\]
+holds for every $g:B^*\to\Cost$ if and only if $f$ is constant on
+each fiber of $\alpha$. It suffices to test the identity against the
+finite native exact-word testers $\delta_z$, with value $0$ at $z$
+and $\infty$ elsewhere.
+\end{theorem}
+\begin{proof}
+A finite zero-cost chain spelling $z$, with only its final state terminal,
+realizes $\delta_z$. At $v=\alpha(z)$ the stated identity reads
+$f(z)=(\alpha_!f)(v)$. Requiring this for every $z$ says exactly that
+$f$ is fiberwise constant, including infinite values. Conversely a
+constant value $c$ on the fiber can be taken outside the minimum of
+$c+g(w)$; if $c=\infty$ both sides are infinite.
+\end{proof}
+This is stronger than saturation of a Boolean trace language. It identifies
+precisely what information must be retained for arbitrary concrete
+synchronization contexts. A selected compatible class of components can
+satisfy the weaker constructive condition that follows.
+
+\begin{definition}[Common endpoint-preserving normalization]
+Choose one section $\kappa:A\to B$ of $\alpha$, shared by every
+component. For every native edge $e:s\xrightarrow{b}t$, supply an
+effective selectable native edge or certified single-event macro
+\[
+ N(e):s\xrightarrow{\kappa\alpha(b)}t,
+ \qquad c(N(e))\leq c(e).
+\]
+Source and target are the same actual configurations. Internal macro steps
+introduce no extra synchronization events, and their termination, cost
+and endpoint are separately certified. No hidden information is required
+to choose the replacement.
+\end{definition}
+
+\begin{theorem}[A primitive native compiler for exact change and wiring]
+\label{thm:native-normal}
+Under common endpoint-preserving normalization, for every state tuple,
+visible word and finite number of independent components,
+\[
+ (\alpha_!f_i)(v)=f_i(\kappa(v)),\qquad J(v)=L(v).
+\]
+Every family of locally chosen native witnesses with visible word $v$
+compiles to synchronized native witnesses with concrete word $\kappa(v)$,
+the same individual endpoints and no larger individual costs. The compiler
+commutes with concatenation and works for arbitrary finite runs in cyclic
+machines.
+\end{theorem}
+\begin{proof}
+Replace every edge and concatenate. Identical actual endpoints make the
+result a legal run from the same initial configuration to the same final
+configuration. Its word is $\kappa\alpha(w)$ and its cost does not
+increase. Hence $f_i(\kappa(v))\leq f_i(w)$ for every lift $w$ of $v$.
+Since $\kappa(v)$ itself is such a lift, it realizes the fiber minimum.
+All components now share a minimizing word, proving equality by
+Theorem~\ref{thm:native-gap}. Occurrencewise replacement commutes with
+concatenation. Normalized runs synchronize because their canonical letters
+match at every step. None of these arguments bounds the number of loop
+iterations or identifies merely observationally equivalent endpoints.
+\end{proof}
+
+For finite graphs without internal macros, this is checked by a finite
+scan of actual edges. More sharply, put
+$M_b(s,t)=\min\{c(e):e:s\xrightarrow b t\}$. With every actual state
+allowed as a named terminal endpoint, canonical words realize every fiber
+minimum if and only if
+\[
+ M_{\kappa\alpha(b)}(s,t)\leq M_b(s,t)\quad\text{for all }s,t,b.
+\]
+Likewise every endpoint-specific profile is fiberwise constant if and only
+if $M_b=M_{b'}$ whenever $\alpha(b)=\alpha(b')$.
+Necessity uses one-letter tests. Sufficiency follows by replacing each
+witnessed edge, or by monotonicity and equality of the corresponding
+min-plus matrix products. Thus both the restricted common-normalization
+class and the universal-context class have independent finite primitive
+certificates.
+
+The two cyclic machines above have different cost-reducing canonical
+letters, so their separate normalizers do not compose. Exact endpoint
+preservation and a \emph{common} section are the substantive conditions.
+Vector resource costs admit the same constructive theorem when every
+replacement is componentwise no more expensive. A scalar minimum cannot
+otherwise represent a Pareto frontier, and pooling total budget does not
+by itself preserve each component's contractual allocation.

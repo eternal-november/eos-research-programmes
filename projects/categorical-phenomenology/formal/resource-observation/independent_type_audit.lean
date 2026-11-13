@@ -1,0 +1,18 @@
+import ResourceObservationIff
+set_option pp.universes true
+set_option pp.explicit true
+#print ResourceObservation.Upward
+#print ResourceObservation.Product
+#print ResourceObservation.ObservedFactorDomination
+#print ResourceObservation.UniversalProductAgreement
+#print ResourceObservation.UniversalRestrictionExact
+#check @ResourceObservation.product_upward_of_trans
+#check @ResourceObservation.factor_domination_of_universal_agreement
+#check @ResourceObservation.universal_product_agreement_iff_factor
+#check @ResourceObservation.universal_restriction_exact_iff_factor
+#check @ResourceObservation.universal_agreement_iff_restriction_exact
+#print axioms ResourceObservation.product_upward_of_trans
+#print axioms ResourceObservation.factor_domination_of_universal_agreement
+#print axioms ResourceObservation.universal_product_agreement_iff_factor
+#print axioms ResourceObservation.universal_restriction_exact_iff_factor
+#print axioms ResourceObservation.universal_agreement_iff_restriction_exact

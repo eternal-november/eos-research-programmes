@@ -1,0 +1,1869 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Pow}{\mathcal P}
+\newcommand{\Fin}{\mathcal P_{\mathrm{fin}}}
+\newcommand{\Ext}{\mathsf{Ext}}
+\newcommand{\Sat}{\mathsf{Sat}}
+\newcommand{\Safe}{\mathsf{Safe}}
+\newcommand{\cl}{\operatorname{cl}}
+\newcommand{\BA}{\operatorname{BA}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\id}{\operatorname{id}}
+\title{Generated Observations and Conservative Characterization Formation}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Adding a logically defined test can preserve observational distinctions while
+changing a concept lattice or a relational topology. This note separates
+syntax, exact semantics, and incomplete evidence, and gives necessary and
+sufficient fixed-domain criteria for preserving the FCA extent closure, the
+future-observation quotient, and the object Dowker complex. Their intersection
+has a largest extensional completion. On a finite nonempty domain without a
+universal test, it consists of the old closed extents except the top extent.
+Action pullbacks generate the greatest invariant observational quotient, with
+a finite refinement bound but no uniform finite bound on infinite domains.
+Finite disjunction closure alone forces a full simplex on active objects.
+By contrast, all nonempty proper Boolean-definable tests on at least two
+and finitely many observable row types give a sphere; permutation dynamics act on its top
+homology by sign. Exact simplicial preservation is distinguished from an
+exact homotopy criterion for adjoining one test, proved using acyclicity and
+a fundamental-group condition. A harmonic oscillator illustrates useful
+operation-generated observations and their measurement assumptions. These
+are conditional structural results assembled from established theories,
+not a claim of priority, an inference of physical laws from a truth table,
+or a general theory of scientific discovery.
+\end{abstract}
+
+\section{Scope and the three levels of a test}
+
+The question is how characterizations can generate further characterizations
+without confusing a change of description with a change of evidence. A useful
+answer must specify what a test means, how it is generated, and what the
+resulting representation is required to preserve. This note gives such an
+answer for fixed-domain observation systems. Its strongest conclusions are
+exact preservation criteria and explicit obstructions, rather than a general
+algorithm for scientific invention.
+
+A typed probe is a function $p:H\to V$ with a declared value set $V$.
+A generating operation has specified input and output types; for example,
+$F:V_1\times\cdots\times V_k\to W$ produces
+$F(p_1,\ldots,p_k):H\to W$. An action $u:H\to H$ produces the
+pullback probe $p\circ u$. Binary probes have $V=\{0,1\}$ and can be
+identified with subsets of $H$. A finite binary incidence table is therefore
+one important special case, not the definition of every possible scientific
+observation. Real-valued observations can be encoded by threshold predicates,
+but exact recovery of a real number generally needs infinitely many thresholds;
+a finite threshold table records only its stated resolution.
+
+Fix an ambient many-sorted algebra of semantic probes and allowed typed
+operations $\Omega$. The least family containing seed probes $S$ and closed
+under those operations is
+\[
+ \operatorname{Gen}_{\Omega}(S)
+ =\bigcap\{A:S\subseteq A,\ A\text{ is }\Omega\text{-closed}\}.
+\]
+This is the ordinary generated-subalgebra construction. It is extensive,
+monotone, and idempotent. For a finitary signature its elements are values
+of finite terms. Infinitary operations may need transfinite closure and do
+not by themselves supply an effective enumeration procedure.
+
+Three levels remain distinct:
+\begin{enumerate}[label=(\roman*)]
+\item \emph{Syntax}: terms, names, proofs, provenance, and execution recipes.
+\item \emph{Semantics}: their interpreted functions on a declared domain.
+\item \emph{Evidence}: what has actually been measured or otherwise warranted
+about those interpretations.
+\end{enumerate}
+Evaluation maps the free typed term algebra to the semantic probe algebra;
+its image is the generated family and its kernel identifies extensionally
+equal terms. Equality in one model or finite sample is not automatically
+provable equivalence in a theory, equality in all admissible models, or
+equality of computational cost. For example, $p$ and $p\wedge p$ agree
+extensionally while having different syntactic lengths.
+
+Every pointwise-generated probe factors through the joint values of its
+input probes. Thus pointwise recombination alone cannot distinguish two
+states whose old values agree. Action pullback is different: it uses the
+transition map in addition to the current row. The following sections make
+that distinction precise and then show that the same point resolution can
+support different FCA and topological structures.
+
+\section{Observations and the meanings of preservation}
+
+Let $H$ be a set, $T$ a set of test labels, and
+$R\subseteq H\times T$ an incidence relation. Write
+\[
+ E_t=\{h\in H:hRt\},\qquad \mathcal E=\{E_t:t\in T\}\subseteq\Pow(H).
+\]
+The family $\mathcal E$ forgets repeated labels with the same extent. Results
+about a largest completion below are \emph{extensional}: arbitrarily many
+synonymous labels would preclude a largest labeled language.
+Define
+\begin{align*}
+ \Ext(\mathcal E)&=\left\{\bigcap\mathcal F:\mathcal F\subseteq\mathcal E\right\},
+ &\bigcap\varnothing&=H,\\
+ \cl_{\mathcal E}(A)&=\bigcap\{E\in\mathcal E:A\subseteq E\},\\
+ K(\mathcal E)&=\{\varnothing\}\cup
+ \{\sigma\in\Fin(H):\exists E\in\mathcal E\ (\sigma\subseteq E)\},\\
+ N(T,R)&=\{\varnothing\}\cup
+ \{\tau\in\Fin(T):\bigcap_{t\in\tau}E_t\ne\varnothing\}.
+\end{align*}
+Thus $\Ext(\mathcal E)$ is the FCA extent lattice under inclusion,
+$K(\mathcal E)$ is the object Dowker complex, and $N(T,R)$ is its test-side
+counterpart. Write $\Delta(D)=\Fin(D)$ for the full abstract simplex.
+The empty face is included even when there are no nonempty faces;
+its geometric realization is then empty. Ground elements whose singleton is
+not a face are not vertices. In the usual FCA notation,
+$A'=\{t:A\subseteq E_t\}$ and $B'=\bigcap_{t\in B}E_t$.
+The formal concepts are pairs $(A,B)$ with $A'=B$ and $B'=A$;
+projection to $A$ identifies their ordered lattice with
+$\Ext(\mathcal E)$. Equality of this labeled extent closure is stronger
+than an unspecified abstract lattice isomorphism.
+
+Suppose also that a monoid $M$ acts on $H$ on the right. Put
+\[
+ \tau_m(h)=hm,\qquad U_m(C)=\tau_m^{-1}(C),\qquad
+ h\equiv_{\mathcal E}k
+ \Longleftrightarrow
+ \forall m\in M\ \forall E\in\mathcal E\quad
+ (hm\in E\Longleftrightarrow km\in E).
+\]
+Then $\equiv_{\mathcal E}$ is a right congruence, so
+$Q_{\mathcal E}=H/{\equiv_{\mathcal E}}$ carries an induced right $M$-action.
+Here $\tau_{mn}=\tau_n\circ\tau_m$ and $U_{mn}=U_m\circ U_n$.
+Let $\Sat(\equiv_{\mathcal E})$ denote the subsets of $H$ that are unions of
+congruence classes.
+
+An additional family of tests is specified by its extents
+$\mathcal G\subseteq\Pow(H)$. The extended incidence has family
+$\mathcal E^+=\mathcal E\cup\mathcal G$ on the \emph{same} $H$ and with the
+\emph{same} action. Throughout, preservation of the FCA structure means
+literal equality of the closure operators, equivalently of their fixed
+subsets of $H$. Preservation of the residual structure means equality of the
+equivalence relations on $H$, hence of their canonical quotient actions.
+Preservation of the object complex means equality of its finite faces.
+These assertions do not say that the enlarged labeled vocabulary, its full
+implication theory, or its test-side complex is literally unchanged.
+
+\begin{proposition}[Universal behavioral quotient]\label{prop:universal}
+For arbitrary $H$ and $M$, the map $q:H\to Q_{\mathcal E}$ is the
+coarsest equivariant quotient that preserves the original test readouts.
+Precisely, let $Y$ carry a right $M$-action, let $f:H\twoheadrightarrow Y$
+be equivariant, and suppose there are subsets $D_t\subseteq Y$ with
+$f^{-1}(D_t)=E_t$. There is a unique equivariant surjection
+$p:Y\twoheadrightarrow Q_{\mathcal E}$ satisfying $q=p f$.
+If $\overline E_t=q(E_t)$, then $p^{-1}(\overline E_t)=D_t$.
+For an additional test $C\subseteq H$, a readout
+$\overline C\subseteq Q_{\mathcal E}$ with $C=q^{-1}(\overline C)$
+exists if and only if $C$ is $\equiv_{\mathcal E}$-saturated.
+\end{proposition}
+\begin{proof}
+If $f(h)=f(k)$ then $f(hm)=f(km)$ for every $m$, so all old tests agree
+after every action. Thus $\ker f\subseteq\equiv_{\mathcal E}$, and
+$p(f(h))=q(h)$ is well-defined. Surjectivity of $f$ gives uniqueness;
+equivariance and preservation of readouts follow by substitution.
+The last assertion is exactly the condition for a subset to be an inverse
+image under a quotient map.
+\end{proof}
+
+\section{Exact criteria for arbitrary simultaneous extensions}
+
+\begin{theorem}[Three extension criteria]\label{thm:criteria}
+For arbitrary sets $H,T,M$ and an arbitrary family $\mathcal G$:
+\begin{enumerate}[label=(\roman*)]
+\item $\Ext(\mathcal E^+)=\Ext(\mathcal E)$ if and only if
+      $\mathcal G\subseteq\Ext(\mathcal E)$.
+\item $\equiv_{\mathcal E^+}=\equiv_{\mathcal E}$ if and only if
+      $\mathcal G\subseteq\Sat(\equiv_{\mathcal E})$.
+\item $K(\mathcal E^+)=K(\mathcal E)$ if and only if
+      $\Fin(C)\subseteq K(\mathcal E)$ for every $C\in\mathcal G$.
+      If each added $C$ is finite (in particular if $H$ is finite), the last condition is equivalent to
+      $C=\varnothing$ or $C\subseteq E$ for some $E\in\mathcal E$,
+      separately for every $C\in\mathcal G$.
+\end{enumerate}
+Moreover $\Ext(\mathcal E)\subseteq\Sat(\equiv_{\mathcal E})$.
+Consequently FCA preservation already implies residual preservation in this
+fixed-state, fixed-action extension problem.
+\end{theorem}
+
+\begin{proof}
+Each added extent is itself an intersection of a singleton family, so (i)
+is necessary. If every added extent was closed, every intersection of old
+and new extents is still closed; this proves sufficiency.
+
+Extension can only refine the residual equivalence. Equality therefore
+implies that every added $C$ is saturated, by testing the identity of $M$.
+Conversely, $h\equiv_{\mathcal E}k$ implies $hm\equiv_{\mathcal E}km$ for
+every $m$. Saturation of $C$ then gives $hm\in C\Leftrightarrow km\in C$.
+This proves (ii), including all future actions, not just the current rows.
+
+For (iii), the new faces are precisely the finite subsets of added
+extents. If $C$ is finite and nonempty, the finite subset $C$
+itself must have an old witnessing column. The converse is immediate.
+Finally, old columns are saturated by the identity test, and intersections
+of saturated sets are saturated.
+\end{proof}
+
+\begin{definition}[Common conservative completion]
+Set
+\[
+ \Safe(\mathcal E)=
+ \{C\in\Ext(\mathcal E):\Fin(C)\subseteq K(\mathcal E)\}.
+\]
+\end{definition}
+
+\begin{theorem}[Largest simultaneous completion]\label{thm:maximal}
+The family $\Safe(\mathcal E)$ contains $\mathcal E$ and is the unique
+largest extensional extension that preserves the three structures in
+Theorem~\ref{thm:criteria}. In particular,
+\[
+ \Ext(\Safe(\mathcal E))=\Ext(\mathcal E),\quad
+ K(\Safe(\mathcal E))=K(\mathcal E),\quad
+ \equiv_{\Safe(\mathcal E)}=\equiv_{\mathcal E},
+ \qquad \Safe(\Safe(\mathcal E))=\Safe(\mathcal E).
+\]
+Every proper closed extent belongs to $\Safe(\mathcal E)$. The only
+possible excluded closed extent is $H$, and
+\[
+ H\in\Safe(\mathcal E)\quad\Longleftrightarrow\quad
+ \Fin(H)\subseteq K(\mathcal E).
+\]
+If $H$ is finite and nonempty, this is equivalent to $H\in\mathcal E$.
+Thus, in the finite nonempty case without a universal test,
+\[
+ \Safe(\mathcal E)=\Ext(\mathcal E)\setminus\{H\}
+ =\left\{\bigcap\mathcal F:\varnothing\ne\mathcal F\subseteq\mathcal E\right\}.
+\]
+When $H=\varnothing$, $\Safe(\mathcal E)=\{\varnothing\}$.
+\end{theorem}
+
+\begin{proof}
+The three preservation statements and maximality follow from
+Theorem~\ref{thm:criteria}; idempotence follows because the defining closure
+family and complex have not changed. If $C$ is a proper closed extent,
+write $C=\bigcap\mathcal F$. Since the empty intersection is $H$,
+$\mathcal F$ is nonempty. Choose $E\in\mathcal F$; then $C\subseteq E$,
+so all finite subsets of $C$ are old faces. The remaining assertions follow
+from the definition and the finite criterion in Theorem~\ref{thm:criteria}.
+In the finite case without a universal column, an intersection of a
+nonempty family of columns cannot be $H$.
+\end{proof}
+
+\begin{remark}[What the completion accomplishes]
+Nonempty conjunctions introduce names for already available
+characterizations while preserving all three reconstructions. The empty
+conjunction is different: it introduces a universal test. The theorem
+identifies the largest common semantic completion; it does not assert that
+this vocabulary is the only scientifically useful one. A deliberately
+discriminating experiment or a desired disjunction can properly leave it.
+\end{remark}
+
+\begin{proposition}[Complete failure certificates]\label{prop:certificates}
+Let $C\subseteq H$. Failure of any one of the three criteria has the
+following witness:
+\begin{enumerate}[label=(\roman*)]
+\item FCA failure: $h\in\cl_{\mathcal E}(C)\setminus C$.
+\item Residual failure: $h\equiv_{\mathcal E}k$ with exactly one of
+      $h,k$ in $C$.
+\item Literal object-complex failure: a finite nonempty
+      $\sigma\subseteq C$ contained in no old column.
+\end{enumerate}
+For finite $H$ these are finite witnesses, relative to the supplied finite
+table and action semantics. They need not be certificates about unobserved
+states of an unknown system.
+\end{proposition}
+\begin{proof}
+Closure is extensive, so $C$ fails to be closed exactly when the difference
+in (i) is nonempty. The other two statements are the negations of
+saturation and the finite-face criterion.
+\end{proof}
+
+Finiteness of witnesses does not imply effective verification for an
+arbitrary presentation of $M$ or an unenumerated test family. With explicit
+finite tables for $H$, the tests, and a finite set of action generators,
+the refinement construction below computes the residual relation and the
+checks are finite. No such algorithmic claim is made for inaccessible
+actions merely described abstractly.
+
+\section{Logical definitions and genuinely new observations}
+
+There are two notions of observational indistinguishability that must be
+kept separate. Equality of the \emph{current} rows means agreement on the
+tests currently available. The residual relation already quantifies over
+\emph{all} permitted future actions. Generating executable future tests can
+refine the former toward the latter, even though it cannot refine the
+already completed residual relation for that same action system.
+
+\subsection{Future experiments generate a stable behavioral quotient}
+
+In deterministic modal syntax, $[a]\varphi$ holds at $h$ exactly when
+$\varphi$ holds at $ha$, so its extent is $U_a(\operatorname{Ext}(\varphi))$.
+Here $\operatorname{Ext}(\varphi)$ denotes the truth set of the formula.
+This is a semantic clause using the supplied dynamics, not an inference
+of that dynamics from the current truth table.
+
+Fix a set of action generators $A$ whose generated submonoid is $M$.
+For a word $w\in A^*$, use the associated state map $\tau_w$ and inverse
+image $U_w$. Set
+\[
+ \mathcal E^{\le n}=\{U_w(E):E\in\mathcal E,\ |w|\le n\},\qquad
+ h\sim_n k\ \Longleftrightarrow\
+ \forall C\in\mathcal E^{\le n}\ (h\in C\Longleftrightarrow k\in C).
+\]
+The original instantaneous row equivalence is $\sim_0$.
+
+\begin{theorem}[Generation by bounded future experiments]\label{thm:future}
+For arbitrary $H$,
+\[
+ \sim_{n+1}=\sim_n\ \cap\!
+ \bigcap_{a\in A}(\tau_a\times\tau_a)^{-1}(\sim_n),\qquad
+ \bigcap_{n\ge0}\sim_n=\equiv_{\mathcal E}.
+\]
+The limiting relation is the greatest right $M$-congruence contained in
+$\sim_0$. Each pair separated at depth $n$ has a distinguishing original
+test preceded by a word of length at most $n$. If it was not separated
+at depth $n-1$, its shortest such word has length exactly $n$.
+
+If $|H|=r<\infty$ and $c_0=|H/{\sim_0}|$, the sequence stabilizes after
+at most $r-c_0$ strict refinement steps. Once $\sim_{n+1}=\sim_n$, it is
+stable forever and already equals $\equiv_{\mathcal E}$. In particular
+every behaviorally distinct pair on this finite domain has a separating
+future experiment of length at most $r-c_0$.
+\end{theorem}
+
+\begin{proof}
+A word of length at most $n+1$ either is already of length at most $n$ or
+begins with one generator followed by a word of length at most $n$.
+This proves the recurrence and, by the definition of $M$, the limiting
+equality. The limit is stable under every generator: agreement at every
+depth implies agreement after applying a generator at every depth.
+Any congruence contained in $\sim_0$ forces agreement after every word,
+so is contained in the limit. The experiment witnesses follow directly
+from the definitions. On a finite set every strict refinement increases
+the number of classes by at least one, which can happen at most
+$r-c_0$ times. Equality at one stage is a fixed point of the displayed
+recurrence, so a later strict step cannot occur.
+\end{proof}
+
+\begin{corollary}[No artificial growth from a Chu-complete language]
+If each generator has a Chu translation on the initial tests, then
+$\sim_0$ is already a right congruence and
+$\sim_n=\sim_0=\equiv_{\mathcal E}$ for every $n$. Independently,
+pointwise Boolean definitions in any fixed current test family never
+split its current row equivalence. Future pullbacks and pointwise Boolean
+definitions are therefore different generation mechanisms.
+\end{corollary}
+\begin{proof}
+Under a Chu translation, agreement on all current tests implies agreement
+after applying the generator, because its pullback is again a current
+test. Boolean combinations preserve equal truth-value vectors.
+\end{proof}
+
+\begin{example}[Infinite future depth]
+Let $H=\mathbb N$, let $u(n)=\max(n-1,0)$, and let the only initial test
+be $\{0\}$. Its depth-$j$ pullback is $\{0,\ldots,j\}$. At depth $n$,
+the classes are $\{0\},\ldots,\{n\}$ and the infinite tail
+$\{k:k>n\}$. Thus the limiting residual relation is equality but no
+finite stage is stable.
+\end{example}
+
+Theorem~\ref{thm:future} is the classical partition-refinement mechanism
+of Moore and Myhill--Nerode theory, expressed here as generation of test
+extents; see Moore \cite{Moore}. It provides an operationally meaningful
+source of new current observations, not a new theorem of automata
+minimization. It assumes the specified actions and observations can be
+performed and are semantically known. A test splitting an \emph{existing
+full residual class} requires a genuinely new observation or an expansion
+of the permitted action system, rather than one of its already accounted
+future recipes.
+
+\subsection{The quotient must retain the structure of its tests}
+
+Let $\mathcal O=\{U_m(E):m\in M,E\in\mathcal E\}$. Choose one
+specified closure doctrine $\mathfrak D$: arbitrary intersections for an
+FCA closure system; finite intersections and arbitrary unions for a topology;
+Boolean operations; or countable unions and complements for a sigma-algebra.
+Let $\mathfrak D(\mathcal O)$ be the least family closed under the chosen
+operations. Since inverse images commute with each of them, this is the least
+$\mathfrak D$-closed, action-stable family containing $\mathcal E$.
+Every operation listed preserves agreement of truth values, so its induced
+point equivalence is exactly $\equiv_{\mathcal E}$.
+
+Write $q:H\twoheadrightarrow Q_{\mathcal E}$ and put
+\[
+ \mathcal L_Q=\{q(C):C\in\mathfrak D(\mathcal O)\}.
+\]
+All such $C$ are saturated, and therefore
+\[
+ q^{-1}:\mathcal L_Q\longrightarrow\mathfrak D(\mathcal O)
+\]
+is a bijection preserving every selected operation; its inverse is direct
+image on these saturated subsets. This proves exact preservation of the
+\emph{structured} quotient $(Q_{\mathcal E},\mathcal L_Q)$, not just
+of its point set. The universal factorization of
+Proposition~\ref{prop:universal} also respects this structure whenever the
+competing representation carries the corresponding generated probes.
+
+The chosen doctrine matters. On $H=\{0,1\}$, the single extent $\{0\}$
+and the two extents $\{0\},\{1\}$ both distinguish the states, but their
+FCA lattices have respectively two and four elements. Likewise the
+Sierpi\'nski and discrete topologies on two points have the same equality
+of observable points and different frames of opens. A bare quotient cannot
+replace these structures. This is closely related to complete abstractions
+and strong preservation in abstract interpretation \cite{RanzatoTapparo},
+and to behavioral semantics in coalgebra \cite{Rutten}.
+
+\subsection{Boolean definitions and disjunction}
+
+\begin{definition}
+An \emph{acted definable test} is an extent obtained from finitely many
+sets $U_m(E_t)$ by Boolean operations. This includes the constants $H$
+and $\varnothing$. A new experiment is \emph{behaviorally discriminating}
+relative to $\mathcal E$ if its extent is not
+$\equiv_{\mathcal E}$-saturated. Extensional definability is relative to the
+specified whole state domain $H$, not merely to a finite observed sample.
+\end{definition}
+
+\begin{theorem}[Boolean completion and its cost]\label{thm:boolean}
+Suppose $H$ is finite. Let
+\[
+ \mathcal B=\BA\{U_m(E):m\in M,\ E\in\mathcal E\}.
+\]
+Then
+\[
+ \mathcal B=\Sat(\equiv_{\mathcal E}),\qquad
+ \equiv_{\mathcal B}=\equiv_{\mathcal E},\qquad
+ \Ext(\mathcal B)=\mathcal B\cong\Pow(Q_{\mathcal E}),\qquad
+ K(\mathcal B)=\Fin(H).
+\]
+If $H\ne\varnothing$, the last complex has contractible realization.
+Thus a maximal Boolean language can preserve every behavioral distinction
+while changing both the FCA structure and the topology. In particular,
+logical conservativity does not imply native topological conservativity.
+\end{theorem}
+
+\begin{proof}
+Each generator is saturated, hence every Boolean combination is saturated.
+For $h\in H$ and each $k\not\equiv_{\mathcal E}h$, choose an acted
+predicate separating $h$ from $k$, and choose it or its complement to
+contain $h$. The finite conjunction of these choices is exactly the
+equivalence class of $h$. Every union of classes is a finite Boolean
+combination, proving the first equality. Saturated subsets are closed
+under all intersections and all action inverse images, proving the next
+two assertions. The universal test $H$ lies in $\mathcal B$, and therefore
+witnesses every finite face.
+\end{proof}
+
+\begin{theorem}[Finite disjunction alone removes Dowker holes]\label{thm:disjunction}
+For arbitrary $H$, let $V=\bigcup\mathcal E$ be the active object set and
+let
+\[
+ \mathcal E^\vee=
+ \left\{E_1\cup\cdots\cup E_k:k\ge1,\ E_i\in\mathcal E\right\}.
+\]
+Then $K(\mathcal E^\vee)=\Fin(V)$. If $V\ne\varnothing$, the completed
+object complex is contractible, as is its test-side Dowker complex.
+No truth constant, infinite disjunction, or finiteness assumption on
+$H$ is needed. The instantaneous row equivalence and the full residual
+equivalence are both unchanged by this extension.
+\end{theorem}
+
+\begin{proof}
+Every union is contained in $V$, so every face lies in $\Fin(V)$.
+For a finite nonempty $\sigma\subseteq V$, choose for each
+$h\in\sigma$ one old column $E_h$ containing it. The finite nonempty
+disjunction $\bigcup_{h\in\sigma}E_h$ witnesses $\sigma$ as a face.
+The empty face is present by convention. The full complex on nonempty
+$V$ is a cone at any chosen vertex, including when $V$ is infinite.
+Dowker's homotopy equivalence gives the test-side assertion
+\cite{BrunSalbu}. Pointwise unions preserve equality of current rows;
+unions of residual-saturated extents are residual-saturated, so
+Theorem~\ref{thm:criteria} gives the residual assertion.
+\end{proof}
+
+The theorem treats every generated compound predicate as an admissible new
+witness element of the incidence relation. It is not a claim that physically
+executing the compound test is free, nor that adding it to a geometric cover
+preserves good-cover hypotheses. Keeping formulas available for reasoning
+without adding them as witness columns is a different construction.
+
+Deleting universal extents afterward does not generally leave a
+disjunction-closed language: two proper extents can have universal union.
+Moreover this does not avoid the infinite-domain obstruction. For all
+singleton columns on $\mathbb N$, every finite disjunction is a proper
+finite subset, yet the resulting object complex is already the full
+infinite simplex. Nonempty conjunction completion preserves the object
+complex exactly; unrestricted finite disjunction completion generally
+does not, even without a universal test.
+
+\begin{remark}[Infinite domains]
+The equality between finitary Boolean definability and all saturated sets
+can fail when $H$ is infinite. For $H=\mathbb N$ with trivial action and
+all singleton tests, the residual relation is equality, but their
+finitary Boolean algebra consists only of finite and cofinite sets.
+Allowing arbitrary unions and intersections yields all saturated sets.
+Separately, the finite-column criterion for topology cannot be used for
+infinite $C$: for $E_n=\{0,\ldots,n\}$ every finite subset of $\mathbb N$
+has an old witness although no $E_n$ contains $\mathbb N$. Adding the
+universal test in that example leaves the object complex literally equal.
+\end{remark}
+
+For a labeled context, an implication $A\Rightarrow B$, with
+$A,B\subseteq T$, holds exactly when
+\[
+ \bigcap_{t\in A}E_t\subseteq\bigcap_{t\in B}E_t.
+\]
+Adding test labels while leaving $H$ and the old incidences fixed preserves
+all implications expressed solely in the old language, even when the new
+extent is \emph{not} closed and the FCA lattice changes. The enlarged
+language nevertheless has a different set of implications. This
+old-language conservativity is strictly weaker than equality of the extent
+closure and should not be substituted for it.
+
+\begin{proposition}[Rows and tests have different evidential effects]
+Let $H\subseteq\widehat H$ and extend all old tests to $\widehat H$ while
+preserving their values on $H$. Every old-language implication true on
+$\widehat H$ was true on $H$. A formerly true implication fails precisely
+when an added row satisfies its premises and violates a conclusion.
+In contrast, adding columns on fixed $H$ does not change the truth of any
+old-language implication.
+\end{proposition}
+\begin{proof}
+Validity is universal quantification over rows. Extending that domain can
+add counterexamples but cannot remove any. Adding labels does not change
+the domain or interpretation of an old formula.
+\end{proof}
+
+This gives a limited but exact co-generation discipline: derived
+characterizations generate labeled tests; new rows can refute their
+empirical implications; behaviorally discriminating tests split the
+residual state space. None of these mechanisms by itself selects a
+scientifically worthwhile experiment, supplies its physical realization,
+or establishes a law beyond the specified observation domain.
+
+\subsection{Positive formulas preserve an order rather than every concept}
+
+Define $h\preceq k$ when every old predicate true at $h$ is true at $k$.
+An added extent preserves this preorder exactly when it is upward closed;
+it preserves current row equivalence exactly when it is a union of current
+row classes. Closed FCA extents satisfy both conditions, but the converses
+fail. On a finite row-type quotient $Q$, all finite positive formulas with
+constants define exactly the upsets of this order. Their FCA closure is
+\[
+ c_{+}(X)=\bigcup_{h\in X}\cl_{\mathcal E}(\{h\}).
+\]
+Indeed each principal upset is a finite conjunction of predicates excluding
+the finitely many types not above it, and every upset is a finite union of
+principal upsets. Thus positive completion preserves the old FCA closure
+exactly when the old closure operator preserves arbitrary unions, including
+the empty union. Monotone
+syntax alone is insufficient for FCA preservation. Adding negation instead
+produces all subsets of a finite row-type quotient, as described next.
+
+A related punctured construction retains all nonempty proper upsets.
+For finite nonempty $Q$, let $\operatorname{Min}(Q)$ be its minimal
+elements. Its quotient object complex is
+\[
+ \bigcup_{m\in\operatorname{Min}(Q)}\Delta(Q\setminus\{m\}).
+\]
+Every proper upset misses a minimal element, and each displayed complement
+is itself an upset. A nonminimal element is a cone vertex, so this complex
+is contractible unless $Q$ is an antichain. For an antichain of size $q\ge2$
+it is the boundary sphere $S^{q-2}$; for $q=1$ it has empty realization.
+Duplicated rows retract onto representatives by the same contiguity argument
+used below. This punctured family is not generally disjunction-closed.
+
+\section{Boolean saturation and presentation dependent topology}
+\label{sec:saturation}
+
+Here $\sim$ denotes equality of the rows of a specified starting family
+$\mathcal P\subseteq\Pow(H)$, and $\pi:H\twoheadrightarrow Q=H/{\sim}$.
+It may be the instantaneous family $\mathcal E$, or the full future family
+$\mathcal O$; the choice must be stated. Set
+$\mathcal B=\BA(\mathcal P)$ and
+$\mathcal B^*=\mathcal B\setminus\{\varnothing,H\}$.
+All formulas are finitary. Removing constants \emph{by their extents} is
+stronger than omitting their symbols: $p\vee\neg p$ is still universal.
+Moreover $\mathcal B^*$ is usually not closed under the Boolean operations.
+
+\begin{lemma}[Finite type saturation]\label{lem:finite-types}
+If $Q$ is finite, even when $H$ and $\mathcal P$ are infinite,
+\[
+ \mathcal B=\{\pi^{-1}(S):S\subseteq Q\}.
+\]
+\end{lemma}
+\begin{proof}
+Boolean formulas are constant on row classes. For a class $q$, choose
+for each $r\ne q$ a literal in an old predicate that is true on $q$ and
+false on $r$. The finite conjunction defines exactly $q$; finite unions
+of these formulas define every subset of $Q$. The empty conjunction and
+disjunction handle the constants and the one-class case.
+\end{proof}
+
+\begin{theorem}[Punctured Boolean saturation]\label{thm:sphere}
+If $2\le q=|Q|<\infty$, then
+\[
+ K(\mathcal B^*)=
+ \{\sigma\in\Fin(H):\pi(\sigma)\ne Q\},
+ \qquad |K(\mathcal B^*)|\simeq S^{q-2}.
+\]
+There is a strong deformation retraction onto the boundary of the
+$(q-1)$-simplex carried by any chosen set of one representative per class.
+Arbitrarily many, including infinitely many, duplicate rows cause no change
+in this conclusion. The test-side Dowker complex has the same homotopy type.
+
+If $Q$ is infinite, $K(\mathcal B^*)=\Fin(H)$, so its realization is
+contractible. No infinitary Boolean operations are needed for this assertion.
+If $q=0$ or $q=1$, the punctured complex has empty realization.
+\end{theorem}
+\begin{proof}
+For finite $Q$, Lemma~\ref{lem:finite-types} shows that a nonempty finite
+$\sigma$ has a proper Boolean witness exactly when its represented types
+omit some member of $Q$. Let $L=\partial\Delta(Q)$, where
+$\Delta(Q)=\Fin(Q)$. Projection $r=\pi:K(\mathcal B^*)\to L$ is
+simplicial. A chosen representative section $s:Q\to H$ is simplicial
+in the opposite direction, and $rs=\id$. For every face $\sigma$,
+\[
+ \pi\bigl(\sigma\cup sr(\sigma)\bigr)=\pi(\sigma)\ne Q.
+\]
+Thus $sr$ is contiguous to the identity relative to the representative
+subcomplex. The straight-line homotopy on each common simplex gives the
+claimed deformation retraction, with the weak CW realization topology.
+The boundary of a $(q-1)$-simplex is $S^{q-2}$.
+
+Equivalently, the $q$ full simplices on
+$H\setminus\pi^{-1}(\{i\})$ cover $K(\mathcal B^*)$; every proper
+subfamily has contractible nonempty intersection and the intersection of
+all $q$ is empty. Their nerve is $\partial\Delta(Q)$. On representatives
+these coatom tests give the classical contranominal relation $(Q,Q,\ne)$.
+The other proper Boolean tests add no object faces.
+
+For infinite $Q$, take a nonempty finite
+$\sigma=\{h_1,\ldots,h_n\}$ and choose $y$ with a type outside
+$\pi(\sigma)$. For each $h_i$ choose a literal true on $h_i$ and false
+on $y$. Their finite disjunction contains $\sigma$ and excludes $y$;
+it is a nonempty proper Boolean extent. Hence every finite subset of $H$
+is a face. The full complex contracts to any chosen vertex.
+If $q=1$, the only Boolean extents are $\varnothing,H$; if $q=0$, then
+$H=\varnothing$. In both cases the punctured family has no active tests.
+Dowker duality gives the test-side statements \cite{BrunSalbu}.
+\end{proof}
+
+For $q=2$ the complex is the disjoint union of full simplices on the two
+blocks, so its reduced $H_0$ is $\mathbb Z$. For $q=1$ the abstract
+complex is $\{\varnothing\}$, sometimes denoted $S^{-1}$ under augmented
+homology conventions, with reduced $H_{-1}=\mathbb Z$. It is not a point.
+For $q=0$ no $S^{-2}$ assertion is made. Including truth gives a
+contractible full object simplex whenever $H\ne\varnothing$; false is a
+ghost test and has no effect on nonempty faces.
+
+\begin{proposition}[Permutation dynamics and singular dynamics]
+\label{prop:sign}
+Suppose $2\le q<\infty$ and $f:H\to H$ respects row equivalence,
+inducing $\sigma:Q\to Q$ with $\pi f=\sigma\pi$.
+If $\sigma$ is a permutation, $f$ induces a simplicial endomorphism of
+$K(\mathcal B^*)$, and its map on
+$\widetilde H_{q-2}(-;\mathbb Z)\cong\mathbb Z$ is multiplication by
+$\operatorname{sgn}(\sigma)$. If $\sigma$ is not bijective, $f$ still
+induces a simplicial map, but it is nullhomotopic and its reduced-homology
+maps are zero.
+\end{proposition}
+\begin{proof}
+A permutation preserves proper type supports, and the canonical projection
+intertwines $f$ with the permutation of $\partial\Delta(Q)$. For an
+ordering $Q=\{1,\ldots,q\}$, the fundamental cycle is
+$z=\partial[1,\ldots,q]$. Its image is
+$\partial[\sigma(1),\ldots,\sigma(q)]
+ =\operatorname{sgn}(\sigma)z$.
+If $\sigma$ is nonbijective, finiteness makes $\sigma(Q)$ a proper
+nonempty subset. The whole image of $f$ lies in the full simplex on
+$\pi^{-1}(\sigma(Q))$, so the induced map is nullhomotopic.
+\end{proof}
+
+No bijectivity of $f$ within duplicate blocks is needed. No equivariant
+representative section is asserted: equivariance of the canonical projection
+suffices for homology. Over characteristic two the sign is invisible.
+Predicate pullback has a separate condition. For a permutation,
+$f^{-1}(\pi^{-1}S)=\pi^{-1}(\sigma^{-1}S)$ preserves nonempty proper
+tests. For a nonbijective finite quotient self-map, it does not:
+$\sigma^{-1}(\sigma(Q))=Q$, while the preimage of a singleton outside
+the image is empty. Thus the punctured Boolean family need not be stable
+under operational pullback, despite existence of the covariant object map.
+
+\begin{proposition}[The map in a Boolean refinement]\label{prop:refinement}
+Let $\mathcal B_t\subseteq\mathcal B_u$ be finite Boolean subalgebras
+on the same fixed $H$, with $2\le q_t<q_u$ realized types. The canonical
+inclusion $K(\mathcal B_t^*)\hookrightarrow K(\mathcal B_u^*)$ is
+nullhomotopic and induces zero on every reduced homology group.
+\end{proposition}
+\begin{proof}
+Choose one object per old type. The old complex retracts onto the boundary
+on those representatives. Their $q_t$ new types form a proper subset of
+$Q_u$, so that entire representative boundary lies inside a simplex of the
+new complex and contracts there. Compose the old retraction homotopy with
+this contraction.
+\end{proof}
+
+The quotient map $p:Q_u\twoheadrightarrow Q_t$ points in the opposite
+direction and need not be simplicial on simplex boundaries. With old
+blocks $\{1,2\},\{3\}$ and new singleton blocks, the object complexes
+are respectively an edge disjoint from a point and a triangle boundary.
+Their forward inclusion kills reduced $H_0$. But $p$ sends the new edge
+$\{1,3\}$ onto all old types, a forbidden boundary face. The correct
+comparison above uses a chosen section $Q_t\to Q_u$, not the reverse
+quotient. Hence this is not a boundary functor on arbitrary surjections.
+
+\begin{proposition}[Boolean expressivity does not determine Dowker shape]
+Every finite simplicial complex $L$ with vertex set $Q$ can be represented
+by test extents consisting of its nonempty maximal faces together with all
+singletons. Its object Dowker complex is $L$, while its generated Boolean
+algebra is $\Pow(Q)$. Consequently raw Dowker homotopy type cannot be
+invariant under arbitrary Boolean definitional re-presentation.
+\end{proposition}
+\begin{proof}
+All chosen extents are faces and the maximal ones generate exactly $L$
+under downward closure. The singleton predicates generate $\Pow(Q)$.
+Taking different complexes on the same $Q$ proves the final assertion.
+\end{proof}
+
+This does not make relational topology useless. It shows that the
+\emph{designated witness family} is part of what it measures. For finite
+$Q$, the Stone space of $\Pow(Q)$ is the discrete $q$-point space, not
+$S^{q-2}$; these are different constructions \cite{Stone}. Erdmann's
+literal-bit construction gives $S^{k-1}$ from $k$ independent bits with
+all $2^k$ row types, whereas full proper Boolean saturation here gives
+$S^{2^k-2}$ \cite[Section 8]{Erdmann}. The difference records the
+chosen test family, not newly discovered geometry.
+
+\section{Iterated and interacting test generation}
+
+Let $\Gamma:\Pow(\Pow(H))\to\Pow(\Pow(H))$ be monotone and extensive.
+It can represent a chosen grammar of test constructors together with
+specified experimental operations. Put
+\[
+ \mathcal E_0=\mathcal E,\qquad
+ \mathcal E_{n+1}=\Gamma(\mathcal E_n).
+\]
+No assumption that the generators act independently is made.
+
+\begin{theorem}[Stable generation and first escape]\label{thm:iteration}
+If $|H|=r<\infty$, the sequence stabilizes at a least
+$\Gamma$-fixed family $\mathcal E_\infty$ containing $\mathcal E$ after
+at most $2^r-|\mathcal E|$ strict stages. The following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item $\mathcal E_\infty$ preserves the original FCA closure, residual
+      equivalence, and object complex.
+\item $\mathcal E_\infty\subseteq\Safe(\mathcal E)$.
+\item Every test produced at every stage belongs to
+      $\Safe(\mathcal E)$.
+\end{enumerate}
+If a structure changes at some stage, no later additive stage restores
+literal equality with that original structure. The first failing stage
+has a certificate of Proposition~\ref{prop:certificates} relative to the
+original family.
+\end{theorem}
+
+\begin{proof}
+There are $2^r$ possible extents; every strict stage adds at least one.
+Monotonicity proves by induction that every fixed family containing
+$\mathcal E$ contains every $\mathcal E_n$, establishing leastness.
+The three equivalent conditions follow from Theorem~\ref{thm:criteria}.
+Under addition, extent families and complexes can only enlarge, while
+residual equivalence relations can only shrink. A previously changed
+structure therefore cannot revert by further addition.
+\end{proof}
+
+\begin{remark}[Interactions matter]
+It is insufficient to check only the initial generators and ignore their
+compositions. On $H=\{a,b\}$, the tests $\{a\}$ and $\{b\}$ are already
+present and harmless. A grammar admitting their union generates $H$.
+It preserves the FCA extent closure and residual states but changes two
+isolated vertices into an edge. All generated tests, not only the seeds,
+must be checked. Conversely, nonempty intersections of members of
+$\Safe(\mathcal E)$ stay in $\Safe(\mathcal E)$, since they remain closed
+and are contained in one of the input extents.
+\end{remark}
+
+For infinite $H$, use transfinite stages with unions at limits to obtain
+the least fixed point of an arbitrary monotone extensive $\Gamma$ on
+the set $\Pow(\Pow(H))$. The same exact final-family criteria and
+irreversibility statements apply, but there is no finite stabilization
+bound. For finitary constructors, the union of the finite stages is already
+closed under those constructors. Infinitary constructors need not have
+this property. Neither case supplies finite termination of discovery on
+an expanding, unknown state domain.
+
+\section{Action laws and their exact domains}
+
+\subsection{The closure lattice}
+Write $L=\Ext(\mathcal E)$ and define
+\[
+ M_L=\{m\in M:U_m(L)\subseteq L\}.
+\]
+\begin{theorem}[Exact lattice action criterion]\label{thm:latticeaction}
+For $m\in M$, the following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item $m\in M_L$.
+\item $U_m(E)\in L$ for every $E\in\mathcal E$.
+\item $U_m|_L$ is a well-defined map $L\to L$ preserving arbitrary meets.
+\end{enumerate}
+The set $M_L$ is a submonoid. For $m\in M_L$, the map
+\[
+ F_m:L\longrightarrow L,\qquad F_m(A)=\cl_{\mathcal E}(\tau_m(A))
+\]
+is left adjoint to $U_m|_L$. On this submonoid,
+\[
+ U_{mn}=U_mU_n,\qquad F_{mn}=F_nF_m,\qquad U_1=F_1=\id.
+\]
+For arbitrary $m$, the largest subset of $L$ on which the unmodified
+inverse image takes values in $L$ is
+\[
+ D_m^L=\{A\in L:U_m(A)\in L\}.
+\]
+It is closed under arbitrary intersections. The closed forward map $F_m$
+is always defined, but in general only satisfies
+$F_{mn}(A)\subseteq F_n(F_m(A))$.
+\end{theorem}
+
+\begin{proof}
+Inverse images preserve arbitrary intersections and $H$, so checking the
+column generators suffices. The formula $U_{mn}=U_mU_n$ proves the
+submonoid assertion. For closed $A,B$,
+\[
+ F_m(A)\subseteq B\ \Longleftrightarrow\
+ \tau_m(A)\subseteq B\ \Longleftrightarrow\
+ A\subseteq U_m(B),
+\]
+proving the adjunction. Uniqueness of left adjoints proves the composition
+identity. The domain assertion follows from the same intersection law.
+Finally $\tau_m(A)\subseteq\cl_{\mathcal E}(\tau_m(A))$ implies the
+stated forward inequality after applying $\tau_n$ and closure.
+\end{proof}
+
+\subsection{The object complex}
+Put $K=K(\mathcal E)$ and
+\[
+ D_m^K=\{\sigma\in K:\tau_m(\sigma)\in K\},\qquad
+ M_K=\{m:D_m^K=K\}.
+\]
+\begin{proposition}[Exact object action domain]\label{prop:objectaction}
+$D_m^K$ is the maximal subcomplex on which the vertex function $\tau_m$
+defines a simplicial map to $K$. The set $M_K$ is a submonoid.
+For arbitrary $H$,
+\[
+ m\in M_K\quad\Longleftrightarrow\quad
+ \forall E\in\mathcal E\ \forall\sigma\in\Fin(E)\quad
+ \tau_m(\sigma)\in K.
+\]
+If $H$ is finite, this is equivalent to requiring that, for every old
+column $E$, its image $\tau_m(E)$ is empty or is contained in an old
+column. On partial domains,
+\[
+ \{\sigma\in D_m^K:\tau_m(\sigma)\in D_n^K\}
+ \subseteq D_{mn}^K,
+\]
+and the two-step map equals $\tau_{mn}$ there. Equality of these domains
+is not asserted: an intermediate image can leave $K$ and subsequently
+return.
+\end{proposition}
+\begin{proof}
+Faces and their images are closed under taking subsets. Every face is
+contained in a column, and every finite subset of a column is a face.
+This proves the domain and criterion statements. Composition of total
+simplicial maps gives the submonoid assertion; direct substitution proves
+the partial composition claim.
+\end{proof}
+
+\subsection{Chu identities and generated observations}
+Suppose a test translation $\rho_m:T\to T$ satisfies the Chu identity
+\[
+ hmRt\quad\Longleftrightarrow\quad hR\rho_m(t),
+ \qquad\text{equivalently}\qquad E_{\rho_m(t)}=U_m(E_t).
+\tag{Chu}
+\]
+This implies $m\in M_L$, but it does not by itself imply $m\in M_K$.
+On the test complex its exact domain is
+\[
+ D_m^N=\{\varnothing\}\cup
+ \left\{\tau\in N(T,R):
+       \left(\bigcap_{t\in\tau}E_t\right)\cap\tau_m(H)\ne\varnothing\right\}.
+\]
+Indeed $\bigcap_{t\in\tau}E_{\rho_m(t)}
+=\tau_m^{-1}(\bigcap_{t\in\tau}E_t)$, and its nonemptiness is exactly
+the displayed condition. In particular surjectivity of $\tau_m$ suffices
+for a total test-side simplicial map.
+
+\begin{proposition}[Exact partial composition for Chu actions]
+Suppose Chu translations exist for $m$ and $n$. The object domains then
+satisfy the stronger equality
+\[
+ D_{mn}^K=\{\sigma\in D_m^K:\tau_m(\sigma)\in D_n^K\}.
+\]
+If the test labels also satisfy $\rho_{mn}=\rho_m\circ\rho_n$, their
+domains satisfy
+\[
+ D_{mn}^N=\{\gamma\in D_n^N:\rho_n(\gamma)\in D_m^N\}.
+\]
+The respective partial maps compose exactly on these domains.
+\end{proposition}
+\begin{proof}
+Only the reverse domain inclusions require proof. If a nonempty final
+object image $\tau_n\tau_m(\sigma)$ lies in a column $E_t$, then the
+intermediate image $\tau_m(\sigma)$ lies in the old column
+$U_n(E_t)=E_{\rho_n(t)}$. Thus it was already a face. Empty faces present
+no issue. On the test side, if $h$ witnesses all tests in
+$\rho_m\rho_n(\gamma)$, then $hm$ witnesses all tests in
+$\rho_n(\gamma)$, by the Chu identity. The state and label composition
+laws then give equality of the maps on their stated domains.
+\end{proof}
+
+\begin{example}[A Chu action need not act on either whole nerve]
+Let $H=\{0,1,2\}$, and let an idempotent monoid element $a$ act by
+$\tau_a(0)=\tau_a(1)=0$, $\tau_a(2)=2$. Use the columns
+\[
+ A=\{0,1\},\qquad B=\{2\},\qquad C=\{1,2\}.
+\]
+There is no universal column and every state occurs in a column.
+The inverse images are $U_a(A)=A$, $U_a(B)=B$, $U_a(C)=B$, so these
+define an idempotent Chu translation. Nevertheless the object edge
+$\{1,2\}$ maps to the nonface $\{0,2\}$. On the test side,
+$\{A,C\}$ is an edge with witness $1$, while its image $\{A,B\}$ is
+not a face. The closure-lattice action is total; both nerve actions require
+their stated partial domains.
+\end{example}
+
+\begin{theorem}[Action-compatible common completion]\label{thm:safeaction}
+Assume $H$ is finite and nonempty. Set $S=\Safe(\mathcal E)$ and
+\[
+ M_S=\{m\in M:U_m(S)\subseteq S\}.
+\]
+Then $M_S$ is a submonoid and
+\[
+ m\in M_S\quad\Longleftrightarrow\quad
+ U_m(E)\in S\quad\text{for every }E\in\mathcal E.
+\]
+The extensional completed language $S$ carries canonical test translations
+$C\mapsto U_m(C)$ for $m\in M_S$, satisfying the Chu identity and the
+exact composition law. Every preexisting Chu translation preserves this
+completion. If $H\notin\mathcal E$, the completion still has no universal
+test. The original residual quotient action, lattice action domains
+$D_m^L$, and object-complex action domains $D_m^K$ are literally unchanged
+by this completion.
+\end{theorem}
+
+\begin{proof}
+Nonempty intersections of members of $S$ belong to $S$. If there is no
+universal column, Theorem~\ref{thm:maximal} expresses each member of $S$
+as a nonempty intersection of original columns. Inverse image commutes
+with this intersection, so the generator criterion suffices. If there is
+a universal column, the only additional case is $U_m(H)=H\in S$.
+Necessity is immediate. Composition of inverse images proves the
+submonoid and action laws. A preexisting Chu translation sends every
+column to another old column, hence satisfies the criterion. The last
+statement follows from equality of $L$, $K$, the residual relation, and
+the underlying state action, which are all the data defining those domains.
+\end{proof}
+
+This action closure must be checked rather than silently imposed.
+Adjoining all inverse-image tests for arbitrary operations can preserve
+the residual quotient while changing the lattice or complex. Conversely,
+a total lattice action or a total simplicial action is a separate
+condition; neither follows from the other's definition.
+
+
+\begin{proposition}[Proper closed tests on arbitrary domains]
+\label{prop:proper-action}
+Let $H\ne\varnothing$, $L=\Ext(\mathcal E)$, and assume $u^{-1}(L)\subseteq L$.
+Then the family $L\setminus\{H\}$ is stable under $u^{-1}$ if and only if
+\[
+ \cl_{\mathcal E}(u(H))=H.
+\]
+In particular, if no old test is universal and $u$ has a Chu translation
+on the old tests, all proper closed extents form a pullback-stable language,
+even for infinite $H$ and infinite defining intersections.
+\end{proposition}
+\begin{proof}
+For closed $C$, the equality $u^{-1}(C)=H$ is equivalent to $u(H)\subseteq C$.
+No proper closed set contains $u(H)$ exactly when its closure is $H$.
+The assumed closed-set stability supplies the other required condition.
+Under a Chu translation, a proper closed extent $C$ has a nonempty
+intersection representation by old columns. Its preimage is closed and is
+contained in the preimage of any selected factor, itself an old proper
+column. It is therefore proper.
+\end{proof}
+
+In this arbitrary-domain assertion, completion by all proper closed extents
+need not be the largest simultaneous completion: on an infinite domain the
+top extent may already have every finite subset witnessed without itself
+being an old column. The exact largest family remains
+Theorem~\ref{thm:maximal}. A label-preserving implementation may use
+$T\sqcup(L\setminus\{H\})$, retaining old translations on $T$ and using
+inverse image on the new extent labels. The monoid law on original labels
+is separate from equality of their extents: synonymous labels may otherwise
+hide a failure of the label action law.
+
+\begin{proposition}[Preservation of existing total test actions]
+Suppose $H\ne\varnothing$, no old column equals $H$, and the
+instantaneous row quotient $H/{\sim_0}$ is finite. Adjoin all proper
+closed extents as tests. If an old Chu translation $\rho_m$ acts
+simplicially on the whole old test complex, its canonical inverse-image
+translation acts simplicially on the whole completed test complex.
+\end{proposition}
+\begin{proof}
+Every proper closed extent is an intersection of finitely many old
+columns: choose, for each excluded row class, one factor in a defining
+intersection that excludes it. There are finitely many classes, and
+properness makes the chosen family nonempty. Any nonempty intersection
+of finitely many completed test extents is consequently a nonempty
+finite intersection of old columns. Totality of the old test-side map
+says that the inverse image of such an intersection is nonempty. This
+is exactly the face criterion for the completed test-side map.
+The completed inverse-image tests themselves are proper closed extents
+by the Chu identity and closure under nonempty intersections.
+\end{proof}
+
+The finite-row-quotient assumption concerns this preservation of total
+test-side actions, not the unconditional preservation of the object
+complex or its partial domains. For an infinite defining conjunction,
+nonemptiness of every finite inverse-image intersection need not imply
+nonemptiness of the full inverse-image intersection. No equivariance of
+the homotopy retraction in the next section follows from this proposition.
+
+
+\section{Literal complexes and canonical homotopy preservation}
+
+In this section abbreviate $K=K(\mathcal E)$ and $N=N(T,R)$;
+superscript $+$ denotes the corresponding complexes after adjoining the
+specified new labeled tests. All abstract simplicial realizations use the
+weak CW topology.
+A newly labeled nonempty test always adds a test-side vertex, even when its
+extent is a duplicate. Thus exact equality of the labeled test complexes
+holds precisely when every added extent is empty. This is stronger than,
+and different from, exact equality of the object complexes.
+
+
+\begin{theorem}[Labeled test-side homotopy under domination]\label{thm:testnerve}
+Adjoin labeled tests $g\in G$ of extents $C_g$. Suppose every nonempty
+$C_g$ is contained in some old extent $E_{d(g)}$. Then the inclusion
+\[
+ i:N(T,R)\longrightarrow N(T\sqcup G,R^+)
+\]
+is a homotopy equivalence on geometric realizations. An explicit simplicial
+retraction sends each old vertex to itself and each new vertex $g$ to
+$d(g)$. Thus every object-complex-preserving extension on finite $H$
+has this property. The test-side complex can have new vertices and faces;
+it is not claimed to be literally equal to the old complex.
+\end{theorem}
+\begin{proof}
+An added empty-extent label is not a vertex and needs no vertex image.
+Choose $d(g)$ for the other labels. A witness for any finite collection of
+old and new tests also witnesses its image under the proposed retraction,
+because each replacement extent contains the original one. This proves
+simpliciality. The retraction $r$ satisfies $ri=\id$. For every simplex
+$\tau$, the union $\tau\cup ir(\tau)$ has the same witness, so $ir$ is
+contiguous to the identity. Contiguous simplicial maps have homotopic
+realizations.
+\end{proof}
+
+The choices $d(g)$ need not commute with a Chu translation. The theorem
+does \emph{not} claim an equivariant retraction or an equivariant homotopy.
+For infinite $H$, equality of the object complex supplies only the
+finite-subset criterion of Theorem~\ref{thm:criteria}; a dominating old
+column need not exist. The functorial Dowker theorem still compares the
+two test complexes up to homotopy through the unchanged object complex
+\cite{BrunSalbu}, but this particular vertex-choice retraction is not then
+available in general.
+
+
+\begin{corollary}[Exact history preservation always preserves nerve homotopy]
+\label{gt:general-homotopy}
+For arbitrary sets, if the object-complex criterion in Theorem~\ref{thm:criteria} holds, the
+canonical inclusion $N\hookrightarrow N^+$ is a homotopy equivalence,
+even if no global dominators $t_j$ exist. More generally the canonical
+inclusion $K\hookrightarrow K^+$ is a homotopy equivalence if and only if
+the canonical inclusion $N\hookrightarrow N^+$ is one.
+\end{corollary}
+\begin{proof}
+The context inclusion $(\mathrm{id}_H,T\hookrightarrow T\sqcup J)$ is
+an incidence-preserving morphism. Functorial Dowker duality gives a
+commutative square in the homotopy category with these two inclusions
+as its horizontal arrows and homotopy equivalences as its vertical
+arrows. Therefore either horizontal arrow is invertible if and only
+if the other is. This version for arbitrary sets and finite simplices
+is supplied, for example, by the strictly natural rectangle-complex
+span in Brun--Salbu~\cite[Theorems 5.1--5.2]{BrunSalbu}.
+\end{proof}
+
+
+\subsection{Dominated completion on exact sequential action domains}
+
+The domination proof can preserve more than an isolated homotopy type.
+Suppose the incidence presentation carries a history operation
+$u:H\to H$ and a test operation $v:T\to T$ satisfying
+\[
+ E_{v(t)}=u^{-1}(E_t).
+\]
+Assume the extended vocabulary $T^+=T\sqcup J$ carries an operation
+$v^+:T^+\to T^+$ extending $v$ and satisfying the same inverse-image
+law for every old or new extent. Write $E_e$ for the extent of any label
+$e\in T^+$, and $D_j=E_j$ for a new label $j\in J$. For a subset
+$S\subseteq H$, let
+$N_S$ and $N_S^+$ be the two test nerves formed using witnesses only
+in $S$. The exact domain of the test operation is
+$N_{u(H)}$, respectively $N^+_{u(H)}$: a face is in this domain
+exactly when all its pulled-back tests have a common witness.
+
+\begin{theorem}[Domainwise comparison and homotopy commutation]
+\label{gt:action-domains}
+Under the domination hypotheses of Theorem~\ref{thm:testnerve}, the
+chosen retraction $r:N^+\to N$ restricts, for every $S\subseteq H$,
+to a retraction $r_S:N_S^+\to N_S$ contiguous to the identity after
+inclusion. In particular it is an equivalence on the exact $u$-domains.
+The two simplicial maps
+\[
+ r\,v^+,\quad v\,r_{u(H)}:N^+_{u(H)}\longrightarrow N
+\]
+are contiguous, relative to the old domain $N_{u(H)}$.
+The forward inclusions commute with the test actions strictly. Thus
+these inclusions and their domainwise homotopy inverses commute with
+the actions in the homotopy category.
+\end{theorem}
+\begin{proof}
+Intersecting $D_j\subseteq E_{t_j}$ with $S$ preserves the containment.
+A new vertex actually present in $N_S^+$ has a witness in $D_j\cap S$,
+so its chosen old dominator is actually present in $N_S$. The proof of
+Theorem~\ref{thm:testnerve} works with that same witness in $S$, including
+when the restricted nerves have no vertices.
+
+Now let $\tau$ be a nonempty face of $N^+_{u(H)}$. Choose $x\in H$
+with $u(x)$ lying in every extent indexed by $\tau$. For every
+$e\in\tau$, inverse-image compatibility gives $x\in E_{v^+(e)}$.
+The chosen retraction either fixes this test or replaces it by a
+dominating old extent, so $x\in E_{r(v^+(e))}$. On the other hand,
+$E_e\subseteq E_{r(e)}$ gives $u(x)\in E_{r(e)}$, and therefore
+$x\in E_{v(r(e))}$. Thus $x$ witnesses the union of the two image
+simplices, which proves contiguity. All maps are well-defined on
+actual vertices: the same argument shows that their image extents
+are nonempty. On old tests both formulas equal $v$, so the homotopy
+is relative to the old domain. Strict commutation of forward
+inclusions follows from the assumption that $v^+$ extends $v$.
+\end{proof}
+
+Apply this theorem separately to every word $w$ in an acted context,
+using $u_w$ and its contravariant test operation $v_w$. The domination
+choices can remain fixed, and the argument supplies equivalences on
+every exact word-domain and commuting squares in the homotopy
+category. No unproved strictly equivariant retraction or system of
+higher coherent homotopies is asserted. If history-side partial
+operations use the domains $\{\sigma\in K:u_w(\sigma)\in K\}$,
+then equality $K^+=K$ preserves those domains and the maps on them
+literally, since the history operations themselves are unchanged.
+
+
+\subsection{An exact criterion for one additional test}
+
+The next theorem strengthens the common sufficient test that the
+attachment intersection be contractible. It is a direct CW attachment
+calculation using ordinary integral homology, van Kampen, covering spaces,
+and Whitehead's theorem. No novelty is claimed. It concerns the
+\emph{canonical inclusion}, not merely an abstract coincidence of the
+two spaces' homotopy types.
+
+\begin{theorem}[Exact one-simplex attachment criterion]
+\label{gt:one-test}
+Let $K$ be a finite simplicial complex, with possibly some unused ambient
+vertices, and let $D$ be a finite nonempty subset of that ambient vertex
+set. Put $B=\Delta(D)$, $K^+=K\cup B$, and $A=K\cap B=K[D]$.
+The inclusion $|K|\hookrightarrow|K^+|$ is a homotopy equivalence if and
+only if both of the following hold:
+\begin{enumerate}
+\item $|A|$ is nonempty and integrally acyclic:
+$\widetilde H_n(|A|;\mathbb Z)=0$ for every $n\geq0$.
+\item For a basepoint $a\in|A|$, the inclusion-induced homomorphism
+\[
+ \pi_1(|A|,a)\longrightarrow\pi_1(|K|,a)
+\]
+has trivial image.
+\end{enumerate}
+Item 1 implies that $|A|$ is path connected, so the choice of basepoint
+does not affect triviality of the image. Only the component of $|K|$
+containing $A$ is involved; all other components are unchanged.
+
+The identical assertion holds without finiteness assumptions for
+abstract simplicial complexes with finite simplices and weak CW
+realizations. It also holds for a union $X\cup_A B$ of CW subcomplexes
+when $B$ is any nonempty contractible CW complex.
+\end{theorem}
+\begin{proof}
+Spaces are written in place of their realizations inside the proof. Simplicial
+subcomplexes are CW subcomplexes, so their inclusions are cofibrations.
+
+\emph{Necessity.} If $A$ has no points, the newly attached nonempty
+simplex is a disjoint additional component. The inclusion cannot be a
+homotopy equivalence. Otherwise the relative simplicial chain complexes
+are naturally isomorphic:
+\[
+ C_*(K^+,K;\mathbb Z)\cong C_*(B,A;\mathbb Z).
+\]
+Indeed, on both sides the basis in each degree consists of exactly the
+faces of $B$ not already in $A$, with the same relative boundary maps.
+Since $B$ is contractible and $A\neq\varnothing$, the relative long
+exact sequence gives, for every $n\geq1$,
+\begin{equation}\label{gt:relative-homology}
+ H_n(K^+,K;\mathbb Z)\cong H_n(B,A;\mathbb Z)
+                       \cong\widetilde H_{n-1}(A;\mathbb Z).
+\end{equation}
+A homotopy equivalence has zero relative homology, so $A$ is acyclic.
+In particular its reduced zeroth homology vanishes, making the nonempty
+CW complex $A$ path connected. The composite
+$A\hookrightarrow K\hookrightarrow K^+$ factors through the
+contractible complex $B$, so it induces the zero homomorphism on
+$\pi_1$. Since $\pi_1(K,a)\to\pi_1(K^+,a)$ is an isomorphism,
+the homomorphism $\pi_1(A,a)\to\pi_1(K,a)$ must already have been zero.
+
+\emph{Sufficiency: components and fundamental groups.} Let $X$ be the
+component of $K$ containing the connected nonempty $A$, and let
+$Y=X\cup_A B$. The other components of $K$ are left unchanged, so it
+suffices to prove $X\hookrightarrow Y$ a homotopy equivalence.
+The van Kampen theorem for a union of connected CW subcomplexes gives
+\[
+ \pi_1(Y,a)\cong\pi_1(X,a)
+       /\langle\!\langle\operatorname{im}\pi_1(A,a)\rangle\!\rangle.
+\]
+Here $B$ has trivial fundamental group. By item 2 the normal subgroup
+is trivial, hence $\pi_1(X,a)\to\pi_1(Y,a)$ is an isomorphism.
+
+\emph{Universal-cover calculation.} Put $G=\pi_1(Y,a)$ and take a
+universal cover $p:\widetilde Y\to Y$. The inverse image
+$\widetilde X=p^{-1}(X)$ is connected because $\pi_1(X)\to G$ is
+surjective, and simply connected because that homomorphism is injective.
+Thus $\widetilde X$ is the universal cover of $X$.
+After fixing a lift of $a$, the inverse image of the simply connected
+$B$ is a disjoint union of copies $B_g$ indexed by $G$. Each copy
+meets $\widetilde X$ in a copy
+$A_g$ of $A$: the restriction of $p$ to $B_g$ is a homeomorphism onto
+$B$, and its inverse image of $A$ is exactly this intersection. All
+cells of $\widetilde Y\setminus\widetilde X$ lie in these copies.
+Therefore
+\begin{equation}\label{gt:cover-relative}
+ C_*^{\mathrm{cell}}(\widetilde Y,\widetilde X;\mathbb Z)
+       \cong\bigoplus_{g\in G}C_*^{\mathrm{cell}}(B,A;\mathbb Z).
+\end{equation}
+Every summand is acyclic by item 1 and the relative long exact sequence.
+Direct sums of chain complexes preserve this acyclicity. Hence
+$\widetilde X\hookrightarrow\widetilde Y$ induces isomorphisms on
+all integral homology groups. Both spaces are simply connected CW
+complexes; the homological form of Whitehead's theorem makes this lift
+a homotopy equivalence. Covering maps identify higher homotopy groups,
+so $X\hookrightarrow Y$ induces isomorphisms on $\pi_n$ for $n\geq2$,
+as well as on $\pi_1$ and components. Whitehead's theorem now proves
+the claimed homotopy equivalence. The standard covering and Whitehead
+facts used here are in Hatcher~\cite[Sections 1.3 and 4.1,
+Corollary 4.33]{Hatcher}.
+
+No step uses finiteness except to avoid infinite chain notation. For
+arbitrary CW subcomplexes the relative cellular chain argument and the
+direct sum in \eqref{gt:cover-relative} are the same. In the stated
+simplicial setting, all realizations and covering spaces are CW spaces.
+\end{proof}
+
+\begin{corollary}[Useful sufficient and insufficient checks]
+\label{gt:checks}
+For one nonempty added test with extent $D$:
+\begin{enumerate}
+\item If $|K[D]|$ is nonempty and contractible, its addition preserves
+the canonical homotopy type. In particular this holds if $K[D]$ has a
+cone vertex or is certified collapsible.
+\item Integral acyclicity of $K[D]$ is necessary but not sufficient
+in general. It is sufficient when $K[D]$ lies in a simply connected
+component of $K$.
+\item If $K[D]$ is disconnected, or has any nonzero reduced integral
+homology, the canonical inclusion cannot be a homotopy equivalence.
+Nonzero rational homology is an easy obstruction, but zero rational
+homology alone is insufficient because it can miss torsion.
+\end{enumerate}
+\end{corollary}
+
+There is also a direct test-side expression. For a single new test $j$
+of extent $D$, its old-vertex link is
+\[
+ L_D=\{\varnothing\}\cup
+ \{\varnothing\neq\tau\subseteq T:\tau\text{ finite and }
+                         D\cap\bigcap_{t\in\tau}E_t\neq\varnothing\}.
+\]
+Thus $N^+=N\cup(j*L_D)$ and $N\cap(j*L_D)=L_D$.
+Theorem~\ref{gt:one-test}, in its contractible-CW version, applies with
+$L_D$ in place of $A$. The restricted incidence relation on $D\times T$
+has history complex $K[D]$ and test complex $L_D$, so Dowker duality
+identifies their homotopy types. Naturality relates the attachment maps
+to the old complexes, not merely these two abstract spaces. This explains
+why the exact criterion agrees on both sides.
+
+\begin{example}[Why the fundamental-group clause is needed]
+There is a finite connected acyclic simplicial complex $A_0$ with
+$\pi_1(A_0)\neq1$. One explicit finite CW model starts with two loops
+$a,b$ and attaches two $2$-cells with words $a^5b^{-3}$ and
+$b^3(ab)^{-2}$. The cellular boundary matrix is
+\[
+ \begin{pmatrix}5&-2\\-3&1\end{pmatrix},\qquad\det=-1,
+\]
+so reduced integral homology vanishes. The fundamental group is
+nontrivial: send $a$ to $(1\ 2\ 3\ 4\ 5)$ and $b$ to $(1\ 4\ 2)$
+in the alternating group on five letters. Both relations hold because
+$a^5=b^3=(ab)^2=1$, while the image of $a$ is nonidentity. The standard
+finite simplicial replacement of a finite CW complex gives $A_0$ with
+these same homotopy invariants. This model is the classical acyclic
+example discussed by Hatcher~\cite[Example 2.38 and Theorem 2C.5]{Hatcher}.
+
+Take old test extents to be the maximal faces of $A_0$, so that the
+old history complex is exactly $K=A_0$. Add truth on its finite vertex
+set. The new history complex is a full simplex. Homology is preserved,
+but homotopy is not: the nontrivial fundamental group is killed. In
+Theorem~\ref{gt:one-test}, the map on $\pi_1(A_0)$ is the identity,
+not the trivial homomorphism.
+
+Conversely let $K=v*A_0$ be a cone, put $D=V(A_0)$, and again use the
+maximal faces of $K$ as old extents. Then $K[D]=A_0$ is not contractible,
+but $K$ is simply connected and $A_0$ is acyclic. The theorem proves
+that adjoining $D$ is a homotopy equivalence. Hence contractibility of
+the attachment intersection is sufficient, but genuinely not necessary.
+\end{example}
+
+\subsection{Several tests: safe stages, exact global tests, and cautions}
+
+For a finite ordered list $D_1,\ldots,D_m$, put
+$K_0=K$ and $K_i=K_{i-1}\cup\Delta(D_i)$. At stage $i$, use the
+\emph{current} intersection $A_i=K_{i-1}[D_i]$, not just the
+intersection with $K_0$. If every nonempty attachment passes
+Theorem~\ref{gt:one-test}, then $K_0\hookrightarrow K_m$ and
+$N_0\hookrightarrow N_m$ are homotopy equivalences. For arbitrary
+families dominated by old extents, Theorem~\ref{thm:testnerve} already
+provides a single simultaneous certificate and needs no ordering.
+
+Stagewise success is sufficient but not necessary for success of the
+final inclusion in a chosen order. For instance, start with the path
+$\{1,2\}\cup\{2,3\}$, first adjoin $D_1=\{1,3\}$, then
+$D_2=\{1,2,3\}$. The first stage creates a circle and the second
+fills it, so neither stage inclusion is a homotopy equivalence; the
+initial-to-final inclusion is nevertheless an equivalence between
+contractible spaces. This also shows why one must test the map and
+the intended stopping stage rather than only count the added columns.
+
+For the general finite final inclusion $j:|K|\hookrightarrow|K^+|$,
+an exact global criterion is that $j$ be bijective on components, induce
+isomorphisms on fundamental groups of corresponding components, and
+that the induced maps between their universal covers be integral
+homology isomorphisms. Necessity follows from lifting a homotopy
+equivalence, and sufficiency is the universal-cover Whitehead argument
+above. Unlike the one-simplex case, these cover-relative chain complexes
+need not split into independent attachments. This is a characterization,
+not an efficient general algorithm: neither arbitrary fundamental-group
+questions nor arbitrary homotopy equivalence should be advertised as
+routine finite computation.
+
+For finite incidence tables, exact preservation \emph{is} elementary:
+compare each nonempty new extent with the old extents and look for a
+superset. With $n=|H|$, $m=|T|$, and $q$ added tests, a direct bit-table
+implementation needs at most $O(nmq)$ Boolean comparisons. A successful
+comparison supplies the explicit retraction witness as well as the
+equality certificate; enumeration of all simplices is unnecessary.
+
+\subsection{Observation covers and the meaning of a topology change}
+
+Suppose now that $H$ is a sample in a space $Z$, with tests representing
+membership in subsets $U_t\subseteq Z$, so $E_t=H\cap U_t$.
+The sample nerve has face $\tau$ precisely when
+$H\cap\bigcap_{t\in\tau}U_t\neq\varnothing$. It equals the true
+cover nerve exactly when every nonempty finite cover intersection has
+a sample witness. Formula generation alone does not prove that sampling
+condition, and finite-sample identities do not prove identities on all
+of $Z$.
+
+\begin{proposition}[A cover-preserving interpretation]
+\label{gt:cover}
+Let $Z$ be paracompact Hausdorff and let $\mathcal U$ be a finite good
+open cover: every nonempty finite intersection of members is
+contractible. Let $\mathcal V$ be a finite family of additional open
+subsets of $Z$. If $\mathcal U\cup\mathcal V$ is also a good cover,
+then the canonical nerve inclusion
+\[
+ |N(\mathcal U)|\hookrightarrow|N(\mathcal U\cup\mathcal V)|
+\]
+is a homotopy equivalence. In particular one may adjoin any family of
+nonempty finite intersections of original cover elements. If a sample
+is nerve-complete for the enlarged cover, the same conclusion applies
+to its observed test nerve.
+\end{proposition}
+\begin{proof}
+The cover inclusion is a morphism of covers over the identity map of
+$Z$. The functorial good-cover nerve theorem identifies the induced
+nerve map, up to homotopy equivalences on both sides, with
+$\mathrm{id}_Z$. Therefore it is a homotopy equivalence; a precise
+natural-span treatment is in
+Bauer--Kerber--Roll--Rolle~\cite{BauerEtAl}. Adding finite intersections
+preserves openness, does not change the union, and makes every new
+finite intersection itself an intersection of original members, hence
+empty or contractible. Nerve-completeness identifies the observed
+complexes with the true nerves. In the finite-intersection case the
+combinatorial domination theorem independently proves the inclusion
+equivalence without any good-cover assumptions.
+\end{proof}
+
+Arbitrary unions behave differently. Even when the original cover is
+good, a union may be noncontractible or may have disconnected or
+noncontractible intersections with other members. Adding $Z$ itself
+always cones the nerve; if $Z$ is noncontractible, the enlarged cover
+is not good because one of its members is $Z$. A logical truth test
+therefore cannot be treated as another harmless member of a good
+geometric cover. For example, start with a finite good open arc cover of $S^1$. Its
+complete union is $S^1$; treating that finite disjunction as one extra
+cover member cones the nerve. The new cover fails the good-cover
+hypothesis because the added member is the noncontractible circle.
+This is not a counterexample to the nerve theorem. Similarly, infinite
+intersections of open sets need not be open. Their combinatorial domination remains valid, but the
+good-open-cover theorem no longer applies automatically.
+
+There are two legitimate outcomes. A generated predicate may preserve
+the selected topological observable, certified above, or it may alter
+that observable because a different observation family is now being
+studied. The latter is not intrinsically a harmful representation move.
+It becomes an error when the changed nerve is asserted to encode the
+same invariant without the needed preservation theorem, or when a
+topology inferred from one cover is misidentified with the topology of
+an unchanged ambient space. Native test generation can be useful even
+when it intentionally changes topology; its effect must be stated at
+the chosen level of structure.
+
+
+\section{A scientific instance and its assumptions}
+\label{sec:oscillator}
+
+Consider a harmonic oscillator with known $\omega>0$,
+\[
+ \dot x=v,\qquad \dot v=-\omega^2x,
+ \qquad H=\mathbb R^2,
+\]
+and instantaneous real-valued probe $p(x,v)=x$. States with the same
+position and different velocity agree on every pointwise function of $p$,
+including every Boolean combination of position-threshold tests. Their
+future positions need not agree. The known flow gives the pulled-back probe
+\[
+ p_\tau(x,v)=p(\Phi_\tau(x,v))
+     =x\cos(\omega\tau)+\frac{v}{\omega}\sin(\omega\tau).
+\]
+When $\sin(\omega\tau)\ne0$, the two probes $p,p_\tau$ identify the
+whole state:
+\[
+ x=p,\qquad
+ v=\omega\,\frac{p_\tau-p\cos(\omega\tau)}{\sin(\omega\tau)}.
+\]
+At the quarter-period $\tau=\pi/(2\omega)$, $p_\tau=v/\omega$.
+Equivalently, the Lie derivatives of $p$ satisfy
+$L_fp=v$, $L_f^2p=-\omega^2p$; their linear span closes after the
+position and velocity probes. This is a concrete instance of observability,
+not just renaming a binary column. It belongs to the established program
+of generating observation functions from dynamics \cite{HermannKrener}.
+
+There is an exact sampling obstruction. If the only allowed time step is
+$\tau=k\pi/\omega$, then
+\[
+ p(\Phi_{n\tau}(x,v))=(-1)^{kn}x
+ \qquad(n\ge0).
+\]
+All such observations remain independent of velocity. The full residual
+quotient for that sampling protocol identifies every velocity at a fixed
+position, whereas a nonresonant time step separates them. The action system,
+not merely the algebra of formulas, determines which distinctions can emerge.
+
+The exact recovery is also ill-conditioned near a resonant step. If the
+position readings have bounded errors $|e_0|\le\eta_0$ and
+$|e_\tau|\le\eta_\tau$, the displayed reconstruction obeys
+\[
+ |\widehat v-v|
+ \le\frac{\omega\bigl(\eta_\tau+
+               |\cos(\omega\tau)|\eta_0\bigr)}
+              {|\sin(\omega\tau)|}.
+\]
+This follows by substituting the perturbed readings and applying the
+triangle inequality. It illustrates why semantic distinguishability alone
+is not a robustness or sample-complexity guarantee.
+
+The example assumes the dynamical law, frequency, timing, and ability to
+measure position along the same trajectory. It does not infer that law
+from the original position-only incidence table. If $\omega$ is unknown,
+two position readings generally do not identify both frequency and velocity.
+Finite thresholds do not give exact real-valued reconstruction, and replacing
+the state space by a smooth quotient requires additional regularity. Thus
+new operational characterizations can expose a physically useful state
+variable, while their evidential and modeling assumptions remain explicit.
+
+\section{Incomplete evidence and possible completions}
+\label{sec:evidence}
+
+All binary incidence theorems above concern an exact relation on a declared
+domain. A blank entry may be interpreted as false only when falsity is
+actually the intended semantics. Untested, unrecorded, or missing observations
+must not silently become negative results. Even a complete finite table
+need not describe every possible object or justify a population law.
+
+For each observed $h$, let $\mathcal V_h\ne\varnothing$ be the set of
+valuations compatible with the record and the explicitly adopted background
+constraints. For a formula $\varphi$, define
+\[
+ \operatorname{must}(\varphi)
+ =\{h:\forall\nu\in\mathcal V_h,\ \nu\models\varphi\},
+ \qquad
+ \operatorname{may}(\varphi)
+ =\{h:\exists\nu\in\mathcal V_h,\ \nu\models\varphi\}.
+\]
+Known truth is membership in $\operatorname{must}$, known falsity is
+nonmembership in $\operatorname{may}$, and the remaining case is unknown.
+These bounds are exact relative to the chosen compatible valuations, not
+an assurance that the chosen possibilities contain the actual world.
+
+\begin{proposition}[Completion semantics retains correlations]
+The following identities and inclusion hold:
+\begin{align*}
+ \operatorname{must}(\neg\varphi)&=H\setminus\operatorname{may}(\varphi),&
+ \operatorname{may}(\neg\varphi)&=H\setminus\operatorname{must}(\varphi),\\
+ \operatorname{must}(\varphi\wedge\psi)
+ &=\operatorname{must}(\varphi)\cap\operatorname{must}(\psi),&
+ \operatorname{may}(\varphi\wedge\psi)
+ &\subseteq\operatorname{may}(\varphi)\cap\operatorname{may}(\psi).
+\end{align*}
+The last inclusion can be strict. Independent lower and upper sets therefore
+need not suffice for exact evaluation of generated tests.
+\end{proposition}
+\begin{proof}
+The first three equalities follow by distributing the universal quantifier
+and exchanging existential and universal quantifiers under negation.
+A common valuation witnessing a conjunction witnesses both conjuncts,
+proving the inclusion. With one unknown atom $p$, both $p$ and $\neg p$
+may hold in different completions, but $p\wedge\neg p$ holds in none.
+\end{proof}
+
+Strong Kleene three-valued evaluation is another legitimate semantics, but
+it is not the same as this supervaluational completion semantics: with
+unknown $p$, it can leave $p\vee\neg p$ unknown, whereas every classical
+completion makes that formula true. The evidence convention must therefore
+be stated before applying Boolean test-generation rules.
+
+For a concrete error, take two observed objects with
+$p(h_1)=1$, $q(h_1)$ unknown, $p(h_2)=0$, $q(h_2)=1$.
+Filling the blank with zero makes $p\Rightarrow\neg q$ appear valid.
+The compatible completion $q(h_1)=1$ refutes it. Attribute exploration with
+partial descriptions has a substantial existing theory
+\cite{BorchmannGanter}; the exact-table lemmas here do not replace it.
+
+\begin{proposition}[An evidence obstruction]\label{prop:evidence}
+Let $W$ be a set of possible worlds and $e:W\to D$ the available record.
+If $e(w)=e(w')$ but a proposition $\varphi$ has different truth values
+in $w$ and $w'$, no function of that record alone can assign a definite
+truth value to $\varphi$ soundly throughout $W$.
+\end{proposition}
+\begin{proof}
+The function receives identical input in both worlds and must return the
+same value, which is wrong in one of them.
+\end{proof}
+
+New logical consequences can be warranted because they hold in all
+compatible worlds. New measurements can shrink that set; new assumptions
+can also shrink it, but give conditional conclusions. These are different
+ways of learning or reorganizing knowledge. A generated test should pass
+three separate checks: its meaning is defined; an admissible procedure can
+execute it at stated precision and cost; and the evidence warrants its
+answer or statistical law. Mathematical measurability does not imply
+computability, and an infinite ``eventually'' test can encode a halting
+problem even when each finite transition is executable.
+
+\subsection{Prediction does not automatically give a Markov quotient}
+
+The deterministic congruence theorem must not be transferred unchanged to
+stochastic systems by replacing truth with equality of future output laws.
+Consider states $x,y,u,v,w,a,b$, with output $1$ only at $a$. Let $a,b$
+be absorbing and let
+\[
+ u\to a,\quad v\to b,\quad
+ w\to\tfrac12a+\tfrac12b,\quad
+ x\to\tfrac12u+\tfrac12v,\quad y\to w.
+\]
+The output processes from $x,y$ have the same law: two initial zeros,
+then an equal mixture of an all-one and an all-zero tail. But $u,v,w$
+have distinct future-output laws, and the successor distributions from
+$x,y$ over those equivalence classes differ. The trace quotient is not
+Markov lumpable. For an exact Markov quotient one needs closure under
+probability modalities such as
+$U\mapsto\{h:K_a(h,U)>r\}$, not just comparison of output traces.
+For predictive states of observed histories, conditional-law and almost-sure
+qualifications are different again \cite{ShaliziCrutchfield}.
+
+\section{Theory extension beyond a fixed incidence domain}
+\label{sec:limits}
+
+A fixed-domain completion is useful but does not capture all mathematical
+or scientific theory formation. A theory can change its signature, introduce
+new sorts, construct quotients and limits, compare models, and organize
+proofs. These require syntax, model categories, and satisfaction compatible
+with translation, as in categorical logic and institutions
+\cite{Lawvere,GoguenBurstall}. The membership table of models and sentences
+forgets model morphisms, substitution, contexts, and proof structure.
+
+A definitional extension adds a new predicate $P$ with
+$P(\mathbf x)\leftrightarrow\varphi(\mathbf x)$ in the old language.
+Every old model has a unique expansion, and substitution eliminates $P$,
+so old-language consequences are unchanged. Function definitions need
+existence and uniqueness; recursive or overloaded definitions need their
+own hypotheses \cite{Xue,GengelbachWeber}. This does not imply preservation
+of a chosen FCA lattice or nerve formed by treating every newly named
+formula as a primitive test. The earlier counterexamples show why.
+An operational extension adds a new admissible experiment or construction;
+a substantive theory extension can instead restrict the admitted models
+by adding hypotheses not entailed before. Neither is justified merely by
+closure of the old syntax.
+
+Even a limit of increasingly discriminating descriptions need not consist
+only of actual objects. Let $H$ be the eventually-zero binary sequences,
+and let stage $n$ observe the first $n$ bits. Each finite quotient contains
+all $n$-bit strings, but their inverse limit is the space of \emph{all}
+infinite binary sequences. The canonical map from the fully distinguished
+$H$ into this inverse limit is injective and not surjective. Ideal completion
+has added possible profiles, not discovered members of the original domain.
+Compactness or other realizability assumptions can change this conclusion,
+but must be supplied.
+
+Classifying toposes give a different, richer universal construction. For a
+geometric theory $\mathbb T$, its classifying topos $\mathcal E_{\mathbb T}$
+represents models across Grothendieck toposes by
+\[
+ \operatorname{Geom}(\mathcal F,\mathcal E_{\mathbb T})
+ \simeq \mathbb T\text{-}\operatorname{Mod}(\mathcal F).
+\]
+This is not the observational quotient of one dataset. Transfer between
+presentations requires a proved interpretation or equivalence and a chosen
+invariant; it does not automatically preserve literal syntax or proof
+complexity. It is a useful broader direction, not a consequence of the
+incidence calculations here \cite{Caramello}.
+
+For a substantive theory of generated characterizations, the next theorem
+would therefore have to specify admissible changes of signature and
+experimental access, the intended consumers and their preservation levels,
+and identifiability or evidence conditions. The present results supply a
+precise fixed-domain baseline and several obstructions. They do not rank
+scientific hypotheses, invent physical procedures, validate an unknown
+law, or guarantee discovery beyond the supplied language and operations.
+
+\section{Established results and the contribution boundary}
+
+The extent criteria are standard FCA reduction expressed as an extension
+problem: a conjunction-defined attribute is reducible, and adding it preserves
+the concept hierarchy \cite{GanterWille,GanterRudolphStumme}. Infomorphisms,
+closure spaces, and induced lattice adjunctions already have substantial
+functorial treatments \cite{ShenZhang,KroetzschEtAl}. Those morphisms must
+not be confused with covariant incidence-preserving pairs, the morphisms
+used in the functorial Dowker comparison.
+
+The greatest invariant quotient and future-depth refinement belong to
+Moore--Myhill--Nerode observability and universal coalgebra
+\cite{Moore,Rutten}. Ranzato--Tapparo's complete abstractions and strong
+preservation provide a particularly close and richer baseline for refining
+representations to respect an inductively generated observation language,
+including nonpartitioning abstractions \cite{RanzatoTapparo}. Angluin's
+learning theorem and coalgebra learning via duality address actual learning
+under their query, finiteness, and structural assumptions
+\cite{Angluin,BarloccoKupkeRot}. The latter explicitly uses formulas as
+tests and proves correctness and termination. Expressivity of a chosen
+coalgebraic logic requires hypotheses such as separation by predicate
+liftings; it is not implied by merely adjoining Boolean syntax
+\cite{Pattinson}.
+
+Dowker duality, natural comparison spans, and nerve theorems supply the
+topological foundations \cite{ChowdhuryMemoli,BrunSalbu,BauerEtAl}.
+The one-simplex criterion proved here is a specialization of standard
+CW attachment, covering-space, and Whitehead theory \cite{Hatcher}.
+Erdmann already studies the topology of logical attribute transformations,
+including literal-bit spheres, Boolean OR changes, the risk of generating
+truth, and the need for physically observable attributes
+\cite[Sections 8--9]{Erdmann}. The full disjunction and punctured-saturation
+statements make particular consequences exact; the underlying warning is
+not new.
+
+Green et al. explicitly integrate hypergraph intersection closures, FCA,
+Dowker complexes, and cosheaves \cite{GreenEtAl}. Their Definition 25
+retains $(G,M,L,\gamma,\mu)$, distinguishing an enriched concept lattice
+from a bare complete lattice. Their Definition 24 also uses a strong context-morphism condition:
+$f(A)'=g(A')$ and $g(B)'=f(B')$ for all subsets, rather than arbitrary
+covariant incidence-preserving maps or Chu infomorphisms. Their reconstruction
+statements must not be
+read as invariance under bare lattice isomorphism or under freely adding
+truth; object and attribute labels and their maps retain additional incidence
+information. Their diagram also need not commute. Thus neither representing
+one relation in several ways nor adding a category-theoretic vocabulary is
+by itself a new unification theorem.
+
+The defensible output is the exact joint preservation problem, its maximal
+completion, its dynamic and epistemic qualifications, and a collection of
+proved separation results. No claim of priority is made for their combined
+formulation. A new scientific or phenomenological theory would need a further
+result linking licensed operations and evidence to a specified target, rather
+than identifying every formula-generated topology with the structure of that
+target.
+
+\begin{thebibliography}{99}
+\bibitem{GanterWille}
+B. Ganter and R. Wille, \emph{Formal Concept Analysis: Mathematical
+Foundations}, Springer, 1999.
+\url{https://doi.org/10.1007/978-3-642-59830-2}.
+
+\bibitem{GanterRudolphStumme}
+B. Ganter, S. Rudolph, and G. Stumme,
+\emph{Explaining Data with Formal Concept Analysis}, 2019,
+Section 3.11, Definition 15 and Proposition 8.
+\url{https://iccl.inf.tu-dresden.de/w/images/4/49/IntroFCA-RW2019.pdf}.
+
+\bibitem{ShenZhang}
+L. Shen and D. Zhang, \emph{The concept lattice functors},
+International Journal of Approximate Reasoning 54(1) (2013), 166--183.
+\url{https://doi.org/10.1016/j.ijar.2012.07.002}.
+
+\bibitem{KroetzschEtAl}
+M. Kr\"otzsch, P. Hitzler, and G.-Q. Zhang,
+\emph{Morphisms in Context}, 2005.
+\url{https://iccl.inf.tu-dresden.de/w/images/1/1f/ICCS05_context-morphisms_long.pdf}.
+
+\bibitem{BorchmannGanter}
+D. Borchmann and B. Ganter,
+\emph{Abstract Attribute Exploration with Partial Object Descriptions}, 2015.
+\url{https://arxiv.org/abs/1511.06191}.
+
+\bibitem{Moore}
+E. F. Moore, \emph{Gedanken-Experiments on Sequential Machines},
+in C. E. Shannon and J. McCarthy (eds.), \emph{Automata Studies}, 1956.
+\url{https://doi.org/10.1515/9781400882618-006}.
+\url{https://www.cs.cmu.edu/~cdm/resources/Moore1956-gedanken-experiments.pdf}.
+
+\bibitem{Rutten}
+J. J. M. M. Rutten, \emph{Universal coalgebra: A theory of systems},
+Theoretical Computer Science 249 (2000), 3--80.
+\url{https://ir.cwi.nl/pub/48/0048D.pdf}.
+
+\bibitem{RanzatoTapparo}
+F. Ranzato and F. Tapparo,
+\emph{Generalizing the Paige--Tarjan Algorithm by Abstract Interpretation}.
+\url{https://www.math.unipd.it/~ranzato/papers/ArXiV0612120.pdf}.
+See also the authors' strong-preservation treatment:
+\url{https://www.math.unipd.it/~ranzato/papers/esop04.pdf}.
+
+\bibitem{Angluin}
+D. Angluin, \emph{Learning regular sets from queries and counterexamples},
+Information and Computation 75 (1987), 87--106.
+\url{https://doi.org/10.1016/0890-5401(87)90052-6}.
+\url{https://homepages.math.uic.edu/~lreyzin/papers/angluin87.pdf}.
+
+\bibitem{BarloccoKupkeRot}
+S. Barlocco, C. Kupke, and J. Rot,
+\emph{Coalgebra Learning via Duality}, FoSSaCS 2019, 62--79,
+Theorems 33 and 37.
+\url{https://doi.org/10.1007/978-3-030-17127-8_4}.
+\url{https://arxiv.org/abs/1902.05762}.
+
+\bibitem{Pattinson}
+D. Pattinson, \emph{Expressive Logics for Coalgebras via Terminal Sequence
+Induction}, Notre Dame Journal of Formal Logic 45(1) (2004), 19--33.
+\url{https://users.cecs.anu.edu.au/~dpattinson/Publications/ndjfl2004.pdf}.
+
+\bibitem{ChowdhuryMemoli}
+S. Chowdhury and F. M\'emoli,
+\emph{A functorial Dowker theorem and persistent homology of asymmetric
+networks}, Journal of Applied and Computational Topology 2 (2018), 115--175.
+\url{https://doi.org/10.1007/s41468-018-0020-6}.
+
+\bibitem{BrunSalbu}
+M. Brun and L. M. Salbu, \emph{The Rectangle Complex of a Relation},
+Mediterranean Journal of Mathematics 20 (2023), article 7,
+Theorems 4.3, 5.1, and 5.2.
+\url{https://doi.org/10.1007/s00009-022-02213-0}.
+
+\bibitem{BauerEtAl}
+U. Bauer, M. Kerber, F. Roll, and A. Rolle,
+\emph{A Unified View on the Functorial Nerve Theorem and its Variations},
+Expositiones Mathematicae 41(4) (2023), article 125503;
+updated preprint v6, 2025.
+\url{https://arxiv.org/abs/2203.03571}.
+
+\bibitem{Hatcher}
+A. Hatcher, \emph{Algebraic Topology}, Cambridge University Press, 2002.
+\url{https://pi.math.cornell.edu/~hatcher/AT/AT.pdf}.
+
+\bibitem{Erdmann}
+M. Erdmann, \emph{Topology of Privacy: Lattice Structures and Information
+Bubbles for Inference and Obfuscation}, 2017.
+\url{https://www.cs.cmu.edu/~me/papers/TopPrivacy.pdf}.
+\url{https://arxiv.org/abs/1712.04130}.
+
+\bibitem{GreenEtAl}
+R. E. Green, C. A. Joslyn, A. Myers, M. G. Rawson, and M. Robinson,
+\emph{The Topological Structures of the Orders of Hypergraphs},
+arXiv:2504.11760v2, 18 April 2025.
+\url{https://arxiv.org/html/2504.11760v2}.
+
+\bibitem{Stone}
+M. H. Stone, \emph{The Theory of Representations for Boolean Algebras},
+Transactions of the American Mathematical Society 40 (1936), 37--111.
+\url{https://www.ams.org/tran/1936-040-01/S0002-9947-1936-1501865-8/S0002-9947-1936-1501865-8.pdf}.
+
+\bibitem{HermannKrener}
+R. Hermann and A. J. Krener,
+\emph{Nonlinear Controllability and Observability},
+IEEE Transactions on Automatic Control 22(5) (1977), 728--740.
+\url{https://www.math.ucdavis.edu/~krener/1-25/10.IEEETAC77.pdf}.
+
+\bibitem{ShaliziCrutchfield}
+C. R. Shalizi and J. P. Crutchfield,
+\emph{Computational Mechanics: Pattern and Prediction, Structure and
+Simplicity}, Journal of Statistical Physics 104 (2001), 817--879.
+\url{https://arxiv.org/abs/cond-mat/9907176}.
+
+\bibitem{Xue}
+T. Xue, \emph{Definitional Extension in Type Theory},
+TYPES 2013, LIPIcs 26 (2014), 251--269, Section 3.
+\url{https://doi.org/10.4230/LIPIcs.TYPES.2013.251}.
+
+\bibitem{GengelbachWeber}
+A. Gengelbach and T. Weber,
+\emph{Model-Theoretic Conservative Extension for Definitional Theories},
+LSFA 2017, Electronic Notes in Theoretical Computer Science 338, 133--145.
+\url{https://doi.org/10.1016/j.entcs.2018.10.009}.
+
+\bibitem{Lawvere}
+F. W. Lawvere, \emph{Functorial Semantics of Algebraic Theories},
+1963, reprinted in Reprints in Theory and Applications of Categories 5 (2004).
+\url{https://www.tac.mta.ca/tac/reprints/articles/5/tr5.pdf}.
+
+\bibitem{GoguenBurstall}
+J. A. Goguen and R. M. Burstall,
+\emph{Institutions: Abstract Model Theory for Specification and Programming},
+Journal of the ACM 39(1) (1992), 95--146.
+\url{https://doi.org/10.1145/147508.147524}.
+
+\bibitem{Caramello}
+O. Caramello, \emph{The unification of mathematics via topos theory},
+2010; author materials on classifying toposes and bridges.
+\url{https://arxiv.org/abs/1006.3930}.
+\url{https://www.oliviacaramello.com/Unification/UnilogTutorial.html}.
+\end{thebibliography}
+
+\end{document}

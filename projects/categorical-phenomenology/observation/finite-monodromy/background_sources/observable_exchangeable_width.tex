@@ -1,0 +1,299 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm,mathtools,enumitem}
+\usepackage[margin=1in]{geometry}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\R}{\mathbb R}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\St}{\operatorname{St}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Hom}{\operatorname{Hom}}
+\title{From observable exchangeable word laws to exact continuous native widths}
+\author{Technical proof draft}
+\date{3 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+Continuous normalized word laws, exchangeability at every length, and constant finite Hankel rank determine a finite cover of distinct IID components without a supplied local stochastic model. For compact parameter spaces we prove that arbitrary continuous native stochastic realizations of width $k$ exist exactly when the component-frame cover admits an equivariant map to the disjoint-support space $D_{p,k}=\Hom(K_p,K_k)$. Necessity uses two finite blocks of ordinary outputs, not hidden-state interventions, a native minimality assumption, or a prescribed retained interface. An explicit approximate-to-exact stochastic splitting argument also gives a finite-horizon uniform obstruction. Normalized signed width is the embedding dimension of the centered predictive bundle plus one. The result is restricted to exchangeable laws; it is not a classification of arbitrary temporal dynamics. Classical ingredients and unassessed novelty are separated below.
+\end{abstract}
+
+\section{Observable input and native output}
+Let $X$ be a nonempty compact Hausdorff space and $Y$ a finite alphabet of size $d$. We are given functions $p_x(w)$ for all finite words $w\in Y^*$, each continuous in $x$, satisfying
+\[
+ p_x(\varnothing)=1,\quad p_x(w)\geq0,\quad
+ \sum_{y\in Y}p_x(wy)=p_x(w).
+\]
+Assume exchangeability: $p_x(w)$ is invariant under every permutation of the positions of $w$. Let
+\[
+ H_x(u,v)=p_x(uv),\qquad \rank H_x=p<\infty
+\]
+for every $x$, with $p$ independent of $x$. Rank means the supremum of ranks of finite submatrices. The nontrivial classification below concerns $p\geq2$; for $p=1$ both widths are one.
+
+A native stochastic realization of width $k$ is a continuous probability row $\rho_x\in\R^k$ and continuous nonnegative matrices $N_{x,y}\in\R^{k\times k}$ with
+\[
+ T_x=\sum_yN_{x,y},\qquad T_x\one_k=\one_k,
+ \qquad p_x(w)=\rho_xN_{x,w}\one_k.
+\]
+Here $N_{x,w}$ is the chronological product. No reachability, observability, irreducibility, hidden stationarity, or local-state retention is assumed of the competitor. A normalized signed realization permits arbitrary real entries but retains $\rho_x\one_k=1$, $T_x\one_k=\one_k$, and the same fixed terminal vector.
+
+\section{Constructing the cover, bundle, and dynamics from words}
+\begin{proposition}\label{prop:observable}
+The observable assumptions determine a unique probability measure $\mu_x$ on $\Delta(Y)$ with exactly $p$ distinct atoms, such that
+\[
+ p_x(w)=\int_{\Delta(Y)}\prod_{j=1}^{|w|}v_{w_j}\,d\mu_x(v).
+\]
+The measures vary weakly continuously. Their supports form a $p$-sheeted cover $C\to X$ with a continuous fiberwise injective map $v:C\to\Delta(Y)$ and continuous positive weights. The ordered-frame cover $P\to X$ is a principal $S_p$-cover. On $P$ write the atoms and weights as $(v_1,\ldots,v_p)$ and $(w_1,\ldots,w_p)$. There are uniform constants
+\[
+ \delta=\min_{P,\ a\ne b}\|v_a-v_b\|_\infty>0,
+ \qquad w_* =\min_{P,a}w_a>0.
+\]
+\end{proposition}
+\begin{proof}
+The representation is the finite-alphabet de Finetti theorem, but a direct compactness proof is short. Let $\mu_{x,n}$ be the law of the empirical frequencies in a length-$n$ sample having law $p_x$. For a fixed word of length $m$, exchangeability and consistency express its probability by sampling $m$ positions without replacement. Sampling with replacement instead changes the probability by at most $m(m-1)/(2n)$. Thus any weak limit of $\mu_{x,n}$ represents every word monomial. Compactness gives a limit, and polynomial density on the compact simplex gives uniqueness.
+
+The Hankel matrix is the Gram matrix of all monomials in $L^2(\mu_x)$. Any $s$ distinct support points admit $s$ polynomial interpolants with Kronecker values there. Their classes are linearly independent in $L^2(\mu_x)$: a continuous polynomial vanishing almost everywhere vanishes on the support. Hence the Gram rank is at least $s$. Conversely, a measure on $s$ points has Gram rank at most $s$, and interpolation gives equality. Rank $p$ therefore means exactly $p$ atoms, all with positive mass.
+
+Every polynomial moment of $\mu_x$ is continuous in $x$. Uniform polynomial approximation implies continuity of its integral against every continuous function, proving weak continuity. Around a fixed $x_0$, choose $p$ disjoint small neighborhoods of its atoms, and smaller neighborhoods compactly contained in them. Positive bump integrals imply that, on a neighborhood of $x_0$, each smaller neighborhood contains an atom. There are exactly $p$ atoms, so there is precisely one in each and no others. A bump equal to one on a smaller neighborhood and zero on the others recovers its weight by integration, and its location by integrating the coordinate functions times that bump and dividing by the weight. These are continuous local labels. Compactness of the finite frame cover gives the displayed positive minima.
+\end{proof}
+
+Define $f_v(w)=\prod_jv_{w_j}$ and the canonical predictive space
+\[
+ E_x=\operatorname{span}\{p_x(u\,\cdot):u\in Y^*\}.
+\]
+Its local frame is $(f_{v_1},\ldots,f_{v_p})$, so $E$ is precisely the permutation bundle associated to $P$. This statement follows directly from the positive Gram factorization: monomial evaluations on the $p$ atoms have full rank. The terminal functional $\ell(f)=f(\varnothing)$ is fixed intrinsically, and $E_0=\ker\ell$ is the centered rank-$(p-1)$ bundle. The canonical shift is
+\[
+ A_yf(v)=f(yv),\qquad A_yf_{v_a}=(v_a)_y f_{v_a},
+\]
+and the initial section is $p_x=\sum_aw_af_{v_a}$. Thus the word laws determine a continuous bundle, its dynamics, its normalization, and its initial section.
+
+\begin{proposition}[Intrinsic positive cone]\label{prop:cone}
+Inside $E_x$, the cone of pointwise nonnegative consistent word functions is
+\[
+ K_x=\left\{\sum_ac_af_{v_a}:c_a\geq0\right\}.
+\]
+It also equals the closure of the cone generated by the unnormalized reachable continuations $p_x(u\,\cdot)$. In particular the observable positive cone has exactly $p$ rays, and its ray cover is $C$.
+\end{proposition}
+\begin{proof}
+The finite-block component classifiers constructed below have expectations tending to the Kronecker delta. Applying their nonnegative test functionals to $\sum_ac_af_{v_a}$ shows that pointwise nonnegativity implies every $c_a\geq0$. Conversely nonnegative coefficients plainly suffice. Weighted sums of the reachable continuations using classifier $a$ have coefficient vector tending to $w_ae_a$. Since $w_a>0$, each ray lies in the closure of the reachable cone. The reverse inclusion is immediate.
+\end{proof}
+
+\section{The exact positive-width criterion}
+Let $\St(r,s)$ denote row-stochastic $r\times s$ matrices. Define
+\[
+ D_{p,k}=\{Q\in\St(p,k):\supp Q_a\cap\supp Q_b=\varnothing\ (a\ne b)\},
+\]
+and
+\[
+ S_{p,k}=\{(Q,L)\in\St(p,k)\times\St(k,p):QL=I_p\}.
+\]
+A relabeling matrix $A\in S_p$ acts by $Q\mapsto AQ$, $L\mapsto LA^{-1}$, $D_y\mapsto AD_yA^{-1}$, $w\mapsto wA^{-1}$. We use the matching convention on the ordered-frame cover. Equivariant maps therefore give objects independent of the chosen ordering.
+
+\begin{theorem}[Arbitrary-native classification]\label{thm:width}
+Under the observable hypotheses, the following are equivalent for every $k$:
+\begin{enumerate}
+\item There is a continuous native stochastic realization of width $k$.
+\item There is a continuous $S_p$-equivariant map $P\to S_{p,k}$.
+\item There is a continuous $S_p$-equivariant map $P\to D_{p,k}=\Hom(K_p,K_k)$.
+\end{enumerate}
+The minimum native stochastic width is consequently determined by the observable component cover, even though competitors need not themselves retain that cover as hidden states.
+\end{theorem}
+
+\subsection{Continuous finite-block classifiers}
+For $n\geq1$ and $u\in Y^n$, let $\widehat v(u)$ be its empirical-frequency vector. Define
+\[
+ b_a(u)=h(\|\widehat v(u)-v_a\|_\infty),\quad
+ h(t)=\begin{cases}1&t\leq\delta/8,\\2-8t/\delta&\delta/8\leq t\leq\delta/4,\\0&t\geq\delta/4.\end{cases}
+\]
+At most one $b_a(u)$ is nonzero, since distinct atoms have distance at least $\delta$. Set
+\[
+ \varphi_a(u)=b_a(u)+\frac{1-\sum_cb_c(u)}p.
+\]
+These functions are continuous on $P$, are equivariant under relabeling, take values in $[0,1]$, and satisfy $\sum_a\varphi_a(u)=1$. They are ordinary randomized postprocessing tests of an observed block, not hidden-state interventions. Since the alphabet of blocks is finite, there is no measurability issue.
+
+Put
+\[
+ C_{ai}=\sum_{u\in Y^n}f_{v_a}(u)\varphi_i(u).
+\]
+Coordinatewise Hoeffding plus a union bound gives
+\[
+ C_{aa}\geq1-\eps_n,\qquad
+ \eps_n=2d\exp(-n\delta^2/32).
+\]
+Choose once and for all
+\begin{equation}\label{eq:n}
+ n\geq\left\lceil\frac{32}{\delta^2}\log\frac{16d}{w_*}\right\rceil,
+ \qquad \eps_n\leq w_*/8\leq1/8.
+\end{equation}
+For any two independent blocks conditional on the same component, the classification joint table and its marginal are
+\[
+ J=C^T\diag(w)C,\qquad a=C^Tw.
+\]
+Here $w$ in the second formula is a column. For each $i$,
+\[
+ a_i\geq w_*(1-\eps_n),\qquad
+ 1-\frac{J_{ii}}{a_i}
+ =\frac{\sum_aw_aC_{ai}(1-C_{ai})}{a_i}
+ \leq\frac{\eps_n}{w_*(1-\eps_n)}\leq\frac17.
+\]
+For the numerator bound, use $1-C_{ii}\leq\eps_n$ when $a=i$, and $C_{ai}\leq\eps_n$ when $a\ne i$.
+
+\subsection{Necessity from an arbitrary native competitor}
+Suppose $(\rho,N_y)$ is any continuous native realization. Define
+\[
+ R_{i,\cdot}=\sum_{u\in Y^n}\varphi_i(u)\rho N_u,
+ \qquad Q_{i,\cdot}=R_{i,\cdot}/a_i,
+\]
+and
+\[
+ L_{\cdot,j}=\sum_{v\in Y^n}\varphi_j(v)N_v\one_k.
+\]
+All entries are continuous. Nonnegativity and $T\one_k=\one_k$ show that $Q\in\St(p,k)$ and $L\in\St(k,p)$. The native Markov factorization at the boundary of the two blocks gives
+\[
+ (QL)_{ij}=J_{ij}/a_i,
+ \qquad (QL)_{ii}\geq6/7.
+\]
+This uses only probabilities of ordinary words through length $2n$. It uses neither $\rho T=\rho$ nor a stationary choice of hidden distributions, and applies to unreachable, transient, and redundant native states.
+
+We now convert this approximate split into an exact one at the same width. Put
+\[
+ U_{ai}=Q_{ai}(L_{ia}-3/4)_+,\qquad
+ Q'_{ai}=U_{ai}/\sum_jU_{aj}.
+\]
+The denominator is uniformly positive:
+\[
+ \sum_jU_{aj}\geq(QL)_{aa}-3/4\geq3/28.
+\]
+Define
+\[
+ d_{ia}=\min\{1,\max\{0,12(L_{ia}-2/3)\}\},\qquad
+ L'_{ia}=d_{ia}+\frac{1-\sum_bd_{ib}}p.
+\]
+Since $L$ is stochastic, at most one $d_{ia}$ is positive in a given row, so $L'$ is stochastic. Whenever $Q'_{ai}>0$, one has $L_{ia}>3/4$, hence $d_{ia}=1$ and the $i$th row of $L'$ equals $e_a$. Thus
+\[
+ Q'L'=I_p.
+\]
+The construction is continuous and equivariant. This proves (1)$\Rightarrow$(2) without any retained-interface premise.
+
+\subsection{The converse and decoder buffering}
+For a stochastic pair $QL=I_p$, nonnegativity implies $L_i=e_a$ whenever $Q_{ai}>0$; hence distinct rows of $Q$ have disjoint supports. This proves (2)$\Rightarrow$(3).
+
+Conversely, for $Q\in D_{p,k}$ set $t=1/(2k)$ and
+\[
+ F(Q)_{ai}=\frac{(Q_{ai}-t)_+}{\sum_j(Q_{aj}-t)_+},\qquad
+ d_{ia}=\min\{1,Q_{ai}/t\},\qquad
+ L_{ia}=d_{ia}+\frac{1-\sum_bd_{ib}}p.
+\]
+The denominator is at least $1-kt=1/2$. Disjoint support makes $L$ stochastic, and $F(Q)_{ai}>0$ forces $L_i=e_a$. Hence $F(Q)L=I_p$. These formulas are continuous and equivariant, proving (3)$\Rightarrow$(2). This is an existence-level repair and does not claim that the original prescribed $Q$ itself has a continuous decoder.
+
+Finally let $(Q,L)$ be an equivariant split and let $D_y=\diag((v_1)_y,\ldots,(v_p)_y)$. The formulas
+\begin{equation}\label{eq:native}
+ \rho=wQ,\qquad N_y=LD_yQ
+\end{equation}
+descend to $X$. They are nonnegative, normalized, and time-homogeneous. Since $QL=I_p$, their word laws are exactly $wD_w\one_p=p_x(w)$. This proves (2)$\Rightarrow$(1). In fact $T=LQ$ is idempotent and $\rho T=\rho$.
+
+The outcome matrices in \eqref{eq:native} already have the ordinary transition-then-emission HMM form. Put $e_y=L((v_a)_y)_a$. Occupied slots decode to single components, so $Q\diag(e_y)=D_yQ$, and therefore $N_y=T\diag(e_y)$ with $T=LQ$. If one instead uses emission-then-transition, an ordinary HMM of the same width exists with the possibly different kernels
+\[
+ \widehat N_y=\diag(e_y)T,\qquad T=LQ,\qquad\rho=wQ.
+\]
+Here $Q\widehat N_y=D_yQ$, so the same word probabilities follow; the two kernels need not agree on unused mixed-decoder rows. All entries remain continuous, $\sum_y\diag(e_y)=I_k$, $T\one_k=\one_k$, and $\rho T=\rho$. The lower bound already applies to the larger class of arbitrary nonnegative outcome matrices. Consequently this exchangeable-family width is unchanged if one requires the ordinary state-emitting form in either convention. No hidden-state intervention is added.
+
+\section{A quantitative finite-horizon obstruction}
+\begin{corollary}\label{cor:robust}
+Use $n$ from \eqref{eq:n}. If a continuous stochastic competitor of width $k$ has length-$2n$ output law at total variation distance at most $w_*/64$ from the target, uniformly on $X$, then $P$ admits an equivariant map into $D_{p,k}$. Consequently, if no such map exists, every width-$k$ competitor has total variation error greater than $w_*/64$ somewhere at that fixed horizon.
+\end{corollary}
+\begin{proof}
+Use the same target-dependent tests. A total variation bound $\beta$ controls the expectation error of each $[0,1]$ test, so $|J'_{ii}-J_{ii}|\leq\beta$ and $|a'_i-a_i|\leq\beta$. The exact target satisfies
+\[
+ J_{ii}-\tfrac34a_i\geq\tfrac3{28}a_i
+ \geq\tfrac3{28}\tfrac78w_*=\tfrac3{32}w_*.
+\]
+For $\beta\leq w_*/64$, the perturbation of the left side is at most $7\beta/4\leq7w_*/256<3w_*/32$. Also $a'_i>0$. Thus $J'_{ii}/a'_i>3/4$, and the same threshold formulas extract a continuous exact split from the competitor. No regularity or rank condition on the competitor is needed.
+\end{proof}
+The horizon bound is conservative and is not an identification-optimal sample threshold. It requires uniform information over the entire parameter space. It does not certify that condition from finitely many parameter samples without additional quantitative regularity.
+
+\section{Normalized signed width}
+Let $g(E_0)$ be the least $m$ such that $E_0$ embeds as a vector subbundle of the trivial real rank-$m$ bundle. Compactness ensures a finite such $m$.
+\begin{theorem}\label{thm:signed}
+The minimum normalized signed width is $g(E_0)+1$.
+\end{theorem}
+\begin{proof}
+For necessity, retain the same continuous classifier matrix $C$, with $\|C-I\|_\infty\leq2\eps_n<1$. Given an arbitrary normalized signed native competitor, form $R$ and $L$ by the finite sums above, without asserting their entrywise positivity. They satisfy
+\[
+ R\one_k=C^Tw,\qquad RL=C^T\diag(w)C.
+\]
+Set $B=(C^T\diag(w))^{-1}R$. Then $B\one_k=\one_p$ and $BL=C$, so $B$ has row rank $p$. It transforms by row permutation under component relabeling. Therefore $z\mapsto zB$ embeds the centered permutation bundle $E_0$ into the fixed hyperplane $\one_k^\perp$. This proves $g(E_0)\leq k-1$ without a minimality assumption.
+
+Conversely, embed $E_0$ into $\one_k^\perp$ and choose a continuous linear left inverse using bundle metrics. Extend this to normalized maps between $E=\R\oplus E_0$ and $X\times\R^k$ by sending the uniform unit-mass section of $E$ to $\one_k^T/k$, and preserving total mass in the left inverse. In component coordinates these are continuous equivariant real matrices $Q,L$ with $QL=I_p$, $Q\one_k=\one_p$, and $L\one_p=\one_k$. Formula \eqref{eq:native} is then a normalized signed realization of width $k$.
+\end{proof}
+
+\section{Two-dimensional bases and a sharp three-component example}
+The established topology of $D_{p,k}$ identifies it, for $k>p$, up to homotopy with a wedge of $(k-p)$-spheres \cite{AGH,BK}. Consequently, on a finite $d$-dimensional CW base, the stochastic width is at most $p+d$: extend a section of the associated $D_{p,p+d}$ bundle cell by cell, using its $(d-1)$-connectivity. Equivalently, choose images of cells in the principal cover one orbit at a time. This is an application of the classical connectivity theorem, not a new computation of the Hom complex.
+
+For $p=3,k=4$, $D_{3,4}$ is a connected graph with $24$ vertices and $36$ edges. Vertices are injections of three component labels into four slots; an edge moves one component between two slots while the other two occupy one slot each. The free $S_3$ quotient forgets component labels. It has four vertices indexed by the vacant slot, with one edge for each pair of vacancies. Hence
+\[
+ D_{3,4}/S_3\cong K_4,
+ \qquad\pi_1(K_4)\cong F_3.
+\]
+Let $\phi:F_3\twoheadrightarrow S_3$ be the monodromy of this connected six-sheeted cover. For a connected finite two-dimensional CW complex $X$ with component monodromy $\rho:\pi_1(X)\to S_3$, the width is therefore
+\[
+ \begin{cases}
+ 3,&\rho\text{ is trivial},\\
+ 4,&\rho\text{ is nontrivial and factors through }\phi,\\
+ 5,&\rho\text{ does not factor through }\phi.
+ \end{cases}
+\]
+Factorization is understood up to conjugacy and means the existence of a homomorphism $\widetilde\rho:\pi_1(X)\to F_3$ with $\phi\widetilde\rho=\rho$. Indeed, an equivariant map to $D_{3,4}$ identifies the component-frame cover with the pullback of $D_{3,4}\to K_4$. Conversely, a factorization is realized by a map $X\to K_4$, since a graph is a $K(F_3,1)$, and the covering classification gives the equivariant map. The five-state bound follows from simple connectivity of $D_{3,5}$.
+
+For this case the connectivity input also has a direct proof. Let $A_i\subset D_{3,5}$ be the subcomplex where slot five is permitted only in row $i$. These three subcomplexes cover $D_{3,5}$, and every intersection of two or more is $D_{3,4}$. Moving row $i$ linearly to the fifth vertex strongly deformation retracts $A_i$ onto $D_{2,4}$. Difference of the two probability rows identifies $D_{2,4}$ with $\{z\in\one_4^\perp:\|z\|_1=2\}$, a polyhedral two-sphere. Each $A_i$ is therefore simply connected; their intersections are connected by spare-slot moves. Van Kampen for finite subcomplexes gives simple connectivity of the union. This verifies the connectivity used for five states without the full wedge theorem.
+
+\begin{theorem}[Moore-space separation]\label{thm:moore}
+There is a continuous exchangeable family on the four-symbol alphabet over the finite two-dimensional Moore space
+\[
+ X=M(\mathbb Z/3,1)=S^1\cup_{\text{degree }3}D^2
+\]
+whose pointwise stochastic and signed widths are three, whose full predictive rank-three bundle is trivial, whose minimum continuous normalized signed width is four, and whose minimum continuous stochastic width is five. Its IID component emissions are all strictly positive. Every four-state continuous stochastic competitor has a positive uniform finite-horizon approximation error as in Corollary~\ref{cor:robust}.
+\end{theorem}
+\begin{proof}
+Use the three-sheeted cover determined by $\pi_1(X)=\mathbb Z/3$ acting cyclically on three components. Its centered real permutation representation is an oriented plane bundle $E_0$ with rotation monodromy $2\pi/3$ (up to orientation reversal). Its Euler class is a generator of
+\[
+ H^2(X;\mathbb Z)=\mathbb Z/3.
+\]
+For detail, the associated unitary character is the nonzero class in $H^1(X;\mathbb Z/3)$, and its integral Bockstein is the Euler class. The coefficient sequence $0\to\mathbb Z\xrightarrow{3}\mathbb Z\to\mathbb Z/3\to0$ makes this Bockstein an isomorphism, since $H^1(X;\mathbb Z)=0$ and multiplication by three on $H^2(X;\mathbb Z)$ vanishes. Thus $E_0$ is nontrivial. On the other hand $H^2(X;\mathbb Z/2)=0$, and the only framing obstruction for an oriented rank-three bundle on a two-complex is $w_2$. Therefore $\R\oplus E_0$ is trivial. These standard bundle facts are exactly the topological input \cite{Hatcher}; no smooth-manifold structure is assumed of the Moore space.
+
+Choose a continuous isometric embedding $j:E_0\hookrightarrow X\times\R^3$, available from the trivial stabilization, and identify $\R^3$ isometrically with $\one_4^\perp$. The three canonical centered vertices in a local component frame are $z_a=e_a-\one_3/3$. For any fixed $0<\eta<1/4$, set
+\[
+ v_a=\one_4^T/4+\eta j(z_a),\qquad w_a=1/3.
+\]
+The formula is independent of local ordering, its entries are strictly positive because $\|j(z_a)\|_2=\sqrt{2/3}<1$, and the entries sum to one. The three atoms are affinely independent, since $j$ is injective on $E_0$. Their held IID mixture is consequently a continuous exchangeable rank-three family whose component cover is the prescribed one. The full predictive bundle is $\R\oplus E_0$, so is trivial. Since $E_0$ is nontrivial but embeds in $\R^3$, $g(E_0)=3$, and Theorem~\ref{thm:signed} gives normalized signed width four. Pointwise rank gives the lower bound three, matched by the local diagonal model.
+
+The nontrivial homomorphism $\mathbb Z/3\to S_3$ cannot factor through $F_3$, because every homomorphism from the finite group $\mathbb Z/3$ to the torsion-free free group $F_3$ is trivial. Thus four stochastic states are impossible, even for arbitrary native competitors. Simple connectivity of $D_{3,5}$ supplies five states. The uniform error statement is Corollary~\ref{cor:robust}.
+\end{proof}
+
+This example separates two costs: fixed normalization raises width three to four, and positivity raises it further to five. The stochastic versus normalized-signed comparison uses the same fixed terminal convention. The theorem does not claim that the centered plane bundle is trivial. A constant three-component family has all three widths equal to three; the earlier circle three-cycle has normalized signed width three and stochastic width four.
+
+\section{Scope, sources, and remaining audit}
+The observer supplies an alphabet, its word-concatenation experiments, and a parameter topology. The theorem derives latent components, the predictive bundle, and its positive cone from all-word exchangeability and finite rank. It does not infer the parameter topology, establish exchangeability from finite data, treat arbitrary nonexchangeable dynamics, or add cross-parameter transport operations. The lower-bound convention allows arbitrary output-labeled transition models with a stochastic sum; the upper bound also has the ordinary state-emitting form at the same width.
+
+Finite-alphabet de Finetti, finite-rank moment reconstruction, Hankel realization, and parameterized vector-bundle realization are classical. Dharmadhikari's 1964 study of exchangeable processes as functions of Markov chains is a direct antecedent. Finesso--Prosdocimi's 2010 binary-exchangeable realization paper directly treats observable Hankel/moment reconstruction, and Prosdocimi--Finesso's recurrence-class decomposition is another close comparison \cite{Dharmadhikari,FP,PF}. Invariant-polyhedral-cone criteria for pointwise positive realization are classical as well. Mond--Smith--van Straten's Theorem 2.4 gives an equivariant identification of fixed-table rank-size stochastic factorization spaces with sandwiched-simplex spaces \cite{MSV}; topology of positive explanation spaces is therefore not a new theme. The candidate family-level bridge in this draft is the explicit continuous extraction of a same-width stochastic split from an \emph{arbitrary} native all-word realization by two observable blocks, including its uniform approximation version, followed by the exact cover-section width criterion. This is a proved comparison within a restricted class, not a novelty claim. A specialist literature audit must compare it with realization theory, statistical sufficiency, nonnegative factorization, and configuration-space section obstructions before any priority assertion.
+
+\begin{thebibliography}{9}
+\bibitem{Dharmadhikari} S. W. Dharmadhikari. \emph{Exchangeable Processes which are Functions of Stationary Markov Chains}. Annals of Mathematical Statistics 35 (1964), 429--430. \href{https://doi.org/10.1214/aoms/1177703768}{doi:10.1214/aoms/1177703768}. Bibliography and pointwise characterization checked through the primary paper \cite{FP}; direct DOI retrieval was unavailable.
+\bibitem{FP} L. Finesso and C. Prosdocimi. \emph{Stochastic Realization of Binary Exchangeable Processes}. MTNS 2010, 1859--1864. \href{https://www.conferences.hu/mtns2010/proceedings/Papers/330_039.pdf}{Conference primary text}. In particular Theorem 3 and the realization algorithm concern observable Hankel ranks and pointwise finite-mixture realization.
+\bibitem{PF} C. Prosdocimi and L. Finesso. \emph{Countable Partially Exchangeable Mixtures}. \href{https://arxiv.org/html/1306.5631v2}{arXiv:1306.5631v2}, Section 4.2.1, Theorem 4.2. Its recurrent-HMM countable-mixture representation is a close pointwise antecedent; it does not itself state this continuous fixed-width family criterion.
+\bibitem{Schonhuth} A. Sch\"onhuth. \emph{Equations for hidden Markov models}. \href{https://arxiv.org/abs/0901.3749}{arXiv:0901.3749}. Theorems 2.5, 2.7 and 5.1 give classical rank, normalization and cone context.
+\bibitem{MW} A. Monr\`as and A. Winter. \emph{Quantum learning of classical stochastic processes: The Completely-Positive Realization Problem}. \href{https://arxiv.org/abs/1412.3634}{arXiv:1412.3634}. Compare its native convention and positive-cone criterion.
+\bibitem{AGH} A. Abrams, D. Gay, V. Hower. \emph{Discretized configurations and partial partitions}. \href{https://arxiv.org/abs/1009.2935}{arXiv:1009.2935}.
+\bibitem{BK} E. Babson, D. N. Kozlov. \emph{Complexes of graph homomorphisms}. \href{https://arxiv.org/abs/math/0310056}{arXiv:math/0310056}.
+\bibitem{AJLS} N. Ay, J. Jost, H. V. L\^e, L. Schwachh\"ofer. \emph{Information geometry and sufficient statistics}. \href{https://arxiv.org/abs/1207.6736}{arXiv:1207.6736}. Compare stochastic splitting and congruent embeddings.
+\bibitem{Byrnes} C. I. Byrnes. \emph{On certain problems of arithmetic arising in the realization of linear systems with symmetries}. Ast\'erisque 75--76 (1980), 57--65. \href{https://www.numdam.org/article/AST_1980__75-76__57_0.pdf}{Primary text}.
+\bibitem{Hatcher} A. Hatcher. \emph{Vector Bundles and K-Theory}, version 2.2. \href{https://pi.math.cornell.edu/~hatcher/VBKT/VB.pdf}{Author text}, printed page 75 for framing obstructions over a two-complex; Propositions 3.10 and 3.13 for complex-line classification and Euler--Chern comparison.
+\bibitem{MSV} D. Mond, J. Smith, and D. van Straten. \emph{Stochastic factorizations, sandwiched simplices and the topology of the space of explanations}. Proceedings of the Royal Society A 459 (2003). \href{https://doi.org/10.1098/rspa.2003.1150}{doi:10.1098/rspa.2003.1150}, Theorem 2.4.
+\end{thebibliography}
+\end{document}
