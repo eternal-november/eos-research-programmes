@@ -346,6 +346,10 @@ class PulseSelector:
                  "Pulse state exceeds its ternary/counter wires")
         need(all(packet is None for packet in self.pending),
              "Initial trigger debt needs its actual capture/entry map")
+        # Initial values populate three distinct installed registers. Python
+        # container aliases cannot turn two physical counters into one store.
+        self.slots=[None if state is None else list(state) for state in self.slots]
+        self.pending=list(self.pending)
         self.force=exact(self.force,"Initial field force")
         need(abs(self.force)<=FORCE,"Initial field exceeds installed amplitude")
 
@@ -526,6 +530,11 @@ def local_checks():
     need(abs(selector.flow(1000,mode="wrong"))<=FORCE and abs(selector.flow(1000,mode="jam"))<=FORCE,
          "Wrong/jammed output exceeded rated force")
     need(selector.flow(1,energy=0)==0, "Empty converter created mechanical work")
+    repeated_initial=[1,10]
+    distinct=PulseSelector(slots=[repeated_initial,repeated_initial,None])
+    distinct.clock_edge(0)
+    need(distinct.slots[0]==[1,9] and distinct.slots[1]==[1,10]
+         and repeated_initial==[1,10],"Initial aliases merged physical slot counters")
     hardware=PulseSelector()
     need(hardware.trigger(0,-1)=="active" and hardware.slots[0][1]==PULSE_EDGES,
          "Ordinary hardware trigger changed its fixed lifetime")
@@ -585,7 +594,8 @@ def local_checks():
                 pulse_counter=dict(hardware_edges=PULSE_EDGES,physical_bits=PULSE_COUNTER_BITS,
                   physical_counter_cap=PULSE_COUNTER_CAP,payload_cannot_choose_count=True,
                   malformed_rejections=pulse_rejections,fixture_rejections=fixture_rejections,
-                  diagnostic_fixture_not_hardware=True,arbitrary_entry_qualified=False,
+                  diagnostic_fixture_not_hardware=True,distinct_physical_counter_storage=True,
+                  arbitrary_entry_qualified=False,
                   arbitrary_cap_profile_work=high_profile,
                   arbitrary_cap_profile_exceeds_existing_reserve=True,
                   physical_reformation_from_arbitrary_counter="unclosed; no clean reset supplied"),
