@@ -20,6 +20,7 @@ BASE='6a5f8aad0f0e5156edb21a054f8c72adcbf7120e'
 FIELD='215ecb755312f580cbd8c283b419f0958518766f'
 CAM_BASE='36d69bce7a4705fd54a915beb7c00cea55cce063'
 INPUT_BASE='bcf8092072a23bfd9072877be98d9a5c3acd6306'
+ITINERARY_BASE='bdeb1d2fd16c3ffbcd6b58f9d8431b3616cf8f2b'
 need=program.need
 need(sys.version_info[:2]==(3,12) and not sys.flags.optimize,'Unoptimized Python3.12 required')
 
@@ -301,9 +302,19 @@ def generate():
     need(tube==Q(1,100)<Q(1,20),'Initial world tube consumes the reserve')
     tracking=Q(publication['world']['tracker']['tracking_error'])
     need(tracking<Q(1,25),'Initial formed keeper lacks the conditional collar supplier')
-    sequence=Q(a['complete_sequence_allocation']);H=Q(a['candidate_H'])
+    itinerary_text=legacy.text_at(ITINERARY_BASE,'portability/interrupted_renewal_results.json')
+    itinerary=json.loads(itinerary_text)
+    for name,sha in itinerary['sources_sha256_lf'].items():
+        need(program.digest(HERE/name)==sha,'Interrupted-entry supplier changed: '+name)
+    need(itinerary['actual_image_sha256']==image_hash
+         and Q(itinerary['all_role_initialization'])==full
+         and Q(itinerary['old_partial_allocation'])==Q(a['partial_time_allocation']),
+         'Interrupted itinerary does not refine the same initial/phase source')
+    sequence=Q(itinerary['corrected_sequence_allocation']);H=Q(a['candidate_H'])
+    need(Q(itinerary['H'])==H and itinerary['raw_cover']==a['raw_token_cover'],
+         'Itinerary changed the source horizon or cover')
     residual=sequence-full
-    need(residual==Q(a['partial_time_allocation'])+Q(a['abort_time_allocation'])+
+    need(residual==Q(itinerary['corrected_partial_allocation'])+Q(a['abort_time_allocation'])+
          2*Q(a['fresh_half_time'])+Q(a['old_suffix_allocation']),
          'Initialization was charged twice or removed from the return allocation')
     need(full+residual<H,'Split bootstrap loses the deadline margin')
@@ -343,6 +354,7 @@ def generate():
            'cam_reformation.py','CAM-REFORMATION.md','cam_reformation_results.json','threshold_field_source.py',
            'parent_realization.py','PARENT-REALIZATION.md','parent_realization_results.json',
            'input_lifecycle.py','INPUT-LIFECYCLE.md','input_lifecycle_results.json',
+           'interrupted_renewal.py','INTERRUPTED-RENEWAL.md','interrupted_renewal_results.json',
            'LEGACY-REALIZATION.md','legacy_realization_results.json','threshold_field_source_results.json','THRESHOLD-FIELD-SOURCE.md')
     frozen_inputs={BASE+':portability/threshold_geometry_results.json':geometry_text,
         BASE+':portability/publication_timing_results.json':publication_text,
@@ -350,11 +362,12 @@ def generate():
         FIELD+':portability/threshold_field_source.py':field_code,
         CAM_BASE+':portability/cam_reformation_results.json':cam_text,
         CAM_BASE+':portability/parent_realization_results.json':parent_text,
-        INPUT_BASE+':portability/input_lifecycle_results.json':input_text}
+        INPUT_BASE+':portability/input_lifecycle_results.json':input_text,
+        ITINERARY_BASE+':portability/interrupted_renewal_results.json':itinerary_text}
     for name in ('INITIAL-RETURN.md','PORT-SOURCE.md','CYCLE.md','HYBRID.md'):
         frozen_inputs[program.BASE+':local-control/'+name]=program.frozen(name)
     return normalize(dict(status='constructed initial relation and derived conditional split-bootstrap supplier',
-        base=BASE,field_base=FIELD,cam_base=CAM_BASE,input_base=INPUT_BASE,python_version=sys.version,frozen_isa_sha256=isa.source_hash,
+        base=BASE,field_base=FIELD,cam_base=CAM_BASE,input_base=INPUT_BASE,itinerary_base=ITINERARY_BASE,python_version=sys.version,frozen_isa_sha256=isa.source_hash,
         actual_image_sha256=image_hash,code_cells=len(c.image),population=population,
         initial_native_state=native,initial_ordinary_input_state=ordinary_inputs,changed_image_boot_prefix=changed_prefix,
         joined_initial_resources=dict(upstream_capacity=joined_capacity,
@@ -400,6 +413,8 @@ def generate():
             first_write_scope='uncharged initial target with fresh corridor start<=t_full; actual exclusion and no relevant interruption; later starts use the maintained-donor supplier',
             initial_service=service,later_formed_service=formed_service,
             recurrence_after_initialization=residual,H=H,H_slack=H-full-residual,
+            fresh_phase4_extra=Q(itinerary['extra_fresh_phase4_and_band']),
+            corrected_partial_itinerary=Q(itinerary['corrected_partial_allocation']),
             no_second_charge_of_initialization=True),
         source_premises=['complete ordinary parent/port nominal timing under actual funded entry',
             'initial native point at all uncharged sources, not restoration by release',
