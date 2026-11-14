@@ -18,6 +18,7 @@ import types
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
 BASE="edce1a21e4dacf2be677900ded765c337d41023c"
+FIELD_BASE="70ac3c8678e0de5a01136a11d6e97d321a088b0c"
 PREFIX="theories-and-designs/byzantine-control/"
 if sys.flags.optimize or sys.version_info[:2]!=(3,12):
     raise RuntimeError("Unoptimized Python 3.12 required")
@@ -53,10 +54,24 @@ def inputs():
         "local-control/port_source_results.json","local-control/port_source_model.py",
         "local-control/PORT-SOURCE.md","local-control/PORT-RESOURCES.md",
         "portability/FLOW-COMPOSITION.md")
-    texts={name:frozen(BASE,name) for name in names}
+    field_names={"portability/threshold_field_source_results.json",
+                 "portability/threshold_field_source.py","portability/THRESHOLD-FIELD-SOURCE.md"}
+    commits={name:FIELD_BASE if name in field_names else BASE for name in names}
+    texts={name:frozen(commits[name],name) for name in names}
     field=json.loads(texts["portability/threshold_field_source_results.json"])
+    previous_field=json.loads(frozen(BASE,"portability/threshold_field_source_results.json"))
+    preserved=(("mechanics","total_reaction"),("thermal","side_effect_bound_with_old_normalization"),
+               ("thermal","new_world_raw_rating"),("thermal","world_flow_ratio_to_old_M"),
+               ("resources","unchanged_total_host_stock"))
+    for section,key in preserved:
+        need(field["point"][section][key]==previous_field["point"][section][key],
+             "Changed consumed field quantity: "+key)
+    old_resources=previous_field["point"]["resources"];new_resources=field["point"]["resources"]
+    resource_changes={key:dict(before=old_resources.get(key),after=new_resources.get(key))
+                      for key in sorted(set(old_resources)|set(new_resources))
+                      if old_resources.get(key)!=new_resources.get(key)}
     for name,h in field["sources_sha256_lf"].items():
-        text=frozen(BASE,"portability/"+name)
+        text=frozen(FIELD_BASE,"portability/"+name)
         need(digest_text(text)==h,"Stale field-source input: "+name)
     for name,h in field["frozen_inputs_sha256_lf"].items():
         need(digest_text(frozen(field["source_base"],name))==h,
@@ -94,6 +109,9 @@ def inputs():
                 native_side=native_side,reaction=reaction,
                 native_world_cap=native_world_cap,native_world_ratio=native_world_ratio,
                 source_hashes={name:digest_text(text) for name,text in texts.items()},
+                source_commits=commits,field_snapshot_base=FIELD_BASE,
+                preserved_field_consumers=[list(pair) for pair in preserved],
+                field_resource_binding_changed=bool(resource_changes),field_resource_changes=resource_changes,
                 field_transitive_hashes=field["frozen_inputs_sha256_lf"],
                 field_transitive_base=field["source_base"]),im.region_edges
 
@@ -451,12 +469,34 @@ def checks(inp,edge_constructor):
         need(max(incidence.values())<=5 and len(rungs)==n,"Actual local coupling incidence failed")
         need(sum(net.values())==0 and all_power+all_heat==0,"Composed physical ledger failed")
         z,r=rungs[0]
-        opened=flow(z,State(Q(0),Q(0),2,(Q(0),Q(0))),{p:x[p] for p in z.ports})
-        need(not any(opened["contributions"].values()) and opened["heat_dot"]==0,"Open ablation created flow")
+        zero=State(Q(0),Q(0),0,(Q(0),Q(0)))
+        not_open,unfunded=mode_request(z,zero,2,(Q(0),Q(0)))
+        need(unfunded=="rejected-or-unfunded" and not_open==zero,
+             "Zero stock paid for an opening")
+        common=State(Q(1),Q(0),0,(Q(0),Q(0)))
+        kept,kept_status=mode_request(z,common,0,(Q(0),Q(0)))
+        opened_state,open_status=mode_request(z,common,2,(Q(0),Q(0)))
+        need(kept_status==open_status=="accepted" and kept.stock==opened_state.stock==0
+             and kept.theta==opened_state.theta==1/z.thermal_capacity,
+             "Matched ablation did not pay equal actual work/heat")
+        continued=flow(z,kept,{p:x[p] for p in z.ports})
+        opened=flow(z,opened_state,{p:x[p] for p in z.ports})
+        need(not any(opened["contributions"].values()) and opened["heat_dot"]==-1,
+             "Open branch lost its paid initial heat/bath evolution")
         need(r["main"]==(Q(m,250),Q(m,250)) and r["heat_dot"]==Q(m,625),"Initial rung witness wrong")
+        need(continued["main"]==r["main"] and continued["generated_transport_heat"]==Q(m,625),
+             "Paid initial state changed normal transport")
         graph_checks.append(dict(regions=2*n,zones=len(zones),incident_zone_max=max(incidence.values()),
             active_rungs=len(rungs),total_generated_heat=all_heat,
-            removed_rung_flow_per_coordinate=Q(m,250),removed_rung_heat=Q(m,625),
+            removed_transport_flow_per_coordinate=Q(m,250),
+            removed_generated_transport_heat=Q(m,625),
+            paid_ablation=dict(common_pre_stock=common.stock,common_pre_theta=common.theta,
+                each_request_cost=z.mode_work,common_post_stock=kept.stock,common_post_theta=kept.theta,
+                passive_mode=kept.mode,open_mode=opened_state.mode,
+                passive_thermal_flows=continued["thermal"],
+                passive_net_heat_derivative=continued["heat_dot"],open_net_heat_derivative=opened["heat_dot"],
+                heat_derivative_difference=continued["heat_dot"]-opened["heat_dot"],
+                zero_stock_open_request_rejected=True),
             installed_work_capacity=len(zones)*edge.stock_capacity,
             installed_thermal_capacity=len(zones)*edge.thermal_capacity,
             actual_initial_coupler_energy=0))
@@ -496,7 +536,9 @@ def checks(inp,edge_constructor):
             minimum_rung_difference=difference,minimum_rung_flow=rate,
             minimum_two_coordinate_rung_dissipation=heat,
             total_rung_dissipation_lower_per_Rm=total_per_Rm,
-            one_open_rung_is_local_variation=True,all_open_rungs_not_a_claimed_fault_history=True),
+            one_open_rung_is_paid_local_variation=True,matched_pre_action_stock=1,
+            matched_post_action_theta=1/edge.thermal_capacity,
+            generated_heat_not_net_heat_derivative=True,all_open_rungs_not_a_claimed_fault_history=True),
         incident_accounting=dict(physical_manifest=repr(physical_manifest),
             lost_source_region=list(lost_region),export_region=list(export_region),
             actual_lost_service=actual_service_loss,actual_additional_export=export,
@@ -519,9 +561,13 @@ def generate():
     actual=system(3,inp["m"],edges)[0]
     need(actual.kappa==certificate["kappa"] and actual.thermal_coefficient==certificate["thermal_coefficient"],
          "World certificate and actual coupler parameters differ")
-    return serial(dict(status="derived candidate coupling source and first-pass exact checks",
+    return serial(dict(status="derived candidate coupling source with independent bounded review and matched paid ablation",
         scope="finite actual ports, flow/energy/material bounds and conditional world interface; no full family",
         frozen_base=BASE,frozen_inputs_sha256_lf=inp["source_hashes"],
+        frozen_input_commits=inp["source_commits"],field_snapshot_base=inp["field_snapshot_base"],
+        preserved_field_consumers=inp["preserved_field_consumers"],
+        field_resource_binding_changed=inp["field_resource_binding_changed"],
+        field_resource_changes=inp["field_resource_changes"],
         field_source_transitive_base=inp["field_transitive_base"],
         field_source_transitive_hashes=inp["field_transitive_hashes"],
         world=certificate,active_law_comparison=active_comparison(inp["m"]),checks=local,
@@ -530,7 +576,7 @@ def generate():
             world_absolute_work_cap=actual.world_work_cap,other_inlet_cap=actual.external_inlet_cap,
             bath_coefficient=actual.bath_coefficient,recoverable_fraction=actual.recovered_fraction,
             stock_leak_rate=actual.stock_leak,thermal_waste_effort=actual.thermal_loss_effort,
-            actual_initial_work_and_heat=0,endpoint_cap_is_material_not_nominal=True),
+            nominal_scaling_initial_work_and_heat=0,endpoint_cap_is_material_not_nominal=True),
         sources_sha256_lf={name:sha256((HERE/name).read_bytes().replace(b"\r\n",b"\n")).hexdigest()
                           for name in ("regional_coupling.py","REGIONAL-COUPLING.md")},
         python_version=sys.version,
