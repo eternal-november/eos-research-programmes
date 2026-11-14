@@ -1,0 +1,332 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}\newtheorem{corollary}{Corollary}\newtheorem{definition}{Definition}
+\newcommand{\TV}{\operatorname{TV}}\newcommand{\Prob}{\mathsf{Prob}}
+\title{Retained-boundary refinement and correlation-aware composition}
+\author{}\date{14 November 2026}
+\begin{document}\maketitle
+\paragraph{Reading guide.} The unifying question is which information a comparison must retain to remain valid under later interaction. Part I gives an exact separator criterion and optimal one-step defect; Part II treats adaptive interference by coherent couplings; Part III distinguishes uniform kernel-aware witnesses from kernel-blind native maps; Part IV propagates defects under precisely declared adaptive contexts. These are finite foundational results and established-technique specializations, not historical novelty claims or completion of the feedback/concurrency contract. In particular, a coupling span is not a directed native cell, and the mathematical context class is not silently identified with physical controllers.
+\part{I: Separator information and composition}
+
+\paragraph{Status and scope.} Written finite-probability theorems; not mechanized and no historical novelty claim. This continues the native shared-content construction by asking when a content/interface abstraction genuinely commutes with composition against every partner, instead of silently replacing a correlated joint behavior by a product of its marginals. The result is a sharp one-step naturality criterion and optimal quantitative defect for a declared separator-context class, not full program-context equivalence or arbitrary concurrent refinement.
+
+\section{The shared information which composition uses}
+Let $S,X,Y$ be finite nonempty sets, let $p$ be a probability law on $S$, and let $K:S\to\operatorname{Prob}(X)$ and $L:S\to\operatorname{Prob}(Y)$ be explicit conditional kernels. The joint construction is
+\[
+ J_{p,K,L}(s,x,y)=p(s)K_s(x)L_s(y).
+\]
+Thus $S$ is a retained shared separator, and the two lift choices are conditionally independent given $S$. This does not assert that a physical system's actual joint law has that form. An explicit correlated scope can be included as one component; correlations omitted from the separator or scope cannot be recovered from marginals.
+
+Suppose a native interface map forgets some separator information via $\beta:S\to Z$, and an output/content map is $a:X\to X'$. Put $F_s=a_*K_s$. We allow the partner kernel $L$ to vary freely over finite output sets; its conditional dependence on the original shared separator is part of the declared context class. For $p_Z(z)>0$ define
+\[
+ w_z(s)=\frac{p(s)}{p_Z(z)}\quad(\beta(s)=z),\qquad
+ \overline F_z=\sum_{\beta(s)=z}w_z(s)F_s,
+ \quad\overline L_z=\sum_{\beta(s)=z}w_z(s)L_s.
+\]
+Rows at $p_Z(z)=0$ can be chosen arbitrarily and have no effect on the laws below. There are two routes to the same apparent interface:
+\begin{align*}
+ P_L(z,x',y)&=\sum_{\beta(s)=z}p(s)F_s(x')L_s(y),\\
+ Q_L(z,x',y)&=p_Z(z)\overline F_z(x')\overline L_z(y).
+\end{align*}
+$P_L$ glues with the real separator before abstracting. $Q_L$ abstracts the two operands separately, then glues over the coarse separator. The operand marginal maps are legitimate probability pushforwards, but their horizontal composite need not be one. This is the relevant native-square naturality issue.
+
+\begin{proposition}[Exact criterion for one specified partner]\label{sep-specified}
+$P_L=Q_L$ if and only if, for every positive-mass $z$ and every $x',y$,
+\[
+ \sum_{\beta(s)=z}w_z(s)F_s(x')L_s(y)
+ =\Bigl(\sum_s w_z(s)F_s(x')\Bigr)
+  \Bigl(\sum_s w_z(s)L_s(y)\Bigr).
+\]
+Equivalently the two output coordinates are conditionally independent given the coarse separator under the pushed joint law. For a particular partner, cancellation can make this hold without either kernel being constant on the separator fibre.
+\end{proposition}
+\begin{proof}
+Divide the equality of the two joint masses by $p_Z(z)$ on its positive support. Zero-mass rows vanish on both sides. This gives precisely the displayed equality.
+\end{proof}
+
+\section{A sharp universal contextual criterion and quantitative bound}
+For finite laws, $\TV(\mu,\nu)=\frac12\sum_t|\mu(t)-\nu(t)|$. Define
+\[
+ \Delta_p(F,\beta)=\sum_s p(s)\TV(F_s,\overline F_{\beta(s)}).
+\]
+Only positive-mass $s$ contribute. This measures how much retained component behavior still depends on separator information erased by $\beta$.
+
+\begin{theorem}[Optimal partner defect]\label{sep-optimal}
+For every partner kernel $L$,
+\[
+ \TV(P_L,Q_L)\le\Delta_p(F,\beta).
+\]
+The bound is attained by the finite deterministic partner with $Y=S$ and $L_s=\delta_s$. Consequently
+\[
+ \sup_{Y\ \mathrm{finite},\,L:S\to\operatorname{Prob}(Y)}
+       \TV(P_L,Q_L)=\Delta_p(F,\beta).
+\]
+In particular abstraction commutes with composition against every partner if and only if $F_s=\overline F_{\beta(s)}$ for every $s$ with $p(s)>0$.
+\end{theorem}
+\begin{proof}
+On $X'\times S$ compare the two retained laws
+\[
+ M(x',s)=p(s)F_s(x'),\qquad
+ N(x',s)=p(s)\overline F_{\beta(s)}(x').
+\]
+Their total-variation distance is exactly $\Delta_p(F,\beta)$. Apply the same stochastic map to both: keep $x'$, output $z=\beta(s)$ and draw $y$ from $L_s$. The resulting laws are $P_L$ and $Q_L$. Finite total variation contracts under a stochastic map, since summing the absolute value of a weighted sum is at most the weighted sum of absolute values. This proves the bound.
+
+If $L_s=\delta_s$, the output retains $s$ itself. The map $(x',s)\mapsto(\beta(s),x',s)$ is injective, so it preserves total variation and attains the bound. Finally $\Delta_p=0$ exactly when every nonnegative positive-weight summand vanishes, giving the stated criterion.
+\end{proof}
+
+This is a universal statement over the declared partner class, not a catalogue of favorable pairings. The witnessing partner does not need to guess a subtle counterexample: it reveals precisely the shared information that was forgotten. If the admissible physical contexts are prohibited from observing or retaining $S$, that smaller class may have a smaller defect. One must not transfer the universal claim to a different observation policy without checking it.
+
+\begin{corollary}[Pointwise all-history version]\label{sep-alllaws}
+The following are equivalent:
+\begin{enumerate}
+\item For every base law $p$ on $S$ and every partner $L$, the two routes commute.
+\item There is a kernel $\widetilde F:Z\to\operatorname{Prob}(X')$ with $F_s=\widetilde F_{\beta(s)}$ for every $s$ (rows outside $\beta(S)$ may be arbitrary).
+\end{enumerate}
+Thus a condition valid under one current distribution is insufficient for all future histories that can change the separator distribution.
+\end{corollary}
+\begin{proof}
+The factorization makes $\Delta_p$ zero for every $p$. Conversely put positive mass on any two $s,t$ with $\beta(s)=\beta(t)$. Theorem~\ref{sep-optimal} forces their rows to coincide. Do this for all such pairs, and define the common row on each nonempty fibre.
+\end{proof}
+If only one particular $p$ is used, exceptional null rows can violate the pointwise factorization. Later adaptive operation can reach those rows. This is the same structural danger exposed by the feedback diagonal boundary, although the finite theorem here quantifies over changed base laws rather than relying on a continuous exceptional-set argument.
+
+\paragraph{Simple discriminator, not the theorem's content.} With $S=\{0,1\}$ fair, $F_s=\delta_s$, and $\beta$ constant, take the revealing partner. The pushed real joint law has equal bits; separately abstracted gluing has independent fair bits. Its distance from the real law is $1/2$, exactly $\Delta_p$. A side effect encoded by this shared bit cannot be removed from the interface without changing compositional behavior.
+
+\section{Native-map closure, not just a scalar test}
+Call a separator/output pair $(\beta,a)$ \emph{sufficient for $K$} when the pointwise factorization in Corollary~\ref{sep-alllaws} holds. This supplies an actual target conditional kernel $\widetilde F$, not merely equality after one sampled experiment.
+
+These sufficient maps compose vertically. If $(\beta,a)$ gives $a_*K_s=F'_{\beta(s)}$, and $(\gamma,c)$ gives $c_*F'_z=F''_{\gamma(z)}$, then
+\[
+ (ca)_*K_s=F''_{\gamma\beta(s)}.
+\]
+Identities are sufficient. If two retained component kernels both factor through the same $\beta$, their product conditional kernel also factors, because
+\[
+ F_s(x')G_s(y')=\widetilde F_{\beta(s)}(x')\widetilde G_{\beta(s)}(y').
+\]
+Thus the sufficient subclass is closed under the conditional-independent horizontal composition at that separator. The actual witness/content map is $(s,x,y)\mapsto(\beta(s),a(x),b(y))$; its body square is literal and its probability pushforward agrees with the target glued law by the factorization. Tuple reassociation gives the retained horizontal coherence on any fixed ordered finite family.
+
+This proves a genuine subclass of native content maps on which the chosen gluing is natural. It does not assert every content map is sufficient. It also does not erase raw-path obligations: probability equations can hold while an output abstraction forgets a physical precondition, or while a zero-weight raw branch has no lift. World/continuation predicate preservation and raw coverage remain separate requirements.
+
+\section{Correlated scopes arranged in a junction tree}
+The single separator need not be one giant global state. Let finitely many finite-variable scopes $C_i$ form a junction tree: the scopes containing any variable form a connected subtree. Supply an explicit joint law $\mu_i$ inside each scope, including arbitrary internal correlations, with equal marginals on adjacent intersections. Root the tree. The root is sampled from $\mu_{\rm root}$; each child samples its new variables from its supplied conditional law given the parent separator. Positive separator rows are determined by the joint law; null rows may be chosen arbitrarily without changing the resulting measure.
+
+This is the standard junction-tree gluing construction, not a new theorem of graphical models. Its normalization and correct scope marginals follow by eliminating leaves: a child conditional row sums to one, and consistency gives its correct separator marginal. The global law is the product of scope masses divided by separator masses on positive support, so it is independent of the chosen root. The construction chooses conditional independence across tree cuts; it does not claim that scope marginals force that choice among all possible global correlations. See the author-maintained graphical-models treatment, Proposition 7.2: \url{https://www.stats.ox.ac.uk/~evans/gms/_book/jt.html}.
+
+There is a useful native consequence. Let coordinatewise abstraction maps preserve the scope diagram. If, at every parent--child cut, the child's abstracted residual conditional kernel factors pointwise through the abstracted separator, then abstracting the global glued law agrees with gluing the abstracted scope laws on that same tree. Prove this by induction down the rooted sampling construction: the root pushes to its abstracted marginal; each child transition pushes to a kernel depending only on the already abstracted separator, exactly the factorization hypothesis. Its actual tuple maps preserve the shared coordinates and commute under reassociation. This is a reusable sufficient interaction criterion for explicit correlated scopes, not an inference that arbitrary scope maps preserve the junction-tree law.
+
+Theorem~\ref{sep-optimal} identifies the exact local worst-context defect when one cut loses sufficient information. It does not by itself give a sharp global sum over all cuts: separator distributions and later conditional laws can change after earlier replacements. A global quantitative composition theorem must control those updated distributions, for example by uniform bounds valid at every reachable history.
+
+\section{Controlled steps and the boundary of the result}
+For application to interfering systems, instantiate $S$ with the shared history/state information used by a joint transition, and $X$ with retained next-step private/world effects. All-history sufficiency means the factorization holds for every admitted state, command and control history, not merely at a current marginal. Then the native one-step pushforward is valid at the actual history chosen by a controller. If state/interface maps also preserve the controller's observations and action availability, cylinder induction supplies the corresponding finite-horizon path-law comparison.
+
+Those extra hypotheses are substantive. The one-step theorem alone does not preserve a scheduler's information, command admission, suspension safety or liveness. The independent coupling/refinement work handles those interfaces explicitly. Here the outcome is the exact information-retention requirement and its optimal one-step quantitative defect, providing a test for which proposed abstractions can serve as compositional native content maps.
+
+\paragraph{Literature and novelty ledger.} Junction-tree probability gluing is established graphical-model theory, and the proofs here use ordinary conditional expectation, finite total-variation contraction and sufficiency. No historical originality is asserted for any displayed theorem. The project-specific work is connecting these facts to native-square naturality, all-partner tests, raw/law separation and the shared-content model. A full priority audit would be needed before claiming novelty; a repository keyword search returning no hit is not evidence of novelty.
+
+\part{II: Adaptive retained-boundary refinement}
+
+\paragraph{Status.} Written foundational bridge, not a novelty claim or full contract discharge. The aim is to replace a fixed common-event-law interface by relational, history-adapted interference simulation, while making its scheduler and dependence assumptions explicit. Probabilistic simulation and robust rectangularity are established theories; the construction below spells out the finite retained-boundary and native-span interface needed here. It is not an automatic extension of arbitrary context/content equipment.
+
+\section{The boundary is an interface, not merely an answer}
+A finite boundary system consists of a nonempty finite state set $S$, a finite command set $A$, a map $o:S\to O$, and nonempty compact convex sets $K_S(s,a)\subseteq\Prob(S)$ of allowed next-state distributions. State includes all retained resources, pending effects and continuation information relevant to the specification. The common interface $o$ includes the command type and all public information on which the context may act. For notational simplicity commands are total; a disabled command is represented by an explicit fault state, not silently removed.
+
+The semantics is \emph{rectangular}: after each finite history and command, an adversary may choose any member of the current $K_S(s,a)$, independently of restrictions on choices at other histories. The adversary may remember the full concrete history. The context chooses $a_n$ from the common interface history, by a possibly randomized history-dependent policy. Its fresh randomization is sampled from the prescribed conditional law given that history; it cannot inspect future transition noise. A persistent latent parameter must be retained in state or imposed as a separate nonrectangular restriction; forgetting it is not licensed by this definition.
+
+A relation $R\subseteq S\times T$ is interface-respecting if $sRt$ implies $o_S(s)=o_T(t)$. A coupling of $\mu,\nu$ supported in $R$ is a nonnegative array $\gamma(s',t')$ with row marginal $\mu$, column marginal $\nu$, and zero outside $R$.
+
+\begin{definition}[Stepwise retained-boundary refinement]
+An interface-respecting $R$ is a refinement from $S$ to $T$ if for every $sRt$, command $a$, and $\mu\in K_S(s,a)$, there are $\nu\in K_T(t,a)$ and an $R$-supported coupling $\gamma$ of $\mu,\nu$.
+\end{definition}
+
+The quantifier order matters. The comparison may respond to the actual source distribution, but not its future realized sample. No equality of the two private-state kernels or conditional independence of their next states is required.
+
+\begin{theorem}[Adaptive contextual law inclusion]\label{ref-adaptive}
+Fix related initial states, a common interface-history context, and any source history-dependent adversary. A joint infinite-run law exists whose source marginal is the prescribed source execution, whose target marginal is generated by an admissible target history-dependent adversary under the same context, and whose paired states satisfy $R$ at every time almost surely. Consequently the common interface histories have identical laws. Every measurable interface-path property transfers with the same probability; every target almost-sure invariant pulling back along $R$ transfers to the source.
+\end{theorem}
+\begin{proof}
+At a finite joint history, sample the common command with its context-prescribed conditional distribution. Apply the source adversary at its source history to obtain $\mu$. Select the witness $(\nu,\gamma)$ from the refinement condition and sample the next pair with law $\gamma$. There are only countably many finite joint histories and commands, so these selections have no measurable-selection difficulty, even if the compact sets of kernels are infinite. Finite products followed by the usual cylinder extension construct the joint law. Induction gives support in $R$ at each time; a countable union of exceptional zero-probability events proves the simultaneous assertion.
+
+The source conditional marginal is always its prescribed $\mu$, so its path marginal is correct. Conditional on a target history and command of positive probability, the target next-state law is a finite convex mixture of the selected $\nu$ over possible source histories. Each lies in the same $K_T(t,a)$; convexity makes the mixture admissible. At zero-probability target histories choose any admissible kernel. This defines a target adversary on target history alone. Common-command probabilities depend only on the identical interface histories, so the target marginal uses the original context rather than an illicit context with access to source private state. Equality of interface cylinder laws and then of path laws proves the assertions.
+\end{proof}
+
+\paragraph{What does not transfer.} This is a synchronized, one-step model, not weak simulation modulo divergence. Fairness of named internal tasks is not an interface-path property unless task identity and fairness observations are retained. Almost-sure conclusions do not cover null raw executions. There is no claim that the selected target adversary is computationally efficient, or that all target behaviors are source behaviors.
+
+\section{Local feasibility is one coherent transport problem}
+For fixed distributions $\mu,\nu$, an $R$-supported coupling exists precisely when
+\[
+ \mu(X)\le\nu(R(X))\qquad(X\subseteq S).
+\]
+Here $R(X)=\{t:\exists s\in X,\ sRt\}$. Necessity follows by summing the coupling over rows $X$. Sufficiency is the unit-flow problem with source-to-$s$ capacities $\mu(s)$, infinite-capacity relation edges, and $t$-to-sink capacities $\nu(t)$: the cut inequalities give maximum flow one. This is a finite transport theorem, not a new classification claim.
+
+For an available set $K\subseteq\Prob(T)$, these inequalities must hold for \emph{one and the same} $\nu\in K$. Maximizing each cut over $K$ separately is not generally sufficient. For example, with diagonal $R$ on three states, take $K$ to be the segment between $(3/5,2/5,0)$ and $(0,3/5,2/5)$, and $\mu=(3/10,2/5,3/10)$. Every subset cut satisfies its separately maximized inequality: on three states this just says each coordinate lies between the endpoint coordinate extrema. Yet $\mu\notin K$: its second coordinate forces the first endpoint, whose third coordinate is zero. An exact alternative uses all real-valued tests and one convex feasibility problem. Put
+\[
+ L_R(K)=\{\rho\in\Prob(S):\exists\nu\in K,\ \rho\mathrel{\overline R}\nu\}.
+\]
+It is compact convex, being a projection of the compact convex feasible coupling set (and may be empty). Hence $\mu\in L_R(K)$ iff for every $v\in\mathbb R^S$,
+\[
+ \langle\mu,v\rangle\le \sup_{\rho\in L_R(K)}\langle\rho,v\rangle.
+\]
+Take $\sup\varnothing=-\infty$. This is the separating-hyperplane theorem, with no interchange of the universal test and existential common witness. When every $t$ has a predecessor under $R$, the right side equals
+\[
+ \sup_{\nu\in K}\sum_t\nu(t)\max_{sRt}v(s).
+\]
+Indeed the row marginal is unconstrained on the right, so each column's mass can be sent to a maximizing related row. If some $t$ has no predecessor, restrict $K$ first to distributions assigning zero mass to those $t$.
+
+\section{Composition and the actual native bridge}
+\begin{theorem}[Transitivity with coherent witnesses]
+If $R:S\rightsquigarrow T$ and $Q:T\rightsquigarrow U$ are refinements, their relational composite $Q\circ R$ is a refinement. Identities are refinements. For a chosen middle state and command, coupling witnesses compose by conditional gluing and marginalization, without requiring independent outer transitions.
+\end{theorem}
+\begin{proof}
+Choose $t$ witnessing $sRtQu$. For a source $\mu$, obtain a coupling $\gamma(s',t')$ with middle marginal $\nu\in K_T(t,a)$, then a coupling $\eta(t',u')$ with final marginal $\xi\in K_U(u,a)$. Define
+\[
+ \theta(s',t',u')=\begin{cases}\gamma(s',t')\eta(t',u')/\nu(t'),&\nu(t')>0,\\0,&\nu(t')=0.\end{cases}
+\]
+Both adjacent marginals are the specified couplings, since zero middle mass forces all corresponding entries to zero. The outer marginal is supported in $Q\circ R$ and has marginals $\mu,\xi$. The diagonal coupling proves identity. This proves existence-level transitivity. Chosen witnesses for a composite relation need not be unique or canonically independent of the selected middle state; no strict category of arbitrary chosen refinements is asserted.
+\end{proof}
+
+The native content/context bridge is a \emph{span}, not an unearned deterministic map between source and target noise tapes. Under Theorem~\ref{ref-adaptive}, take the common witness space to be paired infinite executions with their joint law; prefix projections $p_S,p_T$ preserve laws and causality. The bodies report the retained interface-history maps, and
+\[
+ o_S^{\infty}p_S=o_T^{\infty}p_T
+\]
+pointwise on the subspace of $R$-related runs. This gives two actual commuting native projection squares with common intermediate witness. If the content maps are meant to retain more than $o$, the equalities for that extra content must be proved; public output equality alone is insufficient. This construction extends the comparison language to coupling spans. It does not show that every such span is representable by an existing directed native cell in the original equipment, nor that an arbitrary relative coend preserves these witnesses.
+
+A null-path-sensitive refinement additionally specifies raw allowed transition relations $E_S(s,a),E_T(t,a)$ which may include zero-probability edges and must contain the supports of every allowed stochastic kernel. Require: for every $sRt$, $a$, and raw $s'\in E_S(s,a)$, some raw $t'\in E_T(t,a)$ satisfies $s'Rt'$. Dependent choice then lifts every infinite source raw run with the same commands, provided the context is itself compatible on those raw interface histories. These raw witnesses may be adjoined as a zero-measure component to the joint witness carrier; measure transport is unchanged and source raw projection becomes surjective. This must not be confused with positive-mass support: adding zero-mass witnesses does not certify any positive probability or eventual service. Reverse raw coverage requires its own converse condition.
+
+\section{Exact dependence boundary: rectangularization}
+Let a finite horizon $N$ and finite alphabet $X$ be fixed. A law $P$ on $X^N$ specifies conditional distributions $P(\cdot\mid h)$ at each history $h$ of positive mass. Let $\mathcal P$ be a nonempty family of such laws. For each history occurring with positive mass under some member, let $C_h$ be the closed convex hull of all these conditional distributions. Ignore histories impossible under every member. Let $\operatorname{Rect}(\mathcal P)$ be all laws generated by freely choosing one member of $C_h$ at every reachable history.
+
+\begin{proposition}[Least local-kernel envelope]
+Every $P\in\mathcal P$ belongs to $\operatorname{Rect}(\mathcal P)$. Any rectangular model with compact convex allowed kernel sets that contains all the positive-history conditionals of $\mathcal P$ contains $\operatorname{Rect}(\mathcal P)$. Backward recursion
+\[
+ V(h)=\sup_{q\in C_h}\sum_xq(x)V(hx),\qquad V(x_1\cdots x_N)=g(x_1\cdots x_N)
+\]
+computes the worst expected terminal payoff over $\operatorname{Rect}(\mathcal P)$, not automatically over $\mathcal P$.
+\end{proposition}
+\begin{proof}
+At positive histories of a fixed $P$, choose its own conditionals. Null histories do not affect its law. Finite multiplication proves inclusion. Every newly reachable history is already reachable under some original member: inductively, an edge with positive probability in $C_h$ has positive probability in an original conditional at $h$, since a coordinate vanishing in all generators also vanishes in their closed convex hull. Thus all needed $C_h$ are defined. Minimality follows from inclusion of each closed convex hull in any such local model. The recursion follows by induction, choosing independently maximizing kernels in the compact sets at each of the finitely many histories. Independence of these choices is precisely the rectangular premise.
+\end{proof}
+
+This boundary is sharp at the level of all terminal expectations: if a rectangularized law lies outside the closed convex hull of $\mathcal P$, finite-dimensional strict separation supplies a payoff $g$ for which the recursion has strictly greater value than the original worst case. Conversely, if the rectangularization lies in that closed convex hull, all terminal worst expectations agree. Thus equality of robust values for every terminal payoff is exactly equality of the closed convex envelopes, not equality of the underlying raw law families.
+
+For a concrete diagnostic, take two laws on two bits: $P_0$ fixes the second bit to zero and makes the first fair; $P_1$ fixes the second bit to one and makes the first fair. A persistent world chooses one law once. Then $P(X_2=X_1)=1/2$ for every mixture of the two. The local envelope can select second bit equal to the observed first bit, giving probability one. The erased variable is persistent world identity. Keeping it in the state makes the legal choice dependence explicit; treating the erased local conditionals as freely selectable invents a new adversarial behavior.
+
+\section{Integration target and literature boundary}
+The reusable interface is: actual retained typed state; nonanticipating context; an explicitly allowed scheduler class; a stepwise coupling witness; and a distinct raw lifting witness if all-run safety matters. The theorem accommodates arbitrary relation-supported correlations and arbitrary commands, unlike common-event-law equality, but changes the comparison carrier to a span. It neither supplies full contextual completeness nor derives adequacy of the state abstraction. A next structural question is which native equipments admit these causal coupling spans and their horizontal composition without rectangularizing persistent dependencies.
+
+Probabilistic simulation and its compositional character are established. Lynch, Segala and Vaandrager prove a much stronger characterization for their probabilistic-automata context/scheduler model: simulation is the coarsest compositional refinement of trace-distribution inclusion. Their result must not be transplanted to restricted local schedulers or this native span model without checking the different context class. See \url{https://groups.csail.mit.edu/tds/papers/Lynch/siam07.pdf}. The explicit dependence warning is closely related to robust dynamic programming's rectangularity assumptions; see Iyengar, \emph{Robust Dynamic Programming}, Mathematics of Operations Research 30(2), 2005, \url{https://doi.org/10.1287/moor.1040.0129}, and Nilim--El Ghaoui, \emph{Robust Control of Markov Decision Processes with Uncertain Transition Matrices}, Operations Research 53(5), 2005, \url{https://people.eecs.berkeley.edu/~elghaoui/Pubs/RobMDP_OR2005.pdf}. The proofs here establish only the explicitly stated finite interface results; they are not evidence of new general simulation or rectangularity theory.
+
+\part{III: Uniform witnesses and permitted information}
+
+\paragraph{Purpose.} The retained-boundary simulation theorem constructs a coupling for each fixed context and source adversary. This note identifies a finite class where those witnesses assemble into one reusable causal comparison mechanism, and proves why that mechanism must not be confused with a kernel-blind native map. The results are elementary finite convex geometry and conditional sampling, not asserted historically novel. They refine the comparison interface; they do not furnish arbitrary context/content equipment or contextual completeness.
+
+\section{An explicit uniform selector from finite generator witnesses}
+Fix finite nonempty successor sets $S,T$, a relation $R\subseteq S\times T$, a source polytope $P=\operatorname{conv}\{\mu_1,\ldots,\mu_m\}\subseteq\operatorname{Prob}(S)$, and a nonempty convex set $Q\subseteq\operatorname{Prob}(T)$. Suppose for every generator $\mu_i$ we are given an $R$-supported coupling $\gamma_i$ with source marginal $\mu_i$ and target marginal $\nu_i\in Q$.
+
+\begin{theorem}[Generator-complete coupling selector]\label{uni-selector}
+Every $\mu\in P$ has an $R$-supported coupling to some member of $Q$. More strongly, one may choose $\mu\mapsto\gamma(\mu)$ continuously and piecewise affinely on $P$, with its target marginal also continuous and piecewise affine. The choice depends only on the finite generator witness data and one fixed triangulation, not on a future controller or run.
+\end{theorem}
+\begin{proof}
+A polytope admits a finite triangulation using its extreme vertices. Every extreme vertex is one of the given generator points, so choose once its given coupling (duplicates can be resolved arbitrarily once). On each simplex, express $\mu$ uniquely in barycentric coordinates $\lambda_i$ of that simplex's vertices and set $\gamma(\mu)=\sum_i\lambda_i\gamma_i$. On common faces the positive barycentric coordinates belong to the shared vertices, so the two formulas agree. Thus the selector is continuous and piecewise affine. Marginals and support are linear conditions, and convexity of $Q$ preserves target admissibility. This proves all assertions. Degenerate lower-dimensional polytopes are triangulated in their affine span; a singleton needs no triangulation.
+\end{proof}
+
+This also shows that checking the refinement condition at source generators is sufficient when the target kernel set is convex. Necessity is immediate if every generator belongs to the source set. This is a finite common-witness theorem, not the invalid replacement of one coupling by separately optimized cut witnesses.
+
+\section{A causal comparison machine with a declared information input}
+For every currently related pair of states and command in finite boundary systems, suppose the corresponding source set is a polytope with given generator couplings. Fix the selectors of Theorem~\ref{uni-selector}. This is analyst-level comparison instrumentation, not an assumption that the physical controller can read a probability distribution or private state. The comparison machine is supplied, at step $n$, the paired current states, common command, and the \emph{actual source conditional kernel} $\mu_n$ before the next source sample. After the source produces $s_{n+1}$, use an independent fresh uniform random variable to sample $t_{n+1}$ from
+\[
+ q_{\mu_n}(t'\mid s')=\gamma(\mu_n)(s',t')/\mu_n(s')\qquad\text{when }\mu_n(s')>0.
+\]
+This is a Borel kernel: the numerator is piecewise affine, division is Borel on the positive-denominator region, and finite inverse-CDF sampling is measurable. At zero-denominator rows choose an arbitrary fixed distribution. For all-raw refinement those arbitrary choices must instead use an independently supplied raw relation lift; such a lift is not implied by a zero row in a coupling.
+
+\begin{theorem}[Uniform kernel-aware causal realization]\label{uni-causal}
+For every nonanticipating source execution whose actual conditional kernels are supplied as above, this fixed machine realizes the selected coupling at every step. It works under every common interface-history controller and every source adversary admitted by those polytopes, without recomputing its selection rule. Fresh auxiliary randomness must be independent of the current source sample conditional on the past and supplied kernel. The resulting target path marginal is admissible under the convex rectangular target semantics of the retained-boundary theorem.
+\end{theorem}
+\begin{proof}
+Conditional on the full past, paired state, command and supplied $\mu$, the next source state has law $\mu$. Conditional sampling then gives joint mass $\mu(s')q_\mu(t'\mid s')=\gamma(\mu)(s',t')$ on positive rows. Both sides vanish on zero rows. Repeating this identity proves every finite-dimensional coupling law. The machine uses only current/past information and fresh randomness, so is causal. Target-history-only conditional kernels are mixtures of its admissible target marginals; convexity and rectangularity make them legitimate. No step depends on the identity of a future controller. The selector and sampler are therefore reusable even though the induced target scheduler is obtained by conditional marginalization for the particular source execution.
+\end{proof}
+
+The actual native object is a joint witness extension: it retains the source raw execution and auxiliary randomness and projects to source and constructed target paths. Those projections give the commuting interface-body span. It is not automatically a map from the original source witness carrier to the target carrier: auxiliary randomness has been added. Nor is it an implementation that is forbidden to inspect source private state or kernel choice. The theorem has made the information used by the comparison explicit rather than concealed it inside existential couplings. If external information can predict the auxiliary random variable before the conditional sampling step, the stated fresh-noise premise fails.
+
+\section{Kernel-blind realization is strictly stronger}
+A kernel-blind one-step lift is a single stochastic matrix $H:S\to\operatorname{Prob}(T)$, supported in $R$, such that $\mu H\in Q$ for every $\mu\in P$. It sees the realized source successor but not which source conditional distribution was used. Its quantifiers are
+\[
+ \exists H\ \forall\mu\in P,
+\]
+whereas relational simulation permits $\forall\mu\ \exists\gamma_\mu$. These are not equivalent even for finite rational polytopes.
+
+\begin{proposition}[Strict information obstruction]\label{uni-blind}
+Let $S=\{a,b,c\}$, $T=\{0,1\}$, and
+\[
+ R=\{(a,0),(b,1),(c,0),(c,1)\},\quad
+ P=\operatorname{conv}\{(1/2,0,1/2),(0,1/2,1/2)\},\quad
+ Q=\{(1/2,1/2)\}.
+\]
+Every source distribution admits an $R$-supported coupling to $Q$, and Theorem~\ref{uni-selector} supplies a continuous affine coupling choice. No kernel-blind lift exists.
+\end{proposition}
+\begin{proof}
+For the first generator, pair its $a$ mass with $0$ and $c$ mass with $1$. For the second, pair $b$ with $1$ and $c$ with $0$. Convex mixtures give the required couplings throughout $P$. A relation-supported $H$ must send $a$ to $0$ and $b$ to $1$. The first generator then forces $H(c,0)=0$, while the second forces $H(c,0)=1$, contradiction.
+\end{proof}
+
+This is not a failure of probabilistic simulation, but a proof that a kernel-blind context morphism cannot be inferred from simulation alone. With an observable retained kernel-choice tag, the two cases become distinguishable and the kernel-aware mechanism applies. With a hidden persistent choice, adding that tag to the mathematical witness does not make it available to a physical controller. The permitted information boundary has to be declared separately.
+
+\begin{theorem}[Exact finite criterion for a blind lift]
+If $P=\operatorname{conv}\{\mu_i\}_{i=1}^m$ and the convex target polytope is specified by linear inequalities $Q=\{\nu\in\operatorname{Prob}(T):A\nu\le b\}$, a kernel-blind lift exists exactly when the following finite linear feasibility system is satisfiable:
+\[
+ H_{st}\ge0,\quad \sum_tH_{st}=1,\quad H_{st}=0\ ((s,t)\notin R),\quad A(\mu_iH)\le b\quad(1\le i\le m).
+\]
+Thus pointwise simulation and blind realizability have distinct finite feasibility tests, not merely different descriptions of the same obligation.
+\end{theorem}
+\begin{proof}
+Necessity substitutes each generator. For sufficiency, any $\mu=\sum_i\lambda_i\mu_i$ has $\mu H=\sum_i\lambda_i(\mu_iH)\in Q$ by convexity. All other conditions state exactly that $H$ is a relation-supported stochastic kernel. Infeasibility may be certified by the ordinary linear-program alternative; no stronger claim about minimal physical information is made.
+\end{proof}
+
+\section{Bounded witnesses for a missing-information obstruction}
+Assume every source row has at least one $R$-successor. Let $\mathcal H_R$ be the compact polytope of relation-supported stochastic matrices and put
+\[
+ d=\sum_{s\in S}(|R(s)|-1),
+\]
+its affine dimension. For any source distribution $\mu$, let $C_\mu=\{H\in\mathcal H_R:\mu H\in Q\}$, with $Q$ now a closed convex target set. These are compact convex subsets of the same $d$-dimensional affine space.
+
+\begin{proposition}[Small obstruction to one blind realizer]
+For an arbitrary, possibly infinite family $\mathcal M$ of source distributions, a common blind lift exists if and only if every subfamily of at most $d+1$ source distributions admits a common blind lift. Thus failure always has a witness of at most $d+1$ kernels.
+\end{proposition}
+\begin{proof}
+For a finite family, this is Helly's theorem applied to the sets $C_\mu$. For an infinite family, the stated small-subfamily condition and finite Helly imply the finite intersection property; compactness of $\mathcal H_R$ then gives a point in their total intersection. The reverse implication is immediate. If $d=0$, the base polytope is a singleton and the statement reduces to checking each kernel individually. If some row of $R$ is empty, $\mathcal H_R$ is already empty; that separate syntactic obstruction precedes this proposition.
+\end{proof}
+
+For a finite family $\mu_1,\ldots,\mu_m$, suppose a comparison mechanism may receive a finite tag $g(i)$ identifying only a class of kernel choices, in addition to the sampled source successor. One blind matrix may be fixed per tag. This interface is sufficient exactly when every tag fibre has nonempty intersection of its $C_{\mu_i}$. Equivalently, color the kernel indices so that no minimally infeasible subset is monochromatic. Such forbidden subsets have size at most $d+1$ by the proposition. The minimum number of tags is therefore exactly the chromatic number of this explicitly defined finite obstruction hypergraph (when every individual kernel has a blind lift; otherwise no tagging solves it). This is a mathematical characterization of the information resource for the declared one-step interface, not a guarantee that the tag is physically observable, a polynomial-time algorithm, or a contextual completeness theorem. It is a direct convex-geometric consequence, not a claimed new Helly or hypergraph-coloring theorem.
+
+\section{Scope for the contextual-composition programme}
+The positive result supplies a uniform \emph{kernel-aware} witness strategy from finite local data, improving on per-run existential choices. The obstruction shows why obtaining a uniform native cell requires more: exactly which state, choice, correlation and randomization interfaces it may use. A full equivalence between operational refinement and a native comparison class would need to specify that class and prove both directions. Neither simulation nor the common-event-law construction automatically supplies it. These statements are compatible with the separator-sufficiency result: forgetting a kernel-choice tag can be precisely the abstraction which prevents a uniform context map.
+\part{IV: From local information loss to adaptive trace bounds}
+\section{Approximate retained-boundary simulation}
+Use the finite convex rectangular systems of Part II and an interface-respecting relation $R$. Start from related states. Fix deterministic numbers $\epsilon_n\in[0,1]$. At every related pair reached at time $n$, for every common command and every admitted source conditional law $\mu$, require one admitted target law $\nu$ and one coupling $\gamma$ with
+\[
+ \gamma(R)\ge 1-\epsilon_n.
+\]
+This condition concerns the complete successor boundary used by the next context, not only an immediate return value. The quantifier demands one coherent coupling; separately optimized cut bounds do not suffice.
+
+\begin{theorem}[Adaptive finite-horizon propagation]
+For every source adversary and every interface-history context as in Part II, there is an admissible target adversary under that same context policy such that the total variation distance between their interface-and-command traces through $N$ transitions is at most
+\[
+ 1-\prod_{n=0}^{N-1}(1-\epsilon_n)\ \le\ \sum_{n=0}^{N-1}\epsilon_n.
+\]
+The product bound is sharp among systems satisfying these hypotheses.
+\end{theorem}
+\begin{proof}
+Maintain a flag recording whether a related pair has ever been lost. While the flag is good, the two interface histories agree; sample their common command using the same fresh context randomization, and use the stipulated coupling for their successor states. Conditional on every good paired history the flag survives with probability at least $1-\epsilon_n$. Once bad, let each side follow its own interface-history context policy and choose arbitrary admissible target transition laws. This ensures both marginal context policies remain the prescribed policy, including after their histories disagree. All choices use past information only.
+
+Conditional on a target history and command, the target transition is a convex mixture of admitted target laws at its current state and command, including contributions from both flag values. Compact convexity preserves admissibility and rectangularity permits the resulting history-dependent adversary. Thus it is a genuine target execution, not just an unconstrained comparison measure. Induction gives good-flag probability at least the displayed product. On that event the complete observed traces agree. The coupling inequality for total variation proves the bound. The second inequality is the elementary union bound.
+
+For sharpness, use a source which at step $n$ independently emits an error bit with probability $\epsilon_n$, and a target which always emits zero. Retain the emitted prefix in the finite-horizon boundary (or its persistent error flag where sufficient). Couple while all bits are zero; a first error leaves the relation. The total variation distance from the all-zero trace is exactly the probability of at least one error, the displayed product complement. This uses only finite systems for every fixed horizon.
+\end{proof}
+
+\section{When the separator defect supplies the local error}
+Part I supplies an exact one-step distance $\Delta_p(F,\beta)$ for its unrestricted partner class. If the two gluing routes are explicitly interpreted as laws on the same finite space of entire next retained boundaries, with matching observation and command interfaces, finite maximal coupling turns a uniform bound $\Delta\le\epsilon_n$ into the premise above. This must hold at every admissible paired history and choice. A bound for one stationary base law, an average over unobserved histories, or equality only of terminal output distributions is insufficient. If partners are restricted, the sharp one-step error can be smaller than $\Delta$; the revealing partner must not be invented as an operational capability.
+
+This is the promised connection rather than an automatic application: one-step separator sufficiency gives exact compositional transport when the native boundary map is supplied; its defect gives finite-horizon approximate transport only after that map preserves the complete continuation interface. The product estimate does not prove infinite-horizon almost-sure liveness, fair scheduling, raw-run coverage, or arbitrary concurrent contextual equivalence. Nonzero errors may accumulate to a vacuous bound.
+
+\section{Literature and claim boundary}
+The propagation mechanism is established approximate probabilistic simulation/coupling technology. Bian and Abate's primary paper,
+\href{https://www.cs.ox.ac.uk/people/alessandro.abate/publications/bcBA17.pdf}{On the Relationship between Bisimulation and Trace Equivalence in an Approximate Probabilistic Context} (FoSSaCS 2017), studies tight finite-horizon total-variation trace bounds for approximate probabilistic bisimulation. The present proof explicitly instantiates a one-sided, history-adaptive convex rectangular interface and connects it to the separator defect; it does not claim to originate the product bound. Likewise the earlier parts credit junction-tree gluing, probabilistic simulation, and robust rectangularity rather than treating them as new fields.
+
+The unresolved programme task is to characterize the native comparison and operational context classes jointly, with authority, scheduler memory, feedback and shared-state effects. This tranche proves useful interfaces and separates incompatible quantifier orders. It neither supplies an arbitrary context/content equipment theorem nor substitutes a catalogue of cases for that missing general theory.
+\end{document}

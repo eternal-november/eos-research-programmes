@@ -8,6 +8,8 @@ The [feedback and concurrency extension contract](contracts/Feedback_and_Concurr
 
 The [native feedback and shared-content first results](feedback-and-concurrency/native-first-results/README.md) give scoped kernel/writer composition, feedback boundaries and shared-world constructions. They do not complete the extension contract.
 
+The [retained-boundary refinement and correlation results](feedback-and-concurrency/retained-boundary-refinement/README.md) characterize separator information loss, adaptive coupling refinement, and the limits of uniform comparison witnesses, with explicit context and scheduler assumptions.
+
 ## Reading path
 
 - `foundations/`: finite contextads, reduction tests, structural examples, theory guide, and the common relative construction.
