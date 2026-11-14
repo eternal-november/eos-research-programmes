@@ -54,7 +54,7 @@ def maintenance_receipts(isa, c, b, Ports, population, view, load):
     k = c.constants
     target, pairs = incidence.maintenance_group(population, receiver, ordinal)
     receipts = []
-    steps = calls = samples = offers = 0
+    steps = calls = samples = offers = max_call = 0
     cursors = []
     for provider, local in pairs:
         ports = Ports(c)
@@ -70,11 +70,13 @@ def maintenance_receipts(isa, c, b, Ports, population, view, load):
         machine.W[k['FAST_CURSOR']] = cursor
         while machine.W[k['FAST_CURSOR']] < start + k['RAW_TARGET_HEADS']:
             before = machine.steps
-            # Machine.run's budget is cumulative when the same machine is reused.
+            # The interpreter measures its budget relative to this call's start.
             program.call(isa, c, ports, 'publish_fast', (),
-                         machine.steps + b['instruction_upper_bounds']['publish_fast'] + 10,
-                         machine)
-            steps += machine.steps - before
+                         b['instruction_upper_bounds']['publish_fast'] + 10, machine)
+            elapsed = machine.steps - before
+            need(elapsed <= b['instruction_upper_bounds']['publish_fast'], 'Producer call exceeded its own bound')
+            max_call = max(max_call, elapsed)
+            steps += elapsed
             calls += 1
         receipts.extend(publication.deliveries(c, population, provider, 1, ports, receiver, 1))
         samples += ports.samples
@@ -86,7 +88,7 @@ def maintenance_receipts(isa, c, b, Ports, population, view, load):
     need(all(r.provider_bank == 1 for r in receipts), 'Unpowered sibling supplied evidence')
     return receipts, dict(actual_target=target, receiver=receiver, receiver_bank=1, receiver_target_ordinal=ordinal,
                           providers=[j for j, _ in pairs], cursors=cursors,
-                          producer_calls=calls, producer_instructions=steps,
+                          producer_calls=calls, producer_instructions=steps, maximum_call_instructions=max_call,
                           raw_samples=samples, accepted_offers=offers,
                           all_mapped_receipts=len(receipts), target_receipts=len(relevant),
                           provider_banks=[1], retiring_load=load,
@@ -126,14 +128,14 @@ def helper_check(isa, c, b, Ports, receipts, load, bad_count=0, bad_value=0):
                 fixture_scope='Executed normal-branch representative; not a reachable-W certificate')
 
 
-def world_check(isa, c, b, Ports, population):
+def world_check(isa, c, b, Ports, population, rows=(500,1000), expected=(60,60)):
     receipts = []
     steps = offers = 0
     providers = sorted(set(incidence.plant_group(population, 0, 0)) |
                        set(incidence.plant_group(population, 0, 1)))
     for provider in providers:
         ports = Ports(c)
-        value = (500, 1000)[incidence.head_type(provider)]
+        value = rows[incidence.head_type(provider)]
         # Both direct probes belong to the same installed rank-one type.
         ports.fast[('head', 0)] = value
         ports.fast[('head', 1)] = value
@@ -142,11 +144,11 @@ def world_check(isa, c, b, Ports, population):
         receipts.extend(publication.deliveries(c, population, provider, 1, ports, 0, 1))
         steps += machine.steps
         offers += ports.offers
-    result, consumer_steps = publication.consume_world(isa, c, b, Ports, receipts, 500, 1000, 0)
-    need(result == (60, 60) and len(receipts) == 30, 'Actual single-bank WORLD path differs')
+    result, consumer_steps = publication.consume_world(isa, c, b, Ports, receipts, rows[0], rows[1], 0)
+    need(result == expected and len(receipts) == 30, 'Actual single-bank WORLD path differs')
     return dict(actual_producers=len(providers), provider_banks=[1],
                 producer_instructions=steps, accepted_offers=offers, receipts=len(receipts),
-                receiver_prefix_instructions=consumer_steps, world=list(result),
+                receiver_prefix_instructions=consumer_steps, raw_rows=list(rows), world=list(result),
                 scope='Production frame through first WORLD; no post-output frame pacing simulated')
 
 
@@ -272,9 +274,18 @@ def generate():
                helper_check(isa,c,b,Ports,low_receipts,135,7,3000)]
     world = world_check(isa,c,b,Ports,population)
     exact = arithmetic(c,b,field,geometry)
+    drift = exact['world_drift_upper']
+    nearest = lambda x: (1000*x+Q(1,2)).__floor__()
+    plateau = [nearest(Q(1,2)-drift),nearest(Q(1,2)+drift),
+               nearest(1-2*drift),nearest(1+2*drift)]
+    need(plateau == [500,500,1000,1000], 'Selected nearest quantizer does not preserve plateau')
+    floor_point = Q(1,2)-Q(1,10**9)
+    floor_rows = ((1000*floor_point).__floor__(),(2000*floor_point).__floor__())
+    need(floor_rows == (499,999), 'Floor-quantizer countercase changed')
+    floor_world = world_check(isa,c,b,Ports,population,floor_rows,(59,60))
     source_files = ('common_response.py','COMMON-RESPONSE.md','threshold_program_source.py',
                     'threshold_program_model.py','threshold_design.py','threshold_incidence_model.py',
-                    'threshold_publication_model.py')
+                    'threshold_publication_model.py','constructors.py')
     immutable_inputs = {
         SOURCE_BASE+':portability/THRESHOLD-GEOMETRY.md':immutable(SOURCE_BASE,'portability/THRESHOLD-GEOMETRY.md'),
         SOURCE_BASE+':portability/threshold_geometry_results.json':geometry_text,
@@ -295,6 +306,10 @@ def generate():
         changed_design=design.physical_parameters(c), physical_view=view,
         normal_action_premises=geometry['arithmetic']['normal_action_premises'],
         producer_688=producer, producer_135=low_producer, helpers=helpers, world=world, exact=exact,
+        selected_world_quantizer=dict(rule='floor(1000*z+1/2)',error_at_most=Q(1,2000),
+            plateau_endpoint_outputs=plateau,selected_witness_not_all_error_bounded_heads=True),
+        floor_countercase=dict(actual_x=floor_point,actual_y=floor_point,raw_error_less_than=Q(1,1000),
+            executed=floor_world,scope='admitted head-error/code countercase to universal constant-command plateau; not a whole-source losing history'),
         retained_boundary_cases=['phase0 does not supply this fresh loaded-side history',
             'CUT_OPEN is disconnected-endpoint evidence, not connected-bank evidence',
             'available J is required; capacity does not fund an empty store',
@@ -306,7 +321,7 @@ def generate():
                   'complete parent-input/full-ISA cost and legacy inventory domination',
                   'actual normal-stop/abort/private-state formation and pulse/retirement supplier',
                   'source-class admission and whole-family recurrent/positive-density closure'],
-        no_full_hybrid_simulation=True, independent_review_pending=True,
+        no_full_hybrid_simulation=True, independent_local_review=True,
         rp3_completion=False, source_admission=False, program_completion=False))
 
 
