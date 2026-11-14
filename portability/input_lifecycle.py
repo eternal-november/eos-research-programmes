@@ -880,11 +880,12 @@ def consumer_checks(isa,c,b):
         staged_records_and_clock_control_are_actual_input=True)
 
 def resource_checks():
-    init=json.loads((HERE/"threshold_initialization_results.json").read_text())
-    old=init["joined_initial_resources"]
     cam_record=json.loads((HERE/"cam_reformation_results.json").read_text())["arithmetic"]
     field_record=json.loads((HERE/"threshold_field_source_results.json").read_text())["point"]
     legacy_record=json.loads((HERE/"legacy_realization_results.json").read_text())["inventory"]
+    # Source inventory precedes initialization: initialization consumes this
+    # resource result, so deriving it from an initialization report is circular.
+    old=cam_record["resources"]
     lanes=2*40*2;records=320480;reset_cells=lanes+2
     new_stock=reset_cells*RESET_CAP
     # The192-bit pipelines and separate96-bit reset engines are new. Record
@@ -912,7 +913,7 @@ def resource_checks():
     holding=F(control_bits,1024)
     added_rate=2*(native_rate+control_delivered_rate+action_rate)+reset_charge+holding
     added_burst=2*(native_burst+control_delivered_burst+action_burst)
-    new_U=F(old["upstream_capacity"])-new_stock
+    new_U=F(old["unchanged_upstream_capacity"])-new_stock
     D=F(old["upstream_rate"])+added_rate;B=F(old["upstream_burst"])+added_burst
     reserve=new_U-B-2*D;supply=F(cam_record["resources"]["unchanged_supply_rate"])
     need(D<supply and reserve>added_burst+1,"Same supply/capacity cannot fund raw reset")
@@ -950,7 +951,7 @@ def resource_checks():
         added_upstream_rate=added_rate,added_upstream_burst=added_burst,
         updated_upstream_capacity=new_U,updated_upstream_rate=D,updated_upstream_burst=B,
         usable_reserve_lower=reserve,unchanged_supply_rate=supply,
-        unchanged_total_host_capacity=init["initial_relation"]["total_host_capacity_envelope"],
+        unchanged_total_host_capacity=legacy_record["total_host_capacity_upper"],
         additional_recoverable_stock_is_subtracted_from_U=True,unused_legacy_stock_not_borrowed=True,
         old_data_flight_capacity_retained=legacy_record["retained_flight_capacity"],
         new_native_peak=physical_peak,combined_native_peak=combined,
@@ -972,7 +973,6 @@ def generate():
     need(sys.version_info[:2]==(3,12) and not sys.flags.optimize,"Unoptimized Python3.12 required")
     inputs=("cam_reformation.py","CAM-REFORMATION.md","cam_reformation_results.json",
         "threshold_field_source.py","threshold_field_source_results.json","THRESHOLD-FIELD-SOURCE.md",
-        "threshold_initialization.py","threshold_initialization_results.json","THRESHOLD-INITIALIZATION.md",
         "legacy_realization.py","legacy_realization_results.json","LEGACY-REALIZATION.md",
         "parent_realization.py","parent_realization_results.json","PARENT-REALIZATION.md",
         "threshold_program_model.py","threshold_program_source.py","threshold_design.py",
