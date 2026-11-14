@@ -1,0 +1,184 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Constructive local fairness and controlled native completion}
+\author{}\date{14 November 2026}
+\begin{document}\maketitle
+\paragraph{Reading guide.} The information-and-progress theorem transports admitted fair executions, but it does not produce an admitted fair policy. This manuscript fills a finite constructive part of that gap. Part I proves almost-sure fairness from actual conditional firing hazards, realizes a cooperative private-randomized policy, and connects it to the native joint-kernel/observer/receipt interface. Part II gives an exact finite support synthesis criterion for the stated stationary local policy class, with different quantifiers for adversaries that can or cannot see current fresh actions. It does not characterize all fair strategies, all hostile environments, or all raw paths. No novelty or mechanization claim is made.
+\part{Conditional hazards and controlled completion}
+
+\paragraph{Scope.} The native progress theorem transports fairness but does not construct a fair local policy. This note supplies a sufficient probabilistic realization condition. It proves almost-sure fairness, not fairness of every raw execution, and does not assume trials are independent through time. The local-policy and actual joint acceptance obligations are separate and explicit.
+
+\section{A conditional fairness theorem}
+Let $(\mathcal F_n)$ describe the complete execution history just before transition $n$. For a task $j$, let its enabled event $E_{j,n}$ be $\mathcal F_n$-measurable and its firing event $A_{j,n}$ be $\mathcal F_{n+1}$-measurable. Suppose, for some constant $\epsilon_j\in(0,1]$, at every stage
+\[
+ {\mathbb P}(A_{j,n}\mid\mathcal F_n)\ge
+ \epsilon_j\,{\bf1}_{E_{j,n}}\quad\hbox{almost surely}.
+\]
+The filtration may retain arbitrary dependence on earlier actions, hidden plant state and adversarial choices. It must not expose the fresh random variables of transition $n$ before the conditional probability is formed.
+
+\begin{theorem}[Almost-sure strong fairness from conditional hazard]
+Under this hypothesis,
+\[
+ {\mathbb P}(E_{j,n}\text{ infinitely often},\
+ A_{j,n}\text{ only finitely often})=0.
+\]
+Consequently a finite or countable family of tasks satisfying its own positive constant bound is almost surely strongly fair, hence weakly fair.
+\end{theorem}
+\begin{proof}
+Fix a deterministic time $m$. Let $\tau_1<\tau_2<\cdots$ be the successive enabled times at or after $m$, allowing $\infty$ if there are too few. These are stopping times for the pre-transition filtration. Let $B_k$ be the event that $\tau_k<\infty$ and no firing occurred at any of the first $k$ enabled times. Its previous-failure indicator is measurable at $\tau_k$. Conditional expectation at the finite stopping time, justified by summing over $\{\tau_k=n\}$, gives
+\[
+ {\mathbb P}(B_k)\le(1-\epsilon_j){\mathbb P}(B_{k-1})
+ \le(1-\epsilon_j)^k,
+\]
+with $B_0$ the whole space; requiring the next enabled time to exist only reduces probability. Thus infinitely many enabled times with no firing at any of them after $m$ has probability zero. The event of infinitely many enabled times and only finitely many firings is contained in the countable union of these null events over $m$. A countable union over tasks completes the proof.
+\end{proof}
+
+No independent-trials premise was used: the lower bound is conditional on the actual past. A single stage may have strongly correlated task firings; plant/adversary memory is permitted. Conversely lower bounds on unconditional marginals do not imply the theorem. For example a hidden fair coin can decide that a continuously enabled task always fires or never fires. Every stage then has unconditional firing probability $1/2$, yet fairness fails with probability $1/2$; after an observed failure the conditional hazard is zero.
+
+The geometric estimate concerns the first $k$ enabled opportunities after $m$, not elapsed physical time. Arbitrarily long gaps between enabled opportunities are allowed. An almost-sure theorem can still admit an infinite raw all-failure path of probability zero.
+
+\section{When a decentralized policy actually supplies the bound}
+Consider the finite local-information behavioral model of the preceding manuscript. Agent $i$ owns task $j$ and has a designated attempt action $a_j$ in its local action alphabet. Let $q_i(\cdot\mid I_i(h))$ be a valid local strategy, with fresh private randomness independent of the other agents' fresh draws conditional on the complete past. Assume:
+\begin{enumerate}
+\item For every admissible global history $h$ at which $j$ is enabled, the strategy assigns probability at least $\eta_j\in(0,1]$ to $a_j$.
+\item For every such $h$ and every joint action vector whose $i$th component is $a_j$, the \emph{actual joint plant/environment transition law} fires $j$ with probability at least $\alpha_j\in(0,1]$. This bound is uniform over the other agents' simultaneous actions and the admitted adversarial choices.
+\end{enumerate}
+The second condition is not a statement about isolated component marginals, and is not derived from separate agents' willingness to act.
+
+\begin{proposition}[Local attempt and joint acceptance]
+These assumptions imply the conditional firing theorem with $\epsilon_j=\eta_j\alpha_j$ for every admitted environment satisfying the bound.
+\end{proposition}
+\begin{proof}
+At a fixed complete past where $j$ is enabled, average the joint plant law over the permitted joint-action distribution. The portion where agent $i$ chooses $a_j$ has mass at least $\eta_j$; each of those conditional laws fires with probability at least $\alpha_j$. All other contributions are nonnegative. This proves the full-history conditional hazard bound. The local strategy construction establishes information admissibility independently of this calculation.
+\end{proof}
+
+If enabledness is locally observable and at most $M_i$ owned tasks are enabled, uniformly selecting one gives $\eta_j\ge1/M_i$, provided the menu is nonempty and attempt actions are legal. If global enabledness is not locally observable, an alternative is a fixed positive-probability exploration over all finitely many owned attempt actions. This works only when those attempts are genuinely legal at every relevant local history and their effects are represented by the plant semantics; an unavailable attempt cannot be silently assumed harmless. The full-history enabledness event remains a mathematical predicate even when the agent cannot observe it.
+
+A hostile scheduler that can indefinitely reject an enabled attempt can make $\alpha_j=0$. No fairness follows in that model. Assuming positive acceptance is therefore a real environmental constraint, not a way to prove progress against an unconstrained Byzantine environment. The result is useful when the constraint follows from a declared arbitration or resource-availability mechanism, which must itself be analyzed.
+
+\section{A collision-tolerant local realization without shared coins}
+The uniform-over-all-other-actions acceptance condition can be stronger than needed. Here is a concrete family in which independent local attempts supply a lower bound even though collisions may fail completely.
+
+Suppose there are finitely many participating agents. Agent $i$ selects its task-$j$ attempt with conditional probability at least $\eta_j\in(0,1]$ whenever $j$ is enabled; every other participating agent $k$ selects a legal idle action with conditional probability at least $\delta_k\in(0,1]$ at every history. The agents' fresh action choices are conditionally independent given the full past. Assume only that, when task $j$ is enabled and its owner is the unique nonidle agent, the actual plant/environment law fires $j$ with probability at least $\alpha_j\in(0,1]$. Collision cases have no required success probability.
+
+\begin{proposition}[Private randomized arbitration]
+Under these conditions the full-history firing hazard for $j$ is at least
+\[
+ \epsilon_j=\eta_j\alpha_j\prod_{k\ne i}\delta_k>0.
+\]
+Hence all participating tasks with these bounds are almost surely strongly fair.
+\end{proposition}
+\begin{proof}
+Conditional on an enabled full history, the event that $i$ attempts $j$ and all other agents idle has probability at least $\eta_j\prod_{k\ne i}\delta_k$ by the declared fresh conditional independence. On that event the stipulated actual joint transition succeeds with probability at least $\alpha_j$. Other joint actions contribute nonnegative firing probability. Apply the conditional fairness theorem.
+\end{proof}
+
+For example, an agent with $M_i$ always-legal owned attempts can choose uniformly among them and idle, yielding $\eta_j=\delta_i=1/(M_i+1)$. No common random seed or common scheduler is required. The lower bound can be small, and is not an optimal resource claim. If attempts can cause irreversible effects on failure, those effects remain in the plant and may invalidate a separate completion rank; fairness alone does not make speculative actions safe.
+
+This is not Byzantine-resilient arbitration by itself. An uncooperative agent may refuse to idle, and a hostile environment may refuse lone attempts. Such behavior destroys the stated lower bound unless it is prevented or tolerated by an independently established mechanism. The proposition locates the exact environmental premise rather than silently assuming adversarial cooperation.
+
+\section{A complete controlled abstraction interface}
+Here is a reusable connection to the native transport theorem, not merely a standalone scheduler. Let $S$ be a concrete retained-state space, $X$ an abstract retained-state space and $b:S\to X$ a deterministic abstraction. A transition returns both a next state and the actual set of fired tasks, represented by a finite event label $e$. There are local action vectors $a$ and a shared controller command $u$. Require an actual joint kernel equation, for every concrete history and admitted $(a,u)$:
+\[
+ (b\times\mathrm{id}_{e})_*K_S(s,a,u)
+       =K_X(b(s),a,u).
+\]
+The equation is required for every admitted environmental response, or every effective conditional law allowed by the declared response-timing model, not merely for an averaged response law. If a response parameter is part of the target plant interface it is retained consistently on both sides; otherwise every such source response must push to the same displayed target kernel. Robust positivity of firing probabilities alone does not establish this equation. A history-dependent version replaces $s$ by the entire retained history and has the same proof. This equation includes the correlations between next state and task events; matching the state marginal and the firing marginal separately is insufficient.
+
+Assume the following additional conditions.
+\begin{enumerate}
+\item The concrete local information is obtained from the corresponding abstract local information by a fixed function, so the chosen attempt/idle policies transport without exposing concrete hidden data. The initial laws push forward.
+\item Enabledness reflects from $X$ to $S$ at every retained prefix, and the raw event/body map preserves task firings and public observations. In synchronized partner systems the exact menu criterion is one way to establish this all-prefix condition; it must be checked on the actual joint product.
+\item A safe admitted independent local strategy has a uniformly positive firing hazard for every participating enabled task at every retained history and admitted shared command. This may be supplied either by the preceding private attempt/idle construction or by the exact finite legal-support synthesis criterion in Part II, applied to the actual composed state/command table and the declared adversary timing. For the finite support route, use a finite command alphabet and one joint finite boundary table containing $(s,u)$, with each local-information map exposing $u$ only if that agent is permitted to see it. A single support assignment must work across all observationally indistinguishable state/command pairs. With an infinite command alphabet, a separate uniform positive bound is required; pointwise positive per-command hazards do not suffice. It is not a guarantee against unrestricted hostile interference.
+\item On the abstract system a completion receipt $D$ and natural rank $V$ satisfy the fixed-task fair-completion conditions: while $D$ has not occurred one fixed task $j$ from the transported participating task family is enabled, no transition increases $V$, and its firing enters $D$ or decreases $V$. The abstract receipt reflects an actual concrete receipt, including its required side-effect accounting.
+\end{enumerate}
+One may choose $u_n$ by a strictly delayed deterministic controller reading the common preserved observation prefix. No fixed-input exceptional null set is used: the kernel equation and acceptance bounds hold at every selected history and command.
+
+\begin{theorem}[Admissible controlled almost-sure completion]
+Under this interface, the stated private randomized concrete policy is admissible and almost surely strongly fair for those participating tasks. Its abstract pushforward is an admissible law fair for their transported tasks under the same delayed controller. The concrete execution reaches its completion receipt almost surely.
+\end{theorem}
+\begin{proof}
+Local information and legal fresh private choices give policy admissibility. Either the joint lone-attempt calculation or the exact legal-support synthesis theorem gives a positive full-history firing hazard for every participating task, uniformly after the selected controller command. The conditional fairness theorem therefore gives almost-sure strong fairness of the concrete execution.
+
+The preserved observations force the same delayed controller commands by prefix induction. The actual joint kernel equation and transported local policy factors then give equality of pushed finite-history laws, retaining task labels. All-prefix enabledness reflection and firing preservation transport fairness synchronously. The fixed-task rank argument forces the abstract receipt on every fair abstract path, and its reflection gives the concrete receipt.
+\end{proof}
+
+The conditional kernel equation is the point where hidden side effects must be accounted for. For example an abstraction may discard a microstate $z$ only if the law of the retained next state and event, conditioned on every concrete $(x,z)$ and joint action, is the specified abstract law. If $z$ changes availability in a way affecting the required joint-kernel, acceptance or enabledness obligations, its effect must be retained or otherwise uniformly accounted for. Extra concrete availability irrelevant to those obligations need not be exposed. If $z$ is irrelevant to those laws and obligations, there is no requirement to expose it to a controller.
+
+The theorem is nonvacuous without granting shared coins: either the finite attempt-plus-idle policy or the uniform policies on passing legal-support rectangles explicitly realize its scheduler premise. It gives no worst-case bound on completion time and no all-raw guarantee; null unfair paths remain. Almost-sure completion also does not justify a physical action until its plant, legal attempts, acceptance and receipt semantics are justified. Those are model obligations rather than properties of probability notation.
+
+\section{Composing with the native progress interface}
+Suppose the resulting source law satisfies the local-information model and the conditions above for all tasks. It is almost surely fair. A native comparison satisfying the previously proved law/information, productivity, enabledness and firing interfaces then produces an admitted fair target law. A target rank theorem and reflected completion receipt yield almost-sure source completion. This removes the source-fairness premise only where the conditional hazard has actually been established.
+
+The flow of obligations is thus concrete: legal local attempts and declared local randomness; actual joint acceptance under allowed interference; conditional fairness; native fairness/law transport; rank progress; and a receipt square accounting for completion effects. No stage can be replaced by matching final output distributions alone.
+
+\section{Established foundation and claim boundary}
+The conditional fairness argument is a specialized conditional Borel--Cantelli argument, not a new probability theorem. For an author-maintained treatment of the conditional lemma see Peter M\"orters' martingale notes, Theorem 3.3, \url{https://www.mi.uni-koeln.de/~moerters/lectures/martingales.pdf}. The corresponding general result also has an existing mathlib formalization: \url{https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Martingale/BorelCantelli.html}. Neither citation certifies the present operational interfaces in Lean. Our written proof makes the conditional sampling, local information and actual joint plant assumptions explicit.
+
+\part{Exact finite local support synthesis}
+
+\paragraph{Purpose and scope.} This supplies an exact finite synthesis criterion for the positive conditional hazards used by the fair-policy theorem. It does not characterize all fair decentralized strategies: temporal scheduling can be fair without a positive hazard at every enabled step. The policy class here is stationary behavioral control relative to explicitly retained finite local information, with independent fresh private randomization. The criterion treats actual joint legality and environmental observation timing, instead of assuming that local willingness to act implies joint acceptance. No novelty claim is made.
+
+\section{The actual joint decision table}
+Let $S$ be a finite nonempty set of admitted decision-boundary states. A state includes all world/resource information needed for the following table to be valid conditional on the actual complete past. Agent $i=1,\ldots,m$ has finite action set $A_i$ and local-information map $I_i:S\to L_i$. A local finite-memory controller can be represented by including its retained memory in $I_i$ and the boundary state; this is not permission to read hidden components of $s$.
+
+Let $A=\prod_i A_i$. At state $s$, an arbitrary relation $\mathcal L(s)\subseteq A$ specifies the legal joint actions. It need not be a product of independently legal local menus. There is a finite nonempty environmental response set $D(s)$ and a joint transition law for every legal $(s,a,d)$. For each of finitely many tasks $j$, let $E_j\subseteq S$ be its enabled states and let
+\[
+ p_j(s,a,d)\in[0,1]
+\]
+be its firing probability under that actual joint transition law. Other state changes and effects are retained by the transition law, not suppressed by this scalar. Enabledness is not assumed locally observable. The tables must hold conditional on the full actual past at every admitted boundary, not merely under an averaged stationary law.
+
+A permitted policy consists of distributions $q_i(\cdot\mid l)$, with independent fresh draws conditional on the complete past. The joint action law at $s$ is $q_s(a)=\prod_iq_i(a_i\mid I_i(s))$. It is safe when it assigns probability zero to $A\setminus\mathcal L(s)$ at every admitted state. We ask for one such policy and constants $\epsilon_j\in(0,1]$ such that every enabled task has conditional firing probability at least $\epsilon_j$ at every admitted state, uniformly over the declared environment strategies.
+
+Two timing models must be distinguished:
+\begin{enumerate}
+\item \emph{Pre-action response:} the environment chooses $d$ from the complete past before seeing any current private draws. Its choice is not revealed through a new observation before those draws. Conditional on that past and $d$, agents still use $q_s$.
+\item \emph{Action-observing response:} the environment sees the entire current joint action $a$ and may select $d=d(a)$ before the plant outcome is sampled. It cannot observe future plant noise. Randomized selections are also allowed.
+\end{enumerate}
+There is no hidden assumption that these adversaries have the same power.
+
+\section{Exact support criterion and explicit construction}
+Choose a nonempty support set $B_i(l)\subseteq A_i$ for every attained local-information value. Write $B(s)=\prod_iB_i(I_i(s))$.
+
+\begin{theorem}[Safe local hazard synthesis]\label{sup-synth}
+A permitted safe policy with uniformly positive enabled-task hazards exists exactly when such supports can be chosen satisfying
+\[
+ B(s)\subseteq\mathcal L(s)\qquad(s\in S)
+\]
+and the following coverage condition for every task $j$ and state $s\in E_j$:
+\begin{description}
+\item[Pre-action response:]
+$\displaystyle\forall d\in D(s)\ \exists a\in B(s):\ p_j(s,a,d)>0.$
+\item[Action-observing response:]
+$\displaystyle\exists a\in B(s)\ \forall d\in D(s):\ p_j(s,a,d)>0.$
+\end{description}
+For either criterion, the independent uniform policies on the chosen local supports provide an explicit witness. If some task is enabled, let $\alpha$ be the smallest strictly positive table entry and $M=\max_s|B(s)|$. Then every enabled task has conditional hazard at least $\alpha/M>0$. Empty enabled-task families impose no hazard condition.
+\end{theorem}
+\begin{proof}
+For necessity take the supports of a witnessing local policy. A product of strictly positive local probabilities is positive, so safety implies $B(s)\subseteq\mathcal L(s)$. In the pre-action model, fixing any $d$ yields
+\[
+ \sum_{a\in B(s)}q_s(a)p_j(s,a,d)>0,
+\]
+which requires at least one positive term. In the action-observing model the worst hazard is exactly
+\[
+ \sum_{a\in B(s)}q_s(a)\min_{d\in D(s)}p_j(s,a,d).
+\]
+The environment can minimize separately for each action, since its timing permits that choice and $D(s)$ is finite. Positive hazard therefore requires at least one action whose entire response row is positive. This proves the respective coverage conditions.
+
+Conversely, uniform policies put mass $1/|B(s)|$ on every action in the legal product $B(s)$ and none elsewhere. In the pre-action case, every response $d$ has a positive term, bounded below by $\alpha/|B(s)|$. Randomizing over $d$ cannot reduce that lower bound. In the action-observing case, the guaranteed action has firing probability at least $\alpha$ under every selected response, so the same lower bound holds, even for randomized action-dependent selection. Finiteness supplies the global positive minimum and finite $M$. These inequalities hold conditional on the actual past, hence give the required uniform hazard.
+\end{proof}
+
+If the probabilities are rational, the constructed policy and displayed bound are rational. The criterion is finite and decidable by enumerating local support choices, but no efficient worst-case algorithm is claimed. The test is for all admitted states, not just states reached under one fortunate initialization; restricting that quantifier requires a separately proved invariant.
+
+\section{Two precise compositional obstructions}
+The timing distinction is strict even with one fully informed agent and always-legal actions. Take $A=D=\{0,1\}$ and $p(a,d)=1$ when $a=d$, zero otherwise. A fair private coin gives hazard $1/2$ against every pre-action response. An action-observing environment chooses $d=1-a$ and forces hazard zero. Both environments see the same old state; their difference is access to the current innovation.
+
+Joint legality is equally substantive. Suppose two agents have no local observations and the only legal joint actions are $00$ and $11$. An independent product distribution supported on that diagonal must be a singleton: if either coordinate takes both values, product support includes an off-diagonal pair unless the other coordinate has no values at all. More explicitly, any nonempty rectangle containing both $00$ and $11$ also contains $01$ and $10$. Therefore tasks requiring positive probability of $00$ and positive probability of $11$ at the same boundary cannot both obtain positive hazards from a safe independent stationary policy. A retained common random bit would permit the correlated mixture, but that changes the information/randomness interface. A deterministic temporal alternation could give fairness with memory while still failing this one-step hazard obligation. The theorem separates those mechanisms rather than conflating them.
+
+\section{The actual native progress consequence}
+Suppose supports passing Theorem~\ref{sup-synth} are supplied at the source of the information-and-progress comparison theorem. Use the constructed independent uniform local policy. For every allowed environment, the actual full-history firing bounds imply almost-sure strong fairness by the conditional-hazard theorem; no independence through time is needed. If the native comparison also preserves the actual joint plant law, local information, task events, enabledness and productive clock, its target law is admissible and fair. A target rank argument plus source receipt reflection then gives almost-sure source completion. The completion conclusion inherits every one of these hypotheses.
+
+The criterion can also be used as a diagnostic when composing open components: recompute legal joint rectangles and response coverage using the \emph{composed} transition law and actual environment timing. Individual component support witnesses need not compose; correlated legality constraints or an observer of fresh actions can destroy them. The event-menu test controls raw synchronization availability, but does not imply positive stochastic acceptance. The local-information square controls which action factors are admissible, but does not imply that their product is jointly legal. This support theorem identifies the additional concrete joint obligation rather than hiding it in a general appeal to fairness.
+
+An infinite raw run can still avoid a positive-probability firing forever. Thus this construction supplies an almost-sure fairness premise for admitted laws, not fairness of every raw path, a deterministic latency guarantee, or progress against an unconstrained hostile environment. Likewise it does not characterize all decentralized policies with history-dependent memory not represented by the selected finite information states.
+\end{document}
