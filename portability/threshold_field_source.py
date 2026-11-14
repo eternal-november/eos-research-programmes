@@ -48,6 +48,7 @@ DUMP_TIME = F(100)
 RESET_CLEAR_TIME = F(1,64)
 RESET_ABORT_TIME = F(1,64)
 CONTROL_TAIL = F(64,2**20)
+INITIAL_RESET_SETTLE = F(1000)
 
 
 def need(condition, message):
@@ -172,6 +173,7 @@ class SettingWriter:
     native_inhibit: bool = False
     reset_stock: F = F(0)
     reset_reserve: WorkCell = field(init=False)
+    reset_control_inhibit: bool = False
 
     def __post_init__(self):
         need(type(self.targets) is tuple and len(self.targets)==DEGREE
@@ -207,6 +209,11 @@ class SettingWriter:
         self.logical_cost = F(0)
         self.generator = self.microprogram()
         return "latched"
+
+    def native_reset_claim(self):
+        # Actual old-native request port, separated from the maintenance port.
+        if self.reset_control_inhibit:return "inhibited"
+        return "spent" if self.reset_reserve.debit(32) else "unfunded"
 
     def microprogram(self):
         # Four actual 256-bit latches; no untouched private state is consumed.
@@ -420,6 +427,9 @@ class PulseSelector:
     withdrawal_owner: int|None = None
     reset_motor_owner: bool = False
     reset_actuator_failed: bool = False
+    reset_control_inhibit: bool = False
+    maintenance_control_enabled: bool = False
+    reset_driver_disconnected: bool = False
     motor_input: F = F(0)
     motor_output: F = F(0)
     motor_heat: F = F(0)
@@ -466,6 +476,17 @@ class PulseSelector:
     def counter_bound_holds(self):
         """Counter-only proof query; supplies neither funding nor formation."""
         return all(s is None or 0<s[1]<=self.edge_count for s in self.slots)
+
+    def native_reset_request(self,owner):
+        if type(owner) is not bool:return "reject"
+        if self.reset_control_inhibit:return "inhibited"
+        if not self.reset_source_reserve.debit(32):return "unfunded"
+        # Source issue and receiver admission are distinct paid operations;
+        # a receiver refusal cannot refund the source's already issued work.
+        if not self.reset_reserve.debit(32):return "receiver-unfunded"
+        self.reset_motor_owner=owner
+        if owner:self.reset_driver_disconnected=False
+        return "accepted"
 
     def fault_counter(self,slot,value):
         # Explicit physical-register mutation, outside ordinary payload access.
@@ -518,7 +539,8 @@ class PulseSelector:
 
     def abort_pending(self,slot):
         if not self.valid_slot(slot):return "reject"
-        if not self.cut or not self.native_inhibit:return "inhibit-required"
+        if not self.cut or not self.native_inhibit or not self.maintenance_control_enabled:
+            return "inhibit-required"
         if self.pending[slot] is None:return "absent"
         if self.reset_source_reserve.stock<33 or self.reset_reserve.stock<33:
             return "reset-unfunded-wait"
@@ -561,6 +583,9 @@ class PulseSelector:
         dt=exact(dt);relative_velocity=exact(relative_velocity)
         maximum=BIT_SPEED+22*(F(2**20)+22*(2**16+REACTION))/16+F(11,10)
         need(dt>=0 and abs(relative_velocity)<=maximum,"Invalid field flow/velocity")
+        if self.reset_motor_owner and self.reset_driver_disconnected:
+            self.force=F(0)
+            return self.force
         active=next((i for i,s in enumerate(self.slots) if s is not None),None)
         owner=active if active is not None else self.withdrawal_owner
         command=0 if self.reset_motor_owner else self.selected()
@@ -599,8 +624,54 @@ class PulseSelector:
             relay=min(F(1),cell.stock);cell.debit(relay)
             self.motor_input+=relay;self.motor_heat+=relay
             self.force=F(0)
+            if self.reset_motor_owner:self.reset_driver_disconnected=True
         if self.force==0 and active is None:self.withdrawal_owner=None
         return self.force
+
+    def reset_driver_quiescent(self):
+        return (not self.reset_motor_owner or self.reset_driver_disconnected
+                or self.force==0 and not self.reset_actuator_failed)
+
+    def advance_reset_with_charge(self,dt,*,connected=True,efficiency=F(1,2)):
+        """Exact concurrent receiver-reset stock/zero-driver segment.
+
+        Only the currently selected fixed-zero reset actuator may draw from
+        this cell here. The actual cut's control-load gate excludes old native
+        resets/claims; their already emitted finite tails precede this segment.
+        """
+        dt=exact(dt);efficiency=exact(efficiency)
+        need(dt>=0 and F(1,2)<=efficiency<=1,"Invalid concurrent charge interval")
+        cell=self.reset_reserve
+        rate=efficiency*cell.input_cap if connected else F(0)
+        need(rate<8,"Concurrent formula needs the selected reset charger rating")
+        if self.reset_motor_owner and self.reset_driver_disconnected:self.force=F(0)
+        if self.reset_driver_quiescent():
+            cell.charge(dt,efficiency,connected)
+            return dict(drive_time=F(0),idle_time=dt,disconnected=False)
+        old=self.force;slew=FORCE/F(1000)
+        zero_time=dt+1 if self.reset_actuator_failed else abs(old)/slew
+        low_time=max(F(0),(cell.stock-1)/(8-rate))
+        drive_time=min(dt,zero_time,low_time)
+        charge=rate*drive_time;work=8*drive_time
+        # Update the simultaneous net flow without a fictitious intermediate
+        # stock above capacity or a second expenditure of incoming work.
+        cell.stock+=charge-work;cell.delivered_input+=charge
+        cell.upstream_input+=charge/efficiency;cell.spent+=work
+        if not self.reset_actuator_failed:
+            self.force=old-clip(old,-slew*drive_time,slew*drive_time)
+        self.motor_input+=work;self.motor_heat+=work  # This witness fixes relative velocity0.
+        disconnected=False
+        if low_time<=drive_time and low_time<zero_time:
+            relay=min(F(1),cell.stock)
+            need(cell.debit(relay),"Work-floor disconnect overspent")
+            self.motor_input+=relay;self.motor_heat+=relay
+            self.force=F(0);self.reset_driver_disconnected=True;disconnected=True
+        remainder=dt-drive_time
+        if remainder:
+            need(self.reset_driver_quiescent(),"Concurrent remainder still has an unpaid driver")
+            cell.charge(remainder,efficiency,connected)
+        need(0<=cell.stock<=cell.capacity,"Concurrent reset stock escaped its capacity")
+        return dict(drive_time=drive_time,idle_time=remainder,disconnected=disconnected)
 
 
 @dataclass
@@ -624,11 +695,12 @@ def reformation_bounds():
     # These durations are analyst bounds on actual locally held modes and
     # finite native jobs, not global runtime timestamps.
     commutation=delivery+RESET_CLEAR_TIME
-    total=tail+RESET_REFILL+commutation+DUMP_TIME+1000+RESET_CLEAR_TIME+RESET_ABORT_TIME+RESET_REFILL
+    total=tail+INITIAL_RESET_SETTLE+RESET_REFILL+commutation+DUMP_TIME+1000+RESET_CLEAR_TIME+RESET_ABORT_TIME+RESET_REFILL
     old=parent+F(2198154)
     need(DUMP_TIME>tail,"Old physical parents/native writes can outlast the inhibited drain")
     need(total<old,"Reformation exceeds the existing preparation allowance")
-    return dict(old_parent_and_native_tail=tail,reset_reserve_refill=RESET_REFILL,
+    return dict(old_parent_and_native_tail=tail,initial_reset_settling=INITIAL_RESET_SETTLE,
+                reset_reserve_refill=RESET_REFILL,
                 mode_commutation=commutation,dump=DUMP_TIME,withdrawal=F(1000),
                 native_clear=RESET_CLEAR_TIME,parent_abort=RESET_ABORT_TIME,
                 final_refill=RESET_REFILL,prepared_bound=total,
@@ -697,24 +769,49 @@ class PulseReformation:
     def mark(self,phase,dt=F(0)):
         self.phase=phase;self.elapsed+=dt;self.events.append((phase,self.elapsed))
 
-    def run(self,*,charger_bypass=False,reset_chargers_connected=True):
+    def run(self,*,charger_bypass=False,reset_chargers_connected=True,reset_control_bypass=False):
         if self.phase!="idle":return "busy"
         p=self.selector;s=self.setter;b=reformation_bounds()
         # Start at an actual source cut. No mutable native control flag is
         # assumed cleared here; pending parents remain actual one-shot records.
         p.cut=True
-        if s is not None:s.cut=True
+        # Actual compound-cut contact: inhibit old native reset-load/write
+        # routes without changing the retained physical motor-selector pole.
+        p.reset_control_inhibit=not reset_control_bypass
+        p.maintenance_control_enabled=False
+        if s is not None:
+            s.cut=True;s.reset_control_inhibit=not reset_control_bypass
         self.mark("cut")
         # Pending control continuations are not assumed to complete from their
         # nominal timestamp or depleted Em. Physical in-flight effects settle
         # under the separate tail law; the remaining claims are aborted below.
-        p.flow(b['old_parent_and_native_tail'],mode="jam")
+        if p.reset_motor_owner:
+            p.advance_reset_with_charge(b['old_parent_and_native_tail'],connected=reset_chargers_connected)
+        else:
+            p.flow(b['old_parent_and_native_tail'],mode="jam")
+            p.reset_reserve.charge(b['old_parent_and_native_tail'],connected=reset_chargers_connected)
+        p.reset_source_reserve.charge(b['old_parent_and_native_tail'],connected=reset_chargers_connected)
+        if s is not None:s.reset_reserve.charge(b['old_parent_and_native_tail'],connected=reset_chargers_connected)
         self.mark("initial-physical-tail-window",b['old_parent_and_native_tail'])
-        p.flow(RESET_REFILL,mode="jam")
-        # Old controller states may keep every ordinary charger connected.
-        # Their actual positive input is accounted, never used as a drain aid.
-        for cell in p.energy:cell.charge(RESET_REFILL)
-        p.reset_reserve.charge(RESET_REFILL,connected=reset_chargers_connected)
+        if not p.reset_control_inhibit or s is not None and not s.reset_control_inhibit:
+            return "reset-control-not-isolated"
+        if p.reset_motor_owner:
+            self.initial_settle_flow=p.advance_reset_with_charge(INITIAL_RESET_SETTLE,
+                                                        connected=reset_chargers_connected)
+        else:
+            p.flow(INITIAL_RESET_SETTLE,mode="jam")
+            p.reset_reserve.charge(INITIAL_RESET_SETTLE,connected=reset_chargers_connected)
+            self.initial_settle_flow=dict(drive_time=F(0),idle_time=INITIAL_RESET_SETTLE,disconnected=False)
+        p.reset_source_reserve.charge(INITIAL_RESET_SETTLE,connected=reset_chargers_connected)
+        if s is not None:s.reset_reserve.charge(INITIAL_RESET_SETTLE,connected=reset_chargers_connected)
+        self.mark("initial-reset-settled",INITIAL_RESET_SETTLE)
+        if not p.reset_driver_quiescent():return "initial-reset-not-quiescent"
+        # Reset stores now have no competing actuator or old native draw.
+        # Ordinary Ep/Em states remain arbitrary within their capacity envelope;
+        # no full ordinary-store conclusion is inferred from this interval.
+        if not p.reset_motor_owner:p.flow(RESET_REFILL,mode="jam")
+        self.precharge_flow=p.advance_reset_with_charge(RESET_REFILL,connected=reset_chargers_connected)
+        need(self.precharge_flow['drive_time']==0,"Reset precharge retained a competing draw")
         p.reset_source_reserve.charge(RESET_REFILL,connected=reset_chargers_connected)
         if s is not None:s.reset_reserve.charge(RESET_REFILL,connected=reset_chargers_connected)
         self.mark("reset-reserves-charged",RESET_REFILL)
@@ -725,8 +822,8 @@ class PulseReformation:
         need(p.reset_reserve.debit(128) and p.reset_source_reserve.debit(128),
              "Reset endpoint commutations were not separately funded")
         p.flow(b['mode_commutation'],mode="jam")
-        for cell in p.energy:cell.charge(b['mode_commutation'])
         p.ep_charging=charger_bypass;p.native_inhibit=True;p.reset_motor_owner=True
+        p.maintenance_control_enabled=True;p.reset_driver_disconnected=False
         if s is not None:
             need(s.reset_reserve.debit(128),"Setter isolation was not funded")
             s.native_inhibit=True
@@ -751,7 +848,7 @@ class PulseReformation:
             return "low-work-guard-not-reached"
         # A corrupt pulse counter cannot veto this separately funded actuator.
         p.flow(F(1000))
-        if p.force!=0:
+        if p.reset_actuator_failed or p.force!=0:
             self.mark("withdrawal-failed",F(1000))
             return "withdrawal-failed"
         self.mark("withdrawn",F(1000))
@@ -801,6 +898,7 @@ class PulseReformation:
         # Refill with all trigger/native-write gates still inhibited and the
         # constant clear level still applied. No old count can restart on power.
         p.ep_charging=True;p.refill(RESET_REFILL)
+        need(p.reset_driver_quiescent(),"Final reset refill has a competing actuator draw")
         p.reset_reserve.charge(RESET_REFILL)
         p.reset_source_reserve.charge(RESET_REFILL)
         if s is not None:
@@ -822,6 +920,8 @@ class PulseReformation:
         p=self.selector
         need(p.reset_source_reserve.debit(32),"Physical re-enable work omitted")
         p.reset_motor_owner=False;p.native_inhibit=False;p.cut=False
+        p.reset_control_inhibit=False;p.maintenance_control_enabled=False
+        if self.setter is not None:self.setter.reset_control_inhibit=False
         self.phase="enabled"
         self.events.append(("enabled-after-external-scan",None))
         # This physical action tests no image/vector truth. The programme/cam
@@ -1091,7 +1191,7 @@ def reformation_checks():
     retry=PulseReformation(no_reserve)
     need(retry.run()=="prepared-trigger-inhibited" and no_reserve.counter_bound_holds(),
          "A later funded episode could not resume from retained failed state")
-    bypass=PulseSelector(slots=[[1,PULSE_COUNTER_CAP],None,None],force=FORCE)
+    bypass=PulseSelector(slots=[[1,PULSE_COUNTER_CAP],None,None],force=F(0),reset_motor_owner=True)
     failed=PulseReformation(bypass)
     need(failed.run(charger_bypass=True)=="low-work-guard-not-reached"
          and any(x.stock>DUMP_FLOOR for x in bypass.energy),"Uncut charge feed escaped the drain test")
@@ -1127,8 +1227,93 @@ def reformation_checks():
        refill_without_abort_upstream_work=refill_work,refill_without_abort_replays_old_setting=True,
        absolute_times_are_analyst_annotations=True,
        full_clock_interleaving_and_hybrid_trace_simulated=False,
+       old_phase_energy_envelope=dict(
+          balance="actual_stock=initial_stock+delivered_input-recorded_work-additional_old_work-spill",
+          additional_old_work_nonnegative=True,
+          additional_old_work_is_real_heat_or_port_work=True,
+          only_capacity_bound_used_before_dump=True,
+          full_refill_claims_require_no_competing_draw=True,
+          holding_power_owner="actual U, separately included in the rate inventory"),
        runtime_controller_is_not_given_an_absolute_clock=True,
        programme_or_cam_embedding="open: realize the listed physical input sequence and scan-before-enable order")
+
+
+def initial_reset_precharge_checks():
+    bounds=reformation_bounds();tail=bounds['old_parent_and_native_tail']
+    # Reproduce the independently found old precharge boundary state. This is
+    # an admitted post-tail state; no assumption about earlier charger phase is
+    # needed for the failure of a100000q concurrent refill from that state.
+    old=PulseSelector(force=FORCE,reset_motor_owner=True,
+                      initial_reset_energy=(F(0),F(4000)))
+    old.flow(tail)
+    start=old.reset_reserve.stock
+    result=old.advance_reset_with_charge(RESET_REFILL)
+    rate=RESET_RECEIVER_ENERGY/RESET_REFILL
+    shortfall=RESET_RECEIVER_ENERGY-old.reset_reserve.stock
+    extra=shortfall/rate
+    need(old.reset_reserve.stock<RESET_RECEIVER_ENERGY
+         and F(12225743913,1000000)<old.reset_reserve.stock<F(12225743915,1000000)
+         and extra==result['drive_time'],"Concurrent precharge countercase changed")
+    cases=[]
+    targets=tuple("physical-body-"+str(i) for i in range(DEGREE))
+    for stock in (F(0),F(1,2),F(4000),RESET_RECEIVER_ENERGY):
+        for force in (-FORCE,F(0),FORCE):
+            p=PulseSelector(slots=[[1,PULSE_COUNTER_CAP],None,None],force=force,
+                            reset_motor_owner=True,initial_reset_energy=(F(0),stock))
+            s=SettingWriter(targets)
+            r=PulseReformation(p,s)
+            initial=stock
+            need(r.run()=="prepared-trigger-inhibited","Initial reset-owner state was excluded")
+            cell=p.reset_reserve
+            need(r.precharge_flow['drive_time']==0 and p.reset_driver_quiescent()
+                 and cell.stock==RESET_RECEIVER_ENERGY
+                 and cell.stock==initial+cell.delivered_input-cell.spent-cell.dumped,
+                 "Idle reset refill or concurrent conservation failed")
+            cases.append(dict(initial_stock=stock,initial_force=force,prepared=r.elapsed,
+                 initial_settle_flow=r.initial_settle_flow,received=cell.delivered_input,
+                 spent=cell.spent,final_stock=cell.stock))
+    # The physical cut inhibits every old native reset-load/write route while
+    # retaining the pole. Ordinary native operations can still change their
+    # own state/Ep, but cannot spend reset stock or redirect its driver.
+    p=PulseSelector(slots=[[1,PULSE_COUNTER_CAP],None,None],force=F(0),
+                    reset_motor_owner=True,
+                    initial_reset_energy=(RESET_SOURCE_ENERGY,RESET_RECEIVER_ENERGY))
+    s=SettingWriter(targets,reset_stock=SETTER_RESET_ENERGY)
+    p.cut=True;p.native_inhibit=True;p.reset_control_inhibit=True
+    p.maintenance_control_enabled=False;s.cut=True;s.reset_control_inhibit=True
+    before=(p.reset_motor_owner,p.reset_source_reserve.stock,p.reset_reserve.stock,s.reset_reserve.stock)
+    need(p.native_reset_request(False)=="inhibited" and s.native_reset_claim()=="inhibited"
+         and p.abort_pending(0)=="inhibit-required","Old native reset port escaped the actual cut")
+    p.capture(0,-1);p.clock_edge(0);p.fault_counter(0,PULSE_COUNTER_CAP-1)
+    s.issue((0,0,0,1));s.step();p.flow(F(1),mode="wrong")
+    after=(p.reset_motor_owner,p.reset_source_reserve.stock,p.reset_reserve.stock,s.reset_reserve.stock)
+    need(after==before,"An old native action changed reset pole/stock after isolation")
+    p.reset_control_inhibit=False
+    need(p.native_reset_request(False)=="accepted" and not p.reset_motor_owner,
+         "Missing reset-control interlock has no consequential bypass")
+    bad=PulseSelector(force=FORCE,reset_motor_owner=True,
+                       initial_reset_energy=(F(0),RESET_RECEIVER_ENERGY),reset_actuator_failed=True)
+    failed=PulseReformation(bad)
+    need(failed.run()=="initial-reset-not-quiescent" and bad.force!=0,
+         "Failed already-selected reset actuator acquired an idle-refill certificate")
+    # A second real episode may spend more than one capacity cumulatively, but
+    # only with the recorded physical recharge between the expenditures.
+    repeated=PulseSelector(slots=[[1,PULSE_COUNTER_CAP],None,None],force=FORCE)
+    first=PulseReformation(repeated);need(first.run()=="prepared-trigger-inhibited","First repeat episode")
+    first.enable();repeated.trigger(0,1);repeated.flow(1000)
+    second=PulseReformation(repeated);need(second.run()=="prepared-trigger-inhibited","Second repeat episode")
+    cell=repeated.reset_reserve
+    need(cell.spent>cell.capacity and cell.delivered_input>=cell.spent
+         and cell.stock==cell.delivered_input-cell.spent-cell.dumped,
+         "Cumulative reset work was compared with a fresh fictitious capacity")
+    return dict(old_countercase=dict(post_tail_stock=start,concurrent_end=old.reset_reserve.stock,
+                  shortfall=shortfall,extra_idle_charge_time=extra),
+                broader_initial_owner_cases=cases,old_native_write_frame_checked=True,
+                missing_control_interlock_changes_pole=True,
+                failed_initial_driver="nonquiescent physical branch, no full-refill claim",
+                repeated_reset=dict(capacity=cell.capacity,cumulative_spent=cell.spent,
+                                    actual_delivered_recharge=cell.delivered_input,final_stock=cell.stock),
+                source_scope="actual compound-cut load/write interlock; no old-native access to reset stores during idle refill")
 
 
 def accounting(texts):
@@ -1227,7 +1412,8 @@ def generate():
     texts,binding=inputs()
     return dict(scope="finite local converter/memory/setting source and conditional exact ledger",
         source_base=BASE,frozen_inputs_sha256_lf=binding,local=local_checks(),
-        reformation=reformation_checks(),finite_flight=finite_flight_checks(),
+        reformation=reformation_checks(),initial_reset_precharge=initial_reset_precharge_checks(),
+        finite_flight=finite_flight_checks(),
         point=accounting(texts),sources_sha256_lf={name:digest((HERE/name).read_text(encoding='utf-8'))
             for name in ('threshold_field_source.py','THRESHOLD-FIELD-SOURCE.md')},
         unclosed=["complete actor/ISA observation and all-mode hybrid refinement",
@@ -1235,6 +1421,7 @@ def generate():
           "setter4577-step additional fixed control refinement within complete8192 bound",
           "native STOREC timing is not a uniform all-opcode retirement lower rate",
           "programme/cam embedding of the constructed pulse/setter reformation input sequence",
+          "actual compound-cut reset-control/load interlock and its complete native write-support map",
           "actual old-inventory domination after writer/body removal",
           "complete finite native-step/control and parent/storage-identity refinement under declared raw prices",
           "physical placement, all-path source/fault map and limiter admission",
