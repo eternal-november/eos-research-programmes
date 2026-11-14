@@ -17,7 +17,7 @@ import threshold_publication_model as publication
 HERE=program.HERE
 PREFIX='theories-and-designs/byzantine-control/'
 BASE='f9f9d48167aacce265f7e303e881cf2e5af93d1c'
-FIELD='70ac3c8678e0de5a01136a11d6e97d321a088b0c'
+FIELD='215ecb755312f580cbd8c283b419f0958518766f'
 need=program.need
 MASK=(1<<256)-1
 
@@ -455,7 +455,7 @@ def generate():
     print('executing removed IO and retained native/ordinary operations',flush=True)
     decoder=decoder_checks(isa,c,b,port_module,field_module)
     names=('LEGACY-REALIZATION.md','legacy_realization.py','threshold_program_model.py','threshold_program_source.py',
-           'threshold_design.py','threshold_incidence_model.py','threshold_publication_model.py')
+           'threshold_design.py','threshold_incidence_model.py','threshold_publication_model.py','constructors.py')
     frozen={BASE+':local-control/'+n:program.hash_text(text_at(BASE,'local-control/'+n)) for n in
             ('RUNTIME-PORTS.md','PORT-SOURCE.md','PORT-RESOURCES.md','resource_model.py','port_model.py')}
     frozen[FIELD+':portability/threshold_field_source_results.json']=program.hash_text(field_text)
