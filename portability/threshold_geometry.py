@@ -270,6 +270,7 @@ def generate(full=True):
     files=("threshold_design.py","threshold_geometry.py","THRESHOLD-GEOMETRY.md",
         "threshold_program_source.py","threshold_program_model.py","THRESHOLD-PROGRAM.md",
         "publication_timing.py","publication_timing_results.json","THRESHOLD-PUBLICATION.md",
+        "tracker_envelope.py","TRACKER-ENVELOPE.md",
         "pulse_model.py","pulse_results.json","PULSE-FIELDS.md","constructors.py","THRESHOLD-JOIN.md")
     return serial(dict(
         status="first-pass changed-design instruction and conditional geometry evidence",

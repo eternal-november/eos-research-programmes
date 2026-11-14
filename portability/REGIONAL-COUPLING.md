@@ -81,15 +81,16 @@ Let M=2^98, W=M+6. The existing controller/effect interface supplies, conditiona
 
     U=.84*(1-6/m)-W/m=227/300-731/(150m),
     L=.36+W/m=133/300-1/(6m),
-    S=.3*(1-6/m)-W/m=13/60-49/(30m).
+    S=(.3-epsilon)*(1-6/m)-W/m=13/60-49/(30m)-epsilon*(1-6/m),
+    epsilon=2/11^10.
 
-Here U is the upper-collar removal floor, L the lower-collar removal ceiling and S the actual effector-service floor. Their approximate values are.756667,.443333,.216667. Incoming coupling is not redefined as delivered service.
+Here U is the upper-collar removal floor, L the lower-collar removal ceiling and S the actual effector-service floor. Their approximate values are.756667,.443333,.216667. The shared [tracker envelope](TRACKER-ENVELOPE.md) retains the finite RC residual after an actual10000q powered interval; exact range[.3,.9] is not inferred merely from command range. The conditional .84/.36 collar bounds consume the separate tracking-error certificate. Initial selected trackers already in[.3,.9] have a stronger range entry, while later arbitrary initial tracker states retain epsilon. Incoming coupling is not redefined as delivered service.
 
 In the normal passive family, at most four regional difference terms plus one intra-region term meet a coordinate. On either.01 collar their adverse contribution is at most5*.02*.01=.001. The host plus new paired thermal effects fit.02, giving upper/lower requirements.641/.559. The exact normal margins are347/3000-731/(150m) and347/3000+1/(6m), respectively. This is the final giant-cohort point, not the historical m72 calculation.
 
 For arbitrary modes inside the complete endpoint cap, the entire coupling contribution, including thermal/conversion paths, is bounded by5*.02=.10 per coordinate. Using the conservative host-only side bound.02, sufficient upper/lower requirements become.74/.46. Their margins are1/60-731/(150m)>0 and1/60+1/(6m)>0. Even S-.10>.1, although the original service definition remains S through the effector boundary. No additional .004 or .005 thermal allowance is spent in this robust coupling estimate.
 
-With formed nominal body commands, the robust coordinate slew is below517/300<2. The weaker raw body-capacity bound1 rather than.9 still gives
+After the same finite formation interval, the nominal output upper bound is.9+epsilon, so the robust coordinate slew is below517/300+epsilon<2. The weaker raw body-capacity bound1 rather than.9 still gives
 
     abs(dx/dt_plant) <= .61+1+W/m+.01+.02+.10 < 547/300 < 2.
 

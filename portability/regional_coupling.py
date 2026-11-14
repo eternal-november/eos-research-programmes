@@ -14,6 +14,7 @@ from pathlib import Path
 import subprocess
 import sys
 import types
+from tracker_envelope import tracker_envelope
 
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
@@ -316,7 +317,18 @@ def world_certificate(inp):
     kappa=prototype.kappa;thermal_coefficient=prototype.thermal_coefficient
     upper=Q(21,25)*(1-Q(6,m))-Q(W,m)
     lower=Q(9,25)+Q(W,m)
-    service=Q(3,10)*(1-Q(6,m))-Q(W,m)
+    tracker=tracker_envelope(command=(Q(3,10),Q(9,10)),initial=(-1,1),
+        reference=(Q(3,10),Q(9,10)),gain_floor=Q(1,100),duration=10000,blocks=10,
+        command_error=0,reference_slew=0,initial_error_bound=2)
+    # Project only the range branch, whose proof needs no reference law.
+    # The dummy zero tracking inputs above are not actual source premises.
+    range_fields=('command_lower','command_upper','initial_lower','initial_upper',
+                  'gain_floor','settled_duration','blocks','initial_error_bound',
+                  'required_range_initial_error','rational_decay_upper',
+                  'retained_initial_error','output_lower','output_upper')
+    tracker={key:tracker[key] for key in range_fields}
+    residual=tracker['retained_initial_error']
+    service=tracker['output_lower']*(1-Q(6,m))-Q(W,m)
     thermal_extra=5*2*thermal_coefficient
     normal_side=inp["native_side"]+thermal_extra
     obsolete_side=inp["native_side"]+5*2*Q(1,2000)
@@ -328,15 +340,16 @@ def world_certificate(inp):
     robust_upper=Q(61,100)+Q(1,100)+Q(1,50)+robust_coupling
     robust_lower=Q(59,100)-Q(1,100)-Q(1,50)-robust_coupling
     raw_speed=Q(61,100)+1+Q(W,m)+Q(1,100)+Q(1,50)+robust_coupling
-    formed_speed=raw_speed-Q(1,10)
-    normal_speed=Q(61,100)+Q(9,10)+Q(W,m)+5*kappa*Q(3,10)+Q(1,100)+Q(1,50)
+    formed_speed=raw_speed-Q(1,10)+residual
+    normal_speed=Q(61,100)+tracker['output_upper']+Q(W,m)+5*kappa*Q(3,10)+Q(1,100)+Q(1,50)
     need(upper>robust_upper and lower<robust_lower,"Faulted-coupler collars failed")
     need(service-robust_coupling>Q(1,10),"Conservative net service failed")
     need(raw_speed<2 and 2*raw_speed<4,"Initial/raw row slew exceeds4")
     tube=2*inp["tau"]*50000
     need(tube<Q(1,20),"Initial tube consumes safety reserve")
     return dict(m=m,M=M,node_loss_export_weight=W,upper=upper,lower=lower,
-        actual_effector_service_lower=service,native_host_side=inp["native_side"],
+        actual_effector_service_lower=service,tracker_range=tracker,
+        service_range_residual=residual*(1-Q(6,m)),native_host_side=inp["native_side"],
         native_world_cap=inp["native_world_cap"],native_world_ratio=inp["native_world_ratio"],
         kappa=kappa,thermal_coefficient=thermal_coefficient,new_thermal_side=thermal_extra,
         total_normal_side=normal_side,side_slack=Q(1,50)-normal_side,
@@ -578,7 +591,7 @@ def generate():
             stock_leak_rate=actual.stock_leak,thermal_waste_effort=actual.thermal_loss_effort,
             nominal_scaling_initial_work_and_heat=0,endpoint_cap_is_material_not_nominal=True),
         sources_sha256_lf={name:sha256((HERE/name).read_bytes().replace(b"\r\n",b"\n")).hexdigest()
-                          for name in ("regional_coupling.py","REGIONAL-COUPLING.md")},
+                          for name in ("regional_coupling.py","REGIONAL-COUPLING.md","tracker_envelope.py","TRACKER-ENVELOPE.md")},
         python_version=sys.version,
         remaining=["source realization/admission of all complete coupler caps and bath/inlet envelope",
                    "same-history node loss/export and seven-slot information maps",

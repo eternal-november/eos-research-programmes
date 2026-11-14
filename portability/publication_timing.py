@@ -4,6 +4,7 @@ import argparse
 import json
 import sys
 import threshold_program_model as p
+from tracker_envelope import tracker_envelope, checks as tracker_checks
 
 
 def generate():
@@ -69,11 +70,15 @@ def generate():
     p.need(F(k['ROW_VERIFY_RADIUS'],1000)>=2*row_beta,'Row range availability fails')
     feedback=4*(row_beta+F(1,2000))+F(1,100)
     p.need(feedback<F(4,100),'No room remains within proposed tracker error budget')
+    tracker=tracker_envelope(command=(F(3,10),F(9,10)),initial=(-1,1),
+        reference=(F(3,10),F(9,10)),gain_floor=F(1,100),duration=10000,blocks=10,
+        command_error=feedback,reference_slew=F(4,10**7),initial_error_bound=2)
+    p.need(tracker['tracking_error']<F(1,25),'Actual RC collar budget fails')
     records=2+k['FAST_BATCH'];rate=F(records)/fmin
     tx_backlog=2*records+rate/256
     rx_backlog=264+F(1040,2048)
     p.need(tx_backlog<128 and rx_backlog<512,'Nominal/raw queue capacity fails')
-    source_names=('publication_timing.py','THRESHOLD-PUBLICATION.md','threshold_program_model.py','threshold_program_source.py')
+    source_names=('publication_timing.py','THRESHOLD-PUBLICATION.md','threshold_program_model.py','threshold_program_source.py','tracker_envelope.py','TRACKER-ENVELOPE.md')
     return dict(scope='conditional source-local arithmetic; physical suppliers and joint realization remain open',
         frozen_base=p.BASE,frozen_isa_sha256=isa.source_hash,
         frozen_geometry_sha256=p.hash_text(p.frozen('geometry_results.json')),
@@ -95,11 +100,15 @@ def generate():
             deficit_margin_required=str(deficit_needed),force_upper=str(force_upper),deficit_upper=str(deficit_upper),
             nominal_full_clearance_observation_threshold_slack='0',post_stage_min=str(post_min)),
         world=dict(full_age=str(world_age),row_beta=str(row_beta),feedback_error=str(feedback),
-            remaining_below_point04=str(F(4,100)-feedback),tracker_transient_not_supplied=True),
+            remaining_below_point04=str(F(4,100)-feedback),
+            age_scope='held-DAC command reference; not finite RC memory',
+            tracker={key:str(value) for key,value in tracker.items()},tracker_checks=tracker_checks(),
+            actual_tracking_slack=str(F(1,25)-tracker['tracking_error']),
+            tracker_transient_not_supplied=False,tracker_source_realization_still_required=True),
         traffic=dict(records_per_bank_branch_per_frame=records,full_bank_offers_per_frame=2*k['DEGREE']*records,
             TX_arrival_burst=2*records,TX_arrival_rate=str(rate),TX_backlog=str(tx_backlog),RX_backlog=str(rx_backlog)),
         unclosed=['physical field I/O wait','new origin/capture/decoder clock and power graph','actual primitive error/slew laws',
-                  'all-emitter entry and interval cover','field pulse freshness/retirement','tracker dynamics and world barriers',
+                  'all-emitter entry and interval cover','field pulse freshness/retirement','actual powered tracker/command interval, output weights and global world barriers',
                   'work/heat/stock and all-history source composition'],program_completion=False)
 
 
