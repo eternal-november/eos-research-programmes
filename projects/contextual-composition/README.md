@@ -6,6 +6,8 @@ Start with the [integrated treatment](synthesis/Integrated_Relative_Computation_
 
 The [feedback and concurrency extension contract](contracts/Feedback_and_Concurrency_Research_Contract_v0_1_2.tex) sets out the research target for general recursion, interfering concurrency, and contextual refinement. Its obligations are research targets, not completed results.
 
+The [native feedback and shared-content first results](feedback-and-concurrency/native-first-results/README.md) give scoped kernel/writer composition, feedback boundaries and shared-world constructions. They do not complete the extension contract.
+
 ## Reading path
 
 - `foundations/`: finite contextads, reduction tests, structural examples, theory guide, and the common relative construction.
