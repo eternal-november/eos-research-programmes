@@ -13,11 +13,13 @@ import threshold_incidence_model as incidence
 import legacy_realization as legacy
 import cam_reformation as cam
 import parent_realization as parent
+import input_lifecycle as raw
 
 HERE=program.HERE
 BASE='6a5f8aad0f0e5156edb21a054f8c72adcbf7120e'
 FIELD='215ecb755312f580cbd8c283b419f0958518766f'
 CAM_BASE='36d69bce7a4705fd54a915beb7c00cea55cce063'
+INPUT_BASE='bcf8092072a23bfd9072877be98d9a5c3acd6306'
 need=program.need
 need(sys.version_info[:2]==(3,12) and not sys.flags.optimize,'Unoptimized Python3.12 required')
 
@@ -95,6 +97,92 @@ def native_initial_points(field,population,dispatch_bits):
         release_or_cut_is_not_initialization=True,
         retained_after_cut=dict(counter=retained.slots[0][1],force=retained.force,
                                 actual_work=retained.energy[0].stock))
+
+
+def ordinary_input_initial_points(population,resource):
+    """One-time native entry, retaining arbitrary bounded evidence values.
+
+    The product law uses fixed LaneId incidence and distinct reset stores;
+    representative boundary values exercise its physical state constructors.
+    It is not a reset operation or a temporal publication theorem.
+    """
+    cases=[]
+    for funded_reset in (False,True):
+        payer=raw.SourceWork(2,Q(resource['updated_upstream_capacity']),
+                            Q(resource['updated_upstream_capacity']))
+        captures={rb:{kind:raw.SharedCapture((2,0,rb),kind,payer)
+                      for kind in ('primary','auxiliary')} for rb in (0,1)}
+        lanes=[]
+        for source_bank in (0,1):
+            for receiver_bank in (0,1):
+                active=source_bank==0
+                lane=raw.RawLane(population,raw.LaneId(2,source_bank,0,receiver_bank),
+                                 payer,captures[receiver_bank])
+                value=0 if receiver_bank==0 else raw.MASK
+                # Values/countdowns are evidence, independent of native entry.
+                for record in lane.ordered:
+                    record.value=value;record.staged=raw.MASK-value
+                    record.set_ttl(record.cap)
+                    need(record.control[record.ENABLE] and not record.control[record.BUSY]
+                         and not record.control[record.TICK_VALID]
+                         and not record.control[record.RECEIPT_VALID] and record.claim is None,
+                         'Initial raw words silently changed native control entry')
+                for symbol in range(512):
+                    need(lane.queue.offer(((1<<96)-1) if symbol%2 else 0)=='accepted',
+                         'Full initial finite raw queue cannot be represented')
+                mode=raw.OPEN if active else raw.MASK_MODE
+                lane.mode=mode;lane.masked=not active
+                lane.ingress=active;lane.write_gate=active
+                lane.line=raw.ReassertingControlLine(words=[mode]*8,valid=[True]*8)
+                lane.line.phases=[Q(j+1,64) for j in range(8)]
+                lane.reset_work.stock=Q(raw.RESET_CAP if funded_reset else 0)
+                for capture in lane.captures.values():
+                    capture.snapshot=value
+                    need(capture.clock_enabled and not capture.control_dirty
+                         and capture.pending is None,'Initial capture is not a native entry')
+                before=tuple((r.value,r.ttl) for r in lane.ordered)
+                need(all((r.readable()==r.value) if active else (r.readable()==raw.MASK)
+                         for r in lane.ordered),'Initial hard lane contact differs from its bank role')
+                # Releasing a cut preserves the deliberately wrong data and
+                # finite queue; it does not apply this initial constructor.
+                lane.ingress=False;lane.write_gate=False
+                need(before==tuple((r.value,r.ttl) for r in lane.ordered)
+                     and lane.queue.number(9,10)==512,'An input cut manufactured fresh evidence')
+                lane.ingress=active;lane.write_gate=active
+                lanes.append(lane)
+                cases.append(dict(source_bank=source_bank,receiver_bank=receiver_bank,
+                    active_source=active,records=len(lane.ordered),raw_value=value,
+                    arbitrary_countdown_cap=max(r.cap for r in lane.ordered),
+                    pending_raw_symbols=lane.queue.number(9,10),control_mode=mode,
+                    actual_reset_stock=lane.reset_work.stock,clock_phases=list(lane.line.phases),
+                    no_old_tick_receipt_or_reset_job=True))
+        need(all(a.reset_work is not b.reset_work for i,a in enumerate(lanes)
+                 for b in lanes[i+1:]),'Initial raw reset stocks alias')
+        for rb in (0,1):
+            pair=[lane for lane in lanes if lane.identity.receiver_bank==rb]
+            need(all(pair[0].captures[kind] is pair[1].captures[kind]
+                     for kind in ('primary','auxiliary')),
+                 'Source banks duplicated an existing shared capture')
+        # A real already emitted child has a transferred parcel, not another
+        # charge in addition to the same DATA cell. Its fixed target survives.
+        slot=raw.DataSlot((2,0,'DATA',0));need(slot.cell.debit(4096),'Initial parcel unavailable')
+        child=raw.WireChild(raw.LaneId(2,0,0,0),(0,0),4096)
+        events=[];child.advance(raw.WIRE_DELAY,lambda destination,payload:events.append((destination,payload)))
+        need(slot.cell.stock+child.stock+child.spent==4096 and len(events)==1,
+             'Initial emitted data copied or lost its physical work')
+    need(resource['new_reset_cells']==162 and resource['new_reset_stock']==162*raw.RESET_CAP,
+         'Initial source-row store product differs from the full owner inventory')
+    return dict(representative_boundary_cases=cases,distinct_reset_cells=True,
+        shared_capture_identity_preserved=True,initial_wire_tail=raw.WIRE_DELAY,
+        transferred_initial_wire_work=4096,
+        product_index='(region, source host, source bank, fixed receiver neighbor, receiver bank)',
+        ordinary_records='arbitrary bounded payload/countdown; enabled coherent native control, no stale tick/receipt claim',
+        ordinary_queues='arbitrary bounded symbols/occupancy with coherent FIFO and native parser entry',
+        capture_entry='enabled clock, arbitrary snapshot, no pending old read, fixed source/receiver/kind identity',
+        active_control='OPEN code4 at all eight stages; no pending copy/reset job',
+        cold_control='MASK code0 at all eight stages; hard ingress/write inhibition',
+        source_TX_ADC_entry='actual coherent nominal native queue/slot entry outside initial charged footprints; complete field mapping remains a source refinement obligation',
+        initial_only=True,release_does_not_restore_this_relation=True)
 
 
 def pc0_boot_prefix(isa,c,bounds,bank_capacity):
@@ -232,27 +320,50 @@ def generate():
     joined_reserve=Q(resources['upstream_capacity'])-joined_burst-2*joined_rate
     need(joined_reserve==Q(controls['usable_reserve_lower'])>1,
          'Initial source spent the old field-only reserve after adding cam control')
+    input_text=legacy.text_at(INPUT_BASE,'portability/input_lifecycle_results.json')
+    input_point=json.loads(input_text)
+    for name,sha in input_point['sources_sha256_lf'].items():
+        need(program.digest(HERE/name)==sha,'Initial ordinary input supplier changed: '+name)
+    incoming=input_point['resources']
+    need(Q(incoming['updated_upstream_capacity'])+incoming['new_reset_stock']==Q(resources['upstream_capacity'])
+         and Q(incoming['unchanged_total_host_capacity'])==Q(resources['unchanged_total_host_stock']),
+         'Initial input reset stores lack a conserved source inventory')
+    joined_capacity=Q(incoming['updated_upstream_capacity'])
+    joined_burst+=Q(incoming['added_upstream_burst'])
+    joined_rate+=Q(incoming['added_upstream_rate'])
+    joined_reserve=joined_capacity-joined_burst-2*joined_rate
+    need(joined_reserve==Q(incoming['usable_reserve_lower'])>1,
+         'Initial source omitted the actual input-control demand')
+    ordinary_inputs=ordinary_input_initial_points(population,incoming)
+    need(ordinary_inputs['initial_wire_tail']<remaining_drain,
+         'The new input source leaves old emitted evidence beyond the initial drain')
     files=('THRESHOLD-INITIALIZATION.md','threshold_initialization.py','threshold_program_model.py',
            'threshold_program_source.py','threshold_design.py','threshold_incidence_model.py',
            'constructors.py','legacy_realization.py','threshold_publication_model.py',
            'cam_reformation.py','CAM-REFORMATION.md','cam_reformation_results.json','threshold_field_source.py',
            'parent_realization.py','PARENT-REALIZATION.md','parent_realization_results.json',
+           'input_lifecycle.py','INPUT-LIFECYCLE.md','input_lifecycle_results.json',
            'LEGACY-REALIZATION.md','legacy_realization_results.json','threshold_field_source_results.json','THRESHOLD-FIELD-SOURCE.md')
     frozen_inputs={BASE+':portability/threshold_geometry_results.json':geometry_text,
         BASE+':portability/publication_timing_results.json':publication_text,
         FIELD+':portability/threshold_field_source_results.json':field_text,
         FIELD+':portability/threshold_field_source.py':field_code,
         CAM_BASE+':portability/cam_reformation_results.json':cam_text,
-        CAM_BASE+':portability/parent_realization_results.json':parent_text}
+        CAM_BASE+':portability/parent_realization_results.json':parent_text,
+        INPUT_BASE+':portability/input_lifecycle_results.json':input_text}
     for name in ('INITIAL-RETURN.md','PORT-SOURCE.md','CYCLE.md','HYBRID.md'):
         frozen_inputs[program.BASE+':local-control/'+name]=program.frozen(name)
     return normalize(dict(status='constructed initial relation and derived conditional split-bootstrap supplier',
-        base=BASE,field_base=FIELD,cam_base=CAM_BASE,python_version=sys.version,frozen_isa_sha256=isa.source_hash,
+        base=BASE,field_base=FIELD,cam_base=CAM_BASE,input_base=INPUT_BASE,python_version=sys.version,frozen_isa_sha256=isa.source_hash,
         actual_image_sha256=image_hash,code_cells=len(c.image),population=population,
-        initial_native_state=native,changed_image_boot_prefix=changed_prefix,
-        joined_initial_resources=dict(upstream_capacity=Q(resources['upstream_capacity']),
+        initial_native_state=native,initial_ordinary_input_state=ordinary_inputs,changed_image_boot_prefix=changed_prefix,
+        joined_initial_resources=dict(upstream_capacity=joined_capacity,
             upstream_burst=joined_burst,upstream_rate=joined_rate,usable_reserve_lower=joined_reserve,
             additional_cam_information_bits=controls['added_control_bits'],
+            additional_input_information_bits=incoming['additional_control_bits'],
+            additional_input_reset_stock=incoming['new_reset_stock'],
+            physical_input_reset_cells=incoming['new_reset_cells'],
+            acyclic_source_inventory_precedes_initialization=True,
             initial_cam_words_are_state_not_READY=True),
         initial_relation=dict(keeper='A; symmetric relabeling permitted',
             active_code='actual changed compiled C at its physical rails; BOOT or a prefix of that same image, never frozen B80 addresses',
@@ -266,10 +377,11 @@ def generate():
             cold_activation=0,cold_energy_and_transit=0,cold_tracker_interval=[-1,1],cold_output_weight=0,
             inactive_code='arbitrary retained physical bit states, isolated from CPU/read service until actual formation',
             ordinary_command_fields_and_pending_commands='neutral; no arbitrary old CUT or MODE parent',
-            raw_input_records_and_data_queues='arbitrary within their finite capacities; no fictitious sample times',
+            raw_input_records_and_data_queues='arbitrary bounded evidence with coherent initial native FIFO/receipt/capture control; no fictitious sample times',
+            raw_input_control_entry='actual initial_ordinary_input_state; active OPEN and cold MASK; later corruption requires physical source-row reformation',
             clocks='independent phases and admissible uncertain rates',world_box=[Q(2,5),Q(3,5)],
             host_and_coupler_initial_heat='within the recorded combined-energy initialization',
-            upstream_initial_stock=Q(resources['upstream_capacity']),
+            upstream_initial_stock=joined_capacity,
             total_host_capacity_envelope=Q(resources['unchanged_total_host_stock']),
             fault_overlays='actual raw direct/physical footprints within hard state/flow caps; charged from time0',
             parent_route_initial_state='quiescent at PC0 or the actual same-image paid prefix; no hidden nonselected parent',
@@ -302,7 +414,7 @@ def generate():
         sources_sha256_lf={name:program.digest(HERE/name) for name in files},
         immutable_inputs_sha256_lf={name:program.hash_text(text) for name,text in frozen_inputs.items()},
         full_hybrid_trace=False,independent_review_pending=False,
-        independent_review_scope='bounded initial-state/split-bootstrap review; fixes add actual entry/control state and joined cam budget',
+        independent_review_scope='bounded initial-state/split-bootstrap review, including all eight new input-entry cases and independently recomputed acyclic input/cam/field resource join',
         program_completion=False))
 
 
