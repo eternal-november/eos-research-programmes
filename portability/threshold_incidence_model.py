@@ -150,11 +150,21 @@ def generate():
     direct=[input_slots(86,'digital',providers[k],(),0,providers) for k in range(3,8)]
     union=set(pair).union(*direct)
     require(len(union)==7,'One paired and five singleton incident supports changed')
+    paired_providers=plant_group(86,0,1)
+    first_pair=input_slots(86,'paired_island',0,(paired_providers[1],paired_providers[2]),0,paired_providers)
+    second_pair=input_slots(86,'paired_island',0,(paired_providers[3],paired_providers[4]),0,paired_providers)
+    four=[input_slots(86,'digital',paired_providers[k],(),0,paired_providers) for k in range(5,9)]
+    two_pairs=set(first_pair)|set(second_pair)
+    two_pairs.update(set().union(*four))
+    require(len(two_pairs)==8,'Two paired plus four singleton support obstruction changed')
     return dict(scope='static incidence and regional skeleton; source realization, local-density history and mission remain open',
                 source_rows={'X':[1,0],'XY':[1,1]},
                 producer_keys='keys0/1 are repeated observations of one installed rank-one type; receiver backend maps select the row',
                 region_cohorts=reports,physical_route_equalities=routes,consumer_groups_checked=groups,
                 graph_skeleton=graph_reports,paired_plus_five_support=sorted(union),
+                two_pairs_plus_four_support=sorted(two_pairs),
+                two_pairs_plus_four_group=dict(population=86,receiver=0,row=1,providers=list(paired_providers)),
+                six_unweighted_tokens_do_not_bound_slot_support_by_seven=True,
                 source_shared_calibration_realization='open; footprint test is not a constructed global calibration service',
                 sources_sha256_lf={name:sha256((HERE/name).read_bytes().replace(b'\r\n',b'\n')).hexdigest()
                                   for name in ('threshold_incidence_model.py','THRESHOLD-INCIDENCE.md','constructors.py')},
