@@ -43,7 +43,11 @@ def joins(compiled,bounds,publication,pulse):
     post=c["POST_STAGE_FRAMES"];watch=c["WATCH_FRAMES"]
     stage=(post+1)*fmax+J
     application=J+2*3+6+3
-    settle=age+stage+2*application
+    settle_without_exit=age+stage+2*application
+    # Four generic target visits: start EXIT wait, clear EXIT (return),
+    # start new stage wait, then act. No exact cadence lemma is assumed.
+    all_emitter=age+2*(post+1)*fmax+4*J+15
+    settle=max(settle_without_exit,all_emitter)
     vmax=physical["stroke_max"];cam_min=physical["cam_lower_candidate"]
     opposition=Q(55,2)+physical["extra_reaction"]
     surplus=68-opposition-29
@@ -88,7 +92,6 @@ def joins(compiled,bounds,publication,pulse):
     # twice; it is not needed when readiness boundaries are mapped correctly.
     repeated_preparation_job=timer_job+prepare+freshness
     need(repeated_preparation_job<overlap,"Known preparation terms exhaust overlap")
-    all_emitter=age+2*(post+1)*fmax+3*J+15
     reset_min=Q(c["RESET_LIMIT"])/vmax
     abort_join=age+stage+2*J+12
     abort_min=Q(10000)/vmax
@@ -154,7 +157,12 @@ def joins(compiled,bounds,publication,pulse):
         physical_inputs=physical,force=dict(opposition=opposition,surplus=surplus,
             minimum_stroke_speed=mu,hard_extra_reaction_is_open_supplier=True),
         frames=dict(min=fmin,max=fmax),polling=J,post_stage=stage,
-        ordinary_application=application,ordinary_settle=settle,
+        ordinary_application=application,ordinary_settle_without_exit=settle_without_exit,
+        ordinary_settle=settle,
+        normal_action_premises=["continuing formed execution", "continuously corroborable NORMAL_STOP after age allowance",
+            "stale FULL/ENTERING positives gone", "stable recognisable normal phase",
+            "no intervening private-state corruption/reset", "stable command projection, not merely packet delivery",
+            "ABORT cleared for non-phase4 normal progress, or take actual abort branch"],
         unknown_cam_probe=probe,recognition_allocation=formation,
         watchdog=dict(earliest=tmin,latest=tmax,two_watch_only=two_watch_only,
             complete_timer_job=timer_job,rank_quantum=h,rank_error=error,
