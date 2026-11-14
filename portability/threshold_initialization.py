@@ -13,13 +13,15 @@ import threshold_incidence_model as incidence
 import legacy_realization as legacy
 import cam_reformation as cam
 import parent_realization as parent
+import parent_retirement as retirement
 import input_lifecycle as raw
 
 HERE=program.HERE
 BASE='6a5f8aad0f0e5156edb21a054f8c72adcbf7120e'
 FIELD='215ecb755312f580cbd8c283b419f0958518766f'
 CAM_BASE='36d69bce7a4705fd54a915beb7c00cea55cce063'
-INPUT_BASE='bcf8092072a23bfd9072877be98d9a5c3acd6306'
+INPUT_BASE='4672827a2717816ccc2d4ebbcee88a58c063c8b4'
+PARENT_BASE='4672827a2717816ccc2d4ebbcee88a58c063c8b4'
 ITINERARY_BASE='bdeb1d2fd16c3ffbcd6b58f9d8431b3616cf8f2b'
 need=program.need
 need(sys.version_info[:2]==(3,12) and not sys.flags.optimize,'Unoptimized Python3.12 required')
@@ -29,7 +31,7 @@ def frozen(name):
     return legacy.text_at(BASE,'portability/'+name)
 
 
-def native_initial_points(field,population,dispatch_bits):
+def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity):
     need(type(dispatch_bits) is int and 0<dispatch_bits<=64,
          'Initial dispatch state exceeds its existing reset allocation')
     cam.fixture(controller_residue=(1<<dispatch_bits)-1)
@@ -37,6 +39,8 @@ def native_initial_points(field,population,dispatch_bits):
     except ValueError:pass
     else:raise ValueError('Initial dispatch width omits actual cam bits')
     targets=tuple('region0/host'+str(x) for x in incidence.neighbors(population,0))
+    capacity=Q(bank_capacity)
+    need(capacity.denominator==1 and capacity>0,'Initial operating capacity is not a physical integer')
     cases=[]
     for active in (False,True):
         for funded_reset in (False,True):
@@ -45,6 +49,22 @@ def native_initial_points(field,population,dispatch_bits):
                                     if funded_reset else (Q(0),Q(0)))
             setter=field.SettingWriter(targets,cut=not active,native_inhibit=not active,
                 reset_stock=field.SETTER_RESET_ENERGY if funded_reset else Q(0))
+            cpu=retirement.RetirableParent(isa,c,
+                bank=parent.BankWork(int(capacity),capacity if active else Q(0)),targets=targets)
+            # This is the same physical setter, not an extra installed store.
+            cpu.setter=setter
+            if not active:
+                cpu.C[:]=[(1<<192)-1]*len(cpu.C)
+                cpu.inhibit()
+            need(cpu.pending is None and cpu.native is None and cpu.fabric.token is None
+                 and not cpu.fabric.links and cpu.cell.stock==0 and cpu.setter is setter,
+                 'Initial CPU has hidden route/native/child authority or a duplicate setter')
+            need(cpu.fabric.cut==cpu.fabric.return_cut==cpu.native_inhibit==(not active),
+                 'Initial actual route cutset disagrees with the selected bank')
+            if not active:
+                before=tuple(cpu.C)
+                need(not cpu.recharge() and not cpu.launch() and tuple(cpu.C)==before,
+                     'The cold initial CPU can rearm or rewrite without its physical entry')
             need(pulse.slots==[None]*3 and pulse.pending==[None]*3 and pulse.force==0,
                  'Initial native row has retained pulse debt')
             need(pulse.counter_bound_holds() and not pulse.reset_motor_owner,
@@ -83,6 +103,10 @@ def native_initial_points(field,population,dispatch_bits):
                 actual_receiver_reset_work=pulse.reset_reserve.stock,
                 actual_setter_work=setter.energy,actual_setter_reset_work=setter.reset_reserve.stock,
                 actual_control_state=initial_control,control_offered_work_upper=line.offered_work_upper,
+                actual_parent_state=dict(operating_stock=cpu.bank.stock,parent_stock=cpu.cell.stock,
+                    root_cut=cpu.fabric.cut,return_cut=cpu.fabric.return_cut,native_inhibit=cpu.native_inhibit,
+                    powered=cpu.powered,no_live_token=True,no_pending_child=True,
+                    shared_setter_object=True,cold_arbitrary_code_inhibited=not active),
                 no_pending_parent_or_packet=True,held_setting_default=0,force=0))
     a=field.PulseSelector();b=field.PulseSelector()
     need(all(x is not y for x in a.energy for y in b.energy),'Two installed channels share a stock')
@@ -186,7 +210,7 @@ def ordinary_input_initial_points(population,resource):
         initial_only=True,release_does_not_restore_this_relation=True)
 
 
-def pc0_boot_prefix(isa,c,bounds,bank_capacity):
+def pc0_boot_prefix(isa,c,bounds,bank_capacity,targets):
     Ports=program.ports_class(isa);ports=Ports(c);machine=isa.Machine(c,poison=isa.WORD_MASK)
     need(machine.pc==0,'Initial processor did not start at actual PC0')
     while not machine.io_counts['cpu_count'] and machine.steps<bounds['boot_active_upper']+100:
@@ -200,14 +224,18 @@ def pc0_boot_prefix(isa,c,bounds,bank_capacity):
          and machine.io_counts['send_command']==40 and machine.io_counts['source_invalidate']==1,
          'Actual entry omitted neutralization or its entry gates')
     need(machine.C==c.image and not machine.code_writes,'PC0 prefix changed current C')
-    paid=parent.ParentMachine(isa,c,bank=parent.BankWork(bank_capacity,Q(bank_capacity)))
+    capacity=Q(bank_capacity)
+    need(capacity.denominator==1,'Initial bank capacity lost its exact integer type')
+    paid=retirement.RetirableParent(isa,c,bank=parent.BankWork(int(capacity),capacity),targets=targets)
     paid.W[:]=[isa.WORD_MASK]*len(paid.W)
     paid_ports=legacy.absence_ports_class(isa)(c)
     while not paid.io_counts['cpu_count'] and paid.steps<bounds['boot_active_upper']+100:
         need(paid.step(paid_ports),'Paid PC0 boot prefix blocked')
     need(paid.steps==machine.steps and paid.pc==machine.pc and paid.R==machine.R
          and paid.W==machine.W and paid.C==machine.C and paid_ports.world_latch==ports.world_latch
-         and paid.pending is None,'Paid parent does not refine the actual initial caller state')
+         and paid.pending is None and paid.fabric.token is None and not paid.fabric.link_storage_busy(),
+         'Actual routed parent does not refine the initial caller state')
+    paid.balance()
     routine=program.production_boot_prefix(isa,c,bounds,Ports)
     extra=machine.steps-routine['retired_instructions']
     need(extra==3 and extra<=16,'Actual entry exceeds the existing boot reserve')
@@ -231,7 +259,10 @@ def pc0_boot_prefix(isa,c,bounds,bank_capacity):
             work_spent=paid.cell.spent,unused_work_dissipated=paid.cell.dumped,
             retained_operating_stock=paid.bank.stock,initial_operating_stock=bank_capacity,
             nominal_work_time_upper=paid.nominal_work_time_upper,
-            parent_empty_and_no_pending=paid.pending is None and paid.cell.stock==0),
+            parent_empty_and_no_pending=paid.pending is None and paid.cell.stock==0,
+            actual_routed_parent=True,root_token_consumed=paid.fabric.token is None,
+            no_retained_link_storage=not paid.fabric.link_storage_busy(),
+            fixed_setter_targets=list(targets)),
         routine_harness_is_not_initial_caller_state=True)
 
 
@@ -261,12 +292,18 @@ def generate():
     need(len(c.image)==8192 and all(type(w) is int and 0<=w<2**192 for w in c.image),
          'Initial image is not a finite ordinary code state')
     population=12*(6+2**98)+2
-    native=native_initial_points(field,population,cam_point['control_line']['dispatch_entry_clear_bits'])
-    parent_text=legacy.text_at(CAM_BASE,'portability/parent_realization_results.json')
+    parent_text=legacy.text_at(PARENT_BASE,'portability/parent_realization_results.json')
     parent_point=json.loads(parent_text)
     for name,sha in parent_point['sources_sha256_lf'].items():
         need(program.digest(HERE/name)==sha,'Paid initial parent supplier changed: '+name)
-    changed_prefix=pc0_boot_prefix(isa,c,bounds,parent_point['cost_bounds']['actual_bank_capacity'])
+    retirement_text=legacy.text_at(PARENT_BASE,'portability/parent_retirement_results.json')
+    retirement_point=json.loads(retirement_text)
+    for name,sha in retirement_point['sources_sha256_lf'].items():
+        need(program.digest(HERE/name)==sha,'Retirable initial parent supplier changed: '+name)
+    native=native_initial_points(field,population,cam_point['control_line']['dispatch_entry_clear_bits'],
+        isa,c,parent_point['cost_bounds']['actual_bank_capacity'])
+    targets=tuple('region0/host'+str(x) for x in incidence.neighbors(population,0))
+    changed_prefix=pc0_boot_prefix(isa,c,bounds,parent_point['cost_bounds']['actual_bank_capacity'],targets)
     need(geometry['changed_paced_frame']['retired_instructions']+changed_prefix['frame_return_and_main_spine']
          <=bounds['padded_frame_upper'],'Main-loop instructions exceed actual frame allocation')
     a=geometry['arithmetic'];k=c.constants
@@ -345,6 +382,16 @@ def generate():
     joined_reserve=joined_capacity-joined_burst-2*joined_rate
     need(joined_reserve==Q(incoming['usable_reserve_lower'])>1,
          'Initial source omitted the actual input-control demand')
+    pr=retirement_point['resources']
+    need(pr['new_reset_capacity']==0 and pr['new_reset_charger_cap']==0
+         and Q(pr['unchanged_U_capacity'])==Q(resources['upstream_capacity'])
+         and Q(pr['old_external_rate_slack'])>=0 and pr['old_metadata_slack']>=0,
+         'Parent retirement does not fit the retained owner/reset allocation')
+    need(Q(pr['combined_shared_reset_work'])<Q(pr['one_actual_reset_capacity'])
+         and Q(pr['unchanged_cam_prepared_upper'])==Q(cam_point['arithmetic']['physical_prepared_upper']),
+         'Parent cleanup changes the input/cam formation budget')
+    joint_reaction=Q(incoming['complete_joint_reaction'])+Q(pr['added_parent_gate_reaction'])
+    need(joint_reaction<field.REACTION,'Separately checked input/parent reactions exceed the joint field bound')
     ordinary_inputs=ordinary_input_initial_points(population,incoming)
     need(ordinary_inputs['initial_wire_tail']<remaining_drain,
          'The new input source leaves old emitted evidence beyond the initial drain')
@@ -353,6 +400,7 @@ def generate():
            'constructors.py','legacy_realization.py','threshold_publication_model.py',
            'cam_reformation.py','CAM-REFORMATION.md','cam_reformation_results.json','threshold_field_source.py',
            'parent_realization.py','PARENT-REALIZATION.md','parent_realization_results.json',
+           'parent_retirement.py','PARENT-RETIREMENT.md','parent_retirement_results.json',
            'input_lifecycle.py','INPUT-LIFECYCLE.md','input_lifecycle_results.json',
            'interrupted_renewal.py','INTERRUPTED-RENEWAL.md','interrupted_renewal_results.json',
            'LEGACY-REALIZATION.md','legacy_realization_results.json','threshold_field_source_results.json','THRESHOLD-FIELD-SOURCE.md')
@@ -361,13 +409,14 @@ def generate():
         FIELD+':portability/threshold_field_source_results.json':field_text,
         FIELD+':portability/threshold_field_source.py':field_code,
         CAM_BASE+':portability/cam_reformation_results.json':cam_text,
-        CAM_BASE+':portability/parent_realization_results.json':parent_text,
+        PARENT_BASE+':portability/parent_realization_results.json':parent_text,
+        PARENT_BASE+':portability/parent_retirement_results.json':retirement_text,
         INPUT_BASE+':portability/input_lifecycle_results.json':input_text,
         ITINERARY_BASE+':portability/interrupted_renewal_results.json':itinerary_text}
     for name in ('INITIAL-RETURN.md','PORT-SOURCE.md','CYCLE.md','HYBRID.md'):
         frozen_inputs[program.BASE+':local-control/'+name]=program.frozen(name)
     return normalize(dict(status='constructed initial relation and derived conditional split-bootstrap supplier',
-        base=BASE,field_base=FIELD,cam_base=CAM_BASE,input_base=INPUT_BASE,itinerary_base=ITINERARY_BASE,python_version=sys.version,frozen_isa_sha256=isa.source_hash,
+        base=BASE,field_base=FIELD,cam_base=CAM_BASE,parent_base=PARENT_BASE,input_base=INPUT_BASE,itinerary_base=ITINERARY_BASE,python_version=sys.version,frozen_isa_sha256=isa.source_hash,
         actual_image_sha256=image_hash,code_cells=len(c.image),population=population,
         initial_native_state=native,initial_ordinary_input_state=ordinary_inputs,changed_image_boot_prefix=changed_prefix,
         joined_initial_resources=dict(upstream_capacity=joined_capacity,
@@ -377,6 +426,10 @@ def generate():
             additional_input_reset_stock=incoming['new_reset_stock'],
             physical_input_reset_cells=incoming['new_reset_cells'],
             acyclic_source_inventory_precedes_initialization=True,
+            parent_retirement_new_reset_stock=pr['new_reset_capacity'],
+            parent_retirement_shared_reset_work=pr['combined_shared_reset_work'],
+            parent_reset_bitmap_bits=pr['parent_control_bits'],
+            input_parent_cam_field_joint_reaction=joint_reaction,
             initial_cam_words_are_state_not_READY=True),
         initial_relation=dict(keeper='A; symmetric relabeling permitted',
             active_code='actual changed compiled C at its physical rails; BOOT or a prefix of that same image, never frozen B80 addresses',
@@ -397,7 +450,7 @@ def generate():
             upstream_initial_stock=joined_capacity,
             total_host_capacity_envelope=Q(resources['unchanged_total_host_stock']),
             fault_overlays='actual raw direct/physical footprints within hard state/flow caps; charged from time0',
-            parent_route_initial_state='quiescent at PC0 or the actual same-image paid prefix; no hidden nonselected parent',
+            parent_route_initial_state='actual RetirableParent root/return cuts and no live token; same physical setter; PC0 or the actual routed same-image paid prefix',
             initial_debt_clearing='conditional on actual finite initial-pipeline drainage, clock and custody suppliers'),
         bootstrap=dict(initial_drain_elapsed_max_instructions=prefix_elapsed_max,
             actual_remaining_initial_drain_min=remaining_drain,
@@ -429,7 +482,7 @@ def generate():
         sources_sha256_lf={name:program.digest(HERE/name) for name in files},
         immutable_inputs_sha256_lf={name:program.hash_text(text) for name,text in frozen_inputs.items()},
         full_hybrid_trace=False,independent_review_pending=False,
-        independent_review_scope='bounded initial-state/split-bootstrap review, including all eight new input-entry cases and independently recomputed acyclic input/cam/field resource join',
+        independent_review_scope='bounded initial-state/input/resource review, including actual routed-parent prefix, shared setter identity, cold cutset and combined input/parent reaction',
         program_completion=False))
 
 
