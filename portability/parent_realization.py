@@ -299,7 +299,7 @@ class ParentMachine:
         self.executed=Counter();self.code_writes=0;self.faults=[]
         self.front_work=0;self.body_work=0;self.offers=0;self.committing=False
         self.max_total_work=0;self.max_native_steps=0;self.rejected=Counter()
-        self.elapsed_bound=F(0)
+        self.nominal_work_time_upper=F(0)
     @property
     def C(self):return self._body.C
     @property
@@ -332,7 +332,7 @@ class ParentMachine:
         self.cell.busy=True
         if not 0<=self.pc<len(self.C):
             self.cell.debit(16);self.cell.finish();self.halted=True
-            self.elapsed_bound+=F(1,4*2**27)+F(16)/NATIVE_RATE
+            self.nominal_work_time_upper+=F(1,4*2**26)+F(16)/NATIVE_RATE
             self.rejected["invalid_pc"]+=1;return False
         code=self._body.observe_word(self.pc)
         op,a,b,c,imm=self.isa.decode(code)
@@ -355,9 +355,10 @@ class ParentMachine:
         self.max_total_work=max(self.max_total_work,used)
         native_steps=self.native.steps if self.native is not None else 0
         self.cell.finish();self.pending=None;self.native=None;self.committing=False
-        ordinary=F(100,101*2**26)
+        # This bounds uninterrupted nominal work, never arbitrary wait time.
+        ordinary=F(1,2**26)
         duration=ordinary if not native else max(ordinary,ordinary/4+F(FRONT)/NATIVE_RATE+F(native_steps)/field.WORD_CLOCK)
-        self.elapsed_bound+=duration
+        self.nominal_work_time_upper+=duration
         need(self.bank.stock+self.cell.stock+self.cell.spent+self.cell.dumped==self.initial_bank,
              "Parent/operating work was created")
     def complete(self,ports,*,native_ticks=None,clock=True):
@@ -371,6 +372,7 @@ class ParentMachine:
             if 0<=i<len(p.body.R):p.body.write_R(i,value&MASK)
         if op==s.STOREC:
             if self.native is None:self.native=NativeWrite(p.body,get(b),get(a),self.cell)
+            native_was_done=self.native.done
             limit=2080 if native_ticks is None else native_ticks
             for _ in range(limit):
                 result=self.native.step(clock=clock)
@@ -379,7 +381,7 @@ class ParentMachine:
             if not self.native.done:return "waiting"
             extra=self.native.steps*8+(1 if self.native.accepted else 0)
             self.max_native_steps=max(self.max_native_steps,self.native.steps)
-            if self.native.accepted:self.code_writes+=1
+            if self.native.accepted and not native_was_done:self.code_writes+=1
         else:
             extra=8320 if op in (s.DIV,s.MOD) else 256 if op==s.MUL else 128
             if op==s.IO and 0<=imm<len(s.PRIMITIVES):
@@ -433,7 +435,7 @@ class ParentMachine:
                 if name=="yield_frame":self.yielded=True
                 if name=="set_field":
                     # Complete child/refill bound; no intervening retirement.
-                    self.elapsed_bound+=F(1,64)
+                    self.nominal_work_time_upper+=F(1,64)
         elif op==s.HALT:self.halted=True
         ports.advance(self)
         self.finish_parent(extra,native=op==s.STOREC)
@@ -530,6 +532,9 @@ def cost_bounds():
                     take_predicate=2,four_selects=4,quotient_bit=3,round_control=3)
     need(sum(round_work.values())==32 and 256*32+128==8320,"Division count changed")
     mu=F(101,100)*2**26
+    slow_cycle=F(1,2**26);fast_cycle=1/mu
+    need(slow_cycle-fast_cycle==F(1,101*2**26)>0,
+         'Fastest-cycle countercase to a uniform upper bound disappeared')
     suffix=F(604,100)*DELTA+F(928+6976+256+FRONT)/NATIVE_RATE
     native_total=16641+FRONT
     need(9184+FRONT<=PARENT and native_total<PARENT,"Parent work does not fit")
@@ -564,7 +569,11 @@ def cost_bounds():
     # stage transitions; no new work parcel is inferred from unused steps.
     setter_steps=2*3615+256
     need(setter_steps<=8192 and setter_steps*16<2**20,"Setter control schedule exceeds its existing envelope")
-    return dict(frontend_cases=cases,frontend_reserved=FRONT,frontend_unused_margin=FRONT-max(cases.values()),
+    return dict(nominal_retirement_duration_upper=slow_cycle,
+        fastest_cycle_not_uniform_upper=fast_cycle,
+        omitted_slow_clock_duration=slow_cycle-fast_cycle,
+        time_accumulator_scope='upper bound on completed uninterrupted nominal work; excludes stalled/unfunded time',
+        frontend_cases=cases,frontend_reserved=FRONT,frontend_unused_margin=FRONT-max(cases.values()),
         routed_access_work=r_access,code_capture_work=c_read,route_hop_work=20,
         route_node_bits=128,new_private_routing_bits=route_bits,
         route_node_control_bits=route_nodes,local_capture_buffer_bits=capture_buffers,
@@ -750,6 +759,17 @@ def retention_checks(isa,c):
     state=(stalled.native.index,stalled.C[10])
     need(stalled.complete(sp)=="waiting" and state==(stalled.native.index,stalled.C[10]),
          "Physically lost parent work was replaced")
+    # Native completion and architectural retirement are separate events.
+    # The final native step may spend the last work while frontend return waits.
+    final_wait=ParentMachine(isa,c);fp=Ports(c)
+    final_wait.C[0]=isa.encode(isa.STOREC,3,4);final_wait.R[3]=MASK;final_wait.R[4]=21
+    final_wait.recharge();need(final_wait.launch(),"Final native test did not capture")
+    need(final_wait.complete(fp,native_ticks=2079)=="waiting","Native prefix completed too soon")
+    need(final_wait.cell.debit(final_wait.cell.stock-9),"Could not construct retained low-work case")
+    for _ in range(3):
+        need(final_wait.complete(fp)=="waiting" and final_wait.native.done
+             and final_wait.code_writes==1 and final_wait.retired==0,
+             "Waiting frontend counted one native completion repeatedly")
     return dict(captured_world=list(p.world_latch),reset_preserved_pending=True,
                 replay_rejected=True,recursive_offer_rejected=True,partial_native_word=str(partial),
                 native_completed_steps=n.max_native_steps,old_body_retained=True,
@@ -759,7 +779,8 @@ def retention_checks(isa,c):
                 LOADC_uses_current_addressed_C=True,
                 clock_wait_is_not_a_frozen_physical_flow=True,
                 driven_native_mode_retained=True,
-                post_native_C_intervention_preserved=True)
+                post_native_C_intervention_preserved=True,
+                native_completion_counted_once_while_frontend_waits=True)
 
 def port_fixture(isa,c,load=125):
     Ports=legacy.absence_ports_class(isa);p=Ports(c)
