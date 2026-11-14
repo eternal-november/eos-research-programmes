@@ -204,6 +204,11 @@ def generate():
     earliest_loss=Q(k['WARM_AT'])/Q(a['physical_inputs']['stroke_max'])
     job=Q(a['watchdog']['complete_timer_job'])
     need(full+job<earliest_loss,'Initial keeper cannot cover the complete nontransferable job')
+    write_time=Q(a['vectors']['write_time'])
+    cutoff=Q(a['geometry']['earliest_cutoff'])
+    first_copy=full+write_time
+    need(first_copy<cutoff and first_copy<earliest_loss,
+         'Initial donor formation can be overtaken by the first uncharged write corridor')
     tube=2*Q(1,10**7)*commissioning
     need(tube==Q(1,100)<Q(1,20),'Initial world tube consumes the reserve')
     tracking=Q(publication['world']['tracker']['tracking_error'])
@@ -277,6 +282,10 @@ def generate():
             all_role_commissioning=full,early_world_not_delayed_to_vector_ready=True,
             first_nominal_keeper_loss_lower=earliest_loss,complete_job=job,
             initial_whole_job_slack=earliest_loss-full-job,
+            initial_ready_plus_write=first_copy,
+            initial_write_cutoff_slack=cutoff-first_copy,
+            initial_donor_interval_slack=earliest_loss-first_copy,
+            first_write_scope='uncharged initial target with fresh corridor start<=t_full; actual exclusion and no relevant interruption; later starts use the maintained-donor supplier',
             initial_service=service,later_formed_service=formed_service,
             recurrence_after_initialization=residual,H=H,H_slack=H-full-residual,
             no_second_charge_of_initialization=True),
