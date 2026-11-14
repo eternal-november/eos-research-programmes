@@ -10,6 +10,8 @@ The [native feedback and shared-content first results](feedback-and-concurrency/
 
 The [retained-boundary refinement and correlation results](feedback-and-concurrency/retained-boundary-refinement/README.md) characterize separator information loss, adaptive coupling refinement, and the limits of uniform comparison witnesses, with explicit context and scheduler assumptions.
 
+The [information-and-progress comparison results](feedback-and-concurrency/information-and-progress/README.md) give exact local-information and partner-readiness criteria, fairness transport, and a combined comparison theorem with explicit joint plant and feedback hypotheses.
+
 ## Reading path
 
 - `foundations/`: finite contextads, reduction tests, structural examples, theory guide, and the common relative construction.

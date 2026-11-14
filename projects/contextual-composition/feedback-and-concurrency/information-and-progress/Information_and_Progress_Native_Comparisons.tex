@@ -1,0 +1,282 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Information and progress in native contextual comparisons}
+\author{}\date{14 November 2026}
+\begin{document}\maketitle
+\paragraph{Purpose.} A comparison may preserve visible output law while creating unauthorized shared randomness or losing a continuously enabled obligation. This manuscript separates and reconnects the information, raw-event, probability and progress interfaces. It gives exact finite tests and a sufficient horizontally stable native comparison class, not a general completeness theorem for arbitrary interfering contexts. No historical novelty claim or mechanization claim is made.
+\part{Local authority and correlated contexts}
+
+\paragraph{Scope.}
+This supplies a finite-horizon necessary-and-sufficient admissibility test for the target marginal of a comparison witness. It addresses a gap in convex rectangular refinement: conditioning away the source side of a coupling can introduce shared randomness or dependence on information unavailable to a target agent. The model below has fresh independent private randomization and explicitly given local histories. It does not identify all decentralized strategy models with this one, and is not claimed historically novel.
+
+\section{Declared strategic-measure model}
+Fix a finite horizon $N$, finite global histories $H_n$, finite nonempty action sets $A_i$ for agents $i=1,\ldots,m$, and deterministic local-information maps $I_{i,n}:H_n\to L_{i,n}$. Histories contain all past global states and actions. The plant gives a fixed transition kernel from $(h,a_1,\ldots,a_m)$ to extended history. Terminal states can be completed by an explicit absorbing action so all histories have length $N$.
+
+A permitted behavioral strategy is a family $q_{i,n}(a_i\mid I_{i,n}(h))$. At every stage, agents sample independently using fresh private random variables, independent of the entire preceding global history and each other. Its joint action kernel is
+\[
+ Q_n(a\mid h)=\prod_i q_{i,n}(a_i\mid I_{i,n}(h)).
+\]
+Information maps may include common past observations and private memory. Those past observations may be arbitrarily correlated. Independence is asserted only for the \emph{fresh action draws conditional on full global history}; it is not asserted after conditioning only on common information. Persistent hidden seeds, correlated private coins, or an unobserved coordinator belong to different explicitly enlarged models.
+
+Let $P$ be any proposed law of complete global execution. Its initial law and conditional plant transitions are assumed correct. Write $P_n(a\mid h)$ for its conditional joint action law at every $P$-positive history, and $P_{i,n}$ for its marginals.
+
+\begin{theorem}[Exact local-strategy admissibility]
+The law $P$ is induced by permitted behavioral strategies if and only if both conditions hold at every stage:
+\begin{enumerate}
+\item $P_n(a\mid h)=\prod_i P_{i,n}(a_i\mid h)$ for every positive history $h$;
+\item whenever positive histories $h,h'$ satisfy $I_{i,n}(h)=I_{i,n}(h')$, their $i$th action marginals coincide.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Necessity follows directly from the displayed strategy kernel. For sufficiency, define $q_{i,n}$ on a local-information value attained by a positive history using that history's action marginal. Condition 2 makes this independent of the representative. Choose any distribution at unattained values. Condition 1 makes the resulting action kernel equal to $P_n$ at every positive history. Induction over $n$, using the prescribed initial and plant laws, proves equality of all history distributions. In particular no previously zero history becomes positive, so the arbitrary definitions at unattained information values cannot alter the resulting law.
+\end{proof}
+
+This is an exact finite strategic-measure criterion, not a tractability assertion: checking it requires the proposed full law and declared information maps. Conditional probabilities at zero-probability histories need not satisfy it; all-raw policy witnesses require separate extensions and compatibility conditions.
+
+\section{What coupling marginalization must preserve}
+Suppose a joint comparison law projects to the target execution law $P$. Before marginalization, target actions may be sampled from product kernels depending on the paired past. Conditional on a target history $h$, the projected joint law is generally
+\[
+ P_n(a\mid h)=\sum_z\rho(z\mid h)\prod_i q^z_{i,n}(a_i\mid h).
+\]
+The mixture is not generally a product. Moreover its marginals can vary between target histories with equal local information. Thus neither centralized convex admissibility nor equality of the public trace proves decentralized admissibility.
+
+The preceding theorem gives a necessary-and-sufficient check for this particular projected law: retain the actual conditional mixture and test both factorization and local measurability. A sufficient native interface condition is that each paired-history marginal already factors through the \emph{target} local information, with the same factor for every paired history above it. Then the factors leave the mixture and both conditions follow. It is stronger than necessary for one given law, but stable under sequential local causal transformations that preserve the information maps and use independent fresh local randomness.
+
+For a concrete diagnostic, a hidden fair bit $Z$ can select the deterministic pair of actions $(Z,Z)$. Each selected kernel is a product, but after forgetting $Z$ the joint law gives mass $1/2$ to $00$ and $11$. With constant local information and independent private coins it is inadmissible. If $Z$ was a retained common observation, the law is admissible: conditional on the full history including $Z$ both decisions are deterministic. The distinction is information retention, not the presence or absence of unconditional correlation.
+
+\section{A sharp universal information-preservation boundary}
+Consider one decision stage. Let $E,F$ be finite global-history sets, $b:E\to F$ a deterministic comparison projection, source information $J_i:E\to U_i$, and target information $I_i:F\to L_i$. Actions are unchanged, and every $A_i$ has at least two elements. Quantify over \emph{every} probability law on $E$ and every source product policy depending on $J_i$. Push the global history through $b$, keeping actions.
+
+
+\begin{theorem}[Universal preservation of local policies]
+Every such projected law admits a target product policy depending on $I_i$ if and only if the following two finite conditions hold:
+\begin{enumerate}
+\item For each agent $i$ and distinct attained target histories $f,g$ with $I_i(f)=I_i(g)$, the function $J_i$ is constant on $b^{-1}(\{f,g\})$.
+\item On each nonempty fibre $b^{-1}(f)$, at most one of the functions $J_1,\ldots,J_m$ is nonconstant.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+For necessity of condition 1, choose any $e$ above $f$ and $e'$ above $g$ and give them equal mass. If $J_i(e)\ne J_i(e')$, choose a deterministic source policy giving different actions at those information values. The projected positive target histories then have different action marginals at equal local information, which is impossible. Varying $e,e'$ proves constancy on the union.
+
+For condition 2, first observe that if two source histories in one fibre differ in at least two agents' information values, put equal mass on those histories and let those two agents each choose a bit distinguishing the two histories. The resulting pair of target actions is a nonconstant perfectly correlated pair, hence not a product. Thus any two information vectors in a fibre differ in at most one coordinate. A set of vectors with that property has at most one varying coordinate: fix a base vector; if two other vectors differ from it at distinct coordinates, they differ from each other at both. If one coordinate varies, every vector must therefore agree with the base at all other coordinates. This proves condition 2.
+
+For sufficiency, fix an arbitrary source law and policies. Conditional on a positive target history $f$, condition 2 makes all but possibly one source action factor constant on its fibre. Those constant factors leave the conditional mixture, and the remaining averaged factor is a probability kernel. Thus the projected action law is a product. For distinct positive target histories with the same $i$th local information, condition 1 makes the $i$th source factor constant across both fibres, so their averaged marginals agree. The exact strategic-measure criterion now supplies target local policies.
+\end{proof}
+
+\paragraph{Interpretation.}
+Universal preservation does not require retaining every local information distinction. A forgotten distinction may be absorbed into \emph{one} agent's private randomization when it does not create disagreement across globally distinguishable target histories sharing that agent's information. What cannot be silently created is a shared hidden randomizer between agents, or a decision depending on information the target agent cannot distinguish. This finite theorem gives an exact boundary rather than the overstrong claim that any loss of source information destroys realizability.
+
+For sequential application the criterion can be checked at every history projection, with plant transition compatibility supplied independently. Induction then constructs an admissible target behavioral execution for each projected source law. It does not prove a single policy transformation independent of the source law: the one varying factor is averaged using that law's conditional distribution. A uniform kernel-blind transformation is the stronger issue distinguished in the preceding refinement tranche.
+
+\section{Passive-context stability forces an actual information square}
+The preceding universal projection class is vertically closed, but it need not be stable when coupled to a correlated external environment. This is not an independence assumption that can be supplied by syntax alone.
+
+A passive binary extension retains a bit $w\in\{0,1\}$ as part of the global history, on both sides of the comparison, without revealing it to any agent. Its joint law with the source history $e$ is arbitrary. The source information remains $J_i(e)$, the target information remains $I_i(b(e))$, and the projected global history is $(b(e),w)$. The environment takes no action; its retained bit can nevertheless be correlated with facts available to a source agent.
+
+\begin{theorem}[Exact passive-context closure]
+The projection preserves permitted local behavioral strategies under every passive binary extension, every joint history law, and every source product policy if and only if each agent's source information factors pointwise through its target information:
+\[
+ J_i=v_i\circ I_i\circ b
+\]
+for some function $v_i$ on attained target information values. The same condition then suffices for every finite passive environment, not just a bit.
+\end{theorem}
+\begin{proof}
+If factorization holds, each source factor is already a function of target local information. Averaging over any source history conditional on the extended target global history leaves that factor unchanged. Consequently the projected action kernel is the product of those same locally measurable factors, regardless of the joint law with the environment.
+
+Conversely, if factorization fails, choose $e,e'$ with equal target local information for agent $i$ but different $J_i$ values. Put equal probability on $(e,0)$ and $(e',1)$, and let agent $i$ choose distinct deterministic actions at those two source information values. Other agents act constantly. The two extended target global histories $(b(e),0)$ and $(b(e'),1)$ are distinct, yet have equal $i$th target information. Their conditional action marginals differ, contradicting local measurability. This argument works even if $b(e)=b(e')$, which is precisely the information loss that the unextended one-agent model could absorb into private randomization.
+\end{proof}
+
+For a preserved model, take source history $e=(u,z)$, source local information $J(e)=u$, projection $b(u,z)=u$, and target local information $I(u)=u$. Every local policy $q(a\mid u)$ survives removal of $z$, even when an arbitrary passive environment is correlated with $(u,z)$, because the action factor already depends only on retained $u$. Hidden plant data need not all be exposed to the controller.
+
+For the counterfactual model, let one agent observe a source fair bit $u$, let the target forget it entirely, and let the agent output $u$. In isolation the target reproduces the action law with a private fair coin. But if the passive environment retains $w=u$, the target must reproduce the joint law $a=w$, despite having constant local information and only a fresh private coin. It cannot. Granting the target a correlated seed or revealing $w$ would repair the implementation, but would change its authorized information model rather than establish the original comparison.
+
+Thus a binary retained context is already a complete probe for this universal one-step information-preservation question. The theorem does not grant a real observer access to an arbitrary hidden variable: its quantified context class explicitly permits arbitrary correlated passive global state. If actual contexts cannot retain such correlations, the necessity conclusion may weaken. Likewise the target is not allowed to introduce a new hidden seed correlated with that passive state; doing so enlarges the declared information/randomness model.
+
+The factorization condition is an actual local-information square suitable for native comparison data. It composes vertically and is stable under disjoint-agent parallel product with arbitrary correlated histories: each component's source local information still factors through its own target local information. This supplies a genuine horizontal closure class, stronger than the law-specific coupling criterion. It does not assert that active interference preserves the plant kernel, task enabledness, or action types. Those independent native squares must still be checked, rather than concealed in the information condition.
+
+\section{Exact raw justice transport through a finite native span}
+Let $Z$ be a finite directed witness graph with initial vertices, and $p:Z\to X$, $q:Z\to Y$ be graph maps representing a one-event-per-edge comparison span. Parallel event edges are retained, and both task families are finite. A source task $i$ has an enabledness predicate $E_i$ on vertices and a taken-event predicate $T_i$ on edges. Weak justice is $\mathsf{GF}(\neg E_i\lor T_i)$, testing enabledness at the current edge's source vertex. A task continuously enabled from some point must occur infinitely often. Define target tasks by $E'_j,T'_j$.
+
+Pull these predicates to $Z$ and write $G_i(e)=\neg E_i(p(\mathrm{src}(e)))\lor T_i(p(e))$. For each target task $j$ keep only edges satisfying $B_j(e)=E'_j(q(\mathrm{src}(e)))\land\neg T'_j(q(e))$. A strongly connected component of this subgraph is cyclic if it contains a directed cycle; a singleton needs a self-loop.
+
+\begin{theorem}[Finite justice-transport criterion]
+Every infinite witness path from an initial vertex with a weakly just source projection has a weakly just target projection if and only if there is no target task $j$ and cyclic strongly connected component $C$ of its $B_j$ subgraph such that $C$ is reachable from an initial vertex in the full witness graph and, for each source task $i$, an edge internal to $C$ satisfies $G_i$.
+\end{theorem}
+\begin{proof}
+If such a component exists, take a reachable finite prefix into it. Strong connectivity permits a finite closed walk visiting a chosen good edge for every source task, including a cycle if there are no source tasks. Repeating this walk satisfies all source justice conditions while eventually using only target-bad edges. Conversely a target violation eventually uses only $B_j$ edges for some task. In a finite graph its infinitely recurring vertices and edges lie in one cyclic strongly connected component of that subgraph. Source justice supplies an internal good edge for each source task. This component is reachable and satisfies the criterion.
+\end{proof}
+
+This is the elementary generalized-Buechi emptiness test specialized to retained-event spans, not a new model-checking algorithm. It detects enabledness and event-accounting failures even on null-probability raw paths. If there are no source tasks the good-edge condition is vacuous.
+
+The criterion concerns paths present in $Z$. Transferring a source specification also requires lifts of the relevant source paths. Local outgoing-edge lifting and an initial lift suffice to lift every infinite raw source path. Combining such lifting, the criterion, and a trace-preserving body square gives fair raw trace inclusion. For fair target existence, fairness-preserving choices of lifts suffice; the all-witness-path criterion is stronger and protects arbitrary witness selection. Neither lifting nor the justice test supplies probability pushforward or local-strategy admissibility.
+
+This statement is synchronous. An erasing or stuttering path map needs a separate progress condition preventing infinite source executions from becoming finite target prefixes, and correct enabledness accounting inside blocks. Local-strategy admissibility and justice remain independent obligations: a fair law may use unauthorized common randomness, while an admissible local policy may be unfair.
+
+\paragraph{Closure of universal local-information projections.}
+The universal policy-preservation property above is closed under composition of history projections with their intermediate information maps. Indeed every source law and source product policy pushes to an intermediate law admitting intermediate product policies; universal preservation of the second map then pushes that law to an admitted final law. This is a semantic closure theorem for the declared class; the finite iff gives an exact check for membership. It does not turn law-dependent averaging into a fixed kernel-blind implementation.
+
+\section{Literature boundary and next obligation}
+Information structures in decentralized stochastic control are established, including the common-information approach of Nayyar, Mahajan and Teneketzis, \emph{Decentralized Stochastic Control with Partial History Sharing}, IEEE TAC 2013, \url{https://doi.org/10.1109/TAC.2013.2239000}. That framework should not be conflated with convex centralized scheduler closure. The elementary finite criteria here require an independent novelty review before any originality claim.
+
+The next obligation is to integrate this information test into a native comparison category with specified local tape maps, retained common observations and progress conditions. Equality of path laws then preserves properties measurable in the retained path, but cannot by itself certify membership in an unstated fairness or authority class.
+
+\part{Asynchronous progress and shared-event readiness}
+
+\paragraph{Scope.} A fair source scheduler need not project to a fair target scheduler, and a law-preserving comparison need not produce an admissible local target policy. This note separates those obligations and proves a pathwise fairness interface which composes with the local-information admissibility criterion. It is a scoped asynchronous path theorem, not a new general fairness theory or a claim that arbitrary native context/content cells satisfy its hypotheses.
+
+\section{Retained paths and asynchronous comparison}
+Let source and target systems have state sets $S,T$ and labeled transitions. There is a common set $J$ of task identities; a transition may fire zero or more tasks. Write $\operatorname{En}^S_j(s)$ for enabledness of source task $j$ and $\operatorname{Fire}^S_j(n)$ for its firing on step $n$, and similarly on the target. These predicates belong to the specified operational model: hidden side effects changing enabledness must not be erased. Infinite executions are considered; completed runs can be modeled by explicit absorbing states with all relevant tasks disabled, but a finite execution is not silently identified with an infinite nonproductive one.
+
+An asynchronous native comparison supplies, on every admitted source witness, a source execution $s_0,s_1,\ldots$, a target execution $t_0,t_1,\ldots$, and a causal prefix-length map
+\[
+ \ell:\mathbb N\to\mathbb N,\quad\ell(0)=0,\quad
+ \ell(n+1)-\ell(n)\in\{0,1\}.
+\]
+The target prefix through $\ell(n)$ is determined by the source witness prefix through $n$. The retained body square compares $s_n$ to the \emph{currently represented} target state $t_{\ell(n)}$ at every source prefix, including silent steps. It does not compare only eventual values or selected synchronization points. If the comparison needs auxiliary witnesses, the same conditions are imposed on its common carrier and projection maps; a coupling span is not assumed to be a directed native cell.
+
+The progress interface consists of:
+\begin{enumerate}
+\item \emph{Productivity:} $\ell(n)\to\infty$.
+\item \emph{All-prefix enabledness reflection:} for every $j,n$,
+\[
+ \operatorname{En}^T_j(t_{\ell(n)})\Longrightarrow\operatorname{En}^S_j(s_n).
+\]
+\item \emph{Task-firing preservation:} if $\operatorname{Fire}^S_j(n)$ then $\ell(n+1)=\ell(n)+1$ and the target step numbered $\ell(n)$ fires $j$.
+\end{enumerate}
+The same task names are used to avoid an implicit task-renaming ambiguity. A renaming can be added only with explicit enablement and discharge conditions. Event preservation is a substantive boundary condition: declaring a source task completed while hiding its target obligation does not count as a simulation of that obligation.
+
+Weak fairness for task $j$ means that if it is enabled at every state after some finite index, it fires infinitely often. Strong fairness means that if it is enabled infinitely often, it fires infinitely often. These conventions concern individual task identities; no unmentioned fairness of state visits or scheduler classes is assumed.
+
+\begin{theorem}[Pathwise transport of weak and strong fairness]\label{fair-fair}
+Every asynchronous comparison satisfying the three interface conditions takes a source execution fair for all tasks in $J$ to a target execution fair for those tasks. This holds separately for weak and for strong fairness.
+\end{theorem}
+\begin{proof}
+For weak fairness, suppose target task $j$ is enabled for all $k\ge K$. Productivity gives $N$ such that $\ell(n)\ge K$ for all $n\ge N$. Reflection makes the source task enabled at every such prefix, including silent ones. Source weak fairness gives infinitely many firings. Each preserved firing advances the target clock, so these yield infinitely many distinct target firings.
+
+For strong fairness, suppose the target task is enabled at infinitely many indices $k$. Because $\ell$ starts at zero, advances by at most one and is unbounded, it visits each such $k$. Choose one source index for each; the indices are distinct. Reflection therefore supplies infinitely many source enabled states. Source strong fairness gives infinitely many source firings, whose target images are distinct by the same advance condition. This proves target strong fairness.
+\end{proof}
+
+For strong fairness only, reflection at one source representative of every target index suffices. For weak fairness that weakening is not sound: recurring silent states can repeatedly disable the source task even while the represented target task stays enabled. The difference is exactly the temporal quantifier on enabledness, not a technicality in the clock map.
+
+\begin{proposition}[Why synchronization-boundary checks are insufficient]
+There is a productive causal comparison which preserves task firings and reflects enabledness at the source pre-state of every clock-advancing step, but maps a weakly fair source execution to a weakly unfair target execution.
+\end{proposition}
+\begin{proof}
+Let source states alternate $u\to v\to u\to\cdots$. Task $j$ is enabled at $u$ and disabled at $v$; it has an additional self-loop firing transition at $u$, but the displayed execution never takes it. Thus that execution is weakly fair for $j$, since $j$ is not eventually continuously enabled. Let the target have one state $t$, with $j$ enabled and both a task-$j$ loop and an unrelated tick loop. Map $u\to v$ to a target tick and $v\to u$ to silence. The represented target execution ticks forever without firing $j$, and is weakly unfair. Every pre-advance source state is $u$, so enabledness is reflected there; at the silent pre-state $v$ it is not. The comparison can be extended to source $j$-loops by mapping them to target $j$-loops, preserving the task-event condition. The counterexample concerns the omitted all-prefix condition, not failure of productivity.
+\end{proof}
+
+\section{A checkable no-infinite-stutter certificate}
+Suppose a well-founded strict relation $\prec$ and a rank $r_n$ on each paired prefix satisfy
+\[
+ \ell(n+1)=\ell(n)\quad\Longrightarrow\quad r_{n+1}\prec r_n.
+\]
+Ranks may reset on advancing steps. Then every infinite admitted source execution is productive: if the integer-valued nondecreasing $\ell$ were bounded, it would eventually be constant and the suffix would be an infinite descending rank chain. This certificate prevents divergence entirely hidden by the comparison. It does not bound the duration of a finite silent interval unless additional quantitative bounds are supplied.
+
+\section{Closure under native vertical composition}
+\begin{theorem}[Compositional progress interface]
+Suppose comparisons $S\to T$ and $T\to U$ satisfy the three conditions for the same task identities. Their prefix composition has clock $m(n)=\ell_2(\ell_1(n))$ and also satisfies them. Identity comparisons do as well.
+\end{theorem}
+\begin{proof}
+The composite clock starts at zero and advances by zero or one: a silent first map causes no advance, and a unit first advance causes at most a unit second advance. Both clocks are unbounded and monotone, so their composite is unbounded. Causality follows by composing prefix maps. Enabledness in $U$ at $m(n)$ reflects first to $T$ at $\ell_1(n)$ and then to $S$ at $n$. A source firing gives an advancing firing in $T$; that gives an advancing firing in $U$. Hence the composite has all required conditions. Identity is immediate.
+\end{proof}
+
+This is vertical closure of an actual retained-path comparison subclass. It does not prove closure under arbitrary horizontal composition, since adding interference can change task enabledness and invalidate reflection. To use it horizontally, the partner must preserve the enabledness/discharge interface at all suspended boundaries; common terminal outputs do not establish that condition.
+
+\section{An exact horizontal readiness criterion}
+Here is a nonvacuous partner condition in the shared-event graph fragment. Let $W$ be a directed world-event graph and let $X\to W$, $Y\to W$ be open graphs. Vertices retain the current world; edges retain the actual shared event witness, not merely endpoints. A native comparison is a graph map $f:X\to Y$ over $W$, with pointwise body/world square, preserving the firing of each left task $j$. No edge erasure is allowed in this synchronous fragment.
+
+For a vertex $x$ over $w$, let $M_X(x)$ be the set of world edges with source $w$ that are images of some outgoing edge of $x$. Let $M_{X,j}(x)$ be the corresponding subset realized by outgoing edges firing task $j$. Define $M_Y,M_{Y,j}$ similarly. Enabledness of a task means existence of an outgoing edge firing it.
+
+A partner $C\to W$ composes by the actual graph fibre product: states $(x,c)$ have matching world, and transitions are pairs of outgoing edges carrying the same world event. Left tasks fire when the left edge fires them; partner tasks fire when the partner edge fires them. Distinct task namespaces are retained. This is synchronization on explicit events, not an assertion that every physical interference model has this form.
+
+\begin{theorem}[Universal partner readiness]
+The following conditions on $f$ are equivalent:
+\begin{enumerate}
+\item For every partner graph $C\to W$, every related product state $(x,c)$ and $(f(x),c)$, and every left or partner task, target enabledness implies source enabledness.
+\item For every $x$,
+\[
+ M_Y(f(x))\subseteq M_X(x),\qquad
+ M_{Y,j}(f(x))\subseteq M_{X,j}(x)\quad\text{for every left task }j.
+\]
+\end{enumerate}
+Since $f$ is event- and task-preserving, the reverse inclusions are automatic. Thus the criterion is exactly equality of the event menus and task-specific event menus. It concerns event availability, not a surjection onto every individual target edge or any probability law.
+\end{theorem}
+\begin{proof}
+For sufficiency, an enabled target left task has a left edge firing $j$ with world event $e$ and a compatible partner edge carrying $e$. The task-menu inclusion provides a source edge firing $j$ with that same $e$, which pairs with the same partner edge. An enabled partner task has a partner firing edge with event $e$ and some compatible target left edge; ordinary menu inclusion provides a matching source left edge. Thus every task reflects.
+
+For necessity of a task-menu inclusion, fix any $e\in M_{Y,j}(f(x))$ and use a partner with just one outgoing edge carrying $e$. Target left task $j$ is enabled, so universal reflection supplies a source left task edge with event $e$. To test the ordinary menu, use the same one-event partner but mark its edge with a fresh partner task. Its target enabledness forces a compatible source edge. Such a tester is a valid graph over $W$, even when the event returns to the same world vertex: its two partner vertices may be distinct. Finally the graph-map and task-preservation laws give the opposite inclusions.
+\end{proof}
+
+\begin{proposition}[Horizontal fair-path consequence]
+If $f$ satisfies the equivalent menu conditions, then for every partner $C$, the actual native map $f\times_W\mathrm{id}_C$ takes each weakly or strongly fair source product execution to a fair target product execution. This subclass is closed under identity and vertical composition. It is also stable under adding another synchronized partner.
+\end{proposition}
+\begin{proof}
+Product paths map one edge to one edge, so the clock is the identity and is productive. The theorem gives enabledness reflection at every prefix, while the product map preserves both left and partner task firings. Apply Theorem~\ref{fair-fair}. Menu equality composes under $f$ and another map over $W$, as does event/task preservation. To add another partner, use associativity of the graph fibre product: testing the first product against an arbitrary further partner amounts to testing $f$ against their combined partner. This proves the asserted closure up to the canonical tuple reassociation.
+\end{proof}
+
+This is a genuine horizontal structural condition rather than an assumption that a partner happens not to break fairness. It does not preserve local scheduler admissibility by itself: the map may expose or erase correlated information. Conversely, local-information factorization does not force these event menus to agree. To obtain a probabilistic contextual progress theorem, both conditions and the probability/plant square must be checked. Allowing partners to distinguish event witnesses is essential to necessity; if only a coarser event observation is allowed, the tester class and exact criterion change.
+
+\section{Combining law admissibility with pathwise fairness}
+Suppose a comparison carrier has a probability law with prescribed source marginal. Its target projection must separately satisfy the local-strategy factorization and local-measurability conditions from the local-information theorem, together with the correct initial and plant laws. That theorem then yields an admissible target behavioral policy under the \emph{declared} information structure. In an asynchronous model, one must verify this after indexing the target by its own clock: conditioning at the random source time of a target step need not preserve the intended local action law automatically.
+
+\begin{theorem}[Progress-sensitive contextual transfer]\label{fair-progress}
+Assume the target marginal is admissible as just specified. Suppose the comparison satisfies the three pathwise conditions on a measurable set of carrier probability one, and the source is almost surely weakly (respectively strongly) fair. Then the target is almost surely fair in the same sense. If every admissible fair target execution eventually satisfies $G_T$, and for every represented pair
+\[
+ G_T(t_{\ell(n)})\Longrightarrow G_S(s_n),
+\]
+then the source eventually satisfies $G_S$ almost surely. The analogous assertion holds for recurring goals, with ``infinitely often'' on both sides.
+\end{theorem}
+\begin{proof}
+On the intersection of the probability-one interface set and source-fairness event, Theorem~\ref{fair-fair} gives target fairness. Admissibility permits application of the target's stated progress guarantee. If the target reaches $G_T$ at index $k$, productivity and unit increments supply a source prefix with $\ell(n)=k$; goal reflection gives $G_S$ there. Infinitely many target goal indices yield infinitely many distinct source prefixes. Projection of these probability-one events proves the claimed laws. For finite-state or countable discrete path models these fairness and reachability events are measurable; in a more general carrier their measurability is an explicit hypothesis.
+\end{proof}
+
+The theorem also has an all-raw variant if every raw source execution has a comparison lift satisfying the conditions and the target progress theorem quantifies over the relevant raw fair executions. Almost-sure coupling support alone does not provide that lift. Conversely, even exact equality of visible output laws is insufficient when task enabledness, pending obligations or completion receipts are not included in the retained comparison.
+
+This is a useful division of labor: local-information admissibility establishes that the target execution belongs to the allowed scheduler class; all-prefix reflection and discharge preservation establish fairness transport; a divergence rank establishes productivity; and a separate goal/receipt square establishes the direction of progress transfer. None is inferred from the others, and the proof does not presume physical access to analyst-level coupling witnesses.
+\paragraph{Literature boundary.} Fairness-sensitive refinement and ready simulation are established subjects. Romijn and Vaandrager, \emph{A note on fairness in I/O automata}, Information Processing Letters 59 (1996), 245--250, explicitly treat weak/strong enabledness and interference restrictions; see \url{https://ir.cwi.nl/pub/1392/1392D.pdf}. Henzinger, Kupferman and Rajamani, \emph{Fair Simulation}, Information and Computation 173 (2002), 64--81, study a fairness-sensitive simulation game, \url{https://doi.org/10.1006/inco.2001.3085}. L\"uttgen and Vogler's \emph{Ready simulation for concurrency: It's logical!} studies readiness under CSP-style parallel composition, \url{https://www.sciencedirect.com/science/article/pii/S0890540110000441}. The displayed results here are direct scoped proofs for the declared native path and shared-event interfaces; these references are not claims that their distinct context classes coincide with ours. No historical originality is asserted.
+\part{A combined sufficient contextual comparison class}
+\section{The squares must describe the same retained execution}
+Fix finite synchronous event systems and a deterministic native graph map $f:X\to Y$ over a shared world-event graph. For every synchronized partner $C$ in a declared operational class, use the actual product map $F=f\times_W\mathrm{id}_C$. Assume:
+\begin{enumerate}
+\item $f$ preserves events and task firings and has equal ordinary and task-specific menus. Thus enabledness reflects under every shared-event partner.
+\item All agents' source information along product histories factors through their target information under $F$. Local action alphabets are retained. The target policies use the transported information functions, not an invented correlated seed.
+\item The initial laws push forward. For every source product history $h$ and joint action $a$, the pushforward of its plant next-event/next-state kernel equals the specified target product plant kernel at $(Fh,a)$. These are equations for the actual joint system; they are not inferred from separate component marginals.
+\item The path body square preserves the declared public observation and identifies the task namespace. Any claimed source goal is reflected by the target goal along $F$.
+\end{enumerate}
+For partner agents, information factorization is automatic only when their relevant observations are actually preserved; arbitrary access to a source component's hidden state is not presumed. Likewise a partner that changes the plant law can violate condition 3 even when graph menus match.
+
+\begin{theorem}[Information-and-progress preserving contextual comparison]
+Under these hypotheses, every permitted source behavioral execution law pushes through $F$ to a permitted target behavioral execution law. Every fair raw source product path maps to a fair target product path, for weak and strong task fairness separately. Consequently an almost-sure fair source law induces an almost-sure fair target law. A target progress guarantee for all its permitted fair executions transfers to the corresponding reflected source goal.
+\end{theorem}
+\begin{proof}
+For agent $i$, write the information square as $J_i(h)=v_i(I_i(Fh))$. A source policy $q_i(\cdot\mid J_i)$ becomes the target policy $q_i(\cdot\mid v_i(I_i))$. At every source history, its action factors equal these target-local factors. Therefore averaging over histories with the same target history does not mix different factors; independent fresh private randomization remains valid. The initial-law and plant-kernel equations give equality of pushed history laws by induction. Since finite-cylinder probabilities determine a discrete infinite path law, the same construction gives the infinite-horizon pushforward for consistent history strategies.
+
+The equal-menu theorem reflects enabledness in the product. Firings are preserved and the clock is the identity, so pathwise fairness follows from Part II. Measurability of discrete-path fairness events then gives the almost-sure claim. Apply the target progress guarantee to the admitted fair target law and use the pointwise goal-reflection square.
+\end{proof}
+
+This establishes a real sufficient native class, with separate necessity results for two of its interfaces: passive binary contexts characterize the universal information square, and one-event partner testers characterize readiness reflection. It does not say that these two tests alone characterize contextual refinement: probabilities, raw witness coverage, goal direction and the permitted contexts remain material.
+
+The class composes vertically whenever the plant and information squares have compatible intermediate systems, because graph maps, information functions and kernel pushforwards compose. Under a further synchronized partner, readiness survives structurally by the exact menu theorem; information and joint plant squares must still hold for the enlarged joint system. This last requirement is the explicit location of interference accounting, not a hidden independence assumption. Arbitrary correlated passive extensions satisfy the information part; arbitrary active physical systems need not satisfy the plant part.
+
+For asynchronous comparisons, replace the identity clock by the productive all-prefix interface of Part II and check target-law admissibility in target time. The synchronous theorem cannot silently commute conditioning with random synchronization times. Nor does a theorem about fair raw paths assert that a distributed scheduler can realize every such path or law.
+
+\section{Controlled feedback and a nonvacuous progress consequence}
+The earlier native feedback construction supplies a retained common path carrier rather than merely final-output equivalence. Here is a sufficient way to preserve the present interface when closing it. Let a strictly delayed deterministic controller choose the next shared command from a common retained observation prefix. Require the public body square to identify that prefix, and require the information, task/menu and conditional plant squares above at \emph{every raw history and command}, not merely almost surely for each fixed open input. Event labels include their command; selected-command menus are therefore preserved, not just the union of menus over all commands.
+
+Induction over prefixes then gives the same controller command on both sides and the same closed body square. The conditional kernel square at the selected command proves the closed path-law pushforward by cylinder induction. Restricting both sides to the same command preserves event/task menus, so the fairness argument applies to the closed executions. The information square remains valid when both local histories are augmented by the same permitted controller observation. This is a conditional-law/all-history feedback theorem: it does not invoke the invalid inference from sectionwise tape-measure preservation to feedback preservation ruled out in the native first-results manuscript. If the controller sees only a return value while readiness or pending effects depend on hidden retained state, the required squares have not been established.
+
+For genuinely stochastic controllers, a shared fresh innovation with pointwise conditional transport can replace deterministic choice, but its availability and law belong to the stated controller interface. Private and shared innovations are not interchanged. We do not assert unrestricted feedback closure of arbitrary open witnesses or a full traced-category axiom package.
+
+\begin{proposition}[Ranked fair completion transfers]
+Suppose the target has a completion predicate $D$ and a natural-valued rank $V$. There is one fixed task $j$ that is enabled at every active execution prefix before $D$ (it may be chosen per epoch, not per prefix). Every step before completion either enters $D$ or does not increase $V$; every firing of $j$ before completion either enters $D$ or strictly decreases $V$. Then every infinite weakly fair target execution reaches $D$. Under the combined comparison theorem and reflection of $D$ into an actual source completion receipt, every almost-sure weakly fair admitted source law reaches that receipt almost surely.
+\end{proposition}
+\begin{proof}
+If a target execution never reaches $D$, task $j$ is continuously enabled, so weak fairness supplies infinitely many firings. The rank cannot increase between them and strictly decreases at each, contradicting well-foundedness of the natural numbers. Apply the combined comparison theorem to transfer this target guarantee and the stated completion-reflection square.
+\end{proof}
+
+The target theorem is therefore not vacuous: it can discharge completion from a reusable rank/availability argument rather than assuming completion as a black box. It promises no uniform time bound and does not discharge hidden side effects. For repeated service, each admitted epoch needs its own finite initial rank and the stated enabledness/progress conditions until its receipt; a separate driver must establish that later epochs are actually initiated. Infinite availability cannot be inferred from a finite number of completions.
+
+\section{Remaining contract boundary}
+These results integrate local authority, side-effect readiness and progress for an explicit event/history model. The general contextual-composition programme still needs its full context/content interaction construction and a precisely delimited contextual completeness statement across richer active interference, recursion and feedback. The present native squares and exact testers provide obligations that such a construction must preserve; they are not a replacement of that programme by isolated cases.
+\end{document}
