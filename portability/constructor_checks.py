@@ -5,7 +5,7 @@ from dataclasses import replace
 from fractions import Fraction as Q
 from itertools import combinations, product
 from constructors import (CertificateFailure, PhaseEdge, WindowEnvelope, check_horizon,
-                          matrix_rank, phase_budget, projected_support, reservoir_margin,
+                          matrix_rank, phase_budget, phase_family_budget, initial_debt_deadline, projected_support, reservoir_margin,
                           separating_bundle)
 
 
@@ -68,6 +68,10 @@ def run():
     cycle=rejects(lambda:phase_budget(ranks,frozenset({'done'}),[*edges,PhaseEdge('abort','entry',Q(1),Q(1),'retry')],'entry'),'Nondecreasing')
     stall=rejects(lambda:phase_budget(ranks,frozenset({'done'}),edges[:-1],'entry'),'stalled nonterminal')
     negative=rejects(lambda:phase_budget({'a':1,'z':0},frozenset({'z'}),[PhaseEdge('a','z',Q(-1),Q(1),'bad')],'a'),'Negative phase cost')
+    family=phase_family_budget(ranks,frozenset({'done'}),edges,('entry','write','abort'))
+    need(family.time_bound==9 and family.work_bound==13,'Entry-family maximum changed')
+    need(initial_debt_deadline(family,Q(1),Q(11))==1,'Initialized debt deadline changed')
+    initial_early=rejects(lambda:initial_debt_deadline(family,Q(1),Q(10)),'age out')
     envelope=WindowEnvelope(1,2,Q(3),Q(1,100))
     joint=check_horizon(envelope,Q(12),Q(1),cert,Q(1),6)
     need(joint.support_budget==6 and joint.slack==1,'Joint horizon witness changed')
@@ -85,7 +89,7 @@ def run():
                 bundles=dict(original=bundle.rows,changed=new_bundle.rows,determinant_crosschecks=rank_cases),
                 phase=dict(time=str(cert.time_bound),work=str(cert.work_bound),all_paths=[list(map(str,p)) for p in paths]),
                 horizon=dict(H=str(joint.horizon),support=joint.support_budget,slack=str(joint.slack)),
-                reserve_margin=str(margin),rejections=[missing,search_limit,rank_failure,cycle,stall,negative,late,wide,deficit,fractional,floating,forged,boolean],
+                reserve_margin=str(margin),rejections=[missing,search_limit,rank_failure,cycle,stall,negative,late,wide,deficit,fractional,floating,forged,boolean,initial_early],
                 program_completion=False)
 
 

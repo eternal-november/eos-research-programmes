@@ -174,6 +174,47 @@ def phase_budget(
                             tuple(sorted(ranks.items())), frozenset(terminal), tuple(edges))
 
 
+def phase_family_budget(
+    ranks: Mapping[str, int], terminal: frozenset[str], edges: Sequence[PhaseEdge],
+    entries: Sequence[str],
+) -> PhaseCertificate:
+    """Bound every declared interrupted entry using a demonic zero-cost root.
+
+    The root is an analytic branching device, not a runtime state choice.
+    Source coverage of entries is a separate realization obligation.
+    """
+    require(bool(entries), "Empty phase entry family")
+    require(all(entry in ranks for entry in entries), "Entry family names absent phase")
+    require(all(type(r) is int and r >= 0 for r in ranks.values()), "Invalid phase rank")
+    name = "__all_entries__"
+    while name in ranks:
+        name += "_"
+    joined = dict(ranks)
+    joined[name] = max(ranks.values()) + 1
+    branches = tuple(PhaseEdge(name, entry, Q(0), Q(0), "source partial-state entry map")
+                     for entry in dict.fromkeys(entries))
+    return phase_budget(joined, terminal, (*edges, *branches), name)
+
+
+def initial_debt_deadline(
+    phases: PhaseCertificate, commissioning: Q, deadline: Q,
+) -> Q:
+    """Check debt present at time zero, without inventing a nonnegative release."""
+    commissioning = exact(commissioning, "Initial-debt commissioning")
+    deadline = exact(deadline, "Initial-debt deadline")
+    require(commissioning >= 0 and deadline >= 0, "Negative initial-debt endpoint")
+    expected = phase_budget(dict(phases.ranks), phases.terminal, phases.edges, phases.entry)
+    require(len(dict(phases.ranks)) == len(phases.ranks), "Duplicate phase ranks")
+    exact(phases.time_bound, "Phase time bound")
+    exact(phases.work_bound, "Phase work bound")
+    for value in (*phases.remaining_time.values(), *phases.remaining_work.values()):
+        exact(value, "Remaining phase bound")
+    require(expected == phases, "Phase certificate differs from its ranked graph")
+    finish = commissioning + expected.time_bound
+    require(finish < deadline, "Initial debt can age out before its constructed closure")
+    return deadline - finish
+
+
 @dataclass(frozen=True)
 class WindowEnvelope:
     persistent: int
