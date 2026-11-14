@@ -1,0 +1,1043 @@
+\documentclass[11pt]{article}
+\usepackage[margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}[theorem]{Counterboundary}
+\newcommand{\Stab}{\operatorname{Stab}}
+\newcommand{\Prob}{\mathsf{Prob}}
+\title{Native Feedback and Shared Content\\First Results for the Feedback/Concurrency Extension}
+\author{}\date{14 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+We construct a retained-witness causal kernel family, its independent unary writer interaction, and restricted delayed-feedback operations retaining actual context and content maps. A bijective native-cell counterexample shows that fixed-input probability preservation alone is insufficient for continuous feedback. Countable control histories or stronger all-history innovation transport give positive closure theorems. A synchronized world-event content carrier admits an explicit coherent probabilistic gluing under a common-event-law and chosen conditional-independence hypothesis. Stable boundary and conditional progress certificates complete a restricted interface, not a general concurrent language or arbitrary context/content classification. These are written proofs without a historical novelty claim or mechanized certification.
+\end{abstract}
+\paragraph{Reading map.} Parts I--IV give the principal constructions and feedback laws. Parts V--VII connect resumption safety and progress. The final foundations explain the carrier boundary and basic run-lifting lemmas. The companion theorem ledger records exact contract gaps. No contract obligation is declared complete merely because a restricted construction is available.
+\paragraph{Most important modelling limits.} A writer log does not act on later state. A common event marginal does not determine joint correlations. A probability law does not guarantee every raw path progresses. Each of these distinctions is retained in the statements rather than erased by the word ``composition''.
+\tableofcontents
+\part{Causal kernel witnesses and the feedback boundary}
+
+\paragraph{Status and contribution.} Written proofs of a concrete category-valued, probability-and-raw-witness construction, a delayed-feedback counterexample, and a stronger local transport rule which repairs it in a declared stream class. Not mechanized and not a novelty claim. The construction extends the finite normalized terminal-content witness fragment; it does not extend arbitrary O1 content grades or prove a new independent crossing theorem. The feedback counterexample is important: even adapted native maps with an exact body square and correct probability pushforward for every fixed input need not be safe under feedback.
+
+\section{Filtered measurable interfaces and actual witness cells}
+Fix a universe. A filtered interface is a standard Borel measurable space $A$ with increasing countably generated sub-$\sigma$-algebras $\mathcal A_n$, whose union generates its full $\sigma$-algebra. A pure map is measurable and adapted: inverse images of $\mathcal B_n$ lie in $\mathcal A_n$. These form a category $C$ with finite products and a terminal object. A stream $X^{\mathbb N}$ with its first-$n$ coordinate filtration is a principal example. We can instead use first-$(n+1)$ coordinates consistently; no argument depends on this indexing choice.
+
+A kernel $K:A\to\Prob(\Omega)$ is a probability kernel on standard Borel spaces: $a\mapsto K_a(D)$ is measurable for each measurable $D$. It is causal if this function is $\mathcal A_n$-measurable whenever $D\in\mathcal O_n$. Its full carrier $\Omega$ is a declared raw possibility carrier, including zero-measure points. A retained computation $F\in H(A,B)$ consists of
+\[
+ F=(\Omega,K,f),\qquad f:A\times\Omega\longrightarrow B
+\]
+with a causal kernel and an adapted measurable body. No quotient by almost-sure equality is taken.
+
+A native comparison $r:F\to F'$ is an adapted measurable function
+$r:A\times\Omega\to\Omega'$ such that, for every input $a$,
+\[
+ (r_a)_*K_a=K'_a,\qquad f'(a,r_a\omega)=f(a,\omega)\quad\hbox{for every }\omega.
+\tag{N}
+\]
+Composition is $\omega\mapsto r'_a(r_a\omega)$ and identities are literal identity maps, so $H(A,B)$ is a category. These maps retain proof data even when their output kernels agree. Call the cell raw-covering if every $r_a$ is surjective. Probability preservation alone does not imply raw coverage.
+
+One can additionally retain measurable adapted cumulative costs $c_n:A\times\Omega\to[0,\infty]^d$, nondecreasing in $n$, and require $c'_n(a,r_a\omega)\le c_n(a,\omega)$ pointwise. All proofs below preserve this decoration using addition. It is not needed for the feedback obstruction.
+
+For pure $u:A'\to A$ and $v:B\to B'$, define
+\[
+ H(u,v)(\Omega,K,f)=(\Omega,K\circ u,\ (a',\omega)\mapsto v(f(u(a'),\omega))).
+\]
+On cells use $r_{u(a')}$. This makes $H:C^{op}\times C\to\mathbf{Cat}$ a strict functor.
+
+\section{Dependent serial composition and coherence}
+For $F=(\Omega,K,f)\in H(A,B)$ and $G=(\Lambda,L,g)\in H(B,D)$ define
+\[
+ G\circ F=(\Omega\times\Lambda,M,h),\quad
+ M_a(d\omega,d\lambda)=K_a(d\omega)L_{f(a,\omega)}(d\lambda),
+ \quad h(a,\omega,\lambda)=g(f(a,\omega),\lambda).
+\tag{S}
+\]
+The second randomness is conditionally selected at the actual intermediate body, not independently sampled from an unrelated marginal. This is an actual dependent accumulation formula.
+
+\begin{theorem}[Native serial construction]\label{kernel:serial}
+Formula (S) defines an object of $H(A,D)$. On cells $r:F\to F'$ and $s:G\to G'$ it defines the horizontal cell
+\[
+ (s\star r)_a(\omega,\lambda)=
+       (r_a\omega,\ s_{f(a,\omega)}\lambda).
+\tag{H}
+\]
+These operations are bifunctorial. The singleton probability carrier supplies pure units. Canonical tuple rebracketing and singleton deletion supply natural associativity and unit isomorphisms satisfying pentagon and triangle identities. Pure-middle balancing is literal. Raw-covering cells are closed under identities, vertical and horizontal composition.
+\end{theorem}
+\begin{proof}
+Composition of measurable kernels with measurable functions and integration gives a probability kernel $M$. To check causality, first take a prefix rectangle $E\times D$ with $E\in\mathcal O_n,D\in\mathcal L_n$. Its probability is
+\[
+ \int 1_E(\omega)L_{f(a,\omega)}(D)\,K_a(d\omega).
+\]
+The integrand is measurable with respect to $\mathcal A_n\otimes\mathcal O_n$: causality of $L$ and adaptedness of $f$ imply this. Integration against causal $K$ produces an $\mathcal A_n$-measurable function, first for rectangle simple functions and then by monotone approximation. A monotone-class argument extends from rectangles to the product prefix $\sigma$-algebra. The body and (H) are measurable and adapted by composition.
+
+For native probability preservation, test a nonnegative measurable $\phi$ on $\Omega'\times\Lambda'$. Substituting (H) and then the sectionwise pushforward of $s$ gives
+\[
+ \int K_a(d\omega)\int L'_{f(a,\omega)}(d\lambda')
+       \phi(r_a\omega,\lambda').
+\]
+The body square for $r$ replaces $f(a,\omega)$ by $f'(a,r_a\omega)$, and its pushforward equation turns this into
+\[
+ \int K'_a(d\omega')\int L'_{f'(a,\omega')}(d\lambda')
+       \phi(\omega',\lambda').
+\]
+This is the required target measure. Body commutation follows by substituting the two pointwise squares. Add the two pointwise inequalities for cumulative costs when present. Identity and interchange for horizontal/vertical cell composition follow by substitution, using $f'=f$ along $r$ at the intermediate argument.
+
+Both bracketings of a triple composite have, after the canonical tuple bijection, exactly the measure
+\[
+ K_a(d\omega)L_{f(a,\omega)}(d\lambda)
+ N_{g(f(a,\omega),\lambda)}(d\xi)
+\]
+and the same nested body. Equality follows from iterated nonnegative integration. Associators and their inverses are therefore native cells; they are natural because the cell functions evaluate at the same bodies. Every pentagon path is the same tuple rebracketing function, and every triangle path the same singleton deletion. This proves coherence at retained map level, not only after forgetting witnesses.
+
+For a pure middle map $u:B\to B'$, the two presentations $G\circ H(id,u)F$ and $H(u,id)G\circ F$ both have second kernel $L_{u(f(a,\omega))}$ and the same body. Their cell formulas also coincide. Thus composition respects the relative pure-middle balance generators. Pure unit bodies use the singleton carrier and the pure map itself; singleton deletion supplies their native unitors.
+
+Finally, to cover a target pair $(\omega',\lambda')$, first lift $\omega'$ through $r_a$, and then lift $\lambda'$ through $s_{f(a,\omega)}$. The body square makes this the required target intermediate input. This proves horizontal surjectivity; the other cases are immediate.
+\end{proof}
+
+\paragraph{Exact finite scope recovered.} Give finite spaces the trivial complete filtration. Finite kernels are normalized weight families; their pushforward equations in (N) are exactly sums over witness-map fibres. Pointwise cost lowering is exactly the finite native inequality against the minimum of each fibre (empty minimum $+\infty$). Deterministic bodies can return finite trees encoded as data. This gives the finite terminal-content witness subfragment with its retained maps. It does not recover the arbitrary polynomial occurrence products or nonterminal content grades of O1. Nor does serial composition alone implement interfering parallelism.
+
+\paragraph{Probability versus possibility.} The output law is $f(a,-)_*K_a$, whereas raw output possibility is $f(a,\Omega)$. A native cell identifies every source raw body with a target raw body; raw coverage gives equality of these possibility sets. A zero-measure target point may otherwise lack any preimage. The exact body square is required everywhere, not merely almost surely. This construction can retain nonatomic path laws and their zero-measure individual paths, unlike countably atomic families.
+
+\section{A sharp obstruction to delayed-feedback closure}
+\begin{theorem}[Adapted sectionwise native transport is insufficient]\label{kernel:failure}
+Native cells (N), even with input-independent tape laws and adapted bodies, are not in general preserved by deterministic one-step-delayed feedback on continuous interfaces.
+\end{theorem}
+\begin{proof}
+It suffices to use two time coordinates. Input $a=(a_0,a_1)\in[0,1]^2$ and tape $w=(w_0,w_1)\in[0,1]^2$ have prefix filtrations; the tape law $\mu$ is product Lebesgue measure. Both computations use this constant kernel. The target body is $g(a,w)=w$. Define
+\[
+ r_a(w)_0=w_0,\qquad
+ r_a(w)_1=\begin{cases}w_1^2,&a_1=w_0,\\w_1,&a_1\ne w_0,\end{cases}
+ \qquad f(a,w)=r_a(w).
+\]
+Equality testing is Borel, so $r$ and $f$ are measurable and adapted. For every fixed input $a$, the altered set $\{w:w_0=a_1\}$ has $\mu$-measure zero. Therefore $(r_a)_*\mu=\mu$ exactly as probability measures. The body square $g(a,r_a(w))=f(a,w)$ holds at every raw point. This is a native cell.
+
+Close the second input by delayed feedback $a_1=y_0$, with arbitrary fixed $a_0$. The source has $y_0=w_0$, hence $y_1=w_1^2$. Its second-output distribution function is $\sqrt{t}$ on $[0,1]$. The target has $(y_0,y_1)=(w_0,w_1)$, with distribution function $t$. The closed laws differ. The induced feedback witness transformation is $(w_0,w_1)\mapsto(w_0,w_1^2)$, which is not measure preserving. Each open $r_a$ is nevertheless an adapted Borel bijection: its inverse takes a square root on the same diagonal and is identity elsewhere. That inverse also preserves the open tape law and satisfies the reverse body square. Thus the open cell is an isomorphism, including raw coverage in both directions.
+\end{proof}
+The exceptional set is null for every fixed open input but is selected with probability one by feedback. The proof does not use an anticipating controller: the controller uses only the preceding output. Extending these finite-prefix systems with unused iid coordinates gives the same counterexample on infinite streams. The structural issue is lack of uniform conditional transport at the histories which feedback selects. Raw coverage, invertibility and all-prefix body agreement do not repair it: all three hold for this example.
+
+\section{A sufficient all-history innovation rule}
+A tractable feedback-safe subclass uses explicit discrete-time innovation presentations. Let $U_n,V_n$ be standard Borel innovation spaces with fixed probability laws $\mu_n,\nu_n$. Source and target stream transducers have measurable causal bodies. A finite history contains the input through time $n$, source innovations before time $n$, and the already constructed target innovations before time $n$. A local witness transformation has measurable maps
+\[
+ v_n=\rho_n(h_n,u_n).
+\]
+Require, for \emph{every} raw history $h_n$, not just almost every history under each fixed open input,
+\[
+ (\rho_n(h_n,-))_*\mu_n=\nu_n.\tag{I}
+\]
+Require also that source and target output prefixes agree pointwise when these local maps are used. These are explicit local measure and body equations. They are stronger than (N); in the counterexample the map at a history with $a_1=w_0$ squares the fresh uniform coordinate and violates (I).
+
+A deterministic feedback controller supplies $a_n$ as a measurable function of the external input prefix and the shared output prefix strictly before $n$. This strict delay is essential: no instantaneous fixed-point solution is assumed.
+\begin{theorem}[Delayed-feedback-safe native transport]\label{kernel:safe}
+For every fixed external input stream, under (I) and the pointwise prefix body equations, delayed feedback uniquely defines source inputs, target inputs and transformed innovations by recursion. They give the same output stream at every raw source tape. The transformed target innovations have joint law $\bigotimes_n\nu_n$ when the source tape has law $\bigotimes_n\mu_n$. Consequently the closed comparison is a probability-preserving native witness map, with a literal body square, on infinite raw path carriers.
+\end{theorem}
+\begin{proof}
+At time $n$ the controller uses only already agreed outputs, so both input values agree and are determined. The local map then produces $v_n$; the prefix square gives equality of the next output. This establishes existence, uniqueness and equality by induction at every finite index. Each coordinate is a measurable function of a finite prefix, giving a measurable adapted map on product path spaces.
+
+The external input is fixed, not a random variable correlated with a fresh innovation. Conditioned on the full source history before its fresh innovation $u_n$, the latter has law $\mu_n$. Equation (I) therefore gives conditional law $\nu_n$ for $v_n$, irrespective of that history. More elementarily, iterated integration of a cylinder indicator $\prod_{j\le n}1_{D_j}(v_j)$ first integrates $u_n$ to $\nu_n(D_n)$, then repeats, obtaining $\prod_{j\le n}\nu_j(D_j)$. Equality of all cylinder probabilities determines the product law on the countable product standard Borel space. Thus the transformed tape has exactly the required measure; the previously proved pathwise body equation completes the native cell.
+\end{proof}
+
+\paragraph{Functorial closure and a nonempty class.} For a fixed delayed controller, closing the presented transducers is functorial on these local cells. Identity innovation maps remain identities. For vertical composition, the intermediate closed output equals the source output pointwise, so both component maps use the same feedback input history; evaluating their composite before or after closure gives the same tape map at every coordinate. Thus this is an actual comparison-level feedback operation on the stronger presented category, not only preservation of an output law. It does not assert the full traced-category axioms.
+
+For example, with uniform $[0,1)$ innovations, $\rho_n(h,u)=(u+c_n(h))\bmod 1$ satisfies (I) and is bijective for every measurable history-dependent shift $c_n$. Taking the source body to apply this triangular innovation transformation before a target body produces a nontrivial infinite-path cell covered by the theorem. Arbitrary dependence of $c_n$ on past raw innovations is allowed; dependence on the fresh innovation other than through the displayed measure-preserving map must be checked, not presumed.
+
+\paragraph{Raw coverage requires more.} If every local $\rho_n(h_n,-)$ is surjective, a target tape can be lifted recursively after fixing the external input: choose a source innovation producing the prescribed target innovation, then use the pointwise output equation for the shared controller history. Countable dependent choice gives a source tape. This is a set-theoretic surjectivity proof, not a measurable inverse or executable selection algorithm. Without local surjectivity, probability preservation alone does not establish raw-path coverage. Pointwise cost inequalities, when supplied locally with additive accumulation, persist under feedback at every finite prefix and hence in their monotone infinite limits.
+
+\paragraph{Closure within the local subclass.} Vertical composition uses $\rho^{23}_n(h^{23}_n,\rho^{12}_n(h^{12}_n,u_n))$, retaining the intermediate histories. The two all-history pushforward equations compose, and so do the prefix squares. Serial independent innovations use pairs and triangular maps: first transform the first component's innovation, then transform the second using the shared intermediate output. Integrating the second fresh innovation first proves its target law independently of the first, and then integrating the first proves the product law. Tuple rebracketing is the same coherent associator as in Theorem~\ref{kernel:serial}. This establishes closure for presented synchronous serial transducers and delayed-feedback comparison, not arbitrary scheduler-driven shared-memory concurrency or a general trace axiom package.
+
+\section{Scope and next obligation}
+The construction supplies actual categories, endpoint reindexing, retained serial cells, relative balance and coherence. It supplies one genuine feedback construction on the stronger local innovation presentation. It does not establish a general feedback operator on all kernel witnesses; Theorem~\ref{kernel:failure} rules out that shortcut. It does not make instantaneous feedback total, prove every traced/iteration law, construct independent arbitrary context/content crossing, or supply interfering parallel composition. Suspension and divergence can be retained as tagged infinite paths in a chosen operational interpretation; adequacy of that interpretation is not proved merely by calling its tags outcomes.
+
+The most promising next step is to integrate all-prefix boundary predicates and all-history innovation transport in one presented resumption category, then prove the chosen guarded iteration laws. The raw data of conditional transport must survive abstraction; almost-sure marginal equality is too weak.
+
+\paragraph{Prior art.} Standard measurable kernel composition and categorical probability are established; see Fritz, \emph{A synthetic approach to Markov kernels, conditional independence and theorems on sufficient statistics}, \url{https://arxiv.org/abs/1908.07021}, and Cho--Jacobs, \emph{Disintegration and Bayesian inversion via string diagrams}, \url{https://arxiv.org/abs/1709.00322}. Neither is cited here as having proved the specific contextual-composition extension. The displayed constructions and counterexample are proved in this note; historical novelty has not been established. No disintegration theorem is needed for the sufficient rule because its conditional innovation maps are supplied explicitly at every history.
+
+
+\part{Independent unary interaction and coherent shared content}
+
+\paragraph{Scope.} Written constructions and proofs for two specified fragments: serial retained-history content over causal kernel witnesses, and synchronized deterministic shared-world content. These are actual carrier/maps/coherence results, not a full independent interaction theorem. Their combination into arbitrary concurrent probabilistic resumptions remains an obligation. No novelty claim or mechanized verification is made.
+
+\section{Serial content must not discard intermediate histories}
+Use the filtered standard Borel interfaces and causal kernels of the companion causal-kernel witness construction. A retained-content operation from $A$ to $B$ is
+\[
+ F=(\Omega,K,R,f,q),\quad f:A\times\Omega\to B,\quad q:A\times\Omega\to R,
+\]
+where $R$ is a filtered standard Borel content carrier and both bodies are adapted measurable maps. The actual combined body is $(f,q):A\times\Omega\to B\times R$. Thus it has the explicit native form $e_A P\to d_B Q$ with $e_A P=A\times\Omega$, input-indexed probability context $P=(\Omega,K)$ and content interpretation $d_BQ=B\times R$. This is a fixed writer-style content family, not arbitrary polynomial occurrence content.
+
+A cell $F\to F'$ consists of an adapted measurable context/witness map $r:A\times\Omega\to\Omega'$ and adapted measurable content map $s:R\to R'$ satisfying, for each $a$ and every raw $\omega$,
+\[
+ (r_a)_*K_a=K'_a,\qquad f'(a,r_a\omega)=f(a,\omega),\qquad
+ q'(a,r_a\omega)=s(q(a,\omega)).
+\]
+These are an actual probability law and body square with content map $\mathrm{id}_B\times s$. Pointwise cumulative cost lowering and raw-covering witness maps may also be retained. Vertical composition is ordinary substitution for $r$ and composition for $s$.
+
+For $G=(\Lambda,L,T,g,t):B\to D$, define the composite by
+\[
+ M_a(d\omega,d\lambda)=K_a(d\omega)L_{f(a,\omega)}(d\lambda),
+\]
+\[
+ h(a,\omega,\lambda)=g(f(a,\omega),\lambda),\qquad
+ q_{GF}(a,\omega,\lambda)=(q(a,\omega),t(f(a,\omega),\lambda))\in R\times T.
+\]
+The intermediate retained history remains content even when the final visible output does not reveal it. In particular a final success cannot erase a failed intermediate boundary by the definition of composition.
+
+\begin{theorem}[Retained-content serial coherence]
+This composition is bifunctorial on native cells. Content maps compose horizontally by products, witness maps by the dependent triangular formula
+\[
+ (r\star u)_a(\omega,\lambda)=(r_a\omega,u_{f(a,\omega)}\lambda).
+\]
+Singleton witness and singleton content carriers supply units. Tuple reassociation supplies native associativity isomorphisms obeying pentagon and triangle identities. Pure-middle reindexing is balanced literally.
+\end{theorem}
+\begin{proof}
+Adaptedness and measurability follow by composition and products. The causal-kernel calculation integrates the second conditional kernel first, then uses the first witness pushforward and its visible body square; it therefore proves probability preservation of the displayed witness map. For content, the first factor transforms by $s$, the second by its cell's content map $v$ evaluated at the same intermediate visible value. Thus $q'_{G'F'}\circ(r\star u)=(s\times v)q_{GF}$. This proves the full content square rather than only the final-output square. The same substitution verifies interchange and identity laws. For three factors, both parenthesizations retain the same ordered triple of contents and the same ordered dependent triple of random witnesses. The associator is the corresponding tuple bijection on each carrier. Its probability preservation follows from iterated kernel integration; its body square is literal rebracketing. All pentagon and triangle paths are equal tuple maps. Reindexing a pure intermediate map changes both presentations' second kernel and body by the same substitution and leaves the retained content formula identical.
+\end{proof}
+
+\paragraph{Boundary certificates.} A content map $s$ can be used in the boundary-certificate pullback theorem only if $R,R'$ are interpreted as actual typed boundary histories and $s$ preserves their suspension/interference edges. Adaptedness alone is not that condition. Likewise separate retained histories do not by themselves give a sound shared-world concurrency semantics: the next construction addresses that issue at the deterministic carrier level.
+
+\section{An explicit unary context/content crossing, not just a composite}
+The writer construction can be presented as independent one-sided inputs in the actual relative module notation. Let $C$ be the category of filtered standard Borel interfaces and adapted measurable maps. Define a context grade over $A$ to be $(\Omega,K:A\to\operatorname{Prob}\Omega)$ with causal $K$. Its extension is $e_AP=A\times\Omega$. A grade map $r$ is adapted, may depend on $a$, and satisfies $(r_a)_*K_a=K'_a$. Reindexing is kernel precomposition. Context units have a singleton carrier; dependent accumulation uses the actual kernel product $K_a(d\omega)L_{a,\omega}(d\lambda)$ and tuple witness carrier. These are independent context-only operations.
+
+Independently, a writer content grade over $B$ is a filtered standard Borel space $Q$ with $d_BQ=B\times Q$. Content arrows are adapted maps $Q\to Q'$. Pure covariant transport and cartesian reindexing leave $Q$ unchanged; unit content is a singleton; typed content accumulation is ordered product. The display square for a pure $u:B'\to B$ is the actual pullback square $B'\times Q\to B\times Q$ over $u$. Unit and product accumulation preserve those lifts, and their Beck--Chevalley maps are the canonical tuple identities. In the Set version this is precisely a unary occurrence presentation: take $T=\mathrm{Id}$ and $\nu_B:B\times Q\to B$. Thus the \emph{content} hypotheses of the existing O1 criterion can be checked directly, rather than assuming its desired mixed law. Infinite kernel witnesses are still outside O1's finite augmented-rig hypothesis and require the separate calculation below.
+
+Set
+\[
+ M(A,B)=(e_A\downarrow B),\quad N(A,B)=(A\downarrow d_B),\quad
+ H(A,B)=(e_A\downarrow d_B).
+\]
+Retained comma normalization is explicit. Send a representative
+$[B;(P,g:e_AP\to B),(Q,h:B\to d_DQ)]$ of $M\odot N$ to $(P,Q,hg)$. The reverse presentation of $(P,Q,k)$ chooses middle $e_AP$, context body $\mathrm{id}$ and content body $k$. Balancing along $g$ gives a natural isomorphism between this normalized representative of the composite and the original representative. Native context and content arrows act by their actual extension maps $e_A r$ and $d_Ds$; their commuting square is exactly what makes normalization functorial. Identity/composition relations for balance yield the triangle equations. This proves $H\simeq M\odot N$ on retained categories, not merely on objects or isomorphism classes.
+
+To cross an actual representative of $N\odot M$, write its content body as $f(a)=(b(a),q(a))\in B\times Q$ and its context body as $g:B\times\Omega\to D$ with kernel $K:B\to\operatorname{Prob}\Omega$. Define the normalized mixed object by
+\begin{equation}\label{content:tau}
+ \widetilde K_a=K_{b(a)},\qquad
+ h(a,\omega)=(g(b(a),\omega),q(a))\in D\times Q.
+\end{equation}
+This gives the crossing into $H\simeq M\odot N$. In words: the later random context is sampled at the \emph{actual returned pure interface}, while the earlier retained content is carried through unchanged. The construction does not expose content secretly to the later context.
+
+On a native content map $s:Q\to Q'$ and context map $r:B\times\Omega\to\Omega'$ the crossing uses the actual context map $r_{b(a)}$ and actual content map $s$. Their probability equation is the given context pushforward at $b(a)$; their body square follows by substitution from $f'=(\mathrm{id}\times s)f$ and $g'(b,r_b\omega)=g(b,\omega)$. Causality and measurability follow by composition. For a pure middle map $u:B\to B'$, the two balanced representatives both use kernel $K'_{u(b(a))}$ and the same body, hence the balance comparison is literal. Input and output pure maps commute with the formula in the same way. Native noninvertible maps are not quotiented away.
+
+\begin{theorem}[Unary kernel/writer interaction]\label{content:unary}
+Formula~\eqref{content:tau}, with the displayed native maps and pure balance, yields the coherent unary kernel/writer crossing. Its induced normalized multiplication on $H$ is exactly the retained-content serial multiplication above. Context and content unit comparisons are the singleton tuple maps; the two multiplication comparisons are tuple reassociations. These comparisons satisfy the distributive unit/multiplication coherence diagrams at retained-map level.
+\end{theorem}
+\begin{proof}
+There are four compatibility checks before higher coherence. Crossing a pure content unit carries a singleton, deleted by its unitor. Crossing a pure context unit leaves a singleton witness, likewise deleted. Crossing past two successive content stages retains their ordered content pair: whether content is first accumulated or crossed one stage at a time, the eventual kernel is sampled at the same twice-updated pure value and the content is the same ordered pair. Crossing past two successive context stages yields on both sides the conditional product of their kernels evaluated at the same successive pure values, with the same witness pair. The measure equality is ordinary iterated kernel integration; the body is the same nested evaluation. These comparisons are actual isomorphisms with explicit inverse tuple maps.
+
+For coherence, a finite word of one-sided context and content stages has a retained normal description: ordered context witnesses, their successively conditioned product law, ordered content entries, and the pure value obtained by evaluating the stages in execution order. Crossing a content stage past the next context stage changes none of these data; it only relocates the retained entry. Accumulating equal-sided stages only changes tuple parentheses. Every comparison above is the unique specified reassociation on these addressed entries on the full carriers, not only on the realized body images, and never an arbitrary bijection sharing endpoints. Thus every composite of comparison maps with the same addressed source and target is the same function on context witnesses and the same function on content entries. Kernel measures agree by the iterated formula; content/body equations agree by evaluation. This proves coherence, including diagrams containing inverse comparison maps. Naturality with arbitrary native arrows follows from the triangular pushforward calculation of serial composition and the pointwise body squares, not from assuming carrier maps faithful for other resource categories.
+
+The normal description is independent of pure-middle presentation because each middle substitution is literal in~\eqref{content:tau}; hence these equalities descend through the relative balance generators. Retained comma normalization uses the representative with middle object $e_AP=A\times\Omega$, which is still a filtered standard Borel interface, and retains the original context/content arrows. The induced $H$ multiplication samples the second context at $f$'s returned value and retains the ordered product of the two contents, exactly as previously proved.
+\end{proof}
+
+\paragraph{Exact side-effect limit.} A writer log is not a state action. Later contexts in this construction see the returned pure value $b$, not the hidden log $q$. If a physical or logical effect must constrain a later operation, the actual changed world/capability interface must be part of $b$ (for example $b=(w',v)$), or a further nontrivial content action must be constructed. Keeping that effect only in $q$ and then claiming later admissibility changes is unsound. The commuting-square theorem preserves a supplied world-bearing interface but cannot invent it. This is why the following shared-world content construction is separate, rather than inferred from the writer crossing.
+
+\paragraph{O1 scope.} The result is an independent, explicit unary kernel/writer family extending the normalized finite-probability writer fragment to causal path carriers. It does not establish the existing general O1 criterion for arbitrary rig coefficients, finitary branching occurrence presentations, or arbitrary nonterminal contentads. In particular no map with multiple independently resumed occurrences is justified by this unary calculation. Feedback compatibility also remains restricted by the separate countable-control or all-history innovation theorems.
+
+\section{One shared world, not two independent copies}
+A directed graph $W$ has vertices (world states) and edges (individual world events), with source and target maps. Edges are retained witnesses: different events with equal endpoints need not be identified. A shared-world content grade is a graph map $p:R\to W$. A vertex of $R$ contains private/continuation information together with its actual world state; an edge of $R$ records a permitted update lying over a particular world event. Different grades refer to the \emph{same} graph $W$.
+
+Define the shared tensor by the graph fiber product
+\[
+ R\otimes_W T=R\times_W T.
+\]
+Its vertices are pairs $(r,t)$ with $p(r)=q(t)$. Its edges are pairs $(e_R,e_T)$ with $p(e_R)=q(e_T)$ as actual edges of $W$. Endpoints are the paired endpoints. Thus one shared world event updates both projections coherently; its effects cannot be omitted on one side. If a component is unaffected by an event it must explicitly admit a corresponding lift (possibly preserving its private data), not silently make a second copy of the world.
+
+Content maps are graph maps over $W$. Their tensor is the paired map on vertices and edges. This construction allows genuine shared-state interference: both projections can change private state in response to the same world event. It does not itself assert that either component can initiate every world event.
+
+\begin{theorem}[Coherent shared-content tensor]\label{content:shared}
+Graphs over $W$ with $\otimes_W$ and unit $W\xrightarrow{\mathrm{id}}W$ form a symmetric monoidal category. Associator, unitors and symmetry are explicit tuple maps on vertices and on edges. They obey their coherence equations as literal functions. Pullback along a graph map $u:W'\to W$ preserves this tensor and unit up to these canonical isomorphisms.
+\end{theorem}
+\begin{proof}
+Both bracketings of a triple consist of triples of vertices, respectively edges, having one common image in $W$. Rebracketing is therefore a graph isomorphism over $W$. Deleting the forced world coordinate supplies the unitors; swapping the two coordinates supplies symmetry. Every relevant coherence path acts as the same permutation/rebracketing on the same tuples, including edge witnesses. For base change, both $u^*(R\times_W T)$ and $u^*R\times_{W'}u^*T$ identify canonically with triples $(w',r,t)$ whose common image is $u(w')$; the same statement holds for edges. These identifications commute with structure maps and tuple coherence.
+\end{proof}
+This is genuine witness-level coherence for this specified shared-content family, not merely endpoint equality. It is also ordinary fiber-product geometry, not a claim to have found new category theory. A kernel on independently sampled copies of $R$ and $T$ need not concentrate on this fiber product. The theorem does not supply that missing probabilistic gluing.
+
+\section{Stable certificates and the exact availability requirement}
+Use graph reachability to define stable subsets of vertices. If $V_R$ is stable under edges of $R$ and $V_T$ under edges of $T$, then
+\[
+ V_R\times_W V_T\subseteq R\times_W T
+\]
+is stable: each synchronized edge projects to an allowed edge on each side. This yields horizontal safety-certificate combination on the shared carrier. To use this inference for a concrete concurrent system, every actual global step must map to a synchronized edge, including failures, invalidations, and external events. That is a local step interpretation obligation, not automatically implied by constructing the carrier.
+
+A graph map $q:T\to W$ has the \emph{outgoing edge-lifting property} when, for every $t\in T$ and world edge $e$ with source $q(t)$, there is an edge from $t$ lying over that very $e$. No unique or chosen lift is assumed.
+
+\begin{proposition}[Exact projection transport from local availability]
+If $q:T\to W$ has outgoing edge lifting, the projection $\pi_R:R\times_W T\to R$ lifts every finite outgoing path. Consequently for every vertex predicate $V\subseteq R$,
+\[
+ \pi_R^{-1}\operatorname{Stab}_R(V)
+ =\operatorname{Stab}_{R\times_W T}(\pi_R^{-1}V).
+\]
+Without lifting, only the inclusion from left to right is guaranteed.
+\end{proposition}
+\begin{proof}
+Given a path in $R$ starting at $r$, project its first edge to $W$ and lift that exact world edge at $t$. Pairing the two edges gives the first synchronized edge. Repeat for the finite path. Hence every reachable $r'$ is the projection of a reachable pair; the reverse reachability inclusion holds by projection. The exact stable-domain criterion proves the equality. Without this property, take $R=W$ consisting of one edge $w\to w'$, and $T$ consisting of one vertex over $w$ and no outgoing edge. The shared carrier has no move, so the predicate $\{w\}$ pulls back to a stable predicate there although it is not stable at $w$ in $R$.
+\end{proof}
+The counterexample is also a liveness warning: adding a partner can block a formerly available world action. Predicate safety may appear stronger simply because all movement stopped. Edge lifting is a concrete availability condition that prevents that particular loss; fairness and decreasing-work hypotheses are still needed for progress. Synchronizing event witnesses rather than just endpoints is essential to the proof.
+
+\section{A probabilistic shared-world construction that does compose}
+There is a restricted class in which the probabilistic gluing can be constructed explicitly. Take finite directed graphs with at least one outgoing edge per vertex, and a fixed world-event probability kernel $k_W(w,e)$ on outgoing edges of $W$. A stochastic content grade $p:R\to W$ has a probability kernel $k_R(r,e_R)$ on its outgoing edges, satisfying at every vertex $r$ and every outgoing world edge $e$,
+\begin{equation}\label{content:common}
+ \sum_{e_R:\ p(e_R)=e,\ s(e_R)=r}k_R(r,e_R)=k_W(p(r),e).
+\end{equation}
+Zero-weight edges remain raw edges. Equation~\eqref{content:common} is a strong common-event-law condition: the world-event distribution cannot depend on a component's hidden private state. It is not an assumption satisfied by arbitrary independently designed controllers. One may enlarge the declared world state to retain relevant public information, but this changes the interface and must be justified.
+
+For two grades, put on their actual graph fiber product the kernel
+\begin{equation}\label{content:glue}
+ k_{R\otimes T}((r,t),(e_R,e_T))=
+ \begin{cases}
+ \dfrac{k_R(r,e_R)k_T(t,e_T)}{k_W(w,e)},&k_W(w,e)>0,\\[5pt]
+ 0,&k_W(w,e)=0,
+ \end{cases}
+\end{equation}
+where $w=p(r)=q(t)$ and $e=p(e_R)=q(e_T)$ is the common actual event. This is conditional independence of the two lift choices given their one shared event, not independence of two copies of the world. It is an explicit modelling choice, not a consequence of common marginals. The formula is unique among couplings with these marginals and this conditional independence: at a positive event the two conditional lift laws are the component weights divided by the world weight; multiply them and then multiply by the world weight. Shared hidden correlations must instead be included in the declared world/event or retained in an explicit joint coupling.
+
+A stochastic grade morphism is a graph map over $W$ whose outgoing-edge pushforward at each source vertex is the target's outgoing-edge kernel. Such a map preserves actual event witnesses, not just world endpoint distributions.
+
+\begin{theorem}[Native common-event-law gluing]\label{content:stochastic}
+Formula~\eqref{content:glue} is a probability kernel with the two component outgoing-edge marginals. Its world pushforward is $k_W$. Stochastic grade morphisms tensor by their paired vertex/edge maps and preserve the glued kernels. The tuple associators, symmetry and unitors from Theorem~\ref{content:shared} preserve these kernels, giving a symmetric monoidal category of stochastic grades over this fixed stochastic world. From any fixed initial vertex, each stochastic grade morphism induces a probability-preserving map on infinite path witnesses, commuting pointwise with the mapped retained history.
+\end{theorem}
+\begin{proof}
+At a positive-probability event $e$, summing~\eqref{content:glue} over both lift fibers yields $k_W(w,e)^2/k_W(w,e)=k_W(w,e)$. Zero-probability events contribute zero. Summing over events gives one. To compute the marginal of a fixed $e_R$, sum its partner lifts: when $k_W(w,e)>0$ this gives $k_R(r,e_R)$. When $k_W(w,e)=0$, nonnegativity and~\eqref{content:common} force every local lift weight, including $k_R(r,e_R)$, to be zero, so equality still holds.
+
+For morphisms $a:R\to R'$ and $b:T\to T'$, the fiber sum for a target edge pair factors into the product of its two marginal fiber sums divided by the unchanged $k_W(w,e)$. Their individual kernel-pushforward equations therefore give exactly the target glued weight. The zero case again has all weights zero. Thus tensor acts on actual native path maps.
+
+For three grades, either bracketing gives weight
+\[
+ \frac{k_R(r,e_R)k_T(t,e_T)k_U(u,e_U)}{k_W(w,e)^2}
+\]
+when the world weight is positive, and zero otherwise. Rebracketing is therefore kernel-preserving. Permutation is symmetric; the world grade itself has weight $k_W$, so pairing it with a grade and deleting its forced world coordinate returns that grade's kernel. Tuple-map coherence already proved in Theorem~\ref{content:shared} now holds for the stochastic maps as well.
+
+The infinite path law is determined by the products of the successive finite transition probabilities. Finite induction using the outgoing-edge pushforward equation proves equality on each path cylinder after applying a grade morphism. Cylinders determine the probability law on the infinite path space of a finite graph. The retained mapped history is defined edge by edge, so its body square holds at every raw path, including paths of measure zero.
+\end{proof}
+
+\paragraph{What is, and is not, proved by this law.} This supplies an explicit coherent probabilistic context for the shared-content carrier, rather than assuming some unspecified coupling exists. The tuple associators are native probability-and-history maps. It is a nonterminal shared-content fragment suitable for unbounded Markovian execution with the current graph vertex carrying sufficient memory. It is not the original O1 independent crossing for arbitrary grades or arbitrary scheduler/adversary effects.
+
+Safety predicates stable on the two raw component graphs remain stable on the raw shared graph regardless of weights. For raw coverage of an infinite target path through a morphism, a sufficient condition is surjectivity of outgoing-edge lifts at \emph{each relevant source vertex}; recursive lifting then gives a source path. Mere global graph surjectivity does not suffice. Probability preservation is weaker and does not imply this condition. Likewise~\eqref{content:common} guarantees an available lift of a \emph{positive-weight} world event but not a raw lift for a zero-weight event. Exact raw stable-domain transport still needs the all-edge lifting condition of the previous proposition. This keeps law and possibility separate.
+
+The category is symmetric monoidal, not claimed cartesian: a diagonal that copies a component's private random lift need not preserve the conditionally independent tensor law. General stochastic base change is also \emph{not} claimed; Theorem~\ref{content:shared}'s base-change statement is deterministic graph geometry, and transporting probability kernels along an arbitrary world graph map needs separate data.
+
+\section{Controlled shared-world feedback with all-history transport}\label{content:controlledworld}
+The finite common-event-law construction has a feedback-safe controlled version. This supplies a direct bridge between shared-world content and the all-history transport principle; it does not rely on a choice of almost-sure disintegration or identify arbitrary open laws under feedback.
+
+Fix a standard Borel command space $A$, which may be uncountable. For each finite graph grade $p:R\to W$ give measurable controlled outgoing-edge kernels $k_R(r,a,e_R)$ and $k_W(w,a,e)$. Require, for \emph{every} state $r$, command $a$ and outgoing world event $e$,
+\[
+ \sum_{e_R:p(e_R)=e,\ s(e_R)=r}k_R(r,a,e_R)
+       =k_W(p(r),a,e).
+\tag{CW}
+\]
+A controlled grade morphism $h:R\to R'$ is a graph map over $W$ satisfying, for \emph{every} $r,a,e'$,
+\[
+ \sum_{e_R:h(e_R)=e',\ s(e_R)=r} k_R(r,a,e_R)
+       =k_{R'}(h(r),a,e').
+\tag{CM}
+\]
+Neither premise is only almost everywhere in $a$ or under an open-input experiment. The actual graph remains the raw permitted-edge graph for every command; commands change probabilities, not the declared raw admission relation. Command-dependent raw disabling requires a further indexed-admission model and is not inferred from a zero weight.
+
+Let a deterministic controller choose
+\[
+ a_n=\pi_n(x_{\le n},\gamma^W_{<n}),
+\]
+where $x$ is a fixed external stream and $\gamma^W_{<n}$ is the retained world vertex/event history before the next transition. It can be arbitrarily history dependent and can use continuous external values. It cannot distinguish private histories that the world projection forgets. A fixed controller seed or internal memory is incorporated in these causal functions. Start each grade at a specified vertex mapping to the same initial world vertex.
+
+\begin{theorem}[Controlled native path transport]\label{content:controlledpath}
+Every controlled grade induces a probability law on its infinite raw path carrier under this controller. A controlled morphism induces an adapted measurable path map preserving that law, the retained world history, and its full mapped content history. This remains true for uncountable command spaces. Identities and composition are preserved as actual path functions. If outgoing-edge preimages exist at each relevant source vertex for every target raw edge, the path map also covers every target raw path from the mapped initial vertex.
+\end{theorem}
+\begin{proof}
+A finite path prefix has probability equal to the product of its successive controlled edge weights. The controller at each step is evaluated on the already determined world prefix. Summing next edges gives one, so these finite cylinder laws are consistent and define the usual probability law on the infinite finite-graph path space. Each cylinder probability is measurable in the relevant external-input prefix.
+
+The graph map sends source prefixes to target prefixes with exactly the same world prefix. Consequently both evaluations of the controller choose the same command. At each source prefix, (CM) pushes its next-edge distribution to the target next-edge distribution at the mapped state and that same command. Summing over source prefixes and inducting over length proves the pushforward equation for every target cylinder. Cylinders determine the path probability law. This argument uses the pointwise premise for the command actually chosen from the history; there is no union of parameter-dependent null exceptions.
+
+The mapped path function is defined edge by edge, so it is adapted and measurable, preserves the world projection, and commutes with the content-history body everywhere, including zero-measure paths. Mapping edges commutes literally with composition and identities. Local outgoing-edge lifting constructs a preimage of any infinite target raw path recursively. This last statement is raw coverage, not a measurable inverse or an implication of the kernel equation.
+\end{proof}
+
+\paragraph{Explicit native object.} For fixed initial vertex let $\Omega_R$ be the infinite raw graph paths, $K_R(x,-)$ their controlled law, and $p^\infty$ their world projection. The combined body
+\[
+ (x,\gamma)\longmapsto(p^\infty\gamma,\gamma)
+       \in\Omega_W\times\Omega_R
+\]
+is a writer-style native object with nonterminal content $\Omega_R$. Finite graph path spaces are standard Borel with prefix filtrations; the cylinder calculation makes $K_R$ a causal kernel. A controlled graph map supplies \emph{both} the context map $h^\infty$ and content map $h^\infty$, with probability preservation from Theorem~\ref{content:controlledpath} and a literal body square. Thus the theorem lands in the actual native family, not just an unrelated transition-system relation. It assumes the declared raw graph semantics is appropriate for the application.
+
+\begin{theorem}[Shared-event gluing survives the controller]\label{content:controlledtensor}
+For each command $a$, use the common-event-law conditional-independent gluing formula
+\[
+ k_{R\otimes T}((r,t),a,(e_R,e_T))
+ =\frac{k_R(r,a,e_R)k_T(t,a,e_T)}{k_W(w,a,e)}
+\]
+when the denominator is positive and zero otherwise. The paired grade, its projections, paired morphisms, associators, symmetry and unitors satisfy (CW) and (CM). Therefore their native infinite-path maps remain probability preserving under the same world-history controller. In particular the controlled composite's marginal path laws equal the separately controlled component path laws, and all tuple coherence diagrams still commute at raw path-map level.
+\end{theorem}
+\begin{proof}
+For each fixed $a$, the finite fiber-sum proof of the common-event gluing theorem applies verbatim, including the zero-weight case. It yields the required controlled morphism equations for all $a$, not only for a distribution of open commands. Apply Theorem~\ref{content:controlledpath} to each resulting graph morphism. The controller reads the same world prefix after every such map, so it does not alter the argument. The graph tuple maps already satisfy the coherence equations; applying them edge by edge gives identical functions on infinite paths. Projection morphisms give the two asserted marginal path laws.
+\end{proof}
+
+This is conditional-independent lift gluing, not a claim that those marginals force the chosen joint law. The controller restriction is substantive: if the composite controller reads one component's private history that is absent from the other projection, the separately controlled component cannot necessarily reproduce its command sequence. The common world must then be enlarged and (CW) rechecked, or a different comparison proved. Likewise latent dependence between lift choices is not removed by using a common controller. Adequacy for an external joint system still requires its joint transition law to match the constructed gluing or a separate sound comparison.
+
+The all-state/all-command equations explain why the continuous diagonal feedback counterexample is excluded. Its second-step map fails the conditional transport equation precisely at the selected history/command, although every fixed open-input marginal is correct. Here that history cannot be discarded as a null exception. Unlike the countable-control theorem, no countability assumption on the command range is used.
+
+\section{Adequacy and progress are not automatic consequences of gluing}
+The path-measure theorem is adequate for the \emph{constructed} Markov model: its finite cylinders are exactly the products of its actual transition probabilities, and native morphisms preserve them. For an external system with proposed joint kernel $J$, identifying that system with the construction additionally requires $J$ to equal~\eqref{content:glue}, or a separately proved comparison. Equal component marginals alone do not imply this.
+
+For example, let there be one certain world event and two local fair-bit lifts. The constructed coupling assigns probability $1/4$ to the pair $(1,1)$. A different coupling assigns probability $1/2$ each to $(0,1)$ and $(1,0)$ and zero to $(1,1)$; its world and local marginals are identical. A service requiring both bits to be one has a positive success opportunity in the former and none in the latter. Substituting conditional independence has changed progress-relevant behavior, not just a presentation. If a shared hidden bit causes the anticorrelation, the model must retain it or the joint law rather than pretending the two lifts are independent.
+
+A raw synchronized graph can overapproximate another system's permitted paired transitions. This supports universal safety transfer when every actual transition is represented and observations match. It does not by itself support liveness transfer: restricting transitions can remove a needed enabled action and create deadlock. The separate progress theorem's readiness, rank and fairness premises must be verified for the actual transition/scheduler interpretation. A probability kernel does not imply fairness on \emph{every raw path}; zero-probability infinite paths remain possible in the declared raw semantics.
+
+There is, however, a direct stochastic progress rule for the constructed kernel, without asserting universal fairness. Let $D$ be the desired response set, retain terminated runs by absorbing self-loops, and let $V$ be a nonnegative integer potential on configurations. Suppose, before the first hit of $D$, all positive-probability next steps satisfy $V_{n+1}\le V_n$, and at every reachable finite history not yet in $D$,
+\[
+ \Pr(V_{n+1}\le V_n-1\mid\text{that history})\ge\varepsilon>0.
+\]
+Both are obligations on the \emph{joint} kernel, not on its separate marginals. They may be proved using the charged work/permit potential from the progress note, but are not supplied by gluing alone.
+
+\begin{proposition}[Quantitative almost-sure response]
+With fixed finite $V_0$, the first response time $\tau$ satisfies $\mathbb E\tau\le V_0/\varepsilon$, and in particular $\tau<\infty$ almost surely.
+\end{proposition}
+\begin{proof}
+Stop the potential at $\tau$. Its conditional expected decrement on step $n$ is at least $\varepsilon$ on $\{\tau>n\}$ and zero afterward. Summing through $N-1$ and using nonnegativity gives
+\[
+ \varepsilon\sum_{n<N}\Pr(\tau>n)\le V_0-\mathbb E V_{N\wedge\tau}\le V_0.
+\]
+The sum is $\mathbb E\min(\tau,N)$. Monotone convergence yields the bound and rules out positive probability of infinite $\tau$.
+\end{proof}
+This is an almost-sure/expectation theorem, not universal raw-path response, not physical-time response without a timing interpretation, and not progress under an arbitrary alternative coupling. It makes explicit which progress consequence the chosen path measure can actually support.
+
+\section{Precise remaining interaction problem}
+The first construction gives serial native body squares with retained writer-style content. The second gives coherent shared-world content and exact stable transport under a local availability condition. The common-event-law subclass additionally supplies an explicit coherent probabilistic gluing on that shared carrier. These do not automatically assemble into one general concurrent probabilistic contextad. One must define how a causal probabilistic context selects synchronized world-event lifts, how that selection changes under native content maps, and prove the required distributive/relative laws. Independently sampling contexts can violate shared-world equality; arbitrary chosen lifts can violate coherence; sectionwise measure-preserving maps can fail feedback, as the diagonal counterexample already shows.
+
+A plausible restricted integration uses explicit all-history conditional innovation transport to select world-event lifts and retained shared histories. The next proof must check both the event-lift law and the native probability/body square under the same selection, not merely establish them using unrelated witnesses. This is the specific remaining obstacle, rather than an assertion that a generic operational theorem already completed the contract.
+
+
+\part{Countable-control feedback closure}
+
+\paragraph{Status.} A written compositional theorem refining the companion kernel-witness construction. Not mechanized and not asserted historically novel. This proves a genuine delayed-feedback operation on a tractable native-cell class, rather than merely a statement about final laws. It also identifies why the continuous diagonal counterexample lies outside that class. The separate all-history innovation theorem remains useful when feedback commands are uncountable.
+
+\section{Presented stream class}
+Input coordinates $A_n$ are nonempty countable discrete spaces. Outputs $Y_n$, source tape coordinates $U_n$, and target tape coordinates $V_n$ are standard Borel. Let
+\[
+ A=\prod_n A_n,\quad Y=\prod_nY_n,\quad
+ \Omega=\prod_n U_n,\quad\Lambda=\prod_n V_n.
+\]
+All carry their product Borel structure and coordinate-prefix filtration. Fix probability laws $\mu$ on $\Omega$ and $\nu$ on $\Lambda$, independent of the open input. Neither need be a product law: correlated tape coordinates are allowed.
+
+Objects are adapted measurable bodies $f:A\times\Omega\to Y$, respectively $g:A\times\Lambda\to Y$. A native cell is an adapted measurable $r:A\times\Omega\to\Lambda$ with
+\[
+ (r_a)_*\mu=\nu\quad\hbox{for every fixed }a\in A,
+ \qquad g(a,r_a\omega)=f(a,\omega)\quad\hbox{for all }(a,\omega).
+ \tag{N}
+\]
+Adapted means coordinate $n$ depends only on input and tape coordinates through $n$. No almost-sure quotient is applied to the body square. This is the constant-kernel subcategory of the companion native serial construction. It is closed under serial composition with independent retained tapes; explicitly shared randomness must be represented as such, not silently replaced by independent copies.
+
+A deterministic strictly delayed controller is specified by measurable functions
+\[
+ a_n=\pi_n(x_{\le n},y_{<n})\in A_n,
+\]
+where $x$ is an external input stream. In the following fix $x$. For each tape, recursion uniquely defines the closed input and output. All coordinates are measurable functions of finite tape prefixes. A controller may use arbitrary measurable output information declared by its interface, but not future outputs.
+
+\begin{theorem}[Native feedback closure with countable control]\label{countable:main}
+Close $f$ and $g$ with the same controller. Let $a^f(\omega)$ be the source's closed input stream and set
+\[
+ R(\omega)=r_{a^f(\omega)}(\omega).
+\]
+Then $R$ is adapted and measurable, $R_*\mu=\nu$, and the closed output bodies commute pointwise with $R$. Thus the closed comparison is a native cell. This holds for every fixed external input $x$.
+\end{theorem}
+\begin{proof}
+Causal recursion gives adapted measurability of the closed input and $R$. The pointwise open square and induction over time show that the target run on $R(\omega)$ has the same input and output prefixes as the source run: at each step both controllers see the same earlier outputs. This proves the closed body square.
+
+The probability claim needs more than this induction. Fix a horizon $n$. There are only countably many input words $\alpha=(a_0,\ldots,a_n)$. Choose an arbitrary infinite extension $\bar\alpha$ of each; causality makes all prefixes below independent of that choice. Let $D_\alpha\subseteq\Lambda$ be the tapes for which the open target run at input $\bar\alpha$ is consistent with the controller through time $n$:
+\[
+ \alpha_k=\pi_k(x_{\le k},g(\bar\alpha,\lambda)_{<k})
+ \quad(0\le k\le n).
+\]
+Define $C_\alpha\subseteq\Omega$ analogously with $f$. These are measurable. Both families partition their tape spaces, because strictly delayed recursion produces exactly one consistent input word. Equation (N) gives
+\[
+ C_\alpha=r_{\bar\alpha}^{-1}(D_\alpha).
+\]
+On $C_\alpha$, the closed map $R$ agrees through coordinate $n$ with $r_{\bar\alpha}$. For any measurable target cylinder $Z$ depending only on coordinates through $n$, countable additivity therefore gives
+\begin{align*}
+ \mu(R^{-1}Z)
+ &=\sum_\alpha\mu(C_\alpha\cap r_{\bar\alpha}^{-1}Z)\\
+ &=\sum_\alpha\mu(r_{\bar\alpha}^{-1}(D_\alpha\cap Z))\\
+ &=\sum_\alpha\nu(D_\alpha\cap Z)=\nu(Z).
+\end{align*}
+The penultimate equality is the fixed-input native pushforward law. Cylinder probabilities determine the probability measure on the countable product standard Borel space. Hence $R_*\mu=\nu$.
+\end{proof}
+
+\paragraph{What countability does.} The proof is not an independence-of-fresh-noise argument. It uses countable partitioning by possible finite control histories. It therefore allows arbitrary fixed correlations within each tape. The same proof works if each controller has countable range of possible command histories at every finite horizon, even when the ambient command alphabet is larger. No global bound on execution length or the number of possible complete control streams is imposed.
+
+\begin{corollary}[Raw coverage and native functoriality]\label{countable:functor}
+If every section $r_a$ is surjective, then $R$ is surjective. Closing with the fixed controller preserves identities and vertical composition of native cells, and hence is a functor on this presented comparison category. In particular it preserves native isomorphisms. Pointwise cumulative cost inequalities are also preserved.
+\end{corollary}
+\begin{proof}
+For a target tape $\lambda$, compute its closed input $a^g(\lambda)$. Choose $\omega$ with $r_{a^g(\lambda)}\omega=\lambda$. The open body square implies that the source run at this fixed input has the target's outputs. Delayed recursion then proves that it is precisely the source's closed input, so $R(\omega)=\lambda$. This is set-theoretic coverage, not a measurable choice of inverse.
+
+The closed identity is identity. For two cells, the first closed body square gives equal outputs and hence equal controller input streams in the source and intermediate runs. Therefore closing their composite evaluates the second map at exactly the same input stream as composing the two closed maps. The tape functions are literally equal, not merely equal in law. Measure preservation follows from Theorem~\ref{countable:main}. Pointwise cost inequalities specialize to this same actual closed input.
+\end{proof}
+
+\section{Why the general uncountable case really fails}
+The companion counterexample uses iid uniform $(u_0,u_1)$, target output $(u_0,u_1)$ and source output
+\[
+ f(a,u)=\begin{cases}(u_0,u_1^2),&a_1=u_0,\\(u_0,u_1),&a_1\ne u_0.\end{cases}
+\]
+The map $r_a=f(a,-)$ is an adapted Borel bijection, preserves the fixed-input uniform tape law, and supplies a literal body square; its inverse takes a square root on the same null fibre. Feedback $a_1=y_0$ makes the source's second output square-uniform rather than uniform. The feedback command has uncountable range. Each fixed command has a null exceptional set, but feedback selects their uncountable union. In the proof above, replacing the countable sum by a supposed sum over arbitrary commands is invalid.
+
+This also yields a quotient no-go: any semantics which identifies all causal realizations having the same open output law for every deterministic input cannot simultaneously support an operation agreeing with this operational delayed feedback on every Borel realization. The two open realizations would be equal, while their required closed laws differ. Keeping explicit witness and local-history data, or restricting the admissible feedback class, is therefore substantive, not bookkeeping.
+
+\section{Relation to context/content and remaining work}
+This is a feedback closure theorem for actual native probability/body cells in the constant-kernel stream subclass, with raw paths and coherence retained. It composes with the companion serial kernel-witness theorem. It is not a theorem that every causal kernel has a feedback realization, nor that full traced-category axioms hold automatically. It does not by itself add nonterminal content grades, simultaneous shared-world parallelism, or instantaneous interconnection.
+
+The writer-history extension being developed separately can retain an additional content log: the controller uses the declared returned stream, while a native content map relates the retained logs. The proof here continues to use the pointwise returned-stream square; the log square then transports under the same closed input. An abstract public-output map alone does not justify hidden continuation-state or authority assertions. Those require the explicit boundary-aware content map and its interference preservation.
+
+For uncountable feedback commands, the companion all-history conditional innovation rule is a stronger sufficient replacement for the countable-partition argument. Neither theorem claims an optimal universal characterization. The sharp fact established here is that countable control histories suffice for the weaker sectionwise native maps, while unrestricted Borel control can fail even for native isomorphisms.
+
+
+\part{Seeded delayed feedback with nonterminal native content}
+
+\paragraph{Status.} A direct, scoped native construction with nonterminal retained content and explicit feedback laws. Written proofs, not mechanically verified or asserted novel. It combines the companion kernel-witness, countable-control, and writer-content constructions. It does not invoke the old O1 theorem outside its hypotheses and does not assert an ordinary total traced category.
+
+\section{The actual comma-shaped family}
+Let $C$ be the category of filtered standard Borel interfaces with measurable adapted maps, as in the kernel-witness note; the increasing prefix algebras generate the full sigma-algebra. Stream interfaces are a subfamily, and product streams are identified coordinatewise. For each input interface $A$, define $\mathsf{Ctx}_A$ as follows. Objects are filtered standard Borel tape spaces $\Omega$ with probability law $\mu$, independent of the input. A morphism $(\Omega,\mu)\to(\Omega',\mu')$ is a measurable adapted $r:A\times\Omega\to\Omega'$ satisfying $(r_a)_*\mu=\mu'$ for every $a$. The functor $e_A$ sends this object to $A\times\Omega$ and a morphism to $(a,\omega)\mapsto(a,r_a\omega)$.
+
+Let $\mathsf{Cont}$ be the category of filtered standard Borel history carriers and adapted measurable maps. For output interface $B$, define $d_B(R)=B\times R$ and $d_B(s)=\mathrm{id}_B\times s$. A retained operation is an object of the actual comma category
+\[
+ H^{\mathrm{wr}}(A,B)=(e_A\downarrow d_B):
+ \qquad F=(\Omega,\mu,R,(f,q):A\times\Omega\to B\times R).
+\]
+Here $R$ is not forced to be terminal; $q$ can retain a full typed execution history with pending effects. It retains only what the interpretation explicitly puts into it.
+
+A native arrow $(r,s):F\to F'$ satisfies the context pushforward condition and the literal square
+\[
+ f'(a,r_a\omega)=f(a,\omega),\qquad
+ q'(a,r_a\omega)=s(q(a,\omega)).\tag{N}
+\]
+No almost-sure quotient is taken. The content map may forget information, but any safety application must separately show that it preserves the required boundary/interference structure.
+
+Pure endpoint substitution makes $H^{\mathrm{wr}}:C^{op}\times C\to\mathbf{Cat}$ a functor. Serial composition uses tape $\Omega\times\Lambda$ with law $\mu\times\nu$, visible body $g(f(a,\omega),\lambda)$, and retained content
+\[
+ (q(a,\omega),t(f(a,\omega),\lambda))\in R\times T.
+\]
+Horizontal context maps are triangular: $(\omega,\lambda)\mapsto(r_a\omega,u_{f(a,\omega)}\lambda)$; horizontal content maps are $s\times v$. They preserve the product tape law by integrating the second fresh tape first. Although the tapes are independent, the second native map can depend on the actual intermediate value.
+
+\begin{theorem}[Direct native relative composition]
+These categories admit pure units and serial multiplication on the relative category-valued tensor. Their native associators and unitors satisfy the required coherence. This is a concrete comma-shaped relative pseudopromonad with writer-style content.
+\end{theorem}
+\begin{proof}
+Singleton tapes and singleton histories give units. Both bracketings retain the same ordered triples of tapes and contents, up to canonical tuple maps, with the same body and product law. These maps are native isomorphisms. Pentagon and triangle diagrams are equalities of the tuple functions, not just equality in distribution. For a pure intermediate map $u:B\to B'$, composing $u\circ f$ with $g$ gives the same witness, probability, content and body maps as composing $f$ with $g\circ(u\times\mathrm{id})$. Thus the pure-middle balancing generators are sent to identities, compatibly with their relations. The composition functors consequently descend to the relative pseudocoend tensor; the same native associators and unitors provide its multiplication coherence. The companion kernel and writer proofs verify the probability and body equations explicitly.
+\end{proof}
+The displayed theorem is a direct family construction. It is not inherited automatically from O1: the carriers are path spaces rather than finite augmented families, and the content is the specified writer family rather than arbitrary relative polynomial occurrence content. The dependence of tape maps on inputs is retained. The more general input-dependent kernel construction is available serially, but is not assumed in the feedback theorem below.
+
+\section{Seeded delayed closure retaining the content}
+For feedback, restrict the external interfaces and tape carriers to countable-product stream presentations; retained content carriers may still be general filtered standard Borel spaces. Tape coordinates need not be independent. Write $U=U_0^{\mathbb N}$ where $U_0$ is nonempty and countable. Fix a seed $u_*\in U_0$. Given
+\[
+ F\in H^{\mathrm{wr}}(A\times U,B\times U),\qquad
+ f(a,u,\omega)=(b,v),
+\]
+define its delayed closure $\mathsf D_U^{u_*}(F)$ by the causal equations
+\[
+ u_0=u_*,\qquad u_{n+1}=v_n,\qquad (b,v)=f(a,u,\omega).
+\tag{D}
+\]
+For each fixed external stream $a$ and raw tape $\omega$, recursion uniquely determines $u,b,v$. Retain the \emph{same} tape $\Omega$ with law $\mu$ and the \emph{same} content carrier $R$, with closed content body $q(a,u(a,\omega),\omega)$. There is no repeated resampling or erasure of intermediate history in this definition.
+
+\begin{theorem}[Native nonterminal feedback functor]\label{writerfeedback:functor}
+For countable $U_0$, delayed closure maps a native arrow $(r,s):F\to F'$ to the native arrow
+\[
+ \widehat r_a(\omega)=r_{(a,u(a,\omega))}(\omega),\qquad \widehat s=s.
+\]
+It preserves identities and vertical composition, and thus defines a functor on the indicated native hom categories. Raw-covering context maps remain raw-covering. Pointwise cumulative cost inequalities, when supplied, remain valid.
+\end{theorem}
+\begin{proof}
+The visible part of (N), followed inductively through (D), gives equal closed visible and feedback outputs and hence the same actual input $u$ for the related runs. Substituting this input into the content part of (N) yields the literal closed content square. For each fixed $a$, there are only countably many possible finite feedback-input histories. The countable-control theorem therefore proves $(\widehat r_a)_*\mu=\mu'$, by partitioning source and target tapes according to those histories and applying the open pushforward law on each piece. Adapted measurability follows from recursion. This argument uses neither independent tape coordinates nor a fresh-noise presentation, only an input-independent tape law.
+
+Identities remain identities. For a composite of two arrows, the first body square makes the intermediate feedback input identical to the source feedback input; hence both orders of closing and composing evaluate the second context map at the same input. Content maps compose ordinarily. This proves equality of actual native maps. To lift a target raw tape, compute its target closed input, choose a source preimage under the corresponding open section, and use the pointwise body square and unique recursion to verify that this input is the source closed input too. Cost inequalities similarly specialize at that common input.
+\end{proof}
+
+\section{Laws that hold, and one ordinary trace law that does not}
+All equations below are understood after the displayed canonical interface-product rearrangements. The tape and history maps witnessing them are identities or canonical tuple isomorphisms.
+
+\begin{theorem}[Scoped delayed-feedback laws]\label{writerfeedback:laws}
+The following hold at native witness/content level.
+\begin{enumerate}
+\item \textbf{Pure external naturality.} For causal pure maps $h:A'\to A$ and $k:B\to B'$, external substitution before or after delayed closure agrees:
+\[
+ \mathsf D_U((k\times\mathrm{id}_U)F(h\times\mathrm{id}_U))
+ =k\,\mathsf D_U(F)\,h.
+\]
+These pure maps do not introduce extra tapes or history factors.
+\item \textbf{Separated superposing.} An independently taped operation $G:C\to D$ with no connection to the feedback wire can be placed alongside $F$ before closure or alongside its closure afterward. Both constructions have tape $\Omega\times\Lambda$, content $R\times T$, and equal bodies.
+\item \textbf{Two seeded delays.} For $F:(A\times U)\times V\to(B\times U)\times V$, closing $V$ with seed $v_*$ and then $U$ with seed $u_*$ agrees with joint delayed closure of $U\times V$ with seed $(u_*,v_*)$. The same tape and history carrier occur once, not twice.
+\item \textbf{Unit wire.} Closing the singleton feedback wire gives the original operation under pure product unitors.
+\item \textbf{Delayed yanking.} For the pure swap $U\times U\to U\times U$ with singleton tape and content,
+\[
+ \mathsf D_U^{u_*}(\mathsf{swap})(a)_0=u_*,\qquad
+ \mathsf D_U^{u_*}(\mathsf{swap})(a)_{n+1}=a_n.
+\]
+Thus yanking gives a seeded delay, not identity.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Pure external maps leave the feedback recurrence unchanged; they only substitute the external input or postcompose the external output. Retained content is evaluated at that same solution. For superposing, $G$ contributes no term to the recurrence for $u$, so the solution uses only $F$'s tape and input. The other body and history factor are unchanged.
+
+For the two-delay law, both constructions solve the same equations at each time: $u_0=u_*,v_0=v_*$, and both next values are the corresponding outputs of $F$ at the preceding time. Strict delay gives a unique simultaneous solution by induction. In nested closure the inner solution at time $n$ depends only on the outer wire through time $n$, so the outer recursion is causal and yields that same simultaneous solution. Content is the single evaluation of $q$ along it. No measure comparison is needed beyond identical tapes and laws; functoriality on cells follows from Theorem~\ref{writerfeedback:functor}.
+
+The singleton recurrence carries no information. Finally, swap returns $b_n=u_n$ and $v_n=a_n$, so (D) gives the displayed delay. Each identity is pointwise and preserves the actual content carrier, giving the claimed native maps.
+\end{proof}
+
+These laws do not amount to claiming an ordinary traced symmetric monoidal category. Ordinary yanking is false, seeds are part of the structure, and unrestricted dinaturality or sliding through arbitrary stateful wire transformations has not been proved. Separated superposing uses explicitly independent tapes and is not a theorem about shared mutable state. The shared-world event-gluing construction is a different tensor with additional hypotheses; identifying the two would discard precisely the correlations the programme must retain.
+
+\section{Meaning of the restrictions}
+The countability assumption is sufficient for this comparison class, not a restriction on expressing a continuous-feedback operation as a raw causal transducer. For uncountable wire values, raw recursive closure still exists, but a sectionwise probability-preserving native isomorphism can fail to preserve its closed law. The companion diagonal example proves this. Supplying local innovation transport valid at every history is an alternative sufficient restriction for uncountable wires.
+
+Retained writer content is a genuine nonterminal native family, but does not by itself derive a semantic account of arbitrary result-dependent protocols, graph-changing interfaces, or all O1 contentads. A typed operational interpretation must say which histories and boundary interfaces $q$ retains; a certificate must show its content maps preserve the actual suspension/interference relations. The proven direct composition and delayed-closure laws are reusable structure for that next interpretation, not its replacement.
+
+
+\part{Native boundary-certificate lifting}
+
+\paragraph{Purpose and status.} This constructs a certificate layer \emph{over actual commuting body squares}, rather than treating an unrelated transition-system theorem as the contextual-composition construction. It applies to a retained-path version of the native comma presentation. The path-carrier probability/coherence construction is a separate input; this note neither assumes that its full independent crossing exists nor claims to prove it. Proofs are elementary and written, not mechanized or asserted novel.
+
+\section{The carrier interface that is actually required}
+The existing native operation is $(P,Q,f:e_A P\to d_BQ)$, and a native cell has context and content maps $\alpha,\beta$ satisfying
+\[
+ d\beta\circ f=f'\circ e\alpha.
+\]
+The retained finite probabilistic instance additionally requires a witness pushforward law and a pointwise cost inequality. For feedback, replace terminal-only observations by \emph{retained execution histories}. Let $X_f$ denote raw witness prefixes (including input data), let $Y_f$ denote typed execution prefixes, and let $f:X_f\to Y_f$ be the deterministic history body. The prefix sets are regarded as categories under extension, and all displayed maps preserve prefixes. Complete raw branches, probability measures and cost data may sit above this diagram, but no measure quotient is taken in it.
+
+A typed history retains its actual continuation interface, receipt, pending effects, shared resources and world information specified by the model. Its interference relation $E_f$ consists of allowed extensions while that continuation is suspended. Different continuation identities must not be silently joined. Interference may change the actual interface; such a change is retained in the history. A native cell induces the following actual prefix square:
+\[
+\begin{array}{ccc}
+ X_f&\xrightarrow{a}&X_{f'}\\
+ f\downarrow&&\downarrow f'\\
+ Y_f&\xrightarrow{b}&Y_{f'}.
+\end{array}
+\qquad b f=f'a.
+\]
+Here $a$ is the retained witness/context map and $b$ is the content/interface history map. These are the prefix interpretations of $e\alpha,d\beta$, not newly postulated observational equivalences. We restrict to the native cells for which $b$ preserves interference edges. Composition is composition of the actual context and content maps, hence preserves both the square and this edge condition. If a proposed native cell supplies only an eventual-output square, it is not yet an object of this boundary-aware comparison category.
+
+This requirement is concrete: a causal map on complete paths whose full retained-history square commutes yields the prefix square when its prefix interpretations exist. A map on terminal values alone does not. Probability pushforward, raw-branch coverage, productivity, and cost conditions remain additional requirements on the native path construction; the certificate layer does not weaken them.
+
+\section{An actual displayed category of certificates}
+For each body $f$, a boundary certificate is a pair of subsets $(U,V)$ with
+\begin{equation}\label{boundary:cert}
+ U\subseteq X_f,\quad V\subseteq Y_f,\qquad f(U)\subseteq\Stab_{E_f}(V),
+\end{equation}
+where $\Stab_E(V)=\{y:E^*(y)\subseteq V\}$. Here $U$ specifies admitted raw prefixes at the boundary and $V$ specifies legitimate resumed configurations with their actual dependent interfaces. $U$ is not automatically a controller guard: an executable guard must additionally depend only on the controller's allowed observation. The universal condition is deliberately on all raw prefixes, not merely almost surely.
+
+Certificates form a poset category with
+\[
+ (U,V)\le(\widetilde U,\widetilde V)
+ \quad\Longleftrightarrow\quad
+ \widetilde U\subseteq U\ \text{and}\ V\subseteq\widetilde V.
+\]
+This is the ordinary weakening order: restrict the admitted prefixes and weaken the promised resumption assertion.
+
+\begin{theorem}[Native-square certificate pullback]\label{boundary:pull}
+For each boundary-aware native cell $(a,b):f\to f'$, the formula
+\[
+ (a,b)^*(U',V')=(a^{-1}U',b^{-1}V')
+\]
+defines a functor on certificate posets. These pullbacks compose strictly and preserve identities. Consequently their Grothendieck construction is a displayed certificate category over the boundary-aware native cells, with cartesian pullback of certificates.
+\end{theorem}
+\begin{proof}
+Take $x\in a^{-1}U'$. The actual body square gives
+$b(f(x))=f'(a(x))\in\Stab_{E_{f'}}(V')$. If $f(x)E_f^*y$, edge preservation implies $b(f(x))E_{f'}^*b(y)$, so $b(y)\in V'$. Hence $f(x)\in\Stab_{E_f}(b^{-1}V')$, proving~\eqref{boundary:cert}. Inverse image preserves both set inclusions in the weakening order. Identity and composition are literal inverse-image equalities. The usual displayed construction has objects $(f,C)$ and arrows consisting of a base cell $q:f\to f'$ with $C\le q^*C'$; its cartesian arrow over $q$ has domain $(f,q^*C')$. The universal factorization follows from the pullback functor identities.
+\end{proof}
+
+\paragraph{Direction and applicability.} A target certificate pulls back along a source-to-target native cell. If the implementation admits prefixes $U_0$, one must prove $U_0\subseteq a^{-1}U'$. This is not obtained from the probability marginal equation. Likewise $b^{-1}V'$ must imply the concrete physical precondition actually needed; an abstraction forgetting a dangerous effect can fail that implication. The theorem does not turn an inadequate abstraction into a safety proof.
+
+\begin{proposition}[The precise exactness obstruction]
+The stable-domain comparison used in Theorem~\ref{boundary:pull} is always lax:
+\[
+ b^{-1}\Stab_{E_{f'}}(V')\subseteq\Stab_{E_f}(b^{-1}V').
+\]
+It is equality for every $V'$ if and only if
+\[
+ E_{f'}^*(b(y))=b(E_f^*(y))\qquad(y\in Y_f).
+\]
+Thus exact stable-domain transport requires reachable-state lifting, whereas safe certificate pullback only requires edge preservation.
+\end{proposition}
+\begin{proof}
+Edge preservation gives one inclusion of reachable sets. Membership in the two displayed predicates means that, respectively, the larger reachable set or its source image lies inside $V'$. These conditions are equivalent for every $V'$ precisely when the sets coincide: for necessity choose $V'=b(E_f^*(y))$.
+\end{proof}
+This is a derived requirement on the interpreted native content map, not an assumption that the whole composed program refines itself. It explains which exactness law can fail when moving between interfaces with different interference possibilities.
+
+\section{Dependent resumption and conditional infinite-run safety}
+Suppose a body produces a suspension boundary and its admitted raw prefix lies in $U$. The certificate ensures that every allowed finite interference extension lies in $V$, which contains the continuation's actual resumption precondition. A resumed operation can therefore use that precondition without relying on the historical truth of an obsolete receipt. The same argument applies at every suspension on an arbitrary infinite execution: any particular boundary occurs after a finite prefix. This proves boundary safety in an already given execution model, not existence of a feedback operator on the native probabilistic cells, eventual resumption, or termination. In particular it cannot establish measure preservation after closing a feedback loop.
+
+A controller with only an information set $I(h)\subseteq Y_f$ can authorize immediate resumption after arbitrary allowed waiting whenever $I(h)\subseteq\Stab_{E_f}(V)$. This guard is maximally permissive relative to the represented possibility set $I(h)$; if $I(h)$ overapproximates actual possibilities it may be conservative. The pullback theorem can transport such assertions, but preserving observation-based implementability requires the history map to respect the designated observation equivalences.
+
+The independent progress certificates require additional rank, enabling and fairness data. In particular a native cell that inserts an infinite silent loop can preserve all finite safety predicates while destroying response. Productivity or administrative ranks and the progress-specific transfer premises remain necessary.
+
+\section{Where horizontal composition needs new work}
+Theorem~\ref{boundary:pull} proves vertical composition of actual native cells and their boundary certificates. It does not assert horizontal closure of arbitrary operations. If composing operations enlarges interference from $E$ and $F$ to $E\cup F$, the boundary assertion must survive arbitrary alternation. Individually valid boundary checks or one-block checks need not suffice.
+
+Using execution-order relation composition, one has the exact criterion
+\[
+ \Stab_{E\cup F}(V)=\Stab_E\Stab_F(V)\ \text{for every }V
+ \quad\Longleftrightarrow\quad
+ F^*;E^*\subseteq E^*;F^*.
+\]
+The proof is short: the block relation $E^*;F^*$ contains each factor and is reflexive; it is transitive exactly under the indicated sufficient crossing inclusion, and conversely equality with $(E\cup F)^*$ implies that inclusion. Equality of universal predicates for all $V$ detects equality of reachable sets. Without it, compute the greatest joint stable subpredicate instead; the requested precondition may shrink to the empty set.
+
+Even when the relational criterion holds, the original project's native construction needs \emph{selected witness maps} and coherence. Relational existence is insufficient. For example, a crossing may have two distinguishable witnesses with the same endpoints; different normalizations can choose different witnesses. The predicate layer identifies their endpoints and cannot enforce the associativity/hexagon equations between choices.
+
+A finite native-witness diagnostic makes the loss concrete. Take a fair-bit witness, constant history body and zero cost. On two copies the bijection $T(x,y)=(x,x\mathbin\oplus y)$ preserves the uniform product measure, cost and body square. On three copies, however,
+\[
+ T_{12}T_{23}T_{12}(1,0,0)=(1,0,1),\qquad
+ T_{23}T_{12}T_{23}(1,0,0)=(1,1,1),
+\]
+where maps are applied in execution order. Thus local native-map conditions do not imply even a braid-style three-factor coherence equation. All stable output predicates see only the constant history and cannot detect the disagreement. This is not presented as the exact O1 hexagon: it isolates the missing witness-level information and rules out inferring coherence from measure/body/stability conditions alone. It is therefore a necessary semantic diagnostic for a proposed exact block factorization, not a proof of a witness-level distributive law.
+
+For extensions beyond the companion restricted causal-tape and controlled-world constructions, the remaining precise interface is: show that its explicit tape reassociation/crossing maps induce the all-prefix squares above and preserve suspended interference; then prove certificate pullback agrees with those coherent maps. If its composition duplicates a shared world or resamples retained randomness, the needed square may already fail before stability is considered. No certificate decoration can repair that body-level failure.
+
+\paragraph{A newly checked feedback obstruction.} Adapted sectionwise probability-preserving native squares need not survive even one-step delayed feedback. On independent uniform witnesses $(u_0,u_1)\in[0,1]^2$ define
+\[
+ r_a(u_0,u_1)=\begin{cases}(u_0,u_1^2)&a_1=u_0,\\(u_0,u_1)&a_1\ne u_0.\end{cases}
+\]
+For every fixed input $a$, this is an adapted measurable bijection and preserves the uniform product law, since it changes only the null fiber $u_0=a_1$. Use source body $f(a,u)=r_a(u)$ and target body $f'(a,v)=v$. Their native square commutes pointwise, including all prefixes; the inverse uses square root on the same fiber. Under delayed feedback $a_1=y_0$, however, the source always outputs $u_1^2$ at its second step, while the target outputs $u_1$. Their second-output cumulative distributions are $\sqrt t$ and $t$. Raw bijective coverage and the pointwise body square therefore do not cure the probability failure. This identifies an independent requirement: conditional innovation transport under admissible histories, not just sectionwise pushforward for fixed inputs. The present certificate decoration is not a solution to that requirement.
+
+\section{What has been integrated}
+The construction uses the native context/content square rather than just a relation between final values; gives an explicit displayed certificate category, cartesian pullbacks and vertical coherence; handles result-dependent resumption and every finite boundary of an already given infinite-run model; and identifies exactly which interference transport law is lax or exact. It is a concrete bridge from the operational safety theorem to native path comparisons.
+
+It does not furnish the independent witness-level horizontal crossing, arbitrary shared-world causal probabilistic composition, or a full category-valued resumption interpretation. Those are specific remaining mathematical obligations, not generic caveats. The companion causal-tape work should be tested against them before claiming RC2 or RC3 completion.
+
+
+\part{Exact stable-domain transport and interference crossing}
+
+\paragraph{Status.} Written elementary proofs, not mechanized, no novelty claim. This is a concrete indexed-category fragment relevant to the contextual-composition feedback/concurrency extension. Unlike a mere transition-system proof, it gives actual pure transport, a comparison map, and a necessary-and-sufficient exactness condition. It is not yet the native category of context/content operations or an independent construction of its full crossing.
+
+\section{An indexed category of stable continuation assertions}
+An interference frame is a set $S$ with a relation $E\subseteq S^2$. A frame map $f:(S,E)\to(T,F)$ is a function preserving edges: $sEs'$ implies $f(s)Ff(s')$. Frames and these maps form a category. Let $\mathcal A(S,E)$ be the poset category of $E$-stable subsets of $S$, ordered by inclusion. These are assertions that survive arbitrary finite suspended interference. For arbitrary $P\subseteq S$, put
+\[
+\Stab_E(P)=\{s\mid E^*(s)\subseteq P\}.
+\]
+It is the largest stable subset of $P$, as proved in the companion stable-resumption note. The inclusion of stable subsets into all subsets has $\Stab_E$ as right adjoint.
+
+Inverse image $f^*$ sends stable subsets of $T$ to stable subsets of $S$: if $s\in f^{-1}Q$ and $sEs'$, then $f(s)Ff(s')$ and $f(s')\in Q$. Ordinary inverse-image identities and composition are literal equalities, so $\mathcal A$ is a strict contravariant functor from interference frames to $\mathbf{Cat}$ (indeed posets). There is no quotient identifying different assertions or discarding pending effects: $S$ includes whatever effects and capabilities the semantics must observe.
+
+For arbitrary target assertions, transport need not commute with stable-domain formation. There is always a canonical inclusion
+\begin{equation}\label{stable:lax}
+ f^{-1}\Stab_F(P)\ \subseteq\ \Stab_E(f^{-1}P).
+\end{equation}
+A target-world robust assertion remains robust after transport to the source. But source-world robustness may depend on interference transitions that the source does not model.
+
+\begin{theorem}[Exact stable-domain transport]\label{stable:transport}
+For an edge-preserving $f$, the following are equivalent:
+\begin{enumerate}
+\item For every $P\subseteq T$, inclusion~\eqref{stable:lax} is equality.
+\item For every $s\in S$, every $F$-reachable point from $f(s)$ is the image of an $E$-reachable point from $s$:
+\[
+ F^*(f(s))=f(E^*(s)).
+\]
+\end{enumerate}
+Thus path lifting at the level of reachable states is the exact missing condition, not just preservation of currently true assertions.
+\end{theorem}
+\begin{proof}
+Forward edge preservation implies $f(E^*(s))\subseteq F^*(f(s))$. Membership of $s$ in the left side of~\eqref{stable:lax} means $F^*(f(s))\subseteq P$; membership in the right means $f(E^*(s))\subseteq P$. Equality of these sets implies equivalence for every $P$. Conversely take $P=f(E^*(s))$. The right membership is true. Equality for this $P$ forces every target successor into that image, giving the reverse inclusion.
+\end{proof}
+
+One-step back lifting is a sufficient but unnecessarily strong hypothesis: every $f(s)Ft$ has $sEs'$ with $f(s')=t$. It implies the theorem's reachable-state condition by induction. Maps satisfying the exact condition compose: reachable images first lift through the second map, then through the first. Their identities satisfy it. Consequently exact stable-domain transport is closed under pure interface-map composition.
+
+\paragraph{Strictness example.} Let $S=\{s\}$ have no edges, $T=\{a,b\}$ have $aFb$, and $f(s)=a$. The map preserves edges. For $P=\{a\}$, $s$ lies in $\Stab_E(f^{-1}P)$ but not in $f^{-1}\Stab_F(P)$. A model that omits the reset action thinks a suspended permission is stable. This is a failure of exact transport, not an issue repaired by changing the receipt's type name.
+
+\section{Two interfering effects: when one crossing suffices}
+Fix two interference relations $E,F$ on the same actual configuration set $S$. Their joint interleaving relation is $U=E\cup F$. Write relational composition in execution order: $(R;Q)(s)$ means first an $R$ step, then a $Q$ step. Then
+\[
+ \Stab_E\Stab_F(P)=\{s\mid (E^*;F^*)(s)\subseteq P\}.
+\]
+This compound assertion checks one block of $E$ interference followed by one block of $F$ interference. Joint robustness instead checks arbitrary alternation. Always
+\[
+ \Stab_U(P)\subseteq\Stab_E\Stab_F(P).
+\]
+
+\begin{theorem}[Exact block-factorization criterion]\label{stable:cross}
+The following are equivalent:
+\begin{enumerate}
+\item $\Stab_U(P)=\Stab_E\Stab_F(P)$ for every $P\subseteq S$.
+\item $U^*=E^*;F^*$.
+\item $F^*;E^*\subseteq E^*;F^*$.
+\end{enumerate}
+In particular a directed crossing of arbitrary finite interference blocks, rather than a check of isolated steps on a few examples, is necessary and sufficient for this universal assertion-level factorization.
+\end{theorem}
+\begin{proof}
+The equivalence of the first two claims follows exactly as in Theorem~\ref{stable:transport}, by testing at $s$ with $P=(E^*;F^*)(s)$. The second implies the third because both block orders are contained in $U^*$. For the converse let $R=E^*;F^*$. It is reflexive, contains $E$ and $F$, and is transitive: using the third claim,
+\[
+ R;R=E^*;F^*;E^*;F^*\subseteq E^*;E^*;F^*;F^*=R.
+\]
+Therefore $U^*\subseteq R$. The reverse inclusion always holds.
+\end{proof}
+
+Equality $F^*;E^*=E^*;F^*$ is stronger than needed for one direction, and gives both block orders and commuting stable-domain operators. Mere one-step diamond pictures should not be substituted unless they really imply the displayed arbitrary-block inclusion. The theorem gives a relational criterion; it does not provide selected witnesses or coherence among selections.
+
+\paragraph{Interleaving counterboundary.} Let $S=\{a,b,c\}$, $F=\{(a,b)\}$ and $E=\{(b,c)\}$. From $a$, $E^*;F^*$ reaches only $a,b$, but $U^*$ also reaches $c$. For $P=\{a,b\}$ the nested stable-domain assertion holds at $a$ and joint stability fails. This is the minimal structural reason two individually analyzed interference phases can miss a combined side effect.
+
+\section{Recovering the joint domain without a crossing}
+When block factorization fails, one must not assert it. The joint stable domain is still constructible as the greatest fixed point of
+\[
+ \Phi_P(Q)=P\cap\{s\mid E(s)\subseteq Q\}\cap\{s\mid F(s)\subseteq Q\}.
+\]
+Starting from $Q_0=P$ and taking $Q_{n+1}=\Phi_P(Q_n)$ gives
+\[
+ \Stab_U(P)=\bigcap_{n<\omega}Q_n.
+\]
+Indeed $Q_n$ requires $P$ along all joint-interference paths of length at most $n$. Every finite path appears at some $n$. On finite $S$ this iteration stabilizes after at most $|S|$ strict removals. On arbitrary $S$ it remains an exact semantic definition but not a terminating algorithm for an effective presentation. This provides an honest fallback rather than a catalogue of exceptions.
+
+\section{What this supplies, and what it does not}
+This fragment supplies a genuine category-valued pure-transport construction and exactness tests extracted from semantics, not assumed to be contextual equivalence. Its objects are stable predicates; its arrows are inclusions. It can therefore serve as a displayed certificate layer over a later richer category of computations. In a result-dependent operation, apply it to configurations carrying the actual result, continuation interface, pending effects and authority. Any proposed interface transport must provide its frame map and either accept the lax comparison~\eqref{stable:lax} or prove reachable-state lifting for exactness.
+
+It does \emph{not} supply native grade maps and body squares for arbitrary resumptions, witness-sensitive cells, an independent context/content distributive law, or feedback coherence. Assertion-level relational factorization forgets which interference witness implements a crossing; a coherent witness-level lifting is an additional theorem, not a consequence of Theorem~\ref{stable:cross}. Thus one may not invoke the old project's pseudo-coend/Beck--Chevalley machinery solely from these posetal equalities. This is a precise bridge requirement and obstruction diagnostic for that construction.
+
+The companion progress result uses stable enabledness and locally decreasing ranks under all admitted interference. These stable-domain tests can certify its suspended-readiness assertions. They do not themselves imply fairness, recurrence, or progress, and the progress theorem does not supply the missing witness-level coherence.
+
+\paragraph{Prior-art status.} Stable assertions, inverse-image indexed posets, modal boxes and reachability/p-morphism-style exactness are established mathematical ideas. All displayed arguments are proved here and no claim of historical novelty is made. The project-specific outcome is an exact criterion separating safe lax transport from exact transport and separating arbitrary interference from a single normal-form crossing. A fuller literature and native-structure comparison is still required.
+
+
+\part{Conditional progress with interference and repair}
+
+\paragraph{Status and scope.} Written proofs, not mechanized certification or a novelty claim. This is a reusable operational progress layer for RC6 of version 0.1.2, not discharge of RC0--RC8. It isolates an actual missing obligation: local termination arguments do not survive interference unless the effects of every competing action are charged and enabledness survives. We prove a composition rule, a bounded-disruption generalization, a replacement rule, and unbounded recurrent service. The general independent categorical crossing and its compatibility with arbitrary recursion remain open; the companion integrated construction supplies a restricted unary kernel/writer crossing and scoped delayed feedback. No Byzantine-control-specific library or downstream contract is assumed.
+
+\section{Operational interface and local obligations}
+A global configuration $s\in S$ contains the shared world, each participant's private continuation, pending effects, reservations, and current interface. Steps are labelled by the participant taking the step or by $\mathsf{env}$. An invariant $J\subseteq S$ is preserved by all steps. We reason about maximal runs, including finite deadlock and infinite divergence; neither is silently removed. A participant $i$ is enabled when it has at least one outgoing step. Weak participant fairness means that, on an infinite suffix where $i$ stays enabled, it eventually steps (and hence steps infinitely often if it stays enabled forever). An implementation may not satisfy this simply by selecting a perpetually enabled neutral action: the local obligations below constrain \emph{every} enabled $i$-step in its ready states.
+
+For one service epoch fix a finite set $I$ of obligations and an acyclic precedence relation $\prec$ on $I$. An obligation is not the same as a physical participant: if several obligations share one scheduler identity, its local dispatcher must furnish the fairness used below. Each obligation has a natural-valued remaining-work measure $r_i:S\to\mathbb N$. Write
+\[
+ D_i(s)\iff r_i(s)=0,\qquad E_i(s)\iff r_i(s)>0\ \land\ \forall j\prec i\;r_j(s)=0.
+\]
+The completion predicate is $D=\bigcap_iD_i$. These measures may depend on shared state, not merely private program counters.
+
+A \emph{stable epoch certificate} consists of the following obligations on $J$:
+\begin{enumerate}
+\item Every step $s\to t$, including environment and failure steps, satisfies $r_i(t)\le r_i(s)$ for every $i$. In particular completion cannot be undone during this epoch.
+\item If $E_i(s)$ then $i$ is enabled; every $i$-step from such a state strictly decreases $r_i$. This includes all nondeterministic branches, not just a favorable branch.
+\item Each $i$ has weak participant fairness. A finite maximal run ends only in a state with no outgoing transition.
+\end{enumerate}
+The certificate is checked locally by a transition-effect table: for each component's guarantee and the external rely relation, prove the coordinate inequalities; for each component prove the readiness/decrease clause. This is not an assumption that the combined program already terminates. It is nonetheless a restrictive sufficient condition, not a complete characterization of progress.
+
+\begin{theorem}[Interfering epoch completion]\label{progress:th:epoch}
+Every fair maximal run starting in $J$ reaches $D$ after finitely many transitions. There are at most $\sum_i r_i(s_0)$ steps that strictly decrease any coordinate, though there is no elapsed-time or total-transition bound from weak fairness alone.
+\end{theorem}
+\begin{proof}
+The natural potential $V=\sum_i r_i$ never increases. Suppose an infinite run never reaches $D$. Its decreasing transitions are finite, so eventually every coordinate is constant. Select a $\prec$-minimal unfinished obligation in this suffix. Its predecessors are completed; consequently it remains ready and enabled. Fairness eventually schedules it, and its step strictly decreases its coordinate, contradicting constancy. A finite maximal run ending outside $D$ has a minimal unfinished obligation which is enabled, contradicting maximality. Each decreasing transition lowers $V$ by at least one, giving the stated bound.
+\end{proof}
+
+\paragraph{Composition rule.} A component contributes its local readiness/decrease proof and a guarantee relation. Composition is admissible when each guarantee is included in every other component's coordinate-nonincreasing rely relation and the shared invariant is inductive. Unioning the labelled step relations then satisfies the theorem. Concurrent components may change the same world and inspect each other's output; disjoint heaps are not required. Conversely, a concurrent write that resets another component's measure invalidates this rule rather than disappearing into an additive cost.
+
+\section{Bounded disruption, repair, and the resource ledger}
+Real systems may undo earlier progress. Let $b:S\to\mathbb N$ count remaining disruption permits, and fix $L\in\mathbb N$. Permits are actual environment assumptions or tracked capabilities, not a claim that an arbitrary adversary becomes cooperative. Divide steps into ordinary and disruption steps. Ordinary steps preserve $b$ and are coordinate-nonincreasing. Disruption steps obey
+\[
+ b(t)<b(s),\qquad \sum_i r_i(t)-\sum_i r_i(s)\le L\bigl(b(s)-b(t)\bigr).
+\]
+They may reset completed work, change readiness, and have visible pending effects. The invariant must still hold. The same finite obligation set and precedence graph are retained. At every configuration, readiness implies enabledness and every ordinary $i$-step when ready strictly decreases $r_i$. If an $i$-step is a disruption, its permit charge is required. Weak fairness is still per obligation.
+
+\begin{theorem}[Charged repair]\label{progress:th:repair}
+Every fair maximal run reaches $D$. At most $b(s_0)$ disruption steps occur, and at most $\sum_i r_i(s_0)+L b(s_0)$ ordinary strict-decrease steps occur. On every fair maximal continuation with ordinary and disruption transitions only, there exists a point after which $D$ holds permanently.
+\end{theorem}
+\begin{proof}
+$W=\sum_i r_i+Lb$ is nonincreasing; each ordinary strict-decrease lowers it. Disruptions are finite because each strictly decreases $b$. After the last disruption, Theorem~\ref{progress:th:epoch} applies. If the run is finite and ends outside $D$, readiness still supplies an enabled step, so it is not maximal. For an infinite continuation, apply the same argument after the last disruption: ordinary steps cannot undo $D$.
+\end{proof}
+This theorem accounts for repair rather than presupposing eventual successful repair. For example, if a failure invalidates a prepared reservation and creates three units of revalidation/compensation work, $L\ge3$ and consuming a permit pay for it. An uncharged reset, loss of the compensation record, or unbounded new work violates the premise. Fair scheduling by itself cannot compensate for such violations.
+
+\section{Progress-preserving replacement}
+Let $K$ be a component replaced by $K'$, with new private state and the same external action/obligation labels. A relation $R(s',s)$ couples the concrete and abstract configurations. Require that initialization is related, every concrete transition has a related abstract transition with the same label, and enabledness required by the abstract readiness certificate is implemented concretely. For certificate transfer require
+\[
+ r'_i(s')=r_i(s),\qquad b'(s')=b(s)
+\]
+for related states. Nonfunctional relations are allowed, but these values must be well-defined. Concrete readiness steps must simulate the appropriate ordinary abstract step or a permit-charged disruption. All pending shared effects are part of the related states, not hidden by return-value equality. Other components and environment steps must preserve $R$ through their matching transitions. Concrete scheduler fairness is assumed explicitly.
+
+\begin{corollary}[Local replacement preserves recurrent-service progress]\label{progress:cor:replacement}
+Under these hypotheses the concrete system inherits the stable or charged epoch certificate and its completion conclusion. Any following epoch initialization preserving the same certificate interface can use the replacement without redoing the global termination proof.
+\end{corollary}
+\begin{proof}
+Pull back the invariant, coordinate inequalities, permit inequalities, and local readiness/decrease obligations along $R$. Each is a one-step implication and is preserved by the label-matching simulation. Concrete fairness and the enabledness clause then permit direct application of Theorems~\ref{progress:th:epoch} and~\ref{progress:th:repair}. This proof does not need to assert that an arbitrary abstract simulation preserves fairness.
+\end{proof}
+\paragraph{Why ordinary trace refinement is insufficient.} A replacement may take infinitely many silent internal steps before doing its first visible action; its finite visible traces can be included in those of the original, yet service fails. The present rule excludes such uncharged, nondecreasing readiness steps. A useful later generalization is a separate well-founded administrative rank for finite stuttering; its transfer and scheduler interface must be proved, not inferred from trace inclusion.
+
+\section{Unbounded feedback without bounded total execution}
+A service driver opens epoch $n$ with finite $I_n$, a finite acyclic precedence graph, finite natural measures and permits, then on completion emits a response and opens epoch $n+1$. The driver itself is fairly scheduled. Once an epoch reaches completion, its response action stays enabled until it emits the response; every driver step in that phase emits the response. Between response and next initialization the analogous enabledness/action condition holds, or a finite administrative rank supplies termination. These conditions are required in addition to participant fairness. Work admitted during an epoch is either already included in its measures or queued for a later epoch. Queue entries and their side effects persist; admission must not secretly reset current measures. Each fixed admitted request belongs to some finite-numbered epoch, and initialization of that epoch is enabled after finitely many prior completions. This is an admission condition, not a guarantee for arbitrary overload.
+
+\begin{theorem}[Recurrent service with interference]
+If every initialized epoch has the charged repair certificate, every admitted request assigned as above eventually receives its epoch response. If epochs continue to be initialized, there are infinitely many responses. No global bound on the number of epochs, recursive depth, total runtime, or total disruptions over the whole service is imposed.
+\end{theorem}
+\begin{proof}
+Induct on the finite epoch index. Initialization and fair driver steps start the next epoch; Theorem~\ref{progress:th:repair} finishes it after finitely many transitions, and the driver emits its response. Any fixed request has finite assigned index. Infinite initialization therefore entails arbitrarily many, hence infinitely many, responses.
+\end{proof}
+Fresh permits may be introduced only at initialization under a stated resource/replenishment rule. Infinite faults are allowed across infinitely many epochs; infinitely many faults preventing one epoch are not. Dynamic participants can be installed at epoch boundaries and fixed but unboundedly large finite participant sets are allowed. Dynamic arrivals inside an epoch that enlarge the work set require a further admission/ranking theorem and are not covered here.
+
+\section{Two model interpretations using the same theorem}
+\paragraph{Transactional controller.} A finite epoch comprises prepare, validate, and commit-or-compensate obligations with acyclic dependencies. The world contains reservation ownership, versions, and pending physical/logical effects. A version-changing interference action may invalidate validation and add bounded compensation work, charged to a permit; ordinary writes must preserve already established readiness. The theorem supplies eventual epoch response, including justified refusal, not necessarily successful physical commit. A ``validate, suspend, commit'' implementation with an uncharged intervening write does not satisfy the certificate. This is exactly where the semantics must retain the post-interface and pending effects.
+\paragraph{Asynchronous workflow.} Obligations are a finite dependency graph of acknowledged messages/tasks. Delivery, acknowledgment processing, and cleanup are measured as work, with bounded retry creation charged to permits. Network steps cannot simply erase pending acknowledgments; retransmission's interference effects are included. An unbounded sequence of finite workflow epochs uses the same recurrent-service theorem. Fair scheduling of a sender is not a substitute for a delivery assumption: if delivery is external, readiness/decrease or the external rely relation must provide it explicitly.
+These are parameterized interpretations, not claimed completed implementation verifications. Their value is exposing the same reusable proof interface and different reasons why it can fail.
+
+\section{Relation to the project and remaining construction}
+The existing integrated dossier's finite contextual theorem uses finite ranked/acyclic code and all-input local coupling, with full typed leaves. Its law-and-possibility repair retains raw possible branches for universal claims. The present theorem instead treats arbitrary-length interleaved runs and fair liveness, and its universal transition obligations must also include raw possible zero-probability branches if such branches remain operationally possible. No almost-sure conclusion is proved here.
+
+For a general open concurrent-language interpretation, beyond the companion restricted unary and controlled-world constructions, one must still supply: (i) the resumption/feedback interpretation and interface transport; (ii) an interpretation of native cells preserving the displayed relation, effects, enabledness and rank certificates; (iii) the crossing/compatibility needed for composition; (iv) probabilistic recursive semantics. A plain map on output distributions cannot discharge any of these. The result here is a concrete conditional progress theorem and replacement interface, not an independent interaction theorem and not a claim that the contract is finished.
+
+\paragraph{Novelty and source ledger.} The proof mechanism is elementary well-founded ranking combined with weak fairness and rely/guarantee-style transition closure. No novelty is asserted for this mechanism. Project-specific progress is making the interference, bounded repair charges, resumed preconditions, and replacement interface explicit in one reusable contract-compatible theorem. Inputs consulted: version 0.1.2 of the Feedback and Concurrency Research Contract; the repository's \texttt{synthesis/Integrated\_Relative\_Computation\_Acceptance\_Dossier.tex}; and \texttt{protocols/refinement-recovery/Contextual\_Refinement\_and\_Controlled\_Recovery.tex}. A full literature novelty audit and Lean development remain separate tasks.
+
+
+\part{Stable resumption and productive refinement foundations}
+
+\paragraph{Status.} Written elementary proofs, not mechanized. This is a proposed operational foundation and a precise interface for further research, not completion of the feedback/concurrency contract. The general ideas are established rely--guarantee and divergence-sensitive simulation ideas. No novelty claim is made. This foundational note alone does not construct the native extension; companion parts now give a restricted unary kernel/writer category and feedback laws, while the general extension remains open.
+
+\section{Why a new continuation premise is necessary}
+The existing finite contextual-refinement manuscript retains private state, aliases and dependent interfaces, but uses finite ranked code and separated batches. An interfering environment can invalidate an interface between obtaining a receipt and invoking its continuation. Keeping the receipt as data does not preserve the authority or world predicate it once certified.
+
+Fix a set $S$ of configurations at a suspension boundary and a relation $E\subseteq S\times S$ of allowed interference steps while suspended. A configuration includes the actual world, continuation and returned receipt; the environment can change any of these only if the chosen model explicitly permits it. An assertion $P\subseteq S$ specifies that resuming this continuation is well formed and meets its primitive precondition. This permits result-dependent interfaces: $P$ can assert that the actual resources realize the interface indexed by the retained result. It does not identify a name with authority.
+Define
+\[
+ \Stab_E(P)=\{s\mid \forall t,\ sE^*t\Longrightarrow t\in P\}.
+\]
+An assertion $Q$ is $E$-stable if $s\in Q$ and $sEt$ imply $t\in Q$.
+
+\begin{theorem}[Exact stable resumption domain]\label{resumption:stable}
+$\Stab_E(P)$ is the largest $E$-stable subset of $P$. For every stable $Q$,
+\[
+ Q\subseteq P\quad\Longleftrightarrow\quad Q\subseteq\Stab_E(P).
+\]
+Consequently $\Stab_E$ is monotone, contractive and idempotent, and preserves arbitrary intersections. For $E\subseteq F$, $\Stab_F(P)\subseteq\Stab_E(P)$.
+\end{theorem}
+\begin{proof}
+Reflexivity of $E^*$ gives inclusion in $P$. If $sEt$ and $tE^*u$, then $sE^*u$, giving stability. A stable subset $Q$ of $P$ contains every $E^*$-successor of each of its members by induction on path length, so $Q\subseteq\Stab_E(P)$. The equivalence and idempotence follow. Monotonicity, intersections and antitonicity in interference follow directly from the universal quantifier.
+\end{proof}
+
+The theorem is valid on infinite state spaces and does not assume bounded waiting. On finite $S$ it has an executable elimination rule: start $Q_0=P$ and put
+\[
+ Q_{n+1}=P\cap\{s\mid E(s)\subseteq Q_n\}.
+\]
+This descending sequence stabilizes after at most $|S|$ strict removals; its limit is $\Stab_E(P)$. On infinite $S$, the same intersection $\bigcap_{n<\omega}Q_n$ still equals $\Stab_E(P)$, because every violation has a finite witnessing path. No termination of finite-state elimination is thereby claimed on infinite presentations.
+
+\subsection{Information available to the controller}
+Let $h$ be the controller's observed history and $I(h)\subseteq S$ its declared information set of possible suspension configurations. No observation is made during the waiting interval. The configurations consistent at resumption are $E^*I(h)$, the union of successors of elements of $I(h)$.
+\begin{proposition}[Maximally permissive robust observation-based guard]\label{resumption:knowledge}
+Relative to the represented information set $I(h)$, an observation-based policy can safely authorize immediate resumption after arbitrary allowed waiting at history $h$, for every state consistent with $h$, exactly when
+\[
+ I(h)\subseteq\Stab_E(P).
+\]
+This is the most permissive Boolean guard for this action and information model. If $I(h)$ only soundly overapproximates the actual possibilities, the guard is sufficient but need not be necessary for actual-state safety. Maximality is relative to $I(h)$, and is an actual-information maximality claim only when that representation is exact. It does not characterize the existence of a policy that performs further sensing or repair first.
+\end{proposition}
+\begin{proof}
+The universal safety condition is $E^*I(h)\subseteq P$, which is the displayed condition by quantifier rearrangement. If it fails, a consistent state and finite interference path end outside $P$. A policy seeing only $h$ makes the same authorization there. If it holds, every possible resumption state lies in $P$.
+\end{proof}
+
+\begin{example}[A fresh receipt is not a stable capability]
+A world has a bit $b$, and the operation $\mathsf{use}$ requires $b=1$. A check returns the receipt ``ready'' when $b=1$. Another component may reset $b$ to zero during suspension. The continuation is locally well formed at return but is unsafe after that reset. If resetting is always allowed, $\Stab_E(\{b=1\})$ is empty. Three genuinely different repairs are restricting interference by a lock/protocol, atomically revalidating with use, or allowing a specified failure branch. Renaming the receipt or proving the check correct repairs nothing.
+\end{example}
+
+\paragraph{Composition interface.} For sequential suspended boundaries $k$, instantiate $P_k$ with the continuation's actual dependent interface and require its establishing step to enter $\Stab_{E_k}(P_k)$. Each intervening environment step preserves this assertion by Theorem~\ref{resumption:stable}; finite induction proves safety at every resumed boundary of an execution, including every finite prefix of an infinite execution. This supplies no termination or eventual resumption theorem. Concurrent assembly must separately prove that partner guarantees are contained in $E_k$. The inclusion is an independently checkable relation inclusion, not the desired whole-program conclusion.
+
+\section{A divergence-sensitive run-lifting theorem}
+Safety under suspension does not make ordinary finite-trace simulation adequate for feedback. Fix a closed environment/scheduler interpretation first. Nondeterministic executions below are universal over its admitted choices; no probability or fairness semantics is silently supplied.
+
+A labeled transition system has states, steps labeled in $A\cup\{\tau\}$, and a status on states with no outgoing transitions. Statuses can include termination with result, global deadlock, and suspension relative to the chosen environment. They are distinct labels, and their interpretation must be justified by the operational model. An infinite execution is another kind of maximal behavior, even if its erased visible trace is finite. Suspension of a single component is not automatically global deadlock.
+
+Let $C$ be concrete and $B$ abstract. A simulation certificate consists of:
+\begin{enumerate}
+\item an initial related pair and a relation $R\subseteq C\times B$;
+\item an online matching rule: for each related pair $(c,b)$, each concrete step $c\xrightarrow{a}c'$, and the finite matching history so far, it chooses a finite abstract segment $b\Rightarrow b'$ with the same $\tau$-erased word as $a$, ending with $R(c',b')$;
+\item a rank $\rho$ on related pairs into a well-founded strict order, decreasing whenever the chosen abstract segment has length zero;
+\item if $c$ is maximal finite, then from its related $b$ there is a finite all-$\tau$ segment to a maximal finite abstract state with the same terminal status and observed result. This terminal completion is selected using only the matching history.
+\end{enumerate}
+The matching rule cannot inspect future concrete choices or private information granted to a target controller only by proof notation. A proof witness may inspect mathematical state; if it is claimed to implement an admissible abstract scheduler, the rule must additionally respect that scheduler's observation equivalence. The theorem below is run inclusion, not scheduler-distribution inclusion.
+
+\begin{theorem}[Productive maximal-run lifting]\label{resumption:lifting}
+Every concrete maximal execution has an abstract maximal execution with the same visible trace and the same finite-versus-infinite distinction. Finite maximal executions also have the same declared status and observed result. Thus every universally quantified property of these observations valid in $B$ is valid in $C$.
+\end{theorem}
+\begin{proof}
+Repeatedly apply the online rule to concrete steps and concatenate the chosen finite abstract segments. Each finite prefix has the same visible word after erasing $\tau$, and segment endpoints remain related. A finite maximal concrete execution is completed using item 4, adding no visible event and obtaining the required status. For an infinite concrete execution, suppose the concatenation had only finitely many abstract steps. Beyond some index every chosen segment would be empty, yielding an infinite strict descent of $\rho$, a contradiction. Hence the concatenation is an infinite abstract execution. Equal visible traces follow from prefix matching; this applies also when both erased traces are finite. Infinite executions are maximal by definition. Universal property transfer is immediate from the resulting inclusion.
+\end{proof}
+
+\paragraph{What the rank does not say.} Rank may increase on a nonempty matched segment; no global termination is required. A concrete infinite internal loop must match abstract infinite internal activity or other compatible activity, rather than being collapsed into abstract termination. Conversely an abstract internal loop may match concrete internal activity without proving progress. A well-founded rank supplies no uniform numerical bound on stuttering, no elapsed-time lower bound, no preservation of fairness, and no quantitative cost theorem. Such conclusions need extra hypotheses.
+
+\begin{example}[Finite traces erase failed progress]
+The program that silently loops forever and the program that terminates immediately both have only the empty visible finite trace. Matching every loop step by the empty abstract segment satisfies ordinary stuttering matching, but not the well-founded rank premise. Termination cannot transfer without a premise excluding that infinite stuttering. Likewise a stuck state and a successful return can have the same visible trace; the distinct maximal-status clause prevents their identification.
+\end{example}
+
+\paragraph{Compositional use and its precise limit.} Maximal-observation inclusion is transitive. To compose local simulation certificates, however, their matching rules must be composed and checked against the permitted information and interference discipline. Merely multiplying or lexicographically pairing the two ranks without checking how intermediate segments reset them is not a proof. A separate closure theorem for the chosen native cells is still required. This note deliberately does not infer contextual congruence from a closed-system simulation.
+
+\section{Connection to the research programme}
+Theorem~\ref{resumption:stable} and Proposition~\ref{resumption:knowledge} make the resumption premise explicit; Theorem~\ref{resumption:lifting} makes the missing progress-sensitive observation premise explicit. They can be used together: configurations carry the dependent continuation assertions, while the simulation relation preserves the relevant assertions and statuses. Neither theorem requires finite ranked code or disjoint batches.
+
+They nevertheless do not yet establish the contract's RC2 native context/content operations, RC3 feedback equations, probabilistic scheduler-preserving couplings, or an RC6 concurrent progress theorem. For the general operational language beyond those companion restricted models, remaining steps are: define the actual open language/configurations; construct native comparison cells retaining these certificates; prove closure under the chosen interleaving and feedback operations; then prove adequate interpretation of the old finite fragment. These obligations cannot be replaced by declaring the compatibility predicate to be contextual refinement itself.
+
+\section{Import and novelty ledger}
+\begin{itemize}
+\item Existing project input: \emph{Contextual Refinement and Controlled Recovery}, the retained finite stateful refinement manuscript. Its finite ranked/disjoint-batch restrictions matter; its theorem is not automatically extended here.
+\item Stability under interference and rely--guarantee reasoning are established techniques. Liang et al., \emph{Rely-Guarantee-Based Simulation for Compositional Verification of Concurrent Program Transformations}, is a directly relevant baseline: \url{https://hongjin-liang.github.io/papers/journal/toplas14-rgsim.pdf}. This note does not claim superiority or novelty relative to that framework.
+\item Interaction Trees supplies coinductive recursive effectful semantics and weak-bisimulation machinery: \url{https://arxiv.org/abs/1906.00046}. Choice Trees explicitly addresses nondeterministic branching and induced transition systems: \url{https://arxiv.org/abs/2211.06863}. Either may supply an implementation substrate; neither can be imported without matching observations and scheduler scope.
+\item ReLoC already supports sophisticated concurrent contextual refinement: \url{https://iris-project.org/reloc/}. A project-specific native context/content integration, not rediscovery of general concurrent refinement, is the plausible contribution.
+\item The elementary statements in this note are proved here for a minimal interface, but are treated as specialized baseline facts, not novel research results. Literature comparison remains open for the eventual categorical extension.
+\end{itemize}
+
+
+\part{Why the retained carrier must change}
+
+\paragraph{Status.} A source-grounded obstruction and a limited deterministic comparison construction. Written proofs, not mechanized. No novel general theorem is claimed. This note identifies why a generic transition-system result does not by itself extend the project's actual native cells, and records the carrier requirements which motivate the companion restricted constructions.
+
+\section{The existing carrier, not just its terminology}
+The existing O1 \emph{General Independent Interaction Criterion} fixes finite augmented witness families and a finitary cartesian polynomial occurrence presentation. The O5 \emph{Contextual Refinement and Controlled Recovery}, Section ``Realization by the contracted categorical cells'', specializes a retained computation at an input $a$ to a finite family $(\Omega_a,p,c)$ and deterministic finite-tree body $\theta_a$. A native square with witness map $r_a$ obeys
+\[
+ p'_{u(a),w'}=\sum_{r_a(w)=w'}p_{a,w},\quad
+ c'_{u(a),w'}\le\min_{r_a(w)=w'}c_{a,w},\quad
+ Tv\,\theta_a(w)=\theta'_{u(a)}(r_a(w)).
+\]
+O5 builds comparison spans from paired histories with these exact marginal, body and cost equations. Its horizontal proof is the actual finite occurrence formula
+\[
+ \Omega_{t;u}(a)=\coprod_{h\in\Omega_t(a)}
+       \prod_{j\in\operatorname{leaf}(\theta_t(h))}\Omega_u(b_j).
+\]
+It explicitly does not claim a strict double category of chosen couplings or a horizontal--vertical interchange law. A proposed recursive extension must address these carriers and equations, not only add a coalgebraic operational interpreter next to them.
+
+\section{Two carrier obstructions}
+\begin{proposition}[Finite terminal-support boundary]
+Suppose an interpretation of one retained object at a fixed input obtains its returned-value law by a deterministic observation of its finite witness carrier. It cannot represent the law of the fair-coin recursive program which returns the trial number of the first head.
+\end{proposition}
+\begin{proof}
+A deterministic image of a finite carrier has finite support. The program returns every $n\ge1$ with probability $2^{-n}>0$. These probabilities sum to one, so its returned law has infinite support. Equality of the laws is impossible.
+\end{proof}
+This rules out an unchanged frozen carrier for the full recursive probabilistic interpretation. It does not rule out representing the program by a finite-description coalgebra whose global behavior is no longer a finite witness family. Nor does it rule out using a richer content object that already contains stochastic behavior; that is a change of semantics requiring its own crossing theorem.
+
+\begin{proposition}[Countable weighted histories do not suffice for full streams]
+Replace finite witness families by countable families of nonnegative weights summing to one, retaining deterministic observations of witnesses. Such a carrier cannot realize the infinite fair-coin stream law with its usual finite-prefix observations.
+\end{proposition}
+\begin{proof}
+Some witness has positive weight, and its output stream therefore has positive singleton probability. For fair-coin streams the probability of any specified prefix of length $n$ is $2^{-n}$. The singleton consisting of a specified stream is contained in every such prefix cylinder, hence has probability at most $2^{-n}$ for every $n$, and therefore zero. This is a contradiction.
+\end{proof}
+The countable union of finite prefix carriers is a carrier of prefixes, not a sample space of complete executions. The distinction matters even for finitely branching programs with finite descriptions. Every complete stream has probability zero but is a possible raw behavior. Thus positive-atom support cannot replace the existing law-and-possibility distinction.
+
+\paragraph{Consequence.} One promising route is a two-level construction: finite local transition kernels or effectful resumptions, together with a global path-space interpretation and native comparison maps on that space. Another is projectively consistent cylinder data, with a proved limit interpretation. Either requires new mathematics beyond replacing ``finite'' by ``countable'' in the occurrence formula. Neither choice is forced by these obstructions, and no uniqueness of a semantic architecture is claimed.
+
+\section{A limited history-span bridge that is actually constructible}
+For a transition system $C$ with a specified initial state, let $\mathcal H_C$ be the prefix poset of its finite execution histories, regarded as a category. There is one arrow $h\to h'$ exactly when $h$ is a prefix of $h'$. Histories retain states, labels and identities, including internal steps. Let $\mathcal W$ be the prefix poset of finite visible words. Erasing internal labels defines a functor $o_C:\mathcal H_C\to\mathcal W$.
+
+An online segment-matching strategy from $C$ to $B$ chooses a finite $B$ segment for each next $C$ step using only the matching history so far, maintaining a stated relation on endpoint states. Fix its initial abstract state. Determinism here concerns the chosen proof strategy, not determinism of either transition system.
+\begin{theorem}[History-level comparison span]\label{carrier:span}
+Such a strategy determines a functor $F:\mathcal H_C\to\mathcal H_B$. If each chosen segment has the same erased word as the corresponding concrete step, then
+\[
+ o_BF=o_C.
+\]
+Consequently $\mathcal H_C\xleftarrow{\mathrm{id}}\mathcal H_C\xrightarrow{F}\mathcal H_B$ is a span of history categories commuting with the declared observation. If a well-founded pair-rank decreases on every empty matched segment, then $F$ carries each infinite concrete branch to an infinite abstract branch by taking unions of the nested matched prefixes.
+\end{theorem}
+\begin{proof}
+Define $F(h)$ by concatenating the strategy's segments along $h$. The online condition makes this well-defined: the choice on an initial prefix is unchanged by later extension. Extension of $h$ only appends segments, so it extends $F(h)$; thus the unique prefix arrows define a functor. Segmentwise erased-word equality proves the functor equation. If the union of matched prefixes of an infinite branch were finite, only finitely many segments could be nonempty. The remaining infinite suffix would strictly decrease the well-founded rank at every step, a contradiction.
+\end{proof}
+The relation is retained as endpoint data of the common history object. Its projections are mathematical proof maps, not controller observations. A controller or scheduler extracted from this strategy must separately satisfy its actual information restriction.
+
+\paragraph{Maximal finite paths.} The displayed functor need not map a concrete terminal history to a terminal abstract history if the simulation permits a final silent completion. Such completion can be appended when interpreting maximal behaviors, but is extra data, not a consequence of the finite-prefix functor. A terminal-preserving version requires terminal preservation as a premise. This prevents a hidden claim that finite-history functoriality by itself preserves termination, deadlock or suspension.
+
+\paragraph{Why unfolding cannot simply be omitted.} A strategy may select different abstract segments after two different histories reaching the same concrete state. A function on concrete states then cannot encode that strategy. The prefix-category construction retains exactly the required history; descending it to state-level categories requires a separate history-independence property. Likewise erasing internal steps before imposing productivity can identify a silent infinite branch with a finite one.
+
+\section{What is native, and what remains missing}
+Theorem~\ref{carrier:span} supplies a real comparison square in categories of histories. It is \emph{not yet} an O1-native endpoint square: its witnesses are history categories rather than the frozen augmented finite families, and it supplies neither rig-coefficient pushforwards nor the relative occurrence crossing. Calling the span a generalized contextad would not fill this gap.
+
+A concrete candidate extension would retain measurable raw path spaces with probability measures, measurable witness maps, deterministic measurable body/observation maps, and pointwise cost inequalities. The finite native probability equation would become $r_*\mu=\mu'$, and the body square would remain literal. On finite discrete spaces this recovers the displayed native equations. But this describes individual cells, not a composition theorem.
+
+The companion kernel/writer, controlled-world and feedback constructions address the following requirements in restricted classes. A general extension must still address them together:
+\begin{enumerate}
+\item \textbf{Causal coupling.} A joint measure on whole paths can couple an early target choice to a future hidden source event. Its marginal correctness is insufficient for admissible scheduling. The matching/coupling must satisfy an explicit causal information condition, and composition must preserve it.
+\item \textbf{Raw coverage.} Almost-sure marginal and body equations do not automatically preserve all possible zero-probability paths. A separate raw coverage relation is needed for universal safety judgments; deleting null points can invalidate it.
+\item \textbf{Dependent boundaries.} The continuation interface at a suspension must remain justified by its actual interference relation, or be revalidated. Endpoint equality at eventual termination cannot establish that property.
+\item \textbf{Native coherence.} Composition must be defined on its actual carriers and maps, with units, associativity and the required pure-middle balance. Existence of some couplings after composition is weaker than coherence of chosen native comparisons.
+\end{enumerate}
+The finite O5 argument explicitly exploits finite conditional-weight formulas and finite distributivity. The new construction must either prove suitable path-space analogues at a declared model class or use a different native carrier whose operations can be proved directly. The obstructions above explain why this is a genuine research step rather than routine application of a transition-system progress theorem.
+
+\section{Staging and current scope}
+The original staging proposal was to establish native deterministic comparison carriers before adding path probability and causal composition. The companion parts now carry out a restricted probabilistic kernel/writer construction, an explicit unary crossing, seeded feedback closure, and controlled shared-world gluing. They do not discharge the general language, arbitrary contentad or asynchronous interference requirements listed above. The carrier obstructions in this note remain valid; the earlier staging is not a claim that no probability or coherence theorem has since been supplied.
+
+
+
+\end{document}
