@@ -16,7 +16,7 @@ import threshold_publication_model as publication
 HERE = program.HERE
 PREFIX = 'theories-and-designs/byzantine-control/'
 SOURCE_BASE = '811b6aab8452e95cf2ba2a47330f8d9247514778'
-FIELD_BASE = '70ac3c8678e0de5a01136a11d6e97d321a088b0c'
+FIELD_BASE = '215ecb755312f580cbd8c283b419f0958518766f'
 COUPLING_BASE = 'e9346383a8c20486992fcb71a543ef8f7bbb9d90'
 need = program.need
 

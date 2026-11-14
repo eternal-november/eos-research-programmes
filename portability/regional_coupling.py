@@ -18,7 +18,7 @@ import types
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
 BASE="edce1a21e4dacf2be677900ded765c337d41023c"
-FIELD_BASE="70ac3c8678e0de5a01136a11d6e97d321a088b0c"
+FIELD_BASE="215ecb755312f580cbd8c283b419f0958518766f"
 PREFIX="theories-and-designs/byzantine-control/"
 if sys.flags.optimize or sys.version_info[:2]!=(3,12):
     raise RuntimeError("Unoptimized Python 3.12 required")
