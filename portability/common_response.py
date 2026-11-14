@@ -12,6 +12,7 @@ import threshold_program_model as program
 import threshold_design as design
 import threshold_incidence_model as incidence
 import threshold_publication_model as publication
+import legacy_realization as legacy
 
 HERE = program.HERE
 PREFIX = 'theories-and-designs/byzantine-control/'
@@ -26,7 +27,32 @@ def immutable(commit, relative):
                                    cwd=program.REPO).decode('utf-8-sig').replace('\r\n', '\n')
 
 
-def physical_view(isa, c):
+def keeper_energy_supplier(c,b,field):
+    source,core,ports,legacy_field,bindings,_=legacy.inputs()
+    need(legacy.FIELD==FIELD_BASE and legacy_field==field,
+         'Keeper energy uses a different field-source pair')
+    point=legacy.inventory(c,b,source,core,ports,legacy_field)
+    capacity=Q(core['per_bank_capacity']);unit=Q(core['energy_head_unit'])
+    scaled=capacity/unit;word=scaled.__floor__()
+    cap_time=Q(point['connected_keeper_cap_time'])
+    gap=(Q(c.constants['WARM_AT'])-Q(c.constants['POWER_AT'])-
+         design.VECTOR_DRIVER_OFFSET)/Q(11,10)
+    need(unit==2**41 and word==623488 and word==point['actual_keeper_energy_word'],
+         'Keeper energy decoder changed')
+    need((scaled+Q(1,2)).__floor__()==word,'Selected nearest head differs')
+    need(cap_time+1000<gap,'Keeper cap does not precede the sample prefix')
+    permitted=[-((-(scaled-1)).__floor__()),(scaled+1).__floor__()]
+    need(permitted==[623488,623489],'One-unit error integer-head range changed')
+    return dict(word=word,carrier_capacity=capacity,head_unit=unit,
+        scaled_carrier_energy=scaled,quantization_error=scaled-word,
+        admissible_integer_words=permitted,connected_cap_time=cap_time,
+        pre_sample_allowance=1000,connection_prefix_slack=gap-cap_time-1000,
+        head_quantity='operating carrier E_B; not E_B+T_B',
+        selected_quantizer='floor(z+1/2), zero analogue bias; nonzero quantization error',
+        resource_bindings=bindings,source_admission=False)
+
+
+def physical_view(isa, c, keeper_energy_word):
     """Consistent contact/pose branch, not a manufactured reachable CPU state."""
     k = c.constants
     view = isa.populated_view(c, 0, 10)
@@ -42,7 +68,7 @@ def physical_view(isa, c):
                    'SHUNT_DEF_A': 0 if side == 0 else 1000,
                    'SHUNT_SEATED_A': int(side == 0), 'SHUNT_OPEN_A': int(side == 1),
                    'POWER_OFF_A': int(side == 0), 'BLEND_AT_A': int(side == 1),
-                   'ENERGY_A': 0 if side == 0 else k['RESERVE_CAP']}
+                   'ENERGY_A': 0 if side == 0 else keeper_energy_word}
         for name, value in entries.items():
             view[k[name] + side] = value
     return view
@@ -265,7 +291,8 @@ def generate():
     need(program.hash_text(json.dumps(c.image)) == geometry['changed_image_sha256'], 'Changed executable differs from geometry')
     need(b == geometry['bounds'], 'Compiled work bounds differ from geometry')
     print('executing full-cohort fifteen-provider folds and phase-10 helper',flush=True)
-    view = physical_view(isa,c)
+    keeper_energy = keeper_energy_supplier(c,b,field)
+    view = physical_view(isa,c,keeper_energy["word"])
     receipts, producer = maintenance_receipts(isa,c,b,Ports,population,view,688)
     low_receipts, low_producer = maintenance_receipts(isa,c,b,Ports,population,view,135)
     helpers = [helper_check(isa,c,b,Ports,receipts,688),
@@ -285,7 +312,7 @@ def generate():
     floor_world = world_check(isa,c,b,Ports,population,floor_rows,(59,60))
     source_files = ('common_response.py','COMMON-RESPONSE.md','threshold_program_source.py',
                     'threshold_program_model.py','threshold_design.py','threshold_incidence_model.py',
-                    'threshold_publication_model.py','constructors.py')
+                    'threshold_publication_model.py','constructors.py','legacy_realization.py','LEGACY-REALIZATION.md')
     immutable_inputs = {
         SOURCE_BASE+':portability/THRESHOLD-GEOMETRY.md':immutable(SOURCE_BASE,'portability/THRESHOLD-GEOMETRY.md'),
         SOURCE_BASE+':portability/threshold_geometry_results.json':geometry_text,
@@ -293,6 +320,7 @@ def generate():
         FIELD_BASE+':portability/THRESHOLD-FIELD-SOURCE.md':immutable(FIELD_BASE,'portability/THRESHOLD-FIELD-SOURCE.md'),
         FIELD_BASE+':portability/threshold_field_source.py':immutable(FIELD_BASE,'portability/threshold_field_source.py'),
         COUPLING_BASE+':portability/REGIONAL-COUPLING.md':immutable(COUPLING_BASE,'portability/REGIONAL-COUPLING.md')}
+    immutable_inputs[legacy.BASE+':local-control/port_resource_model.py']=immutable(legacy.BASE,'local-control/port_resource_model.py')
     for name in ('PORT-SOURCE.md','INITIAL-RETURN.md','COUPLED-PORTS.md'):
         immutable_inputs[SOURCE_BASE+':local-control/'+name] = immutable(SOURCE_BASE,'local-control/'+name)
     return normalize(dict(scope='Executed source-shaped local mechanism and derived conditional finite-history construction',
@@ -303,7 +331,7 @@ def generate():
         frozen_isa_sha256=isa.source_hash,
         sources_sha256_lf={name:program.digest(HERE/name) for name in source_files},
         immutable_inputs_sha256_lf={name:program.hash_text(text) for name,text in immutable_inputs.items()},
-        changed_design=design.physical_parameters(c), physical_view=view,
+        changed_design=design.physical_parameters(c), physical_view=view, keeper_energy=keeper_energy,
         normal_action_premises=geometry['arithmetic']['normal_action_premises'],
         producer_688=producer, producer_135=low_producer, helpers=helpers, world=world, exact=exact,
         selected_world_quantizer=dict(rule='floor(1000*z+1/2)',error_at_most=Q(1,2000),
@@ -318,7 +346,7 @@ def generate():
         unclosed=['actual common-history phase10 entry and body/code/field formation',
                   'intermediate shunt feed profile and coherent eleven-module physical map',
                   'timed native publication/receipt/command port realization',
-                  'complete parent-input/full-ISA cost and legacy inventory domination',
+                  'complete parent-input/full-ISA cost and actual use of the inventoried routes',
                   'actual normal-stop/abort/private-state formation and pulse/retirement supplier',
                   'source-class admission and whole-family recurrent/positive-density closure'],
         no_full_hybrid_simulation=True, independent_local_review=True,
