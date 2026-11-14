@@ -4,6 +4,8 @@ A category-valued relative construction for independently specified context and 
 
 Start with the [integrated treatment](synthesis/Integrated_Relative_Computation_Acceptance_Dossier.tex). Its O1–O7 claims are scoped by the [expanded contract](contracts/Expanded_Research_Contract_v0_1.tex), [boundary amendment](contracts/O6_Boundary_Amendment_2026_11_01.tex), and [portfolio freeze](contracts/O6_Portfolio_Freeze_2026_11_01.tex).
 
+The [feedback and concurrency extension contract](contracts/Feedback_and_Concurrency_Research_Contract_v0_1_2.tex) sets out the research target for general recursion, interfering concurrency, and contextual refinement. Its obligations are research targets, not completed results.
+
 ## Reading path
 
 - `foundations/`: finite contextads, reduction tests, structural examples, theory guide, and the common relative construction.
