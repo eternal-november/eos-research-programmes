@@ -33,6 +33,9 @@ SET_REFILL = F(1, 128)
 WORD_CLOCK = F(2**30)
 WORD_ENERGY = F(20480)
 WORD_MASK = (1 << 256) - 1
+PULSE_EDGES = 2**21
+PULSE_COUNTER_BITS = 22
+PULSE_COUNTER_CAP = 2**PULSE_COUNTER_BITS-1
 
 
 def need(condition, message):
@@ -111,6 +114,19 @@ class SettingWriter:
     latched: tuple | None = None
     generator: object = None
 
+    def __post_init__(self):
+        need(type(self.targets) is tuple and len(self.targets)==DEGREE
+             and all(type(t) is str and t for t in self.targets)
+             and len(set(self.targets))==DEGREE,
+             "Setter requires exactly40 distinct fixed physical targets")
+        self.energy=exact(self.energy,"Setter stock")
+        need(0<=self.energy<=SET_ENERGY,"Setter stock outside physical capacity")
+
+    def __setattr__(self,name,value):
+        if name=="targets" and hasattr(self,"targets"):
+            need(value==self.targets,"Fixed setter destinations cannot be rebound")
+        object.__setattr__(self,name,value)
+
     def issue(self, args):
         if self.cut:
             return "cut"
@@ -118,7 +134,7 @@ class SettingWriter:
             return "busy"
         if self.energy < SET_ENERGY:
             return "unfunded"
-        if len(args) != 4 or any(type(v) is not int or not -(1 << 255) <= v < (1 << 255) for v in args):
+        if type(args) not in (tuple,list) or len(args) != 4 or any(type(v) is not int or not -(1 << 255) <= v < (1 << 255) for v in args):
             return "malformed"
         self.latched = tuple(v & WORD_MASK for v in args)
         self.phase = "pending"
@@ -176,7 +192,11 @@ class SettingWriter:
     def step(self):
         if self.phase != "pending":
             return "wait"
-        need(self.energy > 1 + 16, "Setter clock work below operation floor")
+        if self.energy <= 1 + 16:
+            # A physical clock-gated hold, not an exception or a new rejection
+            # event. The latched operands and partially executed microprogram
+            # remain; no positive work or late fresh capture occurs here.
+            return "unfunded-wait"
         try:
             event = next(self.generator)
         except StopIteration:
@@ -223,12 +243,13 @@ def native_word(initial, word, opposing=True, address=0):
     """
     need(len(initial) == 192 and type(word) is int and 0 <= word <= WORD_MASK,
          "Invalid native word operand wire")
-    need(type(address) is int, "Invalid native address wire")
+    need(type(address) is int and 0<=address<=WORD_MASK,
+         "Native address must be an actual unsigned256-bit wire value")
     cells = list(map(exact, initial))
     need(all(-1 <= x <= 1 for x in cells), "Invalid native bit initial state")
     steps=0;address_bits=[]
     for j in range(256):
-        address_bits.append(((address&WORD_MASK)>>j)&1)
+        address_bits.append((address>>j)&1)
         steps+=1
     order=0
     for j in range(255,-1,-1):
@@ -306,40 +327,78 @@ class PulseSelector:
     force: F = F(0)
     cut: bool = False
 
-    def capture(self, slot, value, edges, now=F(0)):
-        natural(slot);natural(edges)
+    @property
+    def edge_count(self):
+        return PULSE_EDGES
+
+    @staticmethod
+    def valid_slot(slot):
+        return type(slot) is int and 0<=slot<3
+
+    def __post_init__(self):
+        need(type(self.slots) is list and len(self.slots)==3
+             and type(self.pending) is list and len(self.pending)==3,
+             "Selector has exactly three installed slots")
+        for state in self.slots:
+            need(state is None or (type(state) is list and len(state)==2
+                 and type(state[0]) is int and state[0] in (-1,0,1)
+                 and type(state[1]) is int and 0<=state[1]<=PULSE_COUNTER_CAP),
+                 "Pulse state exceeds its ternary/counter wires")
+        need(all(packet is None for packet in self.pending),
+             "Initial trigger debt needs its actual capture/entry map")
+        self.force=exact(self.force,"Initial field force")
+        need(abs(self.force)<=FORCE,"Initial field exceeds installed amplitude")
+
+    def counter_bound_holds(self):
+        """Counter-only proof query; supplies neither funding nor formation."""
+        return all(s is None or 0<s[1]<=self.edge_count for s in self.slots)
+
+    def fault_counter(self,slot,value):
+        # Explicit physical-register mutation, outside ordinary payload access.
+        # It does not silently restore nominal expiry or energy qualification.
+        if not self.valid_slot(slot) or type(value) is not int or not 0<=value<=PULSE_COUNTER_CAP:
+            return "reject"
+        if self.slots[slot] is None:return "inactive"
+        self.slots[slot][1]=value
+        return "faulted"
+
+    def capture(self, slot, value, *, now=F(0)):
         now=exact(now)
-        if slot >= 3 or value not in (-1, 0, 1) or edges == 0:
+        if not self.valid_slot(slot) or type(value) is not int or value not in (-1,0,1):
             return "reject"
         if self.cut:
             return "cut"
         if self.pending[slot] is not None:
             return "pending-busy"
-        self.pending[slot]=(value,edges,now+1)
+        self.pending[slot]=(value,now,now+1)
         return "latched"
 
-    def deliver(self, slot, now=F(0)):
-        natural(slot);now=exact(now)
-        need(slot<3, "Absent physical trigger slot")
+    def deliver(self, slot, *, now=F(0)):
+        now=exact(now)
+        if not self.valid_slot(slot):return "reject"
         packet=self.pending[slot]
         if packet is None:return "absent"
+        value,born,deadline=packet
+        if now<born:return "not-arrived"
         self.pending[slot]=None
-        value,edges,deadline=packet
         if now>deadline:return "expired"
         if self.slots[slot] is not None:
             return "busy"
-        self.slots[slot] = [value, edges]
+        self.slots[slot] = [value,self.edge_count]
         return "active"
 
-    def trigger(self, slot, value, edges, now=F(0)):
-        status=self.capture(slot,value,edges,now)
-        return self.deliver(slot,now) if status=="latched" else status
+    def trigger(self, slot, value, *, now=F(0)):
+        status=self.capture(slot,value,now=now)
+        return self.deliver(slot,now=now) if status=="latched" else status
 
     def clock_edge(self, slot):
-        if self.slots[slot] is not None:
-            self.slots[slot][1] -= 1
-            if self.slots[slot][1] == 0:
-                self.slots[slot] = None
+        if not self.valid_slot(slot):return "reject"
+        if self.slots[slot] is None:return "idle"
+        if self.slots[slot][1]>0:self.slots[slot][1]-=1
+        if self.slots[slot][1]==0:
+            self.slots[slot]=None
+            return "expired"
+        return "active"
 
     def selected(self):
         return next((s[0] for s in self.slots if s is not None), 0)
@@ -360,6 +419,21 @@ class PulseSelector:
         return min(F(1), energy)*self.force
 
 
+@dataclass
+class DiagnosticPulseSelector(PulseSelector):
+    """Short-count test fixture; never a hardware lifetime/initial-entry input."""
+    fixture_edges: int = 2
+
+    def __post_init__(self):
+        super().__post_init__()
+        need(type(self.fixture_edges) is int and 0<self.fixture_edges<=PULSE_COUNTER_CAP,
+             "Diagnostic counter count outside native width")
+
+    @property
+    def edge_count(self):
+        return self.fixture_edges
+
+
 def rejected(action):
     try:action()
     except ValueError as e:return str(e)
@@ -368,6 +442,14 @@ def rejected(action):
 
 def local_checks():
     targets = tuple("physical-body-"+str(i) for i in range(DEGREE))
+    layout_rejections=[]
+    for bad_targets in (targets[:39],targets+("extra",),
+                        tuple("physical-body-"+str(i) for i in range(65)),
+                        targets[:-1]+(targets[0],),list(targets)):
+        layout_rejections.append(rejected(lambda:SettingWriter(bad_targets)))
+    fixed=SettingWriter(targets)
+    fixed.issue((39,1,L-1,1))
+    layout_rejections.append(rejected(lambda:setattr(fixed,'targets',tuple(reversed(targets)))))
     outcomes=[]
     for args, expected in (((0,0,0,1),True),((39,1,L-1,-1),True),
                            ((40,0,0,1),False),((-1,0,0,1),False),
@@ -388,6 +470,18 @@ def local_checks():
                              actual_writes=len(setter.held),postwork_energy=before))
     setter=SettingWriter(targets,energy=SET_ENERGY-1)
     need(setter.issue((0,0,0,1))=="unfunded", "Under-reserved setter admitted")
+    stalled=SettingWriter(targets)
+    need(stalled.issue((0,0,0,1))=="latched","Missing pending wait fixture")
+    stalled.step()
+    # This starts after an external accounted loss in an affected parent;
+    # the local test checks that the partial operation spends no further work.
+    stalled.energy=F(17)
+    before=(stalled.steps,stalled.logical_cost,stalled.latched,dict(stalled.held),stalled.energy)
+    for _ in range(3):
+        need(stalled.step()=="unfunded-wait","Unfunded pending operation halted or executed")
+    after=(stalled.steps,stalled.logical_cost,stalled.latched,dict(stalled.held),stalled.energy)
+    need(after==before and stalled.phase=="pending","Clock-gated wait lost partial state/work")
+    need(stalled.issue((1,1,1,-1))=="busy","A new parent replaced unfunded pending work")
     need(8192/SET_CLOCK+SET_REFILL==F(1,64), "Setter nominal suffix changed")
     words=[]
     for word in (0,2**192-1,sum(1<<i for i in range(0,192,2))):
@@ -396,10 +490,12 @@ def local_checks():
         read=sum(int(x>=0)<<i for i,x in enumerate(cells))
         need(accepted and read==word, "Actual bit endpoints differ from latched word")
         words.append(dict(word=str(word),microsteps=steps,bit_work=work))
-    for address in (-1,8192,WORD_MASK):
+    for address in (8192,WORD_MASK):
         cells,steps,work,accepted=native_word([F(-1)]*192,0,address=address)
         need(not accepted and steps==512 and work==0 and cells==[F(-1)]*192,
              "Native invalid address did not reject without a write")
+    wire_rejections=[rejected(lambda a=a:native_word([F(-1)]*192,0,address=a))
+                     for a in (-1,-2**256,2**256,True,0.0)]
     cells,_,_,accepted=native_word([F(-1)]*192,2**220+7)
     need(accepted and sum(int(x>=0)<<i for i,x in enumerate(cells))==7,
          "Native word did not preserve actual192-bit operand masking")
@@ -411,25 +507,49 @@ def local_checks():
     cell=bit_flow(-1,(F(34)-F(6)*F(202,100)-F(25,100)-F(34,100))*U_BIT,
                   0,F(2)/(F(829,100)*U_BIT))
     need(cell==1, "Threshold write interval did not form endpoint")
-    selector=PulseSelector()
-    for slot in range(3):need(selector.trigger(slot,-1 if slot==0 else 1,2)=="active", "Slot failed")
-    need(selector.trigger(0,1,9)=="busy", "Occupied pulse timer reset")
+    selector=DiagnosticPulseSelector(fixture_edges=2)
+    for slot in range(3):need(selector.trigger(slot,-1 if slot==0 else 1)=="active", "Slot failed")
+    need(selector.trigger(0,1)=="busy", "Occupied pulse timer reset")
     need(selector.selected()==-1, "Old priority was forgotten")
     need(abs(selector.flow(1000))<=FORCE, "Q capsules became Q motors")
     selector.clock_edge(0);selector.clock_edge(0)
     need(selector.selected()==1, "Old expiry zeroed a newer pulse")
-    need(selector.capture(0,-1,2)=="latched", "Old trigger was not actually captured")
+    need(selector.capture(0,-1)=="latched", "Old trigger was not actually captured")
     selector.cut=True
-    need(selector.trigger(0,-1,2)=="cut", "Cut sampler could retrigger")
+    need(selector.trigger(0,-1)=="cut", "Cut sampler could retrigger")
     need(selector.deliver(0)=="active", "Paid parent tail erased")
     need(selector.deliver(0)=="absent", "One-shot parent replayed")
-    late=PulseSelector()
-    late.capture(0,-1,2)
-    need(late.deliver(0,F(2))=="expired" and late.selected()==0,
+    late=DiagnosticPulseSelector()
+    late.capture(0,-1)
+    need(late.deliver(0,now=F(2))=="expired" and late.selected()==0,
          "Late pending trigger silently renewed old authority")
     need(abs(selector.flow(1000,mode="wrong"))<=FORCE and abs(selector.flow(1000,mode="jam"))<=FORCE,
          "Wrong/jammed output exceeded rated force")
     need(selector.flow(1,energy=0)==0, "Empty converter created mechanical work")
+    hardware=PulseSelector()
+    need(hardware.trigger(0,-1)=="active" and hardware.slots[0][1]==PULSE_EDGES,
+         "Ordinary hardware trigger changed its fixed lifetime")
+    pulse_rejections=0
+    for slot,value in ((True,1),(-1,1),(3,1),(0,True),(0,2)):
+        need(hardware.capture(slot,value)=="reject","Malformed pulse payload admitted")
+        pulse_rejections+=1
+    for slot in (-1,3,True,0.0):
+        need(hardware.clock_edge(slot)=="reject" and hardware.deliver(slot)=="reject",
+             "Out-of-range native slot accessed state")
+        pulse_rejections+=1
+    need(hardware.fault_counter(0,PULSE_COUNTER_CAP+1)=="reject",
+         "Physical counter mutation escaped installed width")
+    hardware.fault_counter(0,PULSE_COUNTER_CAP)
+    need(not hardware.counter_bound_holds(),"Arbitrary22-bit state was treated as nominal entry")
+    hardware.clock_edge(0)
+    need(hardware.slots[0][1]==PULSE_COUNTER_CAP-1 and not hardware.counter_bound_holds(),
+         "Clock edge silently reset a corrupt counter to its nominal value")
+    initial=PulseSelector(slots=[[1,PULSE_COUNTER_CAP],None,None])
+    need(not initial.counter_bound_holds(),"Constructor supplied an initially clean counter")
+    high_profile=F(2**16)+16*PULSE_COUNTER_CAP+8*(1+PULSE_COUNTER_CAP+1000)
+    need(high_profile+1>2**26,"Arbitrary counter lost its funding obstruction")
+    fixture_rejections=[rejected(lambda e=e:DiagnosticPulseSelector(fixture_edges=e))
+                        for e in (0,True,PULSE_COUNTER_CAP+1)]
     pair=converter_pair(FORCE,1,(F(1,2),F(-1,4),F(1,4)),(22,3,F(11,10)))
     bad_column=rejected(lambda:converter_pair(FORCE,1,(1,1),(1,1)))
     # Recipient velocity is D*i: replacing it by i misses real work.
@@ -456,8 +576,19 @@ def local_checks():
              "Setup/reset counter latency omitted")
         clock_cases.append(dict(edges=edges,actual_min=minimum,actual_max=maximum))
     return dict(setter=outcomes,setter_unfunded_rejected=True,setter_suffix=F(1,64),
-                native_words=words,native_invalid_addresses=3,native_operand_mask_checked=True,
+                setter_layout_rejections=layout_rejections,setter_partial_unfunded_wait_checked=True,
+                native_words=words,native_invalid_addresses=2,native_wire_rejections=wire_rejections,
+                native_operand_mask_checked=True,
                 native_store_tail=F(2080)/WORD_CLOCK,
+                nominal_P_does_not_execute_STOREC=True,
+                native_STOREC_exceeds_generic_retirement_interval=F(2080)/WORD_CLOCK>F(1,2**26),
+                pulse_counter=dict(hardware_edges=PULSE_EDGES,physical_bits=PULSE_COUNTER_BITS,
+                  physical_counter_cap=PULSE_COUNTER_CAP,payload_cannot_choose_count=True,
+                  malformed_rejections=pulse_rejections,fixture_rejections=fixture_rejections,
+                  diagnostic_fixture_not_hardware=True,arbitrary_entry_qualified=False,
+                  arbitrary_cap_profile_work=high_profile,
+                  arbitrary_cap_profile_exceeds_existing_reserve=True,
+                  physical_reformation_from_arbitrary_counter="unclosed; no clean reset supplied"),
                 selector_single_motor=True,late_parent_retained=True,
                 power_pair_example=pair,invalid_joint_column=bad_column,
                 wrong_velocity_countercase=dict(actual=correct,incorrect_i=wrong),
@@ -560,6 +691,9 @@ def generate():
         point=accounting(texts),sources_sha256_lf={name:digest((HERE/name).read_text(encoding='utf-8'))
             for name in ('threshold_field_source.py','THRESHOLD-FIELD-SOURCE.md')},
         unclosed=["complete actor/ISA observation and all-mode hybrid refinement",
+          "native STOREC timing is not a uniform all-opcode retirement lower rate",
+          "physical initial/released pulse counter reformation when ordinary entry does not hold",
+          "replenishment or actual abort/reformation for additionally drained pending setters",
           "actual old-inventory domination after writer/body removal",
           "literal native circuit/gate-price realization beyond the executable microsteps",
           "physical placement, all-path source/fault map and limiter admission",
