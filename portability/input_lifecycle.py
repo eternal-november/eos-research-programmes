@@ -974,7 +974,6 @@ def generate():
     inputs=("cam_reformation.py","CAM-REFORMATION.md","cam_reformation_results.json",
         "threshold_field_source.py","threshold_field_source_results.json","THRESHOLD-FIELD-SOURCE.md",
         "legacy_realization.py","legacy_realization_results.json","LEGACY-REALIZATION.md",
-        "parent_realization.py","parent_realization_results.json","PARENT-REALIZATION.md",
         "threshold_program_model.py","threshold_program_source.py","threshold_design.py",
         "threshold_incidence_model.py","threshold_publication_model.py","constructors.py",
         "fixed_island_model.py","FIXED-ISLANDS.md","publication_timing.py","publication_timing_results.json")

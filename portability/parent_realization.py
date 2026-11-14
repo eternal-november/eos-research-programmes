@@ -26,6 +26,8 @@ PARENT=20480
 FRONT=2816
 NATIVE_RATE=F(4,3)*16384*2**27
 DELTA=F(1,2**30)
+QUALIFICATION_WORK=640
+QUALIFICATION_NODE_BITS=248
 need=program.need
 
 def limbs(value):
@@ -131,6 +133,32 @@ def route_checks():
                 private_W_leaves=[2048,4351],code_word_leaves=[0,8191],
                 every_word_route_has_one_parent_token=True)
 
+def qualification_checks(c):
+    body=Body(c);cases=[]
+    addresses=[0,8191,8192,MASK]+[1<<j for j in range(13,256)]
+    for address in addresses:
+        bank=BankWork(PARENT,F(PARENT));cell=ParentCell();bank.transfer(cell)
+        native=NativeWrite(body,address,0,cell)
+        native.index=511;native.address_order=-1
+        native.address_bits[:]=[(address>>j)&1 for j in range(256)]
+        before=cell.stock;outcome=native.step()
+        need(native.qualification_work==QUALIFICATION_WORK and before-cell.stock==8+QUALIFICATION_WORK,
+             'Selection or rejection did not pay its independent qualification exactly once')
+        need(native.accepted==(address<8192),'Independent high-bit reduction admitted an uninstalled word')
+        need((native.binding is not None)==(address<8192),'Range qualification/binding mismatch')
+        if address>=8192:need(outcome=='done' and native.done,'Invalid leaf did not terminate as a no-write rejection')
+        cases.append(address)
+    bank=BankWork(648,F(648));cell=ParentCell();bank.transfer(cell)
+    native=NativeWrite(body,8192,0,cell);native.index=511;native.address_order=-1
+    native.address_bits[:]=[(8192>>j)&1 for j in range(256)]
+    before=(cell.stock,cell.spent,native.index,native.binding,tuple(native.qualification_bits))
+    need(native.step()=='work-wait' and native.qualification_work==0
+         and before==(cell.stock,cell.spent,native.index,native.binding,tuple(native.qualification_bits)),
+         'Unfunded qualification changed its target or spent a nonexistent parcel')
+    return dict(boundary_and_high_bit_cases=len(cases),all243_upper_wires_reject=True,
+        actual_debit_per_qualification=QUALIFICATION_WORK,existing_tick_debit=8,
+        insufficient648_work_retains_state=True,coherent_snapshot_and_low13_binding=True)
+
 def alu(isa,op,a=0,b=0):
     x=isa.signed(a);y=isa.signed(b)
     if op==isa.ADD:return (a+b)&MASK,128
@@ -232,6 +260,14 @@ class Body:
     def sync_word(self,address):
         list.__setitem__(self.C,address,sum(int(v>=0)<<j for j,v in enumerate(self.physical[address])))
 
+@dataclass(frozen=True)
+class NativeTarget:
+    """Captured physical leaf; its coordinates remain mutable at that leaf."""
+    body: object
+    address: int
+    coordinates: list
+
+
 class NativeWrite:
     """A paused2080-step native child, using the SAME paid CPU parent."""
     def __init__(self,body,address,value,parent):
@@ -239,12 +275,40 @@ class NativeWrite:
         self.parent=parent;self.index=0;self.done=False
         self.address_bits=[0]*256;self.operand_bits=[0]*192
         self.accepted=None;self.address_order=0
-        self.target=None
+        self.target=None;self.target_address=None;self.binding=None
+        self.qualification_bits=[0]*256
+        self.qualification_nodes=[0]*QUALIFICATION_NODE_BITS
+        self.qualification_ok=None
+        self.qualification_work=F(0)  # Analyst actual-work total, not a runtime epoch.
         self.steps=0;self.bit_work=F(0);self.drive_bit=None
+    def qualify_installed_leaf(self):
+        """One paid fixed snapshot/reduction, independent of address_order.
+
+        The tuple is the coherent capture event of the existing local-word
+        primitive, not an additional physical copy. Destination state is the
+        counted256-bit snapshot and248-bit fixed reduction network.
+        """
+        need(self.parent.debit(QUALIFICATION_WORK),'Unfunded independent address qualification')
+        self.qualification_work+=QUALIFICATION_WORK
+        captured=tuple(self.address_bits)
+        for j in range(256):self.qualification_bits[j]=captured[j]
+        level=self.qualification_bits[13:];node=0
+        while len(level)>1:
+            following=[]
+            for j in range(0,len(level),2):
+                value=int(bool(level[j] or level[j+1])) if j+1<len(level) else level[j]
+                self.qualification_nodes[node]=value;node+=1;following.append(value)
+            level=following
+        self.qualification_ok=not bool(level[0])
+        self.qualification_nodes[node]=int(self.qualification_ok);node+=1
+        for j in range(node,QUALIFICATION_NODE_BITS):self.qualification_nodes[j]=0
+        return self.qualification_ok
     def step(self,clock=True):
         if self.done:return "done"
         if not clock:return "clock-wait"
-        if self.parent.stock<9:return "work-wait"
+        if 704<=self.index<1856 and self.binding is None:return "control-wait"
+        required=9+(QUALIFICATION_WORK if self.index==511 else 0)
+        if self.parent.stock<required:return "work-wait"
         need(self.parent.debit(8),"Native work duplicated")
         i=self.index
         if i<256:self.address_bits[i]=(self.address>>i)&1
@@ -254,11 +318,15 @@ class NativeWrite:
             if self.address_order==0 and self.address_bits[j]!=limit:
                 self.address_order=-1 if self.address_bits[j]<limit else 1
             if i==511:
-                self.accepted=self.address_order<0
+                qualified=self.qualify_installed_leaf()
+                self.accepted=self.address_order<0 and qualified
                 if self.accepted:
-                    # These are the captured address wires, not a new caller.
-                    observed=sum(v<<j for j,v in enumerate(self.address_bits))
+                    # The installed decoder consumes only these thirteen
+                    # captured wires; a stale comparison flag cannot widen it.
+                    observed=sum(self.qualification_bits[j]<<j for j in range(13))
+                    self.target_address=observed
                     self.target=self.body.coordinates(routed_index(observed,13)[0])
+                    self.binding=NativeTarget(self.body,observed,self.target)
                 else:self.done=True
         elif i<704:self.operand_bits[i-512]=(self.value>>(i-512))&1
         elif i<1856:
@@ -267,12 +335,13 @@ class NativeWrite:
             if phase==0:self.drive_bit=bit
             if phase==5:self.drive_bit=None
             if 1<=phase<=4:
-                before=self.target[bit]
-                self.target[bit]=field.bit_flow(before,-sign*field.Z_MAX,
+                target=self.binding.coordinates
+                before=target[bit]
+                target[bit]=field.bit_flow(before,-sign*field.Z_MAX,
                     sign*field.NATIVE_FORCE,F(0) if phase==1 else F(100,101)/field.WORD_CLOCK,
                     native_engaged=True)
-                self.bit_work+=abs(field.NATIVE_FORCE*(self.target[bit]-before))
-                self.body.sync_word(self.address)
+                self.bit_work+=abs(field.NATIVE_FORCE*(target[bit]-before))
+                self.sync_target()
         elif i<2048:self.operand_bits[i-1856]=0
         # Last32 fixed completion/control steps are included and paid.
         self.index+=1;self.steps+=1
@@ -280,6 +349,13 @@ class NativeWrite:
             need(self.parent.debit(1),"Native mechanical envelope unpaid")
             self.done=True
         return "done" if self.done else "step"
+    def sync_target(self):
+        # target_address is a mutable controller shadow. It is not authority
+        # to rebind an already accepted physical leaf or its coordinate array.
+        bound=self.binding
+        if bound is None:return False
+        list.__setitem__(bound.body.C,bound.address,sum(int(v>=0)<<j for j,v in enumerate(bound.coordinates)))
+        return True
 
 class ParentMachine:
     """Finite source leaf; no intended-image or ready predicate is consulted.
@@ -345,6 +421,9 @@ class ParentMachine:
     def reset_entry(self):
         # Reset neither cancels nor rebinds a captured parent/native child.
         self.pc=0;self.halted=False;self.yielded=False
+    def make_native_write(self,body,address,value,cell):
+        """Physical leaf hook; a qualified source may add its actual cutset."""
+        return NativeWrite(body,address,value,cell)
     def finish_parent(self,extra_work,native=False):
         capture=self.pending
         need(capture is not None,"No parent to finish")
@@ -354,10 +433,11 @@ class ParentMachine:
         self.front_work+=FRONT;self.body_work+=extra_work
         self.max_total_work=max(self.max_total_work,used)
         native_steps=self.native.steps if self.native is not None else 0
+        qualification=self.native.qualification_work if self.native is not None else F(0)
         self.cell.finish();self.pending=None;self.native=None;self.committing=False
         # This bounds uninterrupted nominal work, never arbitrary wait time.
         ordinary=F(1,2**26)
-        duration=ordinary if not native else max(ordinary,ordinary/4+F(FRONT)/NATIVE_RATE+F(native_steps)/field.WORD_CLOCK)
+        duration=ordinary if not native else max(ordinary,ordinary/4+F(FRONT+qualification)/NATIVE_RATE+F(native_steps)/field.WORD_CLOCK)
         self.nominal_work_time_upper+=duration
         need(self.bank.stock+self.cell.stock+self.cell.spent+self.cell.dumped==self.initial_bank,
              "Parent/operating work was created")
@@ -371,15 +451,15 @@ class ParentMachine:
         def put(i,value):
             if 0<=i<len(p.body.R):p.body.write_R(i,value&MASK)
         if op==s.STOREC:
-            if self.native is None:self.native=NativeWrite(p.body,get(b),get(a),self.cell)
+            if self.native is None:self.native=self.make_native_write(p.body,get(b),get(a),self.cell)
             native_was_done=self.native.done
             limit=2080 if native_ticks is None else native_ticks
             for _ in range(limit):
                 result=self.native.step(clock=clock)
-                if result in ("clock-wait","work-wait"):return "waiting"
+                if result in ("clock-wait","work-wait","access-wait","control-wait","retired"):return "waiting"
                 if result=="done":break
             if not self.native.done:return "waiting"
-            extra=self.native.steps*8+(1 if self.native.accepted else 0)
+            extra=self.native.steps*8+(1 if self.native.accepted else 0)+self.native.qualification_work
             self.max_native_steps=max(self.max_native_steps,self.native.steps)
             if self.native.accepted and not native_was_done:self.code_writes+=1
         else:
@@ -536,15 +616,25 @@ def cost_bounds():
     need(slow_cycle-fast_cycle==F(1,101*2**26)>0,
          'Fastest-cycle countercase to a uniform upper bound disappeared')
     suffix=F(604,100)*DELTA+F(928+6976+256+FRONT)/NATIVE_RATE
-    native_total=16641+FRONT
+    upper_width=243;ORs=0;bypasses=0;levels=0
+    while upper_width>1:
+        ORs+=upper_width//2;bypasses+=upper_width%2
+        upper_width=(upper_width+1)//2;levels+=1
+    qualification_count=256+ORs+bypasses+1+128
+    need((ORs,bypasses,levels)==(242,3,8) and qualification_count<=QUALIFICATION_WORK,
+         'Independent installed-leaf qualification is not fully priced')
+    selection_time=F(QUALIFICATION_WORK+8+13*20)/NATIVE_RATE
+    need(selection_time<F(100,101)/field.WORD_CLOCK,'Selection qualification cannot fit a native address interval')
+    native_total=16641+QUALIFICATION_WORK+FRONT
     need(9184+FRONT<=PARENT and native_total<PARENT,"Parent work does not fit")
     need(8320+4096+FRONT<16384,"ALU plus ordinary I admission/native budget exceeded")
     need(suffix<F(3,4)/mu and suffix+F(1,4*2**27)<1/mu,"Private timing failed")
-    need(F(2080)/field.WORD_CLOCK+F(FRONT)/NATIVE_RATE<F(1,64),"Native suffix exceeds old drain allowance")
+    need(F(2080)/field.WORD_CLOCK+F(FRONT+QUALIFICATION_WORK)/NATIVE_RATE<F(1,64),"Native suffix exceeds old drain allowance")
     # One code tree and one padded private-word tree per CPU, plus I-address tree.
     route_nodes=2*(2*(8192-1)*128+7*128)
     capture_buffers=2*(8192+1804+2304+8)*256
-    route_bits=route_nodes+capture_buffers
+    qualification_bits=2*(256+QUALIFICATION_NODE_BITS+2)
+    route_bits=route_nodes+capture_buffers+qualification_bits
     old=json.loads((HERE/"legacy_realization_results.json").read_text())
     meta=old["inventory"]["memory_by_owner"]["local_route_metadata"]
     need(meta["new_owner_upper"]+route_bits<=meta["old_owner_allocation"],"Actual route controls lack a memory owner")
@@ -577,6 +667,7 @@ def cost_bounds():
         routed_access_work=r_access,code_capture_work=c_read,route_hop_work=20,
         route_node_bits=128,new_private_routing_bits=route_bits,
         route_node_control_bits=route_nodes,local_capture_buffer_bits=capture_buffers,
+        native_qualification_state_bits=qualification_bits,
         old_metadata_slack_after_route=meta["old_owner_allocation"]-meta["new_owner_upper"]-route_bits,
         new_actual_bank_rate_upper=new_bank,new_external_owner_rate_upper=new_external,
         external_owner_rate_slack=F(core["external_rate"])-new_external,
@@ -587,7 +678,11 @@ def cost_bounds():
         private_IO_total=9184+FRONT,private_suffix=suffix,private_nominal_slack=F(3,4)/mu-suffix,
         parent_reuse_slack=1/mu-suffix-F(1,4*2**27),
         native_STOREC_total=native_total,native_parent_floor_margin=PARENT-1-native_total,
-        native_complete_tail=F(2080)/field.WORD_CLOCK+F(FRONT)/NATIVE_RATE,
+        independent_qualification=dict(snapshot_bits=256,upper_bits=243,ORs=ORs,bypass_transfers=bypasses,
+            complement=1,fixed_control=128,counted_work=qualification_count,paid_work=QUALIFICATION_WORK,
+            internal_levels=levels,retained_node_bits=QUALIFICATION_NODE_BITS,validity_bits=2,
+            selection_plus_route_work_time=selection_time,fastest_native_interval=F(100,101)/field.WORD_CLOCK),
+        native_complete_tail=F(2080)/field.WORD_CLOCK+F(FRONT+QUALIFICATION_WORK)/NATIVE_RATE,
         setter_literal_and_cursor_steps=2*3615,setter_stage_control_steps=256,
         setter_complete_ticks=setter_steps,setter_complete_work=setter_steps*16,
         setter_schedule_status="executed payload/cursor/control expansion under declared elementary tick law",
@@ -833,7 +928,7 @@ def generate():
     need(len(c.image)==8192 and c.next_register==1804 and len(Body(c).W)==2304,
          "This parent address tree requires its declared fixed array shape")
     print("checking parent transitions, signed limbs and retained native writes",flush=True)
-    costs=cost_bounds();routes=route_checks();arithmetic=alu_checks(isa);setter=setter_control_checks()
+    costs=cost_bounds();routes=route_checks();qualification=qualification_checks(c);arithmetic=alu_checks(isa);setter=setter_control_checks()
     instructions=instruction_checks(isa,c);retained=retention_checks(isa,c)
     print("executing actual scanner/helper through the paid parent",flush=True)
     routines=program_checks(isa,c,b)
@@ -849,7 +944,8 @@ def generate():
     return normalize(dict(scope="Constructed paid finite parent leaf and qualified local ISA observation refinement",
         base=BASE,python_version=sys.version,image_sha256=program.hash_text(json.dumps(c.image)),
         frozen_ISA_sha256=isa.source_hash,sources_sha256_lf={n:program.digest(HERE/n) for n in names},
-        cost_bounds=costs,routed_memory_checks=routes,arithmetic=arithmetic,setter_control_checks=setter,instruction_checks=instructions,
+        cost_bounds=costs,routed_memory_checks=routes,installed_leaf_qualification_checks=qualification,
+        arithmetic=arithmetic,setter_control_checks=setter,instruction_checks=instructions,
         retained_parent_checks=retained,consumed_routines=routines,
         source_leaf_primitives=["bounded native64 ALU with carry","fixed active-path address routing",
             "coherent local fixed-word capture/commit","nonrearming paid parent token",
