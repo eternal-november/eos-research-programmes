@@ -14,6 +14,8 @@ The [information-and-progress comparison results](feedback-and-concurrency/infor
 
 The [constructive local-fairness results](feedback-and-concurrency/constructive-local-fairness/README.md) connect exact finite legal-support synthesis and environmental timing to conditional fairness and controlled completion, without assuming a shared random scheduler.
 
+The [recursive occurrence machine and finite bridge](feedback-and-concurrency/recursive-occurrence-machine/README.md) supply explicit occurrence jobs, escrowed ownership, ranked-call adaptation and strict operational model maps, with an exact phase-scheduled comparison rather than unrestricted concurrency equivalence.
+
 ## Reading path
 
 - `foundations/`: finite contextads, reduction tests, structural examples, theory guide, and the common relative construction.

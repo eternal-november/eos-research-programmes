@@ -1,0 +1,262 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{definition}{Definition}\newtheorem{proposition}{Proposition}
+\title{Recursive occurrence processes and the exact finite phase bridge}
+\author{}\date{15 November 2026}
+\begin{document}\maketitle
+\paragraph{Reading guide.} Part I defines a parameterized occurrence-process machine preserving addressed returns and frontier ownership. Part II pins the actual old phase evaluator and its independent finite/ranked adapter. Part III proves a direct category of strict primitive-model maps whose operational path comparisons are uniform across recursion and concurrency. The executable reference implements a declared callback-based fragment and finite diagnostics; it is not a static typechecker or a completed RC1--RC7 discharge. No historical novelty, Lean certification or TeX compilation is claimed.
+\part{The retained occurrence-process machine}
+
+\paragraph{Status.}
+This is a parameterized machine construction for the feedback/concurrency contract, with written local invariant proofs and an accompanying reference transition implementation. The exact finite phase adapter is supplied separately in this manuscript; neither constitutes a full language/typechecker certification. The design deliberately retains the old finite programme's addressed event-tree holes and phase bind, rather than replacing it by ordinary single-value return. Its open primitive assumptions and the remaining proof obligations are explicit.
+
+\section{Parameter signature and finite configurations}
+Fix countable sets of data, operation names, channel names, process identities and token identities. Each token has a current kind and a private-store component. Data environments contain ordinary data only: a token's identity as an authority is carried by the ownership interface, not copied into a lexical variable merely because its printed name is data. Handles may name processes or channels, but copying a handle never copies the ownership it refers to.
+
+A finite configuration consists of:
+\begin{itemize}
+\item a mutable world $w$, including actual stocks, reservations and pending effects;
+\item a finite map of live jobs, each with expression, data environment, local control frames and its currently held token bundle;
+\item a finite map of completed results and internal join records;
+\item finite message queues with unique message identities, data payloads and escrowed token bundles;
+\item an ownership ledger assigning each live token to exactly one job, result escrow or message escrow, together with its kind and private store;
+\item a finite execution prefix retaining primitive sample labels, public event labels, scheduler choices, costs and administrative steps.
+\end{itemize}
+Ownership is a property of the current frontier ledger, not of every historical annotation: old event-tree snapshots and audit records may name a token as provenance but do not thereby hold a second executable authority. Only current job/result/message escrow entries own it.
+
+Fresh internal jobs, public process handles and message identities use a fixed deterministic monotone allocator recorded in the configuration. Allocation is not an extra nondeterministic raw choice. Public handles remain observable; no unmentioned alpha-quotient is applied.
+
+Only finiteness of each configuration is required. The set of all configurations, the number of participants created over a run, and run length can be unbounded.
+
+The world is not the ledger. A syntactically held capability may depend on a mutable resource condition that interference invalidates. The primitive semantics must then record refusal, revalidation or recovery without silently restoring an earlier world or deleting already pending effects. Token nonduplication does not prove physical availability.
+
+A primitive interpretation supplies, for every operation, typed argument, current world and held bundle, a finite set of demonic alternatives; each alternative supplies a finite nonempty raw outcome set with nonnegative weights summing to one. Each outcome specifies the new world, a finite planar event tree whose addressed holes contain actual result data and post-bundles, an exact cost increment, and an explicit ledger transaction. Zero-weight outcomes remain raw transitions. The transaction accounts for every transferred, consumed, retyped or freshly minted token; minting requires a declared allocator rule and a fresh identity. It cannot silently duplicate an existing token. Primitive failure is an explicit outcome and can retain effects.
+
+This signature is a parameter, not a proof that a physical primitive implements its table. Untrusted/environmental actions are separately supplied locally finite or countably branching transitions on the same retained state, with explicit allowed effects and deviation outcomes. A selected correctness theorem may restrict them, but the raw semantics does not discard an unsuccessful outcome because it is inconvenient.
+
+\section{Syntax and genuinely unbounded control}
+Expressions are generated by
+\[
+ \mathsf{return}(v),\quad\mathsf{op}(o,v),\quad
+ \mathsf{bind}(t,x.u),\quad\mathsf{case}(v;\{u_k\}),\quad
+ \mathsf{choose}(u_1,\ldots,u_r),\quad\mathsf{call}(f,v),
+\]
+together with explicit separated $\mathsf{batch}$, $\mathsf{yield}$, $\mathsf{spawn}$, $\mathsf{send}$, $\mathsf{receive}$ and $\mathsf{await}$ forms described below. Pure expressions evaluate data without changing world, ledger or costs. Binding supplies a dependent continuation for each actual result value and its actual post-interface. Data can choose among continuation bodies; it cannot manufacture a token bundle.
+
+A finite procedure table may be mutually recursive. Calling unfolds one body in one visible-to-the-machine administrative step; there is no decreasing syntactic rank requirement. Thus $\mathsf{loop}()=\mathsf{call}(\mathsf{loop},())$ has an infinite administrative execution, not a finite failure result. An implementation may inspect finite prefixes, but a fuel cutoff is not the semantics of this loop. A procedure closure captures ordinary data, not copied ownership or private stores. Persistent procedure parameters and the current dynamic input are separate interface components: an entry adapter may instantiate a body with public parameters while retaining the actual input unchanged. A parameter tuple must not silently replace that input merely because both are represented as data.
+
+A job returns a finite planar event tree, not a single value. A leaf is an addressed pair of result data and actual owned bundle. Distinct leaves with equal data remain distinct continuation occurrences. Batch contributes a structural fork node; it does not invent a physical operation event.
+
+\section{Occurrence frames and scheduler steps}
+A configuration step first chooses a permitted live job or an environmental action. A primitive job step then chooses its demonic alternative before drawing its raw weighted outcome. This timing is part of the model; an alternative model allowing the adversary to observe a fresh draw first has a different strategy class.
+
+Administrative rules include:
+\begin{enumerate}
+\item A return creates one leaf holding the job's current bundle; an operation creates its declared event tree and post-bundles by the primitive transaction.
+\item To evaluate $\mathsf{bind}(t,x.u)$, push a bind frame containing the data-only continuation closure and evaluate the entire left computation $t$. No right continuation is started while any part of this left result remains unresolved.
+\item Once the left computation has completed with tree $\theta$, enumerate its actual holes by their planar addresses. Allocate one fresh internal child job for each hole, with continuation $u$ at that hole's value and post-interface. Transfer exactly that hole's bundle and private store to that child. Suspend the parent in a join record retaining the original tree, the address-to-child map and the already completed child results.
+\item When all those children complete, graft their trees into their original addressed holes. Transfer each escrowed result bundle to the parent result record, then return the grafted tree to the next enclosing frame. An empty hole set yields an immediate join with an empty tuple of children.
+\item A separated batch requires an explicit partition of the currently held bundle among its ordered children, including any reserve child. Allocate child jobs with those bundles. Their completed trees are assembled in a structural fork in the original child order, regardless of completion order.
+\end{enumerate}
+A join itself consumes no primitive cost and adds no physical event. It does retain an administrative transition and token-transfer receipt. Global execution cost is the sum of actual primitive transition costs, each unique event counted once. Returning or awaiting an existing result is not a replay of its cost or randomness. In the old finite separated phase fragment, per-command summaries recover the old additive cost and product-weight formulas; for generally interfering dynamic jobs, joint weights come from the actual conditional step kernels, not products of already correlated child marginal laws. While a child result waits, its bundle remains in its own escrow and cannot be claimed by another job merely because an equal data value has appeared elsewhere.
+
+Jobs ready to run can interleave arbitrarily, including starvation by the scheduler. A phase scheduler is a particular policy: within each batch or continuation join, finish the first child completely before running the next, recursively. This policy is intended to recover the old evaluator. The generic semantics includes other schedules and their actual world interactions; it does not identify their chronological words or laws by a bind-associativity axiom.
+
+\section{Dynamic participants, messages and suspension}
+A spawn step allocates a fresh public process identity, partitions the caller's owned bundle into the explicitly transferred child bundle and retained parent bundle, and starts the child expression. It returns only a handle to the caller. The child can outlive the caller. Its eventual result remains escrowed under its unique identity until claimed.
+
+Sending creates a fresh message identity with a specified data payload and an explicitly transferred subset of the sender's bundle. The message owns that bundle in escrow until one receive transition removes the message and transfers its data and bundle to the receiver. On receive, the current caller bundle and the delivered message bundle are combined by their disjoint union in the actual single receive post-interface, and the continuation uses that interface. Queue order, nondeterministic message selection, loss and duplication policies are parameters; any duplication of a message payload does not duplicate its escrowed tokens. A loss outcome must account for the escrow and any outstanding obligation in the world. The default reliable-queue instance does not supply a loss transition.
+
+Receive suspends when no matching message is available. Await suspends until the named result is present, then claims its entire addressed result tree exactly once. The base rule returns a structural fork of that entire child-addressed tree and one separately addressed reserve leaf carrying the retained caller data and entire retained caller bundle. Thus caller tokens are not silently framed into every child hole. A more selective partitioning await can be added only with an explicit disjoint partition rule. The combined tree retains all child post-bundles and the distinct parent reserve bundle. A copied handle cannot claim the same result twice: a later claim takes an explicit already-claimed/refusal branch, retaining the current world. Merely waiting does not borrow the child bundle. Yield makes a scheduling boundary without discarding the current frames or bundle.
+
+The world may change during every suspension. Resume continues with the actual current world and held bundle; cached observations are data, not a guarantee. A primitive that depends on a cached fact must use an interference-stable certificate or an explicitly represented revalidation/refusal operation. This rule does not delete messages, reservations or partial effects which were already recorded before suspension.
+
+\section{Formation guarantees and their limits}
+Each case/choice/procedure branch has the declared input ownership interface and accounts for it through its own post-interface; selecting a branch is not permission to drop or duplicate an input bundle. Pure data typing and ownership formation are separate checks.
+
+A well-formed configuration has disjoint owned bundles across all jobs and escrows; the ledger records exactly those occurrences. Each private store is indexed by its unique token owner and current kind. Internal join children have unique occurrence addresses; result claims and message deliveries are single-use. Procedure/data substitution does not insert token authority into copyable data.
+
+\begin{theorem}[Local ownership and occurrence preservation]
+If the primitive and environment signatures satisfy their declared ledger-transaction conditions, every machine step preserves well-formedness, except an explicitly represented fault/deviation state whose retained transaction is still recorded. Pure substitution and procedure unfolding preserve the ownership interface. No rule copies a token by copying data, a handle or continuation syntax.
+\end{theorem}
+\begin{proof}
+Return moves the same bundle to result escrow. Primitive steps use their transaction premise. Bind allocates children only after a completed tree supplies pairwise disjoint post-bundles; each is removed from its escrow and assigned to its unique addressed child. Grafting removes those child result escrows and reassigns their disjoint union without changing leaf identities. Batch uses its explicit partition. Spawn and send use subset-and-complement partitions; receive and await remove a single source escrow before transfer. Fresh identities cannot alias existing jobs or messages. Case, choice, yield and unfolding change only control and data. These cases exhaust the rules. Private-store indices travel with the corresponding ledger token in every transfer, rather than being copied from the data environment.
+\end{proof}
+
+This theorem is a syntactic ownership invariant, not race freedom, termination, resource sufficiency, truth of evidence, permission to mutate any physical object, or correctness of an adversarial component. Mutable shared state and stale observations remain expressible. A model of malicious token theft must represent it as a declared deviation and cannot claim the ordinary ownership theorem across that violation.
+
+\section{Finite and infinite behavior objects}
+The raw execution object is the prefix tree of finite derivations with their compatible infinite paths. It contains finite successful, refused, faulted and deadlocked maximal runs, and infinite runs including pure unfolding divergence and unfair scheduler behavior. Equal state endpoints do not identify different event/sample/scheduler histories.
+
+The scheduler and each participant have explicit observation maps. Keeping the full ledger and private stores in the semantic configuration does not make them visible to a local scheduler or client. A full-history adversarial strategy is a separately admitted class, not a default implementation of decentralized control.
+
+Once a nonanticipating scheduler and demonic strategy are fixed, the finite outcome kernels assign consistent cylinder probabilities; the finitely/countably branching history tree reachable from each fixed initial configuration admits the standard discrete cylinder/path-law construction. This relies on the declared local branching restriction and deterministic allocator, not on an arbitrary unexamined environmental kernel. For this probability construction only, a finite maximal run is padded by its tagged terminal status (success, refusal, fault or deadlock); these padding coordinates are not extra physical raw transitions. This accounts for finite terminal mass while distinguishing it from infinite administrative divergence. Equivalently one may use the disjoint space of finite and infinite maximal histories. The raw tree is retained separately, including zero-weight edges and their possible infinite paths. No conditioning on successful termination is used to define the complete law.
+
+A native finite-bridge candidate maps a completed phase-scheduled run to its addressed primitive choices, event tree, exact cost and leaf bundles. The required theorem is a bijection with the old coproduct/product witness formula, including zero-weight choices and private stores. This proof is being supplied separately; agreement on final values alone is not accepted as the bridge.
+
+\paragraph{Reference realization and remaining scope.}
+The accompanying runtime supplies a mechanically inspectable callback-based transition presentation, outcome-tree and ledger checks, exact independent finite/ranked diagnostics, and genuinely interfering executions. The later parts supply the finite adapter and strict native model-map theorem at actual boundaries. Static formation remains a premise of the mathematical construction, not a certified typechecker. The world-only environmental helper is narrower than the parameterized deviation signature. These results do not by themselves discharge RC1 or RC7, and the ledger proof does not establish the full general RC2 interaction/coherence theorem.
+
+\part{The actual finite evaluator bridge}
+
+\paragraph{Pinned source and purpose.} This bridge uses the existing CF-0.1 operational rules in \emph{Plural Semantics for Result-Dependent Protocols}, section ``The operational interpretation'', and the finite typed extension in \emph{Typed Protocols and Bounded Higher-Order Interaction}, sections ``Commands operations and typing'', ``Operational runs and denotations'', and ``Private stores and actual model interpretations''. The source snapshot is repository commit \texttt{1525f561ab2f4f8f5e05f88d66bf12a50c7787df}; these sections were inspected directly. The bridge is to an explicit stack/queue machine, which can be realized as the phase scheduling discipline of the new occurrence-job runtime. It is not a claim that arbitrary concurrent schedules reproduce the old evaluator.
+
+\section{What must be retained}
+An admitted finite command has the constructors
+\[
+ \operatorname{Ret}(f),\quad\operatorname{Op}_e(v),\quad
+ \operatorname{Bind}(t,b.u_b),\quad\operatorname{Batch}_\chi(t_1,\ldots,t_n),
+ \quad\operatorname{case}(v;\vec t),\quad X[\sigma].
+\]
+Ranked finite procedure invocation reduces to its selected instantiated template. Pure selectors, code lookup, evidence checks and parameter evaluation are those of the old language, not an unrestricted new evaluator. A continuation is selected by its own actual public post-configuration $b$, with the prescribed data framing and capability family; it cannot inspect the primitive's raw witness or sibling results.
+
+On store-bearing interfaces an actual semantic configuration is $(b,\zeta)$ where $\zeta\in\operatorname{Store}(\Delta_b)$ contains private entries for the actual owned token identities. The client sees $b$, not $\zeta$. Pure maps carry the store unchanged. Primitive tables explicitly update it and distribute it to the disjoint owned token subsets of their ordered child configurations. This includes zero-weight primitive branches.
+
+A completed old run is a record
+\[
+ R=(h,p,c,w,\theta),
+\]
+with raw derivation $h$, probability $p$, cost vector $c$, physical-event word $w$, and planar typed causal result tree $\theta$. The raw history and tree occurrence addresses are not discarded when equal costs or output laws happen to coincide.
+
+The old Bind rule first completes the entire left command. If its returned tree has ordered leaves $(b_1,\ldots,b_k)$, it next runs $u_{b_1},\ldots,u_{b_k}$ in that order and grafts their trees into those very leaves. In particular it does not start a continuation merely because one left-phase branch has already returned.
+
+\section{A mechanically inspectable stack/queue machine}
+There are evaluation states $\operatorname{Eval}(t,a,\kappa)$ and return states $\operatorname{Done}(R,\kappa)$. The stack $\kappa$ contains typed frames:
+\begin{description}
+\item[$\operatorname{WaitBind}(u)$] Wait for the complete left result. It stores continuation code and permitted persistent public framing, not a duplicated input ownership context.
+\item[$\operatorname{Graft}(R_0;D;Q;u)$] $R_0$ is the completed left derivation/tree skeleton; $D$ is the ordered list of completed child records; $Q$ is the ordered queue of remaining actual leaf configurations. The active child is outside the frame. The queue position is the occurrence address, not merely a returned value.
+\item[$\operatorname{Fork}(D;Q)$] $D$ holds completed child records and $Q$ the remaining ordered pairs of child code and split configuration.
+\item[$\operatorname{Admin}(k)$] Optional bookkeeping for case/call/template wrappers when the pinned raw-record convention retains them. Such a frame has no physical event or cost.
+\end{description}
+
+The transition presentation is as follows.
+\begin{enumerate}
+\item $\operatorname{Eval}(\operatorname{Ret}(f),a,\kappa)$ returns $(\mathsf{ret},1,0,\varnothing,\eta f(a))$.
+\item At $\operatorname{Eval}(\operatorname{Op}_e(v),a,\kappa)$ evaluate the admitted pure parameter. For every raw $z\in W_e(a,v)$ there is one transition returning the old record $( (e,z),p_e(z),c_e(z),[\ell_e(z)],\ell_e(z)(\eta d_1,\ldots,\eta d_k))$. The transition has probabilistic weight $p_e(z)$, including a separate raw edge when that weight is zero. The $d_i$ include the actual opaque store restrictions.
+\item Evaluating $\operatorname{Bind}(t,u)$ pushes $\operatorname{WaitBind}(u)$ and starts $t$. On return $R_0$, extract its ordered leaf configurations. If none exist, immediately return the assembled empty-child bind record. Otherwise start the first $u_{b_1}$ and install $\operatorname{Graft}(R_0;[];[b_2,\ldots,b_k];u)$. On each child return append its record to $D$ and start the next queued continuation. When the queue is empty assemble
+\[
+ ((h_0,(h_i)_i),\ p_0\prod_i p_i,\ c_0+\sum_i c_i,
+ \ w_0w_1\cdots w_k,\ \theta_0[\theta_1,\ldots,\theta_k]).
+\]
+\item Evaluating a batch applies its declared pure-data/token split once, then starts child one with a $\operatorname{Fork}$ frame for the remainder. Child returns are accumulated in address order. Assembly uses raw batch history, product weight, summed cost, concatenated physical words, and $\mathsf{Fork}_n(\theta_1,\ldots,\theta_n)$. The structural fork adds no physical event. A nullary batch immediately returns the old nullary record, only at its admitted empty/disposed capability context.
+\item Case, parameter calls and ranked template calls perform exactly the old pure selection/substitution and enter the selected body. They add no physical event, cost or stochastic choice. Optional raw administrative tags follow the pinned convention and are erased only by the same named projection used by the old substitution theorem.
+\end{enumerate}
+All other administrative transitions have probability one and cost zero. Their records must not be added again to the run probability/cost: accumulated output records summarize the same primitive transitions, not a second execution of them.
+
+\section{Ownership and store conservation inside the machine}
+The ownership frontier consists of the active computation, pending queued leaf/child configurations, and returned leaves of completed child records. It excludes historical snapshots, syntax and raw derivation records. A reference to a token name in $R_0$ is not a second permission to use it. An implementation can replace left-result leaves in the graft skeleton by addresses and move their owned configurations to the queue; opaque historical copies remain nonauthoritative.
+
+\begin{proposition}[Finite-fragment frontier preservation]
+Starting with a well-typed old input, every reachable phase-machine state has pairwise disjoint owned frontier bundles. Every live private-store entry is carried by the same unique token owner, and every token kind change is justified by a declared old primitive transition. No client branch depends on a private-store or raw-history value not available in its old interface.
+\end{proposition}
+\begin{proof}
+Return and pure administrative steps preserve ownership. A primitive uses the old disjoint-subset transition certificate and restricts its store to the same subsets. Moving one configuration from a pending queue to the active computation is a transfer, not a copy. Replacing that active computation by its returned leaves preserves disjointness by the same invariant. Batch uses its explicit partition once. Grafting changes tree addresses, not token ownership. The noninspection assertion follows because all command selection uses exactly the old public pure expressions or declared primitive interfaces; bookkeeping records have no client eliminator.
+\end{proof}
+
+\section{Exact raw adequacy}
+\begin{theorem}[Per-command phase-machine bijection]\label{bridge-adequacy}
+For every admitted closed finite old command, public valuation and actual initial store, completed old derivations correspond bijectively to completed phase-machine executions. The correspondence preserves the full addressed raw record, every primitive choice including zero-weight choices, probability, cost, physical-event chronology, typed causal result tree and final private stores. Every raw machine choice completes in this fragment.
+\end{theorem}
+\begin{proof}
+Use structural induction on the finite command derivation jointly with the existing well-founded procedure-template rank. Return and primitive each have exactly the declared machine transitions, indexed by the same raw witness. For Bind, the unique first administrative step installs its left frame. By induction its left evaluation block corresponds to a unique old left derivation. That block determines exactly the ordered actual leaf queue, including the response-dependent number and types of children. Each subsequent evaluation block corresponds by induction to the old derivation at that addressed leaf. Queue order and the assembly rule reproduce exactly the old rule's tuple and annotations. Conversely an old rule instance specifies those same blocks, and hence one complete machine execution. The two constructions are inverse. Batch uses the analogous ordered decomposition. Case and calls use the old total pure selection and strictly smaller finite body; their optional administrative tags follow the same convention. Every block terminates by these inductions; no scheduler choice has been introduced. Multiplying primitive transition weights once and adding their costs once agrees with the assembly formulas. No positivity restriction occurs anywhere.
+\end{proof}
+
+Let $E$ embed the admitted old syntax into a runtime whose phase discipline implements these states and frames, without externally mutating the owned old stores or token kinds. Primitive wrappers implement exactly the pinned old tables; undeclared dependence on a new shared mutable world is excluded from this embedding. Internal child identities are allocated by a fixed deterministic fresh allocator, and the phase discipline fixes the order of all administrative allocation, join and active-frame steps as well as primitive-child evaluation. Otherwise distinct fresh names or redundant administrative schedules would introduce extra raw executions for one old derivation; an explicit quotient would then be needed instead of this literal bijection. Publicly observable dynamic process handles are not silently quotiented. Let $U$ erase administrative steps and the physical word when selecting the old retained causal observation regime, while keeping $h,p,c,\theta$ and store-bearing leaves. The theorem gives the exact witness isomorphism
+\[
+ U(\llbracket E(t)\rrbracket_{\rm phase})\cong H_{\rm old}(t).
+\]
+For the richer old operational observation one may keep the physical word as well; the bijection already preserves it. Taking the old joint cost/tree law is a further pushforward, not an identification of raw possibility with positive support.
+
+\begin{proposition}[Constructor and substitution compatibility]
+The bridge respects the old constructor formulas, pure data substitution and finite code plugging, up to the old named administrative-marker convention. In particular Bind is the dependent coproduct over left runs of the product over their actual addressed leaves, not a fixed-list product.
+\end{proposition}
+\begin{proof}
+The constructor statement is precisely the structural decomposition in Theorem~\ref{bridge-adequacy}. For pure substitution, the old public tables select the same operation instance, case and template at the reindexed valuation. The actual post-interface and token/store families reindex with that valuation, so the machine queue has the corresponding same addressed configurations. Apply induction blockwise; all annotations agree. Finite code plugging replaces exactly the body entered at a call; expansion and machine entry agree after the old administrative projection. These inductions are compatible with identity and composite substitution because the old pure/table and code-substitution operations are. No extra closure capture, witness inspection or capability duplication is introduced by the machine.
+\end{proof}
+
+\section{An executable ranked-call adapter with separate parameter and input lanes}
+The old source makes a distinction that an ordinary one-argument procedure dispatcher can accidentally erase. An open call $X[\sigma]$ computes its parameters from persistent $\Gamma$, while its dynamic input $a$ is supplied separately. A ranked invocation may select a tagged code value $(i,\eta)$ using $(\Gamma,a)$, but then runs $s_i[\eta]$ on the same dynamic input $a$. Captures contain ordinary public data, never the held capability bundle or private store.
+
+The reference adapter represents a static open call by $\mathsf{ParameterCall}(i,\eta)$ after its persistent parameters have been instantiated. It represents dynamic finite-menu invocation by $\mathsf{Invoke}(a\mapsto(i,\eta))$. Compilation evaluates a call packet $(i,\eta,a,r)$, where $r$ is the current exclusive rank bound. The resolver verifies $r_i<r$, instantiates the body with $\eta$, and returns an administrative entry $\mathsf{ProcedureEntry}(\widehat{s_i[\eta]},a)$. The machine sets both the selected body and its explicit input; it does not replace the dynamic input by the parameter packet. This entry adds no physical event, random choice, cost or causal Return node. Top-level bound $R+1$ admits exactly ranks at most $R$.
+
+Compilation is structural on Return, Op, Case, Bind and Batch. A compiled Bind continuation compiles the selected source continuation at its actual result value, under the same surrounding rank bound. Entering a template resets that bound to its strictly smaller rank. In particular there is no assumption that all continuation holes exist before the left result is known.
+
+\begin{proposition}[Ranked adapter adequacy]
+For an admitted finite ranked template family with pure total deterministic callbacks, the compiled phase machine and the structural source evaluator have the same raw primitive-choice runs and store-bearing results, weights, costs and physical words, after the declared administrative-call-marker projection. This comparison extends the finite constructor bijection above to actual parameter entry and finite-menu invocation. It commutes with persistent pure parameter substitution and capture-avoiding body plugging.
+\end{proposition}
+\begin{proof}
+At a parameter call both evaluators select the same instantiated $\eta$ and retain the same $a$. At dynamic invocation the same pure selector sees the same public $a$, hence selects the same tagged capture. Both check the same strict rank inequality and enter the same instantiated body with input $a$ and unchanged authority/store. Induct on the selected rank jointly with structural evaluation. The remaining cases are the constructor proof above; lazy continuation compilation encounters exactly the same actual holes. Administrative entry is deterministic and contributes no primitive record. Substituting parameters changes only their public valuation in both resolutions, and plugging replaces precisely the resolved body; therefore the previous identity/composition and plugging proof extends across the new entry case.
+\end{proof}
+
+The Python adapter is not a static dependent-type or whole-template rank checker. It checks each executed rank decrease; well-formedness of every unvisited branch, finite lower-rank code-valued capture menu, endpoint equality, and data-only closure capture remain premises of the admitted source family. Pure Python callbacks are trusted semantic tables and are not sandboxed against hidden mutable state. The independent source oracle structurally evaluates ranked calls without running the compiled machine. Its accumulated store dictionary may retain archival entries for retired tokens; the final semantic observation restricts that dictionary to the token bundle at each addressed live result leaf. An explicit consumption diagnostic checks this projection. Its finite diagnostics exercise zero-weight choices, distinct equal-valued occurrences, private stores, separate capture/input values, administrative inlining and parameter reindexing; these diagnostics supplement rather than replace the proof.
+
+\section{The scheduler and observation boundaries are part of the theorem}
+A parallel batch with unrelated physical events $a,b$ admits both event orders under unrestricted interleaving, whereas its old phase evaluator emits only $ab$ in address order. Even if both runs return the same causal fork, the richer raw machine has an extra scheduling distinction. With shared mutable effects the final result may also change. Therefore one cannot replace $\llbracket E(t)\rrbracket_{\rm phase}$ by arbitrary scheduled executions in the displayed isomorphism. One must either retain the phase scheduler in the embedding, or separately prove a schedule quotient and its probability/cost/store behavior for an appropriate independence class.
+
+Similarly the old causal Bind associator is not generally a physical-chronology equality: a left phase that creates two occurrences can finish both intermediate actions before either later continuation, whereas another raw bracketing can interleave intermediate and later actions occurrence by occurrence. The old theorem deliberately projects that distinction away. The bridge preserves this boundary rather than granting the old equality to new timing/interference observers.
+
+General recursion, suspension and dynamic participants belong to the new runtime, not this termination theorem. For example a recursive call $X=X$ may generate an infinite administrative execution with no primitive event; it must remain divergence, not become a finite failure or a lost zero-event branch. The finite old embedding is recovered by the admitted finite/ranked subgrammar and its stated phase/environment regime. This proves the finite adapter, not the full RC1/RC7 obligation before the actual new runtime and its embedding are supplied.
+
+\part{Strict native operational model maps}
+
+\paragraph{Scope.}
+This is a direct operational construction, not an inheritance claim for arbitrary independent O1 inputs. It gives a nontrivial class of representation changes under which the recursive occurrence machine and its constructors are natural. Its hypotheses concern primitives, retained interfaces and permitted observers, rather than assuming the desired contextual law. It does not cover arbitrary coupling witnesses or contexts which inspect erased private information.
+
+\section{Strict primitive-model data}
+Two interpretations share public data types, token identities and kinds, event labels, command syntax, procedure table, deterministic fresh-name allocator and queue/claim policies. They may differ in mutable world and private-store representations. A model map consists of a world map $b$ and token-store maps which commute with restriction to owned bundles, retyping and the declared primitive transactions. Public data and process/message handles are unchanged.
+
+For every admitted operation state, public argument and demonic alternative label, require:
+\begin{enumerate}
+\item Definedness and available alternative labels agree under the map. Each source raw outcome has a specified target raw outcome $r(z)$.
+\item The target outcome has exactly the same addressed public result/event tree, ownership transaction and event label. Its next world and private stores are the mapped source next world/stores. No primitive transfers, consumes or mints an unrecorded token.
+\item Outcome probabilities push forward, separately within every demonic alternative:
+\[
+ p'(z')=\sum_{r(z)=z'}p(z).
+\]
+Costs are exact, or pointwise nonincreasing when a cost-refinement mode is explicitly selected.
+\end{enumerate}
+Environmental transition families must satisfy the same conditions, including their admitted alternative labels. This is a joint state/event/kernel condition, not equality of separate state and event marginals. Any refusal or fault relevant to the admitted model is an actual preserved branch, not discarded by the map.
+
+The actual participant, scheduler and adversary observation maps on retained histories (or histories of state observations) must obey an information square: each source observer is a function of its corresponding target observer after the state projection. Thus a source policy can be transported without reading erased information. In the common equal-observer instance the source and target see the same public values and readiness. A full-history source adversary is not automatically admissible after hiding concrete world data.
+
+The primitive interface passes a job only its held private-store restriction, not the store of unrelated processes. A program continuation selects code only from permitted public data; it cannot inspect a raw primitive outcome label merely because the interpreter records that label for verification.
+
+\section{The induced configuration and step map}
+Map a machine configuration by applying $b$ and the store maps, leaving the syntax, data environments, job/message/result identities, addressed join skeletons, control frames and frontier ledger locations unchanged. Historical provenance records map their primitive outcomes through $r$ and do not acquire executable ownership. The monotone identity-allocation state is unchanged.
+
+\begin{theorem}[Strict step naturality]\label{maps-step}
+Every administrative step commutes with this configuration map. Every primitive or environmental raw step maps to a target raw step with the same scheduler/alternative label, public event and result addresses, mapped world/stores, and the stipulated cost behavior. The target conditional step law is the pushforward source conditional step law. Ready-job and terminal-status observations agree.
+\end{theorem}
+\begin{proof}
+Return, case and choice inspect the same public data. Bind installs the same continuation frame; when its left result completes, the two identical addressed public trees allocate the same children with the same fresh identities. Store restriction commutes with the token partitions, so queued and active ownership matches. Graft and batch have the same ordered skeleton and single-use child escrows. Calls unfold the same code with the same data-only captures, without a rank assumption.
+
+Spawn, send and receive use the same names, queue shapes, payloads and held-token subsets; their store transfers commute with restriction. Await sees the same claim flag and whole result-tree shape, transfers the same child escrows and retains the same separately addressed caller reserve. Yield and administrative joins preserve control. Thus these rules commute and agree on readiness, waiting, refusal and completion. Primitive/environment steps commute by the declared outcome square, and summing each finite outcome fibre gives their conditional law. Administrative kernels are Dirac and commute automatically.
+\end{proof}
+
+The theorem applies at every actual suspension/interference boundary, because the map relates the full current world and frontier, not an entry-state snapshot. It still requires each admitted environmental transition to respect that relation; arbitrary interference does not inherit it merely from common outputs.
+
+\section{Finite prefixes, infinite executions and program contexts}
+Extend the step map to raw finite execution prefixes by retaining scheduler/alternative choices and mapping each primitive outcome. It is prefix-compatible. Its infinite extension acts pointwise on every compatible infinite history; no limit of incompatible finite witnesses is chosen.
+
+\begin{theorem}[Recursive contextual naturality]\label{maps-contexts}
+For every finite or mutually recursive procedure table and every machine program, the map above induces a native prefix/path comparison between the two interpretations. It preserves finite terminal status, infinite divergence, public event chronology, addressed result trees and ownership interfaces. It is compatible with all stated constructors, including bind, batch, call, spawn, messaging, suspension and await.
+
+If schedulers and demonic strategies are transported through their information squares, the full path law, with tagged finite termination padding, pushes forward to the target law. Exact costs preserve the joint cost/body law; cost-lowering maps instead give the declared one-way pathwise cost comparison.
+\end{theorem}
+\begin{proof}
+Induction on prefix length uses Theorem~\ref{maps-step}. Infinite executions then follow by the unique compatible coordinate map on the prefix tree. Every source machine step maps to one target step, including call unfolding and silent administration, so an infinite source execution cannot disappear into a finite target prefix. Terminal control shapes and absence of ready steps agree.
+
+Constructor compatibility is not a further semantic assumption: the administrative cases in the step proof are exactly their operational frame rules. Recursive calls use the same one-step unfolding square at every finite prefix; no termination induction is invoked. Substituting the same program into an admitted context therefore preserves the map on the resulting common syntax, provided the context's primitives and observers are in the declared model class.
+
+The information square transports each source choice kernel to a permitted target choice kernel with the same labels. Conditional primitive pushforward then gives finite-cylinder equality by induction. Tagged padding agrees at finite maximal executions, and cylinder uniqueness gives the entire discrete maximal-path law. Costs follow pointwise from their one-step premise. This proof does not multiply unrelated marginal laws of interfering jobs.
+\end{proof}
+
+If the local raw outcome maps are surjective at every related state, and the environment alternatives have the same coverage property, every target finite or infinite raw execution from the mapped initial configuration has a source lift. Choose a preimage of each successive outcome; finite/countable outcome indexing supplies a canonical first choice when desired. Thus raw coverage is an additional local premise, not a consequence of probability pushforward on zero-weight outcomes. Without it, the native map still exists, but all-raw equivalence is not claimed.
+
+\section{Category-valued structure and the finite bridge}
+Identity model maps use identity world/store/outcome maps. Composite model maps compose all three. Transaction and observer squares compose; probability pushforward composes by regrouping the finite outcome sums, and exact/nonincreasing costs compose in their respective modes. The induced configuration and path maps are exactly identities and composites, because their definitions act coordinatewise on the same control skeleton. Thus this is a category of strict primitive interpretations and a functor to native retained execution comparisons.
+
+Each machine constructor gives the corresponding natural operational construction on this category. This is a direct integration result for an occurrence-process family, not a proof that the existing finitary polynomial/coend construction already contains arbitrary recursive concurrency. Its content is nontrivial because worlds and private stores may be abstracted noninvertibly, but only where the primitive, observation and ownership squares actually hold.
+
+On the old finite phase-scheduled fragment, these path maps restrict to the exact phase-evaluator bridge: addressed primitive witness tuples are mapped by the declared outcome maps; their probabilities are pushed forward by summing fibres, not necessarily preserved one tuple at a time. Costs, chronology and private-store frontiers are preserved or compared as stipulated. The old causal associator still does not become a chronological equality under arbitrary interference. This theorem extends representation maps across the new constructors; it does not indiscriminately extend every old quotient or equality.
+\end{document}
