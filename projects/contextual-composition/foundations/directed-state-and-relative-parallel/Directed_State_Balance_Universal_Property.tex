@@ -1,0 +1,71 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}
+\title{Directed state balance: the hom-category universal property}
+\date{15 November 2026}\begin{document}\maketitle
+\paragraph{Status.} Preliminary general construction, not yet a full state-feedback completion. It fixes the direction and universal property of the proposed hom categories before proving composition, feedback and their coherence for the existing relative pseudomonad. No state comparison is silently turned into an equality or inverse.
+
+Let $\mathcal S$ be a small category and $F:\mathcal S^{op}\times\mathcal S\to\mathbf{Cat}$ a strict functor, in fixed universes. Define a category $\mathsf L(F)$ by generators and relations. Its objects are pairs $[s,x]$ with $x\in F(s,s)$. It contains the arrows $[s,a]$ of each $F(s,s)$, subject to their category laws. For $h:s\to t$ and $x\in F(t,s)$, adjoin a directed arrow
+\[
+ \lambda_{h,x}:[s,F(h,1_s)x]\longrightarrow[t,F(1_t,h)x].
+\tag{D}
+\]
+Impose naturality in $x$, $\lambda_{1_s,x}=1$, and for $h:s\to t$, $k:t\to u$, $x\in F(u,s)$ the relation
+\[
+ \lambda_{kh,x}=\lambda_{k,F(1_u,h)x}\;\lambda_{h,F(k,1_s)x}.
+\tag{C}
+\]
+The middle objects in (C) agree by functoriality of the two independent variables. We do not impose invertibility of (D).
+
+\begin{theorem}[Directed dinatural universal property]
+For every category $D$, functors $\mathsf L(F)\to D$ correspond exactly to functors $E_s:F(s,s)\to D$ and natural transformations
+\[
+ E_sF(h,1_s)\Rightarrow E_tF(1_t,h)
+\]
+satisfying the identity and composition equations above. Natural transformations between the resulting functors correspond to families of transformations of the $E_s$ compatible with each directed balance. Consequently this is an isomorphism of the corresponding categories of data, natural in $D$.
+\end{theorem}
+\begin{proof}
+Restriction of a functor supplies the stated data on the generators. The defining relations give exactly the required naturality, identity and composition equations. Conversely such data extend uniquely to paths in the generating graph, and the equations ensure that the extension descends to the presented category. A natural transformation is determined by its components at $[s,x]$; its naturality on internal arrows and on (D) is exactly the stated family compatibility. These two constructions are inverse on objects and arrows.
+\end{proof}
+
+\section{Variance for state feedback}
+For a strict state diagram of process hom categories
+\[
+ F(s,t)=\mathcal H(Rs\otimes A,Rt\otimes B),
+\]
+$h:s\to t$ and $f\in F(t,s)$ give the directed comparison
+\[
+ [s,f(Rh\otimes A)]\longrightarrow[t,(Rh\otimes B)f].
+\]
+This is the chosen direction of \emph{lax} balance here. Reversing all these generators defines a distinct oplax convention. Ordinary state coends identify these two representatives; bicategorical pseudocoends instead require invertible balance. The present construction does neither.
+
+It also does not adjoin every state-intertwiner square. A general pair $f$ at $s$, $g$ at $t$ and comparison $(Rh\otimes B)f\Rightarrow g(Rh\otimes A)$ is not necessarily a sliding generator obtained from one heterotyped $x\in F(t,s)$. Including all such squares requires a different universal property and possibly stronger target axioms.
+
+\section{A minimal noninvertibility test}
+Take $\mathcal S$ to be the ordered set $0<1$, monoidal by maximum with unit $0$, and $F$ constantly the terminal category. Then $\mathsf L(F)$ is exactly $0\to1$. The nonidentity state map produces one noninvertible comparison. The ordinary coend is terminal, while the pseudocoend has the comparison inverted and is equivalent to terminal. Thus the direction is genuine even in the smallest test; this is not a disguised quotient or groupoid completion.
+
+\section{Faithfulness for actual state diagrams}
+For the following theorem let $\mathcal H$ be a strict 2-category and let the displayed state whiskering be strict; this is a scoped hypothesis, not an asserted strictification of every monoidal bicategory. Consider the actual hom-category diagram $F(s,t)=\mathcal H(Rs\otimes A,Rt\otimes B)$.
+
+\begin{theorem}[Native faithfulness detector]
+Every diagonal inclusion $\mathcal H(Rs\otimes A,Rs\otimes B)\to\mathsf L(F)$ is faithful. In particular the state-unit inclusion retains distinct original native cells. It need not be full.
+\end{theorem}
+\begin{proof}
+Define the category of lax state intertwiners. Its objects are $(s,f)$; an arrow $(s,f)\to(t,g)$ is a pair $(h,\beta)$ with $h:s\to t$ and a native 2-cell
+\[
+ \beta:(Rh\otimes B)f\Rightarrow g(Rh\otimes A).
+\]
+Composition is vertical pasting after whiskering: $(k,\gamma)(h,\beta)$ has state map $kh$ and body $(\gamma\, (Rh\otimes A))((Rk\otimes B)\,\beta)$. Strict associativity and interchange prove the category laws.
+
+Send a native generator $[s,\alpha]$ to $(1_s,\alpha)$ and a sliding generator $\lambda_{h,x}$ to $(h,1)$, where the two boundary composites coincide by associativity. Naturality of sliding is precisely interchange; the identity and composition relations give $(1,1)$ and $(kh,1)$. Thus this defines a detector functor $\mathsf L(F)\to\mathsf{Int}$. Two native arrows identified by the presentation would have the same detector $(1_s,\alpha)$, so their original 2-cells must agree.
+
+For nonfullness take terminal $\mathcal H$, constant $R$, and the one-object strict symmetric monoidal category with endomorphism monoid $(\mathbb N,+)$ (tensor is also addition). Then $F$ is terminal and $\mathsf L(F)$ is the one-object category $B\mathbb N$. The original diagonal terminal category has only its identity, but the completion has every $n\in\mathbb N$ as a distinct sliding arrow, as detected by its state map.
+\end{proof}
+
+The detector is not an identification of $\mathsf L(F)$ with all intertwiners. It proves faithfulness because it distinguishes native arrows; it does not show every intertwiner is generated by sliding. If used in a completion of the original relative factory, exact recovery initially means the marked image of original native cells, not an automatically full subcategory of zero-state objects.
+
+\section{What is still owed}
+This is only the hom-category construction and its universal property. For a weak monoidal bicategory $\mathcal H$, the displayed state diagram is generally pseudofunctorial. Its coherence comparisons must be retained or transported through a coherent replacement; strictness is not automatic. One must still derive composition on these hom categories, its naturality in directed balance, associative/unit constraints, state-feedback operations and their laws. Any free lax-feedback assertion needs a precisely specified target doctrine rather than simply naming the generators its desired axioms.
+
+The detector proves faithfulness in the specified strict state-diagram case; full faithfulness is false in general. Extension of that result to weak state diagrams and exact recovery of each old structured specialization must respect the actual coherence data. Merely listing the original cells as generators would not have sufficed to prove their preservation.
+\end{document}
