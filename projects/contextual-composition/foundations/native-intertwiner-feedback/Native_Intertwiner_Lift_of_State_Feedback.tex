@@ -1,0 +1,104 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Lifting established state feedback through native intertwiners}
+\date{15 November 2026}
+\begin{document}\maketitle
+\paragraph{Scope.} This is a written conditional lifting of the established Katis--Sabadini--Walters state construction to native transition cells and directed parallel composition. Sequential composition and feedback require coherent pure actions; the parallel lift additionally requires pure-layer exactness. That condition is derived below for an established concurrent-pseudomonad source. Ordinary state machines and native state maps are not claimed as new. No universal feedback property, unrestricted shared-interface interaction, instantaneous trace, or completion of the extension programme is claimed.
+
+\section{Input and convention}
+Use the coherent pure actions and directed parallel structure of the action/state extension theorem in \emph{Directed state extension with coherent pure actions}: a symmetric monoidal pure category $C$, process bicategory $\mathcal H$, identity-on-objects pure pseudofunctor $J$, coherent left/right pure actions and centrality of $J(C)$, and parallel hom functors with normal lax sequential compositor
+\[
+\chi:(f\parallel g);(f'\parallel g')\Rightarrow(f;f')\parallel(g;g').
+\]
+Parallel associativity, symmetry and units satisfy the specified lax-composition compatibility equations. The pure restrictions agree coherently with the action data. These assumptions alone do not explicitly make every pure input/output layer of $\chi$ invertible. The previously proved whole-pure-strand criterion supplies the pure actions but is not here asserted to supply the extra condition below. No general effectful instance of $\chi$ is inverted.
+
+Let $R:S\to C$ be strong symmetric monoidal with $S$ small. Write $sA$ for $Rs\otimes A$ and $h_A$ for $J(Rh\otimes1_A)$. Composition $f;g$ means first $f$, then $g$. All formulas include the actual unit, associativity and pseudofunctor comparison cells. They are not assertions of an unproved simultaneous strictification.
+
+\paragraph{Additional hypothesis for parallel lifting only.}
+Assume \emph{pure-layer exactness}: $\chi$ is invertible whenever every arrow in its first time-layer is pure, and whenever every arrow in its second time-layer is pure. These are instances of the given lax compositor, with its existing coherence, not separately chosen unrelated maps. This is independent source structure checked before machine intertwiners are defined. It does not require invertibility when both time-layers contain general effects. We have not proved that whole-pure-strand invertibility implies this condition, nor a counterexample to that implication. The distinction is a proved gap in the attempted derivation, not a general impossibility result.
+
+\section{All intertwiners, not only factorized slides}
+Define $\mathcal I_{\mathcal H}(A,B)$ with objects $(s,f:sA\to sB)$. An arrow to $(t,g)$ is a pair
+\[
+(h:s\to t,\quad \alpha:f;h_B\Rightarrow h_A;g).
+\]
+The cell $\alpha$ need not be invertible. Distinct state arrows remain distinct even when $R$ identifies them. Given $(k,\beta):(t,g)\to(u,l)$, the composite uses $kh$ and the paste
+\[
+f;h_B;k_B\xRightarrow{\alpha\,k_B}h_A;g;k_B
+\xRightarrow{h_A\,\beta}h_A;k_A;l.
+\]
+The boundary identifications use the pseudofunctor constraints. Identity pairs use the unit constraints. Bicategorical coherence and interchange prove the category laws. There are no equations identifying different pairs except equality of their two components.
+
+\begin{theorem}[Native lifting]
+Under the coherent pure-action input, these hom categories form a bicategory with the same objects as $\mathcal H$, and sequential assembly and typed retained-state feedback lift to it. With the parallel input and additional pure-layer exactness, parallel composition and directed sequential/parallel interchange also lift. The unit-state inclusion of $\mathcal H$ is locally faithful. The construction uses all state intertwiners and needs no adjoints for state maps.
+\end{theorem}
+\begin{proof}
+For $(s,f):A\to B$ and $(t,g):B\to D$, retain state $s\otimes t$, run $f$ holding $t$, then run $g$ holding $s$, and restore the retained state order. This is the previously defined held-body $\operatorname{Seq}_{s,t}(f,g)$. On arrows $(h,\alpha)$ and $(k,\beta)$ take state map $h\otimes k$. Whisker $\alpha$ while holding $t$, and $\beta$ while holding the target of $h$, inserting pure centrality to move the other state map past the relevant body. This yields precisely
+\[
+\operatorname{Seq}_{s,t}(f,g);(h\otimes k)_D
+\Rightarrow(h\otimes k)_A;\operatorname{Seq}_{s',t'}(f',g').
+\]
+Naturality of pure centrality and bicategorical interchange show that pasting two such pairs vertically is the same as first composing the pairs in each input. Identity pairs are preserved. Threefold sequential composition has the same chronological body $f,g,l$ in both parenthesizations; its state associator and action coherence give the associator intertwiner. Naturality now follows for arbitrary $\alpha,\beta,\gamma$, not merely for a slide generator, from naturality of the action constraints. Pentagon and unit laws are the same action-coherence pastings with the same state maps.
+
+Parallel composition retains $s\otimes t$, applies $f\parallel g$, and inserts the pure state/interface permutation. Its arrow construction uses the following actual rectangle, before those permutations:
+\[
+\begin{aligned}
+(f\parallel g);(h_B\parallel k_D)
+&\xRightarrow{\chi}(f;h_B)\parallel(g;k_D)\\
+&\xRightarrow{\alpha\parallel\beta}(h_A;f')\parallel(k_C;g')\\
+&\xRightarrow{\chi^{-1}}(h_A\parallel k_C);(f'\parallel g').
+\end{aligned}
+\]
+The last inverse is justified by the pure \emph{input time-layer} $(h_A,k_C)$. It is not an instance with an entire pure strand. A slide-only argument cannot justify this step for arbitrary intertwiners. Coherent pure tensor comparison identifies the boundary pair with the state map $h\otimes k$. Functoriality is the source parallel functoriality and pure boundary coherence. The derived interchanger first permutes the four retained states and then uses the forward $\chi$ on the held transition bodies. Its naturality for all intertwiner pairs is the pure-boundary lifting calculation given below; it is not a further unspecified compatibility axiom. Its lax composition and parallel structural equations reduce to the source equations with identical pure state permutations. None of these pastings moves two effectful bodies by an inverse interchange.
+
+The unit-state inclusion maps a native $\theta:f\Rightarrow g$ to $(1_I,\theta)$ after the action unit comparisons. Equality of image pairs implies equality of the original cells. This proves faithfulness, not fullness: nonidentity state endomorphisms of $I$ can supply extra arrows.
+\end{proof}
+
+\section{The pure-boundary lifting calculation}
+The needed fact is not specific to machines. Let $P:\mathcal A\to\mathcal B$ be a normal lax functor of bicategories, carrying a specified pure interface into a specified pure interface with coherent invertible comparisons. Assume its composition comparisons $c_{a,b}:Pa;Pb\Rightarrow P(a;b)$ are invertible if $a$ is pure or $b$ is pure. Then it sends a relative-quintet square $\alpha:f;v\Rightarrow u;g$, with $u,v$ pure, to
+\[
+Pf;Pv\xRightarrow{c_{f,v}}P(f;v)
+\xRightarrow{P\alpha}P(u;g)
+\xRightarrow{c_{u,g}^{-1}}Pu;Pg.
+\]
+This defines the square action of a lax double functor between relative-quintet double categories, with loose composition comparison $c$. The pure-interface comparisons identify its tight sides; no companion inverse or conjoint is used.
+
+To check vertical pasting, expand two successive displayed rectangles. The adjacent inverse/forward pure-boundary comparisons cancel after lax associativity has rewritten them to the same three-layer comparison. The middle equality is functoriality and native naturality of $P$; the outer boundary comparisons are those of the composite square. Identity squares follow from normality and the pure-interface unit coherence. For horizontal pasting, compare applying this rectangle to the pasted source square with first applying the two rectangles and then the loose comparison $c$. Expanding gives a three-layer rectangle on each side. Lax associativity identifies the outer routes, and naturality of $c$ identifies the route through the two original native cells. Only the comparisons adjacent to a pure boundary are cancelled. The resulting equality is exactly naturality of the loose compositor as a square. The lax double-functor associativity and unit equations are those of $P$.
+
+Apply this calculation to the parallel normal lax functor $P:\mathcal H\times\mathcal H\to\mathcal H$. A pure arrow in its domain is a pair of pure arrows, so the hypothesis is precisely pure input/output \emph{layer} exactness, not pure-strand exactness. The resulting square action is the displayed parallel-intertwiner rectangle. This identifies the general categorical mechanism behind the lift and the exact location of the extra hypothesis. The argument is a coherence derivation, not a novelty claim about lax double functors.
+
+\section{Feedback on native cells}
+For an internal-state process $(s,f):Ru\otimes A\to Ru\otimes B$, define
+\[
+B_u(s,f)=(s\otimes u,f)
+\]
+with action reassociations. On $(h,\alpha)$ use $(h\otimes1_u,\alpha)$ with the same boundary reassociations. Thus $B_u$ is a functor, not merely an operation on objects or isomorphism classes.
+
+Tightening, unit-state vanishing, and joining nested closures use only the same pure-action retained-state isomorphisms as the action/state theorem. Separated strength and the subsequent parallel comparisons additionally use the strengthened parallel-lifting hypotheses. They are natural for all intertwiners because the state maps tensor functorially and the body comparisons are natural in the native cells. The distinct assemblies
+\[
+(B_u f);(B_w g)\cong B_{u\otimes w}(\operatorname{Seq}(f,g)),\qquad
+(B_u f)\parallel(B_v g)\cong B_{u\otimes v}(\operatorname{Par}(f,g))
+\]
+retain separate state copies. Their compatibility with the four-process interchanger is obtained by the same state permutation and forward held-body $\chi$ on both routes. This is not an assertion that two independently allocated copies equal reuse of one state, nor a yanking law. A pure outer state map induces a special intertwiner through the identity transition square; arbitrary native intertwiners are additional cells, not required to factor through such a slide.
+
+\section{An established general source supplies pure-layer exactness}
+Paquet--Saville, \emph{Effectful semantics in bicategories: strong, commutative, and concurrent pseudomonads}, Definitions 5.8 and 6.1 and Proposition 6.4, \url{https://philipsaville.co.uk/concurrent-pseudomonads.pdf}, supply a useful non-circular source for the extra exactness. Write $m$ for the monoidal comparison of their pseudofunctor $T$, reserving $\chi$ for the induced Kleisli compositor. The potentially noninvertible part of that compositor is the multiplication comparison $\mu_2$, prewhiskered, up to invertible structural cells, by
+\[
+(f;Tf')\otimes(g;Tg').
+\]
+If the first layer is pure, $f=a;\eta_B$ and $g=b;\eta_D$. Naturality gives $\eta_B;Tf'\cong f';\eta_{TC}$, and similarly on the other strand. Thus the relevant restriction of $\mu_2$ is along $\eta_T\otimes\eta_T$. If the second layer is pure, $f'=a';\eta_C$ and $g'=b';\eta_F$, pseudofunctoriality instead gives restriction along $T\eta\otimes T\eta$.
+
+The unit modifications $\mu\eta_T\cong1_T$ and $\mu T\eta\cong1_T$ are invertible monoidal modifications. Their monoidality equations express these two restrictions of $\mu_2$, surrounded by the invertible monoidal comparisons of $\eta$ and pseudonaturality cells, as invertible structural cells. Hence both restrictions are invertible. Definition 6.1 relaxes general invertibility of $\mu_2$ but retains these unit axioms. Its extra one-strand clauses are not used in this particular argument; they separately give the bistrength/action input of Proposition 6.3.
+
+This proves the needed pure-layer exactness for the established concurrent-pseudomonad Kleisli compositor, not for every abstract pure-strand presentation. To apply the complete symmetric state theorem above, one must also have its stated coherent symmetry and chosen ordinary pure/state interface. The cited paper's merely monoidal formulation is not silently promoted to a symmetric one, nor is an arbitrary bicategorical pure base silently replaced by an ordinary category. With those remaining hypotheses supplied, the general source satisfies the new lifting condition constructively, without postulating the machine comparison squares. 
+
+\section{Recovery and what is not new}
+There is an identity-on-objects functor from the earlier directed balance category $\mathsf L(F_{A,B})$ to $\mathcal I_{\mathcal H}(A,B)$. A native cell maps to its unit-state-boundary pair; the slide for $h:s\to t$ at $x:tA\to sB$ maps to $(h,1)$ between $h_A;x$ and $x;h_B$, using associators. Its balance relations are the displayed composition law. No fullness or equivalence is inferred.
+
+For a symmetric monoidal category $K$, take the locally discrete process bicategory of $K$ and $S=C=K$, $R=1$. Then $\alpha$ exists exactly when the transition square commutes. Up to the stated symmetry moving the state from the input's right to its left, this is exactly the ordinary all-state-map KSW construction, not merely a detector into it. KSW's native machinery and changing-endpoint double presentation are explicitly recalled in Loregian, \emph{Monads and limits in bicategories of circuits}, Definition 1 and Section 1.1, \url{https://arxiv.org/html/2501.01882}.
+
+For an effectful triple $V\to P\to K$, one instead uses initialized states $(s,i:I\to s)$ with $i$ in $P$ and permitted state maps $h$ in $V$ satisfying $hi=j$. In the locally discrete case the sequential part recovers all initialized value-state homomorphisms of Bonchi--Di Lavore--Rom\'an. Its connected components are therefore their bisimilarity quotient; their Theorem 4.4 supplies its ordinary free-uniform-feedback property. This recovery does not posit a parallel bifunctor on arbitrary noncommuting global effects. Source: \url{https://arxiv.org/pdf/2410.10627}.
+
+For an existing relative factory $M,N,\tau$, the input here is its realized $\mathcal H$ and fixed pure interface. Its original native cells remain locally faithfully embedded. This does not construct $M,N,\tau$ anew, identify all additional machine cells with original cells, or show that every shared-interaction mechanism satisfies the input hypotheses. A two-dimensional universal feedback doctrine for all these intertwiners remains a separate obligation; the earlier directed-slide universal property cannot simply be reused because the hom categories have changed.
+\end{document}
