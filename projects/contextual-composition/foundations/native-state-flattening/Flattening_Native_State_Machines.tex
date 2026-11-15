@@ -1,0 +1,96 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\title{Flattening native state machines: a relative state pseudomonad}
+\date{15 November 2026}
+\begin{document}\maketitle
+\paragraph{Scope.} This is a written conditional lifting of established state-machine monadic evaluation to a fixed relative pure interface, native intertwiners and directed parallel composition. It constructs nested-state multiplication and a free-pseudoalgebra evaluation property. Ordinary state-machine feedback and its monad-algebraic strategy are established KSW/Mealy foundations, not claimed as new. No unrestricted shared-interface interaction, instantaneous trace, mechanized proof, or completion of the feedback/concurrency programme is claimed.
+
+\section{Fixed interface and structural morphisms}
+Fix the ordinary symmetric monoidal pure category $C$, small state category $S$, and strong symmetric monoidal $R:S\to C$. An admissible process bicategory $H$ has the fixed objects of $C$, specified $J:C\to H$, coherent pure actions/centrality, and the normal lax parallel structure of the native-intertwiner lifting theorem. Its compositor $\chi$ is invertible on an entirely pure first or second time-layer, not generally on two effectful layers. Sequential-only versions omit parallel throughout.
+
+Work with identity-on-objects pseudofunctors preserving $J$, the specified actions and parallel through coherent invertible comparison cells, and compatible icons between these pseudofunctors. Compatibility includes the specified comparisons on pure arrows; this is not a class of arbitrary pseudofunctors or arbitrary native transformations with nonidentity object components. This fixed-interface structured bicategory/icon doctrine must be kept explicit. More explicitly, a structural map carries an invertible pure comparison $j_F:FJ_H\Rightarrow J_K$, action comparisons, and an invertible parallel comparison $p_F:Ff\parallel Fg\Rightarrow F(f\parallel g)$ satisfying the usual associativity/unit/symmetry diagrams and preserving the given lax compositor. An icon $\theta:F\Rightarrow G$ satisfies $j_G\,\theta_J=j_F$, the analogous action diagrams, and
+\[
+\theta_{f\parallel g}\,p_F=p_G(\theta_f\parallel\theta_g).
+\]
+It also satisfies the pseudofunctor icon equation $\theta_{f;g}\,c_F=c_G(\theta_f;\theta_g)$. Here juxtaposition denotes the displayed vertical pasting, with the types fixing the order. Thus the cells in the ambient doctrine are specified without referring to a feedback evaluator. Composition uses the usual pasted structural comparisons. Denote this doctrine by $\operatorname{Str}_{C,S,R}$. It is a 2-category: underlying identity-object pseudofunctors and icons compose as in the usual icon 2-category; each additional comparison of a composite is its pasted comparison. The preservation equations are closed under this pasting, and icon compatibility is closed under both vertical and horizontal composition by interchange. Identities use identity comparisons. No simultaneous strictification of the input is assumed.
+
+Write $I(H)(A,B)$ for the category of pairs $(s,f:Rs\otimes A\to Rs\otimes B)$ and arrows
+\[
+(h:s\to t,\quad\alpha:f;h_B\Rightarrow h_A;g).
+\]
+Its sequential assembly retains separate states, and its parallel assembly uses the pure-layer rectangle proved previously. The unit-state inclusion is denoted $\eta_H$.
+
+\section{Action on morphisms and closure of the input class}
+For a strong structured pseudofunctor $F:H\to K$, set
+\[
+I(F)(s,f)=(s,Ff),\qquad I(F)(h,\alpha)=(h,F\alpha),
+\]
+where the second formula transports through $F$'s specified pure-boundary and composition comparisons. For an icon $\theta:F\Rightarrow G$, its component at $(s,f)$ is the intertwiner $(1_s,\theta_f)$, with those same comparisons. Naturality is exactly icon naturality applied to $\alpha$ and compatibility on $J$. The sequential and parallel comparisons use $F$'s comparisons on held bodies and preserve all state labels. This describes the constructor on the full specified morphism and cell class, not merely on objects.
+
+The pure interface of $I(H)$ is $\eta_HJ$. Therefore an entirely pure time-layer consists of unit-state machines. The derived $\chi$ for that layer is a state permutation isomorphism together with the corresponding pure-layer $\chi$ of $H$, whiskered by invertible action constraints. It is consequently invertible as an intertwiner. Pure action, symmetry and lax-compositor coherence are inherited by the previous native lifting theorem. Thus iteration $I(I(H))$ does not leave the specified class. The strong structure of $I(F)$ follows from the same preservation calculation. We use $I$ as a pseudoendofunctor of this 2-category, regarded as a bicategory, rather than asserting strictness of all chosen transports. Its comparison
+\[
+\gamma_{F,G}: I(F)I(G)\Rightarrow I(FG)
+\]
+has at $(s,f)$ the state map $1_s$ and the identity of the body $F(Gf)$, transported through the composite pure-boundary comparisons. The unit comparison is the same identity-state, identity-body icon. Here $FG$ means first $G$, then $F$. The structural comparisons of $FG$ are defined by pasting those of $G,F$, so these components satisfy the icon equations: their pure-boundary paths are the two associative pastings of precisely those comparisons. Naturality on $(h,\alpha)$ follows from pseudofunctoriality on that one cell and the equation defining the composite pure comparison. Compatibility with sequential/action/parallel comparisons is their composition definition. The pseudoendofunctor associativity equation on $F,G,L$ compares two identity-state icons on $F(G(Lf))$; their pure-boundary pastes agree by the icon-2-category associativity and bicategorical pasting. Its unit equations reduce to the same identity pastes. This supplies the comparison data and coherence, not an appeal to strictification.
+
+\section{Multiplication on objects and native arrows}
+An object of $I(I(H))(A,B)$ consists of an outer state $s$ and an inner machine
+\[
+(t,f:Rt\otimes(Rs\otimes A)\longrightarrow Rt\otimes(Rs\otimes B)).
+\]
+Define
+\[
+\mu_H(s,(t,f))=(t\otimes s,\bar f),
+\]
+where $\bar f$ is conjugated by the strong monoidal comparison of $R$ and the pure action associators. The order is inner then outer; it is not $s\otimes t$ without a stated symmetry.
+
+An outer intertwiner has state map $h:s\to s'$ and an inner native arrow between the two composites with the outer pure boundaries. These composites have inner states $t\otimes I$ and $I\otimes t'$. Transporting through the actual unitors, its state component is a unique map $k:t\to t'$. Its body cell has boundary $(k\otimes h)$ after pure centrality has placed the two maps in their retained coordinate order. Define $\mu_H$ of the arrow to have state component $k\otimes h$ and that transported cell. This uses the given inner native arrow, not a factorization into slide generators. Distinct nested state pairs may flatten to the same arrow; faithfulness of multiplication is not required.
+
+Vertical composition of outer arrows composes both $h$ and $k$. The flattened state map is $(k'k)\otimes(h'h)=(k'\otimes h')(k\otimes h)$. The flattened body paste agrees by naturality of pure centrality and bicategorical interchange. Identity arrows agree through unit comparisons. Hence each multiplication hom action is a functor.
+
+\section{Sequential and parallel comparison for multiplication}
+Take two nested machines with state pairs $(s,t)$ and $(u,v)$ and bodies $f,g$. First composing in $I(I(H))$ and then flattening gives retained state
+\[
+(t\otimes v)\otimes(s\otimes u).
+\]
+First flattening and then composing in $I(H)$ gives
+\[
+(t\otimes s)\otimes(v\otimes u).
+\]
+The comparison is the explicit pure permutation exchanging the middle retained coordinates $s,v$. Both body routes run $f$ followed by $g$, holding all other coordinates; the comparison cell is built from pure action associativity and centrality. It does not interchange $f$ and $g$. In particular, it does not invert the effectful $\chi$. Unit comparison uses $I\otimes I\cong I$.
+
+For parallel multiplication the same state permutation identifies the two groupings, and the body routes contain the same $f\parallel g$. The comparison uses the parallel structural action constraints, not an inverse comparison between two effectful sequential layers. Naturality in arbitrary nested intertwiners follows from naturality of the action and parallel comparisons; the inner native cells remain in the same two slots on both routes.
+
+For three sequential inputs, label every retained state by its original nesting address and process slot. Both associativity routes move from the same ordered list to the same final list by the same permutation, and have the same chronological body sequence $f,g,l$. Symmetric monoidal coherence identifies the pure permutations; the action pentagon and pure centrality coherence identify the held-body pastes. The unit equations are the action triangle equations. Parallel associativity/symmetry and preservation of the directed compositor are checked in the same addressed manner: the latter has exactly one forward source $\chi$ between the same four held bodies on both routes. State permutations only relocate its pure boundaries. The pure-boundary naturality rectangle from the preceding theorem is needed here; tuple labels alone do not prove native-cell coherence.
+
+\section{Pseudomonad coherence}
+The proposed multiplication associator compares the two flattenings of a depth-three object $(s,(t,(u,f)))$. Its state map is the associator between $(u\otimes t)\otimes s$ and $u\otimes(t\otimes s)$; the body is the corresponding pure action reassociation. The two unit modifications remove a unit state at the inner or outer level. Naturality uses the componentwise tensor of all native state maps and the same underlying cell.
+
+At depth four, all paths in the multiplication pentagon induce the same state associator and the same body action associator. Their equality follows from the monoidal pentagon and the action pentagon. The pseudomonad triangle similarly reduces to the two unitors and the action triangle. Compatibility with the strong sequential/parallel comparisons uses the addressed permutation calculation above, now with both a nesting address and a process slot. Pseudonaturality of $\eta$ at $F$ is the unit-state icon from $F$'s action-unit and pure comparisons, between $I(F)\eta_H$ and $\eta_KF$. Pseudonaturality of $\mu$ at $F$ has state map $1_{t\otimes s}$ and body comparison $F(\bar f)\cong\overline{Ff}$, supplied by $F$'s pure/action comparisons. The icon equation at $(h,(k,\alpha))$ is naturality of $F$ applied to the same transported $\alpha$; both state maps are $k\otimes h$. Its sequential/parallel compatibility is exactly $F$'s corresponding coherence on held bodies. For a composite $FG$, these naturality pastes agree with the pseudoendofunctor comparison $\gamma_{F,G}$ because every comparison of $FG$ was defined by that paste; the identity case is its unit paste. Compatibility with an ambient icon $\theta:F\Rightarrow G$ is its pure/action comparison equation applied to $\bar f$. Thus neither naturality nor its cell-level coherence is being inferred merely from the object flattening formula.
+
+\begin{theorem}[Native state pseudomonad]
+On the fixed-interface structural doctrine just specified, the native state constructor, unit-state inclusion and nested-state flattening, with the displayed comparisons, form a pseudomonad in the stated bicategorical sense. No additional feedback evaluator or target state operation is input to this construction.
+\end{theorem}
+The preceding calculations supply its native-arrow action, strong structural comparisons, pseudonaturality and modification equations. State permutations are actual isomorphism intertwiners, not identifications of retained states.
+
+\section{Evaluation property}
+A pseudoalgebra is a strong structured map $a:I(K)\to K$ with invertible unit and multiplication icons satisfying the pseudomonad algebra equations. It yields feedback operations on transition objects and on \emph{all} native uniformity squares:
+\[
+B_s(f)=a(s,f),\qquad U_h(\alpha)=a(h,\alpha).
+\]
+The hom-functor laws give identity/composition for these squares. The strong sequential/parallel comparisons give assembly of separately retained states; the multiplication icon gives joining nested closures. These operations do not identify state maps or force $U_h(\alpha)$ invertible. Thus this is a concrete two-dimensional evaluation doctrine, stronger than merely assigning a result to each transition object.
+
+Here ``pseudomonad'' is used at the bicategorical level: the pseudoendofunctor of $\operatorname{Str}_{C,S,R}$ has pseudonatural unit and multiplication, with invertible associativity/unit modifications satisfying the pseudomonad axioms. The displayed state-associator icons are the components of those modifications. The constructed pseudomonad therefore has the standard free pseudoalgebra biadjunction, giving an equivalence of categories
+\[
+\operatorname{PsAlg}(I)((I(H),\mu_H),(K,a))\simeq
+\operatorname{Str}(H,K),
+\]
+with strong algebra morphisms and compatible algebra icons on the left. The forward functor restricts along $\eta_H$; the inverse sends $F$ to $a\,I(F)$. The equivalences are the algebra unit/multiplication constraints, not a claim of literal equality or uniqueness of chosen comparisons. This is the standard free-pseudoalgebra pattern applied to the pseudomonad constructed above. The ordinary normal-form evaluation pattern is already present in KSW and effectful Mealy theory; the issue here is retaining the relative pure interface, native cells and conditional directed parallel structure.
+
+This does not yet identify every pseudoalgebra with a previously published independent feedback axiomatisation, supply instantaneous trace/yanking, or add arbitrary shared-boundary admission. It does not reconstruct the original $M,N,\tau$ inside each state machine. Those original data remain markings of the faithfully included input, as in the preceding lift.
+
+\section{Literature trail}
+Katis--Sabadini--Walters state machinery is recalled with all state maps in Loregian, \emph{Monads and limits in bicategories of circuits}, \url{https://arxiv.org/html/2501.01882}. Bonchi--Di Lavore--Rom\'an, \emph{Effectful Mealy Machines}, Theorem 4.4, \url{https://arxiv.org/pdf/2410.10627}, proves the ordinary free uniform-feedback quotient with initialized value-state maps. Neither source is being asserted here to contain the exact fixed-interface native-cell/normal-lax-parallel pseudomonad above. Paquet--Saville, \url{https://philipsaville.co.uk/concurrent-pseudomonads.pdf}, supplies the established concurrent source used to verify pure-layer exactness in the preceding theorem. Katis--Sabadini--Walters, \emph{Feedback, trace and fixed-point semantics} (2002), Section 1, p.~185, explicitly says their earlier \emph{On the algebra of systems with feedback and boundary} (2000) defined feedback categories as algebras for a monad: \url{https://www.numdam.org/item/10.1051/ita:2002009.pdf}. Thus the monadic evaluation strategy itself is established. The 2002 Circ construction uses isomorphism classes of state-transition pairs; this is not a claim that it already supplies the native noninvertible icon and directed-parallel lift sought here.
+\end{document}
