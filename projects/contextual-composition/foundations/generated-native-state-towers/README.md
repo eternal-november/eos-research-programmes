@@ -8,9 +8,11 @@ This general categorical continuation extends [global native state joining](../g
 - [Generated finite towers](Generated_Native_State_Towers.tex) normalize each next raw level to the independently constructed state-list level. The heterogeneous normalization retains every coordinate and witness. Explicit homwise biadjoint-equivalence transport assembles the global structure, and a separate calculation identifies it coherently with the specified chronological composition.
 - [Cell-functorial closure](Cell_Functorial_Closure_on_Generated_Towers.tex) constructs fixed-state closure as a pseudofunctor on all admitted native cells at every generated depth. Nested closure retains its ordered states; the existing block-joining maps give finite joining.
 
+- [Directed parallel and closure](Directed_Parallel_Closure_on_Generated_Towers.tex) transports the specified lax parallel to generated levels and proves compatibility with independently retained sequential and parallel closure. The four-process comparison uses forward directed interchange and four outer states. Supplied parameter-changing intertwiners retain their full state tuples and actual witnesses; bare state maps do not provide such a comparison.
+
 ## Scope
 
-All three sources passed independent written-proof review. The first result allows a genuinely tricategorical process input under its stated hypotheses. The global tower and closure results concern the finite tower generated from the original bicategorical process input with its specified pure actions and state-base comparisons.
+All four sources passed independent written-proof review. The first result allows a genuinely tricategorical process input under its stated hypotheses. The global tower and closure results concern the finite tower generated from the original bicategorical process input with its specified pure actions and state-base comparisons.
 
 This is not an unrestricted state endofunctor on all tricategories, an instantaneous trace, a universal evaluation theorem, or arbitrary shared-diagonal synchronization. State maps require their native process squares; closure does not impose unrestricted sliding or quotient those maps to equality. The higher pure-action doctrine for arbitrary process tricategories remains separate. Concrete implementations are not premises of these results.
 
