@@ -16,6 +16,8 @@ The [constructive local-fairness results](feedback-and-concurrency/constructive-
 
 The [recursive occurrence machine and finite bridge](feedback-and-concurrency/recursive-occurrence-machine/README.md) supply explicit occurrence jobs, escrowed ownership, ranked-call adaptation and strict operational model maps, with an exact phase-scheduled comparison rather than unrestricted concurrency equivalence.
 
+The [scoped checked-language realization](feedback-and-concurrency/checked-interfaces-and-claims/README.md) supplies checked ordinary interfaces, linear claim rights and paired channel packages with written preservation arguments. These structures belong to one operational realization, not to the definition or completion of the general theory.
+
 ## Reading path
 
 - `foundations/`: finite contextads, reduction tests, structural examples, theory guide, and the common relative construction.
