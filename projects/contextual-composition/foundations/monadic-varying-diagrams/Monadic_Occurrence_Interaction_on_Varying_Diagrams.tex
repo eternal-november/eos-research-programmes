@@ -1,0 +1,75 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{lemma}{Lemma}
+\title{Monadic occurrence interaction on varying diagrams}
+\date{15 November 2026}\begin{document}\maketitle
+\paragraph{Status.} Scoped theorem with written proofs. Unlike arbitrary grade content, monadic content has projection $p=\mathrm{id}$ and hence no left-Kan-extension obstruction to pure transport. This note tests an actual occurrence-changing positive family on a pure category with changing diagram shapes. It does not identify shape change with a physical scheduling step or claim arbitrary contentads/interference covered.
+
+\section{The pure category and preserved structure}
+Write $\mathsf D(\mathcal C)$ for objects $(J,A:J\to\mathcal C)$ with small $J$ and arrows $(r,u):(J,A)\to(J',A')$, where $r:J\to J'$ and $u:A\Rightarrow A'r$. Work in nested universes: this category is not claimed small in the carrier universe. A functor $F:\mathcal C\to\mathcal E$ induces $\mathsf D(F)$ by postcomposition; natural transformations similarly act componentwise with identity shape map. This is a 2-functor, not an exponentiation by a single fixed shape.
+
+\begin{lemma}
+The operation $\mathsf D$ preserves pullbacks of categories and sends a Grothendieck fibration to a fibration. It preserves cartesian functors between such fibrations. If $\mathcal C$ has pullbacks and $S:\mathcal C\to\mathcal C$ preserves them, then $\mathsf D(\mathcal C)$ has pullbacks and $\mathsf D(S)$ preserves them. Cartesian natural transformations remain cartesian under $\mathsf D$.
+\end{lemma}
+\begin{proof}
+In a pullback of categories, equality after applying $\mathsf D$ forces the two diagram shapes and the two arrow shape maps to coincide. The remaining data are exactly a diagram, or natural transformation, into the original pullback category. This proves the first claim.
+
+For a fibration $p:\mathcal K\to\mathcal C$, lift $(r,u)$ by first restricting a target diagram to $r$, then lifting $u$ componentwise. Uniqueness of cartesian factorization gives its diagram arrows and the full cartesian universal property. A cartesian functor preserves this construction, including the restriction part, up to its canonical comparisons.
+
+For a pullback of pure arrows with shape maps $r:I\to K,s:J\to K$, use shape $I\times_KJ$. At $(i,j)$ take the pullback $A_i\times_{C_{ri}}B_j$ in $\mathcal C$. The universal property is componentwise after the unique shape factorization. Thus a pullback-preserving $S$ preserves the construction. A natural transformation has identity shape map, so its naturality squares reduce to its original component squares; this proves the last assertion even for changing-shape arrows.
+\end{proof}
+
+The lemma concerns pullbacks, not all finite limits: for instance $\mathsf D(1)$ is the category of small shapes, not a terminal category. Preservation of terminal categories is not used in transporting the stated fibred-span composition and identity spans.
+
+Consequently a cartesian monad $S$ induces a cartesian monad $\mathsf D(S)$ on the enlarged pure category. A contextad in fibred spans, with its actual native structure functors and comparisons, is transported by $\mathsf D$ using the preceding pullback and fibration facts. This assertion uses the full fibred-span presentation; it does not infer relative-coend preservation.
+
+\section{A reusable monadic crossing presentation}
+Let $p:\mathcal K\to\mathcal C$, $e:\mathcal K\to\mathcal C$ be a native contextad. Suppose a monadic-content crossing has the following retained presentation: a cartesian functor $\widehat S:\mathcal K\to\mathcal K$ above $S$, a natural extension isomorphism
+\[
+ \chi:e\widehat S\ \cong\ S e,
+\]
+and the coherent native comparisons with context unit/accumulation and monad unit/multiplication which constitute its full law. In particular these are actual functors and grade maps, not merely a law on endpoint isomorphism classes. This is a specified presentation of an existing monadic crossing, not a replacement for proving such a crossing from independent inputs.
+
+For content $p_L=\mathrm{id}_{\mathcal C},d=S$, a general source representative is $f:A\to SB$, a context $P$ over $B$, and $g:eP\to C$. Its crossed object has context $f^*\widehat SP$ over $A$ and body
+\[
+ e_A(f^*\widehat SP)\longrightarrow e_{SB}\widehat SP
+  \xrightarrow{\chi_P}S(e_BP)\xrightarrow{Sg}SC.
+\tag{M}
+\]
+The content grade at $C$ is unique. Native maps use the actual maps of $\widehat S$ and cartesian reindexing. Pure-middle balance uses cartesianness of $\widehat S$, with the original coherent comparisons.
+
+\begin{theorem}[Varying-diagram monadic interaction]
+Applying $\mathsf D$ to this presentation gives a full native crossing for the transported contextad and monadic content $\mathsf D(S)$ over $\mathsf D(\mathcal C)$. All shape functors are allowed as pure maps. The content projection remains the identity, so no Kan extension of an independent content-grade diagram is required.
+\end{theorem}
+\begin{proof}
+The contextad structure transports by the lemma. The functor $\mathsf D(\widehat S)$ is cartesian above $\mathsf D(S)$ and has extension comparison $\mathsf D(\chi)$. The given four comparisons transport as natural transformations of the actual structure functors. Pullback preservation identifies their dependent-composition domains with the required new domains; their equations are preserved by the 2-functor. Thus the same retained presentation laws hold.
+
+To verify the actual module conclusion without commuting $\mathsf D$ with a coend, use formula (M) for the new pure arrows, including their shape functors. Cartesian reindexing exists by the lemma. This formula acts on every representative/native square, and its pure-middle comparisons satisfy balance by the transported cartesian functoriality. Descend through the new pseudocoend generators. Literal comma normalization over the new pure category is proved by its usual representative with middle $eP$ and balance along the whole body map. The transported four comparisons now give the full law on these modules; their coherence is already checked on all represented generators. No equivalence between an exponentiated old coend and a new coend is asserted.
+\end{proof}
+
+\section{Explicit changing-middle balance}
+Write $S_D=\mathsf D(S)$ for the enlarged monad. For a pure map $u:Y\to Y'$ (including a changing shape functor), a context $P'$ over $Y'$, and $f:A\to S_DY$, the two middle-balanced representatives cross to contexts
+\[
+ f^*\widehat S_D(u^*P')\quad\text{and}\quad
+ (S_Du\,f)^*\widehat S_D(P')
+\]
+over the same source $A$. Cartesianness of $\widehat S_D$ identifies $\widehat S_D(u^*P')$ with $(S_Du)^*\widehat S_D(P')$ by the canonical cartesian comparison. The reindexing compositor then gives the displayed comparison. Its content components are the unique grade over the final output interface. Naturality of $\chi$ against the context extension arrow over $u$, followed by $S_D$ of the final output map, proves the complete body equality.
+
+For the addressed polynomial realization the comparison sends each chosen witness at each occurrence address to that same witness in the reindexed fibre. An underlying pure map may merge labels but does not merge occurrence addresses. Along an arrow of either input diagram the structure maps are actual context fibre maps; their addressed products commute with this comparison by functoriality. Thus it is a natural transformation of context diagrams, not only a collection of componentwise bijections. Identity/composition of middle maps follows from the cartesian comparison coherence. This explicitly checks the changing-shape balance used in the coend proof.
+
+\section{Independent effect and occurrence inputs}
+The monadic-content specialization of the project's effect-fibre occurrence theorem supplies the presentation above. Let $T$ be a commutative Set monad supplying raw context fibres $(X_b,p_b\in TX_b)$, and let $S$ be a finitary cartesian polynomial monad. Take all carrier projections as admitted. For a polynomial element $y=(c,(b_i)_{i\in E_c})\in SB$, set
+\[
+ (\widehat SP)_y=\prod_{i\in E_c}X_{b_i},\qquad
+ \widehat p_y=\mathop{\bigotimes}_{i\in E_c}p_{b_i}.
+\]
+Its total carrier is naturally $S(eP)$ above $SB$; this is $\chi$. Native maps preserve shape and actual occurrence addresses and use the supplied fibre maps at each address. Reindexing along arbitrary pure maps therefore makes $\widehat S$ cartesian. Context accumulation compatibility is the native bijection between a product of dependent sums and the dependent sum of products, with effect equality given by commutative bind/Fubini. Monad unit and multiplication use the addressed polynomial unit and flattening comparisons, and their coherence is the already established occurrence theorem. No affinity is needed for this finite occurrence crossing.
+
+This identifies the exact specialization being transported. The theorem does not claim that the enlarged pure category is itself Set or has an unexamined polynomial interpretation. It transports the constructed functors and comparisons. The resulting content extension is generally not the projection: $S$ changes pure data and occurrence shapes, while the outer diagram shape is retained by the extension functor itself. Arbitrary pure arrows may nevertheless change that outer shape.
+
+\section{Why the earlier obstruction does not apply}
+For a general content projection, transporting a grade across a shape map may require a colimit and may fail to preserve its unit. Here the projection is identity, so its lift over every pure arrow is that very arrow, with unique target grade. The monad unit supplies the module unit directly. This is a structural distinction, not an assertion that Kan extensions preserve terminal objects or finite products in cases where they do not.
+
+This gives a positive occurrence-changing family beyond projection-only separated grades. It still uses the particular monadic-content presentation and the existing independent addressed effect construction. It does not prove closure for arbitrary contentads, arbitrary interference, infinite effects, or adversarial progress. Diagram shapes can encode retained comparisons; a physical interpretation of changing them remains a separate semantic obligation.
+\paragraph{Attribution and mathematical role.} The construction transports an already established native presentation using ordinary functorial and pullback reasoning. It reuses the project's \emph{Independent Occurrence Interaction for Effect Fibres} for the independent effect/polynomial input and the retained comma-normalization architecture of the original O1 manuscript. It does not claim to reprove a general independent-input criterion on a new base or to introduce the underlying diagram/Grothendieck machinery. Its precise role is to establish that this specified occurrence-changing family survives shape variation, and to distinguish it from arbitrary-grade Kan-transport obstructions. No literature-priority claim is made.
+\end{document}
