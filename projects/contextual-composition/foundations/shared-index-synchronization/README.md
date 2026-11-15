@@ -24,6 +24,12 @@ The construction extends to finite operations, substitution and admitted directe
 
 [Global assembly](Global_Variable_Shape_Assembly.tex) lifts the supplied native process tricategory and its admitted parallel/interchange structure to varying internal shapes. Terminal-shape diagrams recover the original process structure. Evaluation has derived directed assembly comparisons; its terminal-shape unit comparison is an equivalence. This differs from the arbitrary fixed-shape constant-unit comparison above.
 
+## Presented grades and varying-state evaluation
+
+[Retained comma presentation](Retained_Comma_Presentation_of_Variable_Shapes.tex) identifies the exact context diagram, content diagram, body and native grade maps of variable-shape processes. It reuses normalization over the common diagram pure base, including its whole-diagram balance. Independently shaped factors do not automatically normalize to the shared-index object: their diagonal comparison need not invert.
+
+[Join-then-synchronize](Join_Then_Synchronize_Varying_State_Towers.tex) evaluates coherent varying-state finite towers by joining first and synchronizing the resulting full native diagram. It is compatible with consecutive-block joining, changing internal shapes and global directed assembly. The output retains the joint synchronized state; it is not identified with a tensor of separately synchronized coordinates. This does not assume synchronization exists at higher tower depths or prove that joining preserves those hypothetical limits.
+
 ## Prerequisites
 
 - [Bicategorical synchronization and assembly](../bicategorical-synchronization/README.md): native cone creation and pure-boundary lifting.
@@ -41,6 +47,6 @@ A module comparison can be relational or have empty fibers. Thus this is not a p
 
 ## Verification and attribution
 
-Independent written-proof review covers the binary construction, finite-operation substitution and global diagram assembly, plus the fixed-state canonical-feedback bridge, reverse-shape total bicategory, diagonal factorization and global variable-shape coherence. No TeX compilation, mechanized proof or CI certification is claimed.
+Independent written-proof review covers the binary construction, finite-operation substitution and global diagram assembly, plus the fixed-state canonical-feedback bridge, reverse-shape total bicategory, diagonal factorization global variable-shape coherence, the retained comma bridge, and finite-depth join-then-synchronize evaluation. No TeX compilation, mechanized proof or CI certification is claimed.
 
 The ordinary lax-monoidal limit construction is established background, linked in the manuscript. The enriched result is proved using the previously constructed native cone equivalences, rather than attributed to that ordinary implementation. No novelty claim is made. `MANIFEST.json` checks file integrity only.
