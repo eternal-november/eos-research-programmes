@@ -41,6 +41,8 @@ The following work chooses particular carriers, operations, observations, or ope
 
 **Recursive operational-language realization.** The [recursive occurrence machine and finite bridge](feedback-and-concurrency/recursive-occurrence-machine/README.md) supply explicit occurrence jobs, escrowed ownership, ranked-call adaptation and strict operational model maps, with an exact phase-scheduled comparison rather than unrestricted concurrency equivalence.
 
+**Scoped checked-language realization.** The [checked interfaces and claim packages](feedback-and-concurrency/checked-interfaces-and-claims/README.md) supply checked ordinary interfaces, linear claim rights and paired channel packages with written preservation arguments. These structures belong to one operational realization, not to the definition or completion of the general theory.
+
 The kernel/writer construction supplies genuine categorical data and coherence for a specific model. The probabilistic, event/history, scheduler and language results develop that model layer and its interfaces. They should not be counted as a general categorical extension merely because they are reusable or satisfy part of a contract obligation. Conversely, their status as relative examples is not a reason to discard their internal theorems.
 
 A proposed categorical-core extension should state its abstract hypotheses and operations, prove the relevant laws or comparison theorem at that level, and separately show how the chosen realizations satisfy those hypotheses. Until that bridge is proved, model-specific assumptions and conclusions remain visible.

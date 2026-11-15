@@ -1,0 +1,180 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}
+\title{Checked occurrence interfaces and linear claim packages}
+\author{}\date{15 November 2026}
+\begin{document}\maketitle
+\paragraph{Place in the programme.} This manuscript is a scoped operational realization, kept distinct from the general contextual-composition theory. Its preservation theorems concern the explicit checked language and runtime specified here. Claim rights, channels and particular finite signatures are choices of this realization, not definitions or compulsory ingredients of the general theory. These results do not replace the programme's general construction, interaction, refinement or feedback obligations. The executable diagnostics test the realization; they do not stand in for the written mathematical arguments.
+
+\part{Checked ordinary formation}
+
+\paragraph{Status.} Written preservation argument for the explicit restricted checker supplied here, not a claim that the earlier callback runtime checks arbitrary host-language branches. The executable elaborator realizes the no-mint subset; any larger primitive interpretation must separately satisfy the stated allocation and transaction premises. Finite syntax and signature do not mean bounded execution, bounded occurrence trees or terminating recursion. This is a staged core, not the entire concurrent contract language.
+
+\section{Leaf interfaces, not flattened results}
+Fix finite public-data and token-kind sets. A leaf sort $q=(v,\Delta)$ records public result data and an ordered vector of owned-token kinds. A command judgment $\Delta\vdash t:Q$ has a finite set $Q$ of allowed leaf sorts. A returned planar tree inhabits $Q$ when every actual addressed leaf has its corresponding sort in $Q$, and the owned identities at different leaves are disjoint. Membership does not forget the tree: it is only a sound formation predicate on the retained tree. In particular, repeated equal sorts at different addresses do not merge occurrences. A nullary event tree satisfies every leaf-sort upper bound while retaining its actual event and ownership transaction.
+
+Source names for owned slots are local placeholders. Their interpretation is an injective map into the current frontier token identities. Copyable public data cannot be used as that map. Renaming the placeholders changes no authority, and allocation chooses genuinely fresh identities, not merely unused local slot names.
+
+A primitive signature is an explicit finite table in the executable submodel. Each input row includes the public input, world and held private-store valuation. Every raw output, including zero-weight output, specifies an event tree, its addressed postslot partition, consumed/retyped/transferred slots and fresh slots. The checker verifies disjoint postslot use, accounting for each input slot, correct kinds and private-store ranges, and legal fresh-slot declarations. Probabilities are normalized exactly. The finite-world/table requirement is for a terminating table checker; the preservation argument itself only needs universal signature conformance and applies to larger semantic models with a separate conformance proof. No table is a proof that physical hardware implements it.
+
+\section{Rules}
+Return has its actual singleton leaf sort. A primitive has the union of its declared output leaf sorts. Case and nondeterministic choice check every syntactic branch, not just branches reached by a test execution. Separated batch partitions its input slots and takes the union of child output-sort bounds; the actual result remains a structural fork with all children.
+
+For bind require
+\[
+ \Delta\vdash t:Q,\qquad
+ \Delta_q\vdash u_q:R\quad(q=(v_q,\Delta_q)\in Q).
+\]
+The continuation selection is an explicit exhaustive table on the declared leaf sorts. A larger conservative $Q$ imposes more checks, not fewer. At runtime $u_q$ is instantiated independently at every actual occurrence of sort $q$. No continuation receives an input token belonging to a different occurrence. Its captured parameters are public data only.
+
+A procedure declaration has a fixed input interface and finite output bound. Check each body against its declaration while recursive calls use the declared input/output interface; do not unfold calls during typechecking. Mutually recursive declarations are checked simultaneously. Yield preserves its interface. There is no recursion rank and no implication of termination. A pure self-recursive call may soundly carry even an empty return bound: it has no successful finite return. The annotation bounds returns if they occur; it does not witness inhabitance, productivity or eventual service. Finite input parameters may be represented by explicit checked branches or finitely many procedure entries. The input public value and persistent parameters must remain distinct, as in the existing ranked adapter.
+
+This ordinary-core layer excludes dynamic message and process handles; later parts add a separate checked administrative layer. Extending it to successful single-use await requires a linear claim right distinct from a copyable public handle; a bare name cannot statically certify that another participant has not claimed the result. Typed queues likewise need an explicit transferred-package schema. The existing runtime may execute these forms with dynamic checks, but that does not make them covered by this checker.
+
+\section{Preservation target and its proof}
+A typed configuration carries a frontier typing: each active job and result escrow has its own injectively interpreted input or output interface. A bind frame records its left result bound and its exhaustive continuation table; a join records actual addresses and the individually typed active/completed children. Historical records are not part of executable ownership.
+
+\begin{theorem}[Restricted-core preservation]
+If every procedure body and every primitive table passes the formation checks, then every core machine step from a typed configuration preserves its frontier typing. Every successful returned leaf has its declared public-data/kind/store interface. This holds along arbitrary finite prefixes, including prefixes of infinitely unfolding recursive executions and arbitrary interleavings of active batch or bind children.
+\end{theorem}
+\begin{proof}
+For return the singleton leaf has the input bundle. Primitive rows satisfy the exhaustive transaction and type checks; fresh names extend the frontier injection without aliasing. Case and choice select an already checked branch. Calls replace a declared interface by its checked body, so the argument uses the declaration invariant, not termination induction. Yield changes no interface. Batch uses its checked disjoint partition.
+
+When a bind left phase completes, every actual leaf sort belongs to its declared bound. Therefore an applicable checked continuation exists at each actual address. Removing each result escrow and assigning its entire bundle to that address's child preserves disjointness; equal sorts at two addresses instantiate the same checked syntax with different injections. Grafting later reassembles the individually typed results without new token copies. Nullary joins introduce no children and consume no phantom input. These rules establish single-step preservation, hence finite-prefix preservation by induction. Infinite execution is not collapsed into a final value.
+\end{proof}
+
+External interference is not silently included in this theorem. A world-only transition that preserves the declared world domain and all frontier typing is admissible. Ledger-changing adversarial actions require their own typed transaction rule or lead to an explicitly separate deviation state. Type safety does not imply physical availability, race freedom, deadlock freedom, fairness or successful completion.
+
+\section{Executable adequacy obligation}
+The supplied no-mint elaborator translates explicit finite syntax into the occurrence runtime without data-dependent generation of unchecked code. The next part supplies its rule-correspondence argument, preserving primitive alternative/outcome indices, addressed trees, costs and chronology under the chosen schedule, rather than relying only on terminal-value diagnostics. Runtime callbacks generated from the finite tables are implementation artifacts; the submitted language contains no arbitrary callbacks. The existing independent big-step oracle remains useful for the finite phase fragment, but recursive formation preservation needs its own configuration invariant.
+
+\part{Ordinary elaboration correspondence}
+
+\paragraph{Status.} Written rule-level proof for the no-mint first-order core, conditional on a frozen accepted declaration snapshot and the specified ordered-interface runtime. Code diagnostics are separate finite checks, not a mechanized proof of this statement. This does not extend the old finite correspondence to arbitrary new schedules.
+
+The submitted syntax contains no host-language functions. Its interface tag $i$ denotes a finite public domain $X_i$ and ordered kind vector $\Delta_i$. Its runtime public representation is $(i,x)$. Its private instantiation $\rho$ is an injective ordered vector of actual owned token identities with those kinds and stores. This vector is retained in the runtime's interface-order field; it is not encoded in copyable public data. The underlying ledger remains the authority record, with $\operatorname{im}\rho$ equal to the job's owned set.
+
+\section{Source transition presentation}
+Use the occurrence-machine control rules on the explicit finite syntax. A primitive is interpreted by looking up the row indexed by the public value, actual world and ordered held-store tuple. Interpret each symbolic postslot by $\rho$; interpret consumption/retyping/store updates using the same injection. The no-mint condition means every postslot denotes a retained input identity. The event tree is retained, not reduced to its leaf-type upper bound. The row's alternative and occurrence index identify the raw sample even when rows have equal labels or zero mass.
+
+Call unfolds the checked procedure body with unchanged interface and public value. Case selects the explicit public-value branch. Choice records the selected branch. A bind records its left frame, waits for the entire left tree, and instantiates the checked handler at each actual addressed leaf. The new child's injection is exactly that leaf's ordered identity list. Batch instantiates each checked slot selection in the declared order. Return emits the current ordered interface. Administrative allocations and scheduling use the same deterministic identity policy as the ordered runtime.
+
+The source control rules are therefore an explicit syntax presentation of the machine, not a new quotient semantics. Their usefulness is that all code selected by these rules belongs to the checked finite syntax, including alternatives never reached by a test run. The source may still have infinite unfolding and unboundedly many internal occurrences.
+
+\section{Elaboration relation}
+Relate a source configuration and an elaborated configuration when their actual world, private stores, authority ledger, identities, ordered slot injections, live control shapes, queues of pending addressed continuations, recorded raw choices and costs agree. Replace each source syntax node by its compiled node. A generated bind closure is related to its finite checked handler table; a generated procedure resolver is related to its checked declaration table. No arbitrary submitted closure is admitted by this relation.
+
+\begin{theorem}[No-mint checked-core rule correspondence]
+For a frozen accepted declaration snapshot, every source step has exactly the elaborated step with the same scheduler, choice, alternative and raw-row index, and conversely every step of the generated program decodes to that source step. The relation is preserved. Conditional outcome laws, addressed result trees, cost vectors and event chronology agree.
+\end{theorem}
+\begin{proof}
+The public wrapper supplies exactly the table key used by source case and primitive rules. The private ordered injection supplies exactly the held-store tuple and symbolic-slot interpretation; sorting token names instead would not justify this case. Checked primitive rows have exhaustive keys and account for all live output slots. Their generated outcome constructor preserves the row, event tree, transaction and weight, including zero rows.
+
+Return and yield commute directly. Compiling choice compiles its entire finite list. Compiling case stores the same branch-index table. Compiling call looks up a previously compiled body and preserves the wrapped input, so recursion is handled by one unfolding step, not by expanding syntax during compilation. The finite procedure declarations are checked mutually, whereas the compiler only traverses their finite bodies.
+
+For bind, the generated closure selects a precompiled handler by the exact $(i,x)$ leaf key. Exhaustive handler checking ensures the key exists for every permitted leaf. The runtime supplies each occurrence's own ordered identities. The two left-phase and join rules agree literally, including nullary trees and equal-valued distinct leaves. Batch uses the same checked ordered slot selections. All fresh internal job identities agree by the shared administrative allocation convention. These cases exhaust the generated syntax. The outcome law agrees row by row, hence also after conditioning on any common admitted scheduler/alternative policy.
+\end{proof}
+
+Induction gives finite-prefix correspondence. Since each step, including call unfolding, is retained, compatible infinite executions also correspond and infinite administration is not mistaken for finite termination. The statement is a rule-level bisimulation of a specific generated implementation, not a completeness theorem for all well-typed algorithms. For randomized policies, use common observation maps and identical choice kernels; arbitrary policies reading different representations are not identified.
+
+\section{What remains to check}
+The executable implementation must preserve the frozen snapshot: mutating a caller-owned dictionary after validation cannot be permitted to change the program. The implementation must reject unsupported minting before execution rather than fail only when a rare row is reached. Runtime tests should include a heterogeneous interface in nonlexicographic identity order, postslot permutation through bind, zero-weight rows, omitted continuation branches, a consumed slot still mentioned in a hidden row, and an unbounded recursive prefix. Host-language purity, malicious object subclasses and physical implementation are outside this finite-data presentation's security claims. The next layers supply protected dynamic claim tickets and a restricted checked channel-package discipline. Arbitrary dependent-data formation remains outside this ordinary layer and the integrated package.
+
+\part{Dynamic linear claim rights}
+
+\paragraph{Status.} An implemented scoped extension of the ordered occurrence runtime, with an invariant proof and concrete transfer diagnostics. This establishes single-use claim authority, not a complete static typing system for dynamic channels or general actors. The result-interface annotation in this standalone runtime layer is recorded metadata; the following checked-script layer additionally derives and validates it from the child's checked ordinary declaration.
+
+\section{Public names and private rights}
+A public process handle $h$ is copyable data. A claim token $c$ is a live ledger authority carrying a protected registry entry $(h,Q)$, where $Q$ is the child's declared result-interface bound. These are different objects. Neither knowing $h$ nor manufacturing a token with a plausible printed name establishes a claim right.
+
+A claim-spawn step takes an explicit subset of the caller's ordered slot interface, starts a fresh child with those actual tokens, and retains the complement. In the same committed administrative step it issues one fresh claim token and records its association with the new public handle. The caller receives the handle as data and holds the reserve plus that claim token. Freshness is checked against the entire token ledger, including retired identities and ordinary identities resembling the reserved namespace. The allocator is deterministic. There is no enumeration of probabilistic alternatives in issuance, hence no fresh-name side effects for unchosen branches.
+
+The default primitive language has no token minting permission. Claim-spawn nevertheless issues a new \emph{administrative right}: it creates neither physical resource stock nor copied child authority. Even in a separately enabled physical-token-mint model, primitive transitions cannot mint or retype a token into the protected claim class, change its target store, or consume it. Those restrictions are checked for every outcome, including zero-probability outcomes. Ordinary operations may carry a claim token unchanged into a post-interface. Data-only operations cannot recreate a consumed claim.
+
+A claim-await command identifies a currently held slot, not merely a public handle. The protected registry supplies the target. If the child is unfinished the command suspends while retaining the token. On successful completion it consumes exactly that claim token, marks the child result claimed and transfers the complete addressed child result. The result is a structural fork of the entire child tree and one reserve leaf holding the caller's other tokens. No parent token is distributed to multiple child holes. Child failure status is retained rather than converted into success.
+
+The claim-right model excludes the old bare public-handle await rule. Mixing that rule with typed claim clients would let an untracked participant claim first and would invalidate the intended availability premise. A missing claim slot instead yields an explicit refusal while preserving held tokens. This is a declared operational model class, not a host-language security boundary: direct mutation of Python object fields is not a source-language step.
+
+\section{Invariant}
+The registry is historical; a consumed right remains recorded but is retired in the current ledger. The invariant is:
+\begin{enumerate}
+\item Every claim entry refers to a unique spawned child; distinct entries have distinct targets.
+\item Every live claim token has one current owner (job, message or result escrow), correct protected kind and immutable target.
+\item A registered child is claimed exactly when its claim token is retired.
+\item All ordinary frontier disjointness and ordered-interface invariants continue to hold.
+\end{enumerate}
+\begin{theorem}[Single-use dynamic claim authority]
+The invariant holds from an initial configuration without claim tokens and is preserved by the supplied claim-runtime rules, ordinary administrative transfers and admitted primitives. Consequently a registered child's result can be successfully claimed at most once. A copied handle alone cannot authorize any claim.
+\end{theorem}
+\begin{proof}
+Claim-spawn allocates a fresh child and a globally fresh token, adding one previously absent association; it does not duplicate a preexisting token. Claim-await requires the actual held token and its registry entry. Until the child is complete the state is unchanged. Completion consumes that token and marks the unique corresponding result claimed in the same transition. All result authority then transfers through the existing single-use escrow rule; the caller reserve omits the consumed token.
+
+Ordinary bind, batch, send, receive and result-join rules transfer an existing token to one new owner without changing its registry entry. Primitive validation excludes every way to forge, retarget, retype or consume a protected claim token. World-only environmental transitions do not alter the ledger or registry. Bare public await is not an admitted rule. These cases exhaust the model's transitions and preserve all four clauses. The once-only conclusion follows because a retired token is no longer held anywhere.
+\end{proof}
+
+This does not prove the child terminates, that a message carrying its right will ever arrive, or that its current owner will choose to await it. A live right may remain forever in an unclaimed result escrow. No fairness or timeout has been silently added.
+
+\section{Actual transfers and next static obligation}
+The executable diagnostics include a namespace collision with an ordinary resource named like a claim token, a multi-hole child with separate caller reserve, and a real transfer through the existing message escrow to a receiving process that performs the unique claim. They also reject primitive forgery and bare-handle await. The original frozen runtime is unchanged; the extension is a separate subclass using the private ordered interface adapter.
+
+For static formation, the intended kind is a nominal $\mathsf{Join}(\alpha,Q)$ bound to a fresh public handle name $\alpha$. A spawn typing rule splits the parent input, checks the child against $Q$, and adds the corresponding linear right to the reserve. The public handle may be copied while this right must be transferred linearly. A typed channel package must carry its existential handle/right relationship, not just a tuple with the same number of fields. Await consumes the right and returns the entire $Q$-typed child tree plus the reserve. These rules require dynamic nominal values and cannot be represented honestly by the earlier checker's finite store enumeration alone.
+
+This standalone claim runtime enforces the unique-right invariant. The following layer checks paired homogeneous channel packages and child annotations for explicit finite administrative scripts. A complete general nominal channel/type discipline remains outside that restricted integration; arbitrary Python callbacks are not thereby typed code.
+
+\part{Checked administrative packages}
+
+\paragraph{Status.} Written preservation argument for the explicit administrative-script implementation, with the generated intermediate frames stated below. It is a rule/invariant argument, not a mechanized proof or an inference from passing tests. This is a general finite-script layer over potentially divergent, unbounded ordinary recursive children, not a full nominal recursive process type system.
+
+\section{Typed resources and names}
+A public environment sends each in-scope handle variable $\alpha$ to an actual handle $h$. A slot descriptor is either an ordinary kind $K$ or $\mathsf{Claim}(\alpha,Q)$. Its interpretation assigns a distinct currently owned token to each slot. Ordinary descriptors require their ordinary kind/store interpretation. Claim descriptors require a live protected registry entry with target $h$ and the stated finite child return-interface bound $Q$.
+
+This map from slots to token identities remains private machine state. The public environment contains handles, not executable ownership. The generated machine also retains the last administrative operation datum separately; terminal await uses that actual datum in its reserve leaf, whereas terminal return explicitly returns the public substitution environment. Neither rule silently asserts a common child/reserve value type. An actual handle can have more than one public variable denoting it. Such aliases do not duplicate its unique claim token.
+
+A homogeneous channel declares an existential package shape
+\[
+ \exists\alpha.\;\bigl(\mathsf{Handle}(\alpha),
+ \mathsf{Claim}(\alpha,Q),\Delta\bigr),
+\]
+where $\Delta$ is a declared ordered ordinary-resource vector. In the first version the package has exactly one claim right; extensions to several rights require their own complete schema. Every queued message has a witness $h$, the matching actual claim token, and disjoint ordinary tokens of the declared kinds. The channel is not inferred from the printed name or total token count.
+
+\section{Administrative syntax and formation}
+A checked script has explicit instructions for spawning a checked ordinary child, sending a package, receiving a package, and terminal await or return. Its finite syntax is not supplied as a host callback. Code generation may substitute runtime public handles in a prechecked script tail, but may not generate new unvalidated branches or transfer authority by copying a captured environment.
+
+Spawn partitions the held interface, giving only an ordinary interface to the chosen child. It checks the child's ordinary procedure declaration and input data against the finite-core checker; $Q$ must be that verified return bound, not arbitrary metadata. The runtime allocates a fresh actual handle and right, extends the local public environment with the declared new binder, and continues with the reserve plus its claim right.
+
+Send verifies that its payload variable and selected claim descriptor use the same local binder and bound, and that its selected ordinary slots have the channel schema. It transfers exactly that package, not copies. Receive takes a message of the declared schema, combines its disjoint escrow with the current reserve, and introduces a capture-avoiding local binder for its existential witness. This binder is \emph{logically new}, not a claim that the received actual handle is fresh or different from every previously known handle. Only spawn has generative runtime freshness.
+
+Terminal await requires a held claim descriptor, consumes it, and returns the entire addressed child tree plus a separately addressed reserve leaf. No continuation after this potentially multi-hole result is included in the first script grammar. A later extension must check continuations separately at all actual child and reserve interfaces, not merge them into one return value. Terminal return retains the entire current interface, including any unused claim rights; the theorem does not force those rights eventually to be exercised.
+
+The protected claim kind is excluded from the ordinary kind signature: a primitive must not pass ordinary formation and then fail because it retypes a resource into the protected administrative namespace. All administrative participants and all ordinary child procedures in the claimed closed configuration must be admitted by these checkers. Arbitrary raw Send or bare-handle Await cannot be silently introduced as an environment component. A wider adversarial model must model package violations and their rejection/deviation outcomes explicitly.
+
+\section{Global configuration assertion}
+The assertion combines:
+\begin{enumerate}
+\item the existing unique frontier ledger and private ordered slot injections;
+\item the protected claim registry invariant;
+\item ordinary checked-child typing (or its generated fixed-input initialization frame), with each spawned child's recorded $Q$ equal to its checked output bound;
+\item each executing script's public environment, static remaining script and typed held-slot vector, or its typed suspended operation/continuation frame as described below;
+\item each queued message's existential package witness and its current escrow ownership;
+\item result typing for live unclaimed results only. Claimed historical trees are provenance, not new authority or current-kind assertions.
+\end{enumerate}
+
+\paragraph{Generated microsteps and pending frames.}
+A script instruction is not one machine step. Nonterminal instructions elaborate to a bind whose left side is an administrative operation and whose right side is the remaining checked script. Before the left side completes, the parent bind frame owns no copy of the input: the left job or its result escrow holds it. The frame records the checked input interface, the instruction's expected output interface and the finite prechecked tail with its public substitution. For spawn, the expected result is existential: the fresh runtime handle/right pair is first stored in the left result, and the continuation's new public binding is installed only when that result is delivered. For send the expected result carries exactly the unsent reserve; for receive it carries the reserve plus a package with its actual existential witness.
+
+Administrative creation of the left job transfers its whole input injection. Completion transfers the output to result escrow. Bind delivery removes that escrow and creates the tail job with the exact post-interface, extending the public substitution where required. Each of these is a separate typed microstate, following the ordinary occurrence-frame invariant. Terminal await has no tail: its final tree retains the child and reserve addresses. The claim-right assertion therefore does not require a suspended parent and its active left job both to hold the same token vector.
+
+\begin{theorem}[Script/package preservation]
+From a configuration satisfying this assertion, every admitted ordinary child step or checked administrative step preserves it. A successful terminal await obtains a child tree all of whose addressed leaves have the child's checked bound $Q$, together with exactly the separate caller reserve; its claim right is consumed once.
+\end{theorem}
+\begin{proof}
+A newly spawned child's generated header first replaces its irrelevant administrative datum by the explicitly checked ordinary input using return/bind frames, without changing its token injection. This initialization frame is typed separately; it is not falsely assumed already to be an ordinary procedure at its first machine state. After that header, ordinary child steps use checked-core preservation. They cannot forge protected claims, and remain registered under the same checked declaration even under recursive unfolding. On completion their current result is $Q$-typed, independently of whether completion was guaranteed.
+
+Spawn supplies precisely the child's checked input valuation and token injection. Fresh allocation extends the registry and public environment without aliasing an existing right. The caller retains exactly the complementary resources and newly issued right. Send moves an already matching existential package to one message escrow. Receive removes that escrow and uses its actual witness to interpret its newly bound local name. The transferred tokens are disjoint from the receiver's reserve by the ledger invariant; possible equality of public handles does not change this fact.
+
+Await's live token determines the unique unclaimed child. If it is unfinished, suspension leaves the assertion unchanged. If finished, the ordinary-child assertion gives the entire actual $Q$-typed tree. Consuming the ticket and transferring that tree preserves all child leaf injections and leaves the caller reserve once in its own leaf. Terminal return only moves current resources to result escrow. For each generated bind expansion, the creation, escrow completion and continuation-delivery microsteps use the typed pending-frame assertion above and the ordinary occurrence-machine transfer rules. No new public binding or input authority appears before delivery. These cases, together with the ordinary administrative join steps, exhaust the first script layer's generated rules. The proof is conditional on the generated runtime steps realizing these exact rules, not merely on final-value agreement in some tests.
+\end{proof}
+
+This theorem concerns all admitted finite prefixes, including zero-weight ordinary outcomes and unfair interleavings. It does not imply delivery, termination, fairness, noninterference, or Byzantine safety. Nominal recursive administrative procedures, arbitrary dynamic channel schemas, result-dependent script continuations after await and symbolic primitive verification remain separate obligations.
+
+\end{document}
