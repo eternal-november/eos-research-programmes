@@ -15,6 +15,7 @@ The programme distinguishes its categorical core from particular realizations an
 Start with the integrated treatment linked above. Read its claims with their stated categorical hypotheses: independently specified context and content, their interaction, and the resulting relative construction and comparison maps.
 
 - [Provisional interactad terminology](foundations/terminology/Interactad_Terminology_Note.tex): names for the presented context/content interaction package and its induced and framed forms, distinguished from realizations and applications.
+- [Retained fibre effects and guarded prefixes](foundations/retained-fibre-effects/README.md): a Set-based construction parameterized by a commutative affine monad, with supplied conditional effects, native writer crossing and guarded prefix transport; semantic instances and exact presentation limits are stated separately.
 - `foundations/`: finite contextads, reduction tests, structural examples, theory guide, and the common relative construction.
 - `interaction/`: feasibility, the indexed receipt construction, and the independent interaction criterion.
 - `framing/`: external framing and representation comparison.

@@ -1,0 +1,341 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}\newtheorem{definition}{Definition}
+\title{Retained Fibre Effects: Set-Based Native Composition and Guarded Prefixes}
+\date{15 November 2026}\begin{document}\maketitle
+\paragraph{Level and scope.} This is a Set-based categorical construction parameterized by a commutative affine monad and supplied fibre-effect presentations. It is not a theorem for arbitrary base categories or every context/content presentation. The base-preserving pure category gives literal native comma presentations with Cartesian writer content. The full bundle category gives a reflected normalized relative algebra; a realization of that variant as an interactad in the programme's exact presentation sense is not proved. The original polynomial/rig occurrence theorem is neither replaced nor generalized by assertion. Semantic instances are presented separately; no process language, scheduler or control example is a premise.
+\paragraph{Proof status.} The written proofs have undergone independent mathematical review in this scope; no proof-assistant certification or novelty claim is made. Standard monad and Cartesian writer machinery is used explicitly. No infinite-limit effect, general trace, fairness or full-contract completion theorem is claimed.
+\paragraph{Size convention.} Fix nested universes: carriers and fibres belong to the smaller universe; their categories, module categories and relative pseudocoends are formed in a sufficiently larger universe. All relative coends below mean the retained-native-arrow pseudocoends of the programme, not quotients of objects by output equivalence.
+\tableofcontents
+
+\part{Retained fibre effects and synchronized composition}
+
+\paragraph{Research status.} A written mathematical construction, independently reviewed in the stated scope. This is not a runtime, control protocol or completion claim. Conditional fibre effects below are \emph{supplied data}; no conditioning, disintegration, pullback preservation or measure extension is inferred from the monad axioms. Concrete stochastic, nondeterministic and environmental interpretations belong to separate semantic instantiations. Affinity excludes ordinary subdistribution semantics for loss of total mass; explicit outcome states or a separately developed partiality structure are needed, rather than silently interpreting divergence as lost mass.
+
+\section{Effect algebra and retained base spans}
+Let $T$ be a commutative affine monad on $\mathbf{Set}$, with unit $\eta$, bind $\mathbin{\gg=}$ and its Fubini map $\otimes_T:T U\times T V\to T(U\times V)$. Affine means $T1\cong1$. We use only functoriality, monad laws and the commutative-monad Fubini/bind interchange law. The underlying monoidal-monad equivalence and affine marginal law are established background, not novelty claims: see Anders Kock, \emph{Commutative monads as a theory of distributions}, Theory and Applications of Categories 26 (2012), Theorem~9.2 and Section~16, \url{https://tildeweb.au.dk/au76680/CMTD.pdf}. When raw nonemptiness is asserted, additionally require $T\varnothing=\varnothing$; otherwise raw feasibility must be supplied separately.
+
+A retained base span from $A$ to $B$ consists of
+\[
+ A\xleftarrow{s}E\xrightarrow{t}B,\qquad
+ \mu_a\in T(E_a),\quad E_a=s^{-1}(a).
+\]
+Its witnesses $e$ are not quotiented by endpoint or effect support. Given $F:B\to C$, compose by the set pullback $E\times_B F$ and
+\[
+ (\mu;\nu)_a=\mu_a\mathbin{\gg=}\bigl(e\mapsto
+ \nu_{t(e)}\mathbin{\gg=} (f\mapsto\eta(e,f))\bigr).
+\]
+Units have singleton witness fibres. Associativity is the canonical tuple bijection with effect equality from the monad laws. All pullbacks in this definition are formed in sets before applying $T$.
+
+\section{Supplied conditional lifts and native bodies}
+An interface is a bundle $p_X:X\to A$. A lift from $X/A$ to $Y/B$ over a retained base span $E$ supplies a set $L_{x,e}$ and effect $\lambda_{x,e}\in T(L_{x,e})$ for each $s(e)=p_X(x)$, and a body
+\[
+ f(x,e,l)=(y,q)\in Y\times Q,
+ \qquad p_Y(y)=t(e).
+\]
+Here $Q$ is a content carrier. The full context extension is
+\[
+ e_X P=\coprod_{x\in X}\coprod_{e\in E_{p_X(x)}}L_{x,e}
+ \longrightarrow B,
+ \qquad (x,e,l)\longmapsto t(e),
+\]
+and $d_Y Q=Y\times Q\to B$. Thus the body really has the required form $e_XP\to d_YQ$ in a category of pure bundles. Its total effect at $x$ is $\mu_{p_Xx}\gg=(e\mapsto\lambda_{x,e}\gg=(l\mapsto\eta(e,l)))$. Affinity ensures its projection to the base witness is exactly $\mu_{p_Xx}$.
+
+A native context map from $P$ to $P'$ consists of $r:E\to E'$ preserving both endpoints, with $T(r_a)\mu_a=\mu'_a$, and maps
+\[
+ u_{x,e}:L_{x,e}\to L'_{x,r(e)},\qquad
+ T(u_{x,e})\lambda_{x,e}=\lambda'_{x,r(e)}.
+\tag{C}
+\]
+A native operation cell additionally supplies $v:Q\to Q'$ with
+\[
+ f'(x,r(e),u_{x,e}l)=(y,vq)\quad\text{whenever }f(x,e,l)=(y,q).
+\tag{B}
+\]
+These are pointwise, all-witness conditions, including base witnesses which carry no mass in a probabilistic interpretation. A marginal equality of the total effect is weaker and is not substituted for (C).
+
+Let $\mathcal C$ have bundles as objects and pure maps over a fixed base as morphisms: it is the disjoint union of the slices $\mathbf{Set}/A$ over the chosen universe of base sets. A context grade over $X/A$ may have any output base $B$, but native context maps preserve that base. The preceding $e_X$ is a functor into $\mathcal C$, and $d_Y$ is the Cartesian writer-content functor. Define the actual comma family
+\[
+ H_T(X,Y)=(e_X\downarrow d_Y).
+\]
+Pure maps reindex the input family and postcompose the output body. Pure changes of the base set are not yet included in $\mathcal C$; adding them requires specified base-change data and laws, not a blanket Beck--Chevalley assertion.
+
+\section{Serial multiplication with retained witnesses}
+For a second lift with base $F:B\to C$, local witnesses $M_{y,f}$, effects $\kappa_{y,f}$ and body $g(y,f,m)=(z,r)$, the composite base is $E\times_B F$. Its local fibre at $x,(e,f)$ is
+\[
+ N_{x,(e,f)}=\coprod_{l\in L_{x,e}}M_{y(x,e,l),f},
+\]
+with effect $\lambda_{x,e}\gg=(l\mapsto\kappa_{y(x,e,l),f}\gg=(m\mapsto\eta(l,m)))$. Its body returns $(z,(q,r))$. In particular the intermediate witness $l$, and hence its result $y$, are retained.
+
+The second base effect depends on $t(e)$, not on a hidden part of $l$. Its local fibre effect may depend on the entire actual $y$. This is a substantive interface condition: if a branch changes the subsequent base effect, that branch must be in the shared boundary or satisfy an independently proved factorization. The formula does not declare arbitrary hidden branching independent.
+
+\begin{theorem}[Relative serial structure]
+These formulae give pure units and native serial multiplication for $H_T$, associative and unital up to the canonical retained-witness/content isomorphisms. Multiplication descends through the pure-middle balancing relation of the category-valued relative tensor.
+\end{theorem}
+\begin{proof}
+Identity contexts use the identity base span, singleton local fibres and the identity output with singleton content. For three operations both bracketings have the same retained base triple and local witness triple, with the same successive bodies. Monad associativity identifies the effects, and tuple reassociation gives the native associator. Unit maps remove the singleton coordinates. Pentagon and triangle diagrams are equalities of these tuple maps, with the same effect transports, not merely endpoint-law comparisons.
+
+For a pure intermediate bundle map $h:Y/B\to Y'/B$, applying $h$ to the first body and then the second context has local witness fibre $M_{h(y),f}$. Reindexing the second context by $h$ yields exactly the same fibre, effect and body. This identifies the generating balance maps and respects their relations, giving multiplication on the relative pseudocoend. Native context and content maps compose pointwise; (B) preserves the actual intermediate $y$, and (C) with bind naturality proves the composite conditional equation.
+
+The assembled total effect agrees with ordinary sequential evaluation: the second base effect can commute past the first local effect because it depends only on the already fixed shared boundary $t(e)$. This step uses commutativity of $T$, not an unstated independence/disintegration hypothesis. Subsequent local effects may depend on the first actual result and are not commuted past it.
+\end{proof}
+
+\section{Synchronized fibre tensor and interchange}
+Two lifts over the \emph{same} base span $E:A\to B$ have a synchronized tensor. Its interfaces are $X_1\times_A X_2$ and $Y_1\times_B Y_2$, its local fibres are $L^1_{x_1,e}\times L^2_{x_2,e}$, its effect is $\lambda^1_{x_1,e}\otimes_T\lambda^2_{x_2,e}$, and its body pairs the outputs and contents. The base witness is sampled once, not once per factor. A pair of native maps can be tensored only when they share the same base-witness map $r$.
+
+\begin{theorem}[Synchronized serial interchange]
+For two first-stage lifts over $E$ and two second-stage lifts over $F$, synchronized tensor commutes with serial composition by the canonical shuffle of retained witnesses and writer contents. The associativity, unit, symmetry and interchange comparisons are coherent native isomorphisms.
+\end{theorem}
+\begin{proof}
+At fixed $x_1,x_2,e,f$, the two local effect expressions are
+\[
+ (\lambda_1\otimes_T\lambda_2)\gg=
+ ((l_1,l_2)\mapsto\kappa_{1,l_1}\otimes_T\kappa_{2,l_2})
+\]
+and
+\[
+ (\lambda_1\gg=(l_1\mapsto\kappa_{1,l_1}))
+ \otimes_T
+ (\lambda_2\gg=(l_2\mapsto\kappa_{2,l_2})),
+\]
+where each displayed continuation includes the retained $l_i$ coordinate. Commutative-monad interchange equates them under
+$((l_1,l_2),(m_1,m_2))\leftrightarrow((l_1,m_1),(l_2,m_2))$.
+Both sides have the same retained base $(e,f)$ and base effect. Bodies and content maps obey the same shuffle. All higher diagrams are canonical tuple permutation/reassociation diagrams on complete raw carriers; the monad laws give their effect equations. Neither side hides the intermediate base or local witness.
+\end{proof}
+
+Consequently the class of native conditional comparisons (C),(B) is closed under these two constructions. An induction on any finite well-typed pasting of them derives its native comparison from the local equations. This is not a premise that the enlarged joint effect square already holds after every context; it is derived for this declared class of constructions.
+
+\section{Boundary sufficiency is descent, not conditioning}
+Let $q:D\twoheadrightarrow B$ be an effective quotient of sets and let $Z_b$ be an output family. Suppose a later context supplies $k_d\in T(Z_{q(d)})$.
+\begin{proposition}[Exact descent criterion]
+There is a unique family $\bar k_b\in T(Z_b)$ with $k_d=\bar k_{q(d)}$ if and only if $k_{d_1}=k_{d_2}$ whenever $q(d_1)=q(d_2)$.
+\end{proposition}
+\begin{proof}
+Necessity is substitution. For sufficiency, each fibre is nonempty and the equality hypothesis makes its value unique; assign that value to $\bar k_b$. This is ordinary effective-quotient descent of a map into the total family $\coprod_b T(Z_b)$. It does not require $T$ to preserve quotients or pullbacks, and does not manufacture a conditional effect from a joint effect.
+\end{proof}
+
+Applying this criterion to the pushed local effects gives precisely when a proposed boundary/content abstraction supplies native condition (C). If hidden history affects a later context, retaining that history in an operative interface or proving descent is necessary for this form of forgetting. The synchronized/serial theorem does not license eliminating intermediate witnesses. Failure of kernel-pair equality is a direct obstruction to the specified descent, not proof that every possible alternative representation is impossible.
+
+\section{Comparison with the existing relative basis}
+The construction uses the same actual native comma shape, pure units and balanced relative multiplication as the existing relative basis. On terminal boundaries, restrict to $E=1$, constant witness fibre $L_{x,*}=\Omega$, and a fixed effect $\lambda_{x,*}=\mu$ independent of $x$. Then
+\[
+ e_XP=X\times\Omega,\quad d_YQ=Y\times Q,
+\]
+and native maps are exactly input-dependent effect-preserving tape maps and content maps with the full body square. Serial composition has tape $\Omega\times\Lambda$, Fubini effect $\mu\otimes_T\nu$, and writer content $Q\times R$. Thus the unary fixed-tape writer family embeds fully faithfully, with its displayed composition and native coherence recovered under the canonical singleton identifications.
+
+This is an explicit comparison with the relative/context-content layer and its unary writer specialization. It does \emph{not} import the entire earlier finite augmented polynomial independent-interaction theorem: arbitrary multiple occurrences, rig actions, relative Cartesian lifts and their display/Beck--Chevalley hypotheses have not been recovered merely by changing notation. A further comparison with those general O1 data remains an obligation.
+
+\section{Separation of general structure and semantic instances}
+The identity monad, nonempty-powerset monad, nonempty-reader monad and finite-distribution monad are candidate nonprobabilistic/probabilistic instances of the stated algebraic hypotheses. Their concrete interpretations and exact support behavior must be checked separately. For a distribution instance, Fubini selects a particular product coupling of the supplied fibre distributions; it is not a uniqueness theorem for all possible physical correlations. Other correlation mechanisms must be retained in the shared base/witness data or supplied as additional effect structure.
+
+No infinite-path measure or unguarded feedback theorem follows from affinity and commutativity alone. Compatible prefix towers can be formed categorically without identifying them with a single $T$-effect on infinite paths. Guarded-feedback closure, raw path lifting, and an interpretation of such towers as actual path laws require further stated structure and separate proofs. They are not claimed in this finite retained-pasting result.
+
+\part{Full bundle base change and normalized modules}
+
+\paragraph{Status.} Written mathematical extension, independently reviewed in the stated scope. Use the supplied fibre-effect presentations and commutative affine monad $T$ from the retained-fibre construction. No conditioned effects or disintegrations are derived from $T$. This note gives explicit base-change maps rather than assuming a Beck--Chevalley property of $T$.
+
+\section{The full pure category and the normalization problem}
+Let $\mathcal C=\mathbf{Set}^{\to}$ be the category of bundles. A pure arrow $(u,a):X/A\to X'/A'$ is a commutative square $p_{X'}u=ap_X$. For fixed $X/A$, allow context presentations $P$ with any output base $D$. A context morphism to $P'$ may have a base map $b:D\to D'$, a base-witness map $r:E\to E'$ with $s'r=s$ and $t'r=bt$, and the same pointwise effect-preserving fibre maps as before. These form a category $\mathsf P_X$. The functor $e_X$ sends a presentation to its total witness bundle over $D$. Let $d_YQ=Y\times Q\to B$ for $Y/B$.
+
+In the raw comma $(e_X\downarrow d_Y)$ a body has a base map $h:D\to B$. It would be incorrect simply to treat that as an identity: a right-unit comparison can otherwise demand a nonexistent inverse to $h$. Instead define $\widehat H_T(X,Y)$ to be the full subcategory of \emph{normalized} objects, with context output base $B$ and body base map $\mathrm{id}_B$. Its cells consequently have context base map $\mathrm{id}_B$.
+
+For any $b:D\to D'$ there is an endpoint pushforward $b_*P$: replace $t:E\to D$ by $bt:E\to D'$, leaving every witness fibre and effect unchanged. The canonical map $P\to b_*P$ has base $b$ and identity witness maps. It is cocartesian for this explicit output-base projection: a context map over $c b$ factors uniquely through the same witness maps over $c$. This assertion is about the defined presentation category, not about arbitrary probabilistic kernels.
+
+\begin{proposition}[Reflective native normalization]
+Pushing a raw object's context along its body base map defines a reflector
+\[
+ N:(e_X\downarrow d_Y)\longrightarrow\widehat H_T(X,Y)
+\]
+left adjoint to the inclusion. Its unit is a native context/content cell, generally noninvertible.
+\end{proposition}
+\begin{proof}
+For a raw body over $h:D\to B$, use $h_*P$ with the same set function body, now over $\mathrm{id}_B$, and the same content. The unit uses the identity witness maps and identity content map, over $h$. A raw native cell from this object to a normalized object necessarily has context base map exactly $h$, by its body square. By the explicit cocartesian property it factors uniquely as the unit followed by a cell with context base map $\mathrm{id}_B$. This is the adjunction bijection on hom sets, natural in both objects. For a cell between arbitrary raw objects with body base maps $h,h'$, the raw context base map $b$ obeys $h'b=h$; the same witness maps therefore give a normalized cell. The counit is identity.
+\end{proof}
+
+This reflection is not claimed to be an equivalence of raw presentations. It retains raw witnesses and content but deliberately normalizes an extraneous base presentation through a directed universal map. It does not quotient equal output laws or discard local witness coordinates.
+
+\section{Pure functoriality without stochastic pullback assumptions}
+For input $(u,a):X'/A'\to X/A$, pull a normalized context base span $A\leftarrow E\to B$ back to
+\[
+ E^a=A'\times_A E,
+ \quad \mu^a_{a'}=T(e\mapsto(a',e))(\mu_{a(a')}),
+\]
+and set
+\[
+ L^a_{x',(a',e)}=L_{u(x'),e},\qquad
+ \lambda^a_{x',(a',e)}=\lambda_{u(x'),e}.
+\]
+The body uses the old body at $u(x')$. The effect transport uses the canonical bijection of the individual input fibres; it is not a claim that $T$ preserves a pullback square.
+
+For output $(v,b):Y/B\to Y'/B'$, push the context endpoint to $bt$, keep local witnesses and effects, and apply $(v,\mathrm{id})$ to the body. Reindex native maps componentwise. Input and output actions commute, and successive input pullbacks have their canonical tuple identifications. Thus these operations define a category-valued pseudofunctor
+\[
+ \widehat H_T:\mathcal C^{\mathrm{op}}\times\mathcal C\to\mathbf{Cat}.
+\]
+Its pure inclusion sends $(u,a):X/A\to Y/B$ to the base span $A\xleftarrow{\mathrm{id}}A\xrightarrow a B$, singleton local witnesses/content and body $u$.
+
+\section{Balancing and multiplication over the full pure category}
+Use the same retained serial construction on normalized objects. Let an intermediate pure arrow be $(v,b):Y/B\to Y'/B'$. Write the first context base span as $E:A\to B$ and the next as $F:B'\to C$. Postcomposing the first operation yields composite base witness set $E\times_{B'}F$. Precomposing the second yields the base witness set $E\times_B(B\times_{B'}F)$. The comparison is the explicit bijection
+\[
+ (e,(t(e),f))\longleftrightarrow(e,f),
+ \qquad b(t(e))=s_F(f).
+\tag{BC}
+\]
+Both base effects are $\mu_a\gg=(e\mapsto\nu_{b(t(e))}\gg=(f\mapsto\eta(e,f)))$ under this bijection. The local witness fibre on both sides is the same family of pairs $(l,m)$, with second local effect indexed by the actual intermediate value $v(y)$. Bodies and content coordinates are identical.
+
+\begin{theorem}[Normalized relative multiplication]
+The displayed input/output actions, pure inclusion and serial construction form a relative category-valued multiplication on $\widehat H_T$, with native associativity and units. Its balancing for arbitrary pure bundle maps is given by (BC). The construction requires neither invertibility nor surjectivity of $b$.
+\end{theorem}
+\begin{proof}
+The calculation above supplies the balance isomorphism, including its effect and body square. Identity and composite pure maps yield the same canonical iterated-pullback bijections, so the balance generators respect their relations. Serial multiplication therefore factors through the relative pseudocoend. Associators rebracket the full retained base and local witness tuples. Since objects are normalized, right and left units use ordinary pullbacks against identity spans and do not demand an inverse to a body base map. All coherence diagrams reduce to tuple reassociation and pullback-projection identities, together with the monad laws; the total-effect sequential comparison uses the previously stated commutativity condition.
+\end{proof}
+
+Synchronized tensor comparisons still require a common shared base span and common base-witness map. The theorem does not supply a universal coupling between unrelated bases. Input pullback of an existing shared span preserves its synchronized tensor by the evident fibre identifications. For output endpoint pushforward there is instead an explicit pure comparison $Y_1\times_B Y_2\to Y_1\times_{B'}Y_2$. Postcomposing the pushed synchronized lift by this inclusion gives the synchronized lift of the pushed factors. The comparison of output bundles need not be invertible: a coarse-boundary fibre product can contain additional pairs with no common fine-boundary preimage. No surjectivity or raw lifting of those additional pairs is claimed.
+
+\section{What boundary abstraction now means}
+An abstraction of interfaces is a pure bundle square, not a license to forget arbitrary effects. For $\alpha:X\to X'$ and $\beta:Y\to Y'$ with their base maps, a heterogeneous comparison is an actual native cell
+\[
+ \widehat H_T(\mathrm{id},\beta)(P)
+ \longrightarrow
+ \widehat H_T(\alpha,\mathrm{id})(P').
+\]
+Unfolding its context component requires the source base effect to push to the reindexed target base effect, and the local conditional fibre effects to satisfy the pointwise transport equations. Its body square compares the retained output/content, not only a marginal. These are sufficient data for pasting the comparison through the derived operations. They are not inferred from the existence of the pure bundle maps.
+
+When constructing an abstract conditional fibre family, the earlier effective-quotient criterion applies to the pushed conditional effects: constancy on the appropriate kernel-pair fibres gives a unique descended family. Raw witness maps and body squares must still be supplied. Even if two individual component maps are surjective, synchronized raw pair lifting can need a further common-fibre lifting hypothesis. None of these requirements is silently replaced by ordinary marginal equality.
+
+\section{Relation to the programme's native definitions}
+The result constructs a genuine $\mathcal C^{\mathrm{op}}\times\mathcal C\to\mathbf{Cat}$ family with units and relative multiplication. Its objects and cells are normalized context/content bodies; normalization is explicitly a reflection inside the raw comma category. The terminal-boundary writer restriction remains the previously checked special case. The result does not identify every raw comma presentation with its normalization, and does not import arbitrary finitary polynomial/rig independent-crossing data without comparison proofs.
+
+No name for the general presented structure is fixed by this note. In particular, a directed normalization cell is not conflated with the invertible associators or with a proposed general crossing. The exact relationship to a broader noninvertible coherent context/content interaction remains to be established at the stated native-cell level.
+
+\part{Independent Cartesian writer crossing}
+
+\paragraph{Status.} Written comparison with the programme's independent context/content architecture, independently reviewed in its stated scope. Work in the normalized family over the pure bundle category from the base-change note. The content input here is specifically the Cartesian writer contentad. This does not claim arbitrary occurrence-indexed content or its independent polynomial theorem. Normalization of raw bundle-body presentations is a reflection, not an equivalence; every module below is explicitly the normalized module.
+
+\section{Independent one-sided structures}
+Let $M(X,Y)$ be the normalized context-body category: contexts $P$ over $X$ with output base equal to that of $Y$, body $e_XP\to Y$ over the identity base, and native context maps commuting with the body. It is equivalently the singleton-content part of $\widehat H_T$. Its pure actions, units and multiplication are the corresponding constructions without writer coordinates. Their validity follows directly from the same retained-witness tuple calculations, not from a mixed crossing assumption.
+
+Independently let $N(X,Y)$ have objects $(Q,f:X\to Y\times Q)$, where $f$ is a pure bundle map with any permitted base map. A native arrow $v:Q\to Q'$ satisfies $f'=(\mathrm{id}_Y\times v)f$. Pure actions are pre/postcomposition. Composition of $(Q,f)$ and $(R,g)$ retains $(q,r)\in Q\times R$, and the unit has content $1$. This is the Cartesian writer relative module; its independent coherence is ordinary Cartesian reassociation.
+
+\section{The crossing carrier and its effects}
+Take a writer operation $f:X/A\to Y/B\times Q$ followed by a context operation $g:e_YP\to Z/C$. Write the base map of $f$ as $a:A\to B$. Pull $P$ back along the pure map $\pi:Y\times Q\to Y$ and then along $f$. The context $f^*\pi^*P$ over $X$ has output base $C$. If the original base span is $B\leftarrow E\to C$, its new base is $A\times_B E$. At $x$ with $f(x)=(y,q)$, its local fibre and effect are exactly $L_{y,e},\lambda_{y,e}$.
+
+There is a canonical body
+\[
+ \chi_P^Q:e_{Y\times Q}(\pi^*P)\longrightarrow e_YP\times Q,
+ \qquad ((y,q),e,l)\longmapsto((y,e,l),q).
+\tag{W}
+\]
+It is an isomorphism of pure bundles over $C$. It does not transport a probability measure across a hidden disintegration: both sides use the same supplied base and conditional effects, while $q$ is carried deterministically. The mixed output operation is the normalized context $f^*\pi^*P$, writer grade $Q$, and body
+\[
+ (x,(p_Xx,e),l)\longmapsto(g(y,e,l),q),\qquad f(x)=(y,q).
+\tag{C}
+\]
+Thus the crossing can be presented as a map from a writer-then-context representative to a context-then-writer representative, without asking for an inverse to the possibly noninvertible pure base map $a$.
+
+\begin{proposition}[Native naturality and balance]
+The formula (C) respects every native context map and every writer content map. It is balanced at the pure intermediate interface, including arbitrary bundle-base maps.
+\end{proposition}
+\begin{proof}
+A writer map $v$ sends the retained coordinate $q$ to $v(q)$ and leaves the chosen $y$ unchanged, so the pulled context and its effects are unchanged. A context map acts on $e,l$ by its specified maps; its body square commutes with $g$, and its pointwise conditional equation is unchanged after reindexing at $y$. These two maps commute on the full raw carrier.
+
+For a pure intermediate map $k:Y/B\to Y'/B'$, postcomposition of $f$ supplies $(k(y),q)$ to the following context. Alternatively pulling the following context back along $k$ first gives exactly the same conditional fibre at $k(y)$. The retained base witnesses on the two sides are identified by the explicit iterated-pullback bijection from the base-change note. Hence effects and full bodies agree, not only output endpoints. Identity and composition of $k$ give the usual pullback identities, establishing the balance relations.
+\end{proof}
+
+\section{The four compatibility calculations}
+The crossing with writer unit $Q=1$ removes the sole coordinate and is the context identity comparison. Crossing the pure context unit retains $q$ and changes no effect, giving the writer identity comparison.
+
+For two writer stages, write their actual successive outputs as $(y,q)$ and $(z,r)$. Crossing their composite past a context chooses that context at $z$ and retains $(q,r)$. Crossing successively has precisely the same conditional context and the same two content coordinates; the comparison is Cartesian reassociation. This remains true when the second writer's value $r$ depends on $y$.
+
+For two context stages, the first local witness $l$ produces actual intermediate $y^+$, and the second witness $m$ is indexed at that $y^+$. Crossing writer $q$ past their composite retains $(l,m,q)$. Crossing it past each stage retains the same data as $(l,q,m)$ before the canonical reordering. The conditional effect is on both sides
+\[
+ \lambda_{y,e}\mathbin{\gg=}\bigl(l\mapsto
+ \kappa_{y^+(l),f}\mathbin{\gg=}(m\mapsto\eta(l,m))\bigr),
+\]
+with $q$ deterministic and unchanged. The context base effects are the same retained sequential effect. No effect is made to depend on $q$, because each context is pulled back along the projection dropping $q$; this is exactly the declared independent writer interaction, not arbitrary interference through writer data.
+
+All comparisons are the displayed bijections on complete raw carriers, with the same conditional effects. Therefore their native naturality, unit triangles, associativity pentagons and the compatibility among these four calculations reduce to identities of retained tuple projections and the context/Cartesian coherence already proved.
+
+\section{Factorization and exact scope of the comparison}
+In normalized modules the familiar comma factorization still applies, but its flattening includes endpoint normalization. A representative writer after context
+\[
+ [Y;(P,g:e_XP\to Y),(Q,h:Y\to Z\times Q)]
+\]
+flattens to the context pushed along the base map of $h$, with body $hg$. Conversely a normalized mixed body uses intermediate $e_XP$, context identity body and the original mixed body as its writer operation. Balancing along $g$ and along the pure endpoint-normalization map identifies the representatives: the latter balance uses the \emph{defined normalized output action of $M$}, not an asserted invertibility of the raw context-normalization cell. Explicitly the inverse comparison is the chain
+\[
+ [Y;P,g;Q,h]\ \cong\ [e_XP;P,\mathrm{id};Q,hg]
+ \ \cong\ [e_X(h_*P);h_*P,\mathrm{id};Q,\overline{hg}],
+\]
+where $h_*$ denotes endpoint push by the base map of $h$, and the second balance uses $k:e_XP\to e_X(h_*P)$, with underlying identity and that base map. The normalized output action sends $(P,\mathrm{id})$ along $k$ exactly to $(h_*P,\mathrm{id})$. Both comparisons are pseudocoend balance isomorphisms; no inverse to $k$ or to the raw context map is used. The native context and content maps are retained by their own module arrows. For a normalized native cell $(\alpha,v)$ with $f'e\alpha=(\mathrm{id}\times v)f$, the section acts by three actual arrows: first the $N$-arrow $v$ at middle $e_XP$; then balance along $e\alpha:e_XP\to e_XP'$; finally the $M$-arrow $\alpha:(P,e\alpha)\to(P',\mathrm{id})$. The body-square equality makes the first step's writer body exactly $f'e\alpha$. This retains noninvertible $\alpha$ and $v$ rather than inverting them. Applying flattening returns exactly $(\alpha,v)$. For the other composite the two-balance chain above is natural in those arrows by the pseudocoend native-arrow balance relations. Its two triangle identities are the balance identity/composition relations. This gives the equivalence $M\odot N\simeq\widehat H_T$ in the normalized setting.
+
+With the normalization/balance verification above, (C) is the explicit writer/context law $N\odot M\to M\odot N$, whose four compatibility calculations induce the previously constructed mixed multiplication. The carrier body (W) is invertible, and the unit/multiplication compatibility modifications are invertible canonical tuple comparisons. These facts do not assert that the whole module crossing is an equivalence: a generic context chosen after a content-dependent input need not be recoverable by a reverse independent factorization. Nor do they make every native context/content cell invertible. This is more specific than merely giving an arbitrary composition on a category of bodies: both one-sided structures and the crossing carrier are exhibited independently. Conversely it is strictly less general than the original polynomial-occurrence interaction. There is exactly one writer-return interface at each step, no finite occurrence-tree display, no rig-indexed multiplication over several addressed occurrences, and no implication that arbitrary independent contentads satisfy (W).
+
+\paragraph{Exact presentation boundary.} Over the base-preserving pure category in the first note, $M$ and $H_T$ are the literal native comma presentations: no reflection is needed. The crossing calculations above restrict to that case. Over the full bundle category, $M$ is the normalized subcategory of a raw comma presentation, not the raw comma itself. A valid relative pseudopromonad and crossing on normalized modules would not by itself establish a presentation satisfying the programme's pinned definition of an interactad. Such a realization theorem is not claimed here; alternatively the exact comma claim must remain in the base-preserving scope.
+
+The guard-prefix construction retains this writer content through delayed state feedback. Its pointwise native conditions must still hold at actual feedback states; an arbitrary whole-stream sectionwise map is not admitted by the above crossing alone. No automatic general concurrent trace, all-path progress theorem or full-contract completion follows.
+
+\part{Guarded retained-prefix effects}
+
+\paragraph{Status and level.} Written categorical extension, independently reviewed in the stated scope. This is a construction on supplied native bodies for an affine monad on sets, not a particular process language, probability model or implementation. It gives a compatible tower of finite effects, not an effect on the inverse limit. Commutativity is needed only when invoking the preceding synchronized-tensor theorem, not for the sequential construction here.
+
+\section{Bodies with a retained state interface}
+Fix sets $S,A,B,Q$. For every $s\in S,a\in A$ supply a raw fibre $W_{s,a}$, an effect $\tau_{s,a}\in T(W_{s,a})$, and a body
+\[
+ F(s,a,w)=(s^+,b,q)\in S\times B\times Q.
+\]
+This is an actual terminal-base object of the normalized native family: the input bundle has carrier $S\times A$, the output bundle $S\times B$, and the context fibre at $(s,a)$ is $W_{s,a}$. The state coordinate is part of the operative pure interface, not an unrecorded side effect. Recurrence connects that coordinate between successive bodies. The raw fibre contains every declared witness, not only a probabilistic support.
+
+A directed comparison to $(S',W',\tau',F',Q')$ consists of $h:S\to S'$, $v:Q\to Q'$, and maps $r_{s,a}:W_{s,a}\to W'_{h(s),a}$ satisfying, for every $s,a$,
+\[
+ T r_{s,a}(\tau_{s,a})=\tau'_{h(s),a},\qquad
+ F'(h(s),a,r_{s,a}w)=(h(s^+),b,v(q)).\tag{N}
+\]
+These are heterogeneous native cells with pure input/output state maps, as in the base-change note. Their conditions are pointwise in the current state and input, not merely sectionwise equalities of a whole-run law for each fixed input stream.
+
+\section{Retained prefixes}
+For an initial $s_0$ and finite word $a_0\cdots a_{n-1}$, let $P_n$ be the set of recursively well-typed witness sequences $(w_0,\ldots,w_{n-1})$, with states and outputs determined by $F$. Put $P_0=1$ and $\theta_0=\eta(*)$. Define $\theta_{n+1}$ by binding $\theta_n$ to $\tau_{s_n,a_n}$ and retaining both the old prefix and the new witness. Let $p_n:P_{n+1}\to P_n$ drop the last witness.
+
+\begin{theorem}[Prefix transport and compatibility]
+For every infinite input stream, $(P_n,p_n,\theta_n)$ is a compatible tower:
+$T p_n(\theta_{n+1})=\theta_n$.
+A comparison (N) induces maps $R_n:P_n\to P'_n$ with
+\[
+ p'_nR_{n+1}=R_np_n,\quad T R_n(\theta_n)=\theta'_n,
+\]
+and the pointwise output/content/state squares at every prefix. These maps preserve identities and vertical composition exactly. If each $r_{s,a}$ is surjective, the prefix maps are surjective; compatible infinite target raw paths lift from each prescribed source initial state mapping to its initial state, using dependent choice.
+\end{theorem}
+\begin{proof}
+For fixed prefix $p$, pushing the appended effect along the constant map to $p$ gives $\eta(p)$: $T1=1$ makes discard of the new effect the unique terminal effect. Binding this identity proves compatibility. Define $R_{n+1}$ by $R_n$ on the prefix and $r_{s_n,a_n}$ on its last witness. Induction using (N) shows the target current state is $h(s_n)$, so this map is well-typed and its body square holds. Bind naturality and the conditional pushforward equation give effect transport. The coordinate formula gives truncation and vertical laws. For raw lifting, recursively choose a preimage of the next target witness at the already chosen source state; this is local surjectivity at each source preimage, stronger than global state-space surjectivity. No claim of a measurable section or effect-preserving reverse map is made.
+\end{proof}
+
+This tower is an object of the category of inverse sequences of sets equipped with compatible $T$-effects and effect-preserving maps. Even when $\lim P_n$ exists as a set, no $\theta_\infty\in T(\lim P_n)$ is asserted. In particular finite-support distributions need not encode an infinite independent sequence as a finitely supported law. Zero-weight raw paths can remain in the inverse limit separately from every chosen semantic interpretation of the tower.
+
+\section{Seeded delayed feedback}
+Now let the input and output of the body be $A\times D$ and $B\times D$. Fix seed $d_0\in D$. Define a closed body with state $S\times D$, input $A$ and output $B$, by
+\[
+ \overline W_{(s,d),a}=W_{s,(a,d)},\quad
+ \overline\tau_{(s,d),a}=\tau_{s,(a,d)},
+\]
+\[
+ F(s,(a,d),w)=(s^+,(b,d^+),q)
+ \ \Longrightarrow\ 
+ \overline F((s,d),a,w)=((s^+,d^+),b,q).
+\]
+There is no fixed-point equation at a single step: the outgoing $d^+$ is used only at the next step. A comparison (N) must preserve the entire outgoing pair $(b,d^+)$.
+
+\begin{theorem}[Native delayed-feedback closure]
+The displayed construction sends a comparison (N) to a comparison with state map $h\times\mathrm{id}_D$, the same $v$, and the same fibre maps evaluated at $(s,(a,d))$. It therefore induces a directed comparison of the closed prefix towers, with all effect/body and raw-lifting conclusions above. It is functorial on the category of bodies and comparisons with the fixed wire $D$.
+\end{theorem}
+\begin{proof}
+The closed conditional equation is exactly (N) at the current actual $(s,a,d)$. Its body square sends $(s^+,d^+)$ to $(h(s^+),d^+)$; hence both recursions use the same next feedback input. This establishes the one-step comparison, and the prefix theorem applies. Functoriality is the pointwise identity/composition law for $r,h,v$.
+\end{proof}
+
+An external deterministic causal controller may similarly choose $a_n$ from a common observed output/content history, provided its observation is preserved by the comparison. At matched prefixes the choices then coincide, so the same induction works. No arbitrary source-private policy is silently transported. A randomized controller is handled only after its own witnesses/effects and native observation square have been included in the retained body construction.
+
+\section{Coherence and limits of the result}
+Two delayed wires $D,E$ can be closed successively or jointly with the same seeds. The resulting state carriers $(S\times D)\times E$ and $S\times(D\times E)$ are related by canonical reassociation. At every step they apply the original body to the same old pair $(d,e)$ and store the same new pair; witness fibres, effects and content are unchanged. This proves a native isomorphism of their prefix towers. Closing a singleton wire gives the unit comparison. Closing the crossed pure wiring gives a seeded delay, not the identity, so this is not a claim of an ordinary unguarded trace or its yanking axiom.
+
+This construction uses the same conditional native comparison at every actual state and wire input. It does not repair the known failure of merely input-sectionwise whole-tape measure-preserving maps under adaptive feedback. It also does not prove that every effectful body or state abstraction has such a comparison. Hidden-history elimination still requires the explicit descent criterion; retaining states avoids, rather than solves, arbitrary sufficient-statistic existence.
+
+For the finite serial comparison, first regard each body as returning state $s^+$ with writer content $(b,q)\in B\times Q$. At step $n$ the pure map $s\mapsto(s,a_n)$ supplies the fixed external input. Native serial multiplication then retains the witness sequence and the entire ordered emission list, with exactly the effects defined above. Thus finite prefixes are obtained by actual native serial pasting and state-wire connections, not by discarding past emissions. Compatibility with synchronized concurrency is restricted to bodies whose common retained base and conditional lift hypotheses meet the earlier interchange theorem. Arbitrary branching occurrence contextads, hiding, unguarded recursion, fairness, convergence and infinite-path measure semantics are separate obligations. No claim that these prefix objects exhaust the original context/content programme is made.
+
+\end{document}
