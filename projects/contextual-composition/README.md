@@ -17,6 +17,7 @@ Start with the integrated treatment linked above. Read its claims with their sta
 - [Provisional interactad terminology](foundations/terminology/Interactad_Terminology_Note.tex): names for the presented context/content interaction package and its induced and framed forms, distinguished from realizations and applications.
 - [Retained fibre effects and guarded prefixes](foundations/retained-fibre-effects/README.md): a Set-based construction parameterized by a commutative affine monad, with supplied conditional effects, native writer crossing and guarded prefix transport; semantic instances and exact presentation limits are stated separately.
 - [Independent occurrence interaction for effect fibres](foundations/occurrence-effect-interaction/README.md): dependent-bind context fibres for commutative Set monads, with the original independent occurrence/display content hypotheses and full native crossing; no affinity, marked converse or recursive-extension claim.
+- [Guarded addressed unfolding](foundations/guarded-addressed-unfolding/README.md): variable finite-frontier native transport, exact retained-context comparison and a final raw indexed coalgebra in the polynomial-monadic instance; compatible prefix effects do not assert an infinite-limit effect.
 - `foundations/`: finite contextads, reduction tests, structural examples, theory guide, and the common relative construction.
 - `interaction/`: feasibility, the indexed receipt construction, and the independent interaction criterion.
 - `framing/`: external framing and representation comparison.
