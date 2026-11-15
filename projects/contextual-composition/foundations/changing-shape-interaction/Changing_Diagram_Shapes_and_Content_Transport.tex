@@ -1,0 +1,55 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Changing diagram shapes requires content transport}
+\date{15 November 2026}\begin{document}\maketitle
+\paragraph{Status.} Scoped theorem with written proofs. The fixed-shape interaction theorem and restriction along a shape functor do not automatically supply an interaction on a pure category whose arrows change shapes. This note identifies a one-sided obstruction and a sufficient indexed transport construction. No claim yet that the mixed crossing or content accumulation preserves this new transport.
+
+For a category $\mathcal C$ let $\mathsf D(\mathcal C)$ have objects $(J,A:J\to\mathcal C)$ for small $J$, and arrows $(r,u):(J,A)\to(J',A')$ with $r:J\to J'$ and $u:A\Rightarrow A'r$. Composition uses whiskering. A context fibration $p_K:\mathcal K\to\mathcal C$ induces a fibration $\mathsf D(p_K)$: restrict a target context diagram along $r$ and then lift $u$ cartesian componentwise. This is restriction followed by ordinary context reindexing.
+
+\section{The terminal-base criterion}
+For a category $\mathcal L$ regard $\mathsf D(\mathcal L)\to\mathsf{Cat}$ as the projection to $J$. Its arrows over $r:J\to J'$ are natural transformations $Q\Rightarrow Q'r$. It is the ordinary Grothendieck fibration of the contravariant diagram pseudofunctor $J\mapsto\mathcal L^J$.
+
+\begin{theorem}
+This projection is also an opfibration over a chosen class of shape maps precisely when each restriction functor $r^*:\mathcal L^{J'}\to\mathcal L^J$ in that class has a left adjoint, with the existence understood at every input diagram. The opcartesian arrow is the unit $Q\Rightarrow(\operatorname{Lan}_r Q)r$. No strict splitting is asserted.
+\end{theorem}
+\begin{proof}
+If left adjoints exist, the adjunction bijection sends maps $Q\to Rr$ to maps $\operatorname{Lan}_rQ\to R$. For a later shape map $s:J'\to J''$, apply this with $R=Vs$; this gives exactly the universal factorization of every arrow $Q\to Vsr$ through the unit over $r$. Thus the unit is opcartesian for the total category, not only universal among arrows with fixed target shape. Conversely an opcartesian lift of $Q$ over $r$, tested against arrows over the identity of $J'$, provides the displayed adjunction universal arrow. Functorial choices give the left adjoint; its unit and universal property give composition comparisons coherently. Ordinary choice and the declared universe sizes apply.
+\end{proof}
+
+The fold from a discrete two-object shape to the terminal shape therefore requires binary coproducts in $\mathcal L$. There is a genuine presented-interaction countermodel. Take pure base the terminal category, trivial context doctrine, and content category the discrete two-element group $C_2$ with accumulation addition modulo two and unit zero. Both content projections and extensions go to the terminal category; the one-sided structure is exactly this strict monoidal category, and its crossing with the trivial context is the unit crossing. The diagram with grades zero and one has no coproduct: neither object receives arrows from both. Hence its fold-shape opcartesian lift does not exist. This is a general terminal-base presentation, not asserted to satisfy the particular Set-polynomial O1 criterion. Generic valid one-sided structure therefore does not supply the needed shape transport. The empty-shape inclusion similarly requires an initial object if it is admitted.
+
+\section{A sufficient indexed construction}
+Let $p_L:\mathcal L\to\mathcal C$ be a cloven opfibration. Suppose its fibres have all small colimits needed below, and every pushforward functor $f_!$ preserves them, with its canonical comparisons. For $(r,u):(J,A)\to(J',A')$ and $Q:J\to\mathcal L$ over $A$, first form $\bar Q=u_!Q$ over $A'r$ by componentwise opcartesian transport. Define an object over $A'j'$ by
+\[
+ Q'_{j'}=\mathop{\mathrm{colim}}_{(j,t:rj\to j')\in(r\downarrow j')}
+       (A't)_!\bar Q_j.\tag{K}
+\]
+The arrows of this comma-indexed fibre diagram use the structure arrows of $\bar Q$ and the opfibration's coherent pushforward comparisons. All indices are small. For an arrow $a:j'\to k'$, preservation of colimits by $(A'a)_!$ and postcomposition $t\mapsto at$ give $(A'a)_!Q'_{j'}\to Q'_{k'}$, hence a total arrow above $A'a$. The colimit universal property gives a diagram $Q'$ and the canonical arrow $Q\to Q'r$ over $u$.
+
+\begin{proposition}[Indexed shape transport]
+Under these hypotheses that arrow is opcartesian in $\mathsf D(p_L):\mathsf D(\mathcal L)\to\mathsf D(\mathcal C)$.
+\end{proposition}
+\begin{proof}
+Consider a subsequent base arrow $(s,v):(J',A')\to(J'',A'')$ and an arrow from $Q$ to a diagram $R$ above its composite with $(r,u)$. Componentwise opcartesian factorization first transports this arrow through $u_!Q$. At a component $j'$, each $t:rj\to j'$ and the structure map of $R$ along $s(t)$ then yield a map from $(v_{j'})_!(A't)_!\bar Q_j$ to $R_{s j'}$ in the fibre over $A''s j'$. Naturality of $v$ and coherent pushforward composition give the required base identification. These maps form a cocone. Preservation of the colimit (K) by $(v_{j'})_!$ gives a unique map $(v_{j'})_!Q'_{j'}\to R_{s j'}$. Colimit uniqueness makes them natural in $j'$, and opcartesian factorization turns them into a unique total diagram arrow over $(s,v)$. It composes with the constructed unit to the original arrow. Conversely any such factorization has those same cocone components and is unique. This proves the full total universal property. Coherence of chosen composite lifts follows from uniqueness, not a declaration that all cleavages are strict.
+\end{proof}
+
+\section{Transport can exist while the retained unit fails}
+There is a second, independent obstruction. Take the terminal pure category and content category $\mathbf{Set}$ with cartesian tensor and unit $1$, again with the trivial context interaction. This is a valid one-sided monoidal presentation and has all small shape Kan extensions. After shape enlargement the pure base is the ordinary category of small categories. Content extension of a diagram $Q:K\to\mathbf{Set}$ is its shape $K$. Thus the proposed module $N(J,K)$ has objects $(f:J\to K,Q\in\mathbf{Set}^K)$, and the retained pointwise unit sends $f$ to $(f,1_K)$.
+
+For a pure endpoint map $r:K\to K'$, covariance sends the unit at $\mathrm{id}_K$ to $(r,\operatorname{Lan}_r1_K)$. Pseudonaturality of that unit requires a native isomorphism to its value at $r$, namely $(r,1_{K'})$. For the fold from two discrete objects to one, the grades are respectively a two-element set and a singleton, which are not isomorphic. Hence this supplied unit cannot extend pseudonaturally, even though every transport exists. Merely having a noninvertible codiagonal $2\to1$ does not satisfy the required invertible pseudonaturality comparison.
+
+This is a failure of extending the stated fixed-shape presentation along the chosen shape maps. It is not a no-go for different operations, a different pure base, or a deliberately lax replacement of the interaction notion. It parallels the pinned O1 warning that existence of (op)cartesian lifts alone does not make a proposed one-sided unit valid.
+
+\section{Exact universal retained-unit criterion}
+Assume the original unit has coherent invertible transport maps $f_!U_c\cong U_{c'}$, as required by its one-sided pseudonatural presentation. In (K), the unit diagram then identifies canonically with the constant diagram at $U_{A'j'}$ on the incoming comma category $(r\downarrow j')$. Its canonical colimit-to-unit map is invertible whenever that comma category is nonempty and connected: all legs of a cocone on a constant diagram must coincide, and at least one leg is present.
+
+Conversely, universal preservation over all such content models forces this incoming-comma condition. The terminal-base cartesian Set model detects it: the colimit of constant singleton on a category is its set of connected components, including the empty set for an empty category. Thus its canonical map to the singleton is bijective exactly when the incoming comma is nonempty and connected.
+
+This gives an exact \emph{universal} criterion for retained-unit preservation in the stated colimit construction. For an individual content model it need not be necessary, since its unit may fail to detect multiplicity or emptiness. With conventional terminology these are initial/coinitial functors; the explicit condition $(r\downarrow j')$ fixes the orientation. It is not the opposite final/cofinal condition $(j'\downarrow r)$. For example $1\to[1]$ selecting the initial object preserves the unit, while selection of the terminal object does not. Unit preservation alone still does not establish the accumulation or mixed crossing laws.
+
+\section{What this does not yet lift}
+The new opfibration is only one-sided transport. A valid contentad on the shape-changing base still requires its unit and dependent accumulation, with the appropriate native comparisons, to respect the new structure. A full interaction additionally needs compatibility between shape Kan extension, context reindexing, and the directed crossing. Existing fixed-shape pointwise proofs do not establish those comparisons. In particular a finite occurrence product need not commute with an arbitrary colimit in (K). Any claimed mixed law needs a precise preservation or Beck--Chevalley theorem instead of hiding this issue in the word ``pointwise.''
+
+Thus fixed-shape diagram interaction and dynamic shape transport are distinct categorical steps. The result supplies an exact terminal-base criterion and sufficient indexed hypotheses for the transport step and exhibits why they are absent in a generic presentation. It does not force a particular physical implementation, probability model, or scheduler.
+\end{document}
