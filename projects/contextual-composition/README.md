@@ -59,6 +59,8 @@ The following work chooses particular carriers, operations, observations, or ope
 
 **Kernel/writer and shared-world realization.** The [native feedback and shared-content first results](feedback-and-concurrency/native-first-results/README.md) give scoped kernel/writer composition, feedback boundaries and shared-world constructions. They do not complete the extension contract.
 
+**Local rule-format comparison.** The [local joint comparison theorem](foundations/local-joint-comparison/README.md) derives native comparisons and joint kernel squares for generated interfering executions from transport-closed admission, chooser descent and primitive native maps in the effect-fibre/writer instance. It retains noncanonical couplings and shared histories; arbitrary native-grade lifting and infinite-effect completion remain separate.
+
 **Finite probabilistic realization and its internal theory.** The [retained-boundary refinement and correlation results](feedback-and-concurrency/retained-boundary-refinement/README.md) characterize separator information loss, adaptive coupling refinement, and the limits of uniform comparison witnesses, with explicit context and scheduler assumptions.
 
 **Event/history and local-policy realization.** The [information-and-progress comparison results](feedback-and-concurrency/information-and-progress/README.md) give exact local-information and partner-readiness criteria, fairness transport, and a combined comparison theorem with explicit joint plant and feedback hypotheses.
