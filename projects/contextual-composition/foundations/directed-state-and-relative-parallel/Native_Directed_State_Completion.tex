@@ -1,0 +1,113 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Native directed state completion: composition, comparison and weak presentations}
+\date{15 November 2026}\begin{document}\maketitle
+\paragraph{Status.} Independently reviewed sequential construction, not a free-feedback theorem. The strict composition construction and the faithful native-inclusion argument are explicit below. The weak extension retains structural isomorphisms rather than quotienting native cells and explicitly reduces its composition coherence to the state, pseudofunctor and symmetric monoidal bicategory coherence laws. Its application to a particular monoidal relative presentation requires the specified monoidal pseudofunctor data; an unstructured relative pseudomonad is not sufficient.
+
+\section{Directed balance for a pseudofunctor}
+Let $\mathcal S$ be small and let $F:\mathcal S^{op}\times\mathcal S\to\mathbf{Cat}$ be a pseudofunctor. Write $c$ for its invertible compositors and $i$ for its unitors, in the convention $c_{b,a}:F(b)F(a)\Rightarrow F(ba)$. Define $\mathsf L(F)$ by objects $[s,x]$, $x\in F(s,s)$, all internal arrows of the diagonal categories, and generators
+\[
+ \lambda_{h,x}:[s,F(h,1_s)x]\longrightarrow[t,F(1_t,h)x]
+ \quad(h:s\to t,\ x\in F(t,s)).
+\]
+The generators are natural in $x$. Their identity relation is the identity on $F(1_s,1_s)x$; equivalently conjugating by $i$ gives the identity on $x$.
+For $h:s\to t$, $k:t\to u$, $x\in F(u,s)$ put
+\begin{align*}
+ c_- &: F(h,1_s)F(k,1_s)\Rightarrow F(kh,1_s),\\
+ m &: F(1_t,h)F(k,1_s)\Rightarrow F(k,1_t)F(1_u,h),\\
+ c_+ &: F(1_u,k)F(1_u,h)\Rightarrow F(1_u,kh).
+\end{align*}
+Here $m$ is the first compositor to $F(k,h)$ followed by the inverse of the other compositor to that same functor. Impose the correctly typed relation
+\[
+ \lambda_{kh,x}=[u,c_{+,x}]\,
+ \lambda_{k,F(1_u,h)x}\,[t,m_x]\,
+ \lambda_{h,F(k,1_s)x}\,[s,c_{-,x}^{-1}].
+ \tag{P}
+\]
+The strict formula is recovered when these comparisons are identities. Pseudofunctor coherence supplies agreement of the structural comparison routes for three state maps; it is not replaced by equality of the two composite functors before applying $c$.
+
+\begin{theorem}[Category-valued universal property]
+Functors $\mathsf L(F)\to D$, and natural transformations between them, are equivalent to families of functors $E_s:F(s,s)\to D$ with natural directed balance transformations satisfying the identity relation and (P), and families of natural transformations respecting those balances. With the displayed generator presentation this correspondence is an isomorphism of categories of data.
+\end{theorem}
+\begin{proof}
+Restriction gives the data. Conversely extend it to paths and use the relations to descend. Naturality need only be checked on internal arrows and balance generators. These constructions are inverse, including on transformations. This does not invert $\lambda$ and makes no assertion that $F$ is strictifiable without retaining comparison data.
+\end{proof}
+A state isomorphism has invertible balance: apply (P) to it and its inverse, using the identity relation and the pseudofunctor comparisons. A general state map does not.
+
+\section{The process instance and a faithful detector}
+Let $\mathcal H$ be a bicategory with the required tensor whiskerings and let $R:\mathcal S\to\mathcal H$ be a pseudofunctor supplying state objects and pure state maps. For fixed interfaces $A,B$ the intended pseudofunctor is
+\[
+ F_{A,B}(s,t)=\mathcal H(Rs\otimes A,Rt\otimes B).
+\]
+Its action is precomposition by $Rh\otimes A$ and postcomposition by $Rk\otimes B$, with the actual bicategorical associators and the pseudofunctor constraints of $R$. These constitute the $c,i$ above; they cannot simply be omitted in a weak source.
+
+Define $\mathsf{Int}(A,B)$ to have the same objects $(s,f)$ and morphisms
+\[
+ (h,\beta):(s,f)\longrightarrow(t,g),\qquad
+ \beta:(Rh\otimes B)f\Rightarrow g(Rh\otimes A).
+ \tag{I}
+\]
+Composition pastes these two-cells and uses the constraints for $R(kh)$ and associators. Identity uses the unit constraints. Bicategory and pseudofunctor coherence prove the category laws; this retains the actual state map $h$ as well as $\beta$.
+
+\begin{theorem}[Faithful native inclusion]
+There is a functor $\mathsf L(F_{A,B})\to\mathsf{Int}(A,B)$ that sends an internal native arrow $\alpha$ to $(1,\alpha)$ with its unit constraints, and sends a slide to its canonical associativity square. Consequently the inclusion of every diagonal native category is faithful. In particular, the state-unit inclusion retains all distinct native comparisons faithfully.
+\end{theorem}
+\begin{proof}
+For $x:Rt\otimes A\to Rs\otimes B$, the slide compares $x(Rh\otimes A)$ and $(Rh\otimes B)x$. Its intertwiner is the associator between the two ways to write $(Rh\otimes B)x(Rh\otimes A)$. Naturality is bicategory interchange, and (P) is the pasting coherence for state-map composition. Thus the assignments respect the presentation. The image of an internal arrow determines that arrow, since the inserted unit comparisons are invertible. Equality of two native arrows in the presented category therefore implies their original equality. This argument does not identify the completion with the category of all intertwiners.
+\end{proof}
+Fullness is false. Take $\mathcal S$ to have one object $I$ and endomorphisms $(\mathbb N,+)$, tensor also $+$ with identity symmetry. Take $\mathcal H$ terminal and $R$ constant. Then $F$ is terminal and $\mathsf L(F)=B\mathbb N$. The original terminal native category embeds faithfully but lacks the nonzero slide loops. The detector distinguishes these by their retained state maps.
+
+\section{Composition in the strict symmetric setting}
+For this section, a strict symmetric source means a Cat-enriched symmetric monoidal category: tensor is a strict 2-functor, its associativity and unit laws are strict, and its symmetry is 2-natural and satisfies the symmetric monoidal equations. This is stronger than a Gray monoid or a general semistrict monoidal bicategory. Take $\mathcal H$ in this sense, $\mathcal S$ a strict symmetric monoidal category and $R$ strict symmetric monoidal. Write $\operatorname{hold}_t(f)$ for applying $f$ to its state and interface while retaining $Rt$, using the canonical symmetry rearrangements. Define
+\[
+ [s,f]:A\to B,\quad[t,g]:B\to C
+ \quad\mapsto\quad
+ [s\otimes t,\ g\star f],
+\]
+where $g\star f$ applies $f$ to $Rs,A$ and then $g$ to $Rt,B$, holding the other state at each step, and returns the wires in order $Rs,Rt,C$. This description specifies a composite of tensor, composition and the unique prescribed wire permutations, not an unspecified state update.
+
+A slide in $f$ along $h:s\to s'$ maps to the slide along $h\otimes1_t$ of the combined heterotyped process. A slide in $g$ along $k:t\to t'$ maps to the slide along $1_s\otimes k$. Structural symmetry maps identify the boundaries. Internal arrows act by tensor/horizontal composition.
+
+\begin{theorem}[Strict-source composition]
+These assignments define a composition functor on the presented hom categories, associative and unital with state-unit identity process. Native maps and directed balance are retained.
+\end{theorem}
+\begin{proof}
+For an internal arrow, compatibility with a slide is naturality of the corresponding held-state process. For two successive slides in one factor, the defining composition relation becomes that for $(h'h)\otimes1$ or $1\otimes(k'k)$. For one slide in each factor, the two paths are the two factorizations of $h\otimes k$; relation (P), strict here, identifies them. Internal/internal interchange is the 2-category interchange law. These are all generating relations of the product of the two presented categories, so the assignment descends as a functor.
+For three processes, both parenthesizations retain states in order $s,t,u$ and apply the processes in order $f,g,l$. Symmetry coherence identifies the wire rearrangements and 2-functoriality identifies the native maps. The state $I$ and identity process give the units by the same calculation.
+\end{proof}
+Parallel tensor similarly places the two states first, applies $f\otimes g$, and restores interface order. Its sequential interchange compares state orders $s,t,u,v$ and $s,u,t,v$ and uses an invertible slide for that permutation. Thus this tensor is not asserted to be a strict 2-functor merely because the source was strict.
+
+\section{Weak-source extension: the exact coherence task}
+For a symmetric monoidal bicategory and a strong symmetric monoidal pseudofunctor $R$, choose fixed bracketings for the preceding formulas. Their bodies now include the tensor pseudofunctor compositor, associators, unitors, symmetry and the monoidal constraints of $R$.
+The candidate composition on a slide is: first the native structural isomorphism to a single combined heterotyped body, then $\lambda_{h\otimes1}$ or $\lambda_{1\otimes k}$, then the inverse structural boundary isomorphism. Descent uses (P), not the strict relation. The associator compares the states $(s\otimes t)\otimes u$ and $s\otimes(t\otimes u)$ by the invertible slide for the state associator, together with the native structural isomorphism of process bodies; unitors are analogous. These are explicit candidates, not new assumed crossing data.
+
+\begin{proposition}[Weak composition and its native associator]
+The same construction gives a bicategory with hom categories $\mathsf L(F_{A,B})$ for a symmetric monoidal bicategory $\mathcal H$ and a strong symmetric monoidal state pseudofunctor $R$. Its associator and unitors are the directed-state presentations just described. This claim concerns sequential bicategory structure; the complete monoidal-feedback doctrine is not asserted here.
+\end{proposition}
+\begin{proof}
+Use the following normalization only for the structural comparison pastings occurring in this construction. Move a comparison across a slide only when it is induced by an arrow in the heterotyped category $F(t,s)$, using the defining naturality relation. The structural comparisons used below are obtained functorially from the same heterotyped held-state process before substituting the state map; they therefore have this form. An arbitrary boundary cell cannot be moved or cancelled across a noninvertible slide. Combine consecutive slides by (P), keeping the intervening pseudofunctor compositor. The resulting path consists of one slide for the composite state map, together with native structural boundary maps. This is an equality of paths in the presented category; it is not cancellation of a noninvertible slide.
+
+For descent in the first factor, two consecutive state changes normalize to the slide for $(h'h)\otimes1$; in the second they normalize to $1\otimes(k'k)$. A slide in each factor normalizes in either order to the slide for $h\otimes k$. The two state composites are equal by bifunctoriality of tensor in $\mathcal S$. The remaining maps are precisely the pseudofunctor compositor/interchange for the held-state process, so agree by those axioms. Internal arrows commute by interchange; compatibility of an internal arrow with a slide is the presentation's naturality. These exhaust product-category generating relations and establish the composition functor.
+
+For associator naturality on slides, the state map on either normalized route is the naturality square for the associator of $\mathcal S$ at the three state arrows. For naturality on internal arrows, move those arrows through the structural process cells by their naturality; the residual comparison is structural. Thus the associator is a natural transformation on the actual presented categories. Its components are invertible because the state associator is an isomorphism and all remaining structural maps are invertible.
+
+For the pentagon, normalize each route to one state slide. Its state label is one of the two composites in the pentagon of $\mathcal S$, so the labels agree. Its process body applies the four given process arrows in the same order, retaining the same four state wires. Normalize the constraints of $R$ by its pseudofunctor and strong monoidal coherence axioms. The remaining two maps are parallel structural pastings in $\mathcal H$ with the same process arrows as formal generators. Symmetric monoidal bicategory coherence identifies them. The triangle works identically with the state triangle and three process arrows, one an identity. This proves the bicategory equations, not merely equality after applying a detector.
+
+For clarity about the external coherence used in the final step, Gurski--Osorno, \emph{Infinite loop spaces, and coherence for symmetric monoidal bicategories}, arXiv:1210.1174, Theorem~1.10, permits formal generating 1-cells. Their Theorem~1.8 alone concerns the one-object-generated structural case. Arbitrary nonstructural native 2-cells are not declared equal by this use: they have first been moved, identically on both routes, by naturality. Constraints of $R$ are compared by its own axioms before applying the theorem. This is a scoped application to the displayed descent, naturality, pentagon and triangle pastings.
+\end{proof}
+
+The state-unit assignment $J(f)=[I,f]$, with the necessary $RI\simeq I$ boundary maps, is a pseudofunctor. Its composition constraint is the invertible slide for $I\otimes I\to I$ followed by the native unit comparison; its identity constraint is analogous. The pseudofunctor associativity and unit equations normalize to the state-unit coherence and the same native unit pastings. Its local faithfulness follows separately from the intertwiner detector, not from these coherence equations.
+
+\section{State feedback and its boundary}
+In the strict setting, define
+\[
+ \mathsf{fbk}_u:\mathsf L(F_{Ru\otimes A,Ru\otimes B})
+       \longrightarrow\mathsf L(F_{A,B}),\qquad
+ [s,f]\longmapsto[s\otimes u,f],
+\]
+with the fixed monoidal identifications. An internal arrow is unchanged and a slide $h$ maps to the slide $h\otimes1_u$. The presentation relations prove functoriality. A directed outer-state change $k:u\to v$ is represented by the slide $1_s\otimes k$ on the appropriate heterotyped process. It is not an equality unless separately imposed.
+Joining is reassociation of retained states; vanishing removes $I$; tightening and strength use the held-state composition and the same state permutations. No yanking law or instantaneous solution of a feedback equation follows. In the weak case the functor uses the same structural conjugations as composition. Its complete family of feedback coherence laws is still to be specified and verified; the sequential bicategory proof does not by itself supply that doctrine.
+
+A free lax-feedback theorem requires a target doctrine specifying the feedback functors, their directed slide transformations, their compatibility with native cells, composition, tensor, joining and units, and morphisms preserving that data. The hom-category universal property alone is not such a theorem. Keeping that obligation separate prevents a generator presentation from being advertised as a universal solution to every feedback problem.
+\end{document}

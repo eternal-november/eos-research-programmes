@@ -1,0 +1,54 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}
+\title{Adjointable state maps and directed balance normalization}
+\date{15 November 2026}\begin{document}\maketitle
+\paragraph{Status.} Independently reviewed written proof. This is a hom-category comparison, not yet a free feedback or unrestricted concurrency theorem. Adjoints are required only for selected state maps, not for every pure map in the original relative construction.
+
+Let $\mathcal H$ be a bicategory, $\mathcal S$ a small category, and let the two state actions $L,R:\mathcal S\to\mathcal H$ be pseudofunctors. Write $l_h:L_s\to L_t$ and $r_h:R_s\to R_t$. Assume $l_h$ has a chosen right adjoint $l_h^*$, with the canonical coherent identifications $(l_kl_h)^*\cong l_h^*l_k^*$. No right adjoint for $r_h$ is needed. All categories are small in fixed suitable universes.
+Put $F(s,t)=\mathcal H(L_s,R_t)$. Its directed contraction has generators
+\[
+ [s,\alpha],\qquad \lambda_{h,x}:[s,x l_h]\to[t,r_hx],\quad x:L_t\to R_s,
+\]
+with native category laws, naturality, identity and composition balance, including the pseudofunctor constraints.
+Define $G_s=\mathcal H(L_s,R_s)$ and
+\[
+ G_h(f)=r_h f l_h^*.
+\]
+The pseudofunctor comparison $G_kG_h\cong G_{kh}$ is the canonical associativity and adjoint-composition comparison.
+
+\begin{theorem}[Normalization]
+The directed contraction of $F$ is equivalent to the covariant Grothendieck construction of $G$. An arrow over $h$ is equivalently a cell
+\[
+ \alpha:r_h f l_h^*\Rightarrow g,
+ \qquad\text{or its mate}\qquad
+ \beta:r_h f\Rightarrow g l_h.
+\]
+No slide is inverted in this comparison.
+\end{theorem}
+\begin{proof}
+For clarity suppress coherent associativity and action constraints; the formulas below are typed bicategorical composites. Map a native cell to the identity-state arrow. Map $\lambda_{h,x}$ to the arrow over $h$ whose cell is
+$r_h x l_h l_h^*\xRightarrow{r_hx\epsilon_h}r_hx$.
+Naturality and composition balance follow from naturality of the counit and the counit of a composite adjunction. This defines a functor $D$ into the Grothendieck construction.
+
+Conversely, map $(h,\alpha)$ to
+\[
+ [s,f]\xrightarrow{[s,f\eta_h]}
+ [s,f l_h^*l_h]\xrightarrow{\lambda_{h,f l_h^*}}
+ [t,r_h f l_h^*]\xrightarrow{[t,\alpha]}[t,g].
+\tag{N}
+\]
+For the identity this is the identity by the identity-adjunction constraints. For two arrows, move the second native cell through the first slide by naturality, then use the composite-slide relation. The two inserted units become the unit of $l_kl_h\dashv l_h^*l_k^*$; the remaining native cell is precisely the Grothendieck composite. Thus (N) defines a functor.
+
+Applying $D$ to (N) gives $\alpha$ by the triangle identity for $l_h\dashv l_h^*$. For a native generator the reverse composite is unchanged. For a slide $\lambda_{h,x}$, the reverse composite is
+\[
+ [t,r_hx\epsilon_h]\;\lambda_{h,x l_h l_h^*}\;[s,x l_h\eta_h].
+\]
+Naturality of $\lambda$ at $x\epsilon_h:x l_h l_h^*\Rightarrow x$ changes the first two factors to
+$\lambda_{h,x}[s,x\epsilon_h l_h]$; the triangle identity then gives $\lambda_{h,x}$. These generator identities prove the inverse comparison. With unsuppressed pseudofunctor constraints these are canonical natural isomorphisms; their coherence is the coherence of mates and of composite adjunctions, not invertibility of a directed slide.
+\end{proof}
+
+\paragraph{State-feedback instance.} Set $L_s=Rs\otimes A$, $R_s=Rs\otimes B$. It suffices that the chosen state maps $Rh$ have right adjoints and that tensoring by the interfaces preserves these adjunctions. The result then identifies the directed state hom category with all lax state-intertwiners in this admitted class. Without the adjointability hypothesis the comparison remains only a detector; fullness is not asserted.
+
+\paragraph{Span test, not the definition.} In the bicategory of spans of a category with pullbacks, a functional span has the reverse span as right adjoint. A state process $S\times A\leftarrow E\to S\times B$ and an intertwiner over $h:S\to T$ amount to a map of transition apices $E\to E'$ commuting with both labelled state boundaries. Thus this construction recovers all such graph maps, rather than identifying them as in an ordinary state coend. The exact comparison to published free feedback on spans of graphs still requires separate composition and feedback compatibility; the hom calculation alone does not establish that universal property.
+\end{document}
