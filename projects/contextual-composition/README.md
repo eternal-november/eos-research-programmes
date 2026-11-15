@@ -8,6 +8,8 @@ The [feedback and concurrency extension contract, v0.1.3](contracts/Feedback_and
 
 ## Reading guide: three levels
 
+The [native-grade feedback assessment](foundations/local-joint-comparison/README.md) derives common-state closure and coherent graded prefix laws, tests a combined stochastic interfering realization, and records the remaining interpretation and two-realization reuse requirements under v0.1.3. Categorical-core completion is not yet established.
+
 The programme distinguishes its categorical core from particular realizations and from applications. These are levels of abstraction, not rankings of mathematical value. A realization may have a substantial, reusable theory of its own and still be a relative example of contextual composition, just as robot transactions are.
 
 ### 1. Categorical core
@@ -58,6 +60,8 @@ The following work chooses particular carriers, operations, observations, or ope
 #### Feedback and concurrency realizations
 
 **Kernel/writer and shared-world realization.** The [native feedback and shared-content first results](feedback-and-concurrency/native-first-results/README.md) give scoped kernel/writer composition, feedback boundaries and shared-world constructions. They do not complete the extension contract.
+
+**Native grade lifting and local rule comparison.** The [coefficient-limit construction](foundations/local-joint-comparison/README.md) derives directed joint context/content cells and generated comparisons from primitive native diagrams, retaining noncanonical couplings and shared histories. It recovers effect-fibre/writer comparison and an original augmented-vector-space doctrine; arbitrary lifting outside this parameter class and infinite-effect completion remain separate.
 
 **Finite probabilistic realization and its internal theory.** The [retained-boundary refinement and correlation results](feedback-and-concurrency/retained-boundary-refinement/README.md) characterize separator information loss, adaptive coupling refinement, and the limits of uniform comparison witnesses, with explicit context and scheduler assumptions.
 
