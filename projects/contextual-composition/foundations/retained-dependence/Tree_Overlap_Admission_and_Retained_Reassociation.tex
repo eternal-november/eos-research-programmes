@@ -1,0 +1,49 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Tree-overlap admission and retained reassociation}\date{15 November 2026}
+\begin{document}\maketitle
+\paragraph{Scope.} This is an abstract functor-level admission theorem, followed by its native effect-context interpretation. The local-to-global result is an application of weak-pullback preservation, not a novelty claim. It does not choose an associative section of a coupling map. It differs from the elementary cone multicategory by deriving the existence of its root from specified local overlap equations.
+
+Let $T:\mathbf{Set}\to\mathbf{Set}$ weakly preserve pullbacks: for every span $X\to S\leftarrow Y$, the canonical map $T(X\times_S Y)\to TX\times_{TS}TY$ is surjective. No monad structure, commutativity, affinity, or support operation is needed here. Fix a finite nonempty tree with vertex sets $X_v$ and, on each edge $e=vw$, a span $X_v\xrightarrow{a_{ve}}S_e\xleftarrow{a_{we}}X_w$. All sets and maps are arbitrary; vertex maps need not be surjective. Supply $p_v\in TX_v$ satisfying
+\[
+ T a_{ve}(p_v)=T a_{we}(p_w)\quad\text{for every edge }e.
+\tag{E}
+\]
+Write $J$ for the set of all vertex tuples satisfying every edge equation, and $\pi_v:J\to X_v$ for its actual projections.
+
+\begin{theorem}[Tree admission]
+There exists $q\in TJ$ with $T\pi_v(q)=p_v$ for every vertex. Conversely every such $q$ implies (E). The raw carrier is the entire compatible-tuple set, not the support of $q$.
+\end{theorem}
+\begin{proof}
+For one vertex take $J=X_v$ and $q=p_v$. Remove a leaf $w$ and let its unique neighbor be $v$. Induction supplies $q_0\in TJ_0$ for the remaining tree. The map from $J_0$ to $S_e$ is $a_{ve}\pi_v$; its effect equals $T a_{we}(p_w)$ by induction and (E). Weak pullback preservation supplies an effect on $J_0\times_{S_e}X_w$ with marginals $q_0,p_w$. This carrier is canonically $J$. Old marginals follow by composition, and the new one by construction. Necessity follows by applying $T$ to the equal edge maps on $J$. This induction uses only finitely many existential choices, and does not identify their outcomes.
+\end{proof}
+
+\section{All choices, rather than an associative selection}
+For any connected vertex subtree $U$, let $J_U$ be its compatible-tuple set. A binary decomposition of the tree repeatedly splits a connected subtree into two connected subtrees along one edge. At each internal node retain an effect $q_U\in TJ_U$ whose projections to its two children give their retained effects; leaves have the specified $p_v$. No conditional kernel or chosen disintegration is part of this data. All carriers are the fixed canonical tuple sets $J_U$: extra redundant witness coordinates are excluded from this particular bijection. The arbitrary-carrier native cone categories in the companion construction remain larger; no bijection of all their presentations with a root law is asserted.
+
+\begin{theorem}[Exact retained reassociation]
+For every such binary decomposition, its nested compatible effect data are canonically in bijection with
+\[
+ \{q\in TJ:T\pi_v(q)=p_v\text{ for all }v\}.
+\]
+The bijection retains the root effect. Its inverse assigns every subtree the projection of that root effect. Reassociation between decompositions is therefore canonical and obeys all coherence diagrams, while it need not preserve a previously selected intermediate marginal for a different decomposition.
+\end{theorem}
+\begin{proof}
+Each internal effect is forced to be the appropriate marginal of its parent. Induction from the root forces every node effect to be its root marginal. Conversely root marginals satisfy every local condition by functoriality, and the tuple restrictions commute with the canonical pullback identifications. The maps are inverse. Every reassociation is inverse-to-root followed by root-to-target, so any composite between fixed decompositions is the same map. In particular the pentagon commutes. This is an bijection of sets of complete retained choices, not the assertion that independently chosen binary couplings assemble to the same $q$.
+\end{proof}
+
+\section{Native maps and actual context fibres}
+A map of overlap diagrams over the same tree consists of $h_v:X_v\to X'_v$ and $k_e:S_e\to S'_e$ satisfying the edge squares. It induces $h_J:J\to J'$. If $T h_v(p_v)=p'_v$, then $T h_J$ sends every joint lift of the first local data to a joint lift of the second. These maps compose strictly. They commute with the reassociation bijections because tuple restriction commutes with $h_J$. This proves native naturality for mapped joint effects; an independently selected target effect need not equal the image, and then there is no such native cell.
+
+Apply this construction fibrewise over a pure input $a$. To obtain a supplied context from pointwise existence one must choose a lift at each input (using the ordinary Set/choice convention, or supplying that family explicitly). Pointwise admission alone is not a canonical selection. Such a chosen family gives actual effect contexts and native projection maps, with joint bodies landing in any prescribed output pullback when the edge spans arise from those bodies. With a monad structure, conditional continuation cones satisfying the native component/body squares compose by the dependent-bind theorem in the companion note. Thus local overlap admission supplies the first-stage joint objects, and the conditional squares, not averaged marginal equations, supply temporal substitution. No general interchange between unrelated resampling choices is inferred.
+
+\section{Necessary boundaries}
+The theorem is false for arbitrary cyclic overlap diagrams even for finite distributions or nonempty powerset. Three fair-bit pair objects may impose $x=y$, $y=z$, and $z\ne x$, each with uniform allowed pairs. Their singleton-overlap marginals agree, but the compatible triple set is empty. For finite distributions $T\varnothing=\varnothing$; likewise for nonempty powerset, so no root effect exists. This illustrates the missing global constraint, not a claim that every cycle is inadmissible.
+
+Equality of boundary effects also does not imply that $\pi_v$ is surjective on all raw witnesses. A zero-weight or disallowed witness may have no matching counterpart. Raw all-path lifting therefore remains a separately checked local-surjectivity property. The theorem never invents a canonical support for arbitrary $T$.
+
+Finite-support distribution satisfies the weak-pullback hypothesis for arbitrary set maps by the finite-support gluing formula: on matched pairs of common boundary $s$ use $p(x)r(y)/m(s)$ when $m(s)>0$, and zero otherwise. The resulting finite-support law has both prescribed marginals. Nonempty powerset satisfies it by the full matching relation of allowed points. These are distinct semantic realizations of the same admission theorem. Neither realization supplies a natural universal choice of dependence.
+
+\paragraph{Relation to known foundations.} Weak-pullback lifting is established categorical machinery; see B\'ilkov\'a, Kurz, Petri\c{s}an and Velebil, \emph{Relation lifting, with an application to the many-valued cover modality}, LMCS9(4:8),2013, \url{https://doi.org/10.2168/LMCS-9(4:8)2013}. The proof here is self-contained. The role in this project is the explicit raw/native carrier and its conditional-context substitution boundary, not a claim to have invented tree gluing or to have completed a concurrent interactad.
+\end{document}

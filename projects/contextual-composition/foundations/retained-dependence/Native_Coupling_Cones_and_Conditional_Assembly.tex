@@ -1,0 +1,103 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Native coupling cones and conditional assembly}
+\date{15 November 2026}\begin{document}\maketitle
+\paragraph{Status and level.} Scoped abstract construction with written proofs. A monad $T$ on Set supplies effect-fibre contexts with dependent-bind composition. No commutativity or affinity is needed for finite assembly. Dependence is retained as an actual joint context and its native projection cells, not reconstructed from marginals or forced into a canonical tensor. The construction below is a coherent category of coupling cones inside the native context framework; it is not yet a full general interference interactad.
+
+\section{One-step native cone data}
+For each $i$ in a fixed finite family, let a component operation $K_i:A_i\to B_i$ be presented by raw fibres $W^i_{a_i}$, effects $p^i_{a_i}\in TW^i_{a_i}$ and bodies $f_i(a_i,w_i)\in B_i$. Fix joint interfaces $A,B$ and pure maps $\alpha_i:A\to A_i$, $\beta_i:B\to B_i$. A coupling cone consists of
+\[
+ Z_a,\ q_a\in TZ_a,\quad b(a,z)\in B,\quad
+ u_{i,a}:Z_a\to W^i_{\alpha_i a}
+\]
+with the local equations
+\[
+ Tu_{i,a}(q_a)=p^i_{\alpha_i a},\qquad
+ f_i(\alpha_i a,u_{i,a}z)=\beta_i b(a,z).\tag{C}
+\]
+These are exactly the heterogeneous native context/body squares over $(\alpha_i,\beta_i)$. The joint witness may contain additional retained dependence data. No global future law is among the input data.
+
+A cell between cones over fixed component operations is a family $v_a:Z_a\to Z'_a$ preserving $q$, the full joint body $b$, and every projection $u_i$. These form a category. Component native maps can also be pasted onto the legs, and diagrams with changed pure interfaces use the original native-square convention; no componentwise equality of marginals replaces the body square.
+
+\section{Conditional serial assembly}
+Let a second cone couple $H_i:B_i\to C_i$, with joint interfaces $B,C$ and projections $\beta_i,\gamma_i$. Write its raw fibre $V_b$, effect $r_b$, body $c(b,v)$ and projection $v_{i,b}$ to the $i$th component continuation. Define the composite joint fibre, effect and body by
+\[
+ J_a=\coprod_{z\in Z_a}V_{b(a,z)},\qquad
+ j_a=q_a\gg=\bigl(z\mapsto r_{b(a,z)}\gg=(v\mapsto\eta(z,v))\bigr),
+ \quad (z,v)\mapsto c(b(a,z),v).
+\]
+Its $i$th projection is
+\[
+ (z,v)\mapsto\bigl(u_{i,a}z,\ v_{i,b(a,z)}v\bigr),\tag{P}
+\]
+into the raw dependent-sum carrier of $K_i;H_i$.
+
+\begin{theorem}[Local-to-global cone assembly]
+The composite is a coupling cone for the component composites. This operation is functorial on native cone cells and has singleton-witness units and canonical associative comparisons satisfying their coherence equations. Consequently any finite serial assembly of supplied local cones yields a native cone for the full assembled behavior without checking a new global coupling equation.
+\end{theorem}
+\begin{proof}
+The first body square in (C) identifies the $i$th continuation input with $\beta_i b(a,z)$, so (P) is well-typed. After fixing $z$, the second cone's effect equation pushes its conditional joint effect to the declared component continuation at that input. After this projection the continuation depends on $z$ only through $u_{i,a}z$: the input equality is $\beta_i b(a,z)=f_i(\alpha_i a,u_{i,a}z)$, and the retained first component coordinate is also $u_{i,a}z$. Thus the entire projected bind integrand factors through $u_{i,a}$, not through an unobserved choice of joint state. Bind naturality then replaces the outer joint effect by its $i$th marginal. The resulting effect is exactly the component dependent-bind effect. The two body squares compose to the composite body square.
+
+For three stages every parenthesization retains the same raw triple of witnesses, including each actual intermediate joint state. Monad associativity gives its effect equation; tuple reassociation gives the body and all projection equations. The pentagon and unit triangles are identities of those full tuples. Native cone-cell products are the corresponding maps of dependent pairs; naturality of bind and their body equations make them well-typed and effect-preserving. Thus all comparisons lie in the cone categories, not just at the level of output distributions.
+\end{proof}
+
+The continuation cone may depend on the whole actual joint state. Its $i$th projected conditional effect must nevertheless equal the specified component effect at its declared input. If another component's hidden data changes that effect, it must be retained in the component's shared interface, or a factorization must be proved; (C) must not be weakened to an average over selected histories. This is the exact local information boundary.
+
+\section{Abstract local admission, distinct from choosing a joint}
+For a span $X\xrightarrow f W\xleftarrow gY$, consider the canonical map
+\[
+ T(X\times_WY)\longrightarrow TX\times_{TW}TY.\tag{L}
+\]
+If (L) is surjective, any two effects with equal boundary images admit a joint effect on the raw pullback, with the actual projection maps as native legs. Conversely universal admission of such raw-pullback cones is exactly this surjectivity condition. Requiring it for all spans is the usual weak-pullback preservation property of the underlying functor, stated here in its explicit coupling form. A restricted class of admitted spans can instead be used, but its closure requirements must be checked in each assembly.
+
+Necessity of boundary-image equality follows by applying $T$ to the pullback square; sufficiency under (L) chooses a preimage of the pair of effects. The joint body is the pair of component bodies and lands in the prescribed boundary pullback. This argument needs neither a disintegration nor a natural choice of such a preimage. Importantly, (L) does not make the choices unique or supply coherent arbitrary concurrent reassociations. The serial cone theorem proves coherence of \emph{the explicit chosen conditional data}, not equality of all possible choices.
+
+The weak-pullback/coupling perspective is established in Barr-style relation lifting. For primary context see B\'ilkov\'a, Kurz, Petri\c{s}an and Velebil, \emph{Relation lifting, with an application to the many-valued cover modality}, LMCS9(4:8),2013, \url{https://doi.org/10.2168/LMCS-9(4:8)2013}. The present use keeps the actual coupling witness and native body maps rather than reducing admission to an existential relation. No novelty is claimed for weak-pullback admission itself.
+
+\section{A nonvacuous local existence theorem, separately probabilistic}
+For finite normalized distributions take two components and joint output interface
+\[
+ B=B_1\times_W B_2,
+\]
+so outputs must agree on the retained shared boundary $W$. At fixed joint input $a$, push each raw component law through its output's world projection, obtaining distributions $m_1,m_2$ on $W$.
+
+\begin{proposition}[Finite shared-boundary admission]
+A coupling cone with that joint output interface exists if and only if $m_1=m_2$. This concerns effect existence, not surjective raw lifting of every zero-weight witness.
+\end{proposition}
+\begin{proof}
+Necessity follows by projecting the joint body to $W$ in the two ways. For sufficiency let $Z$ be the set of pairs of raw component witnesses with equal output boundary. For such a pair $(w_1,w_2)$ of common boundary $t$ and common marginal $m$, give it weight
+\[
+ q(w_1,w_2)=\begin{cases}
+ p^1(w_1)p^2(w_2)/m(t),&m(t)>0,\\
+ 0,&m(t)=0.
+ \end{cases}
+\]
+If $m(t)=0$, every component witness of boundary $t$ has weight zero. Summing over the other fibre gives each original witness weight, so $q$ is normalized and both raw projections preserve effects. Pairing the two output bodies lands in $B$ and gives the body squares. Raw matching pairs of weight zero remain in $Z$. A zero-weight witness with no matching raw counterpart need not lie in either projection image; extra all-witness lifting conditions would be needed.
+\end{proof}
+
+The formula is a witness of existence, not a uniqueness theorem: other conditional couplings may be retained as different cone objects. For example, at a singleton boundary with two fair-bit components, the diagonal joint law and the independent joint law both satisfy (C) but remain distinct cone presentations. The category does not identify them or choose one silently. Sequential assembly applies to either and to state-dependent choices among them. Thus equality of the local shared-boundary laws is an explicit, checkable condition which derives admission; it is not a restatement of a desired whole-history coupling.
+
+This finite formula is a standard coupling/gluing construction. Its use here instantiates the abstract native-cone assembly; a probability model is not the definition of that construction.
+
+\section{A nonprobabilistic realization with genuine dependence}
+For the nonempty-powerset monad, a supplied effect is a nonempty set of allowed witnesses; native effect maps have exactly that set as their image. Let $U\subseteq X$, $V\subseteq Y$ be nonempty allowed sets. Equality $f[U]=g[V]$ holds if and only if the allowed joint set
+\[
+ J=\{(x,y)\in U\times V:f(x)=g(y)\}
+\]
+projects onto both $U$ and $V$. The forward direction supplies a matching partner for every allowed witness; the reverse follows by projection. Thus this realizes (L) and the cone-admission criterion without probability, averaging or statistical independence. The raw carrier can be the entire pullback, with $J$ its allowed effect, so disallowed raw witnesses are not automatically erased.
+
+For example two allowed sets with boundary labels $0,1$ yield a joint allowed set containing the same-label pairs but excluding cross-label pairs. Its two marginals allow both labels, whereas their Cartesian product would allow the forbidden mixed pairs. This is actual retained nondeterministic dependence. After a joint witness, an admitted conditional relation may depend on the full joint state; its projection must still equal each declared component continuation. The abstract serial theorem then preserves the matching-boundary behavior and native witness maps for every finite assembly. Nonempty powerset is affine, so the guarded prefix conclusion also applies.
+
+This is a semantic realization of the same categorical cone construction, not a replacement of the theorem by a finite example. The example only distinguishes the dependent joint from the independent product. Other relations with the same marginal images remain distinct cone objects.
+
+\section{Guarded repeated interaction and refinement}
+When joint and component output interfaces return to their input interfaces with the same projection maps, a cone can be reused at each actual current joint state. For affine $T$, the retained-prefix construction gives compatible joint effects. Repeated use of the one-step equations induces effect-preserving native maps from each joint prefix to each component prefix, including complete intermediate body states. This follows by the same conditional-bind induction as the finite theorem; no independent resampling of the components is assumed. Local cone cells likewise induce a directed comparison of these joint prefix systems.
+
+A causal external choice may select among admitted cone operations, provided its observation and command maps satisfy the corresponding native squares. A source-private policy is not automatically transported through a coarser component interface. For a finite family of explicitly supplied choices, the common conditional law is part of the actual body presentation; there is no theorem that every adversarial choice remains admitted.
+
+Compatible raw limits may be taken separately, but no infinite $T$-effect, almost-sure theorem or fairness guarantee is inferred. Local surjectivity of the actual projection maps can be added for raw path lifting; marginal equality alone cannot provide it.
+
+\section{Categorical capability and remaining gap}
+The construction is parametrized by arbitrary monads and native interface diagrams, and derives coherent serial substitution of dependence-bearing contexts from local conditional squares. It differs from choosing the canonical independent Fubini tensor: arbitrary admitted dependence witnesses remain objects, and native cells track their maps. It is also more limited than a general wiring calculus. Rebracketing serial composition is proved; an arbitrary triple of pairwise couplings does not thereby have a joint extension, and a symmetric concurrent product is not forced. A further general interaction package must specify admissible wiring/overlap diagrams and prove their joint-extension and coherence conditions. Calling this cone category an already completed concurrent interactad would conceal that missing theorem.
+\end{document}
