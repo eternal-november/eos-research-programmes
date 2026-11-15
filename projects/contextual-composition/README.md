@@ -8,6 +8,8 @@ The [feedback and concurrency extension contract, v0.1.3](contracts/Feedback_and
 
 ## Reading guide: three levels
 
+The [native-grade feedback assessment](foundations/local-joint-comparison/README.md) derives common-state closure and coherent graded prefix laws, tests a combined stochastic interfering realization, and records the remaining interpretation and two-realization reuse requirements under v0.1.3. Categorical-core completion is not yet established.
+
 The programme distinguishes its categorical core from particular realizations and from applications. These are levels of abstraction, not rankings of mathematical value. A realization may have a substantial, reusable theory of its own and still be a relative example of contextual composition, just as robot transactions are.
 
 ### 1. Categorical core
