@@ -6,27 +6,49 @@ Start with the [integrated treatment](synthesis/Integrated_Relative_Computation_
 
 The [feedback and concurrency extension contract](contracts/Feedback_and_Concurrency_Research_Contract_v0_1_2.tex) sets out the research target for general recursion, interfering concurrency, and contextual refinement. Its obligations are research targets, not completed results.
 
-The [native feedback and shared-content first results](feedback-and-concurrency/native-first-results/README.md) give scoped kernel/writer composition, feedback boundaries and shared-world constructions. They do not complete the extension contract.
+## Reading guide: three levels
 
-The [retained-boundary refinement and correlation results](feedback-and-concurrency/retained-boundary-refinement/README.md) characterize separator information loss, adaptive coupling refinement, and the limits of uniform comparison witnesses, with explicit context and scheduler assumptions.
+The programme distinguishes its categorical core from particular realizations and from applications. These are levels of abstraction, not rankings of mathematical value. A realization may have a substantial, reusable theory of its own and still be a relative example of contextual composition, just as robot transactions are.
 
-The [information-and-progress comparison results](feedback-and-concurrency/information-and-progress/README.md) give exact local-information and partner-readiness criteria, fairness transport, and a combined comparison theorem with explicit joint plant and feedback hypotheses.
+### 1. Categorical core
 
-The [constructive local-fairness results](feedback-and-concurrency/constructive-local-fairness/README.md) connect exact finite legal-support synthesis and environmental timing to conditional fairness and controlled completion, without assuming a shared random scheduler.
-
-The [recursive occurrence machine and finite bridge](feedback-and-concurrency/recursive-occurrence-machine/README.md) supply explicit occurrence jobs, escrowed ownership, ranked-call adaptation and strict operational model maps, with an exact phase-scheduled comparison rather than unrestricted concurrency equivalence.
-
-The [scoped checked-language realization](feedback-and-concurrency/checked-interfaces-and-claims/README.md) supplies checked ordinary interfaces, linear claim rights and paired channel packages with written preservation arguments. These structures belong to one operational realization, not to the definition or completion of the general theory.
-
-## Reading path
+Start with the integrated treatment linked above. Read its claims with their stated categorical hypotheses: independently specified context and content, their interaction, and the resulting relative construction and comparison maps.
 
 - `foundations/`: finite contextads, reduction tests, structural examples, theory guide, and the common relative construction.
 - `interaction/`: feasibility, the indexed receipt construction, and the independent interaction criterion.
 - `framing/`: external framing and representation comparison.
+
+These directories also contain structural examples and reduction tests; location alone does not make every result a theorem about arbitrary contextads or contentads.
+
+### 2. Model realizations and their internal theories
+
+The following work chooses particular carriers, operations, observations, or operational semantics. Theorems can be general within those choices without becoming general categorical theorems. In particular, “native” means that actual context/content objects and comparison maps are retained; it does not by itself establish a result for arbitrary contextad/contentad pairs.
+
 - `protocols/plural-semantics/`: several interpretations of result-dependent protocols.
 - `protocols/higher-order/`: typed protocols and bounded higher-order interaction.
 - `protocols/refinement-recovery/`: contextual comparison and controlled recovery.
 - `protocols/law-and-possibility/`: information lost by probability-law semantics and its repair.
+
+#### Feedback and concurrency realizations
+
+**Kernel/writer and shared-world realization.** The [native feedback and shared-content first results](feedback-and-concurrency/native-first-results/README.md) give scoped kernel/writer composition, feedback boundaries and shared-world constructions. They do not complete the extension contract.
+
+**Finite probabilistic realization and its internal theory.** The [retained-boundary refinement and correlation results](feedback-and-concurrency/retained-boundary-refinement/README.md) characterize separator information loss, adaptive coupling refinement, and the limits of uniform comparison witnesses, with explicit context and scheduler assumptions.
+
+**Event/history and local-policy realization.** The [information-and-progress comparison results](feedback-and-concurrency/information-and-progress/README.md) give exact local-information and partner-readiness criteria, fairness transport, and a combined comparison theorem with explicit joint plant and feedback hypotheses.
+
+**Scheduler/control realization and synthesis.** The [constructive local-fairness results](feedback-and-concurrency/constructive-local-fairness/README.md) connect exact finite legal-support synthesis and environmental timing to conditional fairness and controlled completion, without assuming a shared random scheduler.
+
+**Recursive operational-language realization.** The [recursive occurrence machine and finite bridge](feedback-and-concurrency/recursive-occurrence-machine/README.md) supply explicit occurrence jobs, escrowed ownership, ranked-call adaptation and strict operational model maps, with an exact phase-scheduled comparison rather than unrestricted concurrency equivalence.
+
+**Scoped checked-language realization.** The [checked interfaces and claim packages](feedback-and-concurrency/checked-interfaces-and-claims/README.md) supply checked ordinary interfaces, linear claim rights and paired channel packages with written preservation arguments. These structures belong to one operational realization, not to the definition or completion of the general theory.
+
+The kernel/writer construction supplies genuine categorical data and coherence for a specific model. The probabilistic, event/history, scheduler and language results develop that model layer and its interfaces. They should not be counted as a general categorical extension merely because they are reusable or satisfy part of a contract obligation. Conversely, their status as relative examples is not a reason to discard their internal theorems.
+
+A proposed categorical-core extension should state its abstract hypotheses and operations, prove the relevant laws or comparison theorem at that level, and separately show how the chosen realizations satisfy those hypotheses. Until that bridge is proved, model-specific assumptions and conclusions remain visible.
+
+### 3. Applications and worked examples
+
 - `applications/`: the nine-case portfolio and its explicit boundaries, plus a [catalogue of potential applications](applications/potential-applications.md) distinguishing demonstrations, integration work, and research extensions.
 
 A small [stochastic checkpointing example](applications/stochastic-checkpointing/README.md) illustrates retained versus resampled randomness and the importance of correlated observations; it makes no new general theorem claim.
