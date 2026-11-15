@@ -1,0 +1,45 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Relational composition of all couplings and the boundary of hiding}
+\date{15 November 2026}\begin{document}\maketitle
+\paragraph{Status.} Scoped theorem with written proofs. This is a category enriched in relations, not an ordinary category obtained by selecting couplings. It uses genuine gluing to prove associativity and identifies why hiding a shared state need only preserve composition laxly. No priority claim or complete native interactad structure is asserted.
+
+Let $T:\mathbf{Set}\to\mathbf{Set}$ weakly preserve pullbacks, in the explicit sense that $T(X\times_S Y)\to TX\times_{TS}TY$ is onto for every span. Work with small carrier sets in a fixed universe; the resulting enriched category may be large and can be viewed in a larger universe. Objects are supplied effects $P=(X,p\in TX)$. Put
+\[
+ \mathsf C_T(P,Q)=\{a\in T(X\times Y):T\pi_X(a)=p,\ T\pi_Y(a)=q\}.
+\]
+For $a:P\to Q$ and $b:Q\to R$, define the \emph{set} $b\diamond a$ of all $c:P\to R$ for which some $t\in T(X\times Y\times Z)$ has marginals $t_{XY}=a,t_{YZ}=b,t_{XZ}=c$. Identity is $1_P=T\Delta_X(p)$. No monad, affinity, commutativity, support, conditional independence or disintegration is required.
+
+\begin{theorem}[Associative relational composition]
+The hom sets with the relation $(a,b)\mathrel{m}c$ iff $c\in b\diamond a$, and singleton-valued identity relations, form a category enriched in $(\mathbf{Rel},\times,1)$. Every composable pair has at least one composite, although the composite need not be unique. For a finite chain, its possible composites are exactly the endpoint marginals of joint effects on all chain coordinates having the prescribed consecutive marginals.
+\end{theorem}
+\begin{proof}
+Existence for a pair follows by weak-pullback gluing of $a$ and $b$ over their common $Y$ marginal. The pullback $(X\times Y)\times_Y(Y\times Z)$ is canonically $X\times Y\times Z$.
+
+For associativity, suppose $e\in c\diamond(b\diamond a)$. Choose $d\in b\diamond a$, witnessed by a law on $XYZ$, and $e\in c\diamond d$, witnessed on $XZW$. These two effects agree on $XZ$ with effect $d$. Gluing over $XZ$ produces an effect on $XYZW$. Its $YZW$ marginal witnesses a possible composite of $b,c$, and its $XYW$ marginal witnesses the other parenthesization with the same endpoint effect $e$. The reverse argument glues over $YW$. Thus the two relational composites are equal. The argument uses all compatible gluing witnesses; it selects no associative section. For the chain induction, glue a retained law on the previous entire chain and its next ternary witness over their common endpoint-pair marginal. Projection yields the required longer chain law; the reverse direction takes marginals. This proves the finite-chain assertion.
+
+For the right identity, the duplicated-coordinate image of $a$ witnesses $a\in a\diamond1_P$. Conversely let $t\in T(X\times X\times Y)$ witness $c\in a\diamond1_P$. Its first two-coordinate marginal is $T\Delta_X(p)$. Apply weak-pullback preservation to $X\xrightarrow{\Delta_X}X\times X\xleftarrow{\pi_{12}}X\times X\times Y$ and the effects $p,t$. The pullback is $X\times Y$, mapped into the triple by $(x,y)\mapsto(x,x,y)$. The resulting lift shows the two $XY$ marginals of $t$ are equal. Hence $c=a$. The other identity is identical with coordinates reversed. This proves exact unit relations, even for functors with no canonical support. These are the associativity and unit diagrams for Rel enrichment.
+\end{proof}
+
+The triple witness is erased only by the composition \emph{relation}. A raw proof-relevant presentation may retain it, but no bicategory of such presentations, associator between all redundant witnesses, or unique ternary extension follows from this theorem. The fixed-carrier tree reassociation theorem concerns a different, explicitly narrower statement.
+
+\section{Native state maps and laxity under information loss}
+Let $h_P:X\to X'$ preserve each supplied effect, $Th_P(p)=p'$. The map on coupling hom sets is $a\mapsto T(h_P\times h_Q)(a)$. Pushing a triple witness proves
+\[
+ h_{PR}[b\diamond a]\ \subseteq\ h_{QR}(b)\diamond h_{PQ}(a).
+\tag{L}
+\]
+Identity couplings are preserved exactly. Thus these maps preserve relational composition in the displayed directed, order-lax sense; they are not in general strictly enriched functors. If all $h_P$ are bijections the inclusion is equality, by lifting with their inverses.
+
+This is a real boundary, not merely a missing proof. For finite distributions let $X,Y,Z$ be fair bits. Take $a$ the diagonal coupling of $X,Y$ and $b$ the diagonal coupling of $Y,Z$. The only possible $XZ$ composite is diagonal, since any triple is concentrated on $x=y=z$. Now collapse $Y$ to a singleton, leaving $X,Z$ unchanged. The two resulting couplings through the singleton have every fair-bit $XZ$ coupling as a possible composite, including the independent one. The left side of (L) remains singleton diagonal. Hiding the shared state has admitted spurious composites. Nonempty powerset gives the same example using diagonal versus full allowed relations.
+
+For arbitrary $T$, positivity or support language is not used in the theorem; the unit proof instead used the actual weak pullback along a diagonal. The concentration argument in the preceding paragraph is only the separately stated probability realization.
+
+\section{Relation to native contexts and remaining construction}
+The objects and deterministic state maps are actual supplied-effect contexts and native effect maps. Every coupling is a joint context with two native projections. Composition relates joint contexts exactly when a ternary native cone exists with the three prescribed marginal contexts. Therefore weak-pullback admission is doing substantive work, not merely declaring all cones composable. In the effect-fibre contextad this may be used pointwise over pure input states. If a monad is supplied, conditional temporal composition still requires the actual component body/input squares established in the earlier conditional assembly theorem; arbitrary couplings do not automatically provide them.
+
+The result supplies a coherent \emph{relational} level of all admitted dependence. Turning it into a directed context/content interaction requires an explicit witness-sensitive lift and crossing laws; the present proof does not invent these. Nor does it equate relational existential admission with a physically available scheduler or a decentralized implementation. The strict inclusion above explains why simply hiding intermediate retained interfaces cannot be assumed to preserve such a future structure.
+
+\paragraph{Literature boundary.} The input property and gluing technique are established weak-pullback/relation-lifting machinery, cf. B\'ilkov\'a, Kurz, Petri\c{s}an and Velebil, \emph{Relation lifting, with an application to the many-valued cover modality}, LMCS9(4:8),2013, \url{https://doi.org/10.2168/LMCS-9(4:8)2013}. A preliminary terminology search did not settle whether this precise all-couplings Rel-enrichment already has an established name; that is not evidence of novelty. The construction and its scope are proved here independently of a priority claim.
+\end{document}
