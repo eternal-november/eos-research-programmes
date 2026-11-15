@@ -12,6 +12,8 @@ The [retained-boundary refinement and correlation results](feedback-and-concurre
 
 The [information-and-progress comparison results](feedback-and-concurrency/information-and-progress/README.md) give exact local-information and partner-readiness criteria, fairness transport, and a combined comparison theorem with explicit joint plant and feedback hypotheses.
 
+The [constructive local-fairness results](feedback-and-concurrency/constructive-local-fairness/README.md) connect exact finite legal-support synthesis and environmental timing to conditional fairness and controlled completion, without assuming a shared random scheduler.
+
 ## Reading path
 
 - `foundations/`: finite contextads, reduction tests, structural examples, theory guide, and the common relative construction.
