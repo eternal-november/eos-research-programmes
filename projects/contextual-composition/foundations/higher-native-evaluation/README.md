@@ -11,6 +11,9 @@ This general categorical result continues [generated native state towers](../gen
 
 5. [Structured target transport](Structured_Target_Transport_of_Finite_Evaluation.tex) constructs comparisons between the finite evaluations in two targets from explicit local higher-uniformity morphism data. It restricts to interface-identity comparisons and retains the equations against assembly, joining and directed interchange.
 
+6. [Canonical target](Canonical_Evaluation_on_the_Generated_Completion.tex) constructs the sufficient doctrine on the generated completion itself by native normalization followed by state joining. It includes all bodies and witnesses of that target, not a seed-only fragment.
+7. [Extension and reconstruction](Extension_and_Reconstruction_of_Native_Evaluators.tex) shows that the stage-one extension preserves feedback and reconstructs each already structured map from its unit-state seed. The reconstruction has an explicit higher feedback comparison; an equivalence of higher evaluator categories is not claimed.
+
 ## Hypotheses and scope
 
 These are sufficient, explicit semantic hypotheses, not a proof that every process target admits feedback. The held-body and parallel operations must have the specified full-witness formulas and coherent comparisons. Joining requires its higher native naturality and assembly laws; those laws do not follow from a scalar feedback function.
