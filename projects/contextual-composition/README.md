@@ -4,7 +4,7 @@ A category-valued relative construction for independently specified context and 
 
 Start with the [integrated treatment](synthesis/Integrated_Relative_Computation_Acceptance_Dossier.tex). Its O1–O7 claims are scoped by the [expanded contract](contracts/Expanded_Research_Contract_v0_1.tex), [boundary amendment](contracts/O6_Boundary_Amendment_2026_11_01.tex), and [portfolio freeze](contracts/O6_Portfolio_Freeze_2026_11_01.tex).
 
-The [feedback and concurrency extension contract](contracts/Feedback_and_Concurrency_Research_Contract_v0_1_2.tex) sets out the research target for general recursion, interfering concurrency, and contextual refinement. Its obligations are research targets, not completed results.
+The [feedback and concurrency extension contract, v0.1.3](contracts/Feedback_and_Concurrency_Research_Contract_v0_1_3.tex) separates categorical-core obligations, semantic realizations and application evidence for general recursion, interfering concurrency and contextual refinement. Its obligations are research targets, not completed results. The [previous v0.1.2 contract](contracts/Feedback_and_Concurrency_Research_Contract_v0_1_2.tex) remains available.
 
 ## Reading guide: three levels
 
@@ -14,6 +14,7 @@ The programme distinguishes its categorical core from particular realizations an
 
 Start with the integrated treatment linked above. Read its claims with their stated categorical hypotheses: independently specified context and content, their interaction, and the resulting relative construction and comparison maps.
 
+- [Provisional interactad terminology](foundations/terminology/Interactad_Terminology_Note.tex): names for the presented context/content interaction package and its induced and framed forms, distinguished from realizations and applications.
 - `foundations/`: finite contextads, reduction tests, structural examples, theory guide, and the common relative construction.
 - `interaction/`: feasibility, the indexed receipt construction, and the independent interaction criterion.
 - `framing/`: external framing and representation comparison.
