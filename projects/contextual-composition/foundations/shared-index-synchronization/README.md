@@ -30,6 +30,12 @@ The construction extends to finite operations, substitution and admitted directe
 
 [Join-then-synchronize](Join_Then_Synchronize_Varying_State_Towers.tex) evaluates coherent varying-state finite towers by joining first and synchronizing the resulting full native diagram. It is compatible with consecutive-block joining, changing internal shapes and global directed assembly. The output retains the joint synchronized state; it is not identified with a tensor of separately synchronized coordinates. This does not assume synchronization exists at higher tower depths or prove that joining preserves those hypothetical limits.
 
+## A universal property for synchronization
+
+[Lax-body diagrams and coreflection](Lax_Body_Diagrams_and_Synchronization_Coreflection.tex) enlarges diagram bodies from pseudonatural to correctly directed lax transformations, retaining their native cells. This admits the actual universal lax cone as a diagram arrow. The singleton embedding then has synchronization as right biadjoint, provided the selected lax bilimits exist. Its counit derives the directed assembly comparisons by taking mates, and recovers the existing comparisons through their cone legs.
+
+The original pseudo-body construction alone does not supply this adjunction: its singleton arrows encode pseudocones rather than all lax cones. The enlargement coincides with it on the original locally discrete comma-category presentation. Admitted global operations and fixed-state feedback remain compatible, using full naturality on noninvertible body cells. This is an evaluation universal property in a doctrine already possessing the selected cones, not their free creation or a new instantaneous feedback law.
+
 ## Prerequisites
 
 - [Bicategorical synchronization and assembly](../bicategorical-synchronization/README.md): native cone creation and pure-boundary lifting.
@@ -47,6 +53,6 @@ A module comparison can be relational or have empty fibers. Thus this is not a p
 
 ## Verification and attribution
 
-Independent written-proof review covers the binary construction, finite-operation substitution and global diagram assembly, plus the fixed-state canonical-feedback bridge, reverse-shape total bicategory, diagonal factorization global variable-shape coherence, the retained comma bridge, and finite-depth join-then-synchronize evaluation. No TeX compilation, mechanized proof or CI certification is claimed.
+Independent written-proof review covers the binary construction, finite-operation substitution and global diagram assembly, plus the fixed-state canonical-feedback bridge, reverse-shape total bicategory, diagonal factorization global variable-shape coherence, the retained comma bridge, finite-depth join-then-synchronize evaluation, and lax-body synchronization coreflection with its counit-mate operation comparisons. No TeX compilation, mechanized proof or CI certification is claimed.
 
 The ordinary lax-monoidal limit construction is established background, linked in the manuscript. The enriched result is proved using the previously constructed native cone equivalences, rather than attributed to that ordinary implementation. No novelty claim is made. `MANIFEST.json` checks file integrity only.

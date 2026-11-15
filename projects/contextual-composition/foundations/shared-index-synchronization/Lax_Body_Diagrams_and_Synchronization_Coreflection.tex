@@ -1,0 +1,81 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Lax-body diagrams and synchronization coreflection}
+\date{15 November 2026}
+\begin{document}\maketitle
+\paragraph{Status.} Independently reviewed conditional theorem, not inherited from the pseudonatural-body construction. It proves a universal property of synchronization under the stated existence hypotheses. The proof constructs the total bicategory with varying shapes and noninvertible body naturality; the ordinary fixed-domain lax-transformation bicategory alone does not prove it.
+
+\paragraph{Why the preceding totalization is insufficient.} In the reviewed reverse-shape construction, a map from the terminal-shape object $(1,x)$ to $(J,F)$ has a pseudonatural body $\Delta x\Rightarrow F$. This represents pseudocones, not all incoming lax cones. Therefore existence of selected lax bilimits does not by itself give a right biadjoint to that construction's singleton inclusion. The universal cone may fail its pseudonaturality requirement. No previous evaluation theorem claimed this adjunction.
+
+\paragraph{Enlargement and exact direction.} Keep small ordinary shapes and pseudofunctors $F:J\to\mathcal D$, but allow an arrow $(J,F)\to(I,G)$ to have $u:I\to J$ and a transformation $\alpha:Fu\Rightarrow G$ with components and directed naturality cells
+\[
+ G(a)\alpha_i\Longrightarrow\alpha_kF(u a),\qquad a:i\to k.
+\tag{1}
+\]
+Use the usual unit and composition equations for this explicitly specified direction; no naming convention for lax versus oplax is relied upon. A two-cell $(u,\alpha)\Rightarrow(v,\beta)$ is $\eta:u\Rightarrow v$ and a modification $m:\alpha\Rightarrow\beta(F\eta)$. Since $F$ is a pseudofunctor, $F\eta$ is pseudonatural, so the target of $m$ is a transformation of type (1).
+
+Composition remains $(v,\gamma)(u,\alpha)=(uv,\gamma(\alpha v))$. For horizontal two-cell composition, first paste the second modification, then the first arrow body's cell (1) along the second shape transformation, then the first modification, then the original diagram compositor. Every use of (1) has its forward direction. Naturality of the modifications and the transformation composition equations give the proof of interchange. Associators and unitors are the pointwise bicategory associators and unitors with their restriction frames; their naturality is checked below with (1), not assumed from the stronger pseudo case. The resulting bicategory is denoted $\operatorname{Diag}_{\ell}(\mathcal D)$.
+
+\paragraph{Explicit total two-cell check.} Write the first pair of arrows as $(u,\alpha),(u',\alpha')$ with $\eta:u\Rightarrow u'$ and $m:\alpha\Rightarrow\alpha'F\eta$, and the second pair as $(v,\gamma),(v',\gamma')$ with $\theta:v\Rightarrow v'$ and $n:\gamma\Rightarrow\gamma'G\theta$. Their horizontal two-cell has shape
+\[
+ (\eta v')\,(u\theta):uv\Rightarrow u'v'
+\]
+and body the paste
+\[
+ \gamma\alpha v\xRightarrow{n}\gamma'G\theta\,\alpha v
+ \xRightarrow{\gamma'\alpha_\theta}\gamma'\alpha v'\,F(u\theta)
+ \xRightarrow{\gamma'm}\gamma'\alpha'v'\,F(\eta v')F(u\theta)
+ \cong\gamma'\alpha'v'\,F((\eta v')(u\theta)).
+\]
+The second arrow is precisely (1), evaluated on $\theta$, not an inverse. These components satisfy the modification equation: expand along a source-shape arrow, apply the modification equations for $m,n$, then the composition equation for $\alpha$ and ordinary naturality of $\theta,\eta$. For vertical composition of two such pairs, the two horizontal pastes are equal after exactly the same substitutions; the middle interchange step is the modification equation for $m$ evaluated on $\theta$. Identity cases use the unit equations for the transformations. Associator naturality compares the corresponding three-arrow pastes; expanding the naturality cell of the composite transformation inserts the same successive cells of the two component transformations, so the result is their composition equation and bicategory associativity naturality. The pentagon and triangles then have identity shape components and the original pointwise bicategory equations. These checks establish the total bicategory without inverting any body naturality cell.
+
+\paragraph{Evaluation.} Suppose selected incoming lax bilimits exist for the admitted shapes. A map $(u,\alpha)$ transports the cone of $F$ to a cone on $G$ with legs $\alpha_i p_{u i}$ and cone cells
+\[
+ G(a)\alpha_i p_{u i}\ \longrightarrow\
+ \alpha_kF(ua)p_{u i}\ \longrightarrow\ \alpha_kp_{u k}.
+\tag{2}
+\]
+The first uses (1), the second the actual $F$ cone. The transformation and cone equations prove this is a cone. Its representing arrow defines $\Sigma_\ell(u,\alpha)$. A two-cell maps to the induced cone modification; its shape component uses the directed cone cell for $\eta_i$. Composition of transported cones agrees, through the specified bicategory frames, with transport by the composite arrow. Thus cone full faithfulness supplies invertible composition and unit comparisons and their equations. This uses the total bicategory proof above. It also explains why merely inverting body naturality is neither needed nor allowed.
+
+\paragraph{Biadjunction.} Let $i:\mathcal D\to\operatorname{Diag}_{\ell}(\mathcal D)$ be the chosen singleton embedding. The shape functor $J\to1$ and its transformations are unique. Hence, directly on objects and arrows of the hom categories,
+\[
+ \operatorname{Diag}_{\ell}(\mathcal D)(ix,(J,F))
+ \cong\operatorname{LaxCone}(x,F)
+ \simeq\mathcal D(x,L_JF).
+\tag{3}
+\]
+The first identification uses exactly direction (1), which for a constant source is the incoming cone cell $F(a)p_i\Rightarrow p_k$. The second is the selected representing equivalence. In $x$ naturality is ordinary precomposition of cones. In the total-diagram variable, naturality is exactly cone transport (2); the comparison is invertible even though the cone cells may not be. On a total two-cell $(\eta,m)$ its component at $i$ is the explicit paste $\alpha_i p_{ui}\xRightarrow{m_i}\beta_iF(\eta_i)p_{ui}\to\beta_i p_{vi}$. This is both the modification obtained by composing the singleton cone with $(\eta,m)$ in the total bicategory and the modification represented by $\Sigma_\ell(\eta,m)$. Thus naturality includes the entire shape and body two-cell, rather than just $u$. Precomposition by any arrow or two-cell at $x$ whiskers this same paste; the bicategory interchange equation proves the other-variable compatibility. By the preceding construction and compatibility, (3) is a pseudonatural hom equivalence displaying $i\dashv\Sigma_\ell$.
+
+The unit is the chosen equivalence $x\simeq L_1\Delta x$. The counit at $(J,F)$ is the actual universal lax cone, now an admitted arrow $iL_JF\to(J,F)$. Triangle modifications and their equations follow from the representing hom equivalence and its unit/counit choices. The inclusion is locally fully faithful on its singleton fragment. Thus the claimed property is a coreflection into a category already possessing selected lax bilimits, not a free construction creating missing bilimits in an arbitrary $\mathcal D$.
+
+\paragraph{Assembly from the counit.} Let $p:\mathcal D_1\times\mathcal D_2\to\mathcal E$ be an admitted native pseudofunctor. Its product-shape operation $\widetilde p$ extends to lax bodies by applying $p$ to their paired components and directed cells (1). The compositor of $p$ supplies the required frames; its naturality on two-cells proves the transformation and modification equations. The total horizontal two-cell formula above is respected because it consists entirely of these functorial pastes. This constructs the operation before specifying any evaluation comparison.
+
+Singleton compatibility is an equivalence
+$i_{\mathcal E}p\simeq\widetilde p(i_1,i_2)$ using the terminal-product shape isomorphism. For diagrams $F,G$, consider
+\[
+ i_{\mathcal E}p(\Sigma_1F,\Sigma_2G)
+ \simeq\widetilde p(i_1\Sigma_1F,i_2\Sigma_2G)
+ \xrightarrow{\widetilde p(\epsilon_F,\epsilon_G)}
+ \widetilde p(F,G).
+\tag{4}
+\]
+Here $\epsilon$ is the actual lax-cone counit just constructed. Its mate under the hom equivalence (3) is
+\[
+ d_p:p(\Sigma_1F,\Sigma_2G)\longrightarrow
+ \Sigma_{\mathcal E}\widetilde p(F,G).
+\tag{5}
+\]
+The projected leg at $(j,k)$ is $p(p_j,q_k)$; its cone cell is $p$ applied to the corresponding cone cells with its compositor. Hence (5) agrees, through the chosen cone-equivalence frames, with the earlier independently constructed product-shape comparison. It is not generally invertible. The construction gives pseudonaturality on lax body maps as well as shape maps: both are the naturality of the counit in (4), whose full directed two-cell action has been verified above.
+
+For composite finite operations, the two relevant composites of (5) correspond under (3) to the same composite of actual counits and operation functors, up to their supplied substitution comparisons. This yields invertible native comparison modifications; their associativity and unit equations follow under the locally fully faithful hom equivalence from the operation equations and counit naturality. A fully admitted pseudonatural comparison between operations, possibly with noninvertible components, yields the corresponding directed evaluation diagram by its native naturality. More explicitly, to lift such an operation comparison $\xi:p\Rightarrow q$ across a lax-body arrow $a$, use the invertible pseudonaturality cell of $\xi$ at every component $a_j$. The modification equation along a shape arrow is the naturality axiom of $\xi$ on the potentially noninvertible naturality two-cell of $a$, together with its composition coherence. The same check on a total shape two-cell uses $F\eta$ and $m$. Thus full pseudonaturality supplies this lift, whereas a list of operation components would not; no naturality cell of $a$ is inverted. Its coherence is verified in the same way. This does not construct a missing native operation comparison out of a process-level cell lacking its native naturality.
+
+For global horizontal assembly use its actual hom-composition pseudofunctor as $p$. The original associator/unit adjoint equivalences, their modifications and equations lift on product shapes using the same two-component proof as before: shape isomorphisms and full native bodies are checked separately, now with the directed cell (1). Operation pseudonaturality makes the component comparisons natural with these lax cells; no inverse of (1) occurs. The admitted parallel and directed interchanger are treated as the other supplied finite operations and comparisons. Thus (5) gives the explicit global directed evaluation inventory on the enlarged hom bicategories. It is not an adjunction in an unspecified category of trihomomorphisms: its horizontal compositor may be noninvertible.
+
+For a unary fixed-state canonical $B_X$, (4) is its action on the universal cone. Its mate (5) is an equivalence precisely when that transported cone is again a selected bilimit cone up to the representing equivalence. The prior pure-module proof establishes this for fixed $X$. Consequently the existing strong fixed-state comparison extends to lax-body diagram maps; its joining and unit compatibility follows from the admitted native operation comparisons and the same counit naturality. Neither varying-state preservation nor instantaneous feedback follows from this mate calculation.
+
+\paragraph{Connection to native theory.} For the original literal comma categories regarded as locally discrete bicategories, every cell (1), if it exists, is an identity. The enlarged and previous constructions therefore coincide at that stage, preserving the exact grade/body presentation. The difference appears in the completed native hom bicategories where genuinely directed three-cell witnesses exist. Such witnesses must be actual admitted cells, not merely equal observed bodies.
+
+An admitted native pseudofunctor transports cells (1) forward, so the enlargement is compatible with the product-shape operation at the level of explicit data. The additional assembly paragraph specifies the proved global transfer and its explicit hypotheses; it does not infer a new feedback algebra from local data alone. Fixed-state feedback can only inherit a strong comparison when its selected lax-cone preservation has separately been established. Neither (3) nor the enlargement invents an instantaneous feedback law.
+
+\paragraph{Source trail and boundaries.} The primary mathlib documentation \href{https://leanprover-community.github.io/mathlib4_docs/Mathlib/CategoryTheory/Bicategory/FunctorBicategory/Lax.html}{Bicategories of lax functors} explicitly supplies the fixed-domain bicategories with lax or oplax transformations and modifications. It does not certify the varying-shape totalization above. Mesiti's \href{https://lucamesiti.github.io/files/Talk-2022-12-15-Yamcats_Laxnlimitsgrothconstr.pdf}{2022 talk on lax normal conical limits and the Grothendieck construction} motivates careful separation of lax cones and pseudocones. The representing-cone and biadjunction mechanisms are standard background; no novelty claim is made. The exact project obligation is retaining its actual native witnesses while constructing the varying-shape evaluation and its typed universal property.
+\end{document}
