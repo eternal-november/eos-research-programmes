@@ -42,6 +42,12 @@ The original pseudo-body construction alone does not supply this adjunction: its
 
 [Relative pure-endpoint laws](Relative_Pure_Endpoint_Laws_for_Synchronization.tex) derive strong compatibility with the original pure endpoint changes from the existing native cone-creation criterion. The endpoint-map components need not be invertible and their realization need not be faithful. Mixed sequential/parallel compatibility uses the original admitted action comparisons; it does not manufacture them.
 
+## Shared state is not independent closure
+
+[Shared-state chronological assembly](Shared_State_Chronological_Assembly_and_Synchronization.tex) retains one state, one state map and one native witness through a finite ordered chain. It composes the original process bodies without copying the state. Under the stated output-preservation hypotheses, this shared-state operation commutes strongly with native synchronization, since its state-base functor is the identity.
+
+This differs from composing independently closed machines, which retain separate state coordinates. The theorem does not identify these operations or supply a same-state parallel schedule. It requires actual ordered process bodies and native squares; simultaneous sharing still needs an admitted joint law.
+
 ## Prerequisites
 
 - [Bicategorical synchronization and assembly](../bicategorical-synchronization/README.md): native cone creation and pure-boundary lifting.
