@@ -1,0 +1,310 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{array,booktabs,longtable,enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlist{leftmargin=1.65em,itemsep=3pt,topsep=4pt}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Beh}{\operatorname{Beh}}
+\newcommand{\Obs}{\operatorname{Obs}}
+\newcommand{\checked}{\ensuremath{[\checkmark]}}
+\newcommand{\deliver}{\par\textbf{Completion evidence.}\ }
+\title{General Feedback and Concurrency in Contextual Composition\\[5pt]\large Proposed Research Contract and Execution Plan, Version 0.1.3}
+\author{}
+\date{15 November 2026}
+\begin{document}
+\maketitle
+
+\textbf{Status: proposed research contract.} This document specifies an independent extension of the contextual-composition research programme. Mathematical support, selection of a research direction and institutional acceptance remain distinct.
+
+Applications motivate requirements and expose weaknesses; completion is determined separately for the categorical core, its semantic realizations, and application evidence as defined below. Application selection is part of this programme and follows the coverage requirements in Section~\ref{sec:applications}.
+
+\section{Purpose and intended contribution}\label{sec:purpose}
+
+Develop a general context/content construction and compositional reasoning theory for computations that use context, produce effects and change the interfaces available to subsequent computation, while supporting general feedback and genuinely interfering concurrency. The intended contribution is a reusable construction and reasoning discipline: local descriptions and certificates should assemble through explicit semantic operations and compatibility laws, rather than requiring a new analysis of each complete program.
+
+The extension should answer five connected questions. What contextual information and capabilities does an operation require? What does it produce or change beyond its returned value? Which uncertainty and dependencies remain? How do operations interact through sequencing, sharing and feedback? Which behavioral judgments survive composition, abstraction or replacement? These questions determine the mathematical structure required; no particular categorical presentation, implementation host or verification tool is selected merely by familiarity.
+
+The programme seeks expressive and mathematically useful semantics, sound composition/refinement results, and evidence that they reduce repeated reasoning. It does not seek a complete automatic verifier for arbitrary recursive programs, a universal physical model, or a guarantee that every concurrent program progresses. Deadlock, divergence, failed operations and interference remain behaviors to represent and distinguish.
+
+The core must be more than a feature list or a common vocabulary. It must provide an interpretation of the new operators, laws at a declared equality or refinement, and a method of reusing those laws across materially different computational models. The amount of code or number of examples is not the measure of success.
+
+\subsection{Three levels of contribution}\label{sec:levels}
+The central target is at the level of contextads, relative categorical constructions and their comparison structures. Keep three levels explicit throughout the programme:
+\begin{enumerate}
+\item \textbf{Categorical core.} Parameterized structures, independently stated hypotheses, composition and feedback operations, native cells, coherence and comparison/transport theorems. Specify what data a model supplies and what the construction derives. Generality does not mean that every contextad admits every operation.
+\item \textbf{Semantic realizations.} Particular languages, transition systems, probabilistic models, shared-state or message-passing models, with their own substantive mathematical theories. Prove the interpretation that makes each a realization of the core. Even a general recursive concurrent language is a relative example at this level, not the definition of the categorical theory.
+\item \textbf{Applications and diagnostics.} Particular systems or parameter families, such as robot transactions or distributed control, interpreted in a realization. Their assumptions and guarantees do not become assumptions or conclusions of the core without a separate abstraction theorem.
+\end{enumerate}
+A theorem about an entire semantic model class may be deep and reusable while remaining at the second level. Conversely, naming a construction categorically does not promote a model-specific theorem to the first. Each principal result must state its level, hypotheses and interpretation dependencies. The core must supply a positive construction or extension theorem, with laws and genuinely reusable consequences; a vocabulary, catalogue of examples or collection of obstructions is insufficient.
+
+No particular operational language, scheduler, ownership mechanism, adversary model or physical substrate defines the general theory. Byzantine-control requirements motivate useful tests but impose no external acceptance obligation. Preserve demanding realization work where it tests the construction; do not require all realizations to share one operational architecture.
+
+\section{Existing mathematical basis}\label{sec:basis}
+
+The existing relative construction starts with a category \(C\) of pure interfaces and a category-valued pseudofunctor
+\[
+H:C^{\mathrm{op}}\times C\longrightarrow\Cat.
+\]
+Its unit \(j:I_C\Rightarrow H\) and multiplication \(m:H\odot_C H\Rightarrow H\), with specified coherence, provide pure inclusion and composition through intermediate interfaces. In the context/content presentation an object of \(H(A,B)\) has the form
+\[
+(P,Q,f:e_A P\longrightarrow d_B Q).
+\]
+Here \(P\) is an admissible context grade over \(A\), \(Q\) is a content grade over \(B\), and \(e_A,d_B\) interpret the corresponding extensions. Native cells retain context and content maps together with their body-compatibility square. This retains more information than a quotient recording only returned values or output laws.
+
+The main existing independent-interaction theorem is over \(\mathbf{Set}\). It constructs a coherent crossing from specified resource and content inputs, including finite augmented witness families, a coherent symmetric rig category, a finitary cartesian polynomial occurrence presentation, relative cartesian lifts, covariant transport and display/Beck--Chevalley conditions. Those hypotheses are substantive; the theorem is not automatic compatibility for arbitrary effects.
+
+The principal existing language has finite public/private data, a fixed pool of actual capability identities, result-dependent interfaces, separated batches and finite ranked code. Private state persists during composition. Its contextual theorem derives correctness in admitted finite contexts from local relational certificates. The law-and-possibility interpretation retains possible zero-probability outcomes that probability laws alone forget.
+
+The extension should preserve these achievements at their declared scope while constructing principled feedback and interfering interaction beyond the existing finite independent setting. A selected operational realization should remove the finite, acyclic and independent-batch restrictions from the old language's expressive scope. It must not assume that the existing finite witness construction, observation quotient or contextual proof already covers the new behaviors.
+
+Specification-relative recovery, including partial undo and retained residual effects, is already available. It may be used in applications and regression examples. The new obligation is to understand how such existing contracts interact with feedback and concurrency, not to redevelop partial undo as a separate foundational feature.
+
+\section{Scope of the extension}\label{sec:scope}
+The following behaviors specify the required coverage of the realization programme, not a universal signature for every categorical model. The core must identify the structural hypotheses needed for the corresponding operations and how their laws interact. Operational mechanisms below belong to selected interpretations; they are not automatically categorical primitives.
+
+\subsection{Feedback}
+Distinguish recursive control flow, state feedback and instantaneous interconnection. Recursive control flow includes unbounded iteration, mutual recursion and recursive callbacks. State feedback carries evolving state through repeated interaction and may include delay or sampling. Instantaneous interconnection imposes a joint relation among connected interfaces, which may have no solution, one solution or several.
+
+General recursion and stateful feedback are mandatory coverage targets for the selected language realization. The semantic development must also identify what licenses feedback interconnection and establish a substantive feedback construction for a declared class of effectful models. A guarded, partial, relational or domain-theoretic construction is permissible when its scope is explicit. This is not a requirement for a total Cartesian fixed-point operator on all functions: Boolean negation already shows why such an interpretation cannot be assumed.
+
+Unguarded or nonproductive loops must remain expressible through a suitable behavior semantics. A restricted theorem about productive or guarded feedback is acceptable; silently restricting the language to programs for which progress has already been proved is not. Mathematical guardedness, operational progress and elapsed-time divergence are separate conditions.
+
+\subsection{Concurrency}
+Support shared mutable state and aliases, asynchronous communication, suspension, reentrant invocation and concurrent creation of further computation. Programs have finite descriptions, and each finite configuration may have only finitely many active participants, but no fixed global bound on recursion depth, execution length or participant creation defines the language.
+
+Concurrent components may interfere. The semantics must admit executions beyond disjoint batches or serializable schedules. Race freedom, atomicity, independence, serializability and fairness are properties or assumptions of particular models and proof rules, not prerequisites for representing a program.
+
+Specify the operational granularity and memory/communication model. Actual shared-state and message-passing interpretations are required. At least one interpretation must permit interference between non-atomic operations, rather than making each complete method indivisible. More specialized memory models can be added when needed; the term unrestricted does not assert coverage of every possible hardware memory model.
+
+Shared resources require an explicit identity and access interpretation. Logical separation or distinct names cannot by themselves establish concrete disjointness. Conversely, shared concrete state need not preclude modular reasoning: appropriate protocols, invariants, permissions or relations may justify it.
+
+\subsection{Uncertainty and observation}
+Preserve nondeterministic and probabilistic distinctions, their causal order and relevant correlations. A scheduler may depend on the past information available to it; it must not be granted future random outcomes or hidden information by an abstraction. The existing finite probabilistic fragment must remain interpretable, while a recursive interpretation accounts explicitly for divergence and potentially infinite collections of outcomes.
+
+Observation is indexed by the intended judgment. Returned values, causal event structure, chronological traces, private state, cost, time and resource availability are not interchangeable observations. Declare what a comparison preserves and forgets. A richer observer may invalidate an equality valid under an older quotient.
+
+The programme does not promise to discover every relevant feature of an application automatically. It supplies ways to specify, test and prove the adequacy of interfaces and abstractions once the relevant source models and observations have been declared.
+
+\section{Common semantic obligations}\label{sec:semantic}
+At the core level specify the ambient categories or equipment, admissible context/content data, native comparisons, interaction and feedback structure, and the hypotheses supporting each theorem. A proposed extension must construct its operations and coherence from those data; packaging the desired conclusion as an axiom is not an extension theorem. Identify the boundary between supplied structure and derived structure.
+
+The operational obligations in the remainder of this section apply when giving a realization. They are not a requirement to reduce every categorical object to one global transition-system model.
+
+Fix a computational model \(M\), an admissible environment/scheduler class \(\mathcal E\), and configurations \(\Sigma\). The configuration includes whatever the claimed judgment consumes: continuations, stores, aliases, owned resources, pending interactions and observations. A semantic model may retain hidden state without making it available to a program.
+
+Provide an operational account and its denotational or categorical interpretation. A schematic transition
+\[
+\sigma\xrightarrow[\ e\ ]{\ell}\sigma'
+\]
+records a program/environment interaction; a timed or quantitative interpretation may enrich it with duration, cost or resource transfers. This notation does not prescribe a single clock, universal atomic step or fixed concrete state space.
+
+Let \(\Beh_M(p,e)\) denote the admitted behavior of program \(p\), including the relevant finite prefixes and maximal executions. Distinguish termination, suspension awaiting interaction, global deadlock and divergence. In timed models also distinguish ongoing time-divergent behavior from finite-time accumulation. No successful-result semantics may erase these distinctions while claiming properties that depend on them.
+
+Primitive specifications describe actual transitions and their admitted alternatives, including refusal, partial completion and failure where relevant. They identify the resulting interface and retained state. A reported status is ordinary data unless the interpretation proves its relationship to the specified effect. A capability name and possession of the corresponding authority are distinct unless their correspondence has been established.
+
+For a wiring or composition description \(\omega\), the intended proof construction has the schematic shape
+\[
+\mathsf{assembleCert}:
+\left(\prod_i\mathsf{LocalCert}(M_i)\right)
+\times\mathsf{Compat}((M_i)_i,\omega)
+\longrightarrow
+\mathsf{Cert}\!\left(\mathsf{Compose}_{\omega}(M_i)\right).
+\]
+The certified property, local premises and compatibility data must be instantiated. Compatibility cannot simply mean that the desired whole-program theorem already holds. If composition or its certificate construction is partial, expose the actual domain or a failed obligation.
+
+For implementations or alternative representations, provide a comparison map and its preservation argument. Matching selected terminal results is insufficient when a continuation can distinguish availability, pending effects or hidden state. A mathematical state refinement is not a new observation capability for the program. Any implementation-level conclusion must identify the interpretation connecting its concrete transitions to the semantic model.
+
+\section{Research obligations}\label{sec:obligations}
+
+\subsection*{RC0: Scope, comparison criteria and reusable baselines}\label{rc0}
+Pin the categorical theorem interfaces and their hypotheses, then the selected language fragment, realization classes, observation regimes and principal model-specific theorem statements before the corresponding proof work. Select examples and quantitative questions by the distinctions they exercise, rather than by their ease of execution. Keep alternative constructions live until an actual requirement or discriminating result licenses a choice.
+
+Assess existing recursion, interaction-tree, process-calculus, iteration/trace and concurrent-reasoning results before rebuilding them. Interaction Trees, Choice Trees, guarded trace theory and concurrent logical relations are relevant starting points~\cite{itrees,ctrees,guarded,reloc}, not mandatory tools. An operational/resumption route and an algebraic extension route may be alternatives or parts of one construction.
+
+\deliver A concise scope and hypothesis ledger, a comparison of the leading approaches against the same required behaviors, an import plan, and clear source/interpretation boundaries. State which results are imported, specialized, newly proved or still conjectural. Failure to find a result is not evidence of novelty.
+
+\subsection*{RC1: A recursive concurrent realization and its interpretation}\label{rc1}
+Develop a substantive language realization of the core, not a proposed definition of all contextual computation. Specify its syntax, dependent interfaces, configurations and interaction rules, including result-dependent sequencing, choice, primitive operations, general recursion, suspension, shared-state interaction, asynchronous communication and dynamic composition of participants. Equivalent presentations are acceptable; a particular ticket system, channel implementation or typechecker is not mandated.
+
+Give finite and infinite behavior semantics, retaining unsuccessful and interfering behaviors. State the actual boundaries at which components and environments act. A bounded evaluator or schedule enumeration cannot define the entire scope. Provide formation rules and relevant preservation guarantees without conflating formation with termination, race freedom, adequate resources or satisfaction of primitive contracts. Represent environmental deviations rather than assuming cooperation.
+
+Prove the interpretation into the declared core structure, identifying which syntax realizes which operation and which operational facts discharge the abstract hypotheses. A language-internal adequacy theorem alone does not discharge RC2. Conversely, a valid core construction is not invalidated because an ambitious language implementation remains unfinished: record those completion statuses separately.
+
+\deliver A language specification, reference interpreter or mechanically inspectable transition presentation, formation/preservation and adequacy results at a declared scope, and its interpretation bridge. Exhibit genuinely unbounded execution and interfering concurrency. This is a required realization deliverable, not the primary categorical theorem.
+
+\subsection*{RC2: Integration with context and content composition}\label{rc2}
+Construct the context, content, transport and composition operations at the categorical level, with explicit supplied data and derived coherence. Relate the chosen realizations to this construction by proved interpretation maps. Explain abstractly how changing contexts, retained effects and result-dependent continuations interact; show separately how suspension, ownership transfer and private state instantiate that account. Identify the category-valued structure and native comparisons retained, together with their units, composition and coherence.
+
+A direct construction or an extension theorem with independently checkable hypotheses is acceptable. The result must apply to a nontrivial class of models, not merely one bespoke evaluator. Do not assume the entire required interaction or contextual-congruence law as an input.
+
+Specify which parts of the existing independent-interaction construction generalize, which can be imported unchanged, and which need different hypotheses. Infinite behaviors and concurrent sharing cannot be credited with finitary polynomial, distributivity or independence properties without a proof.
+
+\deliver Actual semantic constructions, a parameterized integration/coherence result, and concrete instantiations verifying its hypotheses. Supply a usable account of context/effect boundaries rather than only correspondence between terminology.
+
+\subsection*{RC3: Feedback operators and their laws}\label{rc3}
+Define the selected feedback structures and their operations at the core level, and prove how the selected realizations interpret them as recursion, state feedback or interconnection. Different feedback structures may need different hypotheses; do not identify them merely because their diagrams resemble one another. A possible iteration interface is
+\[
+\mathsf{iter}:(A\to M(A+B))\to A\to MB,
+\]
+with a carrier \(M\) that gives an adequate account of nontermination and interaction. The notation is a candidate interface, not a requirement to force every kind of feedback into this one operator.
+
+Prove unfolding and the appropriate structural laws at a specified equality or refinement. State the conditions under which handlers, reindexing maps and representation changes preserve feedback. A monad morphism does not automatically preserve a chosen iteration structure. Treat fixed-point existence, uniqueness and selection as separate claims.
+
+Supply compatible prefix witnesses or a suitable coinductive/limit argument for infinite behavior. A different successful implementation or incompatible witness at every finite horizon does not establish one coherent unbounded computation.
+
+\deliver A feedback construction for a substantive effectful class, sound reasoning rules for it, and positive and boundary cases. Distinguish recursive control flow from instantaneous equation solving, and preserve divergence instead of replacing it with an unrelated finite failure outcome.
+
+\subsection*{RC4: Interaction structure and concurrent realizations}\label{rc4}
+At the core level construct an interaction/composition structure that permits shared context and retained effects without assuming independence. State its wiring operations, comparison cells, compatibility data and coherence laws, including compatibility with feedback from RC3. Prove a positive assembly or substitution result from local hypotheses; a joint compatibility condition that merely restates the desired whole-system theorem is insufficient.
+
+In the concurrent realizations, define parallel composition and program, environment and scheduler steps. Make shared identity, pending effects, resource access and observation visibility explicit. Represent all admitted interleavings, including unfair ones when admitted; state restrictions of particular correctness theorems. These mechanisms interpret the abstract structure rather than prescribe it universally.
+
+Develop compatibility and reasoning rules for interfering components. Prove the applicable associativity, wiring and contextual laws, using relational or one-way comparisons when equality is unwarranted. Independence, commutation, serial replay and atomicity should be derived special cases with their own hypotheses.
+
+Show how a change of participant, ownership or interface is represented without silently copying resources or granting new information. Dynamic interaction may require more than a fixed ownership split; the construction must expose that additional structure.
+
+A suspended or reentrant continuation may resume after interference has invalidated an earlier observation, authority or resource precondition. The rules must establish stability under the admitted interference, justify revalidation using information actually available to the component, or represent a justified refusal/recovery branch. In each case retain effects and obligations already in flight; failed revalidation does not erase them.
+
+\deliver A parameterized interaction construction with proved laws and an explicit relationship to RC2--RC3, plus separately scoped concurrent composition and interference results in meaningful shared-state and message-passing realizations. Prove the bridges rather than treating the operational models themselves as the general construction. At least one example must distinguish the concurrent behavior from every claimed serial or atomic abstraction unless an additional protocol is proved.
+
+\subsection*{RC5: Contextual refinement and abstraction}\label{rc5}
+Define native comparison and observation/abstraction structures for the categorical core and prove their preservation under the constructed operations, under explicit local compatibility hypotheses. State separately the interpretation yielding contextual comparison for the selected language and its admitted contexts. The intended form is
+\[
+p\preceq_{\mathcal O,\mathcal E}q
+\quad\Longrightarrow\quad
+K[p]\preceq_{\mathcal O,\mathcal E}K[q]
+\]
+for contexts \(K\) satisfying the stated interface and compatibility conditions. If closing a context changes the environment class or interface index, include the corresponding transport rather than pretending the indices are unchanged.
+
+Derive composite certificates from local state/behavior relations and compatibility. Relate programs at relevant interference points, not only call entry and return. Preserve actual post-interfaces and private state through intermediate composition.
+
+Keep may-behavior, universal/must guarantees, probability laws, divergence sensitivity and quantitative comparisons distinct. At least one comparison must preserve universal properties of the admitted behaviors, rather than only successful or positive-probability outcomes. A progress-preserving comparison must rule out the relevant infinite unmatched stuttering; this does not follow from partial correctness.
+
+\deliver A contextual-refinement or congruence theorem covering recursion and genuine concurrency, a usable local-certificate interface, and separating contexts for invalid abstractions. Explain how the abstraction criterion determines which state or history distinctions can safely be forgotten at the chosen observation.
+
+\subsection*{RC6: Quantitative and progress interpretations}\label{rc6}
+Treat quantitative, probabilistic and progress structures as declared interpretations or additional structure, not universal properties of every contextad. Prove their compatibility with the relevant core operations and identify all extra hypotheses. Develop quantitative interpretations that distinguish accumulated cost from stateful resource availability. At least one interpretation must retain a shared resource's identity, reservations and intermediate availability through recursive and concurrent composition. State whether each quantity is an exact cost, upper bound, lower requirement or capacity; do not switch meanings during a proof.
+
+For an interpretation with replenishment or transfer, account for its actual state transitions. For example,
+\[
+q_r(t)=q_r(0)+I_r(t)-O_r(t)-D_r(t),\qquad
+0\le q_r(t)\le C_r
+\]
+may describe a concrete stock, with all terms and overflow behavior defined. This is an illustrative model, not a requirement that every resource be physical energy. A logical permission or cumulative cost annotation is not automatically such a stock.
+
+Give a timed or progress-sensitive interpretation and prove at least one nontrivial unbounded progress result under explicit assumptions. Suitable conclusions include productivity, absence of a specified deadlock, eventual response or bounded response. State which is proved. Fairness, enabledness, available resources and elapsed-time behavior are different premises; the semantics must permit their failure.
+
+At least one such result must be preserved by a conditional composition or replacement theorem from RC5 and used in an application combining feedback and interference in the same system. State the scheduler, resource, environment and local-progress assumptions and show how the composite guarantee follows from them; separate safety refinement and an unrelated progress example do not suffice. Mutual assumptions of eventual repair or response require a justified well-founded or other sound joint progress argument, not circular appeals to the desired guarantee. This requirement concerns a reusable conditional result, not a complete downstream control mission.
+
+Preserve the existing finite probabilistic interpretation and provide at least one justified recursive probabilistic model or interpretation. Account for correlations, the order of demonic and random choices, and possible outcomes outside positive probability support. A conditional law of successful termination is not the full behavior of a potentially divergent computation.
+
+\deliver Quantitative composition/refinement results and examples demonstrating both a useful guarantee and its boundary. If a physical, continuous or hybrid application is selected, supply its actual flow/port interpretation and needed well-posedness conditions. A universal hybrid-system theory is not a completion requirement.
+
+\subsection*{RC7: Compatibility with the existing finite development}\label{rc7}
+First identify a structural comparison with the existing relative construction: which context/content objects, native cells and operations are retained, and under which hypotheses. Separately embed the existing finite syntax or evaluator into the selected operational realization through \(E\), with an observation/interpretation projection \(U\) satisfying a justified law of the form
+\[
+U\bigl(\llbracket E(t)\rrbracket_{\mathrm{new}}\bigr)
+\cong \llbracket t\rrbracket_{\mathrm{old}}.
+\]
+Pin the old fragment and observation regime. Preserve its actual dependence, occurrence structure, capabilities, retained stores, correlations and possible branches, and prove compatibility with the relevant constructors and substitution.
+
+Classify the existing native cells, equality rules and representation comparisons. Some may survive at the richer level; others may survive only after \(U\) or under additional hypotheses. New timing or interference observers can distinguish old causal-tree equalities. This is a boundary to explain, not a reason to invalidate the old theorem at its original scope.
+
+\deliver A coherent finite-fragment bridge and a documented account of which existing results are inherited, generalized or restricted. Reuse existing examples where they test the bridge. Agreement on a few final outputs, or an unrelated concurrent calculus with no such interpretation, is insufficient.
+
+\subsection*{RC8: Applications, reuse and synthesis}\label{rc8}
+Develop at least two substantive application or model families with different primitive interfaces or interaction structures, using the same new semantic and proof machinery. Select them for their coverage of the obligations in Section~\ref{sec:applications}; they need not correspond to a prescribed external project or a fixed list of domains.
+
+Demonstrate a consequential replacement or model variation. Identify the local certificates that change, the assumptions that must be rechecked and the composition/refinement arguments reused unchanged. Give a credible direct comparison that is allowed the same established mathematics; count new interpretation and proof costs instead of hiding them in a library.
+
+\deliver Positive worked derivations, meaningful boundary cases and an explicit account of reuse. At least one nontrivial composition or contextual argument must be reused across the developments, rather than re-proved behind application-specific names. Distinguish this structural result from unmeasured claims about lower elapsed effort.
+
+\section{Application selection and scope}\label{sec:applications}
+
+Choose the application families during the initial design stage and state their intended judgments before the positive proofs. Their combined coverage must include genuine unbounded feedback, retained state across interaction, shared-resource or shared-state interference, and behavior sensitive to an observation or representation choice. At least one development must combine feedback and interference in the same system; separate demonstrations that avoid their interaction are insufficient.
+
+Applications should establish results about a declared class or parameter family, not only replay a single favorable trace. An implementation may fail or block outside its positive assumptions; preserve those outcomes and their significance. Positive domains should have actual inhabitants, and a claimed progress theorem must not be satisfied merely because no execution or successful outcome is represented.
+
+Possible directions include recursive stateful services, concurrent allocation and reclamation, message-driven protocols, reactive computation, or feedback-connected processes. These are illustrative choices, not mandatory cases. Existing examples may be extended when doing so materially exercises the new operations. Recovery and partial-undo examples are eligible on the same basis as any other existing capability; they are not a separate required workstream.
+
+One application may be abstract and another concrete. In either case, make its transition rules, environmental choices, observations, resources and atomicity assumptions explicit. A physical realization needs a source interpretation; a software example needs its operational interpretation. Neither the language nor a type name supplies that correspondence automatically.
+
+\section{Execution plan}\label{sec:plan}
+
+The stages below express proof dependencies. They permit exploration and revision; they do not require every design choice to be fixed at the outset. Before a proof consumes a choice, record the applicable definition, model class, comparison and hypotheses.
+
+\begin{longtable}{@{}p{.10\linewidth}p{.30\linewidth}p{.50\linewidth}@{}}
+\toprule Stage & Main output & Completion condition\\ \midrule
+\endhead
+E0 & Scope, leading constructions, import decisions and application coverage. & State the required behaviors and theorem interfaces; identify a plausible semantic route and the missing bridges. Prefer established results where they discharge the task.\\
+E1 & Core structural data and selected operational realizations. & Represent unbounded and interfering executions, including failure and divergence; establish the relevant formation and adequacy results.\\
+E2 & Feedback/concurrency constructions and contextual proof principles. & Prove the central laws under explicit hypotheses, including their interaction with dependent context, effects and ownership.\\
+E3 & Finite-fragment bridge, uncertainty, quantitative and progress interpretations. & Establish the comparison maps and their limits; prove the selected resource/progress results without confusing observation levels.\\
+E4 & Application families, consequential substitution and synthesis. & Use the shared results in the required positive developments; identify reused and application-specific obligations and check the completion conditions below.\\
+\bottomrule
+\end{longtable}
+
+Begin with the semantic obstruction or missing operation, not a predetermined software architecture. Coinductive resumptions, transition systems, logical relations, iteration structures and categorical constructions may be combined if their connections are proved. An additional abstraction earns its place through a named proof or construction benefit.
+
+Choose the formal host and implementation representation with an explicit account of the guarantees they support. Prefer dependent types where formation depends on values or ownership, while retaining the obligation to prove that operations preserve the intended invariants. Existing formal libraries may be reused; no particular proof assistant is prescribed.
+
+Maintain one authoritative home for each definition and theorem. Organize developments by mathematical subject and distinguish the categorical core, model-specific theory, and applications in their authoritative locations. Keep explicit interpretation dependencies between them. The eventual package should include the language and semantic specification, proofs and import ledger, reference semantics or interpreter, worked developments, executable checks and reproduction instructions. A new production compiler, deployment or hardware construction is not required.
+
+If an approach fails, retain the obstruction and revise the approach or scope explicitly. A narrower valid result is a useful partial result, not automatic completion of the original target. Routine implementation choices within an authorized programme do not create repeated approval gates. This proposal itself remains a draft until reviewed.
+
+\section{Validation and completion criteria}\label{sec:completion}
+
+\subsection{Evidence standard}
+Each claimed theorem needs a proof or a verified import with its hypotheses and interpretation stated. Distinguish written mathematical proof, mechanized proof, source/structure checking, finite diagnostics and application validation. A passing example does not prove a quantified contextual theorem, and a proof about a mathematical model does not alone establish a concrete realization.
+
+Select a proportionate formalization and checking plan during E0--E1. Mechanization of central operational or refinement laws is valuable where it improves assurance or reuse; this contract does not impose a separate universal formalization project. If a result is advertised as mechanically checked, bind the actual statement, assumptions, code and tool version and complete that check.
+
+Use targeted mathematical review of the central construction, refinement and compatibility results. Prefer independent review for the load-bearing new theorems and record its scope; author checks remain identified as such, with independent checking queued where outstanding. The review should address credible failure mechanisms, rather than expand into an unbounded attack catalogue or a separate application-certification programme.
+
+\subsection{Representative boundary checks}
+The following distinctions provide a compact check on the claimed laws. They can be established by small decisive witnesses where appropriate; such a witness does not establish broader application coverage.
+\begin{itemize}
+\item Infinite execution is distinct from a finite closed event with no returned value. For a return-only normalized distribution monad, an always-repeating body exposes an empty-result obstruction; a tree model with nullary events requires a different adequacy argument. Neither permits divergence to be silently replaced by success.
+\item Interleaving two shared updates need not equal either proposed atomic abstraction. A parallel operator does not by itself establish independence or serializability.
+\item Equal cumulative or expected cost does not establish compatible intermediate resource use. Copies of a resource name do not duplicate the resource.
+\item Fairness does not establish a fixed deadline, and positive duration per step does not exclude a summable Zeno sequence. State the exact progress conclusion and its suppliers.
+\item Equality under a final-value or causal-tree observation need not survive timing, intermediate-state or audit observations. A refined semantic state is not automatically observable by the program.
+\item Separate finite-horizon witnesses need not form a coherent infinite behavior or uniform strategy. Preserve the consistency and causality needed by the claimed extension.
+\end{itemize}
+
+Additional checks should be driven by the selected constructions and applications. A failed sufficient test is not an impossibility proof. An abstract counterexample is not automatically a reachable execution of a concrete model. Resolve or expose the relevant interpretation before making the stronger claim.
+
+\subsection{Completion by level and completion of the programme}
+Maintain three completion ledgers, not one undifferentiated count of obligations or merged files.
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Categorical core complete:} RC2--RC5 supply a positive parameterized context/content, interaction, feedback and comparison construction, with proved coherence and preservation laws under explicit hypotheses. Its relationship to the existing construction in RC7 is proved. At least two materially different realizations verify the hypotheses and reuse a nontrivial consequence. Neither notation nor results confined to one chosen runtime suffice.
+\item \textbf{Realization programme complete:} RC1 and the realization portions of RC3--RC7 provide adequate finite/infinite behavior semantics, genuine interference, the required probabilistic/resource/progress interpretations and transport results, and the exact finite-evaluator bridge. Record the language, operational model and assumptions of every guarantee. Completion here does not establish the first item by itself.
+\item \textbf{Application/reuse evidence complete:} RC8 and Section~\ref{sec:applications} provide the positive families, consequential substitution and explicit dependency-local reuse. No external Byzantine-control mission or other project's contract is required.
+\end{enumerate}
+Full programme completion requires all three ledgers and the evidence standard above. Each level may be reported as complete independently when its stated criteria are met; unfinished implementation work must not be described as a failure of an already proved abstract theorem, and a working implementation must not be described as completing that theorem. Every result retains its actual scope.
+
+Negative results and restricted cases can contribute, but cannot replace the positive construction, refinement and realization obligations. Completion does not require every program to be correct or every model to admit the same laws. New hypotheses must delimit a meaningful inhabited class and support genuinely reusable conclusions, rather than hiding the required whole-system result in an admission condition.
+
+This contract is a proposed research target, not a feasibility guarantee. Its sufficiency is internal to contextual composition: successful discharge would extend the current finite framework with principled feedback and concurrent interaction, preserve existing results where warranted, and demonstrate reusable reasoning. Its value to other projects may then be assessed through separate interpretations and application contracts.
+
+\section{Starting sources and existing developments}\label{sec:sources}
+
+The existing contextual-composition basis is described in \path{synthesis/Integrated_Relative_Computation_Acceptance_Dossier.tex}. Supporting developments are in \path{foundations/relative-construction}, \path{interaction/independent-criterion}, \path{protocols/plural-semantics}, \path{protocols/higher-order}, \path{protocols/refinement-recovery} and \path{protocols/law-and-possibility}. The stochastic-feedback, quantitative-doctrine and adaptive-receipt applications provide scoped results and boundaries that should inform the extension. Their conclusions remain limited by their stated assumptions.
+
+The sources below are starting points, not automatically discharged imports. The mark \checked\ records the bibliographic identity and public statement/scope checks made during preparation of this draft; it does not certify every proof or implementation. Any imported theorem must be checked against the particular use proposed in RC0.
+
+\begin{thebibliography}{9}
+\bibitem{itrees} \checked\ L.-y. Xia et al., \emph{Interaction Trees: Representing Recursive and Impure Programs in Coq}, POPL 2020; arXiv:1906.00046v2. \url{https://arxiv.org/abs/1906.00046v2}.
+\bibitem{ctrees} \checked\ N. Chappe et al., \emph{Choice Trees: Representing Nondeterministic, Recursive, and Impure Programs in Coq}, arXiv:2211.06863v1. \url{https://arxiv.org/abs/2211.06863v1}.
+\bibitem{guarded} \checked\ S. Goncharov and L. Schr\"oder, \emph{Guarded Traced Categories}, arXiv:1802.08756v1. \url{https://arxiv.org/abs/1802.08756v1}.
+\bibitem{reloc} \checked\ D. Frumin, R. Krebbers and L. Birkedal, \emph{ReLoC Reloaded: A Mechanized Relational Logic for Fine-Grained Concurrency and Logical Atomicity}, LMCS 2021; publication and artifact page. \url{https://iris-project.org/reloc/}.
+\end{thebibliography}
+
+\end{document}
