@@ -1,0 +1,95 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Guarded addressed unfolding and native prefix transport}
+\date{15 November 2026}\begin{document}\maketitle
+\paragraph{Status.} Integration theorem with written proofs independently reviewed in the stated scope. It extends the unary retained-prefix construction to finite addressed branching in a specified polynomial-monadic content instance. It is not an unguarded fixed-point theorem, arbitrary asynchronous concurrency, or a recursive extension of every contentad satisfying O1. The theory, semantic instances and concrete process examples remain distinct.
+
+\paragraph{Size and known foundations.} All state, shape and witness sets lie in a fixed universe closed under countable products; family categories may lie in a larger universe. Final indexed polynomial coalgebras are established background (indexed M-types), not a new existence principle. See Altenkirch, Ghani, Hancock, McBride and Morris, \emph{Indexed containers}, JFP25(e5),2015, Section7.2, \url{https://doi.org/10.1017/S095679681500009X}. The proof below specializes that root/prefix construction to the actual retained witnesses and separately proves their native effect transport; no mechanized certification or novelty is claimed.
+
+\section{A monadic content instance of the independent hypotheses}
+Let $S(X)=\coprod_{c\in C}X^{I_c}$ be a finitary cartesian polynomial monad. Take the content total category to be Set, its projection $p=\mathrm{id}$ and extension $d=S$. There is a unique content grade over each base. Unit and accumulation bodies are $\eta^S$ and $\mu^S$; the occurrence map is identity. Cartesian and opcartesian transports are the unique arrows of the identity projection. Display is the canonical identity $SX\cong SB\times_{SB}SX$. All unit, accumulation and Beck--Chevalley conditions are therefore the polynomial-monad laws and identity-projection identities. One may choose $\mathcal J$ to be all maps. This instantiates the preceding alternative effect-fibre interaction and gives actual native context/content operations, rather than treating a bare traversal as sufficient.
+
+Let $T$ now be \emph{affine and commutative}. Affinity is an additional assumption for truncating future effects, not a hidden assumption of the earlier finite crossing theorem. A guarded body on states $X$ is supplied data
+\[
+ W_x,\quad p_x\in T(W_x),\quad
+ \phi_x:W_x\longrightarrow SX.
+\]
+This is an actual mixed native operation from $X$ to $X$, represented by context fibres $W_x$ and the unique monadic content grade at $X$. An unfolding step consumes one whole current occurrence before producing its finite addressed children. There is no same-step recursive equation to solve.
+
+\section{Retained hierarchical prefixes}
+Fix $x_0$. Let $R_0=1$ with frontier consisting of one occurrence labelled $x_0$. Inductively, each $r\in R_n$ is a finite retained tree of depth at most $n$, with every expanded node decorated by its actual raw witness and output shape. Its frontier $F(r)$ is the finite set of unexpanded depth-$n$ occurrences, each with label $x_a(r)$. Earlier nullary nodes have no frontier children and remain in the retained prefix.
+
+Set
+\[
+ V_r=\prod_{a\in F(r)}W_{x_a(r)},\qquad
+ R_{n+1}=\coprod_{r\in R_n}V_r.
+\]
+For each choice $(w_a)$ attach the shape and labelled children of $\phi_{x_a}(w_a)$ to occurrence $a$. Child addresses are pairs $(a,i)$ with $i$ in that actual shape's position set. Distinct addresses remain distinct even when their state labels agree. Retain the old tree and every $w_a$; do not replace the history by its flattened frontier. With $\theta_0=\eta(*)$, define
+\[
+ \theta_{n+1}=\theta_n\gg=
+ \left(r\mapsto \left(\bigotimes_{a\in F(r)}p_{x_a(r)}\right)
+ \gg=\bigl(\mathbf w\mapsto\eta(r,\mathbf w)\bigr)\right).
+\tag{P}
+\]
+These are finite products at each actual prefix, not a product over all possible future nodes. Empty frontier means a singleton choice with unit effect.
+
+\begin{theorem}[Native guarded branching transport]
+Suppose another body $(X',W',p',\phi')$ has a state map $h:X\to X'$ and supplied fibre maps $u_x:W_x\to W'_{h(x)}$ satisfying
+\[
+ Tu_x(p_x)=p'_{h(x)},\qquad
+ \phi'_{h(x)}u_x=S h\,\phi_x.\tag{N}
+\]
+Then these maps induce a directed map of retained prefix towers $U_n:R_n\to R'_n$ from $x_0$ to $h(x_0)$. It preserves every node address/shape, maps state labels by $h$ and raw witnesses by $u$, and satisfies
+\[
+ T U_n(\theta_n)=\theta'_n,\qquad
+ \operatorname{trunc}'U_{n+1}=U_n\operatorname{trunc}.
+\]
+Both towers are effect-compatible under truncation. Identity and composition of the supplied native maps induce identity and composition of tower maps. If each $u_x$ is surjective, finite prefixes lift from every chosen source initial preimage; compatible infinite target raw histories lift using dependent choice.
+\end{theorem}
+\begin{proof}
+Since $S h$ acts by relabelling positions, (N) says corresponding chosen witnesses produce the same shape and addressed children. Inductively the frontiers have a canonical address bijection, including cases where $h$ identifies distinct labels. Map the next choice product coordinatewise by $u_{x_a(r)}$. Finite Fubini naturality gives its conditional effect equation; bind naturality with the induction hypothesis gives the next prefix pushforward. The same coordinate formula proves truncation and vertical composition.
+
+For effect-compatibility, pushing the next conditional product along its constant map to the old prefix yields the unit at that prefix by $T1=1$. Binding proves $T\operatorname{trunc}(\theta_{n+1})=\theta_n$. This is precisely the step where affinity matters. Nullary/terminated frontiers already have the unit conditional effect and cause no difficulty.
+
+For lifting choose, at each source occurrence state, a preimage of the actual target witness under that state's $u_x$. Its body square ensures the correct target shape and child labels. Each frontier requires only finitely many choices; the next stage repeats at the resulting actual source states. Dependent choice yields a compatible infinite lift. Global surjectivity of $h$ alone would not suffice; the hypothesis is local surjectivity at every source state encountered. No measurable reverse map or probability-one conclusion is asserted.
+\end{proof}
+
+\section{Finite accumulation and its relation to retained history}
+Write $C_n(x)$ for the raw \emph{context carrier} of the $n$-fold native iterate, and $b_n:C_n(x)\to SX$ for its body. Initially $C_0(x)=1$ and $b_0=\eta^S(x)$. If $b_n(c)=(d,(x_i)_{i\in I_d})$, the actual serial crossing constructs
+\[
+ C_{n+1}(x)=\coprod_{c\in C_n(x)}\prod_{i\in I_d}W_{x_i},
+\]
+with the corresponding dependent-bind/product effect. Its body applies $\phi$ at these positions then $\mu^S$ to flatten the resulting occurrence shape. Crucially $c$ remains a coordinate of the new context carrier.
+
+There is a canonical bijection $\beta_n:R_n(x)\cong C_n(x)$, by induction: the cartesian polynomial multiplication gives an addressed bijection between the unexpanded frontier of $r$ and the positions of $b_n(\beta_n r)$, so the next choice products correspond coordinatewise. The effect of (P) pushes forward along $\beta_n$ to the actual native iterate's context effect, by Fubini naturality and bind. The body square is
+\[
+ b_n\beta_n=\operatorname{flatten}_n:R_n(x)\longrightarrow SX.
+\]
+Thus the native context carrier, like $R_n$, retains the entire past witness history. Only the \emph{body projection} to $SX$ may forget hierarchy; it must not be confused with the context carrier. Different histories with the same body output remain different raw context witnesses. The bijections and body squares are native-natural by the polynomial monad and crossing laws.
+
+Changing the enumeration used to write each finite product changes only canonical addressed tuple coordinates. Commutativity of $T$ gives the same effect under that permutation; this is coherence of a finite simultaneous frontier expansion, not permission to reorder state-mutating operations on a shared physical environment. Such shared state would have to be retained and satisfy the appropriate interaction equations separately.
+
+\section{Universal raw guarded semantics}
+For a family $Y=(Y_x)_{x\in X}$ define the indexed polynomial functor
+\[
+ (F Y)_x=\coprod_{w\in W_x}\prod_{i\in I_{\phi_x(w)}}Y_{x_i(w)}.
+\]
+The raw tower $(R_n(x))_x$ is canonically the final sequence $1,F1,F^2 1,\ldots$, with truncation $F^n(!):F^{n+1}1\to F^n1$. Breadth-first tuples in the earlier definition and nested tuples here differ only by canonical retained-history regrouping.
+
+\begin{theorem}[Final raw coalgebra]
+Let $L_x=\lim_n R_n(x)$. Root decomposition induces an isomorphism $L\cong F L$, and the decomposition $L\to F L$ is a final $F$-coalgebra in $\mathbf{Set}^X$.
+\end{theorem}
+\begin{proof}
+In a compatible prefix family, the root witness is visible at depth one and unchanged by every truncation. It therefore determines one fixed summand $w$. The remaining compatible data are, independently for each actual child address, a compatible family of child prefixes. This gives a bijection $L_x\to(F L)_x$, with inverse assembling that fixed root and the child families. No effect functor is applied to this limit.
+
+For any coalgebra $c:C\to F C$, define its depth-$n$ observation $c_n:C\to F^n1$ recursively by $c_0=!$ and $c_{n+1}=F(c_n)c$. These maps commute with truncation by induction, so give a unique map $C\to L$. Root decomposition makes it a coalgebra map, since its depth-$n+1$ observations are exactly $F(c_n)c$. Conversely any coalgebra map to $L$ has these observations, again by induction, and is uniquely determined by them. This proves finality. Empty witness fibres and nullary shapes are covered by the same coproduct/product formulas.
+\end{proof}
+
+The directed native tower map above induces a raw limit map $L_x\to L'_{h(x)}$. In indexed-functor terms, (N) gives a natural transformation $Fh^*\to h^*F'$ by the root witness map and the unchanged child addresses. The limit map commutes with the resulting root-decomposition squares. It does not assert an invertible comparison or an effect on $L$. Finality describes the raw guarded unfolding, not an unguarded equation or an admissible physical scheduler.
+
+\section{Scope of recursion and infinity}
+The inverse system of raw prefix sets exists, and its inverse limit is the set of compatible retained histories. Its compatible effects constitute an object in the category of prefix-effect systems. No element of $T(\lim R_n)$ is inferred. For example a finite-distribution monad cannot generally carry an infinitely supported independent tree law as a finite distribution. A probabilistic path interpretation requires separate extension hypotheses; general nondeterministic/reader interpretations have different meanings.
+
+This is a productive depth-indexed unfolding: every finite depth uses finitely many occurrences along each actual finite prefix. It includes unbounded finite branching degree across different histories, but no single infinitely branching node. It does not prove termination, scheduler fairness, all-path service progress, or existence/uniqueness of an unguarded recursive solution. The raw final-coalgebra theorem does not establish full contextual equivalence of arbitrary recursive expressions. The result supplies a concrete native transport theorem at the guarded prefix level, with the actual finite occurrence construction as its algebraic input.
+\end{document}
