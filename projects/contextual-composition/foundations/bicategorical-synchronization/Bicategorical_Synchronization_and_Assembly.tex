@@ -1,0 +1,102 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}\newtheorem{lemma}{Lemma}
+\title{Bicategorical creation of native synchronization and its assembly comparison}
+\date{15 November 2026}
+\begin{document}\maketitle
+\paragraph{Status.} Written conditional general construction. This directly generalizes the strict creation argument rather than declaring arbitrary bicategories strict. It retains directed structural cells. It is not attributed to a strict-algebra lifting theorem without a separate argument.
+
+\section{Native pseudodialgebras and lax bilimits}
+Let $L,K$ be bicategories and $P,Q:L\to K$ pseudofunctors. Objects of $D(P,Q)$ are $(X,f:PX\to QX)$. Arrows are $(h,\alpha)$ with $\alpha:Qh\,f\Rightarrow g\,Ph$. Modifications are $\theta:h\Rightarrow k$ satisfying $(gP\theta)\alpha=\beta(Q\theta f)$ with all pseudofunctor and associativity constraints included. Composition pastes the two structural cells; units and associators use the corresponding constraints of $L,K,P,Q$. Their bicategory equations follow from pseudofunctor coherence and bicategorical pasting. An arrow is called pseudo when its structural cell is invertible; its underlying $h$ need not be an equivalence.
+
+Fix a small ordinary category $D$ and a pseudodiagram $X:D\to L$. A lax cone has legs $p_j:E\to X_j$ and directed cells $\tau_a:h_ap_j\Rightarrow p_k$ satisfying the unit/composition equations with the pseudodiagram constraints. Its modifications form a category $\operatorname{Cone}_{\ell}(V,X)$. A chosen lax bilimit is a cone such that
+\[
+L(V,E)\longrightarrow\operatorname{Cone}_{\ell}(V,X)
+\]
+is an equivalence of categories, pseudonatural in $V$. It is not assumed to be an isomorphism or a bijection on objects. Assume $L$ has the selected lax bilimits and $Q$ sends each chosen cone to a lax bilimit of the image pseudodiagram in $K$. No corresponding condition on $P$ is imposed.
+
+\section{Transition construction}
+Given a pseudodiagram of dialgebras $(X_j,f_j)$, choose the underlying lax bilimit $(E,p,\tau)$. The legs $f_jPp_j$ form a lax cone from $PE$ to $QX$, with arrow cells
+\[
+Qh_a f_jPp_j\xRightarrow{\alpha_aPp_j}
+ f_kPh_aPp_j\xRightarrow{f_kP\tau_a}f_kPp_k,
+\]
+including the actual pseudofunctor constraints. Its coherence follows from those of the diagram's structural cells and of $\tau$. Essential surjectivity of the $Q$-cone equivalence yields $f_E:PE\to QE$ and an invertible cone modification with components
+\[
+\rho_j:Qp_j f_E\cong f_jPp_j.
+\]
+Thus $(p_j,\rho_j)$ are pseudo dialgebra arrows, and $\tau_a$ are dialgebra modifications. They are not claimed strict. Different choices of $f_E,\rho$ are related by the unique cone-compatible isomorphism supplied by full faithfulness.
+
+\begin{theorem}[Bicategorical lifting]
+The lifted cone is a lax bilimit in $D(P,Q)$. In particular it has pseudo projections and retains all noninvertible structural cells and cone modifications. This is creation up to the specified cone equivalences, not strict creation of a unique structure on a fixed carrier.
+\end{theorem}
+\begin{proof}
+Take a dialgebra cone from $(Y,g)$ with legs $(x_j,\gamma_j)$. Essential surjectivity of the underlying $L$-cone equivalence yields $h:Y\to E$ and an invertible cone modification $\theta_j:p_jh\cong x_j$. Project the desired structural cell $\gamma:Qh\,g\Rightarrow f_EPh$ along $Qp_j$ by the following paste:
+\[
+Qp_jQh\,g\cong Q(p_jh)g
+\xRightarrow{Q\theta_j\,g}Qx_jg
+\xRightarrow{\gamma_j}f_jPx_j
+\xRightarrow{f_jP\theta_j^{-1}}f_jP(p_jh)
+\cong f_jPp_jPh
+\xRightarrow{\rho_j^{-1}Ph}Qp_jf_EPh.
+\]
+The cone-modification equations for $\theta$, $\gamma_j$ and $\rho$ imply that this is a modification between the two projected cones. Full faithfulness of the $Q$-cone equivalence gives a unique $\gamma$ with these projections. The $\theta_j$ now satisfy precisely the equations for invertible dialgebra modifications from the induced cone to the given cone. This proves essential surjectivity of the dialgebra cone functor.
+
+For fullness, a modification between cones induced by $(h,\gamma)$ and $(k,\delta)$ gives a unique underlying $\theta:h\Rightarrow k$ by full faithfulness of the $L$-cone equivalence. The dialgebra equation for $\theta$ is true after every $Qp_j$, by the given modification equations and the invertible $\rho_j$. Faithfulness of the $Q$-cone equivalence proves it in $K$. Faithfulness follows already from that of the underlying $L$-cone equivalence. These constructions commute with precomposition up to the specified cone equivalences and their pseudonaturality constraints, giving the required bilimit equivalence pseudonaturally in $(Y,g)$.
+\end{proof}
+The same proof treats any chosen family of operation symbols $(P_i,Q_i)$ on one base, provided each $Q_i$ preserves these bilimits; the structural modifications are lifted componentwise.
+
+\section{Equivalences of native dialgebras}
+\begin{lemma}
+If $h$ is an equivalence in $L$ and $\alpha:Qh f\cong gPh$ is invertible, then $(h,\alpha)$ is an equivalence in $D(P,Q)$.
+\end{lemma}
+\begin{proof}
+Choose an adjoint equivalence $h\dashv h^*$ with invertible unit $\eta:1\Rightarrow h^*h$ and counit $\epsilon:hh^*\Rightarrow1$. Define the reverse structural cell by
+\[
+Qh^*g\xRightarrow{Qh^*gP\epsilon^{-1}}
+Qh^*gPhPh^*\xRightarrow{Qh^*\alpha^{-1}Ph^*}
+Qh^*Qh fPh^*\xRightarrow{Q\eta^{-1}fPh^*}fPh^*.
+\]
+The suppressed pseudofunctor constraints insert the correctly typed composites. The triangle equations imply that $\eta,\epsilon$ are dialgebra modifications for these two cells. Hence they exhibit an adjoint equivalence. This chooses an adjoint only for an already proved equivalence, not for arbitrary state maps.
+\end{proof}
+
+\section{Assembly preservation criterion}
+Let $U:D\to L$ and $U':D'\to L'$ be native doctrines with the just-created lax bilimits. Let $F:D\to D'$ and $\bar F:L\to L'$ be pseudofunctors, with a specified pseudonatural equivalence $U'F\simeq\bar F U$. Assume $\bar F$ preserves the selected lax bilimits and $F$ takes pseudo arrows to pseudo arrows.
+
+The cone $Fp_j$ has a bilimit as its underlying cone, using the specified equivalence with $\bar F$. The created target bilimit supplies a comparison from $F$ of the source bilimit to the target bilimit. Its underlying map is an equivalence, because both underlying cones are bilimits. Its projected structural cells are invertible: they are built from the pseudo cells of $Fp_j$, the chosen pseudo projection cells of the target and the invertible base-cone comparison. Full faithfulness of the output-cone equivalence reflects invertible modifications, so the structural cell of the comparison is invertible. The preceding lemma makes the comparison a dialgebra equivalence.
+
+Consequently $F$ preserves these lax bilimits up to specified cone equivalence. Coherence is not asserted as equality of arbitrary choices of comparison arrows. After choosing bilimits and their cone equivalences, the comparison modifications are the unique ones having the prescribed projected cells; full faithfulness gives their composition/unit equations. This is the usual bicategorical universal-property construction of the induced comparison pseudonaturality. No inverse of an arbitrary effectful transition comparison is used.
+
+\section{A bicategorical pure-boundary lifting lemma}
+For a pure pseudofunctor $J:C\to K$, define the total native square bicategory $\mathcal Q_J(K)$. Its objects are $(A,B,f:JA\to JB)$; arrows are tagged squares $(u,v,\alpha:Jv\,f\Rightarrow g\,Ju)$; modifications are pairs of pure 2-cells satisfying the native square equation. Pasting gives composition. Its associator is the pair of associators in $C$, and its native equation follows from the coherence of $J,K$. Thus pure tags are retained even when $J$ is nonfaithful.
+
+Let $T:K\to K'$ be a normal lax functor whose composition comparisons $c_{f,g}:Tg\,Tf\Rightarrow T(gf)$ are invertible when either participating arrow is pure. Let $G:C\to C'$ be a pseudofunctor and $\kappa:TJ\simeq J'G$ a specified pseudonatural equivalence. The restriction $TJ$ is a pseudofunctor because its comparisons are pure-layer instances. All coherence of $\kappa$, including naturality for pure 2-cells, is part of this independent input.
+
+Choose adjoint-equivalence inverses for the components $\kappa_A$. Send $f$ to $\kappa_B(Tf)\kappa_A^*$. For a native square, first use the pure-boundary rectangle
+\[
+T(Jv)Tf\xRightarrow{c}T(Jv\,f)
+\xRightarrow{T\alpha}T(g\,Ju)
+\xRightarrow{c^{-1}}Tg\,T(Ju),
+\]
+then insert the $\kappa$ naturality cells and its component unit/counit isomorphisms to obtain the square tagged by $(Gu,Gv)$. Modifications are sent to $(G\theta,G\psi)$. Naturality of $c$ and $\kappa$ proves their square equation. A pair of successively pasted squares expands to the same three-layer rectangle by lax associativity; only pure-boundary comparisons are cancelled. The pseudofunctor's composition comparison has boundary components the compositors of $G$, and its native equation is exactly this rectangle equality together with $\kappa$'s composition coherence. Unit comparison uses normality and the unit coherence of $G,\kappa$. Pentagon and triangle follow from these respective source equations, checked on both tagged boundary components and the native cell. This constructs a pseudofunctor
+\[
+\mathcal Q_J(K)\longrightarrow\mathcal Q_{J'}(K').
+\]
+It sends squares with invertible native cells to squares with invertible native cells. No component of an arbitrary pure state map is inverted; only the chosen equivalence $\kappa$ and pure-layer compositor restrictions are.
+
+\section{Weak enriched assembly and synchronization}
+Apply the lemma to the normal directed parallel functor $T:K\times K\to K$, pure $G$ the specified pure tensor, and its coherent pure-interface comparison $\kappa$. Its condition is exactly pure-layer exactness. The product of square bicategories identifies with the square bicategory of the product input. Therefore parallel acts pseudofunctorially on all tagged squares and modifications, not merely on the old ordinary-state hom categories.
+
+Sequential assembly is obtained by composing held-square pseudofunctors with native square-pasting along the shared middle interface. Before pasting, insert the specified action and state-permutation endpoint identifications so that this middle interface is actually aligned; merely equivalent unaligned endpoints are not treated as equal. Require coherent left/right holding \emph{pseudofunctors}, their mixed-action/centrality comparisons natural for all pure 2-cells, and their stated unit/composition equations. These are action data before any machine assembly is defined. Holding induces the just-described square pseudofunctors (with invertible composition comparisons throughout); square-pasting is pseudofunctorial by bicategorical associativity and interchange. The composition/unit comparisons are the pairs of pure boundary comparisons inherited from those operations. Their native equations are the expanded action-coherence pastes. Binary assembly need not have a strictly associative process body. When all input native cells are invertible, the output cell is a paste of invertible cells, so sequential and parallel assembly preserve pseudo squares.
+
+To restrict these operations to state/input/output tags, give the actual base assembly pseudofunctor $\bar F$ and coherent pseudonatural equivalences identifying its endpoint pseudofunctors with the held or parallel endpoints. Retain the original base tag $h$, mapping it to $\bar Fh$, rather than identifying tags with their possibly nonfaithful endpoint images. The same rectangle and endpoint transports then define a pseudofunctor on the native dialgebra doctrines over $\bar F$. Its comparisons are those of $\bar F$ and the specified endpoint equivalences; naturality and composition are checked before discarding any tags. This is the required relative compatibility data, not an assumption that the resulting assembly preserves synchronization.
+
+For joint state/input/output products the base assemblies preserve lax bilimits when the products are bicategorical products and the state/pure realization pseudofunctors preserve the selected bilimits. The abstract criterion therefore yields synchronization compatibility for these weak enriched assemblies. Its comparisons and coherence modifications are induced through the output-cone equivalences. Existing action and directed-interchange equations remain equations after projection; full faithfulness supplies their lifted coherence. No general effectful interchanger is inverted.
+
+Joint two-state flattening uses the base product $(t,s)\mapsto t\otimes s$ and its specified endpoint product equivalence, applied to the two-state normal-form doctrine. The same restriction/transport construction gives its pseudofunctor and maps pseudo arrows to pseudo arrows. Thus it too commutes with joint synchronization up to cone equivalence. This is not yet the construction of every coherence of a full enriched extension of the earlier state pseudomonad. Fixed-wire closure still needs its constant-state cone condition; replacing strict limits by bilimits does not remove that restriction.
+
+The pure-boundary and assembly arguments in these two sections are conditional on their stated coherent action, endpoint and preservation hypotheses. They do not assert that an arbitrary Freyd bicategory supplies the separate directed parallel operation, or that every original context/content presentation preserves the required bilimits.
+
+\section{Relation to established tools}
+Lack--Shulman, \emph{Enhanced 2-categories and limits for lax morphisms}, \url{https://arxiv.org/html/1104.2111v2}, provides the relevant strict-algebra/weighted-limit framework and motivates keeping morphism variance and projection strength explicit. The argument here spells out the heterogeneous pseudodialgebra lifting at the bilimit level; it is not cited as a theorem already supplied by that strict formulation. The exact literature identification remains open, and no novelty claim is made. It likewise does not construct instantaneous trace, arbitrary physical interference, or all remaining context/content crossing data.
+\end{document}
