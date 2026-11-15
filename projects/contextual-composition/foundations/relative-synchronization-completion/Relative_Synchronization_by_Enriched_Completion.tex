@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Relative synchronization by enriched completion}
+\date{15 November 2026}
+\begin{document}\maketitle
+\paragraph{Scope.} This note constructs the relevant incoming lax-cone objects using established enriched-category/module machinery, and proposes a tagged relative recovery. The construction is a written, independently reviewed result under the stated hypotheses. It does not assert that genuinely lax parallel preserves the completed pure boundary, nor complete the mixed context/content or state-feedback compatibility theorem.
+
+\paragraph{Ambient and size.} Fix universes so the hom categories of the original bicategories are small in one universe and the presheaves, enriched categories and all chosen diagram object and arrow sets are small in a larger one. All coproducts and coends below are taken within the declared universe. For a bicategory $K$, write $PK$ for its homwise presheaf cocompletion and $E(K)$ for the bicategory of small $PK$-enriched categories and modules. Local composition in $PK$ preserves colimits separately, so module composition exists. Singleton enriched categories give a locally fully faithful pseudofunctor $K\to E(K)$: its homs between original singleton objects are presheaves, and the original native arrows and cells enter by Yoneda. This does not mean every newly available presheaf arrow was an old arrow.
+
+\paragraph{Incoming lax-cone construction.} Let $F:D\to E(K)$ be a pseudofunctor from a small ordinary category. Form an enriched category $A_F$ whose objects are pairs $(j,x)$, where $x$ is an object of $Fj$, with the same typed extent as $x$. Its hom from $(j,x)$ to $(k,y)$ is
+\[
+ A_F((k,y),(j,x))=\coprod_{a:j\to k}F(a)(y,x).
+\]
+For two composable diagram arrows, first use the quotient into module composition and then the pseudofunctor compositor $F(b)\odot F(a)\cong F(ba)$. The identity summand and $F(1_j)\cong F(j)$ supply units. The diagram compositor pentagon and the module action laws give associative composition. Thus this is an actual enriched category, not an assumed flattening equivalence of nested module completions.
+
+For any enriched category $X$, a module $W:X\to A_F$ restricts to modules $W_j:X\to Fj$. Its left action on the summand indexed by $a:j\to k$ gives
+\[
+ F(a)\odot W_j\longrightarrow W_k.
+\]
+The action equations are exactly the lax-cone unit and composition equations. Conversely these cone cells assemble the action by coproduct universality and the module quotients. The same restriction and assembly identify module maps with cone modifications. They are mutually inverse on the underlying component data and natural under precomposition by modules. Hence
+\[
+ E(K)(X,A_F)\simeq\operatorname{Cone}_{\ell}(X,F)
+\]
+pseudonaturally in $X$. This is the internal object-limit universal property needed for synchronization, rather than a limit of bicategories in an external category.
+
+\paragraph{Pseudofunctorial preservation.} A pseudofunctor $Q:K\to L$ extends homwise to a locally cocontinuous pseudofunctor $PQ:PK\to PL$: density extends its invertible comparators. It induces a module pseudofunctor $E(Q)$, since it preserves the coproducts and reflexive coequalizers defining module composition. Applying it to the displayed hom coproducts and the defining action maps yields the corresponding construction for $E(Q)F$. The projections agree through these identifications. The same component calculation therefore verifies preservation of the selected incoming lax-cone objects. This argument uses pseudo, not merely lax, structure of $Q$.
+
+\paragraph{Tagged coverage repair for a relative interface.} Suppose $J:C\to K$ is the original identity-on-objects pseudofunctor; it need not be faithful. Set $\widehat C=E(C)$. Define $\widehat K$ to have objects literally the objects of $\widehat C$ and hom categories
+\[
+ \widehat K(x,y)=E(K)(E(J)x,E(J)y).
+\]
+Composition and constraints are those of $E(K)$. There is then an identity-on-objects pseudofunctor $\widehat J:\widehat C\to\widehat K$. Distinct tags are not identified even if $E(J)$ has equal images. The preceding preservation calculation implies that a selected lax-cone object $A_F$ in $\widehat C$ also represents the image cone in $\widehat K$, by restricting test objects to $E(J)z$. On original singleton objects, the old pure tags and old native hom categories embed through Yoneda. This is an enriched enlargement of the pure base, not an assertion that the original ordinary pure category already had these limits.
+
+\paragraph{Outstanding interaction obligation.} Normal lax operations extend locally and through modules, but they need not preserve pseudodiagrams or the newly admitted pure projections. The earlier exactness of old representable pure legs does not imply exactness on all new $\widehat C$-arrows. Likewise a tensor or state operation must be shown to preserve the chosen cone objects; no cartesian-product claim follows from the mere existence of a two-input operation. These are the remaining integration requirements, not premises silently discharged by the construction.
+
+\paragraph{Attribution.} Local cocompletion and its extension principle are Kelly--Labella--Schmitt--Street, \emph{Categories enriched on two sides}, Section 5, Proposition 5.3, \url{https://www.sas.rochester.edu/mth/sites/doug-ravenel/otherpapers/KLSS.pdf}. The enriched module/collage completion is established in Garner--Shulman, \emph{Enriched categories as a free cocompletion}, Section 15, especially Theorems 15.12 and 15.15 and Remark 15.20, \url{https://arxiv.org/html/1301.3191}. The component computation above makes the required incoming-cone orientation explicit. No novelty of the completion machinery is asserted, and no stronger framed-equipment hypothesis is imposed on the original $J$.
+\end{document}
