@@ -36,6 +36,12 @@ The construction extends to finite operations, substitution and admitted directe
 
 The original pseudo-body construction alone does not supply this adjunction: its singleton arrows encode pseudocones rather than all lax cones. The enlargement coincides with it on the original locally discrete comma-category presentation. Admitted global operations and fixed-state feedback remain compatible, using full naturality on noninvertible body cells. This is an evaluation universal property in a doctrine already possessing the selected cones, not their free creation or a new instantaneous feedback law.
 
+## Actual varying interfaces and pure endpoint maps
+
+[Native dialgebra diagram presentation](Native_Dialgebra_Diagrams_and_Varying_Interface_Bodies.tex) identifies the state diagram and its directed lax transition body, including every native square and higher witness. Invertible diagram compositors do not make the transition squares invertible. This verifies the connection to actual changing loop interfaces, rather than merely packaging unrelated processes.
+
+[Relative pure-endpoint laws](Relative_Pure_Endpoint_Laws_for_Synchronization.tex) derive strong compatibility with the original pure endpoint changes from the existing native cone-creation criterion. The endpoint-map components need not be invertible and their realization need not be faithful. Mixed sequential/parallel compatibility uses the original admitted action comparisons; it does not manufacture them.
+
 ## Prerequisites
 
 - [Bicategorical synchronization and assembly](../bicategorical-synchronization/README.md): native cone creation and pure-boundary lifting.
