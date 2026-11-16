@@ -1,0 +1,62 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}
+\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}[theorem]{Proposition}
+\title{Native multilimits and the dependent-selector obstruction}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Status and scope.} This is a candidate component of the native branching programme, not its complete interaction or feedback construction. It treats a one-input native context category, with every actual witness map and coefficient map retained. The completion gives new universal finite assemblies without selecting one coupling. Its extension through dependent accumulation is obstructed by the explicit example below. The written constructions and counterexamples were independently reviewed; no formalization or novelty claim is made.
+
+\section{Native category and family morphisms}
+Work in fixed universes: all witness sets and indexing families are small, $T:\mathbf{Set}\to\mathbf{Set}$ is a functor, and $\mathcal V$ is locally small with the finite limits used below. An object of $\mathcal C_{T,\mathcal V}$ is
+\[
+ P=(W,p,(C_w)_{w\in W}),\qquad p\in TW,\ C_w\in\mathcal V.
+\]
+A morphism $P\to P'$ consists of a function $r:W\to W'$ and actual maps $\alpha_w:C_w\to C'_{r(w)}$ with $Tr(p)=p'$. Composition uses the actual composites, not their carrier images. In particular coefficient arrows over one raw map are not identified. No monad, weak-pullback preservation or faithful coefficient interpretation is assumed.
+
+An object of $\operatorname{Fam}(\mathcal C)$ is a small family $(P_i)_{i\in I}$. A morphism to $(Q_j)_{j\in J}$ is an index function $\phi:I\to J$ and native maps $P_i\to Q_{\phi(i)}$. A family is not a probability mixture and carries no probability law on $I$. The choice index is fixed per component, not selected afresh for each raw witness inside that component. This distinction controls the later obstruction.
+
+\section{Explicit native multilimits}
+Let $D$ be a finite diagram in $\mathcal C_{T,\mathcal V}$, with raw sets $W_i$, effects $p_i$ and coefficient arrows. Put $Z=\lim_i W_i$, with projections $\pi_i$. At $z\in Z$ the coefficient arrows give a genuine diagram $(C^i_{z_i})_i$ in $\mathcal V$; put $L_z=\lim_i C^i_{z_i}$. Define
+\[
+ K_D=\{t\in TZ:T\pi_i(t)=p_i\text{ for every }i\},\qquad
+ J_t=(Z,t,(L_z)_z).
+\]
+The projections are full native maps $J_t\to D_i$.
+\begin{theorem}[Native multilimit]
+For every native object $A$, there is a natural bijection
+\[
+ \coprod_{t\in K_D}\mathcal C(A,J_t)
+ \ \cong\ \operatorname{Cone}_{\mathcal C}(A,D).
+\]
+\end{theorem}
+\begin{proof}
+A cone from $A=(U,a,(E_u)_u)$ gives a unique raw map $r:U\to Z$. Its compatible actual coefficient maps uniquely give $E_u\to L_{r(u)}$. Set $t=Tr(a)$. Its marginals are $p_i$, so $t\in K_D$, and the constructed map $A\to J_t$ is native. Conversely every such map gives the cone. The effect equation forces the index $t$, while raw and coefficient limit uniqueness force the full factorization. Precomposition with a native map $A'\xrightarrow{h}A$ preserves this index since $T(rh)(a')=Tr(a)$; it also preserves the coefficient factorization. Thus the bijection is natural.
+\end{proof}
+The empty diagram has $Z=1$, terminal coefficient and index set $T1$. Inconsistent nonempty diagrams can have $K_D=\varnothing$; then no native cone exists. A finite diagram can require infinitely many components: even two fair bits admit continuum-many couplings. Finite-family completion would therefore be insufficient.
+
+\begin{proposition}[Conservative finite assembly completion]
+The singleton inclusion $\mathcal C\hookrightarrow\operatorname{Fam}(\mathcal C)$ is fully faithful, and $\operatorname{Fam}(\mathcal C)$ has finite limits. In particular the displayed family $(J_t)_{t\in K_D}$ is the limit of a diagram of singleton families.
+\end{proposition}
+\begin{proof}
+Full faithfulness follows directly from the morphism definition. For a cone from $(A_j)_j$ to a diagram of singleton families, apply the theorem to each $A_j$: each selects its unique $t_j$ and full factorization. This is exactly one family morphism to $(J_t)_t$. For general families, a pullback first chooses source-index pairs mapping to the same target index, then uses the multilimit family of the resulting native cospan. The empty-diagram family gives a terminal object. Pullbacks and a terminal object suffice for finite limits.
+\end{proof}
+The standard universal property is free completion under small coproducts. A coproduct-preserving extension of an arbitrary functor need not preserve these new limits; the stronger property requires the relevant multicontinuity conditions. This is the established multilimit/free-coproduct-completion framework, not a new universal-completion principle: see Hu--Tholen, \emph{Limits in free coproduct completions}, and Tendas, \emph{Flatness, weakly lex colimits, and free exact completions}, Section 4.2, \url{https://link.springer.com/article/10.1007/s10231-023-01383-2}. The construction here supplies the full native multilimit explicitly.
+
+\section{What this adds and preserves}
+For $T$ finite probability and terminal coefficients, the original category has no product of two fair-bit spaces. Indeed diagonal and independent joint laws both give cones. If a product object existed, pushing its fixed law through its two projections would give one joint law; factoring either cone through that object by a measure-preserving map would force that law to equal both distinct cone laws, a contradiction. In the family completion, their product exists and retains all joint laws as separate components. No averaging or choice of an independence policy occurs.
+
+Natural transformations between diagrams of the same finite shape induce full maps between these limit families: the raw tuple map transports $t$, and coefficient limits supply the actual coefficient arrow. Rebracketing the same retained finite diagram yields the canonical isomorphism between its universal limit families; its coherence follows from limit uniqueness. This does not exchange execution schedules or prove dynamic occurrence substitution.
+
+Restricted physical admission is a separate condition. Omitting some $t$ generally destroys the multilimit property for the full native cone category. It can remain universal only relative to a declared cone/morphism class for which every induced $Tr(a)$ is admitted and factorization remains available. Mere preservation of marginal laws is insufficient. No effect laws varying arbitrarily across family components or raw witnesses are silently introduced.
+
+\section{Dependent selectors obstruct automatic accumulation}
+Take $T=D$, finite probability, with terminal coefficients. Let $P$ have a fair raw bit $w$ and let $P'$ have one raw point. Erasure $P\to P'$ is native. At the target input offer a continuation family indexed by $j\in\{0,1\}$, each with singleton witness, Dirac effect and returned output $j$. Pull this same family back to each source input $w$; for each fixed $j$ its continuation comparison is identity and output-preserving.
+
+If a proposed extension permits arbitrary source selectors $\sigma(w)$ when accumulating a continuation family, choose $\sigma(w)=w$. The accumulated source returns a fair bit and retains its original $w$. A target family component must choose one index $j$ at its singleton input, so returns a constant. No full native comparison preserving this output exists: the only raw map to a singleton cannot make the output square commute, and the output distributions differ.
+
+This disproves automatic functorial transport for that proposed selector-based accumulation under the stated native erasure. It does not invalidate the family limit theorem, and it does not posit a native comparison for a selector that fails descent. The point is that the new family structure alone cannot discharge that extra obligation. Valid routes include restricting selectors by descent, retaining their distinguishing information in the target input, or extending the effect/choice doctrine to include suitable mixtures. These change the interface and require their own coherence and conservativity arguments.
+
+\paragraph{Remaining problem.}
+Lift the family-valued native assembly through genuinely multi-occurrence dependent substitution, without concealing this selector obstruction or serializing unfinished branches. Content grades, feedback and infinite semantic objects have not yet been extended by the present theorem.
+\end{document}
