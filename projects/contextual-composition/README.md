@@ -133,3 +133,5 @@ The manuscripts contain written proofs at their stated scope. Python checks are 
 
 - [Scoped control and native transport](foundations/scoped-control-and-native-transport/README.md): memory-retaining comprehension, dependent grafting, averaged native transport, and zero-history boundaries.
 - [Countable trace and causal assembly](foundations/countable-trace-causal-assembly/README.md): typed first-hit compilation, native clock-trace recovery, and prefix-flow characterization of causal terminal layers.
+
+- [Globally graded open interaction](foundations/globally-graded-open-interaction/README.md): weighted native control correspondences, exact independent sections, and paid common-scope coherence.
