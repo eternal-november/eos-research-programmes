@@ -1,0 +1,59 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,geometry}\geometry{margin=1in}
+\newtheorem{definition}{Definition}\newtheorem{theorem}[definition]{Theorem}
+\title{Controlled feedback folds: exact schedule-and-row descent}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Audit and interface.}
+The underlying theorem used here is the command-indexed native initiality construction in \emph{Boundary Row Algebras, Command Indexed v2 Corrected}; this document neither strengthens its shared-library kernel nor re-proves its initiality. It adds an exact controller-lifting theorem over the unique underlying native fold. It does not choose unknown off-image target schedules or claim that underlying initiality implies selected-control initiality. The schedule is part of the lifted data, not silently fixed first.
+
+\section{Full command histories and the total controlled category}
+In the command-indexed native system category, a command already contains its entire normalized raw row, boundary/schema witness, actual coefficient arrows and whole writer family. Different command identities are retained even when their rows coincide. A history is a finite word of actual command identities and raw outcomes starting at a designated state. Its starting state is retained as an explicit tag, even when two starts have identical later words. Stop tokens are controller outputs only, never letters of a history; a history may end at a stopped state, with no artificial stop padding. Since joint laws are part of command identities, all prior law-choice labels remain. Include every legal command and every raw atom, including zero atoms, when forming the unselected history set $H_X$. Choose either all states as starting states (the default all-configuration interface) or explicitly specified seed starts; a comparison must map the chosen start interface into the target's. For a finite horizon $N$, let $H_X$ contain exactly these histories of length less than $N$, including stopped endpoints when their length is less than $N$; the depth-$N$ boundary has no controller coordinate and no forced extra choice. Alternatively use all finite histories. No infinite-path measure is asserted.
+
+Let $\mathcal M_X(h)$ be the set of complete selectable command labels at the current state. At a completed state add only the forced completed token; at a commandless unfinished state add only the blocked token. These tokens have no raw draw or writer factor. Optional stopping or idle actions belong only when explicitly supplied by a separate scheduler doctrine; none are inserted here. A total deterministic controller is
+\[
+                    \pi\in\prod_{h\in H_X}\mathcal M_X(h). \tag{1}
+\]
+It is defined at all off-policy and zero histories. Full command rows are selected intact, not reconstructed by disintegration. A controller's actual execution follows its selected command and branches over that command's finite raw carrier.
+
+A native map $f:X\to Y$ maps every active command and every raw atom and commutes with successors. It therefore induces a history function $\widehat f:H_X\to H_Y$ on all finite active histories, including off-policy command choices. It also supplies at each $h$ a map of active labels $c\mapsto f_h(c)$. A completed token maps to completed, by native completion reflection/preservation. More precisely, write $\overline{\mathcal M}_Y(k)=\operatorname{Cmd}_Y(k)\sqcup\{\mathsf{completed},\mathsf{blocked}\}$ for an ambient disjoint union, with actual legal menu $\mathcal M_Y(k)$ its declared subset. The map $f_h$ on source legal labels takes values in $\overline{\mathcal M}_Y(\widehat f(h))$: active commands use the native menu map, and each forced status uses its corresponding sentinel. A blocked sentinel is compatible only when it lies in the actual legal target menu. A native map need not reflect blockedness because its target can have extra commands. This status test is not hidden in its state map.
+
+A morphism of controlled systems $(X,\pi)\to(Y,\rho)$ is a native $f$ such that
+\[
+                    f_h(\pi_h)=\rho_{\widehat f(h)}       \tag{2}
+\]
+for every $h$, including legal matching of forced status tokens. Equality means the complete target command label, not equality of its scalar law alone. Exact row pushforward and actual context/full-writer arrows then hold by the supplied native command field. There is no additional coefficient-map choice inferred from (2).
+
+\begin{theorem}[Coherent total category and exact unrestricted lift fibre]
+Controlled systems with (2) form a category, with the ordinary composition of underlying native morphisms. For a fixed native $f$ and source controller $\pi$, define
+\[
+ V_k=\{f_h(\pi_h):\widehat f(h)=k\},\qquad
+ E_k=\{c\in\mathcal M_Y(k):c=v\text{ for every }v\in V_k\}. \tag{3}
+\]
+The entire set of target controllers making $f$ controlled is exactly $\prod_kE_k$. At a tested target history, a lift requires equality of all incoming complete labels and legality of their common label. Untested histories retain every legal target schedule/command choice. Existence and uniqueness are precisely those of this product; for finite target history sets they reduce to nonempty factors and singleton factors, respectively. A jointly covering descent-compatible family has a unique lift. No arbitrary target extension is prescribed.
+\end{theorem}
+\begin{proof}
+History and command maps compose by the native successor/menu equations. Applying the second map to (2) proves (2) for the composite; forced tokens compose when both matches are legal. Identity is immediate. A target controller is a coordinate in each $\mathcal M_Y(k)$; gathering its required equalities by the target history gives exactly (3). The argument retains command/schema identity, joint law and status, not merely the conditional row. For infinite history sets the product formula remains exact; coordinatewise nonemptiness alone needs the relevant choice principle to yield a global selection.\end{proof}
+
+This category can coexist with merely lax relational projection onto the underlying native category. Forgetting the intermediate controller asks an existential extension question, and the companion history-merging witness shows strict inclusion of composed policy relations even when underlying native morphisms compose. There is no contradiction with strict composition here. A chosen-lift or split subcategory may supply functorial selected transport, but that is additional structure verified on that subcategory.
+
+\section{Instantiation on the unique native feedback fold}
+Let $\iota:T_PF_P\to F_P$ be the finite-tree command-indexed constructor and let $\alpha:T_PX\to X$ be a native algebra in the pinned doctrine. Its unique underlying fold $f:F_P\to X$ has explicitly constructed state, menu, raw, context, full command-writer and independent full terminal-grade fields. Those menu/raw fields induce $\widehat f$ on all full finite control histories. The fold may identify distinct source states or histories and may fail to reach target histories. Its existence does not imply any property of a chosen target controller.
+
+Define the decorated native-algebra category explicitly: an object is $(X,\alpha,\rho)$ consisting of a native $T_P$-algebra and a controller on its underlying system; an arrow is a native algebra morphism satisfying (2). Identity and composition follow from the native algebra category and the preceding controlled-system theorem. This decoration requires no endofunctor on selected controllers. The source object is $(F_P,\iota,\pi)$.
+
+\begin{theorem}[Exact controlled-feedback lift]
+Given an arbitrary total source controller $\pi$ on $F_P$, the compatible target-controller fibre over the native fold is exactly (3) with this $f$. Given a target controller $\rho$, an arrow $(F_P,\iota,\pi)\to(X,\alpha,\rho)$ in this decorated native-algebra category exists precisely when (2) holds for this unique underlying fold. If it exists it is unique among these decorated native-algebra morphisms, because every native algebra morphism underneath it equals $f$. No uniqueness among arbitrary controlled-system morphisms is asserted. Neither existence for every $\pi,\rho$ nor a canonical target controller follows from native initiality.
+\end{theorem}
+\begin{proof}
+The native fold is already defined on every command and raw atom, including unused full writer shapes through its command-family field; hence the preceding theorem applies without replacing its opaque target commands by primitive marginal projections. Any controlled algebra morphism forgets to a native algebra morphism, so the underlying initiality forces it to be $f$. The only extra obligation is exactly its all-history schedule/command equation (2), including stop status. Conversely satisfying that equation equips the existing fold with the required controlled compatibility; no field needs to be reconstructed.\end{proof}
+
+\paragraph{What is and is not an initial controlled algebra.}
+The theorem describes a fibre of compatible controllers over a known algebra morphism; it does not define a new endofunctor on autonomous selected controllers. Such an endofunctor would need to choose, or retain as family data, simultaneous root/child schedule and whole-joint extensions. The all-extension open-assembly theorem supplies coherent assembly when full global-history-indexed response tables and their complete extension witnesses are retained. It does not automatically make an arbitrary opaque algebra $\alpha$ preserve those histories or descend to local controllers. A stronger initiality theorem in a category of controlled algebras would need its own controlled constructor and admissible algebra interface.
+
+\paragraph{Three separately testable failures.}
+History merging can send two source histories with different chosen commands to the same target history, making $V_k$ inconsistent even when their pushed scalar rows coincide. Uncovered target histories can leave multiple choices in $E_k$, including at zero-probability or off-policy histories. A source blocked state can map to a ready target state, making its required blocked token illegal. These are schedule/control obligations, not failures of the existing actual writer or terminal-grade fold. The known sibling-history dependence and zero-fibre disintegration ambiguity explain why none can be repaired by reconstructing a controller from local trace marginals alone.
+
+\paragraph{Preserved source boundaries.}
+This statement is parametric in the proved underlying algebra doctrine. For the pinned command-indexed theorem it inherits port-free deterministic seeds, fixed world/boundary, full command-indexed writer families and a separate terminal polynomial grade. Promotion through a global free-library/flat-descent theorem must carry the actual fold's full schema maps and alias equations; controller compatibility does not prove them. Conversely, once such a stronger native fold is independently available, the same history/menu theorem applies verbatim to its actual command fields. No joint-to-terminal tensor recovery is used.
+\end{document}
