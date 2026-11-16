@@ -1,0 +1,27 @@
+# Causal joint polynomial feedback
+
+## Audit and result
+
+The two manuscripts have passed independent written review at the scopes below. Together they construct a locally controlled, scope-atomic causal strategy interface for genuinely variable-arity polynomial occurrences, evaluate finite terminating recursive executions at the entire grade `R_U C`, and prove a retained-history stopping-frontier assembly theorem. This is not an unrestricted shared polynomial contentad, arbitrary unmarked substitution theorem, uniform trace on the bare primitive process, or completion of the wider project. No proof-assistant certification or TeX compilation is claimed.
+
+## Reading route and exact assembly
+
+Start with `Controlled_Joint_Crossing_and_Causal_Factorization.tex`. At a known addressed occurrence list, a pure control `q` is an arbitrary coupling with the prescribed primitive marginals. Arity can vary between shapes; every current position is determined before sampling. Same-input grouping retains the complete law, actual product coefficient arrows and all original unused grades. For sequential stages, the nonanticipation equation is necessary and sufficient for a flat coupling to factor through conditionally correct later rows. Positive rows determine their conditionals; zero rows retain a choice fibre. Arbitrary couplings of completed branch trajectories need not factor. Temporal evaluation is directed, not an invertible replacement for the original independent Fubini law.
+
+Then read `Causal_Frontier_Strategies.tex`. Each complete raw history supplies exactly the preceding controlled crossing at its already known active frontier. A strategy retains a conditional control at every history, including zero histories. Simultaneous occurrences may share randomness; later rounds condition on the complete past. Recursive evaluation retains all compatible finite raw execution trees, assigns their product of transition probabilities, and has total mass at most one. Its global content is the entire variable-arity tree collection `R_U C`, including unrealized shapes and actual nodewise content coefficients.
+
+The coefficient doctrines are deliberately distinguished. The controlled source analysis tensors successive frontier-products; the recursive target uses the categorical product of all executed node coefficients. An explicit generally noninvertible map augments other temporal blocks and projects to each node. All comparison paths agree on those actual projections. The original O1 independent execution similarly maps by tensor-to-product arrows. Product-coefficient dependent assembly is constructed pointwise; it does not assume that slice products distribute over vector-space direct sums.
+
+Cuts compose strategies for the same primitive process through a complete history-indexed frontier, under a fixed bounded stopping rule. Suffixes are joint forests, including the empty forest, not independent single-root continuations. Prefixes are level-complete. The raw context decomposition is invertible, but the full content grade is `Cut_U C`, retaining every permitted cut-round marker, including unused ones. Forgetting the marker gives a generally noninvertible global grade map to `R_U C`. Repeated cuts are coherent at the retained multi-marked interface. No raw-witness bijection is promoted to an unmarked global-grade isomorphism.
+
+## Material boundaries
+
+Scope splitting fails already for diagonal fair-bit siblings if the second draw must remain conditionally fair after revealing the first. Couplings of entire branch histories can also anticipate the global past. Persistent scopes require explicit residual conditional-law state; arbitrary mutable shared interference is not established. Strategy transport requires a displayed local kernel compatibility condition; every original native comparison is recovered on the independent locus, but not every arbitrary shared policy descends through every grade/history merge. A history-dependent policy is not one common continuation row on the bare loop-state set.
+
+The same-process cut theorem is not general binary substitution of unrelated primitive processes or global grades, nor a new original comma bicategory. The construction supplies terminating finite-tree semantics, not infinite-stream semantics, scheduler invariance, or ordinary fixed-grade yanking.
+
+## Checks and source route
+
+Run `python check_causal_factorization.py` and `python check_frontier_strategies.py` in this directory. The first checks finite exact factorization/grouping cases and the anticipation example. The second checks variable-arity frontier masses, retained zero terminal histories, cut factorization, split-witness native transport and scope boundaries. These finite regressions supplement the written proofs; they do not certify arbitrary cases.
+
+The [original independent interaction criterion](../../interaction/independent-criterion/General_Independent_Interaction_Criterion.tex) supplies the augmented-rig and occurrence interface. [Typed polynomial recursive feedback](../typed-polynomial-recursive-feedback/Typed_Polynomial_Recursive_Feedback.tex) supplies the full ordered tree grade. The present pair constructs a causal scope interface rather than asserting unrestricted shared-substitution coherence. [Native partial-trace domains](../native-partial-trace-domains/README.md) concern a separate instantaneous matching operation, not this iterative execution semantics.
