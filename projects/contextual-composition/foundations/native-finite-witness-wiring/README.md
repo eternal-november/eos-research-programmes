@@ -14,6 +14,12 @@ With finite limits in both coefficient categories and all small families, each f
 
 [Regular module application check](Regular_Module_Check.tex) establishes the simpler formal bridge for the original relative quintet double category: hom followed by collapse gives an ordinary loose right module. Symmetric monoidality requires separately verified structure; joint assembly and feedback do not follow from that application alone. This note preserves the attribution and the rejected overstrong inference.
 
+## Exact preservation boundary
+
+[The limit-preservation classification](Wiring_Limit_Preservation.tex) sharpens the counterexamples. For this counting-witness action on all-law fixed-interface families, every binary product is preserved if and only if the span input leg is bijective and its output leg is injective. This is also exactly the class preserving every nonempty finite limit. Terminal preservation, and hence preservation of all finite limits, requires both legs bijective. This is a classification of the stated action, not a claim about all wiring semantics.
+
+The proof retains actual family indices, raw zero-weight points and the common-boundary interface, including empty interfaces. Run `python3 check_limit_preservation.py` for bounded diagnostics: 43 small labelled spans, 1,600 pair checks on the stated finite weight grids, and a terminal-law grid. These do not replace the universal proof.
+
 ## Reconstruction route and governing obligations
 
 For this task, completion means an independently specified interaction category, a typed native action with actual comparison maps and coherence, and an exact bridge to a declared assembly and feedback interface, or a counterexample at a stronger boundary. It does not mean completion of the project's [v0.2 contract](../../contracts/Native_Feedback_and_Interaction_Extension_Contract_v0_2.tex).
@@ -29,3 +35,4 @@ Changing the effect doctrine, allowing infinite wiring fibres, changing the nati
 ## Verification
 
 The written module theorem, maximality, relative pure-square recovery, native bind/trace recovery and shared-boundary family comparison underwent independent mathematical review. Exact-rational finite diagnostics and static TeX checks are distinct evidence. No TeX compilation, CI pass, proof-assistant certification or historical novelty claim is made.
+
