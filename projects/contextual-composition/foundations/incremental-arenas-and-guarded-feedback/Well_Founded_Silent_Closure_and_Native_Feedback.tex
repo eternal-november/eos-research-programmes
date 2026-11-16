@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}[theorem]{Proposition}
+\title{Well-founded silent initialization: a larger native feedback domain}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Audit and boundary.} Written next-domain theorem with independent mathematical review; finite diagnostics do not constitute formal verification. The earlier no-initial-loop-port compiler remains unchanged. Here initial loop ports are permitted when their independently specified initialization relation is well founded. Finite branching makes each silent closure finite. Native initiality, chosen-control nesting and the event/cost trace comparison extend, but the earlier cost-depth bound $n+1$ does not. An explicit finite structural exploration supplies its replacement. This is not unrestricted silent feedback or ordinary instantaneous matching trace.
+
+\section{Independent guard and finite initialization}
+Use the locally finite incremental arena source and its exact native maps, occurrence-generated identifiers, normalized finite primitive rows, tensor context coefficients and independently full weighted polynomial grade $C$. Let $P:A+U\rightsquigarrow B+U$. Initial configurations may emit finitely many $B$ and $U$ ports. Define a relation on loop labels by
+\[
+ u\mathrel{\leadsto_U}u'\quad\Longleftrightarrow\quad
+ i_P(u)\text{ emits a port labelled }u'\in U.                \tag{1}
+\]
+Parallel ports with the same label remain distinct in all actual trees; relation (1) records only the path-admission test. The guard is well-foundedness of (1) on \emph{all} $U$, not merely on labels reached with positive probability from external roots. Equivalently in the usual set-theoretic setting, there is no infinite chain of such initial ports. No algorithm deciding this condition on an arbitrary infinite label set is claimed; a rank or other independent well-foundedness proof may establish it.
+
+For any input $x\in A+U$, initialize the root at $i_P(x)$ and recursively initialize a child at every emitted $U$ port. Call the resulting silent closure $I_P(x)$. It retains every initial configuration, every port occurrence and label, and all nested early $B$ ports. It performs no paid event and introduces no probabilistic witness or context factor.
+
+\begin{theorem}[Exact finite-initialization domain]
+Under the source's finite initial-port condition, all $I_P(x)$ are finite if relation (1) is well founded. Conversely, finite closure at every loop input implies well-foundedness of (1). Thus (1) is the exact admission criterion for this finite silent-initialization compiler on the entire loop family. It is not a classification of every conceivable feedback semantics.
+\end{theorem}
+\begin{proof}
+The unfolding at each root is finitely branching. An infinite unfolding would have an infinite branch by the finitely branching tree lemma; after at most its external root that branch is an infinite chain in (1). Hence every unfolding is finite. Conversely an infinite chain from a loop label supplies a branch in its port unfolding by selecting at each step one of the finitely many ports with the prescribed next label. Its closure cannot be finite. Repeated labels and zero-probability considerations do not affect this deterministic initial-port argument. No support quotient is used.
+\end{proof}
+
+The proof uses the elementary finitely branching tree lemma: if such a rooted tree has infinitely many nodes, one child has infinitely many descendants; choosing such a child repeatedly constructs an infinite branch. An external root has finitely many initial loop children, so the loop-family condition also suffices for every external root.
+
+\section{The enlarged compiler and its native initiality}
+Use its namespace-refined convention: invocation words retain pairs of stable port identifiers and actual loop labels; continuation deployment in (2) tags copy identifiers by that same loop label. This is not an isomorphism to an unlabelled deployment. Keep exactly the previous compiler's set of all finite compatible invocation configurations: each original state has one child for every emitted $U$ port. The designated initial state is now $I_P(x)$, not necessarily a single node. At a paid event, retain all old children and attach the entire $I_P(u)$ at each newly born $U$ port. Each such closure is finite, and there are finitely many new ports. Enabled rows remain the original primitive rows at the original invocation nodes; newly enabled events are not sampled during silent initialization.
+
+\begin{theorem}[Native enlarged feedback]
+This defines a locally finite recurrent arena with the same full terminal grade $R_UC$. It is functorial for native maps between admitted arenas, preserves all configurations and actual row/content maps, and has the same native initial-algebra characterization for
+\[
+ T_P(X)=P|_U;\operatorname{Case}^{\rm lab}_U(X),\qquad
+ G_{T_P(X)}=C\circ(I+U\cdot G_X).                           \tag{2}
+\]
+No change to the native cell class or deletion of unused grade trees is required.
+\end{theorem}
+\begin{proof}
+Existing configurations remain finite under every transition because only finitely many finite closures are attached. Simultaneously enabled events still commute. Original same-invocation diamonds agree on their distinct new port births, and the same deterministic closure is initialized at the same label on both sides. Different-invocation updates retain all old descendants; newly born closure trees have disjoint stable address prefixes. No event inside a new closure fires during initialization. Thus literal row persistence, all cube equations and output-port inclusions are unchanged. Recursive planar output ordering includes the finite new initial $B$ outputs and preserves all old relative orders.
+
+A native map preserves original initials and has label-preserving port bijections. Recursing through the finite initial closures gives a bijection of their invocation nodes, with the same actual component state and port maps. Hence initialization commutes with that map. The earlier componentwise proof of transition, event-row and terminal body functoriality applies. Full $R_u\gamma$ remains defined on all formal trees independently of their realization.
+
+The underlying root/children algebra of all finite configurations and its full grade constructor are unchanged. For a native algebra $\alpha:T_P(X)\to X$, define the fold by the same structural recursion on finite configurations and actual coefficient/identifier data. The only new initialization obligation is
+\[
+ \operatorname{fold}_\alpha(I_P(u))=i_X(u).                 \tag{3}
+\]
+Prove (3) by induction on the finite initial closure. At its root the children are $I_P(u_p)$ for the initial $U$ ports. Their folds are $i_X(u_p)$ by induction. Therefore the folded root is exactly $\alpha$ applied to the initial configuration of $T_P(X)$, which is $i_X(u)$ because $\alpha$ preserves initials. At a paid root transition every new closure accordingly folds to the required new $X$ initial state. The same ancestor induction proves transition and persistence squares, exact row pushforward, actual coefficient maps and port bijections. Full grade folding still recurses through every formal finite tree and all of $\alpha$'s unused coefficient arrows. The root algebra equation determines every component uniquely as in the paid-guard theorem. Thus native initiality survives; no least scalar fixed-point claim is substituted for it.
+\end{proof}
+
+The categorical target of (2) is the original intrinsic arena hom category with its full native maps and occurrence-generated identifier namespaces. Selected policy descent through an arbitrary fold remains a separate compatibility condition, just as before.
+
+\section{An exact nesting-admission law}
+Let $P:A+U+V\rightsquigarrow B+U+V$ and let $\leadsto$ be its full initial-port relation on $U+V$. The inner $U$ guard is well-foundedness of the restriction to $U$-to-$U$ edges. When it holds, initialize finite $U$ closures and retain the emitted $V$ ports. The induced relation on $V$ is
+\[
+ v\leadsto^{/U}_V v'
+ \quad\Longleftrightarrow\quad
+ v\leadsto v'\ \text{or}\
+ v\leadsto u_1\leadsto\cdots\leadsto u_k\leadsto v'
+ \text{ for some }k\geq1,\ u_j\in U.                      \tag{4}
+\]
+It is exactly the initial $V$-port relation of $\operatorname{Fb}_U(P)$, not merely the original $V$-to-$V$ subrelation. It is finitely branching because each finite $U$ closure emits finitely many ports; all port multiplicities remain in the actual closure.
+
+\begin{theorem}[Nesting domain and actual coherence]
+Combined silent feedback on $U+V$ is admitted if and only if inner $U$ feedback is admitted and the induced relation (4) is well founded. On this domain the actual operational isomorphism
+\[
+ \operatorname{Fb}_V(\operatorname{Fb}_U(P))
+ \cong\operatorname{Fb}_{U+V}(P)
+\]
+with full grade $R_V(R_UC)\cong R_{U+V}C$ remains valid, transports all complete selected policies, and commutes with observed partial-body towers and event-count clocks. It is not restricted to independent controls.
+\end{theorem}
+\begin{proof}
+If the combined relation is well founded, its $U$ restriction is well founded. An infinite chain of (4) would concatenate its finite $U$-interior segments into an infinite combined chain, impossible. Conversely, an infinite combined chain either visits $V$ only finitely many times, leaving an infinite $U$ chain, or visits $V$ infinitely often, whose successive visits give an infinite chain in (4). Thus the two stated conditions are equivalent to the combined guard.
+
+For admitted closures, flatten the finite $V$ tree of finite $U$-components. The unique inverse removes the $V$ edges and takes maximal $U$-connected components. Initial nested closures and combined initial closures have precisely the same original initial states and stable colored ports. At a paid event the newly attached closures flatten in the same way, including all finite silent descendants, with no paid event fired or skipped. Hence configurations, enabled rows, full coupling ports, transitions and output ordering agree under the same operational isomorphism as before. The full formal colored-grade isomorphism is independent of admission and still carries every unused node coefficient through its actual coherence map. Identical event histories give the same strict observed partial-body tower and the same paid-event count. Repeated colors flatten the same finite original-node tree, giving the same coherence equations.
+\end{proof}
+
+The induced relation is essential. With one $u\in U$ and one $v\in V$, let the initials emit $u\leadsto v$ and $v\leadsto u$. Each same-color subrelation is empty and well founded, but the combined relation is cyclic and (4) has $v\leadsto^{/U}_Vv$. Separate checks of the original two restrictions would falsely admit this infinite silent cascade.
+
+\section{A policy-independent finite cost bound}
+Depth means the maximum number of invocation nodes on a root-to-leaf path; a root-only tree has depth one. The old bound $n+1$ on macro invocation depth is now false. A zero-event invocation may emit loop ports along a finite silent chain. Keep cost equal to the number of paid primitive events in a completed invocation trace, and keep the macro independent evaluator subprobabilistic when the original arena is unbounded.
+
+For fixed external input $a$ and integer $n\geq0$, form the set $\mathcal K(a,n)$ of all feedback configurations reached from $I_P(a)$ by \emph{at most $n$ singleton paid events}, allowing every enabled event and every raw outcome, including zero outcomes, at each step. This is a structural exploration of the original event rows and transitions, not a chosen-policy support calculation. Define
+\[
+ N(a,n)=\max\{\operatorname{depth}(s):s\in\mathcal K(a,n)\}.           \tag{5}
+\]
+The initial state belongs to the set, so the maximum is defined.
+
+\begin{theorem}[Finite structural bound and cost-trace comparison]
+The set $\mathcal K(a,n)$ is finite and $N(a,n)$ is finite and independent of the chosen scheduler or couplings. Every finite terminal invocation tree of total cost $n$ has depth at most $N(a,n)$. Thus its exact macro cost layer can be constructed by $N(a,n)$ generations of independent subprobability macro unrolling and terminal-cost restriction. The event clock still uses $n$ paid scopes before selecting event count $n$. The native independent event/macro cost-trace comparison remains valid at each fixed cost, including zero.
+\end{theorem}
+\begin{proof}
+Every current feedback configuration is finite; each has finitely many enabled events and each event a finite raw row. Thus the singleton-event raw transition tree is finitely branching. Up to a fixed finite depth $n$ it has finitely many histories and configurations. Each successor includes finitely many finite silent closures, so its invocation depth is finite. This proves the first claim and (5), without discarding zero outcomes or using probabilities to truncate the search. With effectively supplied finite transition data and terminating initialization procedures this is a finite computation; no global decision procedure for well-foundedness is claimed.
+
+A batched scope of $k$ simultaneously enabled events can be serialized into $k$ singleton events with the same final configuration by the actual diamond equations. Hence any selected history with at most $n$ paid events ends in $\mathcal K(a,n)$. The earlier complete-trace/invocation-tree bijection still applies: finite silent initialization does not execute events, and complete local traces and their stable early ports are unchanged. Every terminal macro invocation tree of total cost $n$ therefore has a corresponding finite complete event history with $n$ events; serializing it puts its terminal configuration in $\mathcal K(a,n)$. Its full invocation depth is bounded by (5).
+
+Conversely, independent macro unrolling to that depth with terminal-cost restriction contains every such raw tree, including zeros. Its law is the independent subprobability bind law, not a normalized-marginal coupling assertion. The event and macro layers thus have the same raw complete-trace data and actual event tensor after the same invocationwise normal form. The full grade remains $R_UC$. Native arena maps preserve event counts, initial closure maps, full grade maps and the exact terminal fibre equations. Their structural bounds need not be numerically equal, but each chosen bound captures the complete cost layer; the native layer map is defined by the complete raw trace map, not a fictitious equality of finite unrolling horizons. For a finite implementation of the macro layer, replace each macro row by its local complete-trace subrow of cost at most $n$. It is obtained by $n$ steps of a fixed nonstalling local scheduler with absorbing terminal padding and terminal-cost restriction, explicitly retaining initially terminal witnesses $T_0$ also when $n=0$; finite branching makes that row finite. Every total-cost-$n$ tree uses only these local witnesses. Thus the bounded macro construction need not query an already assembled unbounded macro law. Countable matching trace then gives the same terminating process, with the same coefficient partition comparison and no infinite tensor.
+\end{proof}
+
+\section{Strict enlargement and residual}
+Take loop labels $U=\mathbb N$. The initial configuration at $u>0$ is a zero-event terminal unary invocation emitting the loop label $u-1$; at $0$ it emits a $B$ value. Give an external input $a_m$ the same initial behavior as label $m$. The initial relation strictly decreases, so its silent closure is finite of depth $m+1$, and the feedback initial state is already terminal. Its context coefficient is the unit, but its full invocation content retains all $m+1$ unary factors and internal labels. The earlier no-initial-$U$ guard rejects $m>0$. Total paid cost is zero while depth is unbounded across inputs, decisively refuting the old uniform $n+1$ formula for this enlarged domain. Formula (5) gives $N(a_m,0)=m+1$.
+
+A pure silent self-loop still fails the guard and has no finite initial closure. Cyclic or infinitely descending silent initialization is not repaired by calling it instantaneous feedback. The exact admissibility/nesting law above applies to this finite-closure mechanism only. Infinite completed coefficients, fairness/liveness of unbounded paid runs, arbitrary weak contractions, and a generic completion of arbitrary contextads remain separate questions.
+\end{document}

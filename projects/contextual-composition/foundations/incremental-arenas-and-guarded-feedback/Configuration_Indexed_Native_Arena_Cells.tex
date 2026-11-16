@@ -1,0 +1,464 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{proposition}[definition]{Proposition}
+\title{Configuration-indexed native arena cells: an explicit enlargement}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Audit and scope.}
+Independently reviewed within the stated local-cell, relative-assembly,
+feedback and observation scope; finite diagnostics are not formal verification.
+Objects, full grades, primitive laws and all configurations are unchanged from
+\emph{Incremental Causal Arenas and Open Control}, SHA
+\texttt{b707e7144fd95498b77ac42b77efafbc903899b41d243449e6dd669822ebaa40}.
+The labelled feedback interface is that of \emph{Guarded Incremental Arena
+Feedback and Cost Trace}, SHA
+\texttt{cddab97194d2bb15aeb7953e93ccfabbb378d5e2e4453d936a3d28ead2927710}.
+Only the cell doctrine changes. In particular this does not remove the
+enabled-event obstruction to a unit-preserving context realization.
+The coefficient doctrines and finite/countable semantic targets remain those
+of the sources. No new effectful symmetric tensor is assumed.
+
+\section{Actual additional maps}
+Write $E_P(s)$ and $O_P(s)$ for enabled events and emitted ordered ports.
+Existing port inclusions along a transition are literal stable-name inclusions.
+\begin{definition}
+A configuration-indexed native cell $H:P\to P'$ at fixed endpoints consists of
+the original configuration map $h$ preserving anchors and initials, one full
+weighted-content map $\gamma$, and, for every configuration $s$,
+\[
+ \epsilon_s:E_P(s)\xrightarrow{\sim}E_{P'}(h s),\qquad
+ \omega_s:O_P(s)\xrightarrow{\sim}O_{P'}(h s).
+\]
+The port bijection preserves order and labels. For every enabled event there is
+an actual native row map $r_{s,e}$ with its augmented coefficient arrows.
+Require the original transition and terminal-body equations, now using
+$\epsilon_s(e)$ and $\omega_s$.
+For $t=s[d,w]$, require
+\[
+ \omega_t(p)=\omega_s(p)\quad(p\in O_P(s)),\qquad
+ \epsilon_t(e)=\epsilon_s(e)\quad(e\in E_P(s),\ e\ne d).       \tag{1}
+\]
+The surviving row functions and actual coefficient arrows at $(s,e)$ and
+$(t,e)$ are equal under the literal row-persistence identifications. These
+requirements apply to every raw outcome, including zero outcomes, and every
+configuration, including unreachable configurations.
+\end{definition}
+Equation (1) is stronger than a transition square alone. It does not identify
+names across configurations unrelated by port/event persistence.
+No coordinate for a never-occurring identifier is added. On terminal
+configurations, $\gamma$ retains its maps on all unused shapes, not only the
+shape selected by that configuration.
+
+\begin{theorem}
+These cells form native hom categories $\mathsf{Arena}_{\rm loc}(A,B)$.
+The original global-cell hom categories include faithfully, identically on
+objects, configurations, raw maps, coefficients and grades.
+\end{theorem}
+\begin{proof}
+For $H:P\to P'$ and $K:P'\to P''$, set
+$\epsilon^{KH}_s=\epsilon^K_{h s}\epsilon^H_s$ and
+$\omega^{KH}_s=\omega^K_{h s}\omega^H_s$; compose raw/coefficient arrows and
+full grade maps. The transition square for $H$ says that $h(t)$ is exactly
+the target transition to which (1) for $K$ applies. Thus both persistence
+equations and row-arrow equalities compose. Exact probability pushforward,
+body equations, identities and associativity follow on the displayed actual
+data. Restrict each old global identifier function to its active/emitted
+sets. This satisfies (1). Equality of restrictions determines the global
+function because every identifier occurs in at least one configuration.
+Thus this inclusion is faithful, not a quotient.
+\end{proof}
+
+\paragraph{Declared additional-map kernel.}
+An enlarged cell comes from an old cell exactly when its local event assignments
+agree wherever the same event identifier occurs and its local port assignments
+agree wherever the same port identifier occurs. These conditions are
+necessary and, by taking unions of the agreeing functions, sufficient.
+The new doctrine stops treating cross-configuration equality of names,
+without any persistence path connecting their occurrences, as mandatory
+comparison data. It does not forget such names on objects, merge old cells,
+erase execution history, or identify coefficient arrows.
+
+The inclusion is not isomorphism-reflecting. Take inputs $\{0,1\}$ and one
+deterministic singleton event per input, followed by the same unary terminal
+output. In one arena name the events $e_0,e_1$ on the two input fibres; in
+the other use the single global name $e$. Keep configurations, laws,
+coefficient arrows and full grades identical. The global forgetful cell
+$e_0,e_1\mapsto e$ has no global inverse. Its local inverse uses $e\mapsto
+e_a$ in input fibre $a$, and is coherent along transitions. Hence it is an
+isomorphism in the enlarged category. Likewise forgetting loop-deployment
+identifier tags can become locally invertible when the current input
+recovers the tag, provided the full grades are identical. Thus the added-map
+kernel admits new isomorphisms between previously distinct global namespace
+presentations, despite being injective on all old parallel cells. It does
+not remove an arity mismatch in full grades or an enabled-event mismatch.
+
+\section{Open assembly and the restored content realization}
+\begin{theorem}
+Original open arena composition extends to the new cells and gives a
+bicategory, with the same objects, horizontal arrows, associators and units.
+Pure input/output actions and pure-middle balance give the same relative
+pseudopromonad construction in the enlarged cell doctrine.
+The zero-event source-content realization $N\to\mathsf{Arena}_{\rm loc}$ is
+locally fully faithful and preserves composition and unit by invertible
+native comparisons.
+\end{theorem}
+\begin{proof}
+At a composite configuration $z=(s,(t_p)_{p\in O_P(s)})$, a pair of cells
+$H:P\to P'$ and $K:Q\to Q'$ sends
+\[
+ z\longmapsto
+ (h s,(k t_p)_{\omega^H_s(p)}).
+\]
+Root events map by $\epsilon^H_s$; a child event $(p,e)$ maps to
+$(\omega^H_s(p),\epsilon^K_{t_p}(e))$; an output port $(p,q)$ maps to
+$(\omega^H_s(p),\omega^K_{t_p}(q))$.
+All are local bijections of the required typed sets; the last preserves
+lexicographic order and labels. Rows use the corresponding component arrows.
+
+If a root event fires, all old $\omega^H_s(p)$ stay fixed by (1).
+The new-port complements correspond bijectively: $\omega_t$ is a bijection
+and agrees with $\omega_s$ on the old sets. Thus each new source child
+initializes precisely the corresponding new target child, and $K$ preserves
+its initial configuration. If a child fires only its component changes.
+This proves the transition square in both cases. For a surviving event or
+port, apply (1) in its component; for an unrelated component all data are
+unchanged. Actual row persistence is checked in these same cases.
+The full content arrow is the original weighted substitution of $\gamma_H$
+and $\gamma_K$, with its full tensor coefficient arrows.
+
+Vertical composition of these formulas agrees exactly with horizontal
+composition of the pointwise composites. This proves interchange, not just
+object-level assembly. Rebracketing sends the same configurations and
+addressed rows to the same three-level family. At any fixed configuration
+each pentagon/triangle path is the same local address function and actual
+coefficient reassociation. Naturality follows from the displayed formulas.
+The old global associators/unitors therefore remain valid, and coherent,
+in the larger category.
+
+Pure input pullback restricts the local maps to pulled-back configurations;
+pure output action changes labels, not these maps. The source's pure-middle
+balance removes/restores the same redundant interface label. Its component
+formulas commute with the local copy-indexing formula above. Identity and
+composite balance laws are equalities on configurations and local maps.
+Thus the same relative pseudocoend descent applies, with actual new cells.
+
+For a source content arrow $(C,f:A\to F_C B)$ take one terminal initial
+configuration per input, no events, rank-labelled ports, and full grade $C$.
+A cell between two such objects has its configuration map forced by anchors;
+its ordered port bijection is uniquely forced; its remaining data are exactly
+the source full grade/body cell. This proves local full faithfulness.
+The composite of two realizations has one configuration per input. Its ports
+are pairs $(i,j)$, and the comparison with the realized source composite maps
+\[
+ (i,j)\longmapsto \sum_{k<i} n_k+j,                         \tag{2}
+\]
+where $n_k$ is the arity of the $k$th inner output at that configuration.
+This is an ordered bijection; its inverse unflattens using the same arities.
+There are no transitions, so (1) adds no constraint across distinct inputs.
+The full grade is the original substituted grade, with its canonical
+coefficient comparison. Threefold flattening is the same leaf-rank map in
+either order. Unit comparisons delete singleton position coordinates.
+This proves naturality, pentagon and triangle on actual maps and full grades.
+These comparisons also commute with the relative pure interfaces. Input
+reindexing along any $u:A'\to A$ carries the entire arity profile at $a'$
+to the profile at $u(a')$, so (2) is unchanged, even when $u$ is noninjective.
+Final output relabelling changes no arity or position. At the middle balance
+for $v:B\to B'$, the inner row chosen at outer label $b_i$ is the same row
+at $v(b_i)$ on both representatives; hence the whole ordered inner-arity
+profile, local flattening and full coefficient map coincide. The source
+and arena unit maps use the same singleton position. Thus this is a strong
+relative comparison for $N$, not only a bicategorical composition comparison.
+The old obstruction, $(2,1)$ becoming rank two or rank three at different
+inputs, is precisely a new map supplied by (2).
+\end{proof}
+This statement retains arbitrary pure interfaces and all source content cells.
+It does not assert full faithfulness of the evaluated operational composite
+into its source semantics for arbitrary arenas.
+
+\section{Feedback on the enlarged doctrine}
+Keep the guard, all finite compatible invocation configurations, and the full
+$R_U C$ of the labelled compiler. Keep invocation edges $(p,u)$ and the
+explicitly labelled endofunctor
+$T_P(X)=P|_U;\operatorname{Case}^{\rm lab}_U(X)$.
+\begin{theorem}
+Feedback and $T_P$ are functorial on configuration-indexed cells.
+The labelled native initial-algebra theorem holds for all
+$T_P$-algebras in the enlarged hom category. Labelled nesting is natural
+for the new cells and retains its original coherent operational isomorphism.
+\end{theorem}
+\begin{proof}
+At a finite feedback configuration tree, map each node configuration by $h$.
+Map an outgoing edge $(p,u)$ at node $v$ to
+$(\omega_{s_v}(p),u_*u)$. This recursively determines a bijection of the
+present nodes and their typed paths. Map each enabled local event at $v$
+by $\epsilon_{s_v}$ and each exposed local output by $\omega_{s_v}$.
+These define local event/output bijections for that whole configuration.
+Their raw arrows are the primitive component arrows and the full grade map
+is $R_u\gamma$.
+
+When an ancestor transitions, all existing child-edge images are fixed by
+(1), and every surviving event map is fixed. New children correspond by
+the new-port-complement argument; their initials correspond by preservation
+of initials and the guard. A descendant transition leaves the other nodes
+unchanged. These observations prove the transition square and both equations
+(1) for the compiled cell, including actual row-arrow persistence. They also
+prove its identity and composition equations. The case construction uses
+the same local maps with the supplied loop-label tags, so $T_P$ is a functor.
+
+Let $\alpha:T_P(X)\to X$ now be any enlarged native algebra. Define the
+configuration fold recursively on finite trees:
+\[
+ h(s,(\tau_p))=\alpha_{\rm cfg}(s,(h(\tau_p))).
+\]
+At that particular configuration, define a root-event map using $\alpha$,
+and a descendant-event map by its child fold followed by the corresponding
+local map of $\alpha$. Define port maps in the same way; compose actual row
+and coefficient arrows along the finite ancestor path. This yields
+bijections and exact row maps. Guarded initials give
+$h(i_F(u))=i_X(u)$.
+For a root transition the existing folded children are unchanged and newly
+born children fold to the required initials. For a child transition use
+the inductive square for that child, followed by the square for $\alpha$.
+Persistence of a surviving ancestor/descendant event or port follows by
+this same case analysis and (1) for $\alpha$ and the child fold. Induction
+is on the old finite ancestor structure and remains valid when the next
+configuration has new children.
+
+Independently, fold every formal grade tree with the full grade map of
+$\alpha$. Tensor the child-fold coefficient arrows with the root identity
+and then apply its actual content arrow. This defines the map on unused
+trees too. The terminal body equation follows recursively from that for
+$\alpha$. Consequently the fold is a new-doctrine native algebra map.
+
+The algebra equation forces the configuration recursion, the root-event
+map, and each descendant map through its child. It therefore forces every
+local event/port map and every raw/coefficient arrow, by induction on finite
+trees and event depth. The full grade equation forces the same recursion
+at every formal grade tree. Hence the fold is unique in the enlarged
+category. This is not merely the old initiality theorem applied to its old
+smaller algebra class.
+
+For nesting, flatten a tree of coloured trees as in the source. At each
+configuration the new cell maps an original node using precisely its
+original local configuration. Therefore flattening before or after this
+map gives the same node, local event and port functions. The full grade
+comparison and coefficients are unchanged from the source. This proves
+naturality for new cells and the existing higher nesting coherence.
+\end{proof}
+The labelled namespace has not been removed merely because the larger
+doctrine sometimes admits additional isomorphisms. No policy descent
+through arbitrary algebra folds is asserted.
+
+\section{Policies and independent evaluation}
+A history map uses $\epsilon_s$ at its current configuration to transport
+the selected scope and uses the primitive raw functions on its outcomes.
+For simultaneously enabled events, (1) and row persistence ensure that
+splitting a scope in any order gives the same target history modulo the
+same exchange. History maps compose exactly, including off-policy and
+zero histories and histories beginning at any retained configuration.
+
+\begin{proposition}
+The original compatible-control relations, terminal evaluation, and canonical
+backward policy lifting extend to the new doctrine. Canonical lifting is an
+actual contravariant functor, not equality of the larger compatible-control
+relations.
+\end{proposition}
+\begin{proof}
+At a source history pull back the target scope through its current event
+bijection. For the resulting tuple of row maps $r_i$, target coupling $q'$,
+and source and target primitive laws $\mu_i,\mu'_i$, put
+\[
+ L_rq'(w_1,\ldots,w_m)=
+ q'(r_1w_1,\ldots,r_mw_m)
+ \prod_i\frac{\mu_i(w_i)}{\mu'_i(r_iw_i)}.                  \tag{3}
+\]
+Set the whole value to zero if any denominator is zero.
+Exact row pushforward means a zero target fibre has only zero source mass.
+Finite fibre summation proves that (3) has source marginals and pushes to
+$q'$. For composable row maps, the factors telescope on positive
+denominators. All other tuples have zero mass on both sides, proving
+$L_rL_t=L_{tr}$; $L_{\rm id}=1$. Current-scope pullback and history transport
+compose exactly by the local cell formulas. Thus these identities hold at
+every control-table entry, without dividing by history probability.
+All actual context arrows and full grades are retained by the selected
+cell; (3) only specifies its conditional raw law.
+
+For the larger relation, ordinary conditional pushforward still gives
+$R_KR_H\subseteq R_{KH}$ and the category of compatible selected objects.
+No equality of these relations, or horizontal closure of pairs of
+standalone policies, follows. Prefix pushforward follows by induction,
+using the actual local row maps at each history. Enabled bijections reflect
+terminality, so restriction to first-terminal strata and nonnegative
+countable summation give exact terminating pushforward, with tensor
+coefficient arrows and full terminal body square.
+
+Independent policies are preserved by (3): lifting a product gives the
+source product. Trace exchanges are respected by (1) and actual row
+persistence, so the source independent evaluator is functorial on the new
+maps. Its composition comparison remains the same bijection of complete
+traces, with the same coefficient tensor and full grade. Naturality follows
+by the componentwise copy/event formulas already proved. Thus its strong
+relative comparison survives this enlargement.
+\end{proof}
+
+\section{Assembly with well-founded silent closure and path observation}
+Use the independently reviewed silent-closure source
+\emph{Well Founded Silent Closure and Native Feedback}, SHA
+\texttt{5889a2e4ac7eeba5409bf5b8051bb470490c6b8c8c4bfc8f78cf2280026c81d6}.
+Its object admission is well-foundedness of the initial-port relation
+$u\leadsto u'$ on the whole loop interface. Finite initial branching then
+makes every initial invocation closure $I_P(x)$ finite. This condition,
+its equivalence to finite closure at every loop input, and the exact nesting
+admission law are properties of objects and unchanged by the cell enlargement.
+
+\begin{theorem}
+For admitted objects, the well-founded-silent compiler is functorial on
+configuration-indexed cells. Its initial-algebra characterization holds
+among all enlarged native algebras. Its nesting, observed prefix and
+event/cost-layer comparisons have the same local-cell naturality, with
+conditional-compatible controls where controls are required.
+\end{theorem}
+\begin{proof}
+At the initial closure $I_P(x)$, apply $h$ to the root initial
+configuration and its local port bijection $\omega_{i_P(x)}$ to the child
+slots. At each such child use the same prescription at its initial
+configuration. Finite recursion gives a bijection to $I_{P'}(x')$:
+initials and labels are preserved, and at every matched pair of nodes
+the port bijection supplies exactly all target children. This is an
+isomorphism of the finite invocation indexing trees, not a claim that
+the primitive configuration or raw-row maps are invertible.
+The local enabled/visible-port maps on the closure are precisely those
+obtained by the recursive feedback formula. Old-edge persistence (1)
+ensures that an ancestor transition does not change any existing copy's
+address image. A newly born loop port attaches its entire matched finite
+initial closure. No event in that closure is fired or sampled. Therefore
+the transition, surviving-event, old-port and actual row-arrow persistence
+proofs apply, including at every unreachable configuration.
+
+For an arbitrary local algebra $\alpha:T_P(X)\to X$, retain the finite-tree
+fold already constructed. Its new initial equation is
+\[
+ \operatorname{fold}_\alpha(I_P(u))=i_X(u).                 \tag{4}
+\]
+Prove (4) by induction on the finite initial closure. Each initial child
+folds to its corresponding $i_X(u_p)$. The root tuple is consequently
+the initial configuration of $T_P(X)$, and $\alpha$ sends it to $i_X(u)$.
+This also verifies all the newly initialized children in a paid
+transition. The earlier ancestor induction supplies the local maps,
+transition/persistence equations and actual coefficients; uniqueness is
+still forced on every finite configuration and every full formal grade
+tree by the algebra equation. Thus the proof covers the additional local
+algebras rather than merely restricting the old theorem.
+
+For nesting, finite silent closure commutes with cutting and flattening
+the coloured invocation tree: both keep the same original initial
+configurations at each node and the same entire finite child closures.
+Local maps apply $\omega_{s_v}$ at that node before or after flattening,
+so the two routes coincide. The exact admission law remains the source's
+well-foundedness of the inner relation and the induced outer relation,
+including paths through inner labels. No altered map doctrine weakens
+that object condition.
+
+For compatible complete controllers, map a selected scope through the
+current local event bijection and its raw tuple map. Induction on the
+number of selected steps gives strict prefix pushforward. The transition
+map commutes with truncation, and enabled bijections reflect terminality,
+including initially terminal $T_0$. Absorbed terminal continuations are
+unique and carry unchanged finite coefficients. Thus observed history/
+configuration decoders and partial terminal bodies commute, with the
+same full grade and actual augmentation deletion arrows.
+Every paid event is mapped to one paid event; the finite initial closure
+performs none. Hence complete histories preserve event count, and
+restriction to each complete cost layer gives its native map. Structural
+exploration bounds $N(a,n)$ from the silent-closure source need not be
+equal under arbitrary native maps. The layer comparison is defined on
+complete raw traces, each fully captured by its own admitted bound, not
+by identifying distinct finite horizons. This is the same qualification
+needed for the source's event/macro cost comparison.
+\end{proof}
+
+More explicitly, for \emph{Native Prefix Paths and Divergence}, SHA
+\texttt{c62dc99887cb402b46b35cc15876a06891fa2788906fba89579a8d00e6cadbd6},
+the maps just constructed satisfy its three required equations:
+\[
+ r'_n f_{n+1}=f_n r_n,\qquad (f_n)_*m_n=m'_n,\qquad
+ f_n^{-1}(T'_n)=T_n.                                     \tag{5}
+\]
+The first follows by recursive history transport, the second by finite
+conditional fibre summation, and the third by the current enabled-event
+bijection and absorption. Hence its inverse-limit construction gives the
+continuous all-raw path map, scalar probability pushforward and exact
+divergence-preimage equation for these local cells. With transported
+controls an operational isomorphism gives a measure-preserving
+homeomorphism. Equation (1) for ports gives a compatible order isomorphism
+of each corresponding path's persistent ordered port unions.
+This does not supply an infinite coefficient tensor, infinite full
+polynomial body, ordinary sequential stream, or forward descent of an
+arbitrary controller. Actual finite prefix coefficients, full terminal
+grades and complete controller tables remain separate retained data.
+
+\paragraph{Directed loop laws in the assembled doctrine.}
+Use \emph{Pure Loop Sliding and Positive Grade Obstruction}, SHA
+\texttt{6b7cef8ae3af9b59c8c1892c51f814c6111d78e7314247dc08af8308bb93e8ea}.
+For a fixed pure $g:V\to U$, sliding deletes the same redundant input tags
+and applies $g$ to every internal label. Given a new fixed-endpoint cell
+$H:P\to P'$, at an original node $s$ the two routes apply $h(s)$ and
+send its port $p$ to $\omega_s(p)$, then relabel its loop label by $g$.
+The recursive formulas therefore commute on all configurations and local
+event/port maps. The full-grade square is the original naturality of
+$R_g$ with $R\gamma$, on every unused tree and its actual coefficient
+arrow. Finite silent-initial-closure recursion proves the same initial
+equation on the source's exact common well-founded domain. Identity and
+composite sliding are unchanged pointwise equations. Control transport,
+prefixes and event counts follow from the same operational histories.
+
+For the reviewed post-tightening comparison
+\[
+ \operatorname{Fb}_U(P);Q\longrightarrow
+ \operatorname{Fb}_U(P;L_Q),
+\]
+a pair of new cells on $P,Q$ acts at each original node by its current
+local maps. The configuration flattening removes only the fixed
+$U$-identity copy. An edge $(p,u)$ corresponds to
+$((p,*_U),u)$; either route sends it to
+$((\omega_s(p),*_U),u)$ at fixed loop interface. At a $Q$ copy the two
+routes apply its same local cell. This proves actual naturality of the
+operational comparison. Its full-grade square is the original naturality
+of $\phi_{C,D,U}$ in the whole weighted $C,D$, so actual coefficient
+coherence, its composition law and directed unit law persist.
+
+This tightening comparison also extends to well-founded silent
+initialization: $L_Q$ sends its $U$ branch through the event-free identity,
+whereas all $Q$ outputs are in the external interface, including at
+unreachable configurations. Thus its initial loop relation is precisely
+that of $P$. In each finite initial closure both sides have the same
+original initial $P$ nodes, the same initial $Q$ copies at every external
+port, and only the removable identity copies at loop ports. Finite
+recursion proves initialization compatibility; newly born closures use
+the same argument. No new paid events or initial probability draws are
+inserted. Full unused-grade obstructions still prevent a reverse native
+comparison in general; the local identifier enlargement does not change
+them.
+
+
+\section{Boundary not repaired}
+The two-event/one-event and sampled-unit/zero-event obstructions remain:
+local enabled bijections still reflect terminality after each transition.
+More generally any functor from native normalized context rows to this
+arena hom category that sends the context unit to an operational zero-event
+unit and admits the actual native evaluator as a retraction is obstructed
+by the native fair-row collapse to the unit. Its image must map to a
+zero-enabled initial state, hence must itself be initially terminal;
+its evaluated raw row is the singleton empty trace, not natively
+isomorphic to a two-point fair row. Configuration-indexed names do not
+change this argument.
+
+The repair is therefore substantial but bounded: strong source content,
+open assembly, labelled native feedback and backward controls coexist in
+an explicitly larger cell doctrine; a strong full source interaction
+embedding is not claimed. The construction does not implement the still
+stronger, scope-changing contractions needed to address that obstruction.
+\end{document}
+

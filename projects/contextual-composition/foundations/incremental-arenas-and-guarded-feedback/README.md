@@ -1,4 +1,4 @@
-# Incremental arenas and guarded native feedback
+# Incremental arenas, native feedback and configuration-indexed cells
 
 ## Scope and mathematical result
 
@@ -24,11 +24,20 @@ The constructions fit together: open arenas expose paid events and early ports; 
 
 8. **`Native_Post_Tightening_Grade_Comparison.tex`** separates a directed full-grade post-tightening comparison from an impossible general reverse isomorphism. Operational correspondence alone does not determine an invertible map on unused formal shapes.
 
-Changes to stable identifier or native-map definitions require rechecking **global**, not merely per-configuration, inverses for structural units and colored nesting, native initiality uniqueness, and source content composition. These proofs consume the precise identifier doctrine.
 
-## Guarded compiler and native initiality
+9. **`Well_Founded_Silent_Closure_and_Native_Feedback.tex`** permits initial loop ports exactly when the initial-port relation is well founded on the whole loop interface. Finite branching then yields finite silent closures, without paid events or probability draws. Labelled native initiality and nesting survive. The old cost-depth bound is replaced by a policy-independent all-raw structural bound.
 
-The guard forbids initial U-output ports, but permits initial B-output ports and zero-event terminal invocations. Every loop-port birth is paid. A feedback configuration contains original arena states in a finite invocation tree, with one child at each emitted U port. Children may execute before their parents finish.
+10. **`Pure_Loop_Sliding_and_Positive_Grade_Obstruction.tex`** constructs directed pure-loop sliding for arbitrary label maps, including noninjective and nonsurjective ones. It proves exact common admission for well-founded silent initialization. The operational configuration/history bijection does not invert the whole grade map; unused-arity and positive-body obstructions prevent reverse native comparisons in general.
+
+11. **`Native_Prefix_Paths_and_Divergence.tex`** constructs the compact all-raw inverse-limit path space and its scalar Borel probability from the finite prefix tower. Strict conditional-compatible maps preserve path probability and reflect divergence. Finite actual coefficient tensors and full partial terminal bodies remain separate; no infinite effect object or ordinary output stream is asserted.
+
+12. **`Configuration_Indexed_Native_Arena_Cells.tex`** enlarges native cells to configuration-indexed event/port bijections coherent under persistence, while retaining objects, every raw row and actual coefficient arrow, and entire weighted grades. Open assembly and the relative pure interfaces extend. The zero-event content realization becomes locally fully faithful and strong relative to those interfaces. Labelled feedback is initial among all enlarged native algebras, and the silent-closure, prefix/path, sliding and directed post-tightening comparisons are natural for the new cells within their stated domains.
+
+In the original global-identifier doctrine, structural units, colored nesting and native initiality consume global identifier functions, not merely per-configuration bijections. The configuration-indexed enlargement below changes that cell doctrine explicitly, supplies transition-persistence equations, and reproves assembly and initiality for its additional maps. Its local inverses do not imply global identifier inverses.
+
+## Paid-guard compiler and native initiality
+
+The original paid guard forbids initial U-output ports, but permits initial B-output ports and zero-event terminal invocations. Every loop-port birth is paid. A feedback configuration contains original arena states in a finite invocation tree, with one child at each emitted U port. Children may execute before their parents finish.
 
 Invocation addresses retain pairs `(stable port identifier, actual loop label)`. A reused port identifier can carry different labels in different configurations; dropping the label prevents a global inverse for colored nesting even when every per-configuration event map is bijective. External inputs do not add root identifier tags.
 
@@ -40,13 +49,25 @@ This is an open-arena universal property. It does not make every selected source
 
 ## Feedback, recurrence and trace assembly
 
-Under the guard on U+V, nested feedback is operationally isomorphic to combined feedback. Removing V edges gives the inverse decomposition into maximal U-components. Labelled paths make this a global identifier inverse. Primitive rows and selectable scopes coincide, so **all** selected policies transport. The full grade isomorphism `R_V(R_U C) ≅ R_(U+V) C` acts on unused trees and actual coefficients. Empty feedback and repeated colored nesting have the stated native coherence.
+Under the original paid guard on U+V, nested feedback is operationally isomorphic to combined feedback. Removing V edges gives the inverse decomposition into maximal U-components. Labelled paths make this a global identifier inverse. Primitive rows and selectable scopes coincide, so **all** selected policies transport. The full grade isomorphism `R_V(R_U C) ≅ R_(U+V) C` acts on unused trees and actual coefficients. Empty feedback and repeated colored nesting have the stated native coherence.
 
 Observed partial-body towers keep the same entire R_U C at every horizon. Active invocation configurations, pending calls and early outputs remain in paid-history observations, without inventing a completed C shape. Nesting gives same-index observed tower isomorphisms, not just a pro-object comparison.
 
 For independent controls, complete primitive-event traces normalize into finite invocation trees. Their raw weights, actual context tensors and full R_U C body agree. The macro process `Eval_ind(P)` may be subprobabilistic, so its independent product rows are not falsely called couplings with unchanged marginals.
 
-Cost counts primitive events in each completed invocation trace. Zero-cost invocations emit no U output. A terminal invocation tree of total cost n has depth at most n+1. The primitive-event clock and macro cost clock therefore have native-isomorphic rows at each n, including zero. Typed terminal restriction is an additional operation, not an old exact-pushforward arrow or an assertion that general trace selects a least fixed point.
+Cost counts primitive events in each completed invocation trace. Under the original paid guard, zero-cost invocations emit no U output. A terminal invocation tree of total cost n has depth at most n+1. The primitive-event clock and macro cost clock therefore have native-isomorphic rows at each n, including zero. Typed terminal restriction is an additional operation, not an old exact-pushforward arrow or an assertion that general trace selects a least fixed point.
+
+## Well-founded silent initialization and the assembled local-cell doctrine
+
+For the silent extension, the relation `u → u′` records an initial loop-port occurrence at input u. It is tested on all loop labels, not only reachable or positive-probability inputs. Well-foundedness together with finite initial branching is equivalent to finite initial closure at every loop input. Every initial invocation node and content factor remains; initialization fires no event. A pure silent self-loop is still inadmissible.
+
+Nesting over U then V is admitted exactly when the U restriction and the induced V relation through finite U paths are well founded. Separate checks of the two same-color restrictions are insufficient: an alternating U–V cycle is a counterexample. The cost of a completed trace remains its number of primitive events. Silent depth can be unbounded across inputs at cost zero. The replacement `N(a,n)` is the maximum invocation depth in the finite all-raw exploration by at most n singleton paid events, including zero outcomes. General native maps need not preserve this number; the cost-layer map is defined on complete raw traces, not by equating exploration horizons.
+
+Configuration-indexed cells do not identify old parallel cells: the original global-cell hom categories include faithfully. They do admit additional isomorphisms between namespace presentations when occurrences of a shared name are unrelated by persistence. The inclusion is therefore not isomorphism-reflecting. All old objects, configurations, primitive laws, actual coefficients and full grades are unchanged. Locality never licenses changing an existing port or surviving event map during a transition.
+
+The strong content comparison flattens each configuration's ordered arity profile and commutes with arbitrary input reindexing, output transport and pure-middle balance. Its fold theorem applies to every algebra in the enlarged hom category, not merely old global algebras. For silent initials, finite closure induction proves that each fold sends the entire initial closure to the target initial configuration. The actual coefficient and unused-grade recursions are independent of support and realization.
+
+Under complete conditional-compatible controllers, local cells induce strict same-horizon prefix maps and the corresponding continuous all-raw path maps, scalar measure pushforward and exact divergence preimages. Their persistent port unions are order-isomorphic pathwise, but the union may have reverse-natural or dense order. Sliding and post-tightening retain their directed whole-grade laws; operational reconstruction does not invert their unused-grade maps. The deterministic-initial normalized-context unit obstruction remains, so strong content recovery is not a strong recovery of the full context/content interaction.
 
 ## Interpretations and decisive boundaries
 
@@ -56,9 +77,9 @@ Cost counts primitive events in each completed invocation trace. Zero-cost invoc
 
 **Tensor-to-product comparison loses actual directions.** The basic map has dimension 4→3 and a nonzero kernel. Eventwise product comparison factors through the product of invocation tensors and then additional per-invocation comparisons; those targets are not identified without the actual arrows.
 
-**Any unit-preserving exact context recovery is obstructed in the current cell class.** A normalized two-point context has a native collapse to the context unit. If a functor J preserved that arrow, sent the unit to the zero-event arena identity, and had `Eval_ind J ≅ id` natively, the enabled-event bijection would force J of the two-point context to be initially terminal. Its evaluation would have only the empty trace, contradicting native recovery of two raw points. Changing the atomic implementation does not solve this obstruction.
+**Any unit-preserving exact context recovery is obstructed with deterministic initial configurations in either native cell class.** A normalized two-point context has a native collapse to the context unit. If a functor J preserved that arrow, sent the unit to the zero-event arena identity, and had `Eval_ind J ≅ id` natively, the enabled-event bijection would force J of the two-point context to be initially terminal. Its evaluation would have only the empty trace, contradicting native recovery of two raw points. Changing the atomic implementation does not solve this obstruction.
 
-**Content recovery also depends on the identifier doctrine.** The zero-event positional realization is homwise fully faithful, but its strong content-composition comparison is not available in the current global-map class. A composite port identifier `(2,1)` must flatten to rank two or three when an earlier sibling has different arity in different configurations. No single global identifier function can do both. Intrinsic arena associators retain nested path tags and do not have this renumbering defect.
+**Content recovery depends on the identifier doctrine.** The zero-event positional realization is homwise fully faithful, but its strong content-composition comparison is not available in the original global-identifier map class. A composite port identifier `(2,1)` must flatten to rank two or three when an earlier sibling has different arity in different configurations. No single global identifier function can do both. Intrinsic arena associators retain nested path tags and do not have this renumbering defect. Configuration-indexed cells repair this particular obstruction by allowing the ordered flattening to depend on the configuration, while requiring persistence along every transition. They do not repair the deterministic-initial context-unit obstruction.
 
 **Full-grade tightening is directed.** With unary C, binary D and singleton U, `(R_U C) ∘ D` has only arity-two shapes, while `R_U(C ∘ (I + D))` has an arity-three shape. No arity-preserving reverse full-grade map exists. The forward decoration law must retain the complete collections, not replace the target by realized shapes.
 
@@ -77,3 +98,16 @@ python check_scheduled_clock.py
 ```
 
 Compiler checks cover 4,161 colored shapes, 1,515 cost/depth cases, parent/child diamonds, shared-law separation, native fold/birth squares, and the global namespace counterexamples and labelled repairs. These finite checks supplement the written general proofs; they do not establish their unrestricted quantifiers.
+
+The extension diagnostics are:
+
+```sh
+python check_silent_closure.py
+python reviewer_check_silent_domain.py
+python check_pure_loop_sliding.py
+python check_silent_sliding_domain.py
+python check_path_observation.py
+python check_local_cells.py
+```
+
+These check finite admission graphs, silent depth witnesses, labelled-word composition and reverse obstructions, scalar cylinder conservation, zero retention, finite port orders, local transition squares and rank-flattening coherence. They do not formally verify arbitrary coefficient categories, general well-foundedness or the full categorical theorems.
