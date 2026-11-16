@@ -99,6 +99,16 @@ The following extension changes the object interface rather than contradicting t
 
 Strong source inclusion J and guarded timing D are therefore related constructions, not a single strong source functor commuting with all feedback and substitution. Their common well-founded domain and the evaluated comparisons are explicit; unrestricted initialization sharing and a general completion characterization remain open. These arenas also retain the commuting-persistent-event hypothesis: nonproduct paid couplings do not by themselves import arbitrary nonserializable shared-world state updates from the separate local-joint runtime.
 
+## Raw initial paths and the coherent native family
+
+16. **`Raw_Initial_Histories_Prefixes_and_Control_Lifting.tex`** gives the initial-row prefix/control interface with raw horizon-zero histories equal to the initializer witness set, not its decoded state image. Exact initial-row maps and actual initializer coefficient arrows extend to normalized finite partial-terminal-body towers. Compatible program maps strictly reflect terminal domains; canonical backward control lifting retains zero and off-policy seed histories. A fixed complete policy has a scalar Borel probability on all raw paths, with continuous native pushforward and exact divergence preimages. No infinite coefficient tensor is supplied.
+
+17. **`Retained_State_Invocation_and_Periodic_Closure.tex`** relates a seeded, stopped unary retained-state machine to guarded invocation recursion through a full state-labelled writer grade. Forgetting internal grade labels is directed and can admit no reverse native map, already at an exact cost-two layer. Separately, finite-wire instantaneous closure of an n-step body is exactly its periodic raw-path restriction, summed over starting states. State intertwiners preserve seeded unfolding but need not preserve that equality restriction and state sum. Neither result identifies multi-child shared-state recursion or unrelated unclosed clocks.
+
+18. **`Source_Interaction_Feedback_Assembly_and_Contract_Ledger.tex`** assembles the strong source inclusion J, native open composition, whole-history paid controls, well-founded feedback, independent semantic retraction, and paid-delay functor D at their actual comparison strengths. It proves coherent independent terminating comparisons between finite delay-placement recipes and their guarded recurrences. Those are not operational arena maps or arbitrary shared-policy transports: the one/two-boot obstruction remains. A branching recurrent process with chosen diagonal frontier laws gives a fixed-primitive separation from independent execution. The E0–E6 ledger records the positive coherent family and its remaining characterization, boot-sharing and nonserializable shared-world assembly obligations, without declaring contract completion.
+
+The tensor-context recovery in these results is not the earlier product-coefficient family. The [directed tensor-to-product comparison](Tensor_Causal_Execution_and_Native_Comparison.tex) applies to matched raw execution skeletons with their full grades; it has an actual coefficient kernel and need not be invertible. Persistent commuting events, initial conditional products and the separate seed/stopping interfaces remain declared hypotheses, not generic conclusions about every local-joint runtime.
+
 ## Executable checks
 
 Run the accompanying component diagnostics, including:
@@ -133,3 +143,13 @@ python check_paid_delay.py
 ```
 
 They test finite seed associators, zero retention, birth stability, random closure, colored nesting, geometric paid delay and timing obstructions. Universal native algebra and coherence claims rest on the written proofs, not these finite enumerations.
+
+Native-family diagnostics:
+
+```sh
+python check_initial_prefix.py
+python check_retained_state_bridge.py
+python check_shared_branching_probe.py
+```
+
+These check finite noninjective initial maps, zero/T0 retention, an actual initializer-coefficient truncation square, unary grade/state and periodic-closure obstructions, and fixed-primitive independent/shared branching laws. They do not certify arbitrary native coherence or the measure-extension theorem mechanically.
