@@ -8,11 +8,19 @@ In Set, the construction supplies event/task-menu readiness. Local observer-memo
 
 The manuscript compares the result with the existing tree-relative-surjectivity proposition, supplies hidden-boundary/admission counterexamples, and credits the established categorical machinery. It is not a new feedback category, a fair-policy synthesis theorem, or contract completion.
 
+## Deriving profiles from primitive tests
+
+[Residual profiles and admission reflection](Residual_Profiles_and_Admission_Reflection.tex) constructs the coarsest componentwise profiles for declared primitive tests. With fixed native witness maps, compatible common profiles exist exactly when each test reflects along those maps and every target residual class has a source representative. This derives profile-defined admission from genuine local factor data; a hidden global oracle does not count as a local factor.
+
+A tree-surjectivity counterexample shows why profile refinement cannot always repair a boundary erased by the target. The result retains native witnesses and grades, and makes no novelty or arbitrary-context completeness claim.
+
 ## Verification
 
 The written proof and observer orientation were independently reviewed. Finite diagnostics exercise profile constraints, witness multiplicities, a failed admission comparison and a chronological observer. No proof-assistant verification or TeX compilation is claimed.
 
 ```sh
 python3 checks/check_observable_covers.py
+python3 checks/check_residual_profiles.py
 sha256sum -c MANIFEST.sha256
 ```
+
