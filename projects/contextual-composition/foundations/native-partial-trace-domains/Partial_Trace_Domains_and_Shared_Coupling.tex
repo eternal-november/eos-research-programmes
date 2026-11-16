@@ -1,0 +1,152 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}[theorem]{Proposition}\newtheorem{lemma}[theorem]{Lemma}
+\newcommand{\HM}{H_{\rm fin}}\newcommand{\HP}{H_{\rm prob}}
+\title{Native partial-trace domains, staged elimination, and shared coupling}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Status.} The written results passed independent adversarial review and exact finite rational diagnostics within the stated scope. No novelty, compilation, or formal-verification claim is made. The target is an actual partial-trace axiom package, not merely a restriction of outputs called feedback. The established finite-wire native writer trace is the ambient construction. The results below give its normalized trace class, exact staged-elimination tests, and sharp robust shared-coupling criteria. They do not provide arbitrary polynomial content, infinite iteration, or a free completion.
+
+\section{Source and the chosen partial-trace standard}
+Use the finite-endpoint native graded-writer bicategory of \emph{Finite-measure native feedback with retained writer grades} (PR77, source blob \texttt{51517c496be9ed6a31c1faa96ae82a95fbe98171}). A row at $(a,u)$ has an arbitrary raw set $W_{a,u}$, finitely supported nonnegative weights $\mu_{a,u}$, actual symmetric-monoidal context coefficients, and a body returning $(b,u^+,o)$. One full global writer family, including unused labels and all actual coefficient arrows, remains present. Its trace retains $(u,w)$ with $u^+(w)=u$ and their original weights and coefficients. Let $\HM$ denote this ambient bicategory and $\HP$ its locally full normalized sub-bicategory.
+
+The selected ordinary-category standard is Malherbe--Scott--Selinger, Definition 3.2 and Remarks 3.5--3.6, in the primary source \url{https://www.mathstat.dal.ca/~selinger/papers/ptrace.pdf}. Naturality and strength use directed Kleene equality: a defined left side requires a defined equal right side. Dinaturality uses bidirectional Kleene equality. Vanishing II has the explicit prerequisite that the inner trace is defined; only then is combined versus nested definedness equivalent. Vanishing I and yanking are total at their stated types. These distinctions are material, not weakened post hoc to fit this example.
+
+For clarity, write $x\rightsquigarrow_\partial y$ for directed definedness equality: if $x$ is defined, $y$ is defined and equal (or canonically natively isomorphic in the lifted formulation). This symbol is not a noninvertible native comparison. With normalized $G:A'\to A$, $K:B\to B'$ and $R:C\to D$, the two directed axioms used here have the orientations
+\[
+ K\,\operatorname{Tr}_U(F)\,G
+ \rightsquigarrow_\partial
+ \operatorname{Tr}_U\big((K\times1_U)F(G\times1_U)\big),
+\]
+\[
+ R\otimes\operatorname{Tr}_U(F)
+ \rightsquigarrow_\partial
+ \operatorname{Tr}_U(R\otimes F).
+\]
+Only the displayed direction is required; the reverse is not silently assumed.
+
+The native claim below is stated at its actual strength: the partial operation is a functor on full domain hom-subcategories, with the canonical native coherence isomorphisms restricted from $\HM$. Passing to native-isomorphism classes of one-cells gives the ordinary partial-trace axioms. This quotient is only a way to state the ordinary axiom package; it is not the semantic interface and is never used to erase native comparison arrows. No general definition or representation theorem for partially traced bicategories is asserted.
+
+\section{The normalized domain and native lift}
+For normalized $F:A\times U\to B\times U$, define its coincidence profile and closed mass
+\[
+ c_F(a,u)=\sum_{w:u^+(w)=u}\mu_{a,u}(w),\qquad
+ z_F(a)=\sum_{u\in U}c_F(a,u).
+\]
+Each $c_F(a,u)\in[0,1]$, but $z_F(a)$ can lie anywhere in $[0,|U|]$. Define
+\[
+ F\in\mathsf{Dom}_U(A,B)\quad\Longleftrightarrow\quad
+ z_F(a)=1\ \hbox{for every }a\in A.
+ \tag{D}
+\]
+On this domain the partial trace is exactly the ambient trace, without renormalization or conditioning.
+
+\begin{theorem}[Native normalized partial trace]
+The domain (D), with the inherited finite-wire trace, satisfies the preceding partial-trace package. At each fixed $(A,B,U)$ the domain is a full hom-subcategory, invariant both ways along every native cell, and trace is a functor into $\HP(A,B)$. The entire global writer and all actual context/content arrows are retained. This is the largest domain on normalized one-cells for which this particular ambient trace remains a normalized native one-cell.
+\end{theorem}
+\begin{proof}
+A fixed-loop native cell preserves the input loop value and its output loop value. Its raw map therefore both preserves and reflects the loop equation; exact pushforward restricts to the closed raw sets. Summing gives equality of $z_F$ and $z_{F'}$. Actual coefficient and writer maps restrict exactly as in the ambient construction. Thus the full domain and functor are well defined.
+
+Normalized processes are closed under ordinary composition and independent tensor. If the trace of $F$ is normalized, whiskering it by normalized external processes or tensoring it with a normalized process remains normalized. The ambient native naturality and strength isomorphisms therefore give the required directed definedness and equality. Ambient dinaturality identifies the two trace results by an actual native isomorphism; normalization is invariant under such an isomorphism, proving bidirectional definedness. Its witness rotation uses the actual context and global-writer symmetries, not equality of observed laws.
+
+Vanishing I and yanking have normalized identity/unit results in the ambient theorem. If the inner trace in vanishing II is normalized, it is a legitimate input to the second partial trace. The ambient nested-versus-joint native isomorphism then shows that the second result is normalized if and only if the combined result is. All coherence diagrams are restrictions of the proved ambient ones. Finally (D) is exactly the row-normalization condition on that ambient result, proving the stated maximality without a claim about other possible trace operations.
+\end{proof}
+This proof is the concrete native adaptation of the established inherited-subcategory mechanism, not a new general partial-trace principle.
+
+\section{Exact external action and definedness boundaries}
+Let $G:A'\to A$ be normalized, with raw row law $\gamma_{a'}$ and output $a(v)$, and let $K:B\to B'$ be normalized. Direct calculation gives
+\[
+ z_{(K\times1)F(G\times1)}(a')
+ =\sum_v\gamma_{a'}(v)z_F(a(v)). \tag{N}
+\]
+Thus preprocessing preserves an already valid trace domain, but can also rescue an invalid one. A pure inclusion may avoid bad rows. Even when every selected row is individually bad, a mixture can balance defects: mix equally a row with closed mass zero and one with closed mass two. This is a numerical statement about instantaneous matching, not a claim of causal execution adequacy.
+
+For an explicit pure restriction, let $A=\{0,1\}$, $B=1$, $U=\{0,1\}$. At external input zero let the deterministic loop update be constant zero, and at external input one let it be identity. Then $z_F=(1,2)$, so $F$ is not traceable, but restriction to the first input is. Strong bidirectional definedness naturality would fail; the selected standard asks only the valid directed implication.
+
+For a native square with external input $h:A\to A'$ and fixed loop, exact pushforward gives $z_F=z_{F'}h$. Hence the input-domain predicates satisfy $\{z_F=1\}=h^{-1}\{z_{F'}=1\}$. A nonsurjective input square need not turn a wholly admissible source into a wholly admissible target. Fixed-hom functoriality and external-square domain transport are distinct statements.
+
+Independent tensor gives the product of closed masses. Accordingly joint normalization can hold when separately traced factors are not normalized. None of these observations contradicts directed strength or conditional vanishing II.
+
+\section{A complete finite staged-elimination calculus}
+Let normalized $F$ have loop coordinates $(U_i)_{i\in I}$, with $I$ finite. For $S\subseteq I$, let $m_S(a,\mathbf u_{I\setminus S})$ be the total mass after the ambient trace closes exactly the coordinates in $S$:
+\[
+ m_S=\sum_{\mathbf u_S}\sum_w\mu_{a,\mathbf u}(w)
+       \prod_{i\in S}\mathbf1[u_i^+(w)=u_i]. \tag{M}
+\]
+Put $\mathcal A_F=\{S:m_S\equiv1\}$. The empty subset belongs to it.
+
+\begin{theorem}[Exact staged domains]
+For a chain $\varnothing=S_0\subseteq S_1\subseteq\cdots\subseteq S_r$, successively tracing the blocks $S_j\setminus S_{j-1}$ in $\HP$ is defined exactly when every $S_j\in\mathcal A_F$. Whenever defined, the result is canonically natively isomorphic to the ambient trace over $S_r$. Any two admitted chains with the same terminal subset give the same result with the ambient coherence. The set $\mathcal A_F$ need not be downward closed; joint admissibility does not require every intermediate cut to be admissible.
+\end{theorem}
+\begin{proof}
+The ambient trace laws identify the result of each prefix with closing its union of coordinates in $F$. Its total row mass is exactly (M). Induction gives the asserted iff and preserves all actual witness/grade maps. The concluding isomorphisms are the ambient tuple bijections and coefficient coherences, not quotients of execution histories.
+\end{proof}
+
+For a deterministic example with no outside input/output, take two bit wires and the transition table
+\[
+ (0,0)\mapsto(0,0),\quad(0,1)\mapsto(1,1),\quad
+ (1,0)\mapsto(0,1),\quad(1,1)\mapsto(0,0).
+\]
+There is exactly one joint fixed point, so the joint trace is normalized. Closing only the second wire gives masses $(2,0)$ indexed by the first input. Closing only the first gives $(1,0)$ indexed by the second input. Neither staged order starts with an admissible trace. This verifies why the inner-definedness prerequisite cannot be deleted.
+
+A native comparison with all external and loop interfaces fixed preserves every $m_S$: its raw map preserves and reflects each chosen coordinate equality, so restricted pushforward remains exact. Consequently any admitted elimination chain transports that comparison with its actual coefficient and full writer maps. A comparison that preserves only separate marginal laws does not supply this conclusion.
+
+The equations (M) are a finite linear admission system in the row weights for finite raw sets. For a finitely presented independent network they are sums of products of primitive row weights. A substitution preserving the complete open native process preserves these tests, whereas refactoring a jointly admissible network into intermediate partial traces additionally requires the corresponding chain of tests. This is the precise substitution obligation, not a claim that all graphical cuts preserve definedness.
+
+\section{All shared couplings: sharp normalization bounds}
+Fix one external input and $k\ge2$ normalized processes with finite nonempty loop sets $U_i$, individually traceable. Write $p_i(u_i)=c_{F_i}(u_i)$, so $\sum_{u_i}p_i(u_i)=1$. At every loop-input tuple $\mathbf u$, allow any probability coupling $\lambda_{\mathbf u}$ of the complete local raw witness laws. Choices for different input tuples are unrestricted. The joint raw set is the full product, including zero-weight points. Full writer grades and actual coefficient objects are retained; the following bounds concern its effect component.
+
+Let $Z(\lambda)$ be its total mass after all loops close. Then the complete possible interval is
+\[
+ L=\sum_{\mathbf u}\max\{0,\sum_i p_i(u_i)-(k-1)\}
+ \ \le Z(\lambda)\le\ 
+ U=\sum_{\mathbf u}\min_i p_i(u_i). \tag{B}
+\]
+Every value between these endpoints is attained. The statements are applied separately at each existing external input tuple. Empty external interfaces have vacuous normalization requirements; no profile criterion is asserted there. A nonempty external input cannot have a normalized trace over an empty loop set. The independent coupling yields $Z=\prod_i\sum_{u_i}p_i(u_i)=1$.
+
+\begin{proof}
+For each input tuple, the events $E_i=$ ``local output loop equals local input'' have probabilities $p_i(u_i)$. The probability of their intersection has precisely the elementary sharp bounds in (B): the upper bound is containment in every $E_i$; the lower bound is the union bound on complements. To attain the upper bound, realize all events as nested intervals in a common unit interval. To attain the lower bound, arrange complement sets of their prescribed sizes to cover as much of the unit interval as possible, giving union size the smaller of one and their total size. These constructions induce finite joint laws on the $k$ event indicators.
+
+Lift an event-indicator coupling to the full raw witnesses by using each local conditional law inside the chosen event or its complement; zero-probability cells contribute zero and need no selected positive law. Conditional laws are needed only for positive-probability indicator values; zero-probability values have zero joint mass. All original raw zero-weight points remain in the product carrier with weight zero. Finite support is preserved. Thus each row attains both bounds. Rows can be chosen independently, and convex interpolation gives the complete interval after summation.
+\end{proof}
+
+\begin{theorem}[Robust normalization under all rowwise couplings]
+Every compatible shared coupling is traceable if and only if at most one coincidence profile $p_i$ is non-Dirac. A Dirac profile here means one loop input has coincidence probability one and every other input has coincidence probability zero; it does not require the process's other outputs or raw witnesses to be deterministic.
+\end{theorem}
+\begin{proof}
+If all but one profiles are Dirac, any input tuple with a nonmatching deterministic coordinate has zero closed probability. At the remaining tuples all those events hold surely, leaving the sole remaining profile, whose sum is one. Conversely, if two profiles are non-Dirac, each has a positive entry strictly below one. Choose those entries and any positive entry of every other profile. At this row all event probabilities are positive and at least two are below one. The sharp lower and upper intersection bounds are then strictly different. Since row choices are independent, $L<U$. The interval contains one, so not every compatible coupling has closed mass one.
+\end{proof}
+For $k$ fresh-fair-bit loop processes, every profile has two entries $1/2$. Equation (B) gives the interval $[0,2^{k-1}]$, whereas independent coupling gives one. Thus individually admissible feedback does not imply robustly admissible shared feedback.
+
+\section{Normalization is weaker than native projection preservation}
+For actual native shared projections, additionally require affine symmetric monoidal context and writer coefficient categories (terminal tensor units), or supply the required projection arrows separately. Tensor products of the component coefficients and the full product writer family then have actual projections to every component. A shared coupling defines a native unclosed process with those marginal projection squares. After closure its raw projection to component $i$ is still well typed, but is native exactly when
+\[
+ \sum_{\mathbf u_{-i},\,\mathbf w_{-i}}\lambda_{\mathbf u}(\mathbf w)
+       \prod_j\mathbf1[E_j(\mathbf u,\mathbf w)]
+ =\mu_{i,u_i}(w_i)\mathbf1[E_i(u_i,w_i)]
+ \quad\text{for every }i,u_i,w_i. \tag{P}
+\]
+Equation (P) is indexed separately by every fixed external input tuple $(a_i)_i$ (suppressed in the notation) and every target closed raw atom $(u_i,w_i)$, including zero-weight atoms; for a nonclosed atom both sides are zero. The unclosed marginal squares change loop interfaces by the product projection $\prod_jU_j\to U_i$. Their preservation after closure is therefore an additional condition, not the ordinary fixed-loop functoriality or trace dinaturality axiom. These are concrete linear constraints on the retained rowwise coupling choices, stronger than $Z=1$. They keep the same supplied coefficient and full writer maps. Independent couplings satisfy them whenever all component traces are normalized, so the constrained family is nonempty. Nonindependent couplings can satisfy them as well.
+
+\begin{theorem}[Robust native projection criterion]
+Every compatible rowwise coupling has normalized closure and all the native projection cells (P) if and only if either:
+\begin{enumerate}
+\item every coincidence profile is Dirac; or
+\item exactly one coincidence profile is non-Dirac, and every other component's raw probability measure at its unique closed loop input is Dirac (additional zero-weight raw points are allowed).
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+With all profiles Dirac, only one loop-input tuple contributes positive closed mass. At that tuple all loop events hold surely, so its joint law has precisely the original component marginals, with arbitrary shared raw randomness still allowed. In the second case all other positive closed raw witnesses are forced, while the one remaining component contributes its complete standalone closed law. This proves sufficiency, including raw zero points, whose effect equations are zero but whose coefficient maps remain actual projections.
+
+If two profiles are non-Dirac, robust normalization already fails. Suppose just profile $j$ is non-Dirac but component $i\ne j$ has a non-Dirac raw law at its unique closed loop input. Choose a positive raw atom of that law with weight strictly between zero and one, and choose a positive coincidence entry of $p_j$ strictly below one. At the loop tuple with these choices and all remaining deterministic closed inputs, the probability of the intersection of that atom with $E_j$ can vary strictly between its sharp bounds while every raw marginal remains fixed. The full-witness lifting used above realizes this variation. Hold all other input-row couplings fixed. It changes the left side of (P) for that specific closed atom but not its prescribed right side. Hence not every coupling preserves that native projection, even though total normalization is robust in this case.
+\end{proof}
+
+For an explicit separation, let component one be a fresh fair bit on a bit loop. Let component two have a singleton loop and an additional fair raw bit $z$. At input $u$ of component one, choose the coupling which gives $(u^+,z)=(u,0)$ with weight $1/2$ and $(1-u,1)$ with weight $1/2$. Both raw marginals are fair at every row. Closing the first loop keeps precisely $z=0$ at both values of $u$, each with weight $1/2$. The joint closed mass is one, but the second raw marginal is now concentrated at zero, violating (P). This distinction concerns full native comparison, not only the existence of a normalized trace result.
+
+\section{Position in the extension problem}
+The partial trace is a standard-axiom operation on the normalized source, lifted before forgetting native maps. Its exact cut domains explain which substitution schedules are defined. The sharp coupling theorems separate three judgments: individual component traceability, joint trace normalization, and preservation of actual closed marginal comparison cells. Chosen shared interactions can be admitted by the explicit constraints (P), not by assuming that component marginals settle them. These conditions do not construct a full shared-interaction distributive law or arbitrary polynomial extension.
+
+The normalized partial trace also differs from the all-prior coupling-span closure: a fresh fair bit on a bit loop has $z=1$ and hence a normalized partial trace, while every prior assigns mass $1/2$ outside the equality event, so the whole-law span closure has no admitted component. Normalization after summing input loop values and requiring one prior's entire law to be closed are distinct interfaces.
+
+All loops are finite and matching is instantaneous. No repeated-execution, fixed-point-selection, infinite-run probability law or convergence result is inferred. The domain maximality is relative to the existing ambient trace; other partial feedback doctrines are not classified. The robust coupling classifications assume the full rowwise coupling interface and can weaken under correlated-across-input or physically restricted admission policies. There is no novelty or formal-certification claim.
+\end{document}
