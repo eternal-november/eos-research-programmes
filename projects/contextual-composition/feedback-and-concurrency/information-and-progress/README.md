@@ -32,3 +32,7 @@ python3 checks/check_information.py
 python3 checks/check_fairness.py
 sha256sum -c MANIFEST.sha256
 ```
+
+## Local certificate construction
+
+[Observable covers and local observers](../observable-covers/README.md) derives readiness images from local profile covers and profile-defined raw assembly, and history-information factorization from observer update squares. Native law/grade transport, actual admission adequacy, goals and fair-policy existence remain separate obligations.
