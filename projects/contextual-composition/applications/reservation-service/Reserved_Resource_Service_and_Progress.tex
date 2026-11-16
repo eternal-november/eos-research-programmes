@@ -1,0 +1,159 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,geometry}
+\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newcommand{\Reg}{\operatorname{Reg}}
+\newcommand{\Free}{\operatorname{Free}}
+\title{Reserved Resource Service: Native Replacement and Unbounded Fair Progress}
+\date{15 November 2026}
+\begin{document}\maketitle
+
+\paragraph{Scope.} This is an operational resource interpretation of the established native interaction, feedback and contextual-comparison construction. It introduces no new categorical structure. One named reusable buffer pool, finitely many recurrent clients and a small reservation protocol suffice. Its physical state is the declared software buffer state, not a claim about an unmodelled actuator or energy source. Conditional primitive contracts, scheduler assumptions and resource assumptions are explicit. Refusal, waiting, infinite delay and in-flight effects remain behaviors outside or inside the appropriate positive domain.
+
+\section{One pool, recurrent requests and actual intermediate availability}
+
+Fix a resource identity $R$, capacity $K\geq1$ and a finite client set $I$ with at least two members. Concrete buffer positions have stable private identities $U_R=\{(R,1),\ldots,(R,K)\}$. Every client refers to this same pool, not to a separately allocated copy. Let $\tau=(R,i,n)$ be a fresh request/reservation identity, where $n$ is client $i$'s monotonically increasing generation. Each client is Idle or Waiting$(\tau)$ and has at most one unacknowledged request. Its next-generation counter prevents reuse of old identities.
+
+The concrete state retains:
+\begin{itemize}
+\item a free-position set $F\subseteq U_R$ and resource-wide health $h\in\{\mathrm{up},\mathrm{down}\}$;
+\item a FIFO request queue $Q$, and records $\Reg(\tau)=(R,i,u,\varphi)$ with distinct assigned positions $u$;
+\item phases $\varphi\in\{\mathrm{Reserved},\mathrm{Applied},\mathrm{Notified},\mathrm{Cooling}\}$, an acknowledgement queue for each client, and its persistent received-receipt set;
+\item a durable output store $E$ keyed by $\tau$, closed-reservation receipts $Z$, client counters/status and the full event/history records;
+\item a separate cumulative cost coordinate $C$ for declared nonnegative action charges.
+\end{itemize}
+Here $E(\tau)$ is the actual committed output item in this software model, not an unsupported claim that an external action happened. A different external-effect interpretation would owe its effect/logging correspondence. Initially $F=U_R$, all queues/registries/output and receipt sets are empty, clients are Idle, generation counters and cost are zero, and health is a supplied initial bit. At every finite prefix these records are finite; generations and histories are unbounded. The smallest instance exhibiting a different allocator law has $K=2$ and two clients.
+
+All four open phases occupy their actual position:
+\[
+ F\ \dot\cup\ \{u_\tau:\tau\in\operatorname{dom}\Reg\}=U_R.
+ \tag{P}\label{eq:partition}
+\]
+Put $f=|F|$. Usable availability is $a=f$ when up and $a=0$ when down. A request identity or client permission is not a free position, and an acknowledgement is not cleanup. In particular Cooling remains occupied even after its client is Idle and has submitted a later request.
+
+Permissions in this model restrict which client/manager actions may address a reservation. They are interface assumptions, not a proof of host access control. The actual inventory and binding invariant \eqref{eq:partition} are separate. Resource-wide failure preserves positions and all records; it does not manufacture a free buffer or cancel a pending effect.
+
+\section{Microstep semantics}
+
+The following transitions are atomic at the displayed granularity. Whole service methods are not atomic: other clients and health changes can interleave between every pair of transitions.
+
+\begin{description}
+\item[Submit$(i)$.] An Idle client creates $\tau=(R,i,n_i)$, increments $n_i$, appends $\tau$ to $Q$ and becomes Waiting$(\tau)$. Submission is permitted while the pool is down or full; acceptance into a queue is not allocation.
+\item[Reserve$(\tau)$.] Requires $\tau$ to be the FIFO head, health up and $F\neq\varnothing$. Select one $u\in F$, remove the head and $u$, and insert $\Reg(\tau)=(R,i,u,\mathrm{Reserved})$. This checks and reserves one actual position in the same transition.
+\item[Apply$(\tau)$.] Requires Reserved and health up. Atomically insert the keyed output $E(\tau)$ and enter Applied. The primitive contract links the actual output-store update to this phase change. A repeat for an identity already in $E$ returns AlreadyApplied without repeating the output effect.
+\item[Publish$(\tau)$.] Applied becomes Notified and one matching acknowledgement is appended to its owner's queue. The reservation and output remain.
+\item[Deliver$(\tau)$.] Consume the owner's matching acknowledgement, add the actual received receipt, change that client from Waiting$(\tau)$ to Idle, and enter Cooling. Free capacity does not change. In this model a client has at most one unacknowledged request, so unrelated client queues cannot obstruct this delivery.
+\item[Clean$(\tau)$.] Requires Cooling and health up. Perform the declared buffer reset, return $u_\tau$ to $F$, remove the active reservation and retain a closed receipt in $Z$. This guard does not depend on the owner's current Idle/Waiting status. Cleanup of an old reservation is not disabled by its owner's next request.
+\item[Health.] Down and Up change health only. Reservations, output items, acknowledgement messages and cooling obligations survive. There is no damage, theft or change of total capacity in this base interpretation.
+\end{description}
+
+Public Probe/Retry calls validate resource, owner, identity and readiness and return explicit refusal or AlreadyApplied responses without erasing existing obligations. Retry on a Reserved request while down reports not-ready and retains the record; such a response is not a phase advance. Successful phase commands themselves are supplied on their declared enabled interfaces. A disabled or duplicate Clean is not an admitted successful command; status/replay calls on a closed identity cannot free capacity again. No total cancellation or unguarded cleanup API is inferred. A busy or down FIFO head instead remains queued when Reserve is disabled. Refusal and blocking are distinct. Duplicate completion/cleanup cannot free a position twice. Cancellation, acknowledgement loss and owner crashes are not silently implemented as release: they require explicit additional rules, and the progress theorem below does not cover them. A no-op Tick is admitted, so unfair nonproductive infinite executions are represented.
+
+The positive protocol's clients recursively submit again after a received receipt. Return from an acknowledgement does not imply that the old buffer is clean; the old Cooling record can coexist with the next queued request. Requests and acknowledgements retain their identities until their specified consumption. No garbage collection of replayable output/receipt identities is part of this model.
+
+At each state the scheduler selects a public command before any allocator draw. The uniform allocator has raw Reserve witnesses $u\in F$ with probability $1/|F|$. The first-free allocator has the singleton raw witness $\min F$ with probability one. All other successful, refused and health transitions are deterministic. A fixed compatible causal strategy, or explicitly included scheduler innovations, supplies a finite-prefix law; demonic commands are not assigned an invented joint probability distribution.
+
+\begin{proposition}[Resource and effect invariants]\label{prop:resource-invariants}
+From the specified initial state, all admitted transitions preserve \eqref{eq:partition}, request/owner/generation identity, the phase-consistent acknowledgement and receipt records, and at most one output insertion per $\tau$. In particular
+\[
+ f+|\operatorname{dom}\Reg|=K,\quad
+ f_n=f_0+\#\mathrm{Clean}_{<n}-\#\mathrm{Reserve}_{<n},\quad 0\leq f_n\leq K.
+ \tag{B}\label{eq:balance}
+\]
+The counts in \eqref{eq:balance} are successful actions only.
+\end{proposition}
+\begin{proof}
+Reserve moves one free position into a fresh binding. Clean moves exactly that bound position back and leaves a closed receipt preventing a second successful cleanup. Other transitions preserve the partition. Fresh generations and the client waiting guard give unique submitted identities; FIFO and phase guards consume each pending record once. Apply inserts only at Reserved with no previous output; its phase change prevents a second successful Apply, and the replay rule preserves the existing item. Publish creates one acknowledgement and Deliver removes it while retaining a receipt; no later Submit removes that receipt. Down, Tick and refusals preserve these facts. Induction proves the invariant and telescoping the Reserve/Clean changes gives \eqref{eq:balance}.
+\end{proof}
+
+Cumulative cost obeys its own equation $C_n=C_0+\sum_{k<n}c(\ell_k)$, for the declared action charge $c$. Neither $C$, $|E|$, final free count nor possession of a client permission determines intermediate availability. For $K=1$, a delivered but Cooling request has $f=0$, while after Clean it has $f=1$ even though the output and received receipt are unchanged. Health can make availability zero with $f=K$. A model retaining only final balance can miss an overlapping reservation that was impossible at its execution time.
+
+\section{Native interpretation and component replacement}
+
+Use the established original presentation with $T=\mathcal D_{\mathrm{fin}}$ and terminal context/content coefficient categories. Each command is interpreted on its actual guarded input interface. Context witnesses are allocator choices or singleton deterministic witnesses; the writer retains the command, resource/reservation identities, response, cost and transaction record. Pure history frames retain the entire intermediate state. Public resource observations include $R,f,h$, every request/owner/phase, pending messages, output store and stable receipt sets.
+
+Construct local joins, rather than postulating a global state square. Reserve's transaction $(R,\tau,u)$ is shared by FIFO removal, free-set removal, registry insertion and its response; their matching graph carries the actual allocator law. Apply joins the Reserved-to-Applied update and actual output insertion over $(R,\tau)$. Publish joins phase update with acknowledgement enqueue. Deliver joins removal of that same message, the owner's receipt/Idle update and Notified-to-Cooling. Clean joins removal of the binding and return of its actual position. Health changes are framed by all the unchanged obligations. Each transaction is counted once and is not independently resampled across its views.
+
+The atomicity of each local transaction is a supplier of this operational interpretation. A broken check-then-reserve implementation could allocate one buffer twice; categorical composition does not implement a lock, transaction or actuator. The theorem applies once the primitive interface correctly represents those actual changes. Intermediate service phases remain exposed to concurrency.
+
+Define the reference by replacing $F$ with $f$ and erasing the assigned position in each reservation; retain every other displayed field. Its invariant is $f+|\Reg|=K$. Its Reserve decrements $f$ and creates the same reservation, and Clean alone increments $f$. Let
+\[
+ \alpha(F,\Reg,Q,E,\ldots)=(|F|,\operatorname{erasePosition}(\Reg),Q,E,\ldots).
+ \tag{H}\label{eq:resource-projection}
+\]
+Extend $\alpha$ pointwise to retained histories and transaction records, erasing their private position fields too. This map never merges different resource identities, owners, generations or phases. The concrete histories still retain actual position identities and bindings; the reference hides only these private positions relative to a pool interface.
+
+The quotient requires downstream service, health, charges and admitted observations to be insensitive to exchanging positions. The allocator itself may use a private order: first-free is not permutation-equivariant, but each allowed choice must have the same projected update. Declared equal action charges are a premise of exact cost preservation, not a claim about measured implementation expense. Resource-wide health is retained. A context selecting a named position, observing its wear, or imposing position-specific faults is outside this quotient. The reference is a specification; it does not eliminate the concrete backend's binding map.
+
+\begin{theorem}[Local native comparison and recurrent closure]\label{thm:resource-native}
+Both the uniform and first-free buffer managers admit directed native comparisons to the reference. These comparisons preserve the entire reference resource/obligation history, ordinary command menus, service-task enabledness and firings, and the declared public observations. Generated composition, admitted interference and guarded recurrent clients preserve these comparisons.
+\end{theorem}
+\begin{proof}
+On Reserve map each concrete chosen position to the reference singleton witness. Its pushed mass is $\sum_{u\in F}1/|F|=1$ for uniform selection and $1$ for first-free selection. Deleting $u$ changes $|F|$ by one; the same fresh $\tau$, owner and Reserved phase are installed. These are the component boundary/body equations for the local join. On Clean, the still-bound position is returned exactly once, changing the count by one. Apply, Publish, Deliver and health/refusal rows preserve the same named records, so their component squares commute with $\alpha$. Unaffected fields are framed.
+
+Every guard is a predicate of retained data: identity/owner/generation, FIFO head, positive free count, health, phase, matching message, output and receipt records. Hence guards and service-task enabledness both reflect, not merely preserve. Each transition retains its public task label and advances one real event on both sides. Public policies factor through $\alpha$ by hypothesis; private position choice remains inside the allocator's supplied primitive effect.
+
+The existing coefficient-limit/local-join and generated native-comparison theorems now construct the dispatcher cell and full next-step law. The normalized effects and terminal coefficient augmentations meet the existing native history-prefix theorem. Include client control and pending messages in the single retained state; seeded guarded recurrence therefore transports every finite prefix and compatible infinite raw path. A blocked/quiescent observation uses the previously proved marked stopping convention, never a new physical idle transition. No whole-system kernel square or eventual completion is a premise.
+\end{proof}
+
+The consequential replacement diagram is
+\[
+ \mathsf{Concrete}_{\rm uniform}\longrightarrow
+ \mathsf{Reference}_{\rm count,records}
+ \longleftarrow\mathsf{Concrete}_{\rm first}.
+ \tag{R}\label{eq:replacement-cospan}
+\]
+It is not a fictitious direct cell identifying different concrete assignments. When at least two positions are free, the implementations have genuinely different position-choice laws; with one free position they coincide. Under a common public context/strategy, both push to the same reference finite-history law. Each reference step lifts from any related concrete state: positive count supplies a free position, and retained bindings/phases supply all other operations. Thus both have the reference's public raw possibilities as well. This licenses replacement of the allocation component while reusing one reference proof; it claims neither a performance improvement nor removal of actual physical tracking.
+
+\paragraph{Exact boundary witnesses.} Two concrete states with free sets $\{u\}$ and $\{v\}$ can have identical reference records but differ for a request specifically naming $u$. The repair is to retain the distinguishing position/health information, not add a new categorical operation. Erasing Cooling is also invalid: an acknowledged old reservation still occupies capacity when its client submits again. Erasing all replay evidence can allow duplicated effects or double release. A particular field $E$ may be reconstructible from other retained records; the obligation is sufficient persistent identity/effect information, not an unconditional claim that one exact field is indispensable. Deleting a lookup field without replacing its guard is not a valid quotient.
+
+\section{Unbounded progress with explicit premises}
+
+The positive domain has these assumptions:
+\begin{enumerate}
+\item $K\geq1$, finitely many live clients, FIFO admission, no position destruction/theft, and no operation stealing another reservation's position.
+\item After some finite execution index the resource remains up. This is an explicit resource-regime assumption, not a consequence of logical authority or fairness. Apply and Clean then have their specified successful local behavior.
+\item Acknowledgements are reliable and the matching client can receive. Cleanup needs no second allocation and is independent of the owner's subsequent request. No cancellation, crash or unbounded loss silently removes these obligations.
+\item Weak fairness holds for each recurrent Submit$(i)$, each admitted head Reserve$(\tau)$, and each reservation phase-advance task. A failed/refused call is not a successful phase firing. Other clients, probes and Tick may run, but cannot indefinitely starve a continuously enabled required task.
+\end{enumerate}
+A service task is enabled by its successful-transition guard, not by the mere ability to attempt an API call returning refusal; Refused/AlreadyApplied responses do not fire that service task. Weak fairness means that a task enabled at every state of an infinite suffix fires infinitely often. The task family is countable because reservations are fresh; each particular argument below uses only its named tasks. There is no bound on scheduling delay, no deadline and no elapsed-time or non-Zeno conclusion. A round-robin scheduler over the finite currently pending service/client tasks with permanently up resource is an inhabited example of this regime.
+
+\begin{theorem}[Every accepted request eventually completes and releases]\label{thm:resource-progress}
+In the count-and-record reference, under these assumptions, every valid submitted $\tau$ eventually has its actual output item, received acknowledgement and closed-cleanup receipt. With recursive fair Submit, every client has infinitely many such completed generations. The theorem holds on all admitted fair raw executions, not only positive-probability or successful samples.
+\end{theorem}
+\begin{proof}
+Work after the finite recovery index; earlier reservations and queued requests are still retained. For an active $\tau$ give its phases ranks $4,3,2,1$, and give Closed rank $0$. The next phase action stays enabled until taken: Apply needs up; Publish needs the retained output/Applied record; Deliver has its reliable matching acknowledgement and waiting owner; Clean needs Cooling/up but not Idle. Other reservations and new tail requests cannot disable these guards. Weak fairness and the finite descending phase chain therefore close every already granted reservation. This lemma does not depend on another request obtaining a buffer.
+
+Now fix a request at the FIFO head. If no slot is free, choose any current reservation; its phase lemma eventually cleans it. While the chosen request remains head, no different Reserve can consume that free slot. The head's Reserve is then continuously enabled and fires. Thus each head is granted and subsequently closes. For an arbitrary queued request there are finitely many predecessors, and new submissions append behind it. Induction over that finite position gives its grant and closure. This is not a circular premise that earlier clients will eventually finish: their progress was proved from the independent phase lemma.
+
+After receiving an acknowledgement a client becomes Idle; its next Submit remains enabled until it fires, independently of health and of the old reservation's cleanup. Fair Submit creates its next generation. Applying the per-request argument and induction over generations gives infinitely many receipts and closures for every live client. Closed and received-receipt predicates are persistent, unlike the transient Idle state.
+\end{proof}
+
+The raw model includes the excluded behaviors. Permanent Down can block a queued request or leave an occupied Cooling buffer forever. Tick-only scheduling after a reservation can diverge without completing it. Repeated refusal while down retains the reservation. Even infinitely recurring Up does not suffice with only weak service fairness: alternate Up/Down and never take the intermittently enabled Apply; it is never continuously enabled. A different positive theorem would need stronger fairness or persistent availability, not the slogan that the resource is repeatedly available. Lost acknowledgements, destroyed positions or cleanup waiting for another allocation likewise need different premises/rules; they are not repaired by the existing proof.
+
+\section{Transport of the progress guarantee through replacement}
+
+Let the observation include the stable predicates $\tau\in E$, $\tau\in\mathrm{Received}$ and $\tau\in Z$, as well as current availability and pending records. The maps \eqref{eq:resource-projection} reflect all three goals exactly.
+
+\begin{theorem}[Fair progress survives the component replacement]\label{thm:resource-progress-transfer}
+Every weakly fair concrete execution of either allocator satisfying the resource assumptions has the request-specific progress of Theorem~\ref{thm:resource-progress}. Replacing the uniform allocator with first-free under the declared public contexts preserves that guarantee without a new system-level completion proof.
+\end{theorem}
+\begin{proof}
+Theorem~\ref{thm:resource-native} supplies a total raw path map and the same event clock $\ell(n)=n$. For every task $j$ and prefix, reference enabledness implies concrete enabledness, and a concrete $j$-firing maps to the same reference firing. The existing all-prefix fairness-transport argument is pointwise in $j$: if a reference task were continuously enabled and indefinitely starved, its concrete counterpart would be too, contradicting source fairness. This applies to the countable task set without importing a finite-state specialization. Health and resource assumptions, FIFO identities and reliable messages are retained, so the image is a fair reference execution in the positive domain.
+
+Apply the single reference progress theorem and reflect its persistent output/receipt/closure goals. This works for both legs of \eqref{eq:replacement-cospan}; no separate concrete liveness induction is required. The generated contextual comparison also gives public finite-law preservation under compatible policies. The raw progress conclusion needs no completed infinite probability object; if a separate probability interpretation assigns probability one to the fair/resource-assumption domain, it inherits the corresponding almost-sure conclusion under its own measure hypotheses.
+\end{proof}
+
+This instantiates the established information/readiness/progress interface: conditional native laws, observation factorization, all-prefix task reflection, firing preservation, identity-clock productivity and goal reflection. A terminal-state balance comparison would not supply those fields. Resource identity, reserved capacity, applied-but-unacknowledged effects and cooling debt are exactly the information consumed by the proof.
+
+\section{Evidence, reuse and remaining limits}
+
+The categorical inputs and theorem proofs remain in \path{../../foundations/local-joint-comparison/Local_Joint_Comparison_and_Generated_Interference.tex}. The fairness-transport argument is the pathwise theorem in \path{../../feedback-and-concurrency/information-and-progress/Information_and_Progress_Native_Comparisons.tex}; it has an arbitrary task set. The finite-state combined-policy theorem is not silently applied to unbounded generations. The retry-capability development motivates retention of applied identities but its finite serialized theorem is not imported as concurrent progress.
+
+The diagnostic encodes a full reservation identity as the retained pool identity plus a client/generation pair, and a position as that pool plus its local index. It reconstructs closed receipts as received identities no longer in the active registry, and uses one unit of cumulative work per successful Apply. These are explicit representations of the displayed fields, not forgotten obligations. Its common logical phase rules are a shared specification; the check compares concrete-position and reference-count operations, not two independently implemented physical backends.
+
+The accompanying exact diagnostic checks small capacities/clients, local native effect/body maps, invariant preservation, task/guard reflection, concrete allocator replacement and meaningful failure cases. Bounded exploration is not the proof of unbounded service. The new proof obligations are the software-resource interpretation, local transaction suppliers, observation boundary and fair/resource progress argument; no new feedback or interaction category is required.
+
+This supplies a recursive/concurrent resource-and-progress interpretation and a conditional transported guarantee relevant to RC6. It does not certify a physical pool, validate a host implementation's atomicity/authentication, prove a resource-independent deadline, cover arbitrary cancellation/loss or complete every application obligation of the research programme.
+\end{document}
