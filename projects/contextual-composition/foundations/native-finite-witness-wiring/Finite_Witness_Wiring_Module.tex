@@ -1,0 +1,133 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newcommand{\Fin}{\mathbf{FinSet}}
+\title{Finite witness wiring on native finite-measure systems}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Status and source boundary.}
+This independently reviewed written construction is an explicit native adaptation of the established span/variable-sharing and loose-module patterns, not a claim to invent those patterns. It uses the finite-measure writer doctrine of \texttt{Finite\_Measure\_Native\_Feedback.tex} (PR77) and the general module interface of Libkind--Myers, \emph{Towards a double operadic theory of systems}, arXiv:2505.18329v2, Definition 4.1 and Explication 4.2, \url{https://arxiv.org/html/2505.18329v2}. No compilation or proof-assistant certification is claimed. The normalized all-coupling bridge of PR82 is different: its composition comparison is oplax, whereas the present action will be pseudo. This note establishes neither the complete original polynomial-content case nor general v0.2 completion. The input-cartesian condition below is exact for the declared witness-map recipe and all finite-measure states; it is not a classification of every possible wiring semantics.
+
+\section{An interaction doctrine specified without native systems}
+Define a pseudo double category $\mathbb W$ as follows. Objects are finite sets, tight arrows are arbitrary functions, and loose arrows $X\rightsquigarrow Y$ are finite spans
+\[w=(X\xleftarrow{s}U\xrightarrow{t}Y).\]
+A square $w\Rightarrow w'$ over $u:X\to X'$ and $v:Y\to Y'$ is a function $h:U\to U'$ with $s'h=us$ and $t'h=vt$, subject to the independent condition that
+\[U\longrightarrow X\times_{X'}U',\quad z\longmapsto(s(z),h(z))\tag{PB}\]
+is bijective. In words, a target wiring witness and an original input determine exactly one original wiring witness. Compose loose arrows by pullback and tensor them by cartesian product. Identities are identity spans.
+
+\begin{proposition}
+These operations form a symmetric monoidal pseudo double category.
+\end{proposition}
+\begin{proof}
+Vertical composition of squares preserves (PB) by pullback pasting. For horizontal composition of $w:X\leftarrow U\to Y$ and $z:Y\leftarrow V\to Z$, suppose both squares obey (PB). Given $x\in X$ and a target composite witness $(a',b')\in U'\times_{Y'}V'$ over $u(x)$, lift $a'$ uniquely to $a\in U$ over $x$. Then lift $b'$ uniquely to $b\in V$ over $t(a)$, since its image in $Y'$ is $t'(a')$. This uniquely lifts the entire composite witness. Identity squares satisfy (PB). Associators and unitors are the canonical pullback tuple bijections. The product of two bijections (PB) verifies tensor closure. Pullback reassociation, product interchange and symmetry commute on named tuple coordinates, giving the pseudo-double and symmetric-monoidal coherence. No probability or native coefficient is involved in this doctrine.
+\end{proof}
+
+\section{Systems and their native maps}
+Fix symmetric monoidal categories $\mathcal V$ and $\mathcal D$. A system with finite interface $X$ is a native finite-measure writer state: a possibly infinite raw set $W$, a finitely supported weight $p:W\to\mathbb R_{\ge0}$, context coefficients $C_w\in\mathcal V$, one entire global writer grade $Q=(O,(D_o))$, and body
+\[(a,o):W\to X\times O.\]
+Keep unused writer labels and zero-weight raw witnesses. A system map over $u:X\to X'$ consists of a raw function $r:W\to W'$, actual coefficient maps $C_w\to C'_{r(w)}$, and one global writer map $(q,\beta):Q\to Q'$, satisfying
+\[r_*p=p',\qquad a'r=ua,\qquad o'r=qo.\]
+These maps form a category $\mathsf S$ over $\Fin$. Its tensor is independent native tensor: raw pairs, product weights, context tensor, and full global writer tensor. The interface is $X\times Y$. The unit has singleton raw and writer carriers, weight one, and unit coefficients. This is precisely the state fragment of the finite-measure writer source, including its actual maps, rather than its output-law shadow.
+
+For $w=(X\leftarrow U\to Y)$ act on $S$ by
+\[S\cdot w:\quad W_w=\{(b,z)\in W\times U:a(b)=s(z)\},\quad p_w(b,z)=p(b),\quad C_{b,z}=C_b.\tag{A}\]
+The writer grade is exactly $Q$, its returned label is $o(b)$, and its external output is $t(z)$. Because $U$ is finite, finite support survives. The wire witnesses carry unit resource and writer data; no coefficient or grade is summed away. Wire multiplicity is counting multiplicity, not normalization or conditioning.
+
+\begin{theorem}[Native finite-witness wiring action]
+The preceding data define a symmetric monoidal loose right module of systems over $\mathbb W$. Explicitly, the projection $p:\mathsf S\to\Fin$ is strong symmetric monoidal, and the strong symmetric monoidal action is
+\[A:\mathsf S\times_{\Fin,s}\mathbb W_1\longrightarrow\mathsf S,\qquad pA=t\pi_2,\]
+with the invertible action associator and unitor proved below. On a compatible system map $r$ and wiring square $h$, the induced raw map is
+\[(b,z)\longmapsto(r(b),h(z));\tag{M}\]
+its native coefficient and global writer maps are the original ones. All finite pure interface functions occur as tight maps. All native globular system maps are retained.
+\end{theorem}
+\begin{proof}
+For a target witness $(b',z')$, each $b$ with $r(b)=b'$ satisfies $u(a(b))=a'(b')=s'(z')$. By (PB) there is exactly one $z$ with $s(z)=a(b)$ and $h(z)=z'$. Consequently the total weight in the fibre of (M) is
+\[\sum_{b:r(b)=b'}p(b)=p'(b'),\]
+the required target weight. The two commuting wiring squares prove the output body equation, and the global writer body equation is inherited from $r$. The coefficient maps are literal given arrows, so nonfaithful coefficient carriers cause no issue.
+
+Functoriality on system and wiring maps follows from coordinatewise composition, with no chosen lifts used in (M). The pullback condition is used only in its effect proof. Acting first by $X\leftarrow U\to Y$ and then $Y\leftarrow V\to Z$ gives raw tuples $((b,z),y)$; acting by the composite gives $(b,(z,y))$. Their matching equations, weights, coefficients and entire writer grade agree. Reassociation is therefore a native isomorphism. Acting by an identity span has raw pairs $(b,a(b))$, canonically isomorphic to $b$. Their pentagon and triangle agree on all coordinates and on the unchanged writer maps. Naturality follows from the same raw maps.
+
+For tensor, the map $((b,z),(c,y))\mapsto((b,c),(z,y))$ is a bijection of matching raw carriers. Weights are $p(b)p(c)$ on both sides, coefficients are $C_b\otimes E_c$, and global writer grades agree up to their specified monoidal constraints. All compatibility diagrams reduce to tuple bijections and symmetric monoidal coherence in $\mathcal V,\mathcal D$. This includes empty raw carriers: equality of global writer structural maps is still checked by monoidal coherence, not inferred from an empty body.
+\end{proof}
+
+Each pure function $u:X\to Y$ has its graph companion $X\xleftarrow{\mathrm{id}}X\xrightarrow{u}Y$. The two usual companion binding squares satisfy (PB), respectively by an identity square and $X\cong X\times_Y Y$; their equations are the corresponding identity tuple maps. These marked companions retain the pure interface inclusion. No full equipment or existence of all conjoints is asserted.
+
+\section{Exact necessity of the comparison restriction}
+\begin{theorem}[Maximality for the fixed native recipe]
+For a commutative map of finite spans $(u,v,h)$, the raw map (M) is mass-preserving for every native system map over $u$ if and only if (PB) holds. Thus no larger class of wiring squares can use this same induced raw map and preserve all finite-measure native systems exactly.
+\end{theorem}
+\begin{proof}
+Sufficiency is the previous fibre computation. For necessity fix $x\in X$ and take a singleton unit-weight, unit-coefficient, unit-writer system at $x$, mapping by the identity raw function to the corresponding singleton system at $u(x)$. The acted-on map is the restriction
+\[h:s^{-1}(x)\longrightarrow(s')^{-1}(u(x)).\]
+Every source and target raw witness has weight one. Exact pushforward holds precisely when every target witness has exactly one preimage. Varying $x$ proves (PB). If $X$ is empty, the same claim is vacuous and the relevant pullback is empty as well. The proof does not rely on a positive-support quotient.
+\end{proof}
+
+For example, spans $1\leftarrow\{0,1\}\to1$ and $1\leftarrow1\to1$ admit a collapse map of apexes but violate (PB). Acting on the unit-weight singleton gives total weights two and one. There is no exact mass-preserving native cell between the resulting systems with that direction. This is a comparison-interface obstruction, not a failure of the action on either individual wiring.
+
+\section{Typed variable-sharing cospans as a specialization}
+Let ports be finite sets labelled by chosen finite value types, and let port maps preserve types. Write $|P|$ for the finite set of assignments to the ports of $P$. A typed cospan $P\xrightarrow{i}N\xleftarrow{o}Q$ determines the finite span
+\[|P|\xleftarrow{i^*}|N|\xrightarrow{o^*}|Q|.\]
+Pushout gluing of cospans becomes pullback of assignments, yielding the composition comparison. Disjoint union of ports becomes cartesian product of assignment spaces.
+
+A reversed map of cospans consists of $f:P'\to P$, $g:Q'\to Q$, $k:N'\to N$ with $ki'=if$ and $ko'=og$. It gives a wiring square with tight maps $f^*,g^*$ and apex map $k^*$. Such a square is admitted exactly when its input assignment square is a pullback. A sufficient combinatorial condition is that the corresponding input square of port sets is a pushout. This condition is closed under vertical/horizontal pasting by the same universal-property argument; the full semantic pullback condition is the exact class consumed by the action. For fixed degenerate types it can be weaker than a combinatorial pushout: if every type is singleton, every assignment space is singleton, irrespective of the port square. Therefore no claim of combinatorial necessity is made.
+
+If every type occurring has at least two values, the semantic condition is equivalent to that combinatorial pushout. Indeed, let $T=P\amalg_{P'}N'$ and let $c:T\to N$ be the induced typed map. The assignment pullback is $|T|$, and its comparison from $|N|$ is restriction along $c$. If a type-fibre of $c$ misses an element, changing that element's value gives two assignments with the same restriction. If it identifies distinct elements, choose unequal values for them in $T$ to obtain an assignment not extendible to $N$. Conversely a typed bijection gives an assignment bijection. All other ports can be assigned values because each type is nonempty. Empty types can mask these tests by making whole assignment spaces empty; singleton types cannot detect identification or omission.
+
+The explicit cospan action retains $(b,x)$, where $b$ is an original native witness and $x$ is a full assignment on $N$ extending its input assignment. It imposes equality when input ports are identified, copies values when outputs share a port, and retains every hidden assignment on unconnected wire components. No hidden assignment is selected or erased.
+
+\section{Recovery of the specified finite-wire feedback}
+For a native process $F:A\to B$ with finite endpoints, define its bent state $\widetilde F$ at $A\times B$ by raw witnesses $(a,b_0)$ with $b_0\in W_a$, weight $p_a(b_0)$, coefficient $C_{a,b_0}$, full original writer grade, and output $(a,\operatorname{out}(b_0))$. This is the native compact transpose from PR77. Conversely a state at $A\times B$ is unbent by restricting raw witnesses to each first coordinate. The two operations are inverse up to explicit singleton-coordinate bijections, preserving actual coefficients, global writer data and all fixed-endpoint native cells. Finite $A$ is used for finite support of the bent state.
+
+Now take $F:A\times U\to B\times U$. Its bent state has interface $A\times U\times B\times U$. Act by the equality span
+\[A\times U\times B\times U\ \xleftarrow{\ell}\ A\times U\times B\ \xrightarrow{r}\ A\times B,\]
+where $\ell(a,u,b)=(a,u,b,u)$ and $r(a,u,b)=(a,b)$. The acted-on witnesses are uniquely the tuples $(a,u,w)$ satisfying $u^+(w)=u$, with unchanged weight $p_{a,u}(w)$, coefficient and global writer grade. Unbending yields exactly PR77's finite-wire trace, up to the displayed raw bijection and unitors. Thus that feedback is an action of an independently specified equality wiring, not an additional primitive system operation in this fragment.
+
+For changing external pure maps $a:A\to A'$ and $b:B\to B'$ with loop type fixed, the equality-wire square has apex map $a\times\mathrm{id}_U\times b$ and input map $a\times\mathrm{id}_U\times b\times\mathrm{id}_U$. Its input square is a pullback because the unchanged loop coordinates reflect equality. The action theorem therefore preserves bent native cells when such a cell is supplied. However, bending an arbitrary changing-input process square does not automatically yield a mass-preserving state map: summing all source input rows can introduce the degree of a nonbijective input map. This limitation must remain separate from the independent PR77 proof of external naturality. For bijective input changes, the bent native state map exists canonically; for general input maps one needs a specified prior, a restricted presentation or a separately proved change-of-input construction.
+
+\subsection*{Exact relative recovery of arbitrary pure squares}
+There is a repair using the same independent wiring action, not by pretending that direct naming is a double functor. For processes $F:A\to B$ and $G:A'\to B'$, a native square over $h:A\to A'$ and $k:B\to B'$ has rows $r_a:W_a\to W'_{h(a)}$, the original coefficient arrows, and one global writer map, with rowwise exact pushforward. Relabel the output of $\widetilde F$ by $\mathrm{id}_A\times k$. Act on $\widetilde G$ by the reindexing span
+\[A'\times B'\ \xleftarrow{h\times\mathrm{id}}\ A\times B'\ \xrightarrow{\mathrm{id}}\ A\times B'.\]
+Its raw witnesses are canonically $(a,w')$ with $w'\in W'_{h(a)}$. The map $(a,w)\mapsto(a,r_a(w))$ is then a native state map over the identity on $A\times B'$, precisely because its pushforward equation is rowwise. Conversely every such state map over the identity preserves the first coordinate and decodes to the original rows and actual grade maps. This is a bijection of the specified comparison data, with all unused writer labels retained.
+
+For an explicit failure of the unrepaired representation, take a singleton unit-weight row at each of two source inputs, a singleton unit-weight row at the sole target input, and the collapsing input map. There is a native process square, but direct naming has source mass two and target mass one, so cannot give an exact mass-preserving state map. Reindexing the target first restores two distinct input-indexed target witnesses. Vertical square composition is recovered by the canonical bijection between iterated input pullbacks and the pullback along the composite; the raw comparison is the rowwise composite. This is a relative comparison interface, not an asserted pseudo double functor to direct state maps.
+
+\subsection*{Serial composition recovered by equality wiring}
+Tensor the named states of $F:A\to B$ and $G:B\to C$, then act by
+\[A\times B\times B\times C\ \xleftarrow{(a,b,c)\mapsto(a,b,b,c)}\ A\times B\times C\ \longrightarrow\ A\times C.\]
+The retained raw witnesses are exactly $(a,w,z)$ where $w\in W_a$ and $z\in W^G_{\operatorname{out}(w)}$. Their weight is $p_a(w)p^G_{\operatorname{out}(w)}(z)$, their coefficient is the actual tensor, and their entire writer grade is $Q_F\boxtimes Q_G$. These are the named native composite, up to tuple bijection. Identity names are obtained from the unit system by the span $1\leftarrow A\xrightarrow{\Delta}A\times A$. Repeated serial assembly and reindexing of native squares agree on the same fully addressed tuples; coefficient/global-grade equality is the given symmetric-monoidal coherence, not an effect-shadow argument. Thus the action recovers the specific native bind and finite-wire trace together, while the relative rather than direct treatment of changing-input squares remains essential.
+
+\section{Joint systems: transport is not generation}
+A chosen joint system is one system over a product of interfaces, with its full joint raw law and supplied native maps to component systems. Such a law can be correlated; it is not required to equal the independent tensor law. The action transports any diagram of these native maps whose corresponding wiring squares obey (PB), because it is a functor on actual maps. Hence it can contract a supplied joint law and transport a supplied native comparison through admitted wiring.
+
+It does not manufacture a joint law from component marginals, and it does not imply that independently closing components agrees with closing a joint system. Projection squares can fail (PB), particularly when another component has extra hidden wire assignments or imposes additional closure constraints. For a concrete support issue, a joint fair diagonal pair has a native marginal of mass one. Restricting the joint state to first bit zero yields mass one half; the unfiltered marginal still has mass one. No exact pushforward comparison to that unfiltered marginal exists. A coherence claim that needs such a map must change the wiring/comparison domain or its effect doctrine, not invoke the module axioms.
+
+\section{All-law family joint assembly and its directed wiring comparison}
+For this section assume in addition that both $\mathcal V$ and $\mathcal D$ have finite limits. These limits are not assumed to be their symmetric tensors. Use all small families of systems in each fixed-interface fibre, not only finite families. The writer-grade category of small $\mathcal D$-labelled families has finite limits: its shape carrier is the compatible tuple set of shapes, and the coefficient at a tuple is the corresponding finite limit in $\mathcal D$. This retains shapes never returned by any raw witness. The total family carrier has objects $(X,(S_i)_{i\in I})$ and morphisms given by one common base map $u:X\to Y$, one family-index function, and component system maps all over that same $u$. It is not the ordinary unrestricted family category of the total $\mathsf S$. The tensor and wiring action extend componentwise, with pairs of family indices for tensor, giving the same symmetric monoidal module on these families. The limits below are in a fixed-interface fibre: every joint raw tuple must have the same retained boundary value. They are not ordinary marginal products over distinct interfaces. Replication along interface projections can change mass and is not a neutral reduction of that different problem.
+
+\begin{theorem}[Native family limits and wiring comparison]
+Every fibre $\operatorname{Fam}(\mathsf S_X)$ has finite limits. For a finite diagram $E$ in that fibre and a wiring span $w:X\rightsquigarrow Y$, there is a canonical native comparison
+\[\kappa_{w,E}:A_w(\lim E)\longrightarrow\lim(A_w E).\tag{K}\]
+These comparisons are coherent with identity and sequential wiring, using the specified action associators. They need not be invertible, even for a binary product of systems with singleton raw carriers. This is a directed compatibility of all-law joint assembly with the specified feedback/wiring action, not arbitrary joint-law generation by a wiring itself.
+\end{theorem}
+\begin{proof}
+First fix a coherent choice of a component of each family in a nonempty finite diagram. Let $Z$ be the set of tuples of raw witnesses $(b_i)$ compatible with every diagram map and having the same interface value $a_i(b_i)\in X$. At a tuple form the finite limit in $\mathcal V$ of its coefficient diagram; separately form the whole global writer-grade limit. Its returned label is the tuple of returned labels, which is compatible by the body equations. Index this candidate system by every finitely supported nonnegative law $\lambda$ on $Z$ whose projections are the given marginal laws. Zero-weight points in all of $Z$ remain in every candidate. If no such law exists the corresponding family is empty.
+
+Any cone from a native system determines its unique raw tuple map, unique coefficient maps to the limits and unique global writer map. Its pushed-forward law determines exactly one family index $\lambda$. Conversely each such native map gives the cone. For a family of source systems this construction is componentwise and unique. Taking all coherent component choices therefore gives the finite limit. For the empty diagram, take raw carrier $X$, terminal context coefficients and terminal global writer grade, with one component for every finitely supported measure on $X$. A system maps uniquely to the component indexed by its output law. This proves terminality without confusing a normalized singleton with a terminal finite-measure object.
+
+Applying $A_w$ to the projections of $\lim E$ gives a cone, so the target limit supplies (K). Explicitly, for a nonempty diagram its raw map is
+\[((b_i)_i,z)\longmapsto((b_i,z))_i.\]
+The selected target law is the pushforward of $\lambda((b_i)_i)$ on these common-wire tuples. Its projection onto each acted-on marginal has precisely the replicated weight prescribed by (A), so it is an admitted target joint law. The context and global-grade maps are the unique maps with the specified limit projections; no carrier-level faithfulness assumption is used. For the empty diagram the map is instead the output map to $Y$, selecting its actual pushforward measure. Identity-wiring coherence follows from the unit law of the action. For two wirings, both routes to the final limit have the same projection to every acted-on diagram object, by the action associator and its naturality; limit uniqueness proves their equality. The same argument proves naturality for supplied maps of finite diagrams within the fixed fibre $\operatorname{Fam}(\mathsf S_X)$. No naturality over arbitrary endpoint-changing diagrams is asserted without a separate base-change interface. This is coherence of actual native maps and retained law indices.
+
+For strictness take $X=Y=1$ and the span with two-element apex. Let $E$ be a discrete diagram of two singleton unit-weight systems with unit grades. Its source product has one compatible joint law and a singleton raw carrier. Acting once gives two raw witnesses, each of weight one. Each separately acted system has two witnesses of weight one. Their family product has a component for every $2\times2$ nonnegative coupling matrix with both marginals $(1,1)$, including diagonal, antidiagonal and independent matrices. The comparison selects the diagonal matrix. Moreover even that selected target component retains four raw tuples, including the two zero-weight off-diagonal tuples, while its source retains only two. Thus the comparison fails to be invertible both because of additional law indices and because the selected native raw map is not surjective. No quotient by support is allowed. A connected-diagram failure is equally explicit. Use the cospan of two fair-bit systems mapping to the unit system over $X=1$, and the same two-witness wiring. In the target pullback each bit marginal has weight $1/2$ at each pair $(b,z)$, and the two wire coordinates must agree. There is an admitted target law that is diagonal on the bits at $z=0$ and antidiagonal at $z=1$, each with the fair marginals. An acted source coupling instead has one and the same bit coupling at both $z$, so cannot give that component.
+\end{proof}
+
+Taking $w$ to be the equality span of the feedback section gives the directed comparison between feedback of a family joint assembly and joint assembly of the feedback images, with the displayed interfaces. It does not identify that operation with independently closing arbitrary components whose interfaces or feedback squares do not form the stated diagram. The native effect and grade hypotheses remain those of the theorem.
+
+There is also strictness for the feedback equality wiring itself. Take two copies of the name of the identity on $U=\{0,1\}$, each with raw witness $u$, weight one and boundary $(u,u)\in X=U\times U$. Their fibre product over $X$ has only the two pairs with the same $u$. Equality wiring followed by hiding sends it to two witnesses of weight one. Each separately closed system also has two witnesses of weight one, but their product over the terminal outside interface retains all four pairs and all couplings with marginals $(1,1)$. The comparison selects the diagonal law. Thus hiding the common loop interface before joint assembly genuinely enlarges the target; it does not commute invertibly with the retained-boundary assembly.
+
+An empty-to-nonempty feedback comparison occurs even on normalized systems. Over $X=\{0,1\}^2$, let $S$ give weight $1/2$ to each of $(0,0),(0,1)$ and let $T$ give weight $1/2$ to each of $(0,0),(1,0)$, with unit grades and raw carriers exactly the stated pairs. Their same-boundary product family is empty, because a common-boundary joint law would force equal boundary marginals. Equality feedback restricts each to its $(0,0)$ witness of mass $1/2$, so their feedback images have a nonempty product. The comparison is the unique map from the empty family. This is an incompatibility of imposing different boundary laws before closure, not a renormalization claim.
+
+\paragraph{Remaining research obligation.}
+The exact action, maximal square criterion, relative pure-square recovery and directed joint-limit compatibility give a non-tautological interaction interface for the finite-measure writer class. This is neither a conservative universal completion nor an interpretation of original multi-occurrence content. General joint assemblies outside these finite-limit family interfaces remain separate obligations. The normalized all-coupling doctrine and this counting-witness wiring doctrine have different semantics; a bridge between them would require the already exposed normalization and dilation-descent boundaries to be addressed.
+\end{document}
