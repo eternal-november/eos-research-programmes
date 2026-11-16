@@ -1,0 +1,186 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}
+\title{Post-tightening: a directed full-grade comparison, not an isomorphism}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Scope.}
+This complementary candidate checks the full weighted constant-polynomial
+grade interface for guarded incremental arena feedback. Operational syntax
+is supplied by the arena/feedback manuscripts, not redefined here. Let
+$P:A+U\rightsquigarrow B+U$ be guarded with full grade $C$ and let
+$Q:B\rightsquigarrow Z$ have full grade $D$. Let $I$ be the unary unit
+grade. Write $L_Q:B+U\rightsquigarrow Z+U$ for the typed case which executes
+$Q$ at $B$ and is the zero-event identity at $U$, retaining the full case
+grade $I+D$. No grading is restricted to realized bodies.
+
+\section{The full grade map}
+\begin{theorem}
+There is a canonical arity-preserving weighted collection map
+\[
+ \phi_{C,D,U}:(R_UC)\circ D\longrightarrow
+ R_U\bigl(C\circ(I+D)\bigr). \tag{1}
+\]
+It is injective on shapes, has bijective ordered external-position maps,
+and its actual coefficient map at each shape is an isomorphism. It is
+natural in all arity-preserving weighted collection maps $C,D$ and loop-label
+maps $U\to U'$. These assertions do not say its full shape map is surjective.
+\end{theorem}
+\begin{proof}
+A source shape is a nonempty finite $C$ invocation tree $t$, with internal
+edges labelled by $U$, and one $D$ shape at each external leaf of $t$.
+At each $C$ node, decorate an internal-edge slot with the $I$ alternative;
+decorate an external-leaf slot with its specified $D$ shape. The new
+invocation node has shape in $C\circ(I+D)$. Its $I$ output continues along
+the original labelled internal edge, and every output of each $D$ decoration
+is external. Retain the original invocation-node tree and all loop labels.
+This gives a target shape on every source shape, whether used or unused.
+
+External positions are the ordered pairs consisting of an original external
+leaf and a position in its $D$ shape; both sides have exactly these positions.
+In particular the backward position map of the corresponding polynomial
+transformation is this bijection, not an arbitrary map collapsing leaves.
+The source coefficient is the tensor of all $C$ node factors followed by the
+$D$ leaf factors in its declared parenthesization. The target has the same
+factors grouped nodewise, with additional unit factors at internal slots.
+The canonical labelled-factor permutation, associators and unitors give an
+actual invertible coefficient arrow. Symmetric monoidal coherence makes the
+construction independent of presentation choices and natural in the actual
+coefficient arrows.
+
+The image consists exactly of target trees satisfying: every $I$-decorated
+slot has its unique output attached to an internal $U$ edge; every output
+of every $D$-decorated slot is external. Delete each internal $I$ decoration
+and move the $D$ decorations to the external leaves of the remaining $C$
+tree. This is the unique inverse on the image, proving injectivity. Nullary
+$D$ decorations are retained at their slots, so this inversion does not lose
+them merely because they contribute no output leaf. The same rule applies
+to nullary $C$ nodes. Native shape maps preserve the alternative tags, ordered
+positions and loop labels under their given image; hence both naturality
+routes agree on complete shapes and on every labelled coefficient factor.
+\end{proof}
+
+\paragraph{Typed refinement, not reachable-only quotient.}
+The image condition is an independently decidable sort constraint on every
+formal target shape. It defines the maximal subcollection on which the
+specified inverse reconstruction works, not a deletion by probability or
+reachability. It may itself contain arbitrarily many unused shapes. Passing
+to it would be an explicit typed refinement of the target grade; the native
+comparison (1) does not silently replace the original full target by it.
+
+\section{Actual operational comparison}
+The operational configurations of $\operatorname{Fb}_U(P);Q$ consist of a
+finite compatible tree of $P$ configurations and one $Q$ configuration at
+each currently emitted $B$ port of that tree. Those of
+$\operatorname{Fb}_U(P;L_Q)$ consist of a tree of $P;L_Q$ configurations:
+each contains the same $P$ configuration, a $Q$ copy at each emitted $B$
+port, and a trivial identity copy at each emitted $U$ port. The latter port
+initializes the corresponding child invocation immediately. Removing these
+trivial identity copies and flattening the stable path tags gives inverse
+configuration functions, including initially unreachable configurations.
+Use the repaired feedback compiler's label-qualified invocation edges:
+$(p,u)$ on the left corresponds on the right to
+$((p,\text{fixed }U\text{-identity port tag}),u)$.
+Flattening and restoring these tags are global identifier functions, not
+configuration-dependent renamings. Every $Q$-generated port has label in
+$Z$, never in $U$, including at unreachable typed configurations. Thus the
+same path correspondence applies to the entire occurring namespace.
+Case identifiers are tagged by the identity versus $Q$ branch, and the
+pure identity uses its fixed singleton port identifier independently of
+input values. Stable path flattening retains these tags until the specified
+identity-copy removal, giving consistent global identifier maps.
+Initial $P$ configurations have no $U$ port; initial $Q$ copies cannot emit
+$U$, so the right-hand feedback remains guarded.
+
+Enabled primitive events on both sides are the same $P$ events and the same
+$Q$-copy events, with identical normalized rows and actual context
+coefficients. Their updates create the same child or continuation copies,
+keep the same old ones, and commute with the flattening. Final output ports
+have the same ordered stable paths. Thus this is an operational isomorphism
+of the configuration/event/port data. At terminal configurations the full
+body comparison is precisely (1): original recursive slots use $I$ and
+original external slots use the actual terminal $Q$ shape.
+
+Consequently, assuming the supplied arena composition and feedback
+constructions, these data form an actual native arrow
+\[
+ \operatorname{Fb}_U(P);Q\longrightarrow
+ \operatorname{Fb}_U(P;L_Q). \tag{2}
+\]
+Its configuration part is invertible and its primitive row maps are the
+structural identity isomorphisms, but its full grade map is (1).
+The inverse configuration function alone is not a native inverse. Every
+complete selected policy transports through the operational event/scope
+bijections, including zero and off-policy tables, without averaging or
+rescheduling. This does not invert the full native grade comparison.
+
+\section{A decisive reverse obstruction}
+Take $U$ singleton, $C$ a singleton unary grade, and $D$ a singleton binary
+grade, all with unit coefficients. Every finite $R_UC$ tree is a unary chain
+with one external leaf. Hence every shape of $(R_UC)\circ D$ has arity two.
+In the right-hand grade, a root $C$ node decorated by $D$ has two outputs.
+Make one output external and attach the other by a $U$ edge to another
+$C$ node decorated by $D$, whose two outputs are external. This is a valid
+full formal target shape of arity three. There is no arity-preserving map
+from the full right-hand collection to the left-hand collection. The shape
+is unused by actual typed $P;L_Q$ executions, but remains part of their full
+global grade. Thus the failure is not repaired by an operational state
+isomorphism or by ignoring zero-weight witnesses.
+
+\section{Coherence with further postcomposition}
+Successive tightening must also retain unused case shapes. There is a
+canonical directed map
+\[
+ \delta_{D,E}:I+(D\circ E)\longrightarrow
+ (I+D)\circ(I+E): \tag{3}
+\]
+a $D\circ E$ shape chooses the $D$ alternative and $E$ at every position;
+the unit alternative chooses $I$ then $I$. Its coefficients use the canonical
+unit/tensor constraints. It is also the full grade map of the actual native case comparison
+$L_{Q;R}\to L_Q;L_R$ when $Q$ has grade $D$ and $R$ grade $E$.
+Its configuration map flattens the same continuation copies; on the identity
+branch it inserts the two trivial identity copies. Tagged identifiers give
+actual maps, and the coefficient arrows are those of (3). Applying guarded
+feedback supplies the comparison used in the common-target diagram.
+This is generally not a full-grade isomorphism:
+the target also contains formal mixtures of $I$ and $E$ below a $D$ shape.
+
+Starting with $((R_UC)\circ D)\circ E$, there are two routes to the common
+full grade
+\[
+ R_U\bigl((C\circ(I+D))\circ(I+E)\bigr).
+\]
+One first applies $\phi_{C,D,U}\circ E$ and then
+$\phi_{C\circ(I+D),E,U}$. The other uses source substitution associativity,
+then $\phi_{C,D\circ E,U}$, then $R_U(C\circ\delta_{D,E})$ and target
+associativity. They agree. At every original internal $U$ slot both insert
+$I$ then $I$; at each original external slot both insert the specified $D$
+shape and then the specified $E$ shapes at all its positions. They have the
+same backward position bijection and the same actual map on every labelled
+$C,D,E$ coefficient factor. Symmetric monoidal coherence proves equality
+of those arrows, not merely equality of carrier functions.
+
+For three or more postcompositions the same all-internal/all-external choice
+rule proves the corresponding common-target diagrams: no slot changes its
+sort along a route, and all coefficient maps are the same labelled-factor
+coherence map. Operationally both routes flatten the identical family of
+continuation configurations and primitive events, so the native diagrams
+commute as well. This is directed full-grade coherence, not an identification
+of all the intermediate target grades. For unit postcomposition, the fold $[1_I,1_I]:I+I\to I$,
+followed by the substitution unitor, induces an actual directed grade map
+\[
+ R_U(C\circ(I+I))\longrightarrow R_UC.
+\]
+Composing it with $\phi_{C,I,U}$ is the original grade unitor
+$(R_UC)\circ I\to R_UC$: both alternative tags are sent to the same
+unary unit shape and all original $C$ nodes and loop labels remain intact.
+At the arena level the typed case of two pure identities maps natively to
+the pure identity, with per-configuration singleton-port bijections. Its two
+branch-tagged global port identifiers may both map to the fixed identity
+identifier, so this map is not asserted to be an operational isomorphism.
+It yields a directed native unit comparison whose composite with tightening
+is the original native unitor. On all formal shapes the analogous unit
+diagrams with (3) agree by folding the same alternative tags; the actual
+coefficient maps agree by monoidal unit coherence. No inverse on the full
+right-hand shape collection or global identifier namespace is claimed.
+\end{document}

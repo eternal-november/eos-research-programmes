@@ -72,6 +72,8 @@ The following work chooses particular carriers, operations, observations, or ope
 
 #### Feedback and concurrency realizations
 
+**Incremental arena realization and internal categorical theory.** The [open assembly and guarded native feedback construction](foundations/incremental-arenas-and-guarded-feedback/README.md) combines early-port composition, functorial backward control lifting, labelled native initiality and nesting, observed recurrent prefixes, and cost-trace comparison. It retains full weighted grades and states directed tightening and source-recovery obstructions; it is not a generic contextad completion.
+
 **Kernel/writer and shared-world realization.** The [native feedback and shared-content first results](feedback-and-concurrency/native-first-results/README.md) give scoped kernel/writer composition, feedback boundaries and shared-world constructions. They do not complete the extension contract.
 
 **Native grade lifting and local rule comparison.** The [coefficient-limit construction](foundations/local-joint-comparison/README.md) derives directed joint context/content cells and generated comparisons from primitive native diagrams, retaining noncanonical couplings and shared histories. It recovers effect-fibre/writer comparison and an original augmented-vector-space doctrine; arbitrary lifting outside this parameter class and infinite-effect completion remain separate.

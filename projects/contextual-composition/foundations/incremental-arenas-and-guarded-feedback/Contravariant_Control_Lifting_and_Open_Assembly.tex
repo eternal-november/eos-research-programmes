@@ -1,0 +1,110 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}[theorem]{Proposition}
+\title{Contravariant native control lifting and composition-indexed open assembly}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Audit.} The stated construction passed independent written review and finite exact diagnostics. No compilation, formal-verification, or novelty claim is made. The base is the independently defined locally finite incremental arena bicategory, with strict native event/port maps and complete policy tables. Forward descent of a selected policy remains obstructed. The construction below instead supplies an actual functorial backward lift, including zero histories, and distinguishes its canonical-map subcategory from the larger category of all compatible policy comparisons. It uses the elementary finite conditional-product formula; no novelty claim is made. Full native coefficient and content maps remain base-arrow data throughout.
+
+\section{A finite normalized coupling lift}
+Let $I$ be a finite set and let
+\[
+ r_i:(W_i,\mu_i)\to(W'_i,\mu'_i),\qquad(r_i)_*\mu_i=\mu'_i
+\]
+be exact native raw maps of normalized finite rows. Write $r=\prod_i r_i$. For a target coupling $q'$ of the $\mu'_i$, define a law on the \emph{entire} source tuple set by
+\[
+ L_r(q')(\mathbf w)=
+ \begin{cases}
+ q'(r\mathbf w)\displaystyle\prod_i
+ \frac{\mu_i(w_i)}{\mu'_i(r_iw_i)},&\mu'_i(r_iw_i)>0\text{ for every }i,\\
+ 0,&\text{otherwise}.
+ \end{cases}\tag{1}
+\]
+No raw tuple or coefficient object is removed when its value is zero. For the empty occurrence set the formula is the unique singleton law.
+
+\begin{theorem}[Exact relative-independent lift]
+$L_r(q')$ is a normalized coupling of the source marginals, and
+$r_*L_r(q')=q'$. For composable componentwise maps $r,s$,
+\[
+ L_1=1,\qquad L_rL_s=L_{sr}.\tag{2}
+\]
+The construction commutes with reindexing finite occurrence coordinates. If the input rows also carry actual augmented coefficient maps, the product raw map with the tensor of those supplied maps is an actual native arrow from the lifted joint row to the target joint row. Scalar division in (1) does not scale or manufacture coefficient maps.
+\end{theorem}
+\begin{proof}
+For a target tuple $\mathbf y$ with all $\mu'_i(y_i)>0$, the conditional factors $\mu_i(w_i)/\mu'_i(y_i)$ sum to one on each fibre. Therefore summing (1) over $r\mathbf w=\mathbf y$ gives $q'(\mathbf y)$. If a target marginal at $y_i$ is zero, every source weight in that fibre and every coupling entry at that target tuple is zero, so the same equation holds. This proves pushforward and normalization.
+
+Fixing a source coordinate $w_i$ and summing all others gives, at a positive denominator,
+\[
+ \frac{\mu_i(w_i)}{\mu'_i(r_iw_i)}
+ \sum_{\mathbf y:\,y_i=r_iw_i}q'(\mathbf y)=\mu_i(w_i).
+\]
+At a zero denominator the source marginal is already zero. Thus all source marginals are correct. Identity holds on positive marginal tuples by cancellation, and on all other tuples because every admitted coupling is zero there.
+
+For composition, if any intermediate marginal $\mu'_i(r_iw_i)$ is zero, then $\mu_i(w_i)=0$ and both direct and iterated lift are zero. Otherwise those intermediate factors cancel in (1); a final zero denominator would force the intermediate marginal to be zero and was already covered. The remaining formula is the direct lift along $sr$. Coordinate permutations only relabel the same factors. The actual coefficient arrow is the supplied finite tensor arrow, with the canonical symmetry for a reindexing. Its augmentation and body equations are those of the original native component maps.\end{proof}
+
+On a positive-mass target tuple, this is precisely the unique lift for which the source coordinates are conditionally independent in their separate raw fibres and have the primitive fibre laws determined by $\mu_i$. It does not recover every source coupling that pushes to $q'$. For instance collapsing two fair-bit source coordinates to singletons admits both diagonal and independent source couplings; (1) chooses the independent residual lift. This is an explicit conditional-independence choice in the \emph{map doctrine}, not a restriction excluding diagonal controls as objects.
+
+\section{Complete policies form a contravariant native functor}
+For an arena $P$, let $\Pi(P)$ be its complete deterministic policy set. A table is specified at every structurally valid raw history rooted at every configuration, including zero histories, initially unreachable configurations, and off-policy earlier scope plans. At a nonterminal history it chooses a nonempty enabled subset and a coupling of its normalized primitive rows. Evaluation uses only the selected plans, with all their raw outcomes retained.
+
+For a strict native arena map $h:P\to Q$, its global identifiers and raw maps induce a map $H$ on all structural histories. Given $\tau\in\Pi(Q)$, define $h^*\tau$ as follows. At source history $a$, pull back the target selected subset at $H(a)$ through the enabled-event bijection. On that subset apply (1) to the target selected joint law and the supplied primitive row maps. No probability of reaching $a$ is used.
+
+\begin{theorem}[All-history contravariant transport]
+These formulas define a functor
+\[
+ \Pi:\mathsf{Arena}(A,B)^{\rm op}\longrightarrow\mathrm{Set}
+\]
+on each native hom category. Identities and composites preserve the complete tables exactly, including zero and off-policy tables. There is an actual compatible native selected-policy arrow
+\[
+ (P,h^*\tau)\longrightarrow(Q,\tau)
+\]
+with underlying map $h$. Its terminal evaluator is an exact native map with the original actual coefficient arrows and full grade map. If $h$ is an operational isomorphism, $h^*$ is the inverse of ordinary table transport along that isomorphism.
+\end{theorem}
+\begin{proof}
+The pulled-back scope is nonempty and enabled. The finite lift theorem gives its required primitive marginals and exact pushforward to the target law. Thus every table entry is admitted independently of the composite theorem. Structural history maps compose, inverse-image scope bijections compose, and (2) proves equality of the conditional tables at each source history. This holds whether its reach probability is positive or zero; there is no conditional division by a prefix mass. The native selected-policy equation follows from the exact pushforward. The arena terminal-evaluation theorem then supplies its actual native terminal map. For a row bijection every fibre is a singleton on positive mass and zero entries remain zero, so (1) is exactly inverse law transport; the same holds for every history and scope.\end{proof}
+
+This is backward transport, not forward policy descent. In particular a source policy depending on an erased source bit need not be the pullback of any target policy. Complete zero-history choices have not been reset to a default: identity maps preserve them exactly.
+
+\begin{proposition}[Pure and recursive compatibility]
+Pure input reindexing pulls a target table back along the raw-history projection, with the same event rows and laws. Pointwise pure output transport changes no event row or history control. These operations commute with the canonical native lifts, including noninjective input maps, and with the operational pure-middle balance.
+
+For guarded feedback, canonical lifting is defined on the actual recurrent arena: at every selected scope it uses the original native event-row maps at the selected invocation/event pairs. It commutes with the operational nesting and empty-loop isomorphisms. This does not assign a feedback strategy to a standalone primitive policy; recurrent scopes may contain events from several invocations and need their own supplied global table.
+\end{proposition}
+\begin{proof}
+Input reindexing replaces the initial input tag and projects the same configurations/histories; it does not sum external rows. Every local row map in that projection is identity, so (1) leaves its chosen coupling unchanged. Output transport likewise changes only emitted labels. The raw-history maps commute with native maps and the pure-middle fibre-product isomorphism; applying (1) at corresponding histories proves the equations, with all actual row coefficients and full grades unchanged except their supplied maps.
+
+The guarded feedback compiler maps each event to the corresponding original event at its mapped invocation. Thus its local raw map and normalized primitive marginals are exactly those used in (1). Nesting flattens the same invocation/event identifiers and permutes only the scope coordinates. The finite lift is invariant under that permutation, so lifting before or after flattening gives the same complete table, including zero/off-policy histories. Equivalently apply the contravariant functor to the compiler's actual native naturality square. The full recursive-grade map and the actual coefficient arrows are those of that square, not reconstructed from the scalar formula. No feedback control is inferred from a collection of local chosen policies.\end{proof}
+
+\section{The two selected-map categories and their universal distinction}
+Define $\mathsf{CanPol}(A,B)$ to have objects $(P,\sigma)$ and arrows $h:P\to Q$ such that $\sigma=h^*\tau$. The projection to $\mathsf{Arena}(A,B)$ is a split discrete fibration. The cartesian lift of $h$ at $(Q,\tau)$ is the just-constructed arrow from $(P,h^*\tau)$; equality (2) gives its strict cleavage laws. Explicitly any arrow over $hk$ into $(Q,\tau)$ has source policy $(hk)^*\tau=k^*h^*\tau$, hence factors uniquely over $k$ through that lift. This proves the universal factorization from the actual lift formula, rather than assuming a policy fibration.
+
+There is a faithful identity-on-objects inclusion into $\mathsf{CompPol}(A,B)$, the category whose arrows are all strict arena maps satisfying the source-to-target conditional pushforward and scheduler equations. This larger category is retained when additional source-fibre correlations in comparison maps matter. The inclusion need not be full; the fair-bit diagonal example above is an all-compatible lift but not the canonical one. The projection of $\mathsf{CompPol}$ is not asserted to be a fibration. Its relational control action still satisfies only $R_kR_h\subseteq R_{kh}$ in general.
+
+Actual native row/coefficient/content maps remain in both categories even when they act identically on scalar policy tables. Thus no nonfaithful coefficient functor has been replaced by its scalar shadow. On atomic original processes the selected scope and joint law are forced, so every original native arrow is admitted also in $\mathsf{CanPol}$. The earlier obstruction to a unit-preserving source context functor in strict arenas remains unchanged; this is a homwise indexed structure, not an invented source-composition comparison.
+
+\section{Composition-indexed assembly of unresolved ports}
+The horizontal arena functor is independently proved from intrinsic configurations and transitions. For composable interfaces define
+\[
+ \mathcal B_n=\mathsf{Arena}(A_0,A_1)\times\cdots\times
+ \mathsf{Arena}(A_{n-1},A_n),\qquad
+ c_n:\mathcal B_n\to\mathsf{Arena}(A_0,A_n)
+\]
+using any chosen parenthesization. The presheaf $\Pi c_n$ assigns to a tuple of \emph{open} components all complete strategies on its actual incrementally assembled arena. Its category of elements
+\[
+ \mathcal A_n=\int(\Pi c_n)\longrightarrow\mathcal B_n\tag{3}
+\]
+is therefore an actual split discrete fibration. Its objects contain the component arenas and a supplied global policy; its maps contain the actual component native maps and use the canonical backward lift for their assembled native map.
+
+\begin{theorem}[Native open assembly coherence]
+Regrouping adjacent open components, or inserting/removing zero-event identity arenas, induces canonical equivalences between the corresponding assembly fibrations (3), covering the intrinsic arena associators/unitors and transporting the same full history tables. Their pentagon, triangle, native naturality and pure-middle balance diagrams commute. Terminal evaluation of the supplied global strategy is a functor from each $\mathcal A_n$ to $H_{\leq}(A_0,A_n)$, compatible through actual native isomorphisms with these regroupings.
+\end{theorem}
+\begin{proof}
+The operational associators identify the entire component configuration family, event identifiers, output ports and primitive rows. Hence the inverse table transport supplied by the preceding theorem is a bijection on all strategy tables, not a projection to component-local histories. Contravariant functoriality sends every commuting native associator/balance diagram to an equal table-reindexing diagram. The intrinsic pentagon and units therefore lift to (3). Pure-middle balance preserves the actual next rows and all history identifiers under the declared fibre-product identification, so the same argument applies. The full weighted content map and actual context arrows are the already proved ones of the assembled arena; no new shape-image grade is substituted. Each canonical lifted arrow is an all-compatible selected-policy map, so the existing native terminal evaluator applies. Regrouping maps are operational isomorphisms, giving native inverse evaluated maps with the same transported controls.\end{proof}
+
+The word ``equivalence'' here concerns the common assembly data after the specified regrouping: no claim that the product of component hom categories is equivalent to a single output hom category is intended. Formally the comparison is between the pulled-back fibrations over the same original component-tuple category, with the total-composite associator supplying the fibre equivalence. Grouping a pair into one arena forgets the chosen decomposition if the base tuple itself is discarded; that base-forgetting operation is not asserted invertible.
+
+This indexed assembly does not assert a map $\Pi(P)\times\Pi(Q)\to\Pi(Q\circ P)$ preserving arbitrary local-history kernels. Such a map, with associative recovery of every global policy, is ruled out by sibling-history and scope-contraction examples. The actual composition glues \emph{open} operational components first; the resulting dependent control ports can see their declared common paid history. Selecting a global section afterward is a different operation from composing two already selected standalone policies. All these distinctions remain visible in (3).
+
+\paragraph{Independent baseline and residual.}
+The source independent product policies are preserved by (1): lifting a target product cancels the target marginal factors and gives the source product. Schedulers pull back along event bijections. Thus the strong independent evaluator and all original atomic native arrows are compatible with the indexed construction. The all-compatible policy category remains available when canonical residual independence is too restrictive. A universal strong conservative source interaction or unrestricted weak-contraction completion has not been obtained merely by constructing this fibration; those require their own actual cell and unit laws. The result supplies a proved relative control/comprehension mechanism for the already established arbitrary open horizontal arena assembly, with its map-choice kernel explicitly stated.
+\end{document}
