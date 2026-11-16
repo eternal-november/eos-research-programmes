@@ -22,6 +22,10 @@ The statements concern explicit generated or indexed interfaces. They do not est
 
 6. **[Cartesian provenance content and indexed grafting](Cartesian_Provenance_Content_and_Indexed_Grafting.tex).** This is a different, restricted content doctrine: the content tensor is Cartesian product; context coefficients may remain augmented vector spaces. Each global scope identifier owns one joint content factor, even when several actors participate. Independently specified local weighted-monoid compilers and accumulator invariants produce an actual directed terminal comparison on every formal shape. Indexed grafting retains a common timeline, full joint data, participant incidence and passive boundary responses. It permits fixed-arity branching, but does not generate a global timeline or arbitrary variable-arity production from unindexed local operands.
 
+7. **[Typed port production](Typed_Port_Production_and_Cartesian_Content.tex).** An independently specified algebra of typed ordered-slot insertions replaces the fixed-arity compiler fragment. Actual family actions derive every formal word compiler and its completed-body square from primitive shape/port invariants. Nonappend births may change displayed ranks while preserving old identities, labels and attached children. The concrete Cartesian payload example retains audit information in the source even when the directed terminal comparison forgets it. This fragment starts with no emitted ports; nonempty initial output needs separate initialization data. The common-timeline and Cartesian-content restrictions remain.
+
+8. **[Shared-world prefixes, statuses and control lifting](Shared_World_Status_Prefixes_and_Control_Lifting.tex).** Closed execution distinguishes completion, global blockage and infinite active execution. Actual whole-scope context factors give normalized partial-terminal-body towers and scalar Borel laws on all raw paths, without command commutation or infinite content tensors. Compatible native maps reflect the three outcomes separately. A canonical backward control functor follows from bijective structural menus, reflected full matching constraints and all-joint admission; arbitrary world/boundary quotients do not satisfy those conditions. Separate full writer-schema histories have same-horizon maps; writer truncation needs compatible content augmentations. Local blockage is not absorbed while other actors can update the world.
+
 ## Why both grades remain material
 
 An actual joint writer coefficient may be a limit, while occurrence substitution tensors actor terminal coefficients. For two augmented two-dimensional factors over a common unit, these coefficients have dimensions three and four. They cannot be identified by an isomorphism. More strongly, there is no natural joint-to-tensor recovery over both primitive legs for all augmented linear maps: an augmentation-preserving shear contradicts the required natural copying map. This excludes a particular natural comparison, not arbitrary arrows or chosen nonnatural sections.
@@ -44,7 +48,7 @@ The [incremental-arena and native-feedback family](../incremental-arenas-and-gua
 
 The [local-joint native construction](../local-joint-comparison/README.md) supplies the original retained-joint and coefficient-limit rule interface. The [earlier shared-world results](../../feedback-and-concurrency/native-first-results/README.md) distinguish actual world-event matching, supplied correlation, post-context effects and raw availability. The present construction uses those distinctions rather than treating a writer log as an action on later state.
 
-Remaining obligations include opaque scope-preserving expansion/folding, arbitrary feedback initiality, unindexed timeline and joint generation, general variable-arity content compilation, and unrestricted single-content recovery. None follows solely from the finite-tree configuration recursion or a scalar probability equation.
+Remaining obligations include opaque scope-preserving expansion/folding, arbitrary feedback initiality, unindexed timeline and joint generation, compilers for arbitrary terminal content libraries, and unrestricted single-content recovery. None follows solely from the finite-tree configuration recursion or a scalar probability equation.
 
 ## Finite checks
 
@@ -62,3 +66,14 @@ python checks/check_sources.py
 ```
 
 The checks exercise read/write noncommutation, world-dependent initialization, multi-active correlated tuples and retained zeros, actual nonidentity coefficient maps, passive block reconstruction, pure-wire balance, once-owned provenance and its restricted compilers. They are finite discriminators, not formal verification of the general categorical statements.
+
+The typed-content and status/path extensions have four further finite diagnostics:
+
+```sh
+python checks/check_typed_insertions.py
+python checks/check_production_maps.py
+python checks/check_shared_world_prefix.py
+python checks/check_world_lift_zero_fibres.py
+```
+
+These exercise nonappend insertions, actual Set coefficient maps, empty-shape boundaries, conditional matching lifts with zero fibres, distinct stopped outcomes and passive readiness revival. They do not establish arbitrary universal properties or liveness guarantees.
