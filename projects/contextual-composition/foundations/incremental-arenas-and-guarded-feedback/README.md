@@ -87,6 +87,18 @@ Under complete conditional-compatible controllers, local cells induce strict sam
 
 No infinite accumulated tensor, automatic fairness/liveness invariance, unrestricted silent initialization, general weak-contraction completion, or generic contextad completion is inferred.
 
+## Initial-row source recovery and paid timing
+
+The following extension changes the object interface rather than contradicting the deterministic-initial obstruction above. It uses configuration-indexed cells and an explicit event-local birth-stability law. Its independent conditional initializer product is supplied structure, not the set of all shared initialization laws.
+
+13. **`Initial_Row_Arenas_and_Source_Recovery.tex`** replaces the single designated initial configuration with a finite normalized native row of raw seeds, actual augmented coefficients and a seed-to-configuration decoder. Distinct and zero seeds remain distinct even when they select the same state. Initial and birth-time downstream seeds assemble by dependent independent bind. Stable birth sets are needed for literal persistence of expanded primitive rows; a port emitted only after two commuting events is a counterexample without this law. The resulting composition has actual native associators and a strong homwise fully faithful realization J of the original finite H, recovering its context/content presentations and crossing. Independent terminating evaluation retracts J. The common birth-stable deterministic-initial local-cell subdoctrine embeds strongly and homwise fully faithfully.
+
+14. **`Initial_Row_Feedback_and_Cost_Recovery.tex`** admits random silent initialization exactly when the possible initial loop relation, including every zero seed, is well founded on the whole loop interface. Finite initializer trees retain each seed and actual coefficient once. The labelled feedback constructor is initial among all native algebras, including actual initial-row arrows and unused weighted grades. Colored nesting transports all chosen paid-scope controls through raw seed/event bijections. Independent invocation normal form and fixed-cost trace comparison use full initial histories. Arbitrary boot correlations, almost-sure-only silent termination and infinite coefficient tensors are not supplied.
+
+15. **`Paid_Delay_and_Guarded_Source_Recovery.tex`** moves each initial draw into one forced paid boot event. The hom-category functor D preserves independent evaluated semantics by an actual raw/coefficient isomorphism. D J(F) is the old one-paid-event atomic source realization, so its guarded recurrence includes geometric and other unbounded paid recursion excluded by undelayed silent admission. Its recurrence uses tensor coefficients; comparison with the earlier product-coefficient family is directed through lambda and need not be invertible. Delay changes the event clock and does not have strong, lax or oplax horizontal unit/composition comparisons: the zero/one and one/two event-count obstructions remain.
+
+Strong source inclusion J and guarded timing D are therefore related constructions, not a single strong source functor commuting with all feedback and substitution. Their common well-founded domain and the evaluated comparisons are explicit; unrestricted initialization sharing and a general completion characterization remain open. These arenas also retain the commuting-persistent-event hypothesis: nonproduct paid couplings do not by themselves import arbitrary nonserializable shared-world state updates from the separate local-joint runtime.
+
 ## Executable checks
 
 Run the accompanying component diagnostics, including:
@@ -111,3 +123,13 @@ python check_local_cells.py
 ```
 
 These check finite admission graphs, silent depth witnesses, labelled-word composition and reverse obstructions, scalar cylinder conservation, zero retention, finite port orders, local transition squares and rank-flattening coherence. They do not formally verify arbitrary coefficient categories, general well-foundedness or the full categorical theorems.
+
+Initial-row diagnostics:
+
+```sh
+python check_initial_row_assembly.py
+python check_random_initializer_feedback.py
+python check_paid_delay.py
+```
+
+They test finite seed associators, zero retention, birth stability, random closure, colored nesting, geometric paid delay and timing obstructions. Universal native algebra and coherence claims rest on the written proofs, not these finite enumerations.
