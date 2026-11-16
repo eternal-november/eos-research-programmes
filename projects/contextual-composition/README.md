@@ -6,6 +6,8 @@ Start with the [integrated treatment](synthesis/Integrated_Relative_Computation_
 
 The [feedback and concurrency extension contract, v0.1.3](contracts/Feedback_and_Concurrency_Research_Contract_v0_1_3.tex) separates categorical-core obligations, semantic realizations and application evidence for general recursion, interfering concurrency and contextual refinement. Its obligations are research targets, not completed results. The [previous v0.1.2 contract](contracts/Feedback_and_Concurrency_Research_Contract_v0_1_2.tex) remains available.
 
+The [native feedback and interaction research contract](contracts/Native_Feedback_and_Interaction_Extension_Contract_v0_1.tex) targets further categorical extension, beginning with graded branching under shared effects and keeping broader feedback and infinite completion as distinct research directions.
+
 ## Reading guide: three levels
 
 The [native-grade feedback assessment](foundations/local-joint-comparison/README.md) now includes a second, asynchronous occurrence-fragment interpretation reusing the generated comparison and feedback theorem. It records the v0.1.3 categorical-core criterion as met at the declared parameterized scope; institutional acceptance and the broader realization/application completion ledgers remain separate.
