@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\title{Finite-measure native feedback with retained writer grades}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Status.} The written finite-wire trace and coherent compact-duality construction passed independent review after correcting the Set/finite-endpoint distinction. No novelty or formal-verification claim is made. This route preserves the graded-writer comma presentation and its bind composition, unlike replacing composition by span pullback. It is a meaningful restricted source class, not the full v0.2 target.
+\section{Independent inputs and native data}
+Construct the independent presentations over $\mathbf{Set}$ using the finite nonnegative-measure monad $M$, then take the full sub-bicategory of the resulting $H$ on finite endpoint objects. Internal extensions $e_AP=\sum_aW_a$ remain Set-valued and need not be finite. For every set $W$, $MW$ consists of finitely supported functions $W\to\mathbb R_{\ge0}$, including zero. Raw carriers may be infinite and retain all zero-weight witnesses. Let $\mathcal V,\mathcal D$ be symmetric monoidal categories; their symmetries are actual native arrows. This is stronger than the nonsymmetric assumptions in the existing one-hole native theorem.
+
+A 1-cell $A\to B$ retains contexts $(W_a,p_a,C_{a,w})$ and one global writer grade $Q=(O,(D_o))$, with body $f_a:W_a\to B\times O$. All $O,D_o$ remain, including labels never returned. Native cells retain actual witness maps, context-coefficient maps and one actual content map $(v,\beta):Q\to Q'$, with effect pushforward and the full body square. The original independent context and content presentations over Set are unchanged except for replacing the effect monad. Only the endpoint objects of the resulting bicategory are restricted to finite sets; the contextad itself is not incorrectly declared FinSet-valued.
+
+Composition retains witness pairs $(w,z)$ with actual intermediate result $b(w)$, weight $p_a(w)q_{b(w)}(z)$, context coefficient $C_{a,w}\otimes E_{b(w),z}$ and global content $Q\boxtimes R$. Tensor is independent pairing of contexts and contents. Associators and interchangers are canonical witness bijections with the stated symmetric coefficient/content maps. The explicit compact-bicategory coherence argument is given below.
+\section{Feedback on a finite wire}
+For $f:A\times U\to B\times U$, let its body at $(a,u)$ return $(b(w),u^+(w),o(w))$. Define
+\[\widehat W_a=\sum_{u\in U}\{w\in W_{a,u}:u^+(w)=u\}.\]
+The weight of $(u,w)$ is $p_{a,u}(w)$; its context coefficient is $C_{a,u,w}$. The global content remains exactly $Q$, and the external body returns $(b(w),o(w))$. Finite $U$ ensures finite support and finite total mass. No normalization, disintegration or choice of a fixed point occurs.
+
+For native cells with fixed loop interface $U$, restrict the actual witness map and coefficient arrows and retain $(v,\beta)$. The full body square makes loop equality reflect as well as preserve under that map, so pushing forward the restricted weight gives the target restricted weight. External changing endpoints $h,k$ are allowed with identity on $U$. Arbitrary loop-interface erasure is not covered.
+\section{Compact closure and laws}
+Cup $1\to U\times U$ has raw witness $u\in U$, weight one, context coefficient $I$, unit global content and body $(u,u)$. Cap $U\times U\to1$ has a singleton weight-one witness at equal inputs and empty zero measure at unequal inputs, again unit content. Snake composites have exactly one compatible witness at each input, with canonical context/content unitors. The resulting compact trace is canonically isomorphic to the displayed matching formula; the cup/cap expression also inserts unit writer grades, removed by the actual unitors.
+
+Unit, external naturality, superposing and nested finite feedback follow from tuple bijections and symmetric monoidal coherence. Dinaturality must include an arbitrary effectful $g:V\to U$: the two closed composites retain an $f$ witness and a $g$ witness with the same two compatibility equations. Rotating that pair gives the native isomorphism; product weights commute and both context coefficients and global writer grades use their actual symmetry. No nonsymmetric version is claimed.
+
+General loop comparison is different from dinaturality. For the pure identity on $U$, closure has $|U|$ raw witnesses of weight one. Erasing $U$ to a singleton does not preserve that total mass, although the unclosed pure processes admit the corresponding changing-interface square. Thus feedback cannot preserve all such squares without a changed comparison interface.
+
+\section{Explicit coherence data}
+For composable pairs $f_1,g_1$ and $f_2,g_2$, the tensor compositor carries
+\[
+ ((w_1,w_2),(z_1,z_2))\longmapsto ((w_1,z_1),(w_2,z_2)).
+\]
+Each $z_i$ lies in the continuation fibre determined by $w_i$, so the displayed map and inverse are well typed. Its context map is the canonical middle interchange
+\[
+ (C_1\otimes C_2)\otimes(E_1\otimes E_2)
+ \longrightarrow (C_1\otimes E_1)\otimes(C_2\otimes E_2),
+\]
+and its content map is the corresponding symmetry/associator on the entire four global grades. Commutativity of nonnegative multiplication proves the effect equation. Unit compositors insert or delete singleton identity witnesses and use unitors. Horizontal associators rebracket retained triples; tensor associators and symmetries rebracket and permute the corresponding independent coordinates.
+
+A composite of these structural cells has a raw map determined by its labelled primitive witness coordinates, with parenthesization ignored only by the specified bijections. Thus the pentagon, triangle, tensor-functor associativity/unit, symmetry and hexagon pastings agree on raw coordinates. Their coefficient and global-content maps agree by symmetric monoidal coherence in $\mathcal V$ and $\mathcal D$. This proves the symmetric monoidal bicategory structural diagrams without identifying different primitive coefficient arrows.
+
+For duality, each snake has a raw tuple consisting of the external label $a$, one cup label, and singleton unit/cap witnesses. The cap equality forces the cup label to be $a$. The snake 2-cell projects this unique tuple to the identity witness; its inverse inserts exactly those forced labels. Its context and writer maps are the unitors and associators on unit objects. In each swallowtail pasting on a cup, both composites leave its one freely chosen label $u$ unchanged and insert then remove the same forced equal labels; on a cap both act on its unique compatible witness when the endpoint labels agree, and on the empty carrier otherwise. Hence the raw maps agree. All structural coefficient factors are copies of $I$ and all writer factors copies of $J$, so the remaining equalities are unit/associator/symmetry coherence. In particular, the global writer maps still agree in empty-carrier cases; raw-map equality alone would not establish native-cell equality. The same coordinate check gives the compatibility of the chosen duality with tensor.
+
+This argument claims no coherence for arbitrary extra shared-joint comparison cells. Those cells are not the invertible independent tensor compositor just described. The displayed construction gives coherent compact duality on this specific native writer bicategory; the written argument was independently reviewed.
+
+\section{Conservativity, strictness and outstanding obligations}
+Normalized finite-probability contexts embed into finite measures. On old objects the native cell equations are identical, so this inclusion is locally fully faithful; old composition and independent tensor remain normalized. Context and global writer data are not projected to output distributions. The new trace need not stay normalized: closing the identity on a two-element wire gives total mass two, while closing bit negation gives zero. These separate feedback closure from the old normalized doctrine, not establish a universal no-go for every probability semantics.
+
+Forgetting native witness and coefficient data recovers the familiar finite weighted-matrix diagonal-sum trace, but that is only a behavioral interpretation. The native lift must prove its own coherence. No free/universal completion property has yet been established. Noncanonical joint couplings and their directed native maps remain possible input data, but compatibility with shared joint assembly and genuinely multi-occurrence content is not supplied merely by compact closure. Infinite wires require a separate summability/completion argument and remain open. Delayed feedback and recurrent control have not been identified with this instantaneous closure.
+\section{Source relationship and attribution}
+The independent presentations and writer crossing are those of
+\path{foundations/local-joint-comparison/Local_Joint_Comparison_and_Generated_Interference.tex},
+in its independent-inputs section, read at repository commit
+\texttt{a8bb1e2108b887709a77495bea98b97115bda4e5}. That proof works for any Set monad: $M$ supplies the same dependent-bind laws, while $e_A$ and the independent writer presentation retain their literal objects and arrows. Symmetry of both coefficient categories is additional here and is used in independent tensor interchange and cyclic witness rotation.
+
+Ordinary weighted-matrix compact closure is established: Abramsky--Coecke, \emph{A categorical semantics of quantum protocols}, Section 5, examples, states the commutative-semiring matrix case: \url{https://arxiv.org/html/quant-ph/0402130v5}. Michael Stay, \emph{Compact closed bicategories}, Theory and Applications of Categories 31 (2016), supplies the direct bicategorical duality/coherence definition in Section 4: \url{https://arxiv.org/pdf/1301.1053}. The present proof checks that structure on retained native data, rather than importing the span theorem. Stay's matrix discussion is not used as a proved blanket theorem applying here.
+
+Disjoint union of mass-preserving weighted witness families is not a categorical coproduct: an inclusion from one positive-mass summand does not preserve the total target measure. Accordingly the proof does not invoke a coproduct-based matrix-bicategory construction. Weighted-matrix behavior is the explicit interpretation obtained by summing weights in each output fibre. That interpretation forgets raw and grade data and cannot establish native coherence on its own.
+
+The aim is a native adaptation and a strict enlargement relative to the pinned normalized doctrine, not a historical novelty claim. The finite-wire result advances the feedback direction of v0.2; its absent universal property and interaction/recurrence bridges remain substantive parts of that investigation.
+\end{document}
