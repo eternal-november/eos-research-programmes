@@ -1,0 +1,9 @@
+# Native coefficient envelopes and retained scope
+
+[Directed distributivity and a conservative native coefficient envelope](Directed_Distributivity_and_Native_Coefficient_Completion.tex) weakens the original coefficient invertibility requirement to coherent finite contractions. Actual dependent aggregation and native Fubini still produce the full occurrence crossing under the original content hypotheses. An opposite-Day construction supplies a coefficient enlargement whose co-Yoneda inclusion preserves the original native augmented families, mixed comma hom-categories and pure endpoint squares fully faithfully.
+
+[Retained native scope and conditional assembly](Retained_Native_Scope_and_Conditional_Assembly.tex) keeps one actual latent context outside conditional occurrence assembly. Coherent directed comparisons from this assembly to independently integrated occurrences exist precisely when the latent context has a cocommutative comonoid. This is not a requirement for sharing itself: the retained joint context has native projections without being the independent tensor of its marginals.
+
+The coefficient construction reuses established convolution machinery. Its completion does not imply limits of augmented contexts, physical interpretations of every new grade, or preservation of all old universal constructions. Neither manuscript constructs general feedback, coherent arbitrary joint-scope substitution, or infinite effects. The [v0.2 target](../../contracts/Native_Feedback_and_Interaction_Extension_Contract_v0_2.tex) remains open.
+
+The written arguments were independently reviewed. No Lean certification or TeX compilation is claimed. The original [independent interaction criterion](../../interaction/independent-criterion/General_Independent_Interaction_Criterion.tex) remains unchanged.
