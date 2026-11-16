@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\title{State intertwiners and instantaneous native closure}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Status.} The written restriction, assembly and seeded subpreserving arguments passed independent review, including their exact support criteria and conservativity boundaries. This compares the finite-measure writer feedback of PR77 with the earlier retained-state machine construction. It neither identifies instantaneous matching with delayed execution nor completes the v0.2 contract.
+\section{Pinned interfaces}
+Work in the finite-endpoint native writer bicategory of
+\path{foundations/finite-measure-native-feedback/Finite_Measure_Native_Feedback.tex}.
+Raw witness sets may be infinite; weights are finitely supported nonnegative measures. Context and content coefficient categories are symmetric monoidal. Raw zero-weight witnesses, actual coefficient arrows, and the whole global content grade are retained.
+
+A machine from $A$ to $B$ consists of a finite state set $U$ and a transition $f:U\times A\to U\times B$. A native comparison to $(V,g)$ is a pure state function $h:U\to V$ and a native cell
+\[\alpha:f;h_B\Longrightarrow h_A;g.\]
+Unitors identify the inserted pure witnesses. Write $W_{u,a}$ for the source transition witnesses, $Z_{v,a}$ for the target witnesses, $p_{u,a},q_{v,a}$ for their weights, and
+\[r_{u,a}:W_{u,a}\to Z_{h(u),a}.\]
+The cell supplies $r_{u,a*}p_{u,a}=q_{h(u),a}$, actual coefficient arrows, one global content map, and the full body square. In particular, if $u^+(w)$ and $v^+(z)$ are returned states,
+\[v^+(r_{u,a}(w))=h(u^+(w)).\]
+External outputs and content labels also commute. This is the actual intertwiner interface, not an ordinary quotient by sliding.
+
+Let $\operatorname{Cl}_U(f)$ be the instantaneous closure: its witnesses at $a$ are $(u,w)$ with $u^+(w)=u$, of weight $p_{u,a}(w)$ and unchanged coefficient. Its global content grade remains the whole grade of $f$.
+\section{Obstruction to unrestricted evaluation}
+Take $A=B=1$, $f=1_U$, $g=1_1$, and $h:U\to1$. The square commutes with an identity transition cell. Closure has total mass $|U|$ on the source and $1$ on the target. Every native cell preserves total mass. Thus if $|U|>1$ there is no cell $\operatorname{Cl}_U(f)\to\operatorname{Cl}_1(g)$. This rules out a closure evaluator on the whole earlier native-intertwiner category with these object values. It does not rule out a different comparison doctrine or retained-state semantics.
+
+Even supplying probability seeds $\pi$ with $h_*\pi=\pi'$ does not suffice: bit negation on two states and singleton identity intertwine under collapse, but seeded fixed-point closure has masses zero and one. In contrast, trace dinaturality concerns factorized slides. For $x:V\times A\to U\times B$, the composites $h_A;x$ and $x;h_B$ have equal traces. Identity on $U$ need not have that factorization through $V$; for collapse to a singleton and a section the resulting endomap is constant, not identity.
+\section{Restriction theorem}
+Call a comparison loop-reflecting if every raw source witness satisfies
+\[h(u^+(w))=h(u)\ \Longrightarrow\ u^+(w)=u.\]
+This includes zero-weight witnesses. For finite $h$, put $n(v)=|h^{-1}(v)|$. Replace the weight of each target closed witness $(v,z)$ by $n(v)q_{v,a}(z)$, leaving raw witnesses, coefficients and global content unchanged. Denote this weighted target by $n\cdot\operatorname{Cl}_V(g)$.
+
+\paragraph{Claim.} A loop-reflecting native comparison canonically induces
+\[\theta_\alpha:\operatorname{Cl}_U(f)\Longrightarrow n\cdot\operatorname{Cl}_V(g).\]
+Its witness map is $(u,w)\mapsto(h(u),r_{u,a}(w))$; coefficient and global content maps are those of $\alpha$.
+
+\paragraph{Proof.} A closed source witness maps to a closed target witness by the body square. For a fixed closed target $(v,z)$, and each $u\in h^{-1}(v)$, every $w$ with $r_{u,a}(w)=z$ has $h(u^+(w))=v=h(u)$; loop-reflection makes it closed. The original pushforward equation therefore gives
+\[
+ \sum_{\substack{u:h(u)=v\\w:r_{u,a}(w)=z\\u^+(w)=u}}p_{u,a}(w)
+ =\sum_{u:h(u)=v}q_{v,a}(z)=n(v)q_{v,a}(z).
+\]
+All sums have finite nonzero support. This is the required effect equation. The remaining native equations are restrictions of the original ones, retaining the same global map. Target witnesses with $n(v)=0$ remain as zero-weight raw witnesses. No choice of lifts or coupling occurs.
+
+\paragraph{Exact criterion.} Raw loop-reflection is sufficient, not necessary. The canonical map on closed witnesses exists for every native intertwiner. For fixed target closed $(v,z)$, the difference between $n(v)q_{v,a}(z)$ and its actual pushed-forward closed weight is exactly
+\[
+ \sum_{\substack{u:h(u)=v\\w:r_{u,a}(w)=z\\u^+(w)\ne u}}p_{u,a}(w).
+\]
+Nonnegativity proves that the canonical map preserves the displayed target measure if and only if every positive-weight source witness with $h(u^+(w))=h(u)$ is closed. Call this support-loop-reflection. Zero-weight witnesses are not deleted or identified: the criterion merely does not constrain loop reflection on them. Both versions will be distinguished below.
+
+When $h$ is a constant-degree $d$ finite cover, the target is simply $d\operatorname{Cl}_V(g)$. When $h$ is bijective, reflection is automatic and $d=1$, giving an ordinary native comparison. Arbitrary directed context/content coefficient maps are allowed; none is inverted.
+\section{Assembly boundaries and coherence}
+Loop-reflecting comparisons compose vertically. For comparisons over $h:U\to V$ and $k:V\to X$, equality $kh(u^+)=kh(u)$ implies $h(u^+)=h(u)$ by reflection for the second comparison applied to the intermediate witness, then $u^+=u$ by reflection for the first. The weaker support-loop-reflection also composes: a positive-weight witness has positive-weight image by the original pushforward equation, so the same argument applies twice. Constant degrees multiply. Restriction of the composite is literally the composite of raw witness maps, with pasted coefficient and global maps. Consequently
+\[\theta_{\beta\alpha}=(d\theta_\beta)\theta_\alpha:
+\operatorname{Cl}(f)\to de\operatorname{Cl}(l)\]
+for degrees $d,e$, under the canonical scalar identifications.
+
+Retained-machine sequential assembly uses product state $U\times R$: first transition updates $U$ once, then the second updates $R$ once. State comparisons are $h\times k$. A closed target composite has equality in each state coordinate; applying reflection to the two actual transition witnesses makes both source coordinates close. Independent parallel assembly has the same coordinate argument. For support-loop-reflection the same reasoning applies to positive composite weights, since a positive product has positive factors. Product cover degrees multiply. Adjoining an extra retained feedback state uses $h\times1_S$, preserving degree and reflection. These statements concern the standard once-updated retained-state assembly, not arbitrary repeated scheduling of one shared register.
+
+For bijective state maps, closure respects sequential and independent parallel assembly up to the canonical native isomorphisms: both sides retain exactly the tuple of closed component transition witnesses, with the same chronological coefficient products and whole global content grades. The trace laws from PR77 supply the reassociations. Thus the bijective-state subfamily admits composition-compatible closure evaluation with arbitrary directed transition cells. The covering family supplies coherent degree-scaled comparisons, not an ordinary evaluator into the original mass-preserving hom categories. Variable-degree weights obey the restriction theorem pointwise, but no scalar-composition assertion is made for them.
+\section{An alternative: seeded closure into a directed comparison doctrine}
+There is a different repair which does not require reflection or a constant-degree state map. Equip finite states with finite nonnegative seeds $\pi$ and require $h_*\pi=\pi'$. This accommodates every bare state function if its target seed is chosen as the pushforward, not every function between independently fixed measured states. Seeded closure gives raw closed witnesses $(u,w)$ weight $\pi(u)p_{u,a}(w)$, retaining coefficients and the global writer grade.
+
+Change the target native comparison condition from $r_*p=q$ to $r_*p\le q$ pointwise, while retaining exactly the same raw maps, coefficient arrows and full body equations. These subpreserving cells compose because pushforward is monotone. They are stable under native bind: for a target dependent witness pair $(w',z')$, summing source products over its preimage is at most $p'(w')q'_{b'(w')}(z')$. The continuation body equation identifies the correct input fibre, first apply its subpreservation inequality and then the outer one. Independent tensor follows the same product-of-sums argument. Thus this is a legitimate directed comparison enlargement of the finite-measure writer construction, not a quotient of its witnesses.
+
+For any seed-preserving native intertwiner the same actual closed-witness map gives a subpreserving cell, since for each closed target $(v,z)$,
+\[
+ \sum_{u:h(u)=v}\pi(u)
+ \sum_{\substack{w:r_{u,a}(w)=z\\u^+(w)=u}}p_{u,a}(w)
+ \le \sum_{u:h(u)=v}\pi(u)q_{v,a}(z)
+ =\pi'(v)q_{v,a}(z).
+\]
+The defect is exactly the same sum over nonclosed preimages, weighted by $\pi(u)$. Thus equality holds precisely when every witness which becomes closed after state identification has $\pi(u)p_{u,a}(w)=0$ unless it was already closed. This is a seeded support condition, not erasure of zero-weight native data. No reflection assumption is needed for the inequality. Vertical composition is literal composition of the retained maps. The identity machine has singleton state with seed mass one. Product-seed associators and unitors preserve measures and give the state comparison isomorphisms; closure of the identity machine is the native identity under its unitors. Product seeds are preserved by product state functions. For sequential assembly with disjoint once-updated state registers, the product seed and chronological transition weights give exactly the product of the two seeded closed weights, indexed by the actual intermediate external result. Independent parallel gives the analogous witness bijection. These identifications retain the entire content products and coefficient maps; their coherence is the same coordinate reassociation as before.
+
+This target is locally fully conservative on the old normalized probability fragment: if both weights have total one, $r_*p\le q$ forces pointwise equality. It is only locally faithful, not full, on all of PR77's finite-measure processes: on singleton raw witnesses the identity map from mass one to mass two is newly admitted. Such a cell is an upper-bound comparison, not equal behavior; it cannot be silently reused as an equality or bidirectional replacement certificate.
+
+Seeded closure is not JSV trace. With a fixed seed on a loop wire, yanking multiplies the returned input by its seed weight; unseeded counting trace instead gives weight one. Between finite counting-seeded state sets, seed-preserving functions are exactly bijections, recovering the earlier degree-one bridge. Moreover, adjoining a new retained state requires a specified seed on it; the earlier unseeded feedback operation does not canonically supply that seed. The construction therefore gives a comparison-compatible closure of seeded machines, not a general uniform trace or a recurrent execution semantics. The equality-preserving and subpreserving routes are distinct admissible interfaces, not interchangeable proofs of one claim.
+
+\section{Scope and provenance}
+The prior interface is
+\path{foundations/native-intertwiner-feedback/Native_Intertwiner_Lift_of_State_Feedback.tex}, checked at main blob \texttt{06ce5d51} (prefix). PR77 supplies the native finite-measure closure, not its functoriality in arbitrary state erasures. The present result separates that missing obligation and proves a restricted comparison bridge. It does not impose bijectivity as the final v0.2 target: noninvertible state comparison, shared interference, branching and infinite execution remain separate obligations.
+
+For literature context, Loregian's \emph{Monads and limits in bicategories of circuits}, Definition 1, explicitly retains state maps in the KSW setting: \url{https://arxiv.org/html/2501.01882}. Bonchi--Di Lavore--Rom\'an, \emph{Effectful Mealy Machines}, develops initialized machines, uniform feedback and coinductive execution traces: \url{https://arxiv.org/pdf/2410.10627}. Its execution trace is not the instantaneous diagonal closure considered here. These sources explain why state-intertwiner compatibility is an independent obligation; they are not cited as proving the native restriction or subpreserving lift above.
+
+No claim of novelty, Lean verification or universal completion is made. In particular, adding a seed and checking seed pushforward does not recover this compact trace: weighted yanking scales the external input by its seed weight. A seeded initial-state execution semantics therefore needs its own laws.
+\end{document}
