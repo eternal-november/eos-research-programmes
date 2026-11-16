@@ -1,0 +1,241 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}[theorem]{Proposition}
+\title{Native recurrent prefixes with partial terminal bodies}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Audit and target.}
+This is a candidate construction, not independently reviewed. It instantiates
+recurrent prefix semantics for the locally finite incremental arenas in
+\texttt{Incremental\_Causal\_Arenas\_and\_Open\_Control.tex}, inspected at
+SHA-256 \texttt{9338bcd8045bf2a7d053afbd73db7dc2be7e85856cb1e72b562c2c7b072af0ee}.
+Finite prefixes have normalized native contexts but need not have a total
+terminal content body. The terminal collection is fixed in advance and kept
+whole. Early output ports and configurations remain decoded from the retained
+raw context, not falsely declared to be completed content shapes. No
+augmentation of content coefficients is assumed.
+
+\section{The partial native comma category}
+Fix external endpoints $A,B$. A normalized finite native context $P$ has a
+finite raw row $W_a$, probability $p_a$, and actual augmented coefficients
+$E_{a,w}\to I$ in $\mathcal E=\mathrm{Vect}_k/k$ (or the source finite
+tensor-closed augmented doctrine). Put $e_AP=\coprod_aW_a$.
+An object consists of $(P,C,T,b)$, where $C$ is a full weighted ordered
+polynomial collection, $T\subseteq e_AP$, and $b:T\to F_CB$.
+Every unused shape and its coefficient remains in $C$.
+
+A fixed-endpoint lax partial-comma arrow to $(P',C',T',b')$ is an actual
+native context map $r:P\to P'$ and full weighted collection map
+$\rho:C\to C'$ satisfying
+\[
+ (e_Ar)^{-1}(T')\subseteq T,\qquad
+ F_\rho B\,b=b'\,e_Ar\quad\text{on }(e_Ar)^{-1}(T'). \tag{L}
+\]
+Thus a source terminal witness may map to an active target witness; a source
+active witness cannot map to a target terminal witness. This variance is
+intentional. A strict-domain arrow additionally has equality in the inclusion.
+
+\begin{proposition}
+These objects and arrows form a category. Strict-domain arrows form a
+subcategory. The full-domain objects $T=e_AP$ form a full subcategory
+canonically equal to the original finite normalized native $H(A,B)$.
+\end{proposition}
+\begin{proof}
+If $r^{-1}T'\subseteq T$ and $s^{-1}T''\subseteq T'$, then
+$(sr)^{-1}T''\subseteq r^{-1}T'\subseteq T$. The two body equations compose
+on that preimage, using the actual full collection maps. Identities and
+associativity are inherited from the native context/content categories.
+Equality of domains is preserved under inverse images. On full domains the
+inclusion is automatic and the body equation is exactly the original native
+comma equation, with no new arrow data or quotient.
+\end{proof}
+Changing external inputs may be included rowwise by replacing $P'$ with its
+pure pullback; output transport replaces $b$ by $F_Cv\,b$ for the supplied
+pure output function. In particular noninjective input maps never sum
+separate external rows. The theorem below is written at fixed endpoints to
+keep the variance visible.
+
+\section{Actual arena prefix towers}
+Fix a locally finite arena and a complete external deterministic scheduler
+and coupling policy. At each nonterminal history it selects a nonempty
+finite enabled scope and a normalized joint law with the required primitive
+marginals. All raw outcomes, zero histories and off-policy table entries are
+retained in the controlled arena. Evaluated histories follow the selected
+scope at each reached history; a different unselected scope is not an extra
+probabilistic raw witness. Horizon $n$ counts selected scope updates, not
+individual events, so no atomic draw is split.
+
+The default initial paid context at external input $a$ is the unit witness
+decoding to the arena's initial configuration. More generally one may start
+with a specified finite normalized paid context $P_0$ over the same $A$, a
+configuration decode for each of its raw witnesses, preserving the original
+external input anchor $a$, and the corresponding
+complete future control tables. The paid coefficient appears once. The
+terminal collection $C$ and terminal body are those of the chosen arena,
+or an explicitly supplied common full collection/body for these decoded
+configurations. This generalization is internal context dependence, not a
+promotion of raw histories to an uncosted pure input interface.
+
+Let $W_{n,a}$ contain the raw histories terminal by step $n$, stored at their
+actual first-terminal length, and the still-active histories of length $n$.
+These are disjoint alternatives. Already terminal histories are absorbing
+bookkeeping states: no new raw event or identity call is inserted. The
+weight is the initial paid weight times all selected joint transition weights.
+The coefficient is the paid coefficient tensored with every executed primitive
+coefficient, in the declared chronological/addressed order. Let $T_n$ be
+precisely its terminal histories, with body $b_n$ given by the arena's
+terminal shape and complete ordered output ports in $F_CB$.
+
+\begin{theorem}[Normalized partial-body tower]
+Each $(P_n,C,T_n,b_n)$ is an object of the partial native category. Truncation
+defines arrows
+\[
+ r_n:(P_{n+1},C,T_{n+1},b_{n+1})\longrightarrow(P_n,C,T_n,b_n)
+\]
+with collection map $1_C$. It satisfies
+$r_n^{-1}T_n\subseteq T_{n+1}$, not generally equality. Above each element
+of $T_n$, the truncation fibre is its unique absorbed continuation, with
+unchanged weight and coefficient. These continuations give injections
+$j_n:T_n\to T_{n+1}$ and inverse coefficient isomorphisms.
+\end{theorem}
+\begin{proof}
+Local finiteness and finite initial rows make every finite-horizon raw row
+finite. At an active history, summing its normalized joint law gives its
+old weight; at a terminal history its unique absorbed copy has that same
+weight. Induction proves normalization and exact raw pushforward along
+truncation, including zero weights. At an active extension, the actual
+coefficient arrow is
+\[
+ E_h\otimes\bigotimes_{e\in J_h}K_{e,w_e}
+ \xrightarrow{1\otimes\bigotimes\epsilon_{e,w_e}} E_h\otimes I
+ \cong E_h.
+\]
+At an absorbed terminal history it is the identity. These maps preserve the
+augmentations and compose coherently: successive truncations augment exactly
+the removed factors. They do not require content arrows $R_c\to I$.
+
+If the shorter history is terminal, its only extension is absorbed and the
+terminal body is unchanged. This proves (L) with $1_C$. A newly terminal
+history can have an active shorter history, explaining the strict inclusion.
+No body equation is required there. Configuration decode, including any early
+emitted ports of active configurations, is retained on all raw histories,
+but is not a substitute terminal body. The absorbing-fibre assertions follow
+directly from the no-extra-event convention.
+\end{proof}
+
+\paragraph{Retained observations and the reduct's kernel.}
+The bare object $(P_n,C,T_n,b_n)$ does not categorically retain the
+configuration decode or early output ports. For example the same singleton
+context with empty $T_n$ can decode to two different active configurations
+and still define the same partial-comma object. The actual arena tower
+therefore retains extra observed paid-context data, not merely this reduct.
+
+Let $V_n$ be the set of all arena histories stopped at horizon $n$ under the
+fixed complete strategy, rooted at the supplied paid initial witnesses and
+retaining those root tokens, their input anchors, full past and current
+configuration. Thus any paid-root distinction consumed by the strategy is
+retained even when two roots decode to the same arena configuration. Terminal histories
+are absorbed as before. There is a literal pure history truncation
+$\tau_n:V_{n+1}\to V_n$. The configuration and every early emitted output
+port are decoded from this retained history. The paid context supplies an
+actual observation
+\[
+ o_n:e_AP_n\longrightarrow V_n,
+ \qquad (P_n,o_n)\in M(A,V_n),
+ \qquad o_n e_Ar_n=\tau_n o_{n+1}.
+\]
+This is the original native contextual observation interface: the original
+root $A$ and all paid weights and coefficients remain present. $V_n$ is an
+observation codomain, not a replacement uncosted root input. In the concrete
+construction the observation simply records the complete paid history; no
+identification of distinct paid roots is performed.
+
+The actual structured tower retains the arena, complete strategy $\sigma$,
+these observed contexts, and their compatible partial terminal bodies.
+Program comparisons must preserve the arena/configuration decode through the
+induced history maps $V_n\to V'_n$, commute with truncation, and satisfy the
+complete policy compatibility equations, in addition to the native partial
+body equations. Forgetting this observation/index data is an explicit reduct
+with a nontrivial kernel. In particular preservation of early output ports is
+not claimed under every isomorphism of bare partial-comma objects.
+The tower does not reconstruct all off-policy control tables, nor in general
+all conditional choices at zero-probability prefixes: $\sigma$ remains a
+separate retained index. Forgetting it is not a faithful representation of
+controlled arenas.
+
+\section{Exact terminal reconstruction and its morphisms}
+\begin{theorem}[Absorbing first-hit reconstruction]
+For this tower, or any tower with the same normalized native context maps,
+fixed full $C$, body-compatible terminal injections and bijective absorbing
+fibres with coefficient isomorphisms, the disjoint union of first-hit layers
+is a countable native subprobability process at each external input, with
+full terminal grade $C$. Compatible strict-domain native program comparisons
+at every horizon induce exact native comparisons between these terminating
+processes. Arbitrary lax partial-comma maps do not suffice.
+\end{theorem}
+\begin{proof}
+Use the injections to identify terminal witnesses at successive horizons.
+Let $L_0=T_0$ and $L_{n+1}=T_{n+1}\setminus j_n(T_n)$, rowwise.
+Absorbing fibres and exact pushforward imply unchanged weights on old
+terminal witnesses; their coefficient isomorphisms and body equations make
+coefficient and body choices compatible. Thus the terminal raw set is the
+countable disjoint union $\coprod_{n\geq0}L_n$. For every $N$, its mass up
+to layer $N$ is the mass of $T_N$ in a normalized row and hence at most one.
+Nonnegative countable summation gives total mass at most one. Every chosen
+coefficient is a legitimate individual augmented object, and the full grade
+is $C$ throughout; no countable tensor or union of realized grades is taken. The target is
+explicitly $H_{\leq}(A,B)$ with countable subprobability raw rows, exact
+fibre pushforward, actual augmented coefficient arrows in
+$\mathrm{Vect}_k/k$, and the full weighted collection $C$. Finite-dimensional
+coefficient restrictions remain valid when every supplied coefficient lies
+in that tensor-closed subdoctrine; no infinite tensor is needed.
+For actual arenas each terminal coefficient is the finite tensor on that
+finite stopped history.
+
+Let $f_n:P_n\to P'_n$ be native context maps, strictly commuting with
+truncations and absorption (or with specified coherent isomorphisms), with
+one full collection map $\rho:C\to C'$ and compatible body squares.
+Assume $f_n^{-1}(T'_n)=T_n$ for every $n$. Exact pushforward then restricts
+to the terminal subrows at every horizon. Compatibility at horizon $n-1$
+and strict domain equality there show that first-hit layer $n$ maps into
+first-hit layer $n$, with precisely its terminal fibre: an earlier terminal
+source would have earlier terminal image, and conversely. At $n=0$ use
+strict equality directly. Hence the exact fibre equations hold separately
+on every first-hit layer. Sum these disjoint equations to obtain exact
+terminal pushforward. The actual coefficient arrows and full $\rho$ descend
+through the specified absorbing isomorphisms, giving the native body square.
+
+For an actual policy-compatible native arena map, event bijections reflect
+terminality and the selected-scope equations preserve scheduled horizons.
+Finite prefix induction gives $f_n$ and its actual tensor coefficient maps;
+transition squares give commuting truncation/configuration decodes. Thus
+strict domain equality and every displayed hypothesis follow from the
+actual arena interface, rather than being postulated whole-terminal
+pushforward. Noninjective external input transport remains rowwise.
+\end{proof}
+
+\paragraph{Decisive failure without strict domains.}
+Take a constant tower with singleton mass-one context and terminal domain
+the whole singleton, and another with the same context but empty terminal
+domain at every horizon. Fix a common collection containing a suitable
+terminal shape, and supply the first tower's constant body. Identity context
+and grade maps from the first tower to the second satisfy (L) vacuously and
+commute with truncation. Both towers have the required absorbing-fibre
+property (vacuous for the second). Their terminal reconstructions nevertheless
+have mass one and zero respectively. There is no raw function from the
+nonempty terminating row to the empty row. Consequently terminal
+reconstruction is not a functor on all lax partial-body towers.
+
+\paragraph{Scope.}
+This construction repairs the recurrent prefix interface; it does not claim
+that active prefixes are total $H$ processes or that full global grades admit
+augmentation. It preserves nonterminating early output information as
+retained context/configuration data. It does not identify different scheduler
+clocks, construct an infinite content tensor, impose fairness on divergence,
+or produce a canonical joint policy from marginal data. For a shared policy
+the reconstruction is its selected terminal evaluator, not the independent
+evaluator $E_{\rm ind}$. Even when independent schedulers have canonically
+isomorphic completed trace semantics, no same-index prefix-tower map is
+asserted between their different scheduling clocks. Those are separate
+interfaces and cannot be inferred from the first-hit theorem.
+\end{document}

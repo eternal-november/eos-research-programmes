@@ -1,0 +1,181 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}
+\title{Actual arena evaluation: local mapping theorem and missing contraction cells}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Source and scope.}
+This reads \texttt{Incremental\_Causal\_Arenas\_and\_Open\_Control.tex} at
+SHA-256 \texttt{67ce4c52a14c740f0e9271d73980e0c494adae6dd93fdc02f27e9ee0d0f69c42}.
+Its arenas have genuinely incremental output ports and open component
+composition. Their native maps preserve enabled events and emitted ports
+bijectively at every configuration. Write $\mathcal A(A,B)$ for these native
+hom categories and $E:\mathcal A(A,B)\to H(A,B)$ for independent evaluation.
+The results below use the claimed native evaluation functor, not a selected
+shared-policy evaluation as a horizontal functor. Independent evaluation's
+full proof is undergoing separate review. No effectful symmetric tensor is
+assumed. This note separates a proved obstruction inside the supplied arena
+category from a standard, precisely limited mapping construction.
+
+\section{The actual native category has no contraction reflection}
+\begin{theorem}
+The atomic inclusion $I:H(A,B)\to\mathcal A(A,B)$ is not a right adjoint to
+$E$ in general. On the supplied native arena-map class it does not even admit
+general lax or oplax unit/composition comparison cells.
+\end{theorem}
+\begin{proof}
+Use a singleton interface and the original identity process $1$, whose
+atomic arena $I(1)$ has a singleton enabled event with singleton raw outcome,
+followed by a terminal configuration with one emitted port. The actual arena
+identity has no events. No native map in either direction can compare these
+initial states, since their enabled sets have sizes zero and one.
+Thus neither orientation of a unit comparison exists.
+
+Let $R=I(1)\circ I(1)$. Its initial state has one enabled event. After that
+event, the first component has emitted its port and the second component has
+one enabled event. A native map $R\to I(1)$ would send the first singleton
+event to the atomic event. Its transition equation would then compare the
+intermediate state of $R$, which has one enabled event, to the terminal
+atomic state, which has none. This contradicts the enabled-set bijection.
+The same transition argument excludes a map $I(1)\to R$.
+But $E(R)$ is canonically the original identity process, so
+$H(E(R),1)$ contains its canonical native identity/unitor. Hence the required
+adjunction bijection
+$\mathcal A(R,I(1))\cong H(E(R),1)$ cannot exist. The missing comparison
+cells also exclude general lax and oplax source compositors with the given
+atomic assignment. This example uses only unary unit grades, deterministic
+rows and actual transition squares; probability or infinite behavior is
+irrelevant.
+\end{proof}
+
+The semantic retraction $EI\cong1$ still proves faithful source recovery;
+it does not construct an operational contraction cell. Enlarging the map
+class is a necessary new construction, not a coherence choice omitted from
+the current definition. The stronger shared-scope obstruction in the
+companion note shows why freely whiskering such added cells through all
+controlled contexts is not semantically justified either.
+
+\begin{theorem}[Unit-preserving context recovery is impossible in this map class]
+Let $M(1,1)$ be the original normalized native context category, with its
+canonical embedding into $H$ using unit content. There is no functor
+$J:M(1,1)\to\mathcal A(1,1)$ simultaneously satisfying: $J$ sends the
+context unit to an arena operationally isomorphic to the zero-event identity;
+$J$ preserves all native context arrows; and $EJ$ is natively isomorphic to
+the original context embedding. This holds independently of the atomic
+choice of implementation.
+\end{theorem}
+\begin{proof}
+Choose the context $P$ with two raw points of weights $1/2,1/2$, unit
+coefficients and constant output. The actual native augmentation collapse
+$P\to1$ exists. Its image is an arena map $J(P)\to J(1)$. At the designated
+initial configuration it must induce a bijection of enabled sets. Since
+$J(1)$ is operationally isomorphic to the zero-event identity, its initial
+enabled set is empty; therefore so is the initial enabled set of $J(P)$.
+That initial configuration is terminal. Independent evaluation consequently
+has one raw witness, the empty execution trace, with weight one. Configurations
+outside initial reach cannot alter this evaluated row. A native isomorphism
+to the original two-point row $P$ would require a raw bijection, which is
+impossible. The contradiction uses actual native recovery, not equality of
+scalar output distributions.
+\end{proof}
+This pins the missing structure more strongly than the atomic counterexample:
+retaining original native collapses, operational unit preservation and exact
+native retraction cannot coexist in this enabled-bijection map doctrine.
+Changing the implementation assigned to $P$ does not remove that obstruction.
+
+\section{A genuine local universal property, at its stated dimension}
+Fix endpoints $A,B$ and the actual functor $E$. Define the evaluation
+collage $\mathcal C_E$ with two disjoint kinds of objects: operational arenas
+$P\in\mathcal A(A,B)$ and opaque processes $[F]$ for $F\in H(A,B)$.
+Its hom sets are
+\[
+\begin{array}{ll}
+\mathcal C_E(P,Q)=\mathcal A(P,Q),&
+\mathcal C_E([F],[G])=H(F,G),\\
+\mathcal C_E(P,[F])=H(EP,F),&
+\mathcal C_E([F],P)=\varnothing.
+\end{array}
+\]
+Native composition is unchanged. For a mixed arrow $\alpha:EP\to F$,
+precomposition by $u:Q\to P$ is $\alpha E(u)$, and postcomposition by
+$\beta:F\to G$ is $\beta\alpha$. Functoriality of $E$ proves associativity.
+Let $K:\mathcal A\to\mathcal C_E$ and $J:H\to\mathcal C_E$ be the two
+inclusions. The canonical mixed arrow $\eta_P:P\to[EP]$ is $1_{EP}$.
+
+\begin{theorem}[Standard evaluation-collage characterization]
+Both $K$ and $J$ are fully faithful. Evaluation extends to
+$\bar E:\mathcal C_E\to H$, taking $P$ to $EP$ and $[F]$ to $F$, and
+$\bar E\dashv J$ with identity counit and unit $\eta$ on operational
+objects. For every category $\mathcal D$, specifying a functor
+$T:\mathcal C_E\to\mathcal D$ is equivalent to specifying functors
+$F:\mathcal A\to\mathcal D$, $G:H\to\mathcal D$, and a natural
+transformation $\theta:F\Rightarrow GE$.
+This equivalence also identifies natural transformations: pairs of
+transformations $(a:F\Rightarrow F',b:G\Rightarrow G')$ must satisfy
+$(bE)\theta=\theta'a$.
+\end{theorem}
+\begin{proof}
+Full faithfulness follows from the displayed hom sets. For every object $X$
+of the collage, the defining equation
+$\mathcal C_E(X,[F])=H(\bar EX,F)$ is natural in both variables and proves
+the adjunction. Its unit and counit have the asserted descriptions.
+
+Restriction gives $F=TK$, $G=TJ$, $\theta=T\eta$; naturality follows from
+$\eta_Q u=(Eu)\eta_P$. Conversely send a mixed arrow $\alpha:EP\to F_0$
+to $G(\alpha)\theta_P$. Naturality of $\theta$ makes this compatible with
+precomposition, and functoriality of $G$ handles postcomposition. There are
+no other mixed compositions. Every mixed arrow factors uniquely as
+$J(\alpha)\eta_P$, so this extension is unique. The natural-transformation
+statement follows by checking that same factorization.
+\end{proof}
+
+This is a concrete instance of the standard collage of a representable
+profunctor, not a novel universal construction. It preserves all original
+native maps and all operational native maps by full embeddings. Its opaque
+$[F]$ is deliberately \emph{not} the existing operational atom $I(F)$:
+there is a directed arrow $I(F)\to[F]$, but no reverse arrow. Thus the theorem
+does not contradict the preceding obstruction or secretly identify those
+interfaces. Full grades and their actual maps are retained by the supplied
+$E$ and by the entire $H(EP,F)$, not reduced to terminal scalar laws.
+
+\section{What this does not establish}
+The collage theorem is local in $(A,B)$, at the category of native
+comparisons. No component-substitution operation on these collages has been
+constructed here. Defining every composition involving an opaque object to
+be opaque would supply a different, absorbing evaluation convention; it would
+not prove preservation of the original open intervention ports. Similarly,
+a free bicategory with formal contraction cells and chosen equations needs
+a separate semantic interpretation before any contextual compatibility is
+claimed.
+
+The intrinsic arena class may include persistent fork/join structures and
+early-output behavior not proved generated by original binary $H$ composition.
+Accordingly the collage takes the entire arena doctrine as an additional
+input. Neither semantic retraction nor this mapping property is a free
+completion theorem for $H$. Such a claim requires a separate generation-and-
+relations theorem, or a declared independent event/port generator doctrine.
+
+The actual arena bicategory already supplies independently characterized
+open substitution and a strong independent evaluator, if its source proof
+passes review. The local collage gives an exact relative mapping property
+for adjoining whole-implementation semantic comparisons. Combining the two
+into a contraction-compatible bicategory is an unresolved compatibility
+obligation, not settled by their separate existence. The no-go examples rule
+out unrestricted scope-reflecting comparison and unrestricted controlled
+whiskering, while leaving sealed/retained-interface constructions open.
+Selected policies also do not acquire horizontal composition merely because
+their native-map compatibility relations compose. Intermediates in those
+relations must share the same retained open scope; closing a component's
+history can lose dependencies on another component's revealed outcomes.
+
+\paragraph{Audit amendment for independent native transport.}
+For a native arena map, the source proof should choose a deterministic target
+scheduler and pull its selected subsets back through the enabled-event
+bijections at each source history. Choosing a source scheduler first and
+pushing it forward can conflict when two source histories merge. Pullback
+is well-defined on every source history, including zero and unreachable
+ones, because target tables are complete and event maps are bijections.
+With independent laws, primitive exact pushforwards then prove the finite
+terminal fibre equations. This is a local proof repair, not a restriction of
+the admitted native maps.
+\end{document}
