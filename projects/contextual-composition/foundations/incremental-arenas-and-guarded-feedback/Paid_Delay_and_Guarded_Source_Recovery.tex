@@ -1,0 +1,170 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}
+\title{Paid delay: guarded source recursion without silent initialization}
+\date{16 November 2026}
+\begin{document}\maketitle
+\paragraph{Audit.} Independently reviewed addendum to the birth-stable initial-row and random-initializer feedback constructions. This changes the timing interface by moving an initial draw into one forced paid event. It is a functor on native hom categories with a natural independent-evaluation comparison, not a strong, lax or oplax preservation claim for horizontal units/composition. The initial witness and every actual coefficient remain present. The earlier well-founded silent theorem is not weakened to accept cyclic initialization.
+
+\section{Raw initial histories are not decoded states}
+At a designated input $a$ of an initial-row arena, the raw horizon-zero history set is $Z_a$, carrying its probabilities and actual coefficients. Its decoded state is $\iota_a(z)$, but a control table may inspect the full $z$. A later history retains this seed followed by all selected scopes and their raw expanded outcomes, including zero and off-policy outcomes. If tests beginning at arbitrary retained configurations are also part of a controller interface, those tests remain separately tagged; no equivalence of that larger interface is inferred just from designated initial executions.
+
+For example, two distinct fair initial witnesses may select the same configuration with two independent fair-bit primitive rows. An admissible paid-scope controller can choose the diagonal coupling at seed zero and the antidiagonal coupling at seed one. Collapsing the initial history to its decoded state destroys this distinction although all primitive marginals agree. Thus preserving the seed in the following timing translation is material, not optional bookkeeping.
+
+\section{The actual paid-delay functor}
+For a birth-stable initial-row arena $P:A\rightsquigarrow B$ with initial row
+$(Z_a,\nu_a,L_{a,z})$ and initial-state map $\iota_a$, define $D(P)$ as follows.
+Add a separate boot configuration $\bot_a$ over every input $a$; keep ALL
+original configurations, including unreachable ones. A boot configuration
+has no emitted port and has exactly one enabled paid event, with a fresh
+boot tag distinct from original event identifiers. Its raw row is exactly
+$(Z_a,\nu_a,L_{a,z})$, and outcome $z$ selects the original state $\iota_a(z)$.
+The new initial row is a singleton of weight one and coefficient $I$, selecting
+$\bot_a$. Original configurations, paid rows, transitions, port data, full
+grade $C$ and terminal bodies are unchanged. A boot state is not terminal.
+The boot event has no coenabled distinct event, so birth stability there is
+vacuous; original birth-stability equations are unchanged.
+
+For a native cell $H:P\to Q$, send $\bot_a$ to $\bot_a$, use its original
+configuration/local maps elsewhere, and use its actual initial-row arrow as
+the boot-event row arrow. The new singleton initializer map is forced. The
+old initial square is exactly the boot transition square. All other native
+squares and persistence laws are the original ones; the full grade map is
+unchanged.
+\begin{theorem}
+These definitions give a functor $D$ on each native initial-row arena hom
+category, and a natural actual native isomorphism
+\[
+ \operatorname{Eval}_{\rm ind}(D(P))\cong
+ \operatorname{Eval}_{\rm ind}(P).
+\]
+The comparison is identity on the full content grade and preserves the raw
+initial witness and all actual context coefficients.
+\end{theorem}
+\begin{proof}
+The cell formulas compose exactly: the boot row map is the composite of the
+original initial-row maps, including their augmented coefficient arrows.
+Identity is equally immediate on all retained configurations and full grades.
+A complete designated execution of $D(P)$ has its forced singleton initial
+witness, one boot outcome $z$, and a complete original paid trace. Delete only
+the forced singleton marker and reinterpret $z$ as the original initial
+witness. This is a raw bijection, including zero outcomes, and preserves the
+probability $\nu_a(z)$ times the original paid law. Its actual coefficient
+map is the unitor
+$I\otimes L_{a,z}\otimes K_{\rm trace}\cong L_{a,z}\otimes K_{\rm trace}$.
+Nothing discards $L_{a,z}$. Terminal full bodies agree. The same initial and
+paid native arrows act on both descriptions, proving naturality.
+\end{proof}
+
+Designated control histories after the boot retain its outcome $z$ in the
+raw past. Therefore a supplied original policy on designated seed histories
+can be implemented after the boot without forgetting seed-dependent choices;
+the boot scope itself is forced and its single-row law fixed. This does not
+assert an equivalence of all possible policy structures on every unreachable
+configuration or every newly introduced boot-state test.
+
+\section{What delay does not preserve}
+Let $1$ be the structural zero-event unit. Its initial state is terminal,
+whereas $D(1)$ initially has one enabled event. No native cell exists in either
+direction, since enabled-event bijections would compare zero with one.
+Likewise $D(1;1)$ has one paid boot, whereas $D(1);D(1)$ has two sequential
+paid boots. Their initial singleton raw rows force any initial comparison;
+after the first event one side is terminal and the other is not. Hence no
+native comparison exists in either direction. The natural evaluated
+isomorphism is not a native operational contraction and cannot make $D$
+strong, lax or oplax on horizontal units/composition in this cell class.
+
+Nor is fullness asserted. For a concrete failure, let $Q$ have one terminal
+state $t$ per its sole input, one unary output, singleton initial row selecting
+$t$, and unit coefficients. Let $P$ contain that state and initializer plus
+an unreachable state $x$ with no ports and one deterministic event leading
+to $t$. Give both the same full unary unit grade. There is no native $P\to Q$
+map because $x$ has one enabled event and every $Q$ state has none. But
+$D(P)\to D(Q)$ can send $x$ to the new boot state of $D(Q)$, its event to the
+boot event, $t$ to $t$, and the designated boot to the designated boot.
+All row, transition and terminal-body squares hold. Thus additional native
+maps arise from the extra boot states; they are not images of old maps.
+
+\paragraph{Coefficient-doctrine pin.}
+Throughout this addendum $\operatorname{Rec}_U(F)$ means the terminating
+invocation-tree recurrence with the TENSOR of the original context
+coefficients at its invocation nodes. The ``old atomic realization'' is the
+one-paid-event tensor-coefficient realization, not the earlier
+product-coefficient all-coupling family. For the corresponding same-law
+product-coefficient process there is only the directed comparison
+$\lambda:\bigotimes_v E_v\to\prod_v^{\mathcal E}E_v$, obtained at component
+$v$ by augmenting every other factor; raw witnesses, weights and the full
+content grade are unchanged. This is the comparison proved in
+\emph{Tensor Causal Execution and Native Comparison}
+(\texttt{\detokenize{Tensor_Causal_Execution_and_Native_Comparison.tex}}).
+It need not be invertible: for two augmented copies of $k^2$ with first-coordinate
+augmentation, it maps a four-dimensional tensor to a three-dimensional
+augmentation pullback and kills the tensor of the two augmentation-kernel
+vectors. No tensor/product identification or recovery of every correlated
+member of the larger all-coupling family is claimed.
+
+\section{Guarded feedback and exact original-source recovery}
+Every initializer of $D(P)$ selects a port-free boot state. Its all-raw
+initial-loop relation is empty. Consequently the random well-founded
+feedback compiler applies to $D(P):A+U\rightsquigarrow B+U$ for ANY original
+birth-stable $P$ of those endpoints, even when $P$'s original initial-loop
+relation has cycles. The compiled arena still retains the boot outcome and
+coefficient at each invocation. In particular a zero-probability seed is
+not omitted to obtain this guard.
+
+\begin{theorem}[Guarded recursive recovery]
+Let $F$ be an original finite normalized weighted-polynomial process
+$A+U\to B+U$, and $J(F)$ its strong zero-paid initial-row realization.
+Then $D J(F)$ is natively isomorphic to the old one-paid-event atomic
+realization of $F$, regarded in the birth-stable initial-row doctrine by
+its singleton initializer. Feedback therefore preserves the old atomic
+paid-control interface and its actual independent recursive semantics:
+\[
+ \operatorname{Eval}_{\rm ind}(\operatorname{Fb}_U(DJ(F)))
+ \cong \operatorname{Rec}_U(F)
+\]
+on finite terminating raw invocation trees, with the full $R_U C$ and
+actual context/content coefficients. This statement does not require the
+undelayed initializer relation of $J(F)$ to be well founded.
+\end{theorem}
+\begin{proof}
+The configurations of $D J(F)$ are a port-free boot over each input and one
+terminal state per original raw context witness. Its boot row is exactly
+the original normalized context row, with its actual augmented coefficient.
+Its terminal shape and output labels are the original body. These are exactly
+the old atomic realization's data, including every zero witness and full
+unused grade. Local event/port maps identify the singleton boot tag and
+ordered output positions, and all actual row/coefficient maps are identities.
+Both singleton initial rows agree. This is a native isomorphism on ALL
+configurations, not merely an evaluated equality.
+
+Apply the guarded feedback functor and transport complete paid-scope policies
+through the induced initial/event raw bijections. The original atomic source
+has exactly these configurations and scopes, so this policy conservation is
+specific and justified; it is not the unqualified all-policy equivalence for
+arbitrary $P$ excluded above. Independent invocation normal form groups one
+boot event at each completed invocation. The raw boot outcome is precisely
+that invocation's original $F$ witness. Its probability and actual coefficient
+are unchanged, and the full terminal body is the same formal $R_U C$ tree.
+Thus finite terminating trees and their actual native data agree. Nontermination
+is permitted in the paid dynamics and contributes no terminal raw witness;
+no silent initializer cascade or infinite coefficient tensor has been used.
+\end{proof}
+
+For general $P$, the same independent normal-form theorem and the natural
+comparison $\operatorname{Eval}_{\rm ind}D(P)\cong\operatorname{Eval}_{\rm ind}P$
+identify the terminating feedback with invocation recurrence of the latter
+process, on its stated countable/subprobability interface. At an invocation,
+paid cost is now one plus its original paid-event cost. This change of clock
+is explicit. For $J(F)$ every completed invocation costs one, so the event
+clock counts invocation nodes, not macro generations. Under countable endpoint
+hypotheses, the cited cost-clock matching trace recovers the same terminating
+process, without claiming equality of differently indexed unclosed clocks.
+
+A fair geometric source that either returns or loops is the discriminating
+example: its undelayed zero-paid $J(F)$ is excluded from finite all-raw silent
+initialization, whereas $D J(F)$ is guarded and supports arbitrarily long
+paid recursive runs. This is a timing/interface change that restores the
+old guarded source mechanism, not a proof that the original silent guard
+was unnecessary or that arbitrary correlated boot laws have been added.
+\end{document}
