@@ -96,6 +96,8 @@ Additional scoped worked examples:
 - [Quantitative doctrine descent](applications/quantitative-doctrine/README.md): lower expectations and capability-preserving finite refinement.
 - [Adaptive receipt parallelism](applications/adaptive-receipt-parallelism/README.md): when buffered task executions admit receipt-preserving serial replay.
 
+- [Reserved resource service](applications/reservation-service/README.md): named reusable capacity, pending effects, delayed cleanup and unbounded fair service transported through allocator replacement.
+
 - [Resource-aware graph witnesses](applications/resource-aware-paths/README.md): Pareto-profile quotients for availability/budget tests, with an exponential representation boundary.
 
 - [Composed accumulator contexts](applications/composed-writer-contexts/README.md): the braid obstruction for independently swapping writer modes and a scope-limited action repair.
