@@ -145,6 +145,15 @@ The [global incidence and response-domain construction](Marked_Pure_Base_and_Res
 [Observable-block feedback](Observable_Block_Guarded_Feedback.tex) separately retains convex joint constraints on fixed child observations and proves initiality in its independently specified observation-preserving algebra category. This does not establish arbitrary opaque-child schema feedback, core-relative initiality, balanced feedback descent or unrestricted controller transport.
 
 
+## Dependent core-entry feedback and its native fold
+
+[The direct constructor](Dependent_Core_Entry_Feedback_and_Native_Fold.tex) operates on independently specified fixed-schema core receivers with immutable birth environments, separate current event drivers, and actual incoming-signature actions. Old root and child actors share one paid event and one incoming carrier; newborns only initialize. Complete child laws are conditioned on their designated binder, not merely a semantic label or an unrelated full-root record. Transparent owner dictionaries preserve the actual contexts and prevent historical factors from being charged again.
+
+Its direct invocation runtime has a native root-decomposition isomorphism and is initial in the specified enriched algebra category. The proof includes all prescope symbolic attempts, even empty admission fibres, as well as admitted plans, all raw zero atoms, incoming/exporter maps and the entire terminal grade. It does not obtain uniqueness by forgetting rejected-template maps. Original guarded-runtime recovery requires the original conditioning projections exactly.
+
+[The population algebra](Dependent_Core_Feedback_Population_Algebra.tex) supplies an independent paid target with nonunit owner factors, full terminal shapes, strict provenance and one shared world update rather than sequential actor updates. [The reading route](Dependent_Core_Feedback_Reading_Route.tex) separates this theorem from earlier reserve-only overlap and from the remaining relative-crossing, balance and controller obligations. Arbitrary opaque receivers are not assumed to possess the required enrichment.
+
+
 ## Scope and remaining interfaces
 
 The base feedback theorem uses common-boundary actual slice limits, all admitted joint laws, persistent ports, and deterministic port-free seeds. The conditional content comparison uses the Cartesian, zero-initial-arity typed-production fragment. Contexts accumulate chronologically by tensor; no tensor--limit interchange is asserted. Regrouping within the retained provenance/partition index is invertible; comparison with terminal content can be directed and information-losing.
@@ -152,4 +161,5 @@ The base feedback theorem uses common-boundary actual slice limits, all admitted
 These constructions supply native mapping and assembly theorems at their stated interfaces, not a generic contextad completion. The initializer-family extension supplies world-inert, all-raw well-founded random initialization; world-changing or non-well-founded initialization remains outside it. The original initial-row source inclusion is not recovered merely by replacing initialization with a paid boot: that delay changes the operational composition interface. Original tensor coefficients agree with scope products only under the specified coincident-mode hypotheses; otherwise available comparisons are directed. Instantaneous retained-state closure, unrestricted controller lifting along opaque folds, and full mixed-source conservativity remain separate obligations.
 
 The manuscripts give written proofs. The Python scripts in `checks/` are exact finite diagnostics for the control-fibre, relational and joint-flattening witnesses, not formal proof certification. Run them with Python 3 in a disposable copy, since some write diagnostic JSON. The factorized-stage diagnostic additionally requires NumPy and checks an exact integer identity minor, not a floating-point rank estimate.
+
 
