@@ -1,0 +1,19 @@
+'ContextualComposition.Factorization.Object' does not depend on any axioms
+'ContextualComposition.Factorization.Hom' does not depend on any axioms
+'ContextualComposition.Factorization.Hom.ext' does not depend on any axioms
+def ContextualComposition.Factorization.universalProperty.{vK, vL, vC, uK, uL, uC, u_1, u_2} : {K : Type uK} →
+  {L : Type uL} →
+    {C : Type uC} →
+      [inst : CategoryTheory.Category.{vK, uK} K] →
+        [inst_1 : CategoryTheory.Category.{vL, uL} L] →
+          [inst_2 : CategoryTheory.Category.{vC, uC} C] →
+            (e : CategoryTheory.Functor K C) →
+              (d : CategoryTheory.Functor L C) →
+                (D : Type u_1) →
+                  [inst_3 : CategoryTheory.Category.{u_2, u_1} D] →
+                    CategoryTheory.Functor (CategoryTheory.Comma e d) D ≌
+                      (ContextualComposition.Factorization.balanceClass e d).FunctorsInverting D :=
+fun {K} {L} {C} [CategoryTheory.Category.{vK, uK} K] [CategoryTheory.Category.{vL, uL} L]
+    [CategoryTheory.Category.{vC, uC} C] e d D [CategoryTheory.Category.{u_2, u_1} D] =>
+  CategoryTheory.Localization.functorEquivalence (ContextualComposition.Factorization.normalize e d)
+    (ContextualComposition.Factorization.balanceClass e d) D

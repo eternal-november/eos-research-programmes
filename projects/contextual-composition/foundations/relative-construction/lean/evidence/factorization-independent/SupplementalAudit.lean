@@ -1,0 +1,5 @@
+import ContextualComposition
+#print axioms ContextualComposition.Factorization.Object
+#print axioms ContextualComposition.Factorization.Hom
+#print axioms ContextualComposition.Factorization.Hom.ext
+#print ContextualComposition.Factorization.universalProperty
