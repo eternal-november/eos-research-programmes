@@ -104,6 +104,12 @@ These constructions do not yet form a closed paid relative module on arbitrary m
 
 [The owner-transparent content/activation face](Owner_Transparent_Content_Activation_Face.tex) compares flat and grouped random activation over one common dependent protocol. Actual driver-entry libraries are explicit data, not inferred from pure content. The comparison is natural on whole laws, actual owner products, early ports and full unused grades, and lifts through the stated temporal interfaces. Opaque block menus with changed disclosures or ownership need separate directed comparisons. These results do not yet close the decorated paid context module or establish every mixed relative law.
 
+## Causal lifts and retained birth histories
+
+[Finite lift covers](Finite_Lift_Covers_and_Birth_Factorization_Obstruction.tex) close under progressive tuples, pullback and composition. That geometric closure is not enough for response composition: a directly born final state can have no lift through an earlier birth followed by input evolution, even with full-simplex laws and unit coefficients.
+
+[Atomic-word actions and backward-determined lifts](Atomic_Word_Actions_and_Backward_Determined_Lifts.tex) provide two exact raw repairs. Retained atomic words act by finite lift spans. Finite discrete fibrations with surjective restriction maps form a class stable under the progressive content-span operations and give unique factorization of lift witnesses. General finite word-lift systems realize that class over input-history objects, not collapsed endpoints. Integrated full-simplex laws factor, but complete zero-conditional plans, restricted admission, actual owner coefficients and full-grade descent remain additional obligations. This is not a completed paid relative module.
+
 ## Scope and remaining interfaces
 
 The base feedback theorem uses common-boundary actual slice limits, all admitted joint laws, persistent ports, and deterministic port-free seeds. The conditional content comparison uses the Cartesian, zero-initial-arity typed-production fragment. Contexts accumulate chronologically by tensor; no tensor--limit interchange is asserted. Regrouping within the retained provenance/partition index is invertible; comparison with terminal content can be directed and information-losing.
