@@ -39,3 +39,7 @@ Independent review passed for the bounded Type-valued reindexing result. See evi
 Read eq:groth and the displayed native arrow, then GrothendieckStep.homEquiv, payload_comp, endpoint_square, restrict_payload and Endpoints.baseRestrict_arrow. Reconstruct the two opposites using the decoded payload arrow, not by guessing variance. Test the families-of-types witness on both Bool selectors. To compose restrictions for different base maps, supply coherence of the endpoint comparisons; Endpoints intentionally has no such fields. To extend to telescopes, use the obtained joint action, not the former same-successor product category. A fresh build may first need the pinned mathlib Grothendieck and Cat.Op modules; see the prerequisite build log.
 
 Independent evidence: `evidence/grothendieck-step-independent/Review.tex`, fresh project build and 629 declaration audits.
+
+For successive base arrows: read eq:groth, GrothendieckStep.restrict_payload, GrothendieckStep.restrictionCell_paste in GrothendieckCoherence.lean, then restrict_paste, Endpoints.Split and Endpoints.extensionPresheaf. The candidate freeze, telescope-172-baseline comparison, scoped author replay and acceptance note record verification. Reopen the split endpoint laws before transporting any conclusion to a general pseudofunctor or a weak cleavage.
+
+Independent scoped pass: see `evidence/grothendieck-coherence-independent/Review.tex` and adjacent fresh project replay records (cached external dependencies).

@@ -39,3 +39,4 @@ public import ContextualComposition.TelescopePayloadCells
 public import ContextualComposition.TelescopeReindex
 
 public import ContextualComposition.GrothendieckStep
+public import ContextualComposition.GrothendieckCoherence
