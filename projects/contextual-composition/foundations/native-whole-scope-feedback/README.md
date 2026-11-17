@@ -96,6 +96,14 @@ Typed first-done restriction is an explicit generator, not an exact-pushforward 
 
 These constructions do not yet form a closed paid relative module on arbitrary moving protocols. Endpoint actions, the general content-multiplication faces and higher mixed diagrams remain obligations. The two accompanying exact Python diagnostics retain zero atoms and check the stated fair-bit and augmented-dimension obstructions; they are not formal proof certification.
 
+## Closed content spans and the mixed activation face
+
+[Atomic protocol reassociation](Atomic_Protocol_Associator_and_Pure_Base_Boundary.tex) preserves primitive prescope actor ages, original owners and request disclosures, so newborn actors cannot gain paid actions through regrouping. Free-path coherence is proved; quotient protocols require matched relation congruences. Unary content units contribute no primitive actor.
+
+[Progressive graded content spans](Progressive_Graded_Spans_and_Causal_Lift.tex) repair the changing content domain by retaining an apex over the original source. Progressive polynomial actions preserve pullbacks and have cartesian unit/multiplication; the resulting span composition has actual associator, pentagon and units, with the entire weighted grade. It recovers static content substitution and all Set maps. This closure is over small categories with all functors, not automatically over the more restrictive atomic/occurrence interface. An arbitrary span does not supply a paid causal lift, an initial law or compatible owner coefficients.
+
+[The owner-transparent content/activation face](Owner_Transparent_Content_Activation_Face.tex) compares flat and grouped random activation over one common dependent protocol. Actual driver-entry libraries are explicit data, not inferred from pure content. The comparison is natural on whole laws, actual owner products, early ports and full unused grades, and lifts through the stated temporal interfaces. Opaque block menus with changed disclosures or ownership need separate directed comparisons. These results do not yet close the decorated paid context module or establish every mixed relative law.
+
 ## Scope and remaining interfaces
 
 The base feedback theorem uses common-boundary actual slice limits, all admitted joint laws, persistent ports, and deterministic port-free seeds. The conditional content comparison uses the Cartesian, zero-initial-arity typed-production fragment. Contexts accumulate chronologically by tensor; no tensor--limit interchange is asserted. Regrouping within the retained provenance/partition index is invertible; comparison with terminal content can be directed and information-losing.
