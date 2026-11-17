@@ -29,3 +29,5 @@ public import ContextualComposition.CoconeRecovery
 public import ContextualComposition.RecoveryModification
 
 public import ContextualComposition.FiniteTelescope
+
+public import ContextualComposition.TelescopeMorphisms
