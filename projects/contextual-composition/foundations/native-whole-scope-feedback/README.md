@@ -2,6 +2,14 @@
 
 This construction extends the [shared-world assembly](../shared-world-native-assembly/README.md) through independently specified opaque operational algebras and complete, law-labelled controller families. The interfaces are different and their comparison is explicit: uncontrolled native feedback has an initial algebra; arbitrary selected policies do not automatically lift through its native maps.
 
+## Stage-aware feedback beyond the silent guard
+
+The [stage-aware assembly](Barrier_Aware_Native_Iteration_Assembly.tex) repairs the executed-prefix crossing only after an explicit control change: synchronized stage cuts and certified progressive external births. Birth-reactive feedback has native same-depth nesting and mixed compatibility with context comparison and content flattening, retaining pending components, whole law families, actual owner cones and full unused grades. The old eager-prefix and return-gated obstructions remain valid.
+
+The [native projective characterization](Native_Projective_Universal_Characterization.tex) proves relative finality with actual coefficient and declaration towers, global initial-input law obligations, and constructed coherent comparison maps. It does not Markovize admitted sibling correlations or identify prior divergent histories with a cemetery. The [dynamic population interpretation](Dynamic_Barrier_Population_Mixed_Test.tex) exercises countable reserves, positive divergence, variable offspring and early certified births with nonunit context and content coefficients.
+
+[The integrated reading route](Barrier_Feedback_Assembly_Reading_Route.tex) records recovery and exact scope. This is a certified, stage/export-preserving coherent family, not arbitrary opaque-algebra initiality, unrestricted controller transport, canonical law selection or equivalence with eager divergent execution.
+
 ## Beyond the silent guard: projective laws and a crossing obstruction
 
 [Projective initialization](Beyond_Guard_Projective_Iteration_and_Crossing_Obstruction.tex) retains all finite and infinite silent raw trees, coherent admitted laws and finite native coefficient cones. Exact-slot native maps preserve the resulting countable finite-completion rows; divergent initialization remains a distinct prefix observation. Identical branching marginals admit completion masses 1/3, 1 and 1/4 under different coherent couplings.
