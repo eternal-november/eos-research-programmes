@@ -46,3 +46,7 @@ Independent review passed for the bounded Type-valued reindexing result. See evi
 For one Grothendieck extension step, joint reindexing now preserves native grade and payload arrows over a nondiscrete base. A payload map into a reindexed target, rather than a map between unrelated successor fibres, is essential. This derives single-base-arrow restriction as a functor; coherence of successive outer restrictions and the all-length categorical telescope comparison remain open.
 
 Independent evidence: `evidence/grothendieck-step-independent/Review.tex`, fresh project build and 629 declaration audits.
+
+After #172, GrothendieckCoherence derives a Cat-valued one-step extension presheaf from split endpoint comparisons; see the final SOURCE_CROSSWALK section for the direction of pasting and the strictness boundary. Fifteen new exports (644 total), author and independent replays passed.
+
+Independent scoped pass: see `evidence/grothendieck-coherence-independent/Review.tex` and adjacent fresh project replay records (cached external dependencies).
