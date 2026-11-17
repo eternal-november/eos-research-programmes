@@ -15,10 +15,10 @@ for name,cmd in [('build',['lake','build']),('axioms',['lake','env','lean','Axio
 rows=json.loads((p/'TheoremIndex.json').read_text())
 a=(e/'axioms.log').read_text()
 for row in rows:
-    if "'"+row['declaration']+"'" not in a: raise SystemExit('Missing theorem audit')
+    if a.count("'"+row['declaration']+"'") != 1: raise SystemExit('Missing or duplicate declaration audit')
 for axioms in re.findall(r'depends on axioms: \[([^]]*)\]',a):
-    if set(axioms.split(', '))-{'propext','Quot.sound','Classical.choice'}:
+    if set(re.split(r',\s*',axioms.strip()))-{'propext','Quot.sound','Classical.choice'}:
         raise SystemExit('Unexpected axiom: '+axioms)
 files=[*p.glob('*.lean'),*p.glob('ContextualComposition/*.lean'),p/'lean-toolchain',p/'lakefile.toml',p/'lake-manifest.json']
 (e/'source_hashes.json').write_text(json.dumps({str(f.relative_to(p)):hashlib.sha256(f.read_bytes()).hexdigest() for f in files},indent=2)+'\n')
-print('PASS: package build and '+str(len(rows))+' named theorem axiom audits')
+print('PASS: package build and '+str(len(rows))+' indexed declaration axiom audits')
