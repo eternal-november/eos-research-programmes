@@ -38,3 +38,7 @@ The Cat-valued telescope extension candidate proves the length-tagged comparison
 
 The discrete-base telescope comparison now respects arbitrary families of natural transformations between payload-change functors. Both directions commute as functors on the parameter hom-category. One starting state detects precisely the components at the endpoints of its actual chains; all starting states together detect every component through empty chains. No nondiscrete base reindexing is inferred.
 Independent scoped review passed; see evidence/telescope-payload-cells-independent/REVIEW.md and its fresh own-project build and 543-declaration axiom audit. The nine pinned dependency build caches were reused.
+
+The reviewed #105 tranche proves the telescope extension comparison as an isomorphism of Type-valued presheaves on an arbitrary base category with selected split one-step grade lifts. A concrete base arrow changes an inhabited successor to an empty one, and a second test distinguishes induced payload maps even with identical successor types. This does not combine the earlier discrete-base Cat-valued theorem with arbitrary base reindexing.
+
+Independent review passed for the bounded Type-valued reindexing result. See evidence/telescope-reindex-independent/Independent_Telescope_Reindex_Review.tex and the fresh build/audit logs there. Dependencies were cached. The general categorical and strict-algebra obligations remain open.
