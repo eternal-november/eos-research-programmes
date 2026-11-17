@@ -2,6 +2,14 @@
 
 This construction extends the [shared-world assembly](../shared-world-native-assembly/README.md) through independently specified opaque operational algebras and complete, law-labelled controller families. The interfaces are different and their comparison is explicit: uncontrolled native feedback has an initial algebra; arbitrary selected policies do not automatically lift through its native maps.
 
+## Integrated structural account
+
+[The parameterized native extension family](Structured_Native_Extension_Family.tex) gives an actual mapping property over independently specified fixed-interface parameters and opaque algebras. Primitive maps first induce all-law constructor transformations; free feedback is then a relative initial section, left adjoint to the algebra projection. This is not a fullness assertion after forgetting parameters.
+
+The event-free identity-decoder subcategory identifies the relative family product with operational initial-row assembly and joins source coreflection to the constructor/fold square. Generated paid comparisons, fusion and continuation faces are parameter-natural at their declared interfaces. [Controlled observer assembly](Controlled_Family_Observer_Assembly.tex) supplies the exact decorated category and controller-extension fibres on which prefix, restriction and clock observations preserve those equations.
+
+This is a coherent family, not a single paid relative completion. An independently defined paid context/content crossing covering arbitrary opaque paid systems remains missing. Unfinished initial states prevent a naive projection into the terminal source presentation; writer interpretation does not automatically preserve initiality. These restrictions prevent an E0–E6 closure claim.
+
 ## Native feedback and the full writer library
 
 [Boundary-row algebras](Boundary_Row_Algebras.tex) admit opaque states and whole simultaneous commands, actual world updates, passive rebasing, exact raw pushforwards and complete context/writer arrows. The root constructor couples active root and child commands using the entire supplied joint law. Its finite invocation carrier is initial for deterministic port-free seeds. The fold proof retains unreachable configurations, raw zero atoms, growing successor trees and the separate full terminal polynomial grade.
@@ -79,6 +87,7 @@ The base feedback theorem uses common-boundary actual slice limits, all admitted
 These constructions supply native mapping and assembly theorems at their stated interfaces, not a generic contextad completion. The initializer-family extension supplies world-inert, all-raw well-founded random initialization; world-changing or non-well-founded initialization remains outside it. The original initial-row source inclusion is not recovered merely by replacing initialization with a paid boot: that delay changes the operational composition interface. Original tensor coefficients agree with scope products only under the specified coincident-mode hypotheses; otherwise available comparisons are directed. Instantaneous retained-state closure, unrestricted controller lifting along opaque folds, and full mixed-source conservativity remain separate obligations.
 
 The manuscripts give written proofs. The Python scripts in `checks/` are exact finite diagnostics for the control-fibre, relational and joint-flattening witnesses, not formal proof certification. Run them with Python 3 in a disposable copy, since some write diagnostic JSON. The factorized-stage diagnostic additionally requires NumPy and checks an exact integer identity minor, not a floating-point rank estimate.
+
 
 
 
