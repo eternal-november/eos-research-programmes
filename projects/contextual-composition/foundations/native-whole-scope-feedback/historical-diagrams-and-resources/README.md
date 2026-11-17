@@ -11,3 +11,5 @@ The two Python scripts require only Python 3's standard library. Run `python coe
 [Completed-row to causal native lifting](causal/RECONSTRUCTION.md) characterizes raw prefix factorization, pointwise conditional-law transport and historical coefficient descent. The finite linear system includes required forward-update squares; its recurrent existence theorem does not select canonical lifts or reconstruct divergent laws from completed rows.
 
 [Resource assembly and historical consumers](integrated/RECONSTRUCTION.md) derives tensor/sequential interchange and joint-local recurrent representation. Arbitrary future historical readers obstruct canonical resource normalization; the noninvertible context/action face remains a separate obligation.
+
+[Retained common-history context face](integrated/COMMON_HISTORY_REVIEW_ROUTE.md) lifts the directed same-cut core-scoped comparison while preserving actual repair resources and historical consumers. Joint observers and forward updates remain explicit; equation reflection requires epimorphic observers. This is not eager cut deletion or arbitrary receiver recovery.
