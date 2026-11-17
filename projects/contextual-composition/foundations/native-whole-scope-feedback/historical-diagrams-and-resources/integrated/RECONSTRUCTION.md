@@ -1,0 +1,9 @@
+# Integrated repair assembly and historical consumers
+
+Read the governing feedback/interaction contract before this checkpoint. The requested structural result must compose operations rather than merely list their theorems. Then read the universal total resource manuscript, especially graph retention, sequential composition and noninvertible base changes; the calibrated online companion; and the completed-row causal lift manuscript, especially forward-update squares.
+
+`Resource_Assembly_and_Historical_Consumer_Obstruction.tex` supplies the common actual-realization doctrine and derives tensor/sequential interchange. It then distinguishes a fixed joint-observer skeleton from full historical coefficients. Only the former admits the stated terminal resource normalization. The positive recurrent assembly keeps a common raw law and all original labels/binders; it never tensors probabilities. Same-recipe dependent substitution means actual bracketing and disjoint framing of retained event/resource keys, not the unproved noninvertible context face.
+
+The decisive failure is a future native material consumer reading a resource direction that immediate universal normalization kills. The proof uses an actual augmented identity reader and singleton raw laws. Thus the obstruction is not caused by a probability/conditioning mistake. Consumer saturation or retaining actual resources are meaningful repairs but do not automatically yield a canonical global normal form.
+
+Run `python3 check_resource_assembly.py`. The exact-hash independent review is `../reviews/Resource_Assembly_Independent_Review.tex`. Its scope includes: variance and tensor interchange; generated-map terminality rather than false ambient finality; old joint versus full history; all-raw/whole-law sameness; actual limits of same-recipe substitution; and the consumer obstruction. No claim of complete noninvertible mixed-action assembly is made.
