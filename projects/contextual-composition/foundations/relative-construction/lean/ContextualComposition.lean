@@ -13,3 +13,5 @@ public import ContextualComposition.TargetChange
 public import ContextualComposition.EndpointTransport
 
 public import ContextualComposition.EndpointTarget
+
+public import ContextualComposition.LocalizationDescent
