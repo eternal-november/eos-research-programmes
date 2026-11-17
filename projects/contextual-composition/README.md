@@ -8,6 +8,10 @@ The [feedback and concurrency extension contract, v0.1.3](contracts/Feedback_and
 
 The [native feedback and interaction research contract, v0.2](contracts/Native_Feedback_and_Interaction_Extension_Contract_v0_2.tex) targets a structural account relating general admissible feedback, dependent graded occurrences and shared interaction, with recurrent semantics and conservativity addressed explicitly. It replaces the earlier branching-first default; a local extension does not alone resolve the governing question.
 
+## Current structural checkpoint
+
+The [balanced implementation-indexed guarded family](foundations/native-whole-scope-feedback/Balanced_Guarded_Core_Feedback_Coherent_Family.tex) now assembles the core crossing, dependent paid native feedback and initial folds, whole-grade nesting/sliding laws, source recovery, and a substantive shared-population interpretation. Its [reading route](foundations/native-whole-scope-feedback/Balanced_Feedback_Assembly_Reading_Route.tex) distinguishes the actual comparison strengths and observation kernels. The result is scoped to core, transparent-owner, guarded implementations; coherent solution-selection and native transport beyond silent well-foundedness remain open.
+
 ## Reading guide: three levels
 
 The [native-grade feedback assessment](foundations/local-joint-comparison/README.md) now includes a second, asynchronous occurrence-fragment interpretation reusing the generated comparison and feedback theorem. It records the v0.1.3 categorical-core criterion as met at the declared parameterized scope; institutional acceptance and the broader realization/application completion ledgers remain separate.
