@@ -1,0 +1,6 @@
+module
+import ContextualComposition
+#print axioms ContextualComposition.TerminalComma.Presentation
+#print axioms ContextualComposition.TerminalComma.body
+#print axioms ContextualComposition.TerminalComma.Mixed.Realization
+#print axioms ContextualComposition.TerminalComma.Mixed.NativeSquare
