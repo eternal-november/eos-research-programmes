@@ -1,0 +1,47 @@
+def ContextualComposition.Factorization.Source.explicitPresentationEquivalence.{vK, vL, vC, vD, uK, uL, uC, uD} : {K :
+    Type uK} →
+  {L : Type uL} →
+    {C : Type uC} →
+      {D : Type uD} →
+        [inst : CategoryTheory.Category.{vK, uK} K] →
+          [inst_1 : CategoryTheory.Category.{vL, uL} L] →
+            [inst_2 : CategoryTheory.Category.{vC, uC} C] →
+              [inst_3 : CategoryTheory.Category.{vD, uD} D] →
+                (e : CategoryTheory.Functor K C) →
+                  (d : CategoryTheory.Functor L C) →
+                    (ContextualComposition.Factorization.Primitive.generators e d).FunctorsInverting D ≌
+                      ContextualComposition.Factorization.Source.Cocone e d :=
+fun {K} {L} {C} {D} [CategoryTheory.Category.{vK, uK} K] [CategoryTheory.Category.{vL, uL} L]
+    [CategoryTheory.Category.{vC, uC} C] [CategoryTheory.Category.{vD, uD} D] e d =>
+  { functor := ContextualComposition.Factorization.Source.restrictionFunctor e d,
+    inverse := ContextualComposition.Factorization.Source.extensionCategoryFunctor e d,
+    unitIso := ContextualComposition.Factorization.Source.explicitUnitIso e d,
+    counitIso := ContextualComposition.Factorization.Source.explicitCounitIso e d, functor_unitIso_comp := ⋯ }
+ContextualComposition.Factorization.Source.target_associativity.{vK, vL, vC, vD, vE, vF, uK, uL, uC, uD, uE, uF, vG, uG}
+  {K : Type uK} {L : Type uL} {C : Type uC} {D : Type uD} {E : Type uE} {F : Type uF}
+  [CategoryTheory.Category.{vK, uK} K] [CategoryTheory.Category.{vL, uL} L] [CategoryTheory.Category.{vC, uC} C]
+  [CategoryTheory.Category.{vD, uD} D] [CategoryTheory.Category.{vE, uE} E] [CategoryTheory.Category.{vF, uF} F]
+  (e : CategoryTheory.Functor K C) (d : CategoryTheory.Functor L C) {G : Type uG} [CategoryTheory.Category.{vG, uG} G]
+  (S : ContextualComposition.Factorization.Source.Cocone e d) (H : CategoryTheory.Functor D E)
+  (J : CategoryTheory.Functor E F) (N : CategoryTheory.Functor F G) :
+  CategoryTheory.CategoryStruct.comp
+      (ContextualComposition.Factorization.Source.postcomposeMap e d N
+        (ContextualComposition.Factorization.Source.postcomposeCompIso e d S H J).hom)
+      (CategoryTheory.CategoryStruct.comp
+        (ContextualComposition.Factorization.Source.postcomposeCompIso e d S (H.comp J) N).hom
+        (ContextualComposition.Factorization.Source.targetTransformation e d (H.associator J N).hom S)) =
+    CategoryTheory.CategoryStruct.comp
+      (ContextualComposition.Factorization.Source.postcomposeCompIso e d
+          (ContextualComposition.Factorization.Source.postcompose e d S H) J N).hom
+      (ContextualComposition.Factorization.Source.postcomposeCompIso e d S H (J.comp N)).hom
+ContextualComposition.Factorization.Source.extension_target_naturality.{vK, vL, vC, vD, vE, uK, uL, uC, uD, uE}
+  {K : Type uK} {L : Type uL} {C : Type uC} {D : Type uD} {E : Type uE} [CategoryTheory.Category.{vK, uK} K]
+  [CategoryTheory.Category.{vL, uL} L] [CategoryTheory.Category.{vC, uC} C] [CategoryTheory.Category.{vD, uD} D]
+  [CategoryTheory.Category.{vE, uE} E] (e : CategoryTheory.Functor K C) (d : CategoryTheory.Functor L C)
+  (S : ContextualComposition.Factorization.Source.Cocone e d) {H J : CategoryTheory.Functor D E} (τ : H ⟶ J) :
+  CategoryTheory.CategoryStruct.comp
+      (ContextualComposition.Factorization.Source.extensionTransformation e d
+        (ContextualComposition.Factorization.Source.targetTransformation e d τ S))
+      (ContextualComposition.Factorization.Source.extensionPostcomposeIso e d S J).hom =
+    CategoryTheory.CategoryStruct.comp (ContextualComposition.Factorization.Source.extensionPostcomposeIso e d S H).hom
+      ((ContextualComposition.Factorization.Source.extensionFunctor e d S).whiskerLeft τ)
