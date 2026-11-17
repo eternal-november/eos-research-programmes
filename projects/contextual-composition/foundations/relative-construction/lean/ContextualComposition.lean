@@ -19,3 +19,5 @@ public import ContextualComposition.LocalizationDescent
 public import ContextualComposition.WeakChoiceCoherence
 
 public import ContextualComposition.NormalizationCoherence
+
+public import ContextualComposition.EquivalenceCoherence
