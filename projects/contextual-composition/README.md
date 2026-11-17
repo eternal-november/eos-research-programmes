@@ -147,3 +147,8 @@ The manuscripts contain written proofs at their stated scope. Python checks are 
 
 The [feedback overlap route](foundations/native-whole-scope-feedback/Feedback_Overlap_Reading_Route.tex) assembles actual reserve-signature transport, neutral closed-input recovery and a fixed proper output retaining early ports. Static polynomial output factorization is obstructed; full terminal-grade semantics remains a separate interpretation. Observable-block initiality is proved separately on its observation-preserving algebra category. Arbitrary progressive child substitution and core-relative feedback initiality are not inferred.
 
+
+### Direct dependent core feedback
+
+[Dependent core-entry feedback](foundations/native-whole-scope-feedback/Dependent_Core_Entry_Feedback_and_Native_Fold.tex) now has an actual paid constructor, complete-family root decomposition and full-native initial fold on its fixed-schema, immutable-birth interface. The proof retains incoming correlations, rejected symbolic attempts, zero atoms, whole owner contexts and full terminal grades; recovery pins the original binders. An independent [population algebra](foundations/native-whole-scope-feedback/Dependent_Core_Feedback_Population_Algebra.tex) interprets simultaneous shared-world recurrence. This is a direct structural result, not general feedback descent through the relative crossing or balanced quotient; those compatibility obligations remain distinct.
+
