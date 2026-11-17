@@ -22,8 +22,10 @@ Independent scoped review passed. See evidence/finite-telescope-independent, inc
 
 ## #105 telescope native-morphism branch after #167
 Read the final two crosswalk sections, then ChainHom, chainCategory, singletonHomEquiv, flattenFunctor and the three homogeneous law statements in TelescopeMorphisms.lean. The casts use exactly the #167 equalities on old chain objects. Recover the noninvertible and parallel-map witnesses before considering constructions that quotient the hom family. For the Cat-valued extension comparison, define arrows in payload-bearing values and in iterates, then prove the equivalence on them; the old object equivalence is insufficient.
-Independent scoped review passed. See evidence/telescope-morphisms-independent for the fresh own-source replay and the two-block discriminator.
 
 ## Cat-valued telescope extension after #168
 Read the pinned eq:telescope passage, the preceding two telescope tranches and the final crosswalk. TelescopeExtension.lean builds ValueHom and PackedHom independently on the earlier object types, before defining either comparison functor. Test a singleton with an arbitrary grade map and an arbitrary payload map, and check the no-cross-length and shared-next-state conditions. The strongest roundtrip statements are equalities of functors. To generalize to a nondiscrete base, simple equality of next states no longer describes all allowed transport; a real reindexing/cleavage interface is needed.
-Independent scoped review and fresh own-project replay passed for 525 indexed declarations, reusing pinned dependency binaries. See evidence/telescope-extension-independent.
+
+## Telescope payload 2-cell candidate after #169
+Read the final crosswalk and eq:telescope at the pinned manuscript lines 929–953. Compare #169's forward_payload/backward_payload (individual payload functors) with forward_family/backward_family (functors on the parameter hom-category); do not conflate this vertical result with horizontal 2-functor data or base reindexing. The exact fixed-state reachable-endpoint criterion is a check against claiming each single fibre is faithful on all families. See TELESCOPE_PAYLOAD_CELLS_FREEZE.json and evidence/telescope-payload-cells-author-fresh.
+Independent scoped review passed; see evidence/telescope-payload-cells-independent/REVIEW.md and its fresh own-project build and 543-declaration axiom audit. The nine pinned dependency build caches were reused.
