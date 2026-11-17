@@ -1,0 +1,34 @@
+# Scope and reconstruction route
+
+## Source and operation
+
+The source is `projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex` at EOS commit `458ff36a4798e432dee5947afc402f9903a47f14`, §“Internal constructors and familiar specializations” (`sec:constructors`). The adjacent displayed fixed-effect formulas, Para paragraphs and reader/writer paragraphs are the exact targets. Issue #105 tracks the much larger constructor programme; #91 sets formal-verification acceptance. Neither issue is closed by this package.
+
+The next operation is to extend earlier constructor formalization without mistaking a concrete realization for the general relative pseudopromonad factory. Read that source section first, then the three Lean files and this scope ledger; inspect `AxiomAudit.lean` and replay `verify.py`. Consult the earlier source sections only when attempting the factory comparison. The interpretation preserves actual parameter maps, including a proved noninjective example, rather than quotienting native cells to existence.
+
+A partial result here is a checked declaration under its precise formal hypotheses plus a source comparison. Kernel acceptance does not establish that the intended theorem was translated faithfully. Accordingly the infrastructure separates theorem names/axioms, source adequacy and the remaining coverage ledger. A change from Type to an arbitrary monoidal action changes a shared structural input; the Type proof cannot be reclassified as a general proof without a new comparison and coherence proof. This is why the coverage unit is a constructor at a declared base, not a single “#105 done” flag.
+
+## Declaration/source crosswalk
+
+All declaration names below begin `ContextualComposition.`. `TheoremIndex.json` enumerates each full name and file; hypotheses are in the Lean declarations, not implicit in the source label.
+
+* `MonadRecovery.square_iff_quintet`, `horizontal`, `vertical`, `kleisli_comp`: source first fixed-monad display and endpoint equation. Arbitrary category `C` with supplied mathlib monad `T`; operational composition is definitionally the underlying base arrow of mathlib Kleisli composition (the library now wraps objects and homs in structures). Pure endpoint equation is proved equivalent to composing with the pure arrows on either side. Horizontal and vertical pasting preserve it.
+* `ComonadRecovery.square_iff_quintet`, `horizontal`, `vertical`, `cokleisli_comp`: dual fixed-comonad display and endpoint equation, arbitrary category and supplied comonad. No inversion of counit or comultiplication.
+* `Reader.transpose_comp`, `transpose_pure`, `square_iff`: reader paragraph. Explicit invertible arrow map (with both inverse laws in `transpose`) preserves composition, pure arrows and endpoint equations. Base is Type at a universe, not every cartesian closed category. Both composition formulas reuse the same environment.
+* `Writer.encode_comp`, `encode_pure`, `assoc`, `left_unit`, `right_unit`, `square_iff`, `horizontal`: writer paragraph. Arbitrary monoid `W`, Type base, arbitrary sets, including empty sets. Grade and body retained separately. Both inverse laws are in `encode`. The square comparison retains grade equality as well as body commutation; associativity uses monoid associativity, not commutativity.
+* `Para.square_ext`, `horizontal_identity`, `interchange`: Para paragraph with `C=V=Type` and cartesian product action. `Arrow` retains the parameter Type and body. `Square.param` is a forward map, not its opposite or an isomorphism. The fixed-endpoint hom category is a genuine mathlib Category; square extensionality identifies cells only when their actual parameter maps agree. The interchange theorem allows changing pure endpoints.
+* `Para.assoc_inverse`, `assoc_inverse_other`, `assoc_naturality`, `pentagon`: same Para construction, explicit product reassociation maps, both inverse laws, naturality with changing endpoints and pentagon.
+* `Para.left_unitor_inverse`, `left_unitor_inverse_other`, `right_unitor_inverse`, `right_unitor_inverse_other`, `triangle`: same Para construction, explicit unit parameter maps and triangle. These are checked equations, not a claim that a bundled general-action bicategory has been constructed.
+* `Para.collapse_not_injective`: negative retention control: a genuine Boolean-to-unit forward cell is noninjective. This is not a general impossibility theorem.
+
+## Residual coverage
+
+Operational and square recovery data are checked, but a comparison from terminal-fibre comma modules and the relative factory to these realizations is NOT yet formalized. No bundled pure-square double-category isomorphism or general-action Para bicategory is claimed. Para unitor naturality and the complete pure-map pseudofunctor packaging remain to be assembled.
+
+The supplied mixed monad/comonad law and its composition (eq:fixedmixed) remain open. Admitted display spans/codisplay cospans, chosen pullback/pushout coherence, Grothendieck/presheaf pseudomonad, representable restriction and actual native arrows, dependent telescopes, strict normal-cleavage recognition, opwreath seven-axiom specialization, restricted factorization envelope and discrete-transposition obstruction remain open. General noncartesian parameter actions and general CCC reader transposition remain open. No #92–#94 crossing/pseudocoend theorem, later arena theorem or feedback theorem is inferred.
+
+The source links and pinned lockfile are an online recovery route, not a self-contained archive of mathlib. Network access or a compatible dependency cache is needed for a clean replay. Under the pinned Lean 4.35.0 environment, all eight `FixedEffects` theorems report `propext`, `Classical.choice` and `Quot.sound`. The reader theorems and writer encoding, pure and square-equivalence theorems report `Quot.sound`; writer associativity and unit laws additionally report `propext`. Writer horizontal pasting and all thirteen Para theorems report no axioms. These are the actual per-theorem audit results, not project theorem assumptions. The separately preserved Lean 4.19 results are historical evidence and do not describe the current dependency closure. Concrete monads/comonads and their factory realization remain separate work.
+
+## Rechecking and adequacy test
+
+Any change to a source target, formal hypotheses, theorem type, monad/action convention, dependency revision or exported declaration requires renewed source comparison and replay. A fresh reviewer should determine whether this package supports arbitrary monoidal-action Para, the complete #105 constructor suite, and forward noninvertible parameter cells. The scope ledger supplies these distinctions, so this is a route-adequacy check, not blind theorem discovery. Record the reviewer’s actual result separately. Proof-assistant success alone must not close source or coverage obligations.
