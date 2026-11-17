@@ -6,3 +6,4 @@ public import ContextualComposition.Para
 public import ContextualComposition.MixedEffects
 public import ContextualComposition.TerminalComma
 public import ContextualComposition.Factorization
+public import ContextualComposition.PrimitiveBalance
