@@ -1,0 +1,3 @@
+import ContextualComposition
+#print ContextualComposition.Factorization.Source.extensionMap_comp
+#print ContextualComposition.Factorization.Source.commaCoconeEquivalence

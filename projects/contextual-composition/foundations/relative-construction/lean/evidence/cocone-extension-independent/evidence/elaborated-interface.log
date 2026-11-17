@@ -1,0 +1,1002 @@
+theorem ContextualComposition.Factorization.Source.extensionMap_comp.{vK, vL, vC, vD, uK, uL, uC, uD} : ∀ {K : Type uK}
+  {L : Type uL} {C : Type uC} {D : Type uD} [inst : CategoryTheory.Category.{vK, uK} K]
+  [inst_1 : CategoryTheory.Category.{vL, uL} L] [inst_2 : CategoryTheory.Category.{vC, uC} C]
+  [inst_3 : CategoryTheory.Category.{vD, uD} D] (e : CategoryTheory.Functor K C) (d : CategoryTheory.Functor L C)
+  (S : ContextualComposition.Factorization.Source.Cocone e d) {s t r : ContextualComposition.Factorization.Object e d}
+  (f : s ⟶ t) (g : t ⟶ r),
+  ContextualComposition.Factorization.Source.extensionMap e d S (CategoryTheory.CategoryStruct.comp f g) =
+    CategoryTheory.CategoryStruct.comp (ContextualComposition.Factorization.Source.extensionMap e d S f)
+      (ContextualComposition.Factorization.Source.extensionMap e d S g) :=
+fun {K} {L} {C} {D} [CategoryTheory.Category.{vK, uK} K] [CategoryTheory.Category.{vL, uL} L]
+    [CategoryTheory.Category.{vC, uC} C] [CategoryTheory.Category.{vD, uD} D] e d S {s t r} f g =>
+  let al := ContextualComposition.Factorization.Source.balanceAssocLeft e d s.first f.middle g.middle r.second;
+  let ar := ContextualComposition.Factorization.Source.balanceAssocRight e d s.first f.middle g.middle r.second;
+  have hL :=
+    id
+      (Eq.mpr
+        (id
+          (congrArg
+            (fun _a =>
+              _a =
+                CategoryTheory.CategoryStruct.comp
+                  (S.map
+                    { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                      middle_eq := ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                      first_square := ContextualComposition.Factorization.Source.outputProduct._proof_1 e d f,
+                      second_square := ContextualComposition.Factorization.Source.outputProduct._proof_2 e d f })
+                  (S.map
+                    (ContextualComposition.Factorization.Source.native e d s.first s.first
+                      (CategoryTheory.CategoryStruct.comp f.middle t.second)
+                      (CategoryTheory.CategoryStruct.comp f.middle
+                        (CategoryTheory.CategoryStruct.comp g.middle r.second))
+                      (CategoryTheory.CategoryStruct.id s.left) g.right
+                      (ContextualComposition.Factorization.Source.beforeBalance._proof_1 e d)
+                      (ContextualComposition.Factorization.Source.balanceNativeLeft._proof_1 d f.middle t.second
+                        (CategoryTheory.CategoryStruct.comp g.middle r.second) g.right
+                        (ContextualComposition.Factorization.Source.beforeBalance._proof_2 e d g)))))
+            (Eq.symm
+              (S.map_comp
+                { left := CategoryTheory.CategoryStruct.id s.left,
+                  right := (CategoryTheory.CategoryStruct.comp f g).right,
+                  middle_eq := ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                  first_square :=
+                    ContextualComposition.Factorization.Source.outputProduct._proof_1 e d
+                      (CategoryTheory.CategoryStruct.comp f g),
+                  second_square :=
+                    ContextualComposition.Factorization.Source.outputProduct._proof_2 e d
+                      (CategoryTheory.CategoryStruct.comp f g) }
+                (ContextualComposition.Factorization.Source.balanceAssocLeft e d s.first f.middle g.middle r.second)))))
+        (Eq.mpr
+          (id
+            (congrArg
+              (fun _a =>
+                S.map
+                    (ContextualComposition.Factorization.Source.productComp e d
+                      { left := CategoryTheory.CategoryStruct.id s.left,
+                        right := (CategoryTheory.CategoryStruct.comp f g).right,
+                        middle_eq := ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                        first_square :=
+                          ContextualComposition.Factorization.Source.outputProduct._proof_1 e d
+                            (CategoryTheory.CategoryStruct.comp f g),
+                        second_square :=
+                          ContextualComposition.Factorization.Source.outputProduct._proof_2 e d
+                            (CategoryTheory.CategoryStruct.comp f g) }
+                      (ContextualComposition.Factorization.Source.balanceAssocLeft e d s.first f.middle g.middle
+                        r.second)) =
+                  _a)
+              (Eq.symm
+                (S.map_comp
+                  { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                    middle_eq := ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                    first_square := ContextualComposition.Factorization.Source.outputProduct._proof_1 e d f,
+                    second_square := ContextualComposition.Factorization.Source.outputProduct._proof_2 e d f }
+                  (ContextualComposition.Factorization.Source.native e d s.first s.first
+                    (CategoryTheory.CategoryStruct.comp f.middle t.second)
+                    (CategoryTheory.CategoryStruct.comp f.middle (CategoryTheory.CategoryStruct.comp g.middle r.second))
+                    (CategoryTheory.CategoryStruct.id s.left) g.right
+                    (ContextualComposition.Factorization.Source.beforeBalance._proof_1 e d)
+                    (ContextualComposition.Factorization.Source.balanceNativeLeft._proof_1 d f.middle t.second
+                      (CategoryTheory.CategoryStruct.comp g.middle r.second) g.right
+                      (ContextualComposition.Factorization.Source.beforeBalance._proof_2 e d g)))))))
+          ((fun {K} {L} {C} {D} [CategoryTheory.Category.{vK, uK} K] [CategoryTheory.Category.{vL, uL} L]
+                [CategoryTheory.Category.{vC, uC} C] [CategoryTheory.Category.{vD, uD} D] {e} {d} self {s t} a a_1
+                e_a =>
+              e_a ▸ Eq.refl (self.map a))
+            S
+            (ContextualComposition.Factorization.Source.productComp e d
+              { left := CategoryTheory.CategoryStruct.id s.left,
+                right := (CategoryTheory.CategoryStruct.comp f g).right,
+                middle_eq := ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                first_square :=
+                  ContextualComposition.Factorization.Source.outputProduct._proof_1 e d
+                    (CategoryTheory.CategoryStruct.comp f g),
+                second_square :=
+                  ContextualComposition.Factorization.Source.outputProduct._proof_2 e d
+                    (CategoryTheory.CategoryStruct.comp f g) }
+              (ContextualComposition.Factorization.Source.balanceAssocLeft e d s.first f.middle g.middle r.second))
+            (ContextualComposition.Factorization.Source.productComp e d
+              { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                middle_eq := ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                first_square := ContextualComposition.Factorization.Source.outputProduct._proof_1 e d f,
+                second_square := ContextualComposition.Factorization.Source.outputProduct._proof_2 e d f }
+              (ContextualComposition.Factorization.Source.native e d s.first s.first
+                (CategoryTheory.CategoryStruct.comp f.middle t.second)
+                (CategoryTheory.CategoryStruct.comp f.middle (CategoryTheory.CategoryStruct.comp g.middle r.second))
+                (CategoryTheory.CategoryStruct.id s.left) g.right
+                (ContextualComposition.Factorization.Source.beforeBalance._proof_1 e d)
+                (ContextualComposition.Factorization.Source.balanceNativeLeft._proof_1 d f.middle t.second
+                  (CategoryTheory.CategoryStruct.comp g.middle r.second) g.right
+                  (ContextualComposition.Factorization.Source.beforeBalance._proof_2 e d g))))
+            (ContextualComposition.Factorization.Source.ProductHom.ext
+              (id
+                (of_eq_true
+                  (Eq.trans
+                    (congr (congrArg Eq (CategoryTheory.Category.comp_id (CategoryTheory.CategoryStruct.id s.left)))
+                      (CategoryTheory.Category.comp_id (CategoryTheory.CategoryStruct.id s.left)))
+                    (eq_self (CategoryTheory.CategoryStruct.id s.left)))))
+              (id
+                (of_eq_true
+                  (Eq.trans
+                    (congrFun'
+                      (congrArg Eq
+                        (CategoryTheory.Category.comp_id (CategoryTheory.CategoryStruct.comp f.right g.right)))
+                      (CategoryTheory.CategoryStruct.comp f.right g.right))
+                    (eq_self (CategoryTheory.CategoryStruct.comp f.right g.right)))))))));
+  have hR :=
+    id
+      (Eq.mpr
+        (id
+          (congrArg
+            (fun _a =>
+              _a =
+                CategoryTheory.CategoryStruct.comp
+                  (S.map
+                    (ContextualComposition.Factorization.Source.native e d
+                      (CategoryTheory.CategoryStruct.comp (CategoryTheory.CategoryStruct.comp s.first f.middle)
+                        g.middle)
+                      (CategoryTheory.CategoryStruct.comp t.first g.middle) r.second r.second f.left
+                      (CategoryTheory.CategoryStruct.id r.right)
+                      (ContextualComposition.Factorization.Source.balanceNativeRight._proof_1 e
+                        (CategoryTheory.CategoryStruct.comp s.first f.middle) t.first g.middle f.left f.first_square)
+                      (ContextualComposition.Factorization.Source.middleInput._proof_1 e d)))
+                  (S.map
+                    { left := g.left, right := CategoryTheory.CategoryStruct.id r.right,
+                      middle_eq := ContextualComposition.Factorization.Source.inputProduct._proof_3 e d g,
+                      first_square := ContextualComposition.Factorization.Source.inputProduct._proof_1 e d g,
+                      second_square := ContextualComposition.Factorization.Source.inputProduct._proof_2 e d g }))
+            (Eq.symm
+              (S.map_comp
+                (ContextualComposition.Factorization.Source.balanceAssocRight e d s.first f.middle g.middle r.second)
+                { left := (CategoryTheory.CategoryStruct.comp f g).left,
+                  right := CategoryTheory.CategoryStruct.id r.right,
+                  middle_eq :=
+                    ContextualComposition.Factorization.Source.inputProduct._proof_3 e d
+                      (CategoryTheory.CategoryStruct.comp f g),
+                  first_square :=
+                    ContextualComposition.Factorization.Source.inputProduct._proof_1 e d
+                      (CategoryTheory.CategoryStruct.comp f g),
+                  second_square :=
+                    ContextualComposition.Factorization.Source.inputProduct._proof_2 e d
+                      (CategoryTheory.CategoryStruct.comp f g) }))))
+        (Eq.mpr
+          (id
+            (congrArg
+              (fun _a =>
+                S.map
+                    (ContextualComposition.Factorization.Source.productComp e d
+                      (ContextualComposition.Factorization.Source.balanceAssocRight e d s.first f.middle g.middle
+                        r.second)
+                      { left := (CategoryTheory.CategoryStruct.comp f g).left,
+                        right := CategoryTheory.CategoryStruct.id r.right,
+                        middle_eq :=
+                          ContextualComposition.Factorization.Source.inputProduct._proof_3 e d
+                            (CategoryTheory.CategoryStruct.comp f g),
+                        first_square :=
+                          ContextualComposition.Factorization.Source.inputProduct._proof_1 e d
+                            (CategoryTheory.CategoryStruct.comp f g),
+                        second_square :=
+                          ContextualComposition.Factorization.Source.inputProduct._proof_2 e d
+                            (CategoryTheory.CategoryStruct.comp f g) }) =
+                  _a)
+              (Eq.symm
+                (S.map_comp
+                  (ContextualComposition.Factorization.Source.native e d
+                    (CategoryTheory.CategoryStruct.comp (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle)
+                    (CategoryTheory.CategoryStruct.comp t.first g.middle) r.second r.second f.left
+                    (CategoryTheory.CategoryStruct.id r.right)
+                    (ContextualComposition.Factorization.Source.balanceNativeRight._proof_1 e
+                      (CategoryTheory.CategoryStruct.comp s.first f.middle) t.first g.middle f.left f.first_square)
+                    (ContextualComposition.Factorization.Source.middleInput._proof_1 e d))
+                  { left := g.left, right := CategoryTheory.CategoryStruct.id r.right,
+                    middle_eq := ContextualComposition.Factorization.Source.inputProduct._proof_3 e d g,
+                    first_square := ContextualComposition.Factorization.Source.inputProduct._proof_1 e d g,
+                    second_square := ContextualComposition.Factorization.Source.inputProduct._proof_2 e d g }))))
+          ((fun {K} {L} {C} {D} [CategoryTheory.Category.{vK, uK} K] [CategoryTheory.Category.{vL, uL} L]
+                [CategoryTheory.Category.{vC, uC} C] [CategoryTheory.Category.{vD, uD} D] {e} {d} self {s t} a a_1
+                e_a =>
+              e_a ▸ Eq.refl (self.map a))
+            S
+            (ContextualComposition.Factorization.Source.productComp e d
+              (ContextualComposition.Factorization.Source.balanceAssocRight e d s.first f.middle g.middle r.second)
+              { left := (CategoryTheory.CategoryStruct.comp f g).left,
+                right := CategoryTheory.CategoryStruct.id r.right,
+                middle_eq :=
+                  ContextualComposition.Factorization.Source.inputProduct._proof_3 e d
+                    (CategoryTheory.CategoryStruct.comp f g),
+                first_square :=
+                  ContextualComposition.Factorization.Source.inputProduct._proof_1 e d
+                    (CategoryTheory.CategoryStruct.comp f g),
+                second_square :=
+                  ContextualComposition.Factorization.Source.inputProduct._proof_2 e d
+                    (CategoryTheory.CategoryStruct.comp f g) })
+            (ContextualComposition.Factorization.Source.productComp e d
+              (ContextualComposition.Factorization.Source.native e d
+                (CategoryTheory.CategoryStruct.comp (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle)
+                (CategoryTheory.CategoryStruct.comp t.first g.middle) r.second r.second f.left
+                (CategoryTheory.CategoryStruct.id r.right)
+                (ContextualComposition.Factorization.Source.balanceNativeRight._proof_1 e
+                  (CategoryTheory.CategoryStruct.comp s.first f.middle) t.first g.middle f.left f.first_square)
+                (ContextualComposition.Factorization.Source.middleInput._proof_1 e d))
+              { left := g.left, right := CategoryTheory.CategoryStruct.id r.right,
+                middle_eq := ContextualComposition.Factorization.Source.inputProduct._proof_3 e d g,
+                first_square := ContextualComposition.Factorization.Source.inputProduct._proof_1 e d g,
+                second_square := ContextualComposition.Factorization.Source.inputProduct._proof_2 e d g })
+            (ContextualComposition.Factorization.Source.ProductHom.ext
+              (id
+                (of_eq_true
+                  (Eq.trans
+                    (congrFun'
+                      (congrArg Eq (CategoryTheory.Category.id_comp (CategoryTheory.CategoryStruct.comp f.left g.left)))
+                      (CategoryTheory.CategoryStruct.comp f.left g.left))
+                    (eq_self (CategoryTheory.CategoryStruct.comp f.left g.left)))))
+              (id
+                (of_eq_true
+                  (Eq.trans
+                    (congr (congrArg Eq (CategoryTheory.Category.comp_id (CategoryTheory.CategoryStruct.id r.right)))
+                      (CategoryTheory.Category.comp_id (CategoryTheory.CategoryStruct.id r.right)))
+                    (eq_self (CategoryTheory.CategoryStruct.id r.right)))))))));
+  have hM :=
+    id
+      (Eq.mpr
+        (id
+          (congrArg
+            (fun _a =>
+              _a =
+                CategoryTheory.CategoryStruct.comp
+                  (S.map
+                    (ContextualComposition.Factorization.Source.native e d
+                      (CategoryTheory.CategoryStruct.comp s.first f.middle)
+                      (CategoryTheory.CategoryStruct.comp s.first f.middle) t.second
+                      (CategoryTheory.CategoryStruct.comp g.middle r.second) (CategoryTheory.CategoryStruct.id s.left)
+                      g.right
+                      (ContextualComposition.Factorization.Source.balanceNativeRight._proof_1 e s.first s.first f.middle
+                        (CategoryTheory.CategoryStruct.id s.left)
+                        (ContextualComposition.Factorization.Source.beforeBalance._proof_1 e d))
+                      (ContextualComposition.Factorization.Source.beforeBalance._proof_2 e d g)))
+                  (S.map
+                    (ContextualComposition.Factorization.Source.native e d
+                      (CategoryTheory.CategoryStruct.comp s.first f.middle) t.first
+                      (CategoryTheory.CategoryStruct.comp g.middle r.second)
+                      (CategoryTheory.CategoryStruct.comp g.middle r.second) f.left
+                      (CategoryTheory.CategoryStruct.id r.right) f.first_square
+                      (ContextualComposition.Factorization.Source.balanceNativeLeft._proof_1 d g.middle r.second
+                        r.second (CategoryTheory.CategoryStruct.id r.right)
+                        (ContextualComposition.Factorization.Source.middleInput._proof_1 e d)))))
+            (Eq.symm
+              (S.map_comp
+                { left := f.left, right := CategoryTheory.CategoryStruct.id t.right,
+                  middle_eq := ContextualComposition.Factorization.Source.inputProduct._proof_3 e d f,
+                  first_square := ContextualComposition.Factorization.Source.inputProduct._proof_1 e d f,
+                  second_square := ContextualComposition.Factorization.Source.inputProduct._proof_2 e d f }
+                { left := CategoryTheory.CategoryStruct.id t.left, right := g.right,
+                  middle_eq := ContextualComposition.Factorization.Source.productId._proof_3 e d t,
+                  first_square := ContextualComposition.Factorization.Source.outputProduct._proof_1 e d g,
+                  second_square := ContextualComposition.Factorization.Source.outputProduct._proof_2 e d g }))))
+        (Eq.mpr
+          (id
+            (congrArg
+              (fun _a =>
+                S.map
+                    (ContextualComposition.Factorization.Source.productComp e d
+                      { left := f.left, right := CategoryTheory.CategoryStruct.id t.right,
+                        middle_eq := ContextualComposition.Factorization.Source.inputProduct._proof_3 e d f,
+                        first_square := ContextualComposition.Factorization.Source.inputProduct._proof_1 e d f,
+                        second_square := ContextualComposition.Factorization.Source.inputProduct._proof_2 e d f }
+                      { left := CategoryTheory.CategoryStruct.id t.left, right := g.right,
+                        middle_eq := ContextualComposition.Factorization.Source.productId._proof_3 e d t,
+                        first_square := ContextualComposition.Factorization.Source.outputProduct._proof_1 e d g,
+                        second_square := ContextualComposition.Factorization.Source.outputProduct._proof_2 e d g }) =
+                  _a)
+              (Eq.symm
+                (S.map_comp
+                  (ContextualComposition.Factorization.Source.native e d
+                    (CategoryTheory.CategoryStruct.comp s.first f.middle)
+                    (CategoryTheory.CategoryStruct.comp s.first f.middle) t.second
+                    (CategoryTheory.CategoryStruct.comp g.middle r.second) (CategoryTheory.CategoryStruct.id s.left)
+                    g.right
+                    (ContextualComposition.Factorization.Source.balanceNativeRight._proof_1 e s.first s.first f.middle
+                      (CategoryTheory.CategoryStruct.id s.left)
+                      (ContextualComposition.Factorization.Source.beforeBalance._proof_1 e d))
+                    (ContextualComposition.Factorization.Source.beforeBalance._proof_2 e d g))
+                  (ContextualComposition.Factorization.Source.native e d
+                    (CategoryTheory.CategoryStruct.comp s.first f.middle) t.first
+                    (CategoryTheory.CategoryStruct.comp g.middle r.second)
+                    (CategoryTheory.CategoryStruct.comp g.middle r.second) f.left
+                    (CategoryTheory.CategoryStruct.id r.right) f.first_square
+                    (ContextualComposition.Factorization.Source.balanceNativeLeft._proof_1 d g.middle r.second r.second
+                      (CategoryTheory.CategoryStruct.id r.right)
+                      (ContextualComposition.Factorization.Source.middleInput._proof_1 e d)))))))
+          ((fun {K} {L} {C} {D} [CategoryTheory.Category.{vK, uK} K] [CategoryTheory.Category.{vL, uL} L]
+                [CategoryTheory.Category.{vC, uC} C] [CategoryTheory.Category.{vD, uD} D] {e} {d} self {s t} a a_1
+                e_a =>
+              e_a ▸ Eq.refl (self.map a))
+            S
+            (ContextualComposition.Factorization.Source.productComp e d
+              { left := f.left, right := CategoryTheory.CategoryStruct.id t.right,
+                middle_eq := ContextualComposition.Factorization.Source.inputProduct._proof_3 e d f,
+                first_square := ContextualComposition.Factorization.Source.inputProduct._proof_1 e d f,
+                second_square := ContextualComposition.Factorization.Source.inputProduct._proof_2 e d f }
+              { left := CategoryTheory.CategoryStruct.id t.left, right := g.right,
+                middle_eq := ContextualComposition.Factorization.Source.productId._proof_3 e d t,
+                first_square := ContextualComposition.Factorization.Source.outputProduct._proof_1 e d g,
+                second_square := ContextualComposition.Factorization.Source.outputProduct._proof_2 e d g })
+            (ContextualComposition.Factorization.Source.productComp e d
+              (ContextualComposition.Factorization.Source.native e d
+                (CategoryTheory.CategoryStruct.comp s.first f.middle)
+                (CategoryTheory.CategoryStruct.comp s.first f.middle) t.second
+                (CategoryTheory.CategoryStruct.comp g.middle r.second) (CategoryTheory.CategoryStruct.id s.left) g.right
+                (ContextualComposition.Factorization.Source.balanceNativeRight._proof_1 e s.first s.first f.middle
+                  (CategoryTheory.CategoryStruct.id s.left)
+                  (ContextualComposition.Factorization.Source.beforeBalance._proof_1 e d))
+                (ContextualComposition.Factorization.Source.beforeBalance._proof_2 e d g))
+              (ContextualComposition.Factorization.Source.native e d
+                (CategoryTheory.CategoryStruct.comp s.first f.middle) t.first
+                (CategoryTheory.CategoryStruct.comp g.middle r.second)
+                (CategoryTheory.CategoryStruct.comp g.middle r.second) f.left (CategoryTheory.CategoryStruct.id r.right)
+                f.first_square
+                (ContextualComposition.Factorization.Source.balanceNativeLeft._proof_1 d g.middle r.second r.second
+                  (CategoryTheory.CategoryStruct.id r.right)
+                  (ContextualComposition.Factorization.Source.middleInput._proof_1 e d))))
+            (ContextualComposition.Factorization.Source.ProductHom.ext
+              (id
+                (of_eq_true
+                  (Eq.trans
+                    (congr (congrArg Eq (CategoryTheory.Category.comp_id f.left))
+                      (CategoryTheory.Category.id_comp f.left))
+                    (eq_self f.left))))
+              (id
+                (of_eq_true
+                  (Eq.trans
+                    (congr (congrArg Eq (CategoryTheory.Category.id_comp g.right))
+                      (CategoryTheory.Category.comp_id g.right))
+                    (eq_self g.right))))))));
+  have hN₁ :=
+    S.bal_natural s.first s.first f.middle t.second (CategoryTheory.CategoryStruct.comp g.middle r.second)
+      (CategoryTheory.CategoryStruct.id s.left) g.right
+      (of_eq_true
+        (Eq.trans
+          (congrFun'
+            (congrArg Eq
+              (Eq.trans (congrFun' (congrArg CategoryTheory.CategoryStruct.comp (e.map_id s.left)) s.first)
+                (CategoryTheory.Category.id_comp s.first)))
+            s.first)
+          (eq_self s.first)))
+      (Eq.symm g.second_square);
+  have hN₂ :=
+    S.bal_natural (CategoryTheory.CategoryStruct.comp s.first f.middle) t.first g.middle r.second r.second f.left
+      (CategoryTheory.CategoryStruct.id r.right) f.first_square
+      (of_eq_true
+        (Eq.trans
+          (congrFun'
+            (congrArg Eq
+              (Eq.trans (congrArg (CategoryTheory.CategoryStruct.comp r.second) (d.map_id r.right))
+                (CategoryTheory.Category.comp_id r.second)))
+            r.second)
+          (eq_self r.second)));
+  id
+    (Eq.mpr
+      (id
+        (congrArg
+          (fun _a =>
+            CategoryTheory.CategoryStruct.comp
+                (S.map
+                  (ContextualComposition.Factorization.Source.outputProduct e d
+                    (CategoryTheory.CategoryStruct.comp f g)))
+                (CategoryTheory.CategoryStruct.comp _a
+                  (S.map
+                    (ContextualComposition.Factorization.Source.inputProduct e d
+                      (CategoryTheory.CategoryStruct.comp f g)))) =
+              CategoryTheory.CategoryStruct.comp (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                (ContextualComposition.Factorization.Source.extensionMap e d S g))
+          (S.bal_comp s.first f.middle g.middle r.second)))
+      (id
+        (Eq.mpr
+          (id
+            (congrFun'
+              (congrArg Eq
+                (congrArg
+                  (CategoryTheory.CategoryStruct.comp
+                    (S.map
+                      (ContextualComposition.Factorization.Source.outputProduct e d
+                        (CategoryTheory.CategoryStruct.comp f g))))
+                  (Eq.trans
+                    (CategoryTheory.Category.assoc (S.map al)
+                      (CategoryTheory.CategoryStruct.comp
+                        (S.bal s.first f.middle (CategoryTheory.CategoryStruct.comp g.middle r.second)).hom
+                        (CategoryTheory.CategoryStruct.comp
+                          (S.bal (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle r.second).hom
+                          (S.map ar)))
+                      (S.map
+                        (ContextualComposition.Factorization.Source.inputProduct e d
+                          (CategoryTheory.CategoryStruct.comp f g))))
+                    (congrArg (CategoryTheory.CategoryStruct.comp (S.map al))
+                      (Eq.trans
+                        (CategoryTheory.Category.assoc
+                          (S.bal s.first f.middle (CategoryTheory.CategoryStruct.comp g.middle r.second)).hom
+                          (CategoryTheory.CategoryStruct.comp
+                            (S.bal (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle r.second).hom
+                            (S.map ar))
+                          (S.map
+                            (ContextualComposition.Factorization.Source.inputProduct e d
+                              (CategoryTheory.CategoryStruct.comp f g))))
+                        (congrArg
+                          (CategoryTheory.CategoryStruct.comp
+                            (S.bal s.first f.middle (CategoryTheory.CategoryStruct.comp g.middle r.second)).hom)
+                          (CategoryTheory.Category.assoc
+                            (S.bal (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle r.second).hom
+                            (S.map ar)
+                            (S.map
+                              (ContextualComposition.Factorization.Source.inputProduct e d
+                                (CategoryTheory.CategoryStruct.comp f g))))))))))
+              (CategoryTheory.CategoryStruct.comp (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                (ContextualComposition.Factorization.Source.extensionMap e d S g))))
+          (Eq.mpr
+            (id
+              (congrArg
+                (fun _a =>
+                  _a =
+                    CategoryTheory.CategoryStruct.comp (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                      (ContextualComposition.Factorization.Source.extensionMap e d S g))
+                (Eq.symm
+                  (CategoryTheory.Category.assoc
+                    (S.map
+                      (ContextualComposition.Factorization.Source.outputProduct e d
+                        (CategoryTheory.CategoryStruct.comp f g)))
+                    (S.map al)
+                    (CategoryTheory.CategoryStruct.comp
+                      (S.bal s.first f.middle (CategoryTheory.CategoryStruct.comp g.middle r.second)).hom
+                      (CategoryTheory.CategoryStruct.comp
+                        (S.bal (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle r.second).hom
+                        (CategoryTheory.CategoryStruct.comp (S.map ar)
+                          (S.map
+                            (ContextualComposition.Factorization.Source.inputProduct e d
+                              (CategoryTheory.CategoryStruct.comp f g))))))))))
+            (Eq.mpr
+              (id
+                (congrArg
+                  (fun _a =>
+                    CategoryTheory.CategoryStruct.comp _a
+                        (CategoryTheory.CategoryStruct.comp
+                          (S.bal s.first f.middle (CategoryTheory.CategoryStruct.comp g.middle r.second)).hom
+                          (CategoryTheory.CategoryStruct.comp
+                            (S.bal (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle r.second).hom
+                            (CategoryTheory.CategoryStruct.comp (S.map ar)
+                              (S.map
+                                (ContextualComposition.Factorization.Source.inputProduct e d
+                                  (CategoryTheory.CategoryStruct.comp f g)))))) =
+                      CategoryTheory.CategoryStruct.comp
+                        (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                        (ContextualComposition.Factorization.Source.extensionMap e d S g))
+                  hL))
+              (Eq.mpr
+                (id
+                  (congrFun'
+                    (congrArg Eq
+                      (CategoryTheory.Category.assoc
+                        (S.map (ContextualComposition.Factorization.Source.outputProduct e d f))
+                        (S.map (ContextualComposition.Factorization.Source.beforeBalance e d f g))
+                        (CategoryTheory.CategoryStruct.comp
+                          (S.bal s.first f.middle (CategoryTheory.CategoryStruct.comp g.middle r.second)).hom
+                          (CategoryTheory.CategoryStruct.comp
+                            (S.bal (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle r.second).hom
+                            (CategoryTheory.CategoryStruct.comp (S.map ar)
+                              (S.map
+                                (ContextualComposition.Factorization.Source.inputProduct e d
+                                  (CategoryTheory.CategoryStruct.comp f g))))))))
+                    (CategoryTheory.CategoryStruct.comp
+                      (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                      (ContextualComposition.Factorization.Source.extensionMap e d S g))))
+                (Eq.mpr
+                  (id
+                    (congrArg
+                      (fun _a =>
+                        CategoryTheory.CategoryStruct.comp
+                            (S.map (ContextualComposition.Factorization.Source.outputProduct e d f))
+                            (CategoryTheory.CategoryStruct.comp
+                              (S.map (ContextualComposition.Factorization.Source.beforeBalance e d f g))
+                              (CategoryTheory.CategoryStruct.comp
+                                (S.bal s.first f.middle (CategoryTheory.CategoryStruct.comp g.middle r.second)).hom
+                                (CategoryTheory.CategoryStruct.comp
+                                  (S.bal (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle r.second).hom
+                                  _a))) =
+                          CategoryTheory.CategoryStruct.comp
+                            (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                            (ContextualComposition.Factorization.Source.extensionMap e d S g))
+                      hR))
+                  (id
+                    (Eq.mpr
+                      (id
+                        (congrArg
+                          (fun _a =>
+                            CategoryTheory.CategoryStruct.comp
+                                (S.map
+                                  { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                    middle_eq := ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                                    first_square :=
+                                      ContextualComposition.Factorization.Source.outputProduct._proof_1 e d f,
+                                    second_square :=
+                                      ContextualComposition.Factorization.Source.outputProduct._proof_2 e d f })
+                                _a =
+                              CategoryTheory.CategoryStruct.comp
+                                (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                                (ContextualComposition.Factorization.Source.extensionMap e d S g))
+                          (Eq.symm
+                            (CategoryTheory.Category.assoc
+                              (S.map (ContextualComposition.Factorization.Source.beforeBalance e d f g))
+                              (S.bal s.first f.middle (CategoryTheory.CategoryStruct.comp g.middle r.second)).hom
+                              (CategoryTheory.CategoryStruct.comp
+                                (S.bal (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle r.second).hom
+                                (CategoryTheory.CategoryStruct.comp
+                                  (S.map (ContextualComposition.Factorization.Source.afterBalance e d f g))
+                                  (S.map
+                                    { left := g.left, right := CategoryTheory.CategoryStruct.id r.right,
+                                      middle_eq :=
+                                        ContextualComposition.Factorization.Source.inputProduct._proof_3 e d g,
+                                      first_square :=
+                                        ContextualComposition.Factorization.Source.inputProduct._proof_1 e d g,
+                                      second_square :=
+                                        ContextualComposition.Factorization.Source.inputProduct._proof_2 e d g })))))))
+                      (Eq.mpr
+                        (id
+                          (congrArg
+                            (fun _a =>
+                              CategoryTheory.CategoryStruct.comp
+                                  (S.map
+                                    { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                      middle_eq := ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                                      first_square :=
+                                        ContextualComposition.Factorization.Source.outputProduct._proof_1 e d f,
+                                      second_square :=
+                                        ContextualComposition.Factorization.Source.outputProduct._proof_2 e d f })
+                                  (CategoryTheory.CategoryStruct.comp _a
+                                    (CategoryTheory.CategoryStruct.comp
+                                      (S.bal (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle
+                                          r.second).hom
+                                      (CategoryTheory.CategoryStruct.comp
+                                        (S.map (ContextualComposition.Factorization.Source.afterBalance e d f g))
+                                        (S.map
+                                          { left := g.left, right := CategoryTheory.CategoryStruct.id r.right,
+                                            middle_eq :=
+                                              ContextualComposition.Factorization.Source.inputProduct._proof_3 e d g,
+                                            first_square :=
+                                              ContextualComposition.Factorization.Source.inputProduct._proof_1 e d g,
+                                            second_square :=
+                                              ContextualComposition.Factorization.Source.inputProduct._proof_2 e d
+                                                g })))) =
+                                CategoryTheory.CategoryStruct.comp
+                                  (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                                  (ContextualComposition.Factorization.Source.extensionMap e d S g))
+                            hN₁))
+                        (Eq.mpr
+                          (id
+                            (congrFun'
+                              (congrArg Eq
+                                (congrArg
+                                  (CategoryTheory.CategoryStruct.comp
+                                    (S.map
+                                      { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                        middle_eq :=
+                                          ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                                        first_square :=
+                                          ContextualComposition.Factorization.Source.outputProduct._proof_1 e d f,
+                                        second_square :=
+                                          ContextualComposition.Factorization.Source.outputProduct._proof_2 e d f }))
+                                  (CategoryTheory.Category.assoc (S.bal s.first f.middle t.second).hom
+                                    (S.map (ContextualComposition.Factorization.Source.middleOutput e d f g))
+                                    (CategoryTheory.CategoryStruct.comp
+                                      (S.bal (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle
+                                          r.second).hom
+                                      (CategoryTheory.CategoryStruct.comp
+                                        (S.map (ContextualComposition.Factorization.Source.afterBalance e d f g))
+                                        (S.map
+                                          { left := g.left, right := CategoryTheory.CategoryStruct.id r.right,
+                                            middle_eq :=
+                                              ContextualComposition.Factorization.Source.inputProduct._proof_3 e d g,
+                                            first_square :=
+                                              ContextualComposition.Factorization.Source.inputProduct._proof_1 e d g,
+                                            second_square :=
+                                              ContextualComposition.Factorization.Source.inputProduct._proof_2 e d
+                                                g }))))))
+                              (CategoryTheory.CategoryStruct.comp
+                                (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                                (ContextualComposition.Factorization.Source.extensionMap e d S g))))
+                          (Eq.mpr
+                            (id
+                              (congrArg
+                                (fun _a =>
+                                  CategoryTheory.CategoryStruct.comp
+                                      (S.map
+                                        { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                          middle_eq :=
+                                            ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                                          first_square :=
+                                            ContextualComposition.Factorization.Source.outputProduct._proof_1 e d f,
+                                          second_square :=
+                                            ContextualComposition.Factorization.Source.outputProduct._proof_2 e d f })
+                                      (CategoryTheory.CategoryStruct.comp (S.bal s.first f.middle t.second).hom
+                                        (CategoryTheory.CategoryStruct.comp
+                                          (S.map (ContextualComposition.Factorization.Source.middleOutput e d f g))
+                                          _a)) =
+                                    CategoryTheory.CategoryStruct.comp
+                                      (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                                      (ContextualComposition.Factorization.Source.extensionMap e d S g))
+                                (Eq.symm
+                                  (CategoryTheory.Category.assoc
+                                    (S.bal (CategoryTheory.CategoryStruct.comp s.first f.middle) g.middle r.second).hom
+                                    (S.map (ContextualComposition.Factorization.Source.afterBalance e d f g))
+                                    (S.map
+                                      { left := g.left, right := CategoryTheory.CategoryStruct.id r.right,
+                                        middle_eq :=
+                                          ContextualComposition.Factorization.Source.inputProduct._proof_3 e d g,
+                                        first_square :=
+                                          ContextualComposition.Factorization.Source.inputProduct._proof_1 e d g,
+                                        second_square :=
+                                          ContextualComposition.Factorization.Source.inputProduct._proof_2 e d g })))))
+                            (Eq.mpr
+                              (id
+                                (congrArg
+                                  (fun _a =>
+                                    CategoryTheory.CategoryStruct.comp
+                                        (S.map
+                                          { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                            middle_eq :=
+                                              ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                                            first_square :=
+                                              ContextualComposition.Factorization.Source.outputProduct._proof_1 e d f,
+                                            second_square :=
+                                              ContextualComposition.Factorization.Source.outputProduct._proof_2 e d f })
+                                        (CategoryTheory.CategoryStruct.comp (S.bal s.first f.middle t.second).hom
+                                          (CategoryTheory.CategoryStruct.comp
+                                            (S.map (ContextualComposition.Factorization.Source.middleOutput e d f g))
+                                            (CategoryTheory.CategoryStruct.comp _a
+                                              (S.map
+                                                { left := g.left, right := CategoryTheory.CategoryStruct.id r.right,
+                                                  middle_eq :=
+                                                    ContextualComposition.Factorization.Source.inputProduct._proof_3 e d
+                                                      g,
+                                                  first_square :=
+                                                    ContextualComposition.Factorization.Source.inputProduct._proof_1 e d
+                                                      g,
+                                                  second_square :=
+                                                    ContextualComposition.Factorization.Source.inputProduct._proof_2 e d
+                                                      g })))) =
+                                      CategoryTheory.CategoryStruct.comp
+                                        (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                                        (ContextualComposition.Factorization.Source.extensionMap e d S g))
+                                  (Eq.symm hN₂)))
+                              (Eq.mpr
+                                (id
+                                  (congrFun'
+                                    (congrArg Eq
+                                      (congrArg
+                                        (CategoryTheory.CategoryStruct.comp
+                                          (S.map
+                                            { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                              middle_eq :=
+                                                ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                                              first_square :=
+                                                ContextualComposition.Factorization.Source.outputProduct._proof_1 e d f,
+                                              second_square :=
+                                                ContextualComposition.Factorization.Source.outputProduct._proof_2 e d
+                                                  f }))
+                                        (congrArg
+                                          (CategoryTheory.CategoryStruct.comp (S.bal s.first f.middle t.second).hom)
+                                          (congrArg
+                                            (CategoryTheory.CategoryStruct.comp
+                                              (S.map (ContextualComposition.Factorization.Source.middleOutput e d f g)))
+                                            (CategoryTheory.Category.assoc
+                                              (S.map (ContextualComposition.Factorization.Source.middleInput e d f g))
+                                              (S.bal t.first g.middle r.second).hom
+                                              (S.map
+                                                { left := g.left, right := CategoryTheory.CategoryStruct.id r.right,
+                                                  middle_eq :=
+                                                    ContextualComposition.Factorization.Source.inputProduct._proof_3 e d
+                                                      g,
+                                                  first_square :=
+                                                    ContextualComposition.Factorization.Source.inputProduct._proof_1 e d
+                                                      g,
+                                                  second_square :=
+                                                    ContextualComposition.Factorization.Source.inputProduct._proof_2 e d
+                                                      g }))))))
+                                    (CategoryTheory.CategoryStruct.comp
+                                      (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                                      (ContextualComposition.Factorization.Source.extensionMap e d S g))))
+                                (Eq.mpr
+                                  (id
+                                    (congrArg
+                                      (fun _a =>
+                                        CategoryTheory.CategoryStruct.comp
+                                            (S.map
+                                              { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                                middle_eq :=
+                                                  ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                                                first_square :=
+                                                  ContextualComposition.Factorization.Source.outputProduct._proof_1 e d
+                                                    f,
+                                                second_square :=
+                                                  ContextualComposition.Factorization.Source.outputProduct._proof_2 e d
+                                                    f })
+                                            (CategoryTheory.CategoryStruct.comp (S.bal s.first f.middle t.second).hom
+                                              _a) =
+                                          CategoryTheory.CategoryStruct.comp
+                                            (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                                            (ContextualComposition.Factorization.Source.extensionMap e d S g))
+                                      (Eq.symm
+                                        (CategoryTheory.Category.assoc
+                                          (S.map (ContextualComposition.Factorization.Source.middleOutput e d f g))
+                                          (S.map (ContextualComposition.Factorization.Source.middleInput e d f g))
+                                          (CategoryTheory.CategoryStruct.comp (S.bal t.first g.middle r.second).hom
+                                            (S.map
+                                              { left := g.left, right := CategoryTheory.CategoryStruct.id r.right,
+                                                middle_eq :=
+                                                  ContextualComposition.Factorization.Source.inputProduct._proof_3 e d
+                                                    g,
+                                                first_square :=
+                                                  ContextualComposition.Factorization.Source.inputProduct._proof_1 e d
+                                                    g,
+                                                second_square :=
+                                                  ContextualComposition.Factorization.Source.inputProduct._proof_2 e d
+                                                    g }))))))
+                                  (Eq.mpr
+                                    (id
+                                      (congrArg
+                                        (fun _a =>
+                                          CategoryTheory.CategoryStruct.comp
+                                              (S.map
+                                                { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                                  middle_eq :=
+                                                    ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                                                  first_square :=
+                                                    ContextualComposition.Factorization.Source.outputProduct._proof_1 e
+                                                      d f,
+                                                  second_square :=
+                                                    ContextualComposition.Factorization.Source.outputProduct._proof_2 e
+                                                      d f })
+                                              (CategoryTheory.CategoryStruct.comp (S.bal s.first f.middle t.second).hom
+                                                (CategoryTheory.CategoryStruct.comp _a
+                                                  (CategoryTheory.CategoryStruct.comp
+                                                    (S.bal t.first g.middle r.second).hom
+                                                    (S.map
+                                                      { left := g.left,
+                                                        right := CategoryTheory.CategoryStruct.id r.right,
+                                                        middle_eq :=
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_3
+                                                            e d g,
+                                                        first_square :=
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_1
+                                                            e d g,
+                                                        second_square :=
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_2
+                                                            e d g })))) =
+                                            CategoryTheory.CategoryStruct.comp
+                                              (ContextualComposition.Factorization.Source.extensionMap e d S f)
+                                              (ContextualComposition.Factorization.Source.extensionMap e d S g))
+                                        (Eq.symm hM)))
+                                    (of_eq_true
+                                      (Eq.trans
+                                        (congr
+                                          (congrArg Eq
+                                            (congrArg
+                                              (CategoryTheory.CategoryStruct.comp
+                                                (S.map
+                                                  { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                                    middle_eq :=
+                                                      ContextualComposition.Factorization.Source.productId._proof_3 e d
+                                                        s,
+                                                    first_square :=
+                                                      ContextualComposition.Factorization.Source.outputProduct._proof_1
+                                                        e d f,
+                                                    second_square :=
+                                                      ContextualComposition.Factorization.Source.outputProduct._proof_2
+                                                        e d f }))
+                                              (congrArg
+                                                (CategoryTheory.CategoryStruct.comp
+                                                  (S.bal s.first f.middle t.second).hom)
+                                                (CategoryTheory.Category.assoc
+                                                  (S.map
+                                                    { left := f.left, right := CategoryTheory.CategoryStruct.id t.right,
+                                                      middle_eq :=
+                                                        ContextualComposition.Factorization.Source.inputProduct._proof_3
+                                                          e d f,
+                                                      first_square :=
+                                                        ContextualComposition.Factorization.Source.inputProduct._proof_1
+                                                          e d f,
+                                                      second_square :=
+                                                        ContextualComposition.Factorization.Source.inputProduct._proof_2
+                                                          e d f })
+                                                  (S.map
+                                                    { left := CategoryTheory.CategoryStruct.id t.left, right := g.right,
+                                                      middle_eq :=
+                                                        ContextualComposition.Factorization.Source.productId._proof_3 e
+                                                          d t,
+                                                      first_square :=
+                                                        ContextualComposition.Factorization.Source.outputProduct._proof_1
+                                                          e d g,
+                                                      second_square :=
+                                                        ContextualComposition.Factorization.Source.outputProduct._proof_2
+                                                          e d g })
+                                                  (CategoryTheory.CategoryStruct.comp
+                                                    (S.bal t.first g.middle r.second).hom
+                                                    (S.map
+                                                      { left := g.left,
+                                                        right := CategoryTheory.CategoryStruct.id r.right,
+                                                        middle_eq :=
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_3
+                                                            e d g,
+                                                        first_square :=
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_1
+                                                            e d g,
+                                                        second_square :=
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_2
+                                                            e d g }))))))
+                                          (Eq.trans
+                                            (CategoryTheory.Category.assoc
+                                              (S.map
+                                                { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                                  middle_eq :=
+                                                    ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                                                  first_square :=
+                                                    ContextualComposition.Factorization.Source.outputProduct._proof_1 e
+                                                      d f,
+                                                  second_square :=
+                                                    ContextualComposition.Factorization.Source.outputProduct._proof_2 e
+                                                      d f })
+                                              (CategoryTheory.CategoryStruct.comp (S.bal s.first f.middle t.second).hom
+                                                (S.map
+                                                  { left := f.left, right := CategoryTheory.CategoryStruct.id t.right,
+                                                    middle_eq :=
+                                                      ContextualComposition.Factorization.Source.inputProduct._proof_3 e
+                                                        d f,
+                                                    first_square :=
+                                                      ContextualComposition.Factorization.Source.inputProduct._proof_1 e
+                                                        d f,
+                                                    second_square :=
+                                                      id (Eq.refl (CategoryTheory.CategoryStruct.id t.right)) ▸
+                                                        ContextualComposition.Factorization.Source.inputProduct._proof_2
+                                                          e d f }))
+                                              (CategoryTheory.CategoryStruct.comp
+                                                (S.map
+                                                  { left := CategoryTheory.CategoryStruct.id t.left, right := g.right,
+                                                    middle_eq :=
+                                                      ContextualComposition.Factorization.Source.productId._proof_3 e d
+                                                        t,
+                                                    first_square :=
+                                                      ContextualComposition.Factorization.Source.outputProduct._proof_1
+                                                        e d g,
+                                                    second_square :=
+                                                      ContextualComposition.Factorization.Source.outputProduct._proof_2
+                                                        e d g })
+                                                (CategoryTheory.CategoryStruct.comp
+                                                  (S.bal t.first g.middle r.second).hom
+                                                  (S.map
+                                                    { left := g.left, right := CategoryTheory.CategoryStruct.id r.right,
+                                                      middle_eq :=
+                                                        ContextualComposition.Factorization.Source.inputProduct._proof_3
+                                                          e d g,
+                                                      first_square :=
+                                                        ContextualComposition.Factorization.Source.inputProduct._proof_1
+                                                          e d g,
+                                                      second_square :=
+                                                        id (Eq.refl (CategoryTheory.CategoryStruct.id r.right)) ▸
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_2
+                                                            e d g }))))
+                                            (congrArg
+                                              (CategoryTheory.CategoryStruct.comp
+                                                (S.map
+                                                  { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                                    middle_eq :=
+                                                      ContextualComposition.Factorization.Source.productId._proof_3 e d
+                                                        s,
+                                                    first_square :=
+                                                      ContextualComposition.Factorization.Source.outputProduct._proof_1
+                                                        e d f,
+                                                    second_square :=
+                                                      ContextualComposition.Factorization.Source.outputProduct._proof_2
+                                                        e d f }))
+                                              (CategoryTheory.Category.assoc (S.bal s.first f.middle t.second).hom
+                                                (S.map
+                                                  { left := f.left, right := CategoryTheory.CategoryStruct.id t.right,
+                                                    middle_eq :=
+                                                      ContextualComposition.Factorization.Source.inputProduct._proof_3 e
+                                                        d f,
+                                                    first_square :=
+                                                      ContextualComposition.Factorization.Source.inputProduct._proof_1 e
+                                                        d f,
+                                                    second_square :=
+                                                      id (Eq.refl (CategoryTheory.CategoryStruct.id t.right)) ▸
+                                                        ContextualComposition.Factorization.Source.inputProduct._proof_2
+                                                          e d f })
+                                                (CategoryTheory.CategoryStruct.comp
+                                                  (S.map
+                                                    { left := CategoryTheory.CategoryStruct.id t.left, right := g.right,
+                                                      middle_eq :=
+                                                        ContextualComposition.Factorization.Source.productId._proof_3 e
+                                                          d t,
+                                                      first_square :=
+                                                        ContextualComposition.Factorization.Source.outputProduct._proof_1
+                                                          e d g,
+                                                      second_square :=
+                                                        ContextualComposition.Factorization.Source.outputProduct._proof_2
+                                                          e d g })
+                                                  (CategoryTheory.CategoryStruct.comp
+                                                    (S.bal t.first g.middle r.second).hom
+                                                    (S.map
+                                                      { left := g.left,
+                                                        right := CategoryTheory.CategoryStruct.id r.right,
+                                                        middle_eq :=
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_3
+                                                            e d g,
+                                                        first_square :=
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_1
+                                                            e d g,
+                                                        second_square :=
+                                                          id (Eq.refl (CategoryTheory.CategoryStruct.id r.right)) ▸
+                                                            ContextualComposition.Factorization.Source.inputProduct._proof_2
+                                                              e d g })))))))
+                                        (eq_self
+                                          (CategoryTheory.CategoryStruct.comp
+                                            (S.map
+                                              { left := CategoryTheory.CategoryStruct.id s.left, right := f.right,
+                                                middle_eq :=
+                                                  ContextualComposition.Factorization.Source.productId._proof_3 e d s,
+                                                first_square :=
+                                                  ContextualComposition.Factorization.Source.outputProduct._proof_1 e d
+                                                    f,
+                                                second_square :=
+                                                  ContextualComposition.Factorization.Source.outputProduct._proof_2 e d
+                                                    f })
+                                            (CategoryTheory.CategoryStruct.comp (S.bal s.first f.middle t.second).hom
+                                              (CategoryTheory.CategoryStruct.comp
+                                                (S.map
+                                                  { left := f.left, right := CategoryTheory.CategoryStruct.id t.right,
+                                                    middle_eq :=
+                                                      ContextualComposition.Factorization.Source.inputProduct._proof_3 e
+                                                        d f,
+                                                    first_square :=
+                                                      ContextualComposition.Factorization.Source.inputProduct._proof_1 e
+                                                        d f,
+                                                    second_square :=
+                                                      ContextualComposition.Factorization.Source.inputProduct._proof_2 e
+                                                        d f })
+                                                (CategoryTheory.CategoryStruct.comp
+                                                  (S.map
+                                                    { left := CategoryTheory.CategoryStruct.id t.left, right := g.right,
+                                                      middle_eq :=
+                                                        ContextualComposition.Factorization.Source.productId._proof_3 e
+                                                          d t,
+                                                      first_square :=
+                                                        ContextualComposition.Factorization.Source.outputProduct._proof_1
+                                                          e d g,
+                                                      second_square :=
+                                                        ContextualComposition.Factorization.Source.outputProduct._proof_2
+                                                          e d g })
+                                                  (CategoryTheory.CategoryStruct.comp
+                                                    (S.bal t.first g.middle r.second).hom
+                                                    (S.map
+                                                      { left := g.left,
+                                                        right := CategoryTheory.CategoryStruct.id r.right,
+                                                        middle_eq :=
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_3
+                                                            e d g,
+                                                        first_square :=
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_1
+                                                            e d g,
+                                                        second_square :=
+                                                          ContextualComposition.Factorization.Source.inputProduct._proof_2
+                                                            e d g })))))))))))))))))))))))))
+def ContextualComposition.Factorization.Source.commaCoconeEquivalence.{vK, vL, vC, vD, uK, uL, uC, uD} : {K : Type uK} →
+  {L : Type uL} →
+    {C : Type uC} →
+      (D : Type uD) →
+        [inst : CategoryTheory.Category.{vK, uK} K] →
+          [inst_1 : CategoryTheory.Category.{vL, uL} L] →
+            [inst_2 : CategoryTheory.Category.{vC, uC} C] →
+              [inst_3 : CategoryTheory.Category.{vD, uD} D] →
+                (e : CategoryTheory.Functor K C) →
+                  (d : CategoryTheory.Functor L C) →
+                    CategoryTheory.Functor (CategoryTheory.Comma e d) D ≌
+                      ContextualComposition.Factorization.Source.Cocone e d :=
+fun {K} {L} {C} D [CategoryTheory.Category.{vK, uK} K] [CategoryTheory.Category.{vL, uL} L]
+    [CategoryTheory.Category.{vC, uC} C] [CategoryTheory.Category.{vD, uD} D] e d =>
+  (ContextualComposition.Factorization.Primitive.universalProperty e d D).trans
+    (ContextualComposition.Factorization.Source.presentationEquivalence D e d)
