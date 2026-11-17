@@ -377,3 +377,15 @@ import ContextualComposition
 #print axioms ContextualComposition.Factorization.Endpoint.localizedCocone_target_identity
 #print axioms ContextualComposition.Factorization.Endpoint.localizedCocone_target_composition
 #print axioms ContextualComposition.Factorization.Endpoint.localizedCocone_endpoint_composition
+#print axioms ContextualComposition.recoverySquare
+#print axioms ContextualComposition.recoverySquare_app
+#print axioms ContextualComposition.recoverySquare_counit
+#print axioms ContextualComposition.recoverySquare_unit
+#print axioms ContextualComposition.recoverySquare_unique
+#print axioms ContextualComposition.Factorization.Endpoint.coconeEndpointRecovery
+#print axioms ContextualComposition.Factorization.Endpoint.coconeEndpointRecovery_counit
+#print axioms ContextualComposition.Factorization.Endpoint.coconeEndpointRecovery_unit
+#print axioms ContextualComposition.Factorization.Endpoint.localizedCoconeTargetComparison
+#print axioms ContextualComposition.Factorization.Endpoint.coconeTargetRecovery
+#print axioms ContextualComposition.Factorization.Endpoint.coconeTargetRecovery_counit
+#print axioms ContextualComposition.Factorization.Endpoint.coconeTargetRecovery_unit

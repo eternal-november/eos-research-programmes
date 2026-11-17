@@ -23,3 +23,5 @@ public import ContextualComposition.NormalizationCoherence
 public import ContextualComposition.EquivalenceCoherence
 
 public import ContextualComposition.LocalizedCoconeTransport
+
+public import ContextualComposition.CoconeRecovery
