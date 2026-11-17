@@ -37,3 +37,5 @@ public import ContextualComposition.TelescopeExtension
 public import ContextualComposition.TelescopePayloadCells
 
 public import ContextualComposition.TelescopeReindex
+
+public import ContextualComposition.GrothendieckStep
