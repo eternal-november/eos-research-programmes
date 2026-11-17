@@ -11,3 +11,5 @@ public import ContextualComposition.SourceCocone
 public import ContextualComposition.CoconeExtension
 public import ContextualComposition.TargetChange
 public import ContextualComposition.EndpointTransport
+
+public import ContextualComposition.EndpointTarget
