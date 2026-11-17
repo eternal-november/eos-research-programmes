@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,url}
+\begin{document}
+\section*{Independent Lean 4.35 constructor review}
+\paragraph{Verdict and material qualification.}
+PASS for the frozen implementation's stated partial mathematical scope and clean own-source replay. A documentation correction is required before unqualified publication: the frozen source crosswalk says the axiom sets are at most \texttt{propext} and \texttt{Quot.sound}, but the eight fixed-effect theorems now additionally report \texttt{Classical.choice}. This is a standard Lean axiom, allowed by the verification script, not a project theorem assumption or failed proof. The actual trust claim must nevertheless match the audit. No candidate file was edited.
+
+\paragraph{Exact implementation pins.}
+The independently rebuilt files have SHA256:
+\begin{quote}\ttfamily
+FixedEffects.lean: efb8a5cbb403fa1a4554a683286710659c0e5a1f2b8c139c19501883a5117690\\
+Para.lean: 112b399895ae4a57a614f3486ade71e732e13936c369fa9cd86d2f7ed2252c3c\\
+ReaderWriter.lean: fd340bf4f3e6daf3e09087a5c666d01a58d906c244181cddbfd5487a214b342e\\
+SOURCE\_CROSSWALK.md: 226325decf460622db18f5dbd959514003234c33110341bedac70e722b235b9b\\
+TheoremIndex.json: 6371d2c982e0cf2aec7a4db23a2bef97e978e3721c7fbea29c4e39a2cc891a07\\
+AxiomAudit.lean: 22c8a71da1a06517fceeb1ac2da7b618fbb5163b99b31ccca49bc1d5021dbd2b\\
+lake-manifest.json: eee9430bd94b68a077b30470bd1c711d400926cc78cdc445c641c66165fa1c64
+\end{quote}
+
+\paragraph{Source and migration comparison.}
+The source target remains EOS revision \texttt{458ff36a4798e432dee5947afc402f9903a47f14}, relative-construction manuscript, section ``Internal constructors and familiar specializations''. The earlier independent review read the original constructor section, independently retrieved repository lines 785--856 and issue 105's acceptance specification, and inspected all three formal modules. This review compared every migrated module against those exact earlier files, not merely the author's change summary.
+
+ReaderWriter and Para changed only module/public-import/exposure declarations. Their mathematical types, definitions and proofs are unchanged. FixedEffects additionally removes unused simplifier arguments and adapts the two composition comparisons to the new mathlib object/hom wrappers. The current pinned mathlib Kleisli file was read directly: \texttt{Kleisli.mk} wraps the original object, \texttt{Hom} has one underlying-arrow field \texttt{of}, and composition wraps exactly $f\mathbin{\gg}T(g)\mathbin{\gg}\mu$. The coKleisli wrapper has the dual single-field construction. Projection to \texttt{Hom.of} in the migrated comparisons therefore does not erase extra hom data, quotient maps, or weaken the target to scalar equality. Both comparisons remain definitional equalities of actual base arrows. Their hypotheses are unchanged; no target was replaced by an assumption.
+
+\paragraph{Supported adequacy scope.}
+For arbitrary object/hom universes and supplied category with monad or comonad, the implementation checks the source's operational composition and pure changing-endpoint square equations, their quintet equivalence, and horizontal/vertical pasting. No unit, multiplication, counit or comultiplication is assumed invertible.
+
+Reader transposition is the explicit invertible arrow map over Type, preserves composition using the same environment twice, pure arrows and endpoint equations. Writer transposition retains input-dependent grade and body, the ordered arbitrary-monoid multiplication, both inverse laws and both parts of its square equation. Empty carriers remain allowed. Neither is a bundled general cartesian-closed double-category theorem.
+
+Para is the cartesian Type action, not a general monoidal action. It retains actual forward parameter maps, fixed-endpoint hom categories, changing-endpoint interchange, product reassociation/inverses/naturality/pentagon, unit maps/inverses/triangle and the noninjective Boolean-to-unit cell. It does not reverse native cells or replace their data by existence. The remaining unitor naturality and full pure-map pseudofunctor packaging are not silently discharged.
+
+\paragraph{Fresh replay procedure and evidence.}
+Copied the frozen package to a separate directory with package build outputs and earlier evidence excluded. Created only links to pinned dependency caches. Independently verified all nine dependency Git revisions against the lockfile and verified no tracked modifications in those checkouts. The actual executable reports Lean 4.35.0, commit \texttt{eb6cafb7290e8bd5f2937522d8d804f58f02bafc}; mathlib is \texttt{56a005855ea17e0b0958f73ec801ae140b0a1679}. Executed \path{verify.py}; the fresh build log records builds of all three implementation modules and the root module. Build and axiom-audit commands succeeded. All 31 distinct indexed names appear exactly once in the fresh audit. All copied Lean bytes were then checked equal to the frozen candidate.
+
+This is a clean own-source build using existing pinned dependency objects, not a rebuild of all mathlib from source or an independent release-signature audit. The 4.19 replay is historical evidence only and was not used as a substitute for 4.35 kernel acceptance.
+
+\paragraph{Actual axiom result.}
+All eight fixed-effect theorems report \texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound}. Reader theorems and the writer encoding/pure/square equivalence report \texttt{Quot.sound}; writer associativity and unit laws also report \texttt{propext}. Writer horizontal pasting and all thirteen Para theorems report no axioms. Source inspection found no \texttt{sorry}, \texttt{admit}, project \texttt{axiom}, \texttt{unsafe}, or native-decision escape. No audited declaration depends on \texttt{sorryAx} or an invented project theorem axiom. The script permits the three standard axioms now observed, so its PASS is consistent with the actual output; only the prose crosswalk's two-axiom description is stale.
+
+\paragraph{Nonclosure and next acceptance gate.}
+The current package does not instantiate the terminal-fibre comma factory or prove its comparison with these realizations. No bundled pure-square double-category isomorphism, arbitrary monoidal-action Para, general CCC reader, mixed-law construction, display/codisplay coherence, Grothendieck presheaf pseudomonad, representable restriction, telescope theorem, opwreath, factorization recognition or discrete-transposition obstruction is certified here. Issue 105 remains open. The checked realization data is a substantive partial certificate, not evidence of the complete constructor suite. No blocking semantic or kernel defect was found within that declared scope. Correct the stale axiom sentence, retaining these boundaries, before presenting the documentation as matching the 4.35 audit.
+\end{document}

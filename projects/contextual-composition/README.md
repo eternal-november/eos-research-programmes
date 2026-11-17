@@ -14,6 +14,10 @@ The [feedback and concurrency extension contract, v0.1.3](contracts/Feedback_and
 
 The [native feedback and interaction research contract, v0.2](contracts/Native_Feedback_and_Interaction_Extension_Contract_v0_2.tex) targets a structural account relating general admissible feedback, dependent graded occurrences and shared interaction, with recurrent semantics and conservativity addressed explicitly. It replaces the earlier branching-first default; a local extension does not alone resolve the governing question.
 
+## Constructor-level formal verification
+
+The [Lean constructor package](foundations/relative-construction/lean/README.md) checks fixed monad/comonad operational and endpoint-square recovery, Type reader/writer transpositions, and cartesian-Type Para native cells and selected coherence. Its [source crosswalk](foundations/relative-construction/lean/SOURCE_CROSSWALK.md) records the precise hypotheses, axiom audit and residuals. This is a partial constructor certificate, not a formalization of the relative factory, general-action Para or the full programme.
+
 ## Current structural checkpoint
 
 The [balanced implementation-indexed guarded family](foundations/native-whole-scope-feedback/Balanced_Guarded_Core_Feedback_Coherent_Family.tex) now assembles the core crossing, dependent paid native feedback and initial folds, whole-grade nesting/sliding laws, source recovery, and a substantive shared-population interpretation. Its [reading route](foundations/native-whole-scope-feedback/Balanced_Feedback_Assembly_Reading_Route.tex) distinguishes the actual comparison strengths and observation kernels. The result is scoped to core, transparent-owner, guarded implementations; the stage-aware extension below addresses native transport beyond silent well-foundedness under additional explicit control interfaces, while law selection remains separate.
