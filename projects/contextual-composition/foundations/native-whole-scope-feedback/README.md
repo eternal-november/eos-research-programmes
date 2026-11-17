@@ -1,5 +1,11 @@
 # Native whole-scope feedback and complete control families
 
+## Reviewed nonblocking recurrent assembly
+
+[Nonblocking world and historical owner effects](Nonblocking_World_and_Genealogical_Effects.tex), [complete-law controllers and certified exports](Nonblocking_History_Controllers_and_Certified_Exports.tex), and the [reading route](Nonblocking_Recurrent_Assembly_Reading_Route.tex) extend the scoped barrier checkpoint with actual overlapping paid episodes: pending or divergent initialization does not globally lock unrelated ready actors in the world-receptive interface. The construction includes open passive-only scope signatures, parse-independent law labels, directed late-owner material updates, calibrated whole-plan execution, native mixed comparisons and finite correlated-row recovery by persistent reveal commitments. The [population test](Nonblocking_Population_Concrete_Test.tex) has infinite paid progress despite a divergent initializer, and positive done mass under a distinct retirement controller.
+
+This does not erase genuine local dependency cuts, equate central and decentralized resources, assert unrestricted eager crossing, or invert the late-owner comparison. [Resumption checkpoint](Resumption_Checkpoint_After_Nonblocking_Assembly.tex): research stops after this reviewed publication pending a new instruction. Earlier sections below retain their historical interface scopes.
+
 This construction extends the [shared-world assembly](../shared-world-native-assembly/README.md) through independently specified opaque operational algebras and complete, law-labelled controller families. The interfaces are different and their comparison is explicit: uncontrolled native feedback has an initial algebra; arbitrary selected policies do not automatically lift through its native maps.
 
 ## Structural outcome and loop-color transport
