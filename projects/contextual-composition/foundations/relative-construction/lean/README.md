@@ -50,3 +50,5 @@ Independent evidence: `evidence/grothendieck-step-independent/Review.tex`, fresh
 After #172, GrothendieckCoherence derives a Cat-valued one-step extension presheaf from split endpoint comparisons; see the final SOURCE_CROSSWALK section for the direction of pasting and the strictness boundary. Fifteen new exports (644 total), author and independent replays passed.
 
 Independent scoped pass: see `evidence/grothendieck-coherence-independent/Review.tex` and adjacent fresh project replay records (cached external dependencies).
+
+GrothendieckIterates constructs the length-graded presheaf of finite iterates for each fixed Cat-valued payload, with recursive native hom decoding, restriction and a depth-two dependent witness. This is the right-hand construction of eq:telescope, not yet the comparison. See the final source crosswalk and scoped evidence. Independent scoped pass: see `evidence/grothendieck-iterates-independent/Review.tex` and the adjacent isolated project replay (664 indexed audits; cached external dependencies).

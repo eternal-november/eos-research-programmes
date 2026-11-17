@@ -43,3 +43,7 @@ Independent evidence: `evidence/grothendieck-step-independent/Review.tex`, fresh
 For successive base arrows: read eq:groth, GrothendieckStep.restrict_payload, GrothendieckStep.restrictionCell_paste in GrothendieckCoherence.lean, then restrict_paste, Endpoints.Split and Endpoints.extensionPresheaf. The candidate freeze, telescope-172-baseline comparison, scoped author replay and acceptance note record verification. Reopen the split endpoint laws before transporting any conclusion to a general pseudofunctor or a weak cleavage.
 
 Independent scoped pass: see `evidence/grothendieck-coherence-independent/Review.tex` and adjacent fresh project replay records (cached external dependencies).
+
+For nondiscrete all-length transport, read manuscript eq:telescope on its right-hand side, then GrothendieckIterates.layer, Code/decode, successor_payload, packedPresheaf, summandDecode, and Witness.leaf_test. See GROTHENDIECK_ITERATES_FREEZE.json and evidence/grothendieck-iterates-author-fresh. The next comparison needs an independently constructed left-hand chain endpoint and hom interface, not a renaming of the iterate.
+
+Independent scoped pass: see `evidence/grothendieck-iterates-independent/Review.tex` and the adjacent isolated project replay (664 indexed audits; cached external dependencies).
