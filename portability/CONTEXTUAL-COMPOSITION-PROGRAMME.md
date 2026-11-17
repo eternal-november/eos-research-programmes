@@ -1,5 +1,7 @@
 # Contextual composition as a formulation of reusable Byzantine control
 
+The [open-protocol formulation](OPEN-PROTOCOL-FORMULATION.md) gives the resulting synthesis problem, transport proposition, worked discharges and outstanding proof obligations.
+
 **Judgment.** The project offers a candidate architecture for the proof of portability itself. In that architecture a component presents the histories it can read, the choices it can make, the resources and authority it may use, its responses to intervening events, and the outcomes it exposes to other components. Assemble those presentations over one shared execution. Compare the assembly with the actual source on the decisions, physical effects, elapsed time and service that constitute the mission. The recurring defects at the pause point concern precisely the information lost between those two accounts.
 
 This changes the judgment in the [earlier, narrower assessment](CONTEXTUAL-COMPOSITION-ASSESSMENT.md). Finite rule generation and observer tests are two parts of a larger proposal. The greatest potential savings concern construction of a common history, synthesis of locally implementable actions, and recovery proofs that survive a change of mechanism. Below, *candidate* marks a proposed Byzantine application. A conditional mathematical finding, a reproduced model discriminator and an admitted physical source history carry different warrants.
