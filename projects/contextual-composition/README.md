@@ -16,7 +16,7 @@ The [native feedback and interaction research contract, v0.2](contracts/Native_F
 
 ## Constructor-level formal verification
 
-The [Lean constructor package](foundations/relative-construction/lean/README.md) checks fixed monad/comonad operational and endpoint-square recovery, Type reader/writer transpositions, and cartesian-Type Para native cells and selected coherence. Its [source crosswalk](foundations/relative-construction/lean/SOURCE_CROSSWALK.md) records the precise hypotheses, axiom audit and residuals. This is a partial constructor certificate, not a formalization of the relative factory, general-action Para or the full programme.
+The [Lean constructor package](foundations/relative-construction/lean/README.md) checks fixed monad/comonad recovery, the supplied-law mixed category and its comparison maps, Type reader/writer transpositions and their concrete mixed-law instance, and cartesian-Type Para native cells and selected coherence. Its [source crosswalk](foundations/relative-construction/lean/SOURCE_CROSSWALK.md) records the precise hypotheses, axiom audit and residuals. This is a partial constructor certificate, not a formalization of the relative factory, general-action Para or the full programme.
 
 ## Current structural checkpoint
 
