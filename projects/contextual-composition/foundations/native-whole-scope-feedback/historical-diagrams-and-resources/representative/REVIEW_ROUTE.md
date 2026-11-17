@@ -1,0 +1,11 @@
+# Representative-system integration checkpoint
+
+Read `Population_Repair_Mixed_Assembly_Instance.tex` against the actual `../Nonblocking_Population_Concrete_Test.tex`, especially the primitive grammar, complete launch/decision law, 12-to-10 matrix, all-prefix owner-cone induction and two controller fibres. Then use the reviewed common-history face and online repair sources.
+
+The new F is explicitly added at bootstrap; it waits for three actual named receipts, consumes a declared two-dimensional nonunit resource once, and returns a genuine nullary body. It is not an undeclared old primitive. Both compared presentations retain the same complete raw law, owner/read fields and resource. The coefficient repair uses a direction lost by the actual population cone, with retained history dimension 24 and joint-evaluation rank 13. Off-policy extra factors are retained and the named-factor residual uses augmentation of other factors.
+
+Critical discovered qualification: the new augmented-product observers are NOT epimorphisms (ranks 13 into dimensions 24 and 22). Broad enriched-arrow reflection therefore fails as an available premise. The candidate instead proves epimorphy of the old population observers and reflection only for inherited arrows extended with fixed repair identity, by cancellation of their surjective old leg. Review this distinction carefully.
+
+Operational review obligations: actual source launch/B/J sequence; real late-factor identity-continuation context-face specialization; shared/current-world fields unchanged; F outside the local J reader, not sibling disclosure; all raw zero branches and selected-prior calibration; original queue resumption; full grade/body addition distinguished from old-record observation; recurrent versus finite-exit controllers; and genuinely instantiated same-cut diagrams rather than assumed global compatibility.
+
+Run `python3 check_population_repair_instance.py`. Its 54 exact insertion-matrix tests and selected finite whole-law tests support, but do not prove, the recurrent/operational argument. Exact-hash bounded independent review: `../reviews/Population_Repair_Independent_Review.tex`. This candidate aims at a meaningful restricted stopping outcome, not an unrestricted completion.
