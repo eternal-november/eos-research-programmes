@@ -2,6 +2,12 @@
 
 This construction extends the [shared-world assembly](../shared-world-native-assembly/README.md) through independently specified opaque operational algebras and complete, law-labelled controller families. The interfaces are different and their comparison is explicit: uncontrolled native feedback has an initial algebra; arbitrary selected policies do not automatically lift through its native maps.
 
+## Structural outcome and loop-color transport
+
+The [clause-level outcome ledger](Native_Extension_Structural_Outcome_Ledger.tex) records a positive v0.2 structural coherent-family outcome at the declared certified scope. It does not claim unrestricted completion of every feedback doctrine. In particular, one initialization/pending-episode semantics is not yet a controlled infinite sequence of beyond-guard paid episodes.
+
+The [additional loop-color theorem](Birth_Reactive_Sliding_and_Reindexing.tex) extends original-port-retaining sliding to infinite birth-reactive prefixes and possibly noninjective loop functions. Actual histories, owners and whole laws reparse; the full grade map remains directed. Changing-grade naturality and mixed nesting use explicit disjoint target copies when color images overlap. This addition is not retroactively required for the ledger's PR137 assessment.
+
 ## Stage-aware feedback beyond the silent guard
 
 The [stage-aware assembly](Barrier_Aware_Native_Iteration_Assembly.tex) repairs the executed-prefix crossing only after an explicit control change: synchronized stage cuts and certified progressive external births. Birth-reactive feedback has native same-depth nesting and mixed compatibility with context comparison and content flattening, retaining pending components, whole law families, actual owner cones and full unused grades. The old eager-prefix and return-gated obstructions remain valid.
