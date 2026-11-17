@@ -80,6 +80,12 @@ Typed first-done restriction is an explicit generator, not an exact-pushforward 
 
 [Deterministic causal-image reconstruction](Deterministic_Selector_Causal_Image.tex) characterizes the compiler's image at the additional finite-skeleton, common-carrier, path-faithful interface. Exact raw-presence closure, one deterministic complete command per retained active node, whole-law admission and prefix flows reconstruct the selected execution. Zero raw atoms and full law labels remain; the remaining off-policy controller fibre is explicit. This is an existential characterization, not a general finite decision algorithm. Convexifying command selection or deleting zero terminal witnesses fails the stated image criterion.
 
+## Progressive interfaces and content composition
+
+[The terminal-only factorization obstruction](Terminal_Only_Paid_Factorization_Obstruction.tex) gives equal full first-done presentations whose live ports permit different continuation commands. [The progressive-port base](Progressive_Port_Base_and_Unary_Factorization_Test.tex) retains those observations and represents the declared native interface. Its specific delayed-unary Set-mediated normal form nevertheless misses a terminating two-revelation process. Neither obstruction rules out all paid relative constructions.
+
+[Pointed progressive content substitution](Progressive_Content_Substitution_Boundary.tex) supplies an independent dependent-protocol composition with early live outputs, actual native arrows, associator, pentagon and units. It retains entire substituted grades and actual content coefficients, and restricts exactly to the original static content operation. Child entry is explicit: a swap automorphism obstructs a natural choice from arbitrary unpointed protocols. Paid installation, random-entry law/coefficient compatibility, moving-context multiplication and the paid relative crossing remain separate obligations.
+
 ## Scope and remaining interfaces
 
 The base feedback theorem uses common-boundary actual slice limits, all admitted joint laws, persistent ports, and deterministic port-free seeds. The conditional content comparison uses the Cartesian, zero-initial-arity typed-production fragment. Contexts accumulate chronologically by tensor; no tensor--limit interchange is asserted. Regrouping within the retained provenance/partition index is invertible; comparison with terminal content can be directed and information-losing.
