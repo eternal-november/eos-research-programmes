@@ -31,3 +31,6 @@ The independently reviewed recovery-modification module proves that the actual i
 
 The independent #105 telescope branch starts with discrete spans over arbitrary discrete state types. Finite chains retain every actual endpoint-indexed grade. The package proves substitution unit/associativity, the payload-natural length-tagged comparison with sequential extension iterates, the distinction between length-one and length-zero units, and compatibility of categorical arrow accumulation with flattening. This is not the full split-fibrant Cat-valued or strict Tel-algebra theorem.
 Independent statement review and isolated own-source replay passed for this specialization (442 distinct indexed declarations; dependency binaries reused).
+
+TelescopeMorphisms now equips the original finite chains with actual morphisms from arbitrary categories of grades at each pair of discrete base states. Singleton is fully faithful on grade arrows, flattening is a functor, and the two telescope unit laws and triple substitution hold on morphisms after the original object identifications. This does not yet extend the coproduct-of-iterates equivalence to Cat-valued payloads or introduce nontrivial base reindexing.
+Independent statement review and isolated own-project rebuild passed. See evidence/telescope-morphisms-independent for the two-block order discriminator and audit.
