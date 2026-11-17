@@ -42,3 +42,7 @@ Independent scoped review passed; see evidence/telescope-payload-cells-independe
 The reviewed #105 tranche proves the telescope extension comparison as an isomorphism of Type-valued presheaves on an arbitrary base category with selected split one-step grade lifts. A concrete base arrow changes an inhabited successor to an empty one, and a second test distinguishes induced payload maps even with identical successor types. This does not combine the earlier discrete-base Cat-valued theorem with arbitrary base reindexing.
 
 Independent review passed for the bounded Type-valued reindexing result. See evidence/telescope-reindex-independent/Independent_Telescope_Reindex_Review.tex and the fresh build/audit logs there. Dependencies were cached. The general categorical and strict-algebra obligations remain open.
+
+For one Grothendieck extension step, joint reindexing now preserves native grade and payload arrows over a nondiscrete base. A payload map into a reindexed target, rather than a map between unrelated successor fibres, is essential. This derives single-base-arrow restriction as a functor; coherence of successive outer restrictions and the all-length categorical telescope comparison remain open.
+
+Independent evidence: `evidence/grothendieck-step-independent/Review.tex`, fresh project build and 629 declaration audits.
