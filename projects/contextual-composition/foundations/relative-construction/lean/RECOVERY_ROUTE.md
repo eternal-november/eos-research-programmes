@@ -47,3 +47,7 @@ Independent scoped pass: see `evidence/grothendieck-coherence-independent/Review
 For nondiscrete all-length transport, read manuscript eq:telescope on its right-hand side, then GrothendieckIterates.layer, Code/decode, successor_payload, packedPresheaf, summandDecode, and Witness.leaf_test. See GROTHENDIECK_ITERATES_FREEZE.json and evidence/grothendieck-iterates-author-fresh. The next comparison needs an independently constructed left-hand chain endpoint and hom interface, not a renaming of the iterate.
 
 Independent scoped pass: see `evidence/grothendieck-iterates-independent/Review.tex` and the adjacent isolated project replay (664 indexed audits; cached external dependencies).
+
+For the independent left-hand interface, read TelescopeSquares.Chain, next, Square, terminalMap, DecoratedHom before realizedEquiv, tailTarget, squareEquiv and verticalEquiv. Next independently paste squares, prove endpoint composition and compare induced payload composition to the native one. See TELESCOPE_SQUARES_FREEZE.json and evidence/telescope-squares-author-fresh.
+
+Independent scoped pass: see `evidence/telescope-squares-independent/Review.tex` and adjacent fresh own-project replay (683 distinct audits; cached external dependencies). Independent chain-square identity and composition, and comparison preservation of both, remain open.

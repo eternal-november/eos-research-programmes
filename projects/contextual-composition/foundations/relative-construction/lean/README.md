@@ -52,3 +52,7 @@ After #172, GrothendieckCoherence derives a Cat-valued one-step extension preshe
 Independent scoped pass: see `evidence/grothendieck-coherence-independent/Review.tex` and adjacent fresh project replay records (cached external dependencies).
 
 GrothendieckIterates constructs the length-graded presheaf of finite iterates for each fixed Cat-valued payload, with recursive native hom decoding, restriction and a depth-two dependent witness. This is the right-hand construction of eq:telescope, not yet the comparison. See the final source crosswalk and scoped evidence. Independent scoped pass: see `evidence/grothendieck-iterates-independent/Review.tex` and the adjacent isolated project replay (664 indexed audits; cached external dependencies).
+
+TelescopeSquares builds payload-independent chains, their squares over arbitrary base maps, and the terminal endpoint map. It proves object and hom-type comparisons with the iterates, not yet a categorical equivalence. 683 indexed declarations; separate review pending.
+
+Independent scoped pass: see `evidence/telescope-squares-independent/Review.tex` and adjacent fresh own-project replay (683 distinct audits; cached external dependencies). Independent chain-square identity and composition, and comparison preservation of both, remain open.
