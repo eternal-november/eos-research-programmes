@@ -1,0 +1,4 @@
+import ContextualComposition
+#print ContextualComposition.Factorization.Source.explicitPresentationEquivalence
+#check ContextualComposition.Factorization.Source.target_associativity
+#check ContextualComposition.Factorization.Source.extension_target_naturality
