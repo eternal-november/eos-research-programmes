@@ -55,3 +55,7 @@ Independent scoped pass: see `evidence/telescope-squares-independent/Review.tex`
 Resume after #175 via SquarePasting.headComp, next_comp, squareComp, terminal_comp and decoratedComp. Review compared_comp_head versus compared_zero_comp: full comparison preservation on transported tails, then category laws, remain to be proved. See SQUARE_PASTING_FREEZE.json and evidence/square-pasting-author-fresh.
 
 Independent scoped pass: see `evidence/square-pasting-independent/Review.tex` and its fresh replay. At positive length the comparison of the pasted arrow has the specified head projection; this is not a comparison against an independently formed native composite. The double-successor witness tests the terminal map only.
+
+After #176, inspect tail_paste (source), comparison_rebase (transport), compared_paste_tail (arbitrary-length tail), one_tail_native (general length-one payload component), and FamilyComparison.one_comp (full arrow, specialized model). Next obtain an inductive decomposition of nativePaste for general outer Grothendieck homs; matching only the independently compared tail is not yet that theorem. See TAIL_PASTING_FREEZE.json and evidence/tail-pasting-author-fresh.
+
+Independent scoped pass: read `evidence/tail-pasting-independent/Review.tex` and the adjacent fresh replay before resuming the general native outer decomposition.
