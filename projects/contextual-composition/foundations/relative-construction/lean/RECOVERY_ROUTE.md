@@ -15,3 +15,7 @@ Baseline merge 24b033d725c0ffd3124aeb7ac6b974e7d8a82985. Read the last crosswalk
 
 ## Independently reviewed recovery modification after #165
 Baseline merge 117cd3b66bb2d820d97c8201159b1b56c60c0e33. Read the final crosswalk, the #165 recovery component, #164 forward choice and target-transformation equations, and RecoveryModification.lean. Preserve the distinction between a noninvertible transformation of target functors and an invertible compatible endpoint choice. To extend this to horizontal transport composition, account for the cocone and localized compositors and mixed associators; the vertical law is not that equation.
+
+## #105 finite telescope branch after #166
+Read issue #105, source pin 458ff36a lines 929–953, scoping-audit lines 169–184 and proof-status ledger K2; #150 and #151 do not contain a telescope construction. Start at FiniteTelescope.Chain, not at the later #93 recovery modules. Check both flatten units, the triple law, pack/unpack inverses and payload naturality, and the two units' distinct domains. The degree-dependent witness and parallel grades are tests against a constant fibre or endpoint-only substitution. See FINITE_TELESCOPE_FREEZE.json, the final crosswalk and evidence/finite-telescope-author-fresh. The next extension to nondiscrete grade morphisms will require a morphism-of-chains interface, not merely more object examples.
+Independent scoped review passed. See evidence/finite-telescope-independent, including a separate probe whose successor depends on the chosen grade.
