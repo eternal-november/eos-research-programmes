@@ -15,3 +15,5 @@ public import ContextualComposition.EndpointTransport
 public import ContextualComposition.EndpointTarget
 
 public import ContextualComposition.LocalizationDescent
+
+public import ContextualComposition.WeakChoiceCoherence
