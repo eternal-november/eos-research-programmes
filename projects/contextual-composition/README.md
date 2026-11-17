@@ -12,6 +12,8 @@ The [native feedback and interaction research contract, v0.2](contracts/Native_F
 
 The [balanced implementation-indexed guarded family](foundations/native-whole-scope-feedback/Balanced_Guarded_Core_Feedback_Coherent_Family.tex) now assembles the core crossing, dependent paid native feedback and initial folds, whole-grade nesting/sliding laws, source recovery, and a substantive shared-population interpretation. Its [reading route](foundations/native-whole-scope-feedback/Balanced_Feedback_Assembly_Reading_Route.tex) distinguishes the actual comparison strengths and observation kernels. The result is scoped to core, transparent-owner, guarded implementations; coherent solution-selection and native transport beyond silent well-foundedness remain open.
 
+The [beyond-guard projective result](foundations/native-whole-scope-feedback/Beyond_Guard_Projective_Iteration_and_Crossing_Obstruction.tex) adds coherent silent-prefix laws and restricted native transport, with a concrete obstruction to extending the deterministic crossing under completion-sensitive, executed-only prefix semantics. It does not claim repaired crossing or unrestricted iteration; [its route](foundations/native-whole-scope-feedback/Beyond_Guard_Reading_Route.tex) fixes that boundary.
+
 ## Reading guide: three levels
 
 The [native-grade feedback assessment](foundations/local-joint-comparison/README.md) now includes a second, asynchronous occurrence-fragment interpretation reusing the generated comparison and feedback theorem. It records the v0.1.3 categorical-core criterion as met at the declared parameterized scope; institutional acceptance and the broader realization/application completion ledgers remain separate.

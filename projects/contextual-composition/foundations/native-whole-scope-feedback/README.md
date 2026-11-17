@@ -2,6 +2,12 @@
 
 This construction extends the [shared-world assembly](../shared-world-native-assembly/README.md) through independently specified opaque operational algebras and complete, law-labelled controller families. The interfaces are different and their comparison is explicit: uncontrolled native feedback has an initial algebra; arbitrary selected policies do not automatically lift through its native maps.
 
+## Beyond the silent guard: projective laws and a crossing obstruction
+
+[Projective initialization](Beyond_Guard_Projective_Iteration_and_Crossing_Obstruction.tex) retains all finite and infinite silent raw trees, coherent admitted laws and finite native coefficient cones. Exact-slot native maps preserve the resulting countable finite-completion rows; divergent initialization remains a distinct prefix observation. Identical branching marginals admit completion masses 1/3, 1 and 1/4 under different coherent couplings.
+
+A completion-sensitive, executed-only prefix interpretation cannot retain the old deterministic context comparison: grouped binding can have a single divergent raw path while local binding has already executed a fair initializer. This is a precise obstruction at that interface, not a theorem that every beyond-guard completion fails. [The reading route](Beyond_Guard_Reading_Route.tex) separates this result from the guarded family. Repaired mixed coherence and beyond-guard native initiality remain open.
+
 ## Balanced implementation-indexed guarded family
 
 [The coherent-family theorem](Balanced_Guarded_Core_Feedback_Coherent_Family.tex) joins the core relative crossing to dependent paid feedback through actual balanced implementations, an essential-profile output protocol, and a directed implementation action. Native initial folds respect the proved balance, content and context comparisons. Primitive-binder nesting is invertible; noninjective loop sliding is directed on the entire grade.
