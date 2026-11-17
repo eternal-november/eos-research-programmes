@@ -40,3 +40,4 @@ public import ContextualComposition.TelescopeReindex
 
 public import ContextualComposition.GrothendieckStep
 public import ContextualComposition.GrothendieckCoherence
+public import ContextualComposition.GrothendieckIterates
