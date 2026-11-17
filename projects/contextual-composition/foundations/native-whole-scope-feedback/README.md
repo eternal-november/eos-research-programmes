@@ -2,6 +2,14 @@
 
 This construction extends the [shared-world assembly](../shared-world-native-assembly/README.md) through independently specified opaque operational algebras and complete, law-labelled controller families. The interfaces are different and their comparison is explicit: uncontrolled native feedback has an initial algebra; arbitrary selected policies do not automatically lift through its native maps.
 
+## Balanced implementation-indexed guarded family
+
+[The coherent-family theorem](Balanced_Guarded_Core_Feedback_Coherent_Family.tex) joins the core relative crossing to dependent paid feedback through actual balanced implementations, an essential-profile output protocol, and a directed implementation action. Native initial folds respect the proved balance, content and context comparisons. Primitive-binder nesting is invertible; noninjective loop sliding is directed on the entire grade.
+
+[Parameter and context-face maps](Dependent_Feedback_Parameter_Category_and_Context_Face.tex), their [canonical loop enrichment](Canonical_Core_Context_Face_Loop_Enrichment.tex), and [boundary implementation and source recovery](Boundary_Implemented_Balanced_Feedback.tex) supply the interfaces. The concrete proper-port population model combines nonunit contexts, branching recurrence and shared simultaneous effects in a nontrivial implementation-action diagram. The [reading route](Balanced_Feedback_Assembly_Reading_Route.tex) identifies the precise imports.
+
+The source embedding is faithful on canonically induced original native arrows; it is not a strong horizontal inclusion. A distinguished-law-preserving row map need not preserve the enlarged coupling family. Output normalization forgets redundant advertised requirements, not actual command admission. General solution-selection and native transport beyond silent well-foundedness remain open; this is a structural result for the declared core, transparent-owner, guarded family, not unrestricted contract closure.
+
 ## Integrated structural account
 
 [The parameterized native extension family](Structured_Native_Extension_Family.tex) gives an actual mapping property over independently specified fixed-interface parameters and opaque algebras. Primitive maps first induce all-law constructor transformations; free feedback is then a relative initial section, left adjoint to the algebra projection. This is not a fullness assertion after forgetting parameters.
