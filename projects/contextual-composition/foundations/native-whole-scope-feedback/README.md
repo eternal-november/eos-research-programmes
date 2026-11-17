@@ -118,6 +118,14 @@ These constructions do not yet form a closed paid relative module on arbitrary m
 
 [Entry and external-response obstructions](Atomic_Polynomial_Entry_and_Response_Obstructions.tex) show why ordinary progressive injections and active/passive-only graphs do not already supply the missing content action. New slots require actual entry witnesses, external installation needs its original sponsor, and an atomic entry condition cannot be imposed unchanged on temporal composites. These results do not prove closure of the enriched base under polynomial/span substitution or a general paid context/content normal form.
 
+## Bounded schema-receiver content action
+
+[Decorated atomic content action](Decorated_Atomic_Content_Action.tex) constructs a moving-input polynomial action on footprint-local, reserve-stable schema receivers over a fixed primitive library. Entry schemas retain complete primitive carriers, original conditioning projections and every block constraint; substitution does not replace a generated schema by an opaque initializer at a larger predecessor. Dependent entry bind conditions downstream tests on the preceding intrinsic entry record, whereas simultaneous old paid scopes retain their whole correlated joint. Actual signature transport, same-ticket random activation, content multiplication, the directed context face and their mixed equations preserve full unused grades, raw zeros, selected states and original owner coefficients.
+
+The pure content bodies are defined independently of receiver realizations. Their pending invocation slots are not operational output ports. [Entry-sponsored atomic polynomials](Entry_Sponsored_Atomic_Progressive_Polynomials.tex), [coherent primitive occurrence instances](Coherent_Primitive_Occurrence_Instance_Libraries.tex), [pending requests and indexed realization](Pure_Pending_Requests_and_Indexed_Realization.tex), and [reserve-saturated protocols](Reserve_Saturated_Entry_Protocol_Graphs.tex) supply the separate graph, naming, realization and ticket interfaces. Fixed-library root reparse is not nested opaque realization; graph weakening alone chooses neither probability laws nor coefficient arrows.
+
+The context face is genuinely directed: a cross-sibling four-bit coupling is admitted by local entry tests but rejected by full-prefix tests. Evaluated event-free recovery concerns the rows and maps presentable over the declared primitive library, not schema-presentation fullness. Arbitrary opaque receivers, general span realization, discarded-group controller descent and a common-base relative coend/normal-form theorem remain outside this bounded action.
+
 ## Scope and remaining interfaces
 
 The base feedback theorem uses common-boundary actual slice limits, all admitted joint laws, persistent ports, and deterministic port-free seeds. The conditional content comparison uses the Cartesian, zero-initial-arity typed-production fragment. Contexts accumulate chronologically by tensor; no tensor--limit interchange is asserted. Regrouping within the retained provenance/partition index is invertible; comparison with terminal content can be directed and information-losing.
@@ -125,7 +133,3 @@ The base feedback theorem uses common-boundary actual slice limits, all admitted
 These constructions supply native mapping and assembly theorems at their stated interfaces, not a generic contextad completion. The initializer-family extension supplies world-inert, all-raw well-founded random initialization; world-changing or non-well-founded initialization remains outside it. The original initial-row source inclusion is not recovered merely by replacing initialization with a paid boot: that delay changes the operational composition interface. Original tensor coefficients agree with scope products only under the specified coincident-mode hypotheses; otherwise available comparisons are directed. Instantaneous retained-state closure, unrestricted controller lifting along opaque folds, and full mixed-source conservativity remain separate obligations.
 
 The manuscripts give written proofs. The Python scripts in `checks/` are exact finite diagnostics for the control-fibre, relational and joint-flattening witnesses, not formal proof certification. Run them with Python 3 in a disposable copy, since some write diagnostic JSON. The factorized-stage diagnostic additionally requires NumPy and checks an exact integer identity minor, not a floating-point rank estimate.
-
-
-
-

@@ -1,0 +1,61 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,geometry}\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}\newtheorem{lemma}{Lemma}
+\title{Reserve-saturated entry protocols and synchronized polynomial closure}
+\date{17 November 2026}\begin{document}\maketitle
+\paragraph{Interface and scope.} This constructs the reserve-extension graph interface missing from arbitrary fixed-ticket graphs. It extends the support-separated entry-sponsored atomic polynomial in \texttt{\detokenize{Entry_Sponsored_Atomic_Progressive_Polynomials.tex}}, not arbitrary paid receivers. Pure pending entry tokens may be used instead of filled witnesses. Their receiver-indexed realization and actual law/material transport remain separate. No weakening chooses a probability law or deletes a reserve coefficient.
+
+\section{Ticket extensions and event-stamped freshness}
+Fix one run-qualified atomic occurrence $e=(R,n)$ and physical boundary $w\to w'$. A ticket has a finite registry of globally old actor occurrences, their prescope active/passive selectors and the required primitive command/raw-slot descriptors. A ticket extension $t\leq t'$ adds unrelated old registry entries and preserves all existing entries, the boundary, event stamp and selected sponsors. It does not change the command of an actor already in $t$. These extensions form a thin category $\mathsf T_e$.
+
+All old actor names in these registries are initial names or were allocated strictly before $e$ in the retained common run history. Fresh entries for this occurrence use the primitive namespace allocation in \texttt{\detokenize{Coherent_Primitive_Occurrence_Instance_Libraries.tex}} with birth stamp $e$. Therefore every such entry support and actorless material request is disjoint from every old registry in $\mathsf T_e$. Distinct fresh requests still require disjoint primitive request paths. This chronology-indexed name restriction is load-bearing: arbitrary extensions adding an already planned fresh name are not ticket extensions in this category. No event is inserted by the stamp.
+
+A finite footprint requirement is a finite conjunction of positive registry facts, such as the presence of an old actor, its specific command selector, or the activity of a named sponsor. The physical boundary/event stamp is fixed outside this conjunction. Write $t\models r$ when $t$ satisfies it. Such requirements are monotone under extension. Requirements may be inconsistent; then no representative occurs. Conjunction is denoted $r\wedge s$. This allows a request needing a sponsor without pretending its local data determine all other actors' commands.
+
+\section{Intrinsic protocols and saturation as actual indexed graphs}
+An intrinsic protocol $G$ has vertices, entry witnesses or pending entry tokens, and atomic edges with the support, selected-entry, raw request and operational observation fields of the chosen graph branch. Every item $x$ has a finite footprint requirement $r(x)$. For edges, the requirements imply those of source and target and of every constituent entry; selected-entry requirements imply those of the selected vertex. Footprint membership/command facts mention only the globally OLD part of local supports and every referenced old sponsor or predecessor actor. Current-event fresh actors in entries and target vertices are separately retained support fields with stamp $e$; they are NEVER required to belong to the old ticket registry. Their freshness is supplied by the event-stamped namespace rule. Predecessor wiring involving those newly created initializer ancestors is retained as a typed internal request field, not an old-registry membership assertion. These distinctions apply to vertices, target vertices and entries as well as edges. Additional declared reserve requirements may be retained; footprints need not be minimal.
+
+Define an actual graph at ticket $t$ by
+\[
+       (\operatorname{Sat}G)(t)=\{\operatorname{rep}(t,x):
+                                             t\models r(x)\}, \tag{1}
+\]
+on each item sort, with the inherited incidence and observation maps. For $t\leq t'$, the weakening map sends $\operatorname{rep}(t,x)$ to $\operatorname{rep}(t',x)$ on vertices, entries and edges. It changes only the ambient registry index. Monotonicity and the incidence requirements make this an actual functor $\mathsf T_e\to\mathsf{Graph}_{\rm entry,obs}$. No component law is supplied by (1).
+
+Uniform intrinsic maps are item functions commuting with incidence, selected-entry and all strict primitive/observation fields, independent of $t$, with
+\[
+       t\models r(x)\Longrightarrow t\models r(fx).       \tag{2}
+\]
+They induce natural maps of the indexed graphs. They may forget redundant footprint requirements, but not actual primitive sponsor/predecessor records. Arbitrary ticket-dependent maps are not in this uniform class.
+
+Strict pullbacks of uniform maps are represented intrinsically by pairs with equal images, with requirement $r(x)\wedge r(y)$ and equal preserved fields. Unsatisfiable pairs have no representative at any ticket. The indexed pullback is therefore computed ticketwise. This assertion is about the realized indexed graphs; unrealisable intrinsic descriptions are not declared distinguishable merely because their syntax differs.
+
+\section{The polynomial is pointwise and remains saturated}
+Construct the intrinsic $P_C^{\rm at}G$ by the actual entry-sponsored polynomial. Tuple/entry supports are disjoint and worlds are retained at empty tuples. The requirement of a tuple or entry is the conjunction of its component requirements. For an atomic edge take the conjunction of the old-component edge requirements, every new entry requirement and the explicit requirement that each displayed external sponsor be active. All other same-ticket constraints are retained. A conflicting command choice yields an unsatisfiable conjunction and no edge representative.
+
+\begin{theorem}[Reserve-saturated polynomial closure]
+For every ticket $t$ there is a canonical isomorphism, natural in weakening and uniform maps,
+\[
+ (\operatorname{Sat}P_C^{\rm at}G)(t)
+          \cong P_{C,t}^{\rm at}((\operatorname{Sat}G)(t)). \tag{3}
+\]
+The right side uses that one common ticket for all components, including external responses. Units, multiplication and their coherence extend to these indexed graphs. The polynomial preserves indexed strict pullbacks, and its unit/multiplication naturality squares are indexed pullbacks on the uniform strict map class. Hence the synchronized graded span construction closes on these reserve-saturated indexed protocols.
+\end{theorem}
+\begin{proof}
+A tuple or edge on the left is a finite tuple of intrinsic items for which $t$ satisfies exactly the conjunction of their requirements and sponsor facts. This is precisely a tuple of representatives at $t$ with those same actual edges and entries on the right. The maps remove or restore the redundant $t$ tags and are inverse on vertices, entries, edges, output injections and primitive fields. Weakening changes only those tags, proving naturality. Thus no component-specific ticket remains when the product edge is formed.
+
+At each $t$, the proved atomic unit and multiplication act on the same actual data. A flattened item requires no fact absent from its nested source: old leaf edges retain their requirements, new leaf entries retain theirs and inherit the supplied sponsor. A source requirement attached only to an empty content wrapper may become redundant, but the map remains defined at every ticket where its source exists. This is allowed by (2); no material actorless entry is discarded. Therefore the unit and multiplication are natural maps of saturated indexed graphs. Their equations follow pointwise from the atomic leafwise calculations.
+
+Strict pullbacks in this realized indexed category are pointwise by the conjunction construction above. Pointwise polynomial preservation and pointwise cartesianness give the claimed indexed pullback squares. Their reconstructions are uniform: split at the supplied nested grouping, retain actual leaf entries/edges and sponsor values, and check their conjunction at the same ticket. Empty groups recover their nested phase/sponsor data from the given nested item, not from an invented primitive factor. The span composition and its coherence are then the same actual pointwise pullback constructions and cartesian comparisons.\end{proof}
+
+This theorem supplies full simultaneous prescope querying: first choose the global compatible ticket, then take each component's representative at that ticket. It does not take independently sampled local tickets and attempt to merge their realized outcomes afterward. Uniform compatibility with noninjective pure value relabeling is allowed only with unchanged primitive occurrences and agreed observation-label reindexing; noninjective actor/owner contraction is not added by this theorem.
+
+\section{Pending geometry, library realization and the paid boundary}
+For a receiver-independent pure protocol, intrinsic entries are typed pending invocation tokens. Their requirements mention input type/world, sponsor and primitive request occurrence, not receiver-specific raw alphabets, laws or selected states. A library $R$ fills final tokens with its own complete finite initializer witnesses. The same pending graph can therefore be used with a fair-bit library, a deterministic library with retained zero atoms, or a singleton library; (1)--(3) have not examined those choices.
+
+A filled realization is a separately indexed all-extension family over each ticket. Its pure token root remains the same; the actual selected states, early outputs and internal actor/material records are generated by the supplied library. This is not a strict observation-preserving map equating pending slots with actual output ports. Pure multiplication fills only the final tokens: intermediate wrappers add no material initializer.
+
+To consume reserve weakening operationally, require the receiver's locality condition: accepted global fillings are exactly the fixed incoming whole-law marginal together with accepted projection to its consumed footprint, while unrelated old raw/factor reserve is forwarded. Then a reserve extension supplies a family of joint lifts, not a selected coupling. Native transport additionally retains the complete raw maps, actual coefficients, selected-entry/poststate squares and whole-block constraints. Those are the indexed receiver action's independent fields; graph naturality cannot replace them.
+
+Event-stamped allocation guarantees compatibility with reserve additions only within the declared common-history ticket class. If an unrelated component is instantiated using a conflicting current-event name or a different event ordering, a fresh coherent reindexing is required before applying (3). Likewise arbitrary fixed-ticket graphs need not be saturated: missing representatives at a larger ticket are genuine missing edges, not repaired by notation. The positive theorem applies to the explicitly constructed saturated interface and its uniform maps.
+\end{document}
