@@ -1,4 +1,6 @@
-# Contextual composition for reusable Byzantine control
+# Digital operation and observer comparison case study
+
+For the programme-wide evaluation, including regional histories, repair resources, causal feedback and physical replacement, see [Contextual composition as a formulation of reusable Byzantine control](CONTEXTUAL-COMPOSITION-PROGRAMME.md). The evidence below concerns the original digital comparison.
 
 **Evaluation.** Use the generated finite comparison and observer criteria for the discrete part of a Byzantine source adapter. Use passive responses of pending operations as a design requirement where a cut, reset or change of owner can intervene. Defer a general categorical runtime, probability-law model, or migration of the hybrid proof. Evidence supports a saving on repeated discrete composition arguments and earlier rejection of inadequate interfaces. The balance of costs across two complete Byzantine families remains open.
 
