@@ -7,3 +7,5 @@ The coefficient and fresh-resource constructions compose at fixed support profil
 The two Python scripts require only Python 3's standard library. Run `python coefficients/check_support_coefficients.py` and `python control/check_resource_witnesses.py` from this directory. They print exact finite diagnostic results, not proofs of universal or recurrent claims. No fresh proof-assistant verification, TeX compilation or novelty certification is claimed.
 
 [Total dynamic historical repair](dynamic/README.md) supplies the separately declared augmented-resource construction, calibrated online law interface and explicit nonblocking deployment. It does not remove the strict old-relation obstruction or supply arbitrary resources and comparison maps.
+
+[Completed-row to causal native lifting](causal/RECONSTRUCTION.md) characterizes raw prefix factorization, pointwise conditional-law transport and historical coefficient descent. The finite linear system includes required forward-update squares; its recurrent existence theorem does not select canonical lifts or reconstruct divergent laws from completed rows.
