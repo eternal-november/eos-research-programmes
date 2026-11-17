@@ -136,6 +136,15 @@ The [global incidence and response-domain construction](Marked_Pure_Base_and_Res
 
 [A concrete correlated activation](Core_Local_Random_Activation_Instance.tex) exhibits two paid actors, owned random entries, all 81 raw atoms and nonunit owner coefficients. Its crosswise entry coupling belongs to the local-pair target but not the full-prefix successive-entry source. The scoped relative theorem does not cover arbitrary consumption of forwarded records, arbitrary span realization, a context-comma normal form, or automatic transport of the earlier feedback initiality/controller theorems.
 
+## Guarded feedback at a proper core-receiver boundary
+
+[The feedback overlap route](Feedback_Overlap_Reading_Route.tex) distinguishes a generated receiver lift from a separate enriched constructor. [Reserve-signature transport](Generated_Feedback_Reserve_Receiver_Lift.tex) retains each complete internal compiler law while pushing arbitrary compatible reserve correlations, with actual noninjective raw/factor maps and neutral closed-input recovery. Its input remains static invocation data plus unread reserve, not arbitrary progressive child substitution.
+
+[The operational display](Guarded_Feedback_Protocol_Display_and_Static_Obstruction.tex) retains early ports and completion in a fixed proper protocol endpoint. Opaque state, raw/command identity and terminal shape remain in the realization but need not be recoverable from that endpoint. A strict factorization to the static polynomial endpoint is impossible at nonempty operational output; the separate full terminal grade and first-done interpretation remain valid. [A recurrent deployment](Core_Feedback_Recurrence_and_Ancestral_Admission_Test.tex) and [its incoming-signature transport](Core_Feedback_Incoming_Signature_Deployment.tex) test the actual ancestral constraints, raw zero atoms and whole-owner coefficients.
+
+[Observable-block feedback](Observable_Block_Guarded_Feedback.tex) separately retains convex joint constraints on fixed child observations and proves initiality in its independently specified observation-preserving algebra category. This does not establish arbitrary opaque-child schema feedback, core-relative initiality, balanced feedback descent or unrestricted controller transport.
+
+
 ## Scope and remaining interfaces
 
 The base feedback theorem uses common-boundary actual slice limits, all admitted joint laws, persistent ports, and deterministic port-free seeds. The conditional content comparison uses the Cartesian, zero-initial-arity typed-production fragment. Contexts accumulate chronologically by tensor; no tensor--limit interchange is asserted. Regrouping within the retained provenance/partition index is invertible; comparison with terminal content can be directed and information-losing.
@@ -143,3 +152,4 @@ The base feedback theorem uses common-boundary actual slice limits, all admitted
 These constructions supply native mapping and assembly theorems at their stated interfaces, not a generic contextad completion. The initializer-family extension supplies world-inert, all-raw well-founded random initialization; world-changing or non-well-founded initialization remains outside it. The original initial-row source inclusion is not recovered merely by replacing initialization with a paid boot: that delay changes the operational composition interface. Original tensor coefficients agree with scope products only under the specified coincident-mode hypotheses; otherwise available comparisons are directed. Instantaneous retained-state closure, unrestricted controller lifting along opaque folds, and full mixed-source conservativity remain separate obligations.
 
 The manuscripts give written proofs. The Python scripts in `checks/` are exact finite diagnostics for the control-fibre, relational and joint-flattening witnesses, not formal proof certification. Run them with Python 3 in a disposable copy, since some write diagnostic JSON. The factorized-stage diagnostic additionally requires NumPy and checks an exact integer identity minor, not a floating-point rank estimate.
+
