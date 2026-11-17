@@ -12,3 +12,6 @@ LocalizedCoconeTransport.lean connects the existing chosen localized transports 
 
 ## Actual recovery candidate after #164
 Baseline merge 24b033d725c0ffd3124aeb7ac6b974e7d8a82985. Read the last crosswalk section, the previous forward squares, EquivalenceCoherence.unit_square_of_counit and CoconeRecovery.lean. Verify that the concrete comparison is passed in the opposite direction to the general forward-square convention and that the actual composite record appears on both sides. Distinguish a single change from a pasting of changes, for which the correction isomorphisms are new obligations. Independent review passed; see evidence/cocone-recovery-independent/Independent_Cocone_Recovery_Review.tex and adjacent fresh replay records.
+
+## Independently reviewed recovery modification after #165
+Baseline merge 117cd3b66bb2d820d97c8201159b1b56c60c0e33. Read the final crosswalk, the #165 recovery component, #164 forward choice and target-transformation equations, and RecoveryModification.lean. Preserve the distinction between a noninvertible transformation of target functors and an invertible compatible endpoint choice. To extend this to horizontal transport composition, account for the cocone and localized compositors and mixed associators; the vertical law is not that equation.

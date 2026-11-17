@@ -389,3 +389,8 @@ import ContextualComposition
 #print axioms ContextualComposition.Factorization.Endpoint.coconeTargetRecovery
 #print axioms ContextualComposition.Factorization.Endpoint.coconeTargetRecovery_counit
 #print axioms ContextualComposition.Factorization.Endpoint.coconeTargetRecovery_unit
+#print axioms ContextualComposition.recoverySquare_modification
+#print axioms ContextualComposition.recoverySquare_vertical
+#print axioms ContextualComposition.Factorization.Endpoint.pullbackChoiceComparison
+#print axioms ContextualComposition.Factorization.Endpoint.coconeEndpointRecovery_choice
+#print axioms ContextualComposition.Factorization.Endpoint.coconeTargetRecovery_transformation
