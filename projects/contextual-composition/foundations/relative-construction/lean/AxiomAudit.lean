@@ -356,3 +356,8 @@ import ContextualComposition
 #print axioms ContextualComposition.Factorization.Endpoint.section_transport_choice
 #print axioms ContextualComposition.Factorization.Endpoint.section_transport_identity
 #print axioms ContextualComposition.Factorization.Endpoint.section_transport_composition
+#print axioms ContextualComposition.unit_square_of_counit
+#print axioms ContextualComposition.Factorization.Endpoint.packaged_counit_app
+#print axioms ContextualComposition.Factorization.Endpoint.source_counit_compatibility
+#print axioms ContextualComposition.Factorization.Endpoint.packaged_counit_compatibility
+#print axioms ContextualComposition.Factorization.Endpoint.packaged_unit_compatibility
