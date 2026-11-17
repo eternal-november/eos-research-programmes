@@ -17,3 +17,5 @@ public import ContextualComposition.EndpointTarget
 public import ContextualComposition.LocalizationDescent
 
 public import ContextualComposition.WeakChoiceCoherence
+
+public import ContextualComposition.NormalizationCoherence
