@@ -704,3 +704,14 @@ import ContextualComposition
 #print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.Example.preSrc
 #print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.Example.preSquare
 #print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.Example.pasted_test
+#print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.rebaseDecorated
+#print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.rebaseDecorated_data
+#print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.comparison_rebase
+#print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.compared_tail
+#print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.tailPart
+#print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.tail_paste
+#print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.compared_paste_tail
+#print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.nativePaste
+#print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.one_tail_native
+#print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.FamilyComparison.single
+#print axioms ContextualComposition.GrothendieckStep.TelescopeSquares.FamilyComparison.one_comp

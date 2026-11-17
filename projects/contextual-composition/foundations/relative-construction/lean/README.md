@@ -58,3 +58,5 @@ TelescopeSquares builds payload-independent chains, their squares over arbitrary
 Independent scoped pass: see `evidence/telescope-squares-independent/Review.tex` and adjacent fresh own-project replay (683 distinct audits; cached external dependencies). Independent chain-square identity and composition, and comparison preservation of both, remain open.
 
 SquarePasting constructs independent finite-chain identity/pasting and proves preservation by the terminal endpoint map. Only head and zero-length comparisons are claimed, not categorical equivalence. Independent scoped pass: 702 audited declarations; see evidence/square-pasting-independent/Review.tex.
+
+TailPasting verifies arbitrary-length tail transport and a full length-one composite in the dependent-sum model. General tail recursion is distinguished from full outer composition equality in the final source crosswalk. Independent scoped pass: 713 indexed declarations; see `evidence/tail-pasting-independent/Review.tex`.
