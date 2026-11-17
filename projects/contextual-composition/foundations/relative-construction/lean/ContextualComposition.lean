@@ -33,3 +33,5 @@ public import ContextualComposition.FiniteTelescope
 public import ContextualComposition.TelescopeMorphisms
 
 public import ContextualComposition.TelescopeExtension
+
+public import ContextualComposition.TelescopePayloadCells

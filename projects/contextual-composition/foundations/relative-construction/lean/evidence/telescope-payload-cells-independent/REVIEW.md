@@ -1,0 +1,11 @@
+# Independent review: payload-change cells over discrete states
+
+**Verdict: pass for the stated fixed-pair result.** Reviewed from the frozen candidate, against merged #169 (076b50ac2b7efaf61f4b340b03882d4f87eca63f). The 30 recorded SHA-256 digests agreed; 22 previous implementation modules matched the reviewed #169 archive and baseline Git blobs. The 525 earlier index entries were retained, with 18 additions. The pinned manuscript's lines 929–953 state the broader extension equation; these cell equalities are derived verification of its discrete-base case.
+
+Both squares are homogeneous functor equalities out of the parameter category, not mere equations on objects. Their proofs use the previous object squares and induction for the new arrow components. The packed action recurses independently; the value action appends the original terminal component to an identity on the chain. Naturality tests arbitrary domain grade and payload arrows. Neither construction assumes commutation with its comparison. Each action preserves identities and vertical composition.
+
+For parallel families of transformations, equality in either presentation at a fixed start means equality at every payload object over every endpoint of an actual chain from that start. A disconnected state need not be observed. Across all starts, empty chains recover every component. The no-reverse test assumes an empty reverse payload hom; it is not an unrestricted reflection-of-isomorphisms theorem.
+
+Replayed from project source in a new build directory with Lean 4.35.0 (eb6cafb7290e8bd5f2937522d8d804f58f02bafc). All nine dependency checkouts matched manifest revisions and were tracked-clean. Their compiled caches were reused, not independently rebuilt. All 543 unique indexed names matched the axiom directives and parsed reports in order. Only propext, Classical.choice and Quot.sound appeared. The independent axiom log matched the author log byte for byte. See build.log, axioms.log, and source_hashes.json alongside this review.
+
+No horizontal composition across varying payload pairs, grade changes, nonidentity base reindexing, general split left-fibrant result, or strict telescope algebra recovery follows. The common object-universe restriction is unchanged. Neither #105 nor #93 is closed.
