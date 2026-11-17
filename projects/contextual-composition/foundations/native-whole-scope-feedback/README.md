@@ -197,3 +197,7 @@ These constructions supply native mapping and assembly theorems at their stated 
 The manuscripts give written proofs. The Python scripts in `checks/` are exact finite diagnostics for the control-fibre, relational and joint-flattening witnesses, not formal proof certification. Run them with Python 3 in a disposable copy, since some write diagnostic JSON. The factorized-stage diagnostic additionally requires NumPy and checks an exact integer identity minor, not a floating-point rank estimate.
 
 
+
+## Historical diagrams and decentralized resources
+
+[The historical-diagram and resource extension](historical-diagrams-and-resources/README.md) derives fixed-profile owner-support diagram insertions and finite decentralized service synthesis, then proves their simultaneous same-clock native assembly with fresh within-instruction resources. A separate eager/common-cut probe gives the finite-causal-past criterion and a qualified event-indexed exchange theorem. Dynamic cross-episode total updates, persistent-seed strong erasure, decentralized world coordination and unrestricted eager crossing remain separate obligations.

@@ -1,0 +1,154 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,url}
+\newtheorem{theorem}{Theorem}\newtheorem{proposition}{Proposition}\newtheorem{lemma}{Lemma}
+\newcommand{\Aug}{\mathsf{Aug}}\newcommand{\supp}{\mathop{\rm supp}}
+\title{Support-indexed historical coefficients: general diagram incidence, its naturality boundary, and compatible joint merging}
+\author{}\date{}
+\begin{document}\maketitle
+\paragraph{Audit and target.}
+The input is the finite historical coefficient interface of \emph{Nonblocking World and Genealogical Effects}, published at EOS commit \texttt{88e05c7d526474bedaef1cab19d53cc7ab127acf}. Its outgoing-head/fixed-boundary theorem is retained. The present result enlarges that shape to arbitrary finite relation diagrams carrying owner-support at every node, derives their insertion and restriction maps, and classifies the seed-free natural linear edges in augmented vector spaces. A support-increasing edge, a repeated tensor occurrence, and a joint relation joining formerly separate episodes are three different obstructions. The repair for the last is an explicit maximal compatibility subobject; it is a changed source domain, not an unrestricted total update. Written proofs below do not imply a formal certificate or novelty against the literature.
+
+\section{Independent data and the derived diagram}
+Let $\mathcal C$ be a symmetric monoidal category, with unit $I$. Work in the category $\Aug(\mathcal C)=\mathcal C/I$ of objects equipped with an augmentation $\epsilon_X:X\to I$ and augmentation-preserving arrows. Tensor has augmentation $\epsilon_X\otimes\epsilon_Y$ followed by the unit comparison. The tensor unit is terminal in this slice, but tensor is NOT assumed cartesian. Assume the finite limits below exist in the slice.
+
+An owner is an immutable occurrence key, not an actor name. Fix a finite totally ordered owner set $P$. A support profile is a finite diagram presentation $J$ (finite generating graph and relations), a base diagram $K:J\to\Aug(\mathcal C)$, and a subset $S_j\subseteq P$ at each node, such that
+\[
+ j\xrightarrow{e}k\quad\Longrightarrow\quad S_k\subseteq S_j.\tag{1}
+\]
+Relations include the support labels at their endpoints. Each owner occurs at most once INSIDE each node's tensor. The same owner may occur at many nodes. That is a diagram incidence declaration, not a duplication into independent factors. For owner-slot objects $M=(M_a)_{a\in P}$ set
+\[
+ D_j(M)=K_j\otimes\bigotimes_{a\in S_j}^{\text{owner order}}M_a.
+\]
+For an edge $e:j\to k$, define $D_e(M)$ as $K_e$ tensored with the labeled projection that retains factors in $S_k$ and augments factors in $S_j\setminus S_k$, using symmetry and unitors. Thus no edge obtains a factor absent from its source. The fixed base arrows, support sets and augmentation are independent inputs; no global insertion square is supplied as a premise.
+
+\begin{lemma}[Diagram and functor]
+These formulas define $D(M):J\to\Aug(\mathcal C)$ and a functor in all augmented slots. All relations of $K$ hold in $D(M)$.
+\end{lemma}
+\begin{proof}
+Along a path each owner is retained until its first deletion, after which it cannot reappear by (1). Hence the slot map of a path is the unique labeled coherence map retaining exactly its endpoint support and augmenting its complement. Both paths of a base relation have that same map. Their base parts agree by the relation in $K$. Tensor coherence proves the asserted equality. Slot naturality follows from augmentation preservation and naturality of tensor coherence.
+\end{proof}
+Write $F(M)=\lim_J D(M)$ with projections $\pi_j$.
+
+\section{Insertion, forgetting, and coherence}
+For a new factor $L$ owned by $a$, let $M^{+a}$ replace $M_a$ by $M_a\otimes L$, preserving the order INSIDE that owner's history. There is a natural diagram arrow $D(M^{+a})\to D(M)$ deleting $L$, hence a restriction $r_a:F(M^{+a})\to F(M)$. Define candidate cone legs
+\[
+ t_j:F(M)\otimes L\longrightarrow D_j(M^{+a})
+\]
+by $\pi_j\otimes1_L$ and labeled readdressing when $a\in S_j$, and by $\pi_j(1\otimes\epsilon_L)$ otherwise.
+
+\begin{theorem}[Support-derived historical action]
+The $t_j$ form a cone, and therefore induce a natural augmented insertion
+\[
+ \iota_a:F(M)\otimes L\longrightarrow F(M^{+a}),\qquad
+ r_a\iota_a=1\otimes\epsilon_L.\tag{2}
+\]
+These insertions are unital and coherent for ordered finite insertions. Different-owner reordering commutes with the actual labeled symmetry; same-owner insertion preserves its supplied chronological order. All statements are natural in slot maps and base-diagram maps with the same support profile.
+\end{theorem}
+\begin{proof}
+For an edge $j\to k$ there are precisely three cases: the owner occurs at both nodes, only at $j$, or at neither. The fourth case is excluded by (1). In the first case both cone routes retain the same $L$ and use the original cone equation. In the second both routes augment $L$; in the third both routes also augment it. Tensor coherence gives equality in all cases, including base relations. Limit universality supplies $\iota_a$. Composing a projection with $r_a\iota_a$ gives $\pi_j(1\otimes\epsilon_L)$, proving the restriction equation by uniqueness.
+
+For successive insertions, project into any node. Each route retains exactly the newly inserted factors whose owners belong to its support, in the same within-owner order, and augments all others. For distinct owners only their labeled tensor ordering changes; the specified symmetry accounts for it. The projection composites are equal, so limit uniqueness proves every associativity and unit diagram. The same calculation with a base map $K_j\to K'_j$ or slot map proves naturality, without assuming tensor preserves limits.
+\end{proof}
+
+The single source $F(M)\otimes L$ is used to define several cone legs. No map $L\to L\otimes L$ is used. This distinction permits one historical factor to constrain several diagram nodes without authorizing two tensor copies at one node. Full owner keys, factor keys and timestamps remain in the raw interface even when their coefficient interpretation has a kernel.
+
+\paragraph{Recovery and strict shape enlargement.}
+The previous outgoing-head construction is recovered by $S_j=\{a\}$ at owner $a$'s head and empty support at every fixed boundary node. Tensor-mode scopes and a tensor of separate scope limits remain separate expression constructors; the theorem does not replace tensor by a limit over a disjoint union. An arbitrary finite expression made from these tensor and limit constructors inherits insertion by structural induction: at a tensor constructor route each new factor to its UNIQUE owning subtree, unless a shared-support limit node explicitly represents its joint incidence. No tensor diagonal is inferred at a branching expression node.
+
+For a strict new diagram shape take $\Aug(\mathsf{Vect}_{\mathbb Q})$, $K_j=K_k=\mathbb Q^2$ with augmentation $(x,y)\mapsto x$, and two parallel arrows $f(x,y)=(x,0)$ and $g(x,y)=(x,y)$. Assign $S_j=S_k=\{a\}$. Both source and target are changing nodes; the coefficient is the equalizer of $f\otimes1_{M_a}$ and $g\otimes1_{M_a}$, canonically $\mathbb Q\otimes M_a$. This is an actual nontrivial relation between changing slots, outside the old head-to-fixed-boundary presentation. Formula (2) is defined for every late factor, not merely a successful numerical example. The equalizer may have an alternative reduced presentation; the strict claim is enlargement of admitted primitive diagrams, not nondefinability of its eventual object by all old presentations.
+
+Cycles are allowed, but (1) forces all nodes in a strongly connected component to have the same support. An arrow INTO a changing slot can therefore be admitted when its source also carries the required historical owners. Reclassifying a fixed boundary this way is a declared interface enlargement, not a proof that the old fixed boundary secretly supplied that material.
+
+\section{Exact seed-free linear edge classification}
+The following tests whether (1) is only a convenient restriction. Take all augmented vector spaces over $\mathbb Q$, including those with zero augmentation, and all augmentation-preserving linear maps. Let $A,B$ be fixed augmented vector spaces and, for finite subsets $S,T\subseteq P$, consider the underlying vector-space functors
+\[
+ G_S(M)=A\otimes\bigotimes_{a\in S}M_a,\qquad
+ H_T(M)=B\otimes\bigotimes_{a\in T}M_a.
+\]
+Naturality means naturality in EVERY augmented slot map, not just isomorphisms, sampled factors, or a chosen basis.
+
+\begin{lemma}[No natural inserted vector]
+A natural linear transformation from a constant vector space $U$ to $V\otimes M$, with $M$ ranging over augmented vector spaces, is zero.
+\end{lemma}
+\begin{proof}
+At $M=\mathbb Q$ let its component be $b:U\to V$. For $M=\mathbb Q^2$ augmented by first coordinate, both $\eta_0(1)=(1,0)$ and $\eta_1(1)=(1,1)$ are augmented arrows from the unit. Naturality says the component equals both $b\otimes\eta_0$ and $b\otimes\eta_1$, hence $b=0$. For any $M$ with a unit-augmentation vector, naturality along its map from the unit forces its component zero. Every augmented $M$ embeds by $m\mapsto(0,m)$ into $\widehat M=\mathbb Q\oplus M$ with augmentation $(x,m)\mapsto x+\epsilon_M(m)$. The latter has a unit-augmentation vector. Naturality along this injection and injectivity after tensoring with $V$ force the component at $M$ zero too.
+\end{proof}
+
+\begin{theorem}[Classification of multiaffine natural edges]
+If $T\nsubseteq S$, every natural linear transformation $G_S\Rightarrow H_T$ is zero. If $T\subseteq S$, each is uniquely
+\[
+ f\otimes\operatorname{discard}_{S\setminus T},\tag{3}
+\]
+with the actual labeled reordering, for a linear map $f:A\to B$. In the second case the transformation is augmented if and only if $f$ is augmented. In the first case the zero transformation is augmented at all slots if and only if $\epsilon_A=0$. Consequently, given an augmented base arrow $f:A\to B$ with $\epsilon_A\ne0$, (1) is NECESSARY AND SUFFICIENT for an augmented edge schema natural in arbitrary once-per-owner slots. A nonzero underlying vector space with zero augmentation is not covered by this last necessity statement.
+\end{theorem}
+\begin{proof}
+If $a\in T\setminus S$, fix all other variables. Naturality in $M_a$ is the previous lemma, with the remaining source and target tensors absorbed into $U,V$; symmetry moves $M_a$ to the end. Thus every component is zero.
+
+If $T\subseteq S$, naturality along $\epsilon_{M_a}:M_a\to\mathbb Q$ for each $a\in S\setminus T$ forces those variables to be discarded. Variables outside $S\cup T$ have no effect, by their unique maps to the terminal augmented unit. It remains to classify a transformation with the same slot set on both sides. Evaluate at unit slots to obtain $f:A\to B$. When every slot has nonzero augmentation, its vectors of augmentation one span its underlying vector space: choose such a vector $u$ and write a kernel vector $z$ as $(u+z)-u$. Naturality along the maps $1\mapsto m_a$ therefore determines the transformation on a spanning family of pure tensors as $f\otimes\bigotimes1_{M_a}$. For zero-augmentation slots embed each into $\widehat M_a$ as in the lemma; tensoring injections over a field remains injective, so naturality forces the same formula there. The augmentation assertions follow by evaluation at units and by tensoring the augmentation equations. If $\epsilon_A\ne0$, the source augmentation at unit slots is nonzero, excluding the zero transformation in the support-increasing case.
+\end{proof}
+
+The theorem classifies all such natural linear transformations, not just arrows generated by the construction. Its boundary is explicit: a chosen seed/section, coalgebra, restricted factor family, nonlinear map, or dependence on a selected raw value changes the naturality domain. Such enriched doctrines are not ruled out. A naturality failure cannot be cured by a scalar coupling law, since that law supplies no missing native linear arrow.
+
+\paragraph{Repeated tensor occurrence.}
+The classification assumes at most one occurrence of a variable per node. In particular it does not provide $M\to M\otimes M$. A uniform augmented linear diagonal with counit laws cannot exist on all augmented vector spaces: at $\mathbb Q$ it sends $1$ to $1\otimes1$; naturality along every map $1\mapsto m$ of augmentation one would give $\Delta(m)=m\otimes m$. For $u$ of augmentation one and nonzero $z$ of augmentation zero, linearity applied to $u+t z$ for rational $t$ contradicts the nonzero quadratic term $t^2z\otimes z$. Explicit coalgebra structure is therefore a genuinely independent resource. Cone-leg reuse in Theorem 1 does not evade this obstruction.
+
+\section{Joint merging across episodes: totality obstruction and maximal repair}
+The previous finite state observes a tensor of separately materialized scope limits. A new joint relation can demand more than those independent coefficient objects supply. Even with all supports empty, let $A=B=\mathbb Q^2$, augmented by first coordinate, and let the proposed joint diagram have $A\xrightarrow{1}B$ after identifying their presentations. Its limit is $A$, with both legs identity. On the previously independent source $X=A\otimes B$, the required old-observation legs are
+\[
+ p_A=1_A\otimes\epsilon_B,\qquad p_B=\epsilon_A\otimes1_B.
+\]
+No map $X\to\lim(A\xrightarrow1B)$ can preserve both legs: on $e_1\otimes e_0$, where $e_0=(1,0)$ and $e_1=(0,1)$, the first is $e_1$ and the second is zero. A shared scalar probability law does not make these linear arrows equal. Thus arbitrary cross-episode insertion is not a total extension of the old independent-tensor interface.
+
+There is nevertheless a canonical exact repair once the proposed node maps themselves exist. For an arbitrary finite presented diagram $D'$ in a finitely complete category, a source $X$, and independently specified candidate legs $t_j:X\to D'_j$, form the simultaneous equalizer
+\[
+ e:E\longrightarrow X,\qquad
+ D'_f t_j e=t_k e\quad(f:j\to k\text{ a generator}).\tag{4}
+\]
+Here $E$ is the equalizer of the two maps from $X$ into the finite product of edge target objects. In the augmented slice all arrows and equalizers are taken there. The candidate legs in a historical update may be the old projections tensored with the fresh factor, with any separately provided seeds/resources made explicit.
+
+\begin{theorem}[Maximal compatible update domain]
+There is a unique $u:E\to\lim D'$ with projections $t_j e$. The mono $e$ is universal among all source maps whose prescribed legs form a cone. A total update from $X$ preserving those legs exists if and only if every edge equation already holds on $X$, equivalently if and only if $e$ is an isomorphism. In augmented vector spaces,
+\[
+ E=\bigcap_{f:j\to k}\ker(D'_f t_j-t_k)\subseteq X.\tag{5}
+\]
+This is an exact linear compatibility calculation, not a positive-probability filter.
+\end{theorem}
+\begin{proof}
+The equalizer equations supply a cone on generators and hence on all paths. Limit universality supplies $u$. Any map $z:Z\to X$ supplying that cone equalizes the displayed pair, so factors uniquely through $e$. A total cone exists precisely when the identity of $X$ factors through this equalizer; since $e$ is mono this makes it an isomorphism. The kernel formula is the vector-space simultaneous-equalizer formula with its restricted augmentation.
+\end{proof}
+
+For the explicit two-episode obstruction, in the ordered basis $e_0e_0,e_0e_1,e_1e_0,e_1e_1$, equation (5) is $x_{10}=x_{01}$, so $\dim E=3$. The joint limit has dimension two; $u$ sends $e_0e_0\mapsto e_0$, $e_0e_1+e_1e_0\mapsto e_1$, and $e_1e_1\mapsto0$. Thus a genuine mixed kernel survives even after compatibility restriction. Neither $E=X$ nor $E\cong\lim D'$ may be claimed.
+
+\paragraph{Composition and interpretation of the repair.}
+Compatible domains compose by pullback, not by silently tensoring excluded inputs back in. A constrained state arrow is a span with mono left leg $X\otimes L\xleftarrow{e}E\xrightarrow{u}Y$. Given $Y\otimes N\xleftarrow{e'}E'\xrightarrow{u'}Z$, in vector spaces take $P=(E\otimes N)\times_{Y\otimes N}E'$, with its mono into $X\otimes L\otimes N$. Its right map is $u'$ after the pullback projection. Tensor preserves monos over a field; pullback associativity and tensor preservation of pullbacks in underlying vector spaces (hence these slice pullbacks) give associative composition up to the canonical identifications. Equivalently, all composites are the subspace of the full input satisfying each ordered stage's pulled-back equations, which proves the same associativity directly. The left leg need not be surjective. This yields a bicategory of presented constrained material updates, or a category after taking isomorphism classes of the intermediate spans while retaining the actual increment object and its labels. It is not the old total effect-state category. The tensor functor need not preserve the terminal object of the augmented slice; that false assertion is not used. It requires an operational interpretation authorizing exactly these native domains; restricting a probability law's support alone does not authorize it. For non-vector ambient categories the stated closure/pullback preservation assumptions must be separately checked.
+
+\paragraph{The missing prefix restriction and its history-retaining repair.}
+The span alone is NOT a native prefix-observation extension. In the two-episode example, $u:E\to Y$ kills $e_1e_1$, whereas $e:E\to X$ does not. There is no $r:Y\to X$ with $ru=e$. Reporting only the new joint limit $Y$ would therefore erase retained old material. This is a decisive obstruction to using the preceding span category unchanged as the nonblocking observation tower.
+
+For an update with old historical state $H$, increment $L$, and compatibility mono $e:E\hookrightarrow H\otimes L$, retain $H^+=E$ as the NEW HISTORICAL STATE and retain $u:E\to Y$ only as its joint observer. Its prefix restriction is
+\[
+ \rho=(1_H\otimes\epsilon_L)e:E\longrightarrow H.\tag{6}
+\]
+The input-domain leg is still $e$; the update on that domain is the identity of $E$. Thus no false total arrow $H\otimes L\to E$ is supplied. At the next step retain a new compatibility subobject $E'\hookrightarrow E\otimes N$ and its next joint observer. The successive inclusions embed $E'$ into $H\otimes L\otimes N$, and (6) composes to the actual augmentation of the later factors on that subspace. Induction proves one coherent finite prefix cone, retaining every earlier factor in the historical subobject rather than discarding it through $u$.
+
+More generally for a span update that has retained source evidence $E$ but uses $Y$ as an operational interface, impose the next constraints on $E\otimes N$ via $u\otimes1_N$ and take the pullback $P$ above as the NEXT historical state. Its map to $E\otimes N$, followed by augmentation, is the prefix restriction. Pullback universality gives the new joint observer. Ordered iteration retains every constraint and source factor; canonical pullback reassociation proves compatibility of finite bracketing. This is a history-retaining constrained doctrine, with different state objects from the unretained joint limits. It supplies native restriction maps, but NOT a total coefficient update on the old unrestricted domain. A runtime using it must independently admit these constrained domains on every raw alternative and must still satisfy the unchanged incoming probability-law and zero-table obligations. Their satisfiability is not a consequence of (4)--(6). At completed observation the map $u$ may still have a kernel, so recovery is through its explicitly declared joint observer, not an equality of historical and completed coefficient objects.
+
+\section{Interface to nonblocking recurrence and remaining obligations}
+\paragraph{Open profile presentation.}
+An open coefficient fragment retains its node keys, generating edge keys, base objects/arrows, owner-support labels, relations, and unresolved boundary references. Gluing is allowed when overlapping keys carry identical declarations and every crossing reference is resolved by the retained outer graph. Closing forms the limit of that actual union, not a tensor of closed fragment limits. Relations and owner-support are checked on the union before a raw proposal is admitted. This is an independent finite presentation: (1), the base relation equations and the supplied raw domains are directly checkable without solving any global feedback equation.
+
+\begin{theorem}[Finite-registry assembly for fixed support profiles]
+Take the published nonblocking registry's operational/world/read/grade/controller data unchanged. Replace the finite coefficient diagrams of its scopes by the support profiles above, presented openly as just specified. For each raw alternative assume the finite base presentation and its support checks are supplied; primitive comparison maps preserve the graph keys and support labels and commute with the base arrows. Then the coefficient part of every finite registry transition, its restriction, and every such native comparison are derived by (2). Disjoint-fragment reparsing, pure grouping and transparent nesting that preserve the actual global instruction graph preserve these maps. Iteration therefore yields coherent finite native observation towers for these machines, including runs with arbitrarily many overlapping pending scopes. No new coefficient limit at infinite time is required.
+\end{theorem}
+\begin{proof}
+At a finite history the retained factor dictionary gives each $M_a$ as its finite ordered tensor, including only factors already consumed. A late initializer contributes its actual new factor and immutable owner; (2) supplies its update and restriction. A new independent scope contributes its actual supplied head limit as one whole increment, just as in the old runtime. Tensoring the unchanged scope observations supplies the global map, without replacing a joint head by the tensor of its marginal heads. Naturality in Theorem 1 proves the native square for a primitive base/slot comparison, including all zero alternatives, since none of that proof used probabilities. Consecutive instructions compose by the proved insertion coherence and ordinary arrow composition. Restrictions compose in their reverse order.
+
+The open presentation's union of uniquely keyed declarations is unchanged by rebracketing or pure grouping. It therefore gives the same base diagram, owner supports and original factor occurrences; grouping creates no factor. Transparent nesting forwards the original sponsor and owner keys, so again does not change the coefficient presentation. The projected insertion maps on both routes keep the same factors and augment the same complements; limit uniqueness gives equality. World transitions, read/binder fields, global raw laws, full content grades, and actual bodies remain exactly those of the original finite registry, so their separately proved squares are not replaced by a coefficient argument. Induction gives coherent observations at every finite depth. The existing path-law construction applies only to its independently calibrated controllers; the coefficient extension does not prove calibration or global admission by itself.
+\end{proof}
+
+This theorem includes genuine changing-node relations inside the same nonblocking execution mechanism; it does not merely place a coefficient lemma beside recurrence. Its comparison class is fixed-profile primitive base/slot maps and exact global-graph reparses. An arbitrary context face that changes diagram incidence still requires its actual comparison map, and the cross-episode repair above is not automatically a member of this total-transition class.
+
+For a fixed support profile, Theorem 1 supplies exactly the local coefficient insertion, augmentation restriction and naturality equations used by the finite-registry assembly proof. Replace each old outgoing-head scope diagram by such a profile while retaining all raw carrier, world, binder, owner, law, controller, grade and body data. On a finite transition the projection calculation derives the native update square; finite composition gives its prefix observation tower. This is a substitution of a proved coefficient module, not a new assertion of world receptivity or eager cut deletion. Ordinary source recovery follows when the completed support diagram is the original supplied finite diagram and each factor enters once in its declared node incidences. The earlier outgoing-head source is recovered literally by its support assignment.
+
+New cross-episode joint relations instead require either proof of total compatibility on the old source or the changed constrained-domain semantics (4). A new edge can never be inferred from a scalar whole-law coupling. Repeated factors require specified comonoids or another explicit resource. Dynamic support changes require actual maps between the old and new profiles; Theorem 1 alone compares fixed profiles. Arbitrary row permutations still need their raw decomposition maps. Full controller calibration and zero-history service equations are unchanged and are not discharged by the coefficient theorem. No infinite accumulated coefficient, unrestricted joint-to-tensor recovery, or general distributed implementation follows.
+\end{document}
