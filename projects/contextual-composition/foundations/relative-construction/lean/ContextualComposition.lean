@@ -21,3 +21,5 @@ public import ContextualComposition.WeakChoiceCoherence
 public import ContextualComposition.NormalizationCoherence
 
 public import ContextualComposition.EquivalenceCoherence
+
+public import ContextualComposition.LocalizedCoconeTransport
