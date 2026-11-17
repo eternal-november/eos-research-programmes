@@ -34,3 +34,6 @@ Independent statement review and isolated own-source replay passed for this spec
 
 TelescopeMorphisms now equips the original finite chains with actual morphisms from arbitrary categories of grades at each pair of discrete base states. Singleton is fully faithful on grade arrows, flattening is a functor, and the two telescope unit laws and triple substitution hold on morphisms after the original object identifications. This does not yet extend the coproduct-of-iterates equivalence to Cat-valued payloads or introduce nontrivial base reindexing.
 Independent statement review and isolated own-project rebuild passed. See evidence/telescope-morphisms-independent for the two-block order discriminator and audit.
+
+The Cat-valued telescope extension comparison proves the length-tagged comparison on actual grade and payload morphisms at each discrete base state. The two comparison functors are inverse as functors and commute in both directions with arbitrary families of payload-change functors. This is not the general split-fibration theorem over a nondiscrete base.
+Independent scoped review and fresh own-project replay passed for 525 indexed declarations, reusing pinned dependency binaries. See evidence/telescope-extension-independent.
