@@ -1,5 +1,11 @@
 # Contextual Composition
 
+### Nonblocking recurrent interaction checkpoint
+
+Earlier checkpoint paragraphs below retain their historical scopes.
+
+The [integrated nonblocking assembly](foundations/native-whole-scope-feedback/Nonblocking_Recurrent_Assembly_Reading_Route.tex) now constructs repeated paid work during pending initialization, with historical owner effects, calibrated complete-law controllers, certified streaming exports and actual native mixed comparisons. Exact finite correlated-plan recovery uses retained commitments, not independent residual draws. The [population witness](foundations/native-whole-scope-feedback/Nonblocking_Population_Concrete_Test.tex) separates recurrent progress from first-done behavior. Local dependency cuts, central/decentralized resources and directed material maps remain explicit. [Stop/resumption checkpoint](foundations/native-whole-scope-feedback/Resumption_Checkpoint_After_Nonblocking_Assembly.tex).
+
 A category-valued relative construction for independently specified context and content, with dependent protocols and comparison semantics.
 
 Start with the [integrated treatment](synthesis/Integrated_Relative_Computation_Acceptance_Dossier.tex). Its O1–O7 claims are scoped by the [expanded contract](contracts/Expanded_Research_Contract_v0_1.tex), [boundary amendment](contracts/O6_Boundary_Amendment_2026_11_01.tex), and [portfolio freeze](contracts/O6_Portfolio_Freeze_2026_11_01.tex).
