@@ -42,3 +42,4 @@ public import ContextualComposition.GrothendieckStep
 public import ContextualComposition.GrothendieckCoherence
 public import ContextualComposition.GrothendieckIterates
 public import ContextualComposition.TelescopeSquares
+public import ContextualComposition.SquarePasting

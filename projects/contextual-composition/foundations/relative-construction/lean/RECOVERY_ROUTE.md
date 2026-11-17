@@ -51,3 +51,7 @@ Independent scoped pass: see `evidence/grothendieck-iterates-independent/Review.
 For the independent left-hand interface, read TelescopeSquares.Chain, next, Square, terminalMap, DecoratedHom before realizedEquiv, tailTarget, squareEquiv and verticalEquiv. Next independently paste squares, prove endpoint composition and compare induced payload composition to the native one. See TELESCOPE_SQUARES_FREEZE.json and evidence/telescope-squares-author-fresh.
 
 Independent scoped pass: see `evidence/telescope-squares-independent/Review.tex` and adjacent fresh own-project replay (683 distinct audits; cached external dependencies). Independent chain-square identity and composition, and comparison preservation of both, remain open.
+
+Resume after #175 via SquarePasting.headComp, next_comp, squareComp, terminal_comp and decoratedComp. Review compared_comp_head versus compared_zero_comp: full comparison preservation on transported tails, then category laws, remain to be proved. See SQUARE_PASTING_FREEZE.json and evidence/square-pasting-author-fresh.
+
+Independent scoped pass: see `evidence/square-pasting-independent/Review.tex` and its fresh replay. At positive length the comparison of the pasted arrow has the specified head projection; this is not a comparison against an independently formed native composite. The double-successor witness tests the terminal map only.
