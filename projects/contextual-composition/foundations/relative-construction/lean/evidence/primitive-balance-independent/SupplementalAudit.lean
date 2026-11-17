@@ -1,0 +1,4 @@
+import ContextualComposition
+#print axioms ContextualComposition.Factorization.Primitive.Data
+#print ContextualComposition.Factorization.Primitive.inversion_iff
+#print ContextualComposition.Factorization.Primitive.transformationOfGenerators

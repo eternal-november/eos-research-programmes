@@ -1,0 +1,41 @@
+'ContextualComposition.Factorization.Primitive.Data' does not depend on any axioms
+theorem ContextualComposition.Factorization.Primitive.inversion_iff.{vK, vL, vC, uK, uL, uC, u_1, u_2} : ∀ {K : Type uK}
+  {L : Type uL} {C : Type uC} [inst : CategoryTheory.Category.{vK, uK} K] [inst_1 : CategoryTheory.Category.{vL, uL} L]
+  [inst_2 : CategoryTheory.Category.{vC, uC} C] (e : CategoryTheory.Functor K C) (d : CategoryTheory.Functor L C)
+  {D : Type u_1} [inst_3 : CategoryTheory.Category.{u_2, u_1} D]
+  (F : CategoryTheory.Functor (ContextualComposition.Factorization.Object e d) D),
+  (ContextualComposition.Factorization.Primitive.generators e d).IsInvertedBy F ↔
+    (ContextualComposition.Factorization.balanceClass e d).IsInvertedBy F :=
+fun {K} {L} {C} [CategoryTheory.Category.{vK, uK} K] [CategoryTheory.Category.{vL, uL} L]
+    [CategoryTheory.Category.{vC, uC} C] e d {D} [CategoryTheory.Category.{u_2, u_1} D] F =>
+  {
+    mp := fun h =>
+      ContextualComposition.Factorization.inverts_of_contractions e d F
+        (ContextualComposition.Factorization.Primitive.primitive_inverts_contractions e d F h),
+    mpr := fun h ⦃s t⦄ f hf => h f (ContextualComposition.Factorization.Primitive.generators_le e d f hf) }
+def ContextualComposition.Factorization.Primitive.transformationOfGenerators.{vK, vL, vC, uK, uL, uC, u_1, u_2} : {K :
+    Type uK} →
+  {L : Type uL} →
+    {C : Type uC} →
+      [inst : CategoryTheory.Category.{vK, uK} K] →
+        [inst_1 : CategoryTheory.Category.{vL, uL} L] →
+          [inst_2 : CategoryTheory.Category.{vC, uC} C] →
+            (e : CategoryTheory.Functor K C) →
+              (d : CategoryTheory.Functor L C) →
+                {D : Type u_1} →
+                  [inst_3 : CategoryTheory.Category.{u_2, u_1} D] →
+                    (F G : CategoryTheory.Functor (ContextualComposition.Factorization.Object e d) D) →
+                      (a : (s : ContextualComposition.Factorization.Object e d) → F.obj s ⟶ G.obj s) →
+                        (∀ {s t : ContextualComposition.Factorization.Object e d} (f : s ⟶ t),
+                            ContextualComposition.Factorization.Primitive.NaturalOn e d F G a
+                              (ContextualComposition.Factorization.Primitive.outputUpdate e d f)) →
+                          (∀ {s t : ContextualComposition.Factorization.Object e d} (f : s ⟶ t),
+                              ContextualComposition.Factorization.Primitive.NaturalOn e d F G a
+                                (ContextualComposition.Factorization.Primitive.inputUpdate e d f)) →
+                            (∀ (b : ContextualComposition.Factorization.Primitive.Data e d),
+                                ContextualComposition.Factorization.Primitive.NaturalOn e d F G a
+                                  (ContextualComposition.Factorization.Primitive.arrow e d b)) →
+                              (F ⟶ G) :=
+fun {K} {L} {C} [CategoryTheory.Category.{vK, uK} K] [CategoryTheory.Category.{vL, uL} L]
+    [CategoryTheory.Category.{vC, uC} C] e d {D} [CategoryTheory.Category.{u_2, u_1} D] F G a hout hin hbal =>
+  { app := a, naturality := ⋯ }
