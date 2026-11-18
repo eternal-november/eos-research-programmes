@@ -77,3 +77,5 @@ public import ContextualComposition.NativeBlocks
 public import ContextualComposition.BlockCartesian
 public import ContextualComposition.NativeAssoc
 public import ContextualComposition.NativeTriple
+public import ContextualComposition.PackedCuts
+public import ContextualComposition.NativePacked
