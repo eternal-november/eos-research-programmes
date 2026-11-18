@@ -76,6 +76,38 @@ def check_helper(isa, compiled, bounds):
 
 
 
+def check_full_readiness(isa, compiled, bounds):
+    """A fresh exit birth needs every tested contact on the chosen side."""
+    k = compiled.constants
+    limit = bounds["instruction_upper_bounds"]["helper"] + 100
+    cases = 0
+    for half in (0, 1):
+        cold = 1 - half
+        # These exact comparisons enter ready or the following cam test.
+        # ISO and SHUNT are separate fallback actions, not readiness evidence.
+        inputs = (k["BLEND_AT_A"] + half, k["CUT_OPEN_A"] + cold,
+                  k["POWER_OFF_A"] + cold, k["ACT_ZERO_A"] + cold,
+                  k["CLAMP_OPEN_A"] + cold, k["RESET_OPEN_A"] + cold,
+                  k["CAM_ENTRY_A"] + half)
+        for absent in (None, *inputs):
+            ports = program.ports_class(isa)(compiled)
+            machine, view = program.helper_fixture(isa, compiled, ports, half, 0)
+            for index in inputs:
+                view[index] = int(index != absent)
+            view[k["MODE"]] = 0
+            view[k["NORMAL_STOP"]] = 0
+            view[k["ABORT_FULL"]] = 1
+            ports.set_view(0, view)
+            base = k["TARGET_BASE"]
+            machine.W[base + k["STAGE_ID"]] = 27
+            program.call(isa, compiled, ports, "helper", (0,), limit, machine)
+            command = next(e for e in reversed(ports.events) if e[0] == "command")
+            assert command[5] == (-20 if absent is None else 20)
+            assert machine.W[base + k["EXITING_ABORT"]] == int(absent is None)
+            cases += 1
+    return cases
+
+
 def check_bounds(c, geometry, itinerary):
     phase = geometry["arithmetic"]
     age = Q(record("publication_timing_results.json")["receipts"]["maintenance"]["singleton_age"])
@@ -121,7 +153,24 @@ def check_bounds(c, geometry, itinerary):
     entering_edge = age + poll + maximum + 1 + 2 * half + settle + 10000
     assert entering_edge == Q(144430816876333325, 4718592)
     assert entering_edge + Q(itinerary["corrected_sequence_allocation"]) < Q(itinerary["H"])
-    return {"first_eligible_exit_lower": str(lower), "joined_by_if_return_persists": str(upper),
+    # One restarted excursion may need distinct turnovers in ENTERING and
+    # FULL. The FULL proof charges even a possible keeper switch, and then
+    # the complete old abort budget as an upper allocation for cleanup.
+    switch_wash = age + maximum + 2 * poll + 15 + 1
+    assert switch_wash < Q(c["BLEND_LIMIT"] * 10, 11)
+    reliable_initial_entering = (max(Q(itinerary["all_role_initialization"]), upper + switch_wash)
+                                 + age + poll + maximum + 1)
+    assert reliable_initial_entering < 25_000_000 < Q(10 * c["POWER_AT"], 11)
+    fresh_full = 2 * switch_wash + age + maximum + poll + settle + 1
+    half_off = Q(60)
+    assert half_off + settle < Q(100000, 11)
+    full_to_seat = (fresh_full + 2 * half + settle + Q(itinerary["abort_allocation"])
+                    + half_off + 2 * settle + 10000)
+    envelope = Q(itinerary["corrected_sequence_allocation"]) + entering_edge + full_to_seat
+    assert envelope == Q(24344546690768962437, 67108864) < Q(itinerary["H"])
+    return {"one_extra_excursion_allowance_test": str(envelope),
+            "full_to_seat_conditional": str(full_to_seat),
+            "first_eligible_exit_lower": str(lower), "joined_by_if_return_persists": str(upper),
             "distance_after_first_possible_exit_before_join": str(distance),
             "conditional_entering_edge": str(entering_edge), "force_floor_one_ambiguous_pair": str(force_floor(1))}
 
@@ -138,6 +187,7 @@ def main():
     bounds = program.bounds(isa, compiled)
     assert bounds == geometry["bounds"]
     check_helper(isa, compiled, bounds)
+    print("FULL readiness branch cases:", check_full_readiness(isa, compiled, bounds))
     print(json.dumps(check_bounds(compiled.constants, geometry, itinerary), indent=2))
     print("PASS conditional abort branch and budget checks; source recovery by H remains open")
 
