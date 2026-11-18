@@ -4,18 +4,14 @@ From this project's `exclusive-service` directory, run unoptimized Python 3.12 w
 
 ## Frozen scientific checks
 
-The [97-check receipt](portability/PROGRAM-VERIFICATION.json) applies to the Git objects and original paths named in it. Use an isolated original-layout clone for historical reproduction. Run the following PowerShell commands from the research-programmes repository root with Git, Python 3.12 and Lean 4.33.0 installed. Choose an unused path for the clone and a new output filename for each run. The archive branch must be available in the repository you clone.
+The [97-check receipt](portability/PROGRAM-VERIFICATION.json) applies to the Git objects and original paths named in it. The current examples above run directly from a GitHub checkout. Replaying the historical suite also requires access to the separately retained local evidence archive. Run the following PowerShell commands from the research-programmes repository root with Git, Python 3.12 and Lean 4.33.0 installed. Choose an unused path for the clone and a new output filename for each run. Set $archiveRepo to the path of the local checkout holding the archive branch.
 
 ```powershell
 $research = (git rev-parse --show-toplevel)
-git show-ref --verify --quiet refs/heads/archive/byzantine-control-evidence
-if ($LASTEXITCODE -ne 0) {
-    git fetch --no-tags origin refs/heads/archive/byzantine-control-evidence:refs/heads/archive/byzantine-control-evidence
-    if ($LASTEXITCODE -ne 0) { throw 'The evidence archive is unavailable from origin.' }
-}
-if ((git rev-parse refs/heads/archive/byzantine-control-evidence) -ne '5803f72336f92bfd24d2955b6141e73ef5c52eec') { throw 'Unexpected evidence archive revision.' }
+$archiveRepo = $research  # Change this path if the archive is held in a different local checkout.
+if ((git -C $archiveRepo rev-parse --verify refs/heads/archive/byzantine-control-evidence) -ne '5803f72336f92bfd24d2955b6141e73ef5c52eec') { throw 'The original local evidence archive is required.' }
 $replay = Join-Path ([IO.Path]::GetTempPath()) ('byzantine-verification-' + [guid]::NewGuid().ToString('N'))
-git clone --no-local --single-branch --no-tags --branch archive/byzantine-control-evidence $research $replay
+git clone --no-local --single-branch --no-tags --branch archive/byzantine-control-evidence $archiveRepo $replay
 git -C $replay switch --detach cb358a77f0bcbfd42f92422aa2367e2323f08bc3
 Push-Location (Join-Path $replay 'theories-and-designs/byzantine-control/portability')
 python -B program_replay.py --at cb358a77f0bcbfd42f92422aa2367e2323f08bc3 --freeze-commit 6069e2b55d9642063813117b30f7f86ec928d1a4 --selection-commit 35418fde54f73e46ccc3d766025e0337d1b6ba24 --lean (Get-Command lean).Source --research-repo $research --jobs 4 --output (Join-Path $replay 'byzantine-verification-result.json')
