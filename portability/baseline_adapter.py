@@ -84,7 +84,7 @@ def generate():
                 open_source_maps=['rule-local no-spread/frame proof','actual entry-family coverage',
                                   'all-emitter and debt-transport map','retirement-path inventory',
                                   'flow coordinate/event/boundary inventory','local-policy and mission assembly'],
-                sources_sha256_lf={name:digest(HERE/name) for name in ('baseline_adapter.py','BASELINE-ADAPTER.md','constructors.py','CONSTRUCTORS.md','CORE.md','FLOW-COMPOSITION.md','RankedJobs.lean')},
+                sources_sha256_lf={name:digest(HERE/name) for name in ('baseline_adapter.py','BASELINE-ADAPTER.md','constructors.py','CONSTRUCTORS.md','CORE.md','FLOW-COMPOSITION.md','RankedJobs.lean','ContextualJobs.lean')},
                 helper_sha256_lf=digest(LOCAL/'primary_comparison_model.py'),
                 program_completion=False,baseline_global_theorem_used_as_premise=False)
 
