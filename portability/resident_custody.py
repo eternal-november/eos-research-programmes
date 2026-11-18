@@ -259,7 +259,7 @@ def run():
     i=program.load_isa()
     c=program.compile_program(i,design.design(i))
     ports=program.ports_class(i)(c)
-    population=gates.record("threshold_initialization_results.json")["population"]
+    population=gates.record("regional_coupling_results.json")["world"]["m"]
     r=Region(3,population)
     target=40
     f=assembly(i,c,r,target)
@@ -437,7 +437,8 @@ def primary():
     directory=HERE.parent/"local-control"
     spec=importlib.util.spec_from_file_location("_custody_primary",directory/"program_model.py")
     isa=importlib.util.module_from_spec(spec);sys.modules[spec.name]=isa;spec.loader.exec_module(isa)
-    data=json.loads((directory/"geometry_results.json").read_text())["design"]
+    geometry=json.loads((directory/"geometry_results.json").read_text())
+    data=geometry["design"]
     data["physical_parameters"]=tuple(map(tuple,data["physical_parameters"]))
     c=isa.compile_check(isa.Design(**data))
     k=c.constants;key=k["BAYS"]*k["IMAGE_CELLS"]+17;encoded=(key<<k["SYMBOL_BITS"])+c.image[17]
@@ -454,8 +455,7 @@ def primary():
              "Changed mature A-prime observation")
         out[n]=m.result()
     digest=hashlib.sha256(b"".join(x.to_bytes(24,"little") for x in c.image)).hexdigest()
-    expected=gates.record("normal_orbit_results.json")
-    need(digest==expected["primary_image_little_endian_sha256"],"Wrong primary controller")
+    need(digest==geometry["compiler"]["encoded_image_sha256"],"Wrong primary controller")
     return dict(image=digest,exact_matching_origins_to_literal_return=out,
                 minimum_wait=Q(94900,101),wait_margin=Q(94900,101)-874-6-Q(1,64)-Q(1,2**26))
 
@@ -500,8 +500,8 @@ def generate():
     i,c,ports,r,f,leaf=context
     paths=("parent_realization.py","parent_retirement.py","shared_bank_charging.py","input_lifecycle.py",
            "threshold_gate_source.py","threshold_field_source.py","threshold_program_model.py",
-           "threshold_program_source.py","threshold_design.py","normal_orbit_results.json",
-           "threshold_gate_source_results.json","threshold_initialization_results.json","threshold_geometry_results.json","cam_reformation.py",
+           "threshold_program_source.py","threshold_design.py","regional_coupling_results.json",
+           "threshold_gate_source_results.json","threshold_geometry_results.json","cam_reformation.py",
            "threshold_incidence_model.py","../local-control/program_source.py","../local-control/program_model.py",
            "../local-control/geometry_results.json")
     immutable={}
