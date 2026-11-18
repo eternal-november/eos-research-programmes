@@ -7,24 +7,19 @@ import subprocess
 
 
 HERE = Path(__file__).resolve().parent
-BASE = "169be129b9aa090acf8175e79d5114aa84f1cda9"
+PREVIOUS = "169be129b9aa090acf8175e79d5114aa84f1cda9"
+BASE = "56c4cff67e8d36c88f6b7a51c68d0f4af861cf03"
 KINDS = {"primitive", "import", "local", "finite", "comparison", "assembly", "open"}
 PRIMITIVES = {"design", "mission", "material", "history", "initial"}
 IMPORTS = {"legacy", "flow-existence", "composition", "retained-history", "paced-rules",
            "all-raw", "safe-fibre", "menu-descent", "finite-health"}
-A_OPEN = {"a-use", "a-cover", "a-witness"}
-B_PHYSICAL = {"b-reference", "b-sender-join"}
-B_OPEN = {"b-use", "b-cover", "b-witness"} | B_PHYSICAL
-WITNESSES = {
-    "positive-a": A_OPEN,
-    "positive-b": B_OPEN,
-    "reuse": A_OPEN | B_OPEN | {"burden"},
-    "b-g2": B_PHYSICAL | {"b-use", "b-cover"},
-    "b-g3": B_PHYSICAL,
-    "matched-coupled": B_PHYSICAL | {"b-use", "b-cover"},
-    "a-window-applied": {"a-window-cover"},
-    "b-window-applied": {"b-window-cover"},
-}
+# None of the scoped development results consumes either RP6 open leaf.
+WITNESSES = {key: set() for key in (
+    "a-universal", "b-universal", "positive-a", "positive-b", "b-g2", "b-g3",
+    "a-window-applied", "b-window-applied", "later-factual", "information", "structural",
+    "matched-coupled", "burden", "reuse",
+)}
+WITNESSES["completion"] = {"transfer", "aggregate"}
 REQUIRED_INPUTS = {
     "flows": {"flow-existence"}, "chronology": {"retained-history", "paced-rules"},
     "query": {"all-raw"}, "remote-debit": {"all-raw"},
@@ -33,12 +28,28 @@ REQUIRED_INPUTS = {
     "coupler-material": {"coupler-law", "topology", "flows"},
     "coupler-ingress": {"coupler-material", "topology"},
     "regional-world": {"b-world", "coupler-material", "coupler-ingress"},
-    "b-g2": {"prefix-mission", "b-region", "b-world", "factual-menu", "b-lease",
-             "b-frame", "b-normal-action", "b-sender", "b-sender-join", "b-reference"},
+    "b-g2": {"prefix-mission", "prefix-guard", "b-region", "b-compare", "b-world",
+             "b-cover", "b-use", "b-physical", "b-cut-handoff", "b-lease"},
     "b-g3": {"coupler-law", "b-host-roster", "flows", "b-host-flow", "b-physical"},
-    "matched-coupled": {"coupler-law", "matched", "b-world", "regional-world", "b-physical"},
-    "positive-a": {"a-region", "a-custody", "a-trip", "a-physical", "prefix-mission"},
-    "positive-b": {"b-g2", "b-g3", "prefix-mission", "b-frame", "b-normal-action"},
+    "matched-coupled": {"matched", "b-universal", "b-world", "regional-world", "b-physical", "b-cover"},
+    "a-universal": {"prefix-mission", "prefix-use", "a-physical", "a-use", "a-cover", "a-region"},
+    "b-universal": {"prefix-mission", "prefix-use", "b-g2", "b-g3", "b-use", "b-cover"},
+    "a-witness": {"a-universal", "a-custody", "a-trip"},
+    "b-witness": {"b-universal", "b-cut-handoff", "spatial-world", "b-use"},
+    "positive-a": {"a-universal", "a-witness"}, "positive-b": {"b-universal", "b-witness"},
+    "b-reference": {"b-host-roster", "b-host-flow", "b-sender-port", "b-trip-install", "coupler-material"},
+    "b-sender-join": {"b-reference", "b-sender-port", "b-trip-install", "coupler-ingress"},
+    "b-trip-install": {"b-host-roster", "b-sender-port"},
+    "a-window-applied": {"a-window", "a-window-cover"},
+    "b-window-applied": {"b-sender-window", "b-window-cover", "quiet-window"},
+    "a-use": {"a-custody", "a-trip", "a-cover", "a-window-applied", "prefix-rules"},
+    "b-use": {"b-physical", "b-cover", "b-lease", "b-cut-handoff", "b-window-applied", "prefix-rules"},
+    "later-factual": {"b-universal", "factual-menu", "b-normal-action", "b-cut-handoff", "b-sender-join"},
+    "information": {"positive-b", "later-factual", "topology", "query", "framing"},
+    "structural": {"positive-a", "positive-b", "a-custody", "b-field", "b-cover"},
+    "burden": {"structural", "matched-coupled", "a-trip", "b-cut-handoff", "framing", "flows"},
+    "reuse": {"structural", "positive-a", "positive-b", "matched-coupled", "burden"},
+    "completion": {"reuse", "information", "replay-method", "transfer", "aggregate"},
     "a-window": {"quiet-window", "a-seat"}, "b-window": {"quiet-window", "b-seat"},
     "wear-boundary": {"finite-health"},
     "b-world": {"b-image", "b-native", "flows", "tracker", "b-region"},
@@ -134,9 +145,14 @@ def validate(nodes):
         "a-seat": {"quiet-window"}, "b-seat": {"quiet-window"},
         "a-physical": {"a-use", "a-custody", "a-trip", "orbit", "prefix-mission"},
         "b-host-flow": {"b-frame", "b-normal-action", "b-lease", "orbit", "prefix-mission"},
-        "prefix-mission": {"positive-a", "positive-b", "a-physical", "b-host-flow",
+        "prefix-mission": {"positive-a", "positive-b", "a-universal", "b-universal", "a-witness", "b-witness", "later-factual", "a-physical", "b-host-flow",
                            "a-seat", "b-seat", "a-use", "b-use"},
     }
+    # The later existential fork and scaling witnesses consume the universal
+    # source results. They cannot establish the causal premises for those results.
+    for owner in ("a-universal", "b-universal", "b-g2", "b-g3"):
+        forbidden[owner] = {"a-witness", "b-witness", "later-factual", "structural", "burden", "reuse"}
+    forbidden["b-g3"].update({"orbit", "b-frame", "b-use", "b-lease", "prefix-mission"})
     for owner, barred in forbidden.items():
         pending = list(nodes[owner][1])
         seen = set()
@@ -175,6 +191,13 @@ def main():
     require(proof_sources <= references,
             f"Pinned source files without an entry: {sorted(proof_sources - references)}")
 
+    added_paths = git("diff", "--diff-filter=A", "--name-only", PREVIOUS, BASE, "--", ".").splitlines()
+    added_evidence = {p[len(prefix):] for p in added_paths if p.startswith(prefix) and "/" not in p[len(prefix):]}
+    require(added_evidence <= references,
+            f"New local artifacts without an evidence owner: {sorted(added_evidence - references)}")
+    require({name for name, (kind, _) in nodes.items() if kind == "open"} == {"transfer", "aggregate"},
+            "New or missing open obligation at the final scientific pin")
+
     admission = (HERE / "CLASS-ADMISSION.md").read_text(encoding="utf-8")
     expected = [f"A{i:02}" for i in range(1, 19)]
     require(re.findall(r"^\| (A\d\d) \|", admission, re.MULTILINE) == expected,
@@ -188,7 +211,9 @@ def main():
           f"referenced; {len(audit_documents)} earlier audit documents classified separately.")
     for owner in WITNESSES:
         open_leaves = sorted(name for name in leaves[owner] if nodes[name][0] == "open")
-        print(f"{owner}: {', '.join(open_leaves)}")
+        display = ", ".join(open_leaves) if open_leaves else "none"
+        print(f"{owner}: {display}")
+    print(f"{len(added_evidence)} added local artifacts assigned evidence owners since the previous pin.")
     print("18 assumption families; 10 conditional branches. Structural checks passed.")
 
 
