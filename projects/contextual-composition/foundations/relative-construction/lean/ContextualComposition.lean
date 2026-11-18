@@ -49,3 +49,4 @@ public import ContextualComposition.ChainIdentity
 public import ContextualComposition.ChainRestriction
 public import ContextualComposition.ChainPayload
 public import ContextualComposition.SpanApex
+public import ContextualComposition.ChainSnoc
