@@ -92,3 +92,5 @@ public import ContextualComposition.TripleEvaluation
 public import ContextualComposition.TripleTrace
 public import ContextualComposition.TripleFibre
 public import ContextualComposition.TripleCuts
+public import ContextualComposition.ChartRestriction
+public import ContextualComposition.SuffixCell
