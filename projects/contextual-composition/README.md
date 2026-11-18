@@ -1,5 +1,7 @@
 # Contextual Composition
 
+[Choose a reading route by question](NAVIGATION.md): recover a mathematical claim, check its evidence, or locate the boundary of the Lean formalization.
+
 ### Nonblocking recurrent interaction checkpoint
 
 Earlier checkpoint paragraphs below retain their historical scopes.
