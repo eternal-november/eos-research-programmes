@@ -113,6 +113,43 @@ def joinPersistent {P : Type u} {clock : BudgetClock P}
     ⟨left.point, left.elapsed, Nat.le_trans left.fits (Nat.le_max_left _ _),
      left.sameRun, (left.result, carryRight _ _ later right.result)⟩
 
+/-- Remaining symbols of the active old claim followed by old queued
+    claims. Fresh arrivals behind this fixed prefix do not alter the list. -/
+inductive OldTxStep : List Nat → List Nat → Prop
+  | more (k : Nat) (tail : List Nat) : OldTxStep ((k+2)::tail) ((k+1)::tail)
+  | last (tail : List Nat) : OldTxStep (1::tail) tail
+  | drop (k : Nat) (tail : List Nat) : OldTxStep ((k+1)::tail) tail
+
+theorem oldTxDecrease {a b : List Nat} (event : OldTxStep a b) :
+    1 + b.sum ≤ a.sum := by
+  cases event <;> simp [List.sum_cons] <;> omega
+
+/-- An actual next service opportunity, including an interruptible source.
+    The unit interval is the maximum spacing of usable old-claim edges. -/
+inductive TxOpportunity {P : Type u} (clock : BudgetClock P)
+    (old : P → List Nat) (Interrupted : P → Type w) (i : P) where
+  | service (j : P) : clock.within i j 1 → OldTxStep (old i) (old j) →
+      TxOpportunity clock old Interrupted i
+  | interrupt (j : P) : clock.within i j 1 → Interrupted j →
+      TxOpportunity clock old Interrupted i
+
+def oldQueueDrain {P : Type u} (clock : BudgetClock P)
+    (old : P → List Nat) (Interrupted : P → Type w)
+    (positive : ∀ i, old i ≠ [] → 0 < (old i).sum)
+    (opportunity : (i : P) → old i ≠ [] → TxOpportunity clock old Interrupted i)
+    (i : P) :
+    Arrival clock (Disposition (fun j => PLift (old j = [])) Interrupted) i (old i).sum :=
+  closeOnRun clock _ _ (fun j => (old j).sum) (fun j => (old j).sum)
+    (fun j =>
+      if empty : old j = [] then .terminal ⟨empty⟩ else
+        match opportunity j empty with
+        | .interrupt k time evidence => .interrupted k 1 time (positive j empty) evidence
+        | .service k time event =>
+          have reduces := oldTxDecrease event
+          .advance k 1 time (by omega) reduces) i
+
+#print axioms oldTxDecrease
+#print axioms oldQueueDrain
 #print axioms stagesOnRun
 #print axioms joinPersistent
 #print axioms closeOnRun
