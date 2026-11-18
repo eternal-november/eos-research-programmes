@@ -87,3 +87,8 @@ public import ContextualComposition.NativeTrace
 public import ContextualComposition.BlockCompositor
 public import ContextualComposition.BlockUnits
 public import ContextualComposition.EmptyUnitOverlap
+public import ContextualComposition.TripleBoundary
+public import ContextualComposition.TripleEvaluation
+public import ContextualComposition.TripleTrace
+public import ContextualComposition.TripleFibre
+public import ContextualComposition.TripleCuts
