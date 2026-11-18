@@ -70,3 +70,4 @@ public import ContextualComposition.TaggedBaseLaws
 public import ContextualComposition.MateLaws
 public import ContextualComposition.TaggedMixed
 public import ContextualComposition.ForwardMixed
+public import ContextualComposition.MixedMates
