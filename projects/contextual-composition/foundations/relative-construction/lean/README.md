@@ -80,3 +80,7 @@ Independent scoped pass: see `evidence/chain-payload-independent/Review.tex` and
 SpanApex compares a dependent Grothendieck step with an independently defined strict CAT pullback and with the corresponding iso-comma. It identifies binary chains and squares over prescribed base arrows with the binary apex and computes both legs. It does not identify all chains with all span powers.
 
 Independent scoped pass: see `evidence/span-apex-independent/Review.tex` and the fresh 881-declaration replay (nine pinned dependency caches reused). Strict forward projections do not give a strict inverse over both legs; all-length pasting remains open.
+
+ChainSnoc proves binary identity and composition preservation, splits any nonempty chain and its squares at the final grade, and identifies the objects and both endpoint objects of every positive presented span power. All-length equivalence of categories remains open.
+
+Independent scoped pass: see evidence/chain-snoc-independent/Review.tex and the isolated 901-declaration replay (nine pinned external caches reused). Positive-power index zero is one primitive; all-length native arrow comparison remains open.

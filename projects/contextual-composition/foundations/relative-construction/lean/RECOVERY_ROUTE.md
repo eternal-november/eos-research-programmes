@@ -79,3 +79,7 @@ Independent scoped pass: see `evidence/chain-payload-independent/Review.tex` and
 For the span bridge, read SpanApex.right, Strict.commute/universal, strictFactor/strictEquivalence, then chainObjects/chainHoms/chainEndpoint_map. Next assemble an all-length functor: the span append extends the right end, while chain induction removes the left head. A decomposition at the last grade or a proved reassociation is required; a hom bijection alone proves no composition law.
 
 Independent scoped pass: see `evidence/span-apex-independent/Review.tex` and the fresh 881-declaration replay (nine pinned dependency caches reused). Strict forward projections do not give a strict inverse over both legs; all-length pasting remains open.
+
+For right-append assembly, start at Snoc.objects, Snoc.squares and terminal_append (no split needed). Compare chainHoms_id and chainHoms_comp for the complete binary arrows, then pointStep and powerPoints on the split span tower. The remaining inductive step must compare final grade arrows across the prefix endpoint transports on both sides and prove preservation of independently defined identities and pastings. Endpoint agreement or an object bijection alone does not supply that step.
+
+Independent scoped pass: see evidence/chain-snoc-independent/Review.tex and the isolated 901-declaration replay (nine pinned external caches reused). Positive-power index zero is one primitive; all-length native arrow comparison remains open.
