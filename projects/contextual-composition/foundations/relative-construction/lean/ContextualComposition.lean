@@ -96,3 +96,8 @@ public import ContextualComposition.ChartRestriction
 public import ContextualComposition.SuffixCell
 public import ContextualComposition.ChartTotalCell
 public import ContextualComposition.MovingFrames
+public import ContextualComposition.ProjectedCharts
+public import ContextualComposition.FibreReader
+public import ContextualComposition.RightEndpoints
+public import ContextualComposition.FibreEndpoints
+public import ContextualComposition.EndpointValues
