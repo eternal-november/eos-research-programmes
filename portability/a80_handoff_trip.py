@@ -2,6 +2,8 @@
 
 from fractions import Fraction as Q
 
+from handoff_contact import retiring_side
+
 import a80_g3 as joined
 import a80_return_seat as seat
 
@@ -18,19 +20,11 @@ class HandoffTrip(joined.JoinedSeat):
             self.sampler.remaining == 0 and not self.held_plane and self.U >= seat.PRICE,
             "No funded predecessor edge",
         )
-        band = int(self.positions["cam"] // self.p["SEGMENT"])
-        old, stage = divmod(band, 13)
-        offset = self.positions["cam"] % self.p["SEGMENT"]
-        interior = Q(self.p["SEGMENT"], 4) < offset < Q(3 * self.p["SEGMENT"], 4)
-        retire = (
-            self.carriage.normal
-            and self.carriage.phase == "NORMAL"
-            and stage == 9
-            and interior
-            and self.positions["blend"] == (1 - old) * self.p["BLEND_LIMIT"]
-        )
+        old = retiring_side(self.carriage.normal, self.carriage.phase,
+                            self.positions["cam"], self.positions["blend"],
+                            self.p["SEGMENT"], self.p["BLEND_LIMIT"])
         result = super()._funded_sample(actual)
-        if retire:
+        if old is not None:
             self.trips[old].enabled = False
             # The other orientation's phase-1 predecessor is precisely all
             # eighty ACT zeros of this old bank, captured by this same paid edge.
