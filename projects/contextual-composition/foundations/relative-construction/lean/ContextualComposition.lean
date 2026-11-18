@@ -85,3 +85,5 @@ public import ContextualComposition.CutCompositor
 public import ContextualComposition.WordTrace
 public import ContextualComposition.NativeTrace
 public import ContextualComposition.BlockCompositor
+public import ContextualComposition.BlockUnits
+public import ContextualComposition.EmptyUnitOverlap
