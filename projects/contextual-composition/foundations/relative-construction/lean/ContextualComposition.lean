@@ -67,3 +67,4 @@ public import ContextualComposition.SumChange
 public import ContextualComposition.SpanPull
 public import ContextualComposition.PullLaws
 public import ContextualComposition.TaggedBaseLaws
+public import ContextualComposition.MateLaws
