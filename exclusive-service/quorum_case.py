@@ -208,7 +208,16 @@ def source_checks():
     newer.close()
     newer.persist()
     require(not newer.store, "Stale votes wrote a new output")
-    reused = Sink(Q, EPOCH)  # Remove the no-reuse / retained-key discipline.
+    # Fresh aperture state can reopen under a reused name. If the old actual
+    # store survives, its keyed insertion still suppresses the second effect.
+    remembered = Sink(Q, EPOCH, store=positive.store)
+    for voter in (0, 2, 3):
+        remembered.receive(voter, EPOCH, True)
+    remembered.close()
+    remembered.persist()
+    require(remembered.insertions == 0 and positive.store == {EPOCH: Q},
+            "Name reuse alone bypassed the retained durable entry")
+    reused = Sink(Q, EPOCH)  # Reopen the name with the original key memory discarded.
     for v in (0, 2, 3):
         reused.receive(v, EPOCH, True)
     reused.close()
