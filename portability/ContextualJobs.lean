@@ -198,6 +198,167 @@ def explainMiss {P : Type u} (clock : BudgetClock P)
 
 #print axioms explainMiss
 
+namespace Handoff
+
+/-- Order is physical causal order, including microsteps at the same time.
+    The common unit bounds elapsed time; event times need not be integral. -/
+structure WindowOrder (clock : BudgetClock Nat) where
+  forward : ∀ a b n, clock.within a b n → a ≤ b
+  subinterval : ∀ {a b c d n}, a ≤ b → b ≤ c → c ≤ d →
+    clock.within a d n → clock.within b c n
+  widen : ∀ {a b m n}, m ≤ n → clock.within a b m → clock.within a b n
+
+/-- A sponsor too far before the old-bank loss for BOTH formation and the
+    demand window forces every reachable formation step into the strict past
+    of the demand. Nothing here assumes that the replacement actually formed. -/
+theorem strictSponsor {clock : BudgetClock Nat} (ord : WindowOrder clock)
+    {trigger loss start finish budget width j used : Nat}
+    (triggerBefore : trigger ≤ loss) (lossBy : loss ≤ finish)
+    (window : clock.within start finish width)
+    (separated : ¬ clock.within trigger loss (budget + width))
+    (reached : clock.within trigger j used) (fits : used ≤ budget) :
+    j < start ∧ j < loss := by
+  have withinBudget := ord.widen fits reached
+  have beforeLoss : j < loss := by
+    by_cases late : loss ≤ j
+    · have bound := ord.subinterval (Nat.le_refl trigger) triggerBefore late withinBudget
+      exact False.elim (separated (ord.widen (Nat.le_add_right budget width) bound))
+    · omega
+  constructor
+  · by_cases late : start ≤ j
+    · have tail := ord.subinterval late (Nat.le_of_lt beforeLoss) lossBy window
+      exact False.elim (separated (clock.append withinBudget tail))
+    · omega
+  · exact beforeLoss
+
+/-- One actual incarnation and its usability evidence at every queried cut.
+    Birth here is the beginning of the witnessed service interval. -/
+structure Held {Bank : Type u} (Ready : Bank → Nat → Type v) (start through : Nat) where
+  bank : Bank
+  since : Nat
+  byStart : since ≤ start
+  byEnd : since ≤ through
+  readAt : ∀ j, since ≤ j → j ≤ through → Ready bank j
+
+def carryTo {A : Nat → Type v} {fromCut toCut : Nat} (entry : A fromCut)
+    (advance : ∀ k, fromCut ≤ k → k < toCut → A k → A (k+1)) :
+    (j : Nat) → fromCut ≤ j → j ≤ toCut → A j
+  | 0, after, _ => by
+    have eq : fromCut = 0 := by omega
+    exact eq ▸ entry
+  | k+1, after, before => by
+    by_cases eq : fromCut = k+1
+    · exact eq ▸ entry
+    · exact advance k (by omega) (by omega) (carryTo entry advance k (by omega) (by omega))
+
+/-- Failure evidence retains the actual local job, its trigger, deadline
+    budget and interruption point. Its projection into a raw cover is checked
+    by its caller, including the reach of the original uncompleted work. -/
+structure Interruption {clock : BudgetClock Nat} (Stop : Nat → Type w) (start : Nat) where
+  trigger : Nat
+  budget : Nat
+  receipt : Arrival clock Stop trigger budget
+  beforeStart : receipt.point < start
+
+def prepareReplacement {Bank : Type u} {clock : BudgetClock Nat} (ord : WindowOrder clock)
+    (Ready : Bank → Nat → Type v) (Stop : Nat → Type w)
+    (bank : Bank) (trigger loss start finish width : Nat)
+    (triggerBefore : trigger ≤ loss) (lossBy : loss ≤ finish)
+    (window : clock.within start finish width) (rank remaining : Nat → Nat)
+    (separated : ¬ clock.within trigger loss (remaining trigger + width))
+    (step : ∀ i used, clock.within trigger i used → used + remaining i ≤ remaining trigger →
+      i < start → Local clock (Ready bank) Stop rank remaining i)
+    (retain : ∀ k, trigger ≤ k → k < loss → Ready bank k → Ready bank (k+1)) :
+    Held Ready start loss ⊕ Interruption (clock := clock) Stop start := by
+  let result := closeInBudget clock (Ready bank) Stop rank remaining trigger
+    (fun i used reached room => step i used reached room
+      (strictSponsor ord triggerBefore lossBy window separated reached (by omega)).1)
+  have early := strictSponsor ord triggerBefore lossBy window separated result.sameRun result.fits
+  cases result.result with
+  | closed ready =>
+    exact .inl ⟨bank,result.point,Nat.le_of_lt early.1,Nat.le_of_lt early.2,
+      carryTo ready (fun k h₁ h₂ => retain k
+        (Nat.le_trans (ord.forward _ _ _ result.sameRun) h₁) h₂)⟩
+  | charged receipt =>
+    exact .inr ⟨trigger,remaining trigger,
+      ⟨result.point,result.elapsed,result.fits,result.sameRun,receipt⟩,early.1⟩
+
+/-- Seek the last structural loss since an established entry, then frame that
+    single incarnation over the remaining suffix. At each step the loss flag
+    belongs to the analyst's actual event trace, not to the local selector. -/
+def wholeWindow {Bank : Type u} {Ready : Bank → Nat → Type v} {Obstruction : Type w}
+    (base start finish : Nat) (begun : base ≤ start) (ordered : start ≤ finish)
+    (incumbent : Bank) (entry : Ready incumbent base) (loss : Nat → Bool)
+    (frame : ∀ k, base ≤ k → k < finish → loss k = false →
+      ∀ b, Ready b k → Ready b (k+1))
+    (replacement : ∀ k, base ≤ k → k < finish → loss k = true →
+      Held Ready start (k+1) ⊕ Obstruction) : Held Ready start finish ⊕ Obstruction := by
+  let rec scan (n : Nat) (bounded : base+n ≤ finish) : Held Ready start (base+n) ⊕ Obstruction :=
+    match n with
+    | 0 => .inl ⟨incumbent,base,begun,by omega, fun j lo hi =>
+        (show base = j by omega) ▸ entry⟩
+    | m+1 =>
+      if h : loss (base+m) = true then
+        replacement (base+m) (by omega) (by omega) h
+      else
+        match scan m (by omega) with
+        | .inr cause => .inr cause
+        | .inl prev => .inl ⟨prev.bank,prev.since,prev.byStart,by have := prev.byEnd; omega,
+            fun j lo hi => by
+              by_cases current : j = base+m+1
+              · subst j
+                exact frame (base+m) (by omega) (by omega) (by simpa using h)
+                  prev.bank (prev.readAt _ prev.byEnd (Nat.le_refl _))
+              · exact prev.readAt j lo (by omega)⟩
+  have eq : base+(finish-base) = finish := by omega
+  exact eq ▸ scan (finish-base) (by omega)
+
+/-- The source classifies an actual loss as an interruption, or supplies its
+    physical antecedent and the primitive steps of a named replacement. The
+    latter may itself be interrupted; it cannot assume a successful handoff. -/
+structure Sponsor {Bank : Type u} (clock : BudgetClock Nat)
+    (Ready : Bank → Nat → Type v) (Stop : Nat → Type w) (start loss width : Nat) where
+  bank : Bank
+  trigger : Nat
+  triggerBefore : trigger ≤ loss
+  rank : Nat → Nat
+  remaining : Nat → Nat
+  separated : ¬ clock.within trigger loss (remaining trigger + width)
+  step : ∀ i used, clock.within trigger i used → used + remaining i ≤ remaining trigger →
+    i < start → Local clock (Ready bank) Stop rank remaining i
+  retain : ∀ k, trigger ≤ k → k < loss → Ready bank k → Ready bank (k+1)
+
+inductive Failure {clock : BudgetClock Nat} (Stop : Nat → Type w) (start : Nat) where
+  | lostAt (post : Nat) : Stop post → Failure Stop start
+  | interrupted : Interruption (clock := clock) Stop start → Failure Stop start
+
+def sponsoredWindow {Bank : Type u} {clock : BudgetClock Nat} (ord : WindowOrder clock)
+    (Ready : Bank → Nat → Type v) (Stop : Nat → Type w)
+    (base start finish width : Nat) (begun : base ≤ start)
+    (window : clock.within start finish width) (incumbent : Bank) (entry : Ready incumbent base)
+    (loss : Nat → Bool)
+    (frame : ∀ k, base ≤ k → k < finish → loss k = false →
+      ∀ b, Ready b k → Ready b (k+1))
+    (explain : ∀ k, base ≤ k → k < finish → loss k = true →
+      Sponsor clock Ready Stop start (k+1) width ⊕ Stop (k+1)) :
+    Held Ready start finish ⊕ Failure (clock := clock) Stop start :=
+  wholeWindow base start finish begun (ord.forward _ _ _ window) incumbent entry loss frame
+    (fun k reached byEnd actual =>
+      match explain k reached byEnd actual with
+      | .inr cause => .inr (.lostAt (k+1) cause)
+      | .inl h =>
+        match prepareReplacement ord Ready Stop h.bank h.trigger (k+1) start finish width
+            h.triggerBefore byEnd window h.rank h.remaining h.separated h.step h.retain with
+        | .inl held => .inl held
+        | .inr why => .inr (.interrupted why))
+
+#print axioms sponsoredWindow
+
+#print axioms strictSponsor
+#print axioms prepareReplacement
+#print axioms wholeWindow
+end Handoff
+
 namespace Authority
 
 /-- One actual route along which the same consequential authority survives.

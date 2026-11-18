@@ -4,6 +4,7 @@ import sys
 from fractions import Fraction as Q
 from pathlib import Path
 
+from constructors import exact
 from shared_bank_charging import log_bounds
 
 
@@ -76,6 +77,60 @@ def saturation_and_release():
     return "two tied caps, inhibited debit, later recharge, upper spill and empty-face failure"
 
 
+def connected_deficit(steady, rate, decay, burst):
+    """Rational upper bound on the empty-transit shortfall on any intact interval."""
+    steady = exact(steady, "steady input")
+    rate = exact(rate, "withdrawal rate")
+    decay = exact(decay, "transit decay")
+    burst = exact(burst, "withdrawal burst")
+    if steady <= 0 or decay <= 0 or rate < 0 or burst < 0:
+        raise ValueError("Invalid connected supply or demand bound")
+    if rate > steady:
+        return None  # A sustained admissible envelope excess has no finite deficit.
+    if rate == steady:
+        return burst + steady/decay
+    # log(z) >= 2(z-1)/(z+1). This rational bound also covers zero rate.
+    return burst + rate**2/((2*steady-rate)*decay)
+
+
+def connected_handoffs():
+    def read(name):
+        return json.loads((HERE/name).read_text(encoding="utf-8-sig"))
+
+    source = read("../local-control/port_resource_results.json")
+    upper = Q(source["transit"]["actual_Emax"])
+    on = Q(source["transit"]["actual_Eon"])
+    off = Q(source["transit"]["actual_Eoff"])
+    old_rate = Q(source["point"]["bank_rate"])
+    new_rate = Q(read("legacy_realization_results.json")["inventory"]["retained_downrated_bank_allowance"])
+    native_bound = Q(read("parent_retirement_results.json")["resources"]["updated_actual_bank_rate"])
+    decay = Q(41, 10)
+    assert connected_deficit(3,0,decay,2)==2
+    assert connected_deficit(3,3,decay,2)==2+3/decay
+    assert connected_deficit(3,4,decay,2) is None
+
+    for family, design_rate, actual_rate, burst in (
+        ("A-prime", old_rate, old_rate, Q(source["transit"]["bank_burst"])),
+        ("B", new_rate, native_bound, Q(0)),
+    ):
+        assert 0 < actual_rate <= design_rate
+        steady = 2*design_rate
+        deficit = connected_deficit(steady, actual_rate, decay, burst)
+        lo,hi = log_bounds(steady/(steady-actual_rate),Q(1,10**12))
+        optimal_low = burst+(actual_rate-(steady-actual_rate)*hi)/decay
+        optimal_high = burst+(actual_rate-(steady-actual_rate)*lo)/decay
+        assert 0 < optimal_low <= optimal_high <= deficit < burst+steady/decay
+        assert upper >= on and on-deficit > off > 1
+        # Start this fill after half-supply maturity. Even if the bank spilled
+        # earlier, this guarantees a new full contact from which the burst floor holds.
+        _,log2_upper=log_bounds(2,Q(1,10**12))
+        mature_full = log2_upper/decay+(upper+burst+design_rate/decay)/(steady-actual_rate)
+        assert mature_full < 11 and upper-burst > on
+        print(f"{family}: connected floor margin {float(on-deficit-off):.7g} above Eoff, "
+              f"post-maturity full contact by {float(mature_full):.6f}q "
+              f"(verified upper bound <11q), subsequent floor Emax-{burst}")
+
+
 def b_comparisons():
     def read(name):
         return json.loads((HERE / name).read_text(encoding="utf-8-sig"))
@@ -114,3 +169,4 @@ if __name__ == "__main__":
     print(can_restart_from_empty())
     print(saturation_and_release())
     print(b_comparisons())
+    connected_handoffs()
