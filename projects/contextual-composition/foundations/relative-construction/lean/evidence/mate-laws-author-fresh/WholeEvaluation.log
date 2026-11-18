@@ -1,0 +1,34 @@
+evaluationUnitDiagram splitEndpoints presheaf
+  Bool : (SpanPull.All.evaluationBase splitEndpoints presheaf (𝟙 Bool)).hom ≫
+    (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.whiskerLeft (eqToHom ⋯) =
+  Functor.whiskerRight (wholeUnit splitEndpoints presheaf Bool)
+    (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor
+evaluationCompDiagram splitEndpoints presheaf collapse
+  (selectPoint
+    true) : (SpanPull.All.evaluationBase splitEndpoints presheaf (collapse ≫ selectPoint true)).hom ≫
+    (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.whiskerLeft (eqToHom ⋯) =
+  Functor.whiskerRight (wholeComp splitEndpoints presheaf collapse (selectPoint true))
+      (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor ≫
+    (SpanPull.All.pull splitEndpoints presheaf (selectPoint true)).whiskerLeft
+        (SpanPull.All.evaluationBase splitEndpoints presheaf collapse).hom ≫
+      Functor.whiskerRight (SpanPull.All.evaluationBase splitEndpoints presheaf (selectPoint true)).hom
+        (Iterates.packedMap endpoints splitEndpoints presheaf collapse.op)
+evaluationComp splitEndpoints presheaf collapse (selectPoint true)
+  wholeAtZero : (SpanPull.All.evaluationBase splitEndpoints presheaf (collapse ≫ selectPoint true)).hom.app
+      wholeAtZero ≫
+    (eqToHom ⋯).app ((CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.obj wholeAtZero) =
+  (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.map
+      ((wholeComp splitEndpoints presheaf collapse (selectPoint true)).app wholeAtZero) ≫
+    (SpanPull.All.evaluationBase splitEndpoints presheaf collapse).hom.app
+        ((SpanPull.All.pull splitEndpoints presheaf (selectPoint true)).obj wholeAtZero) ≫
+      (Iterates.packedMap endpoints splitEndpoints presheaf collapse.op).map
+        ((SpanPull.All.evaluationBase splitEndpoints presheaf (selectPoint true)).hom.app wholeAtZero)
+evaluationComp splitEndpoints presheaf collapse (selectPoint true)
+  wholeAtOne : (SpanPull.All.evaluationBase splitEndpoints presheaf (collapse ≫ selectPoint true)).hom.app wholeAtOne ≫
+    (eqToHom ⋯).app ((CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.obj wholeAtOne) =
+  (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.map
+      ((wholeComp splitEndpoints presheaf collapse (selectPoint true)).app wholeAtOne) ≫
+    (SpanPull.All.evaluationBase splitEndpoints presheaf collapse).hom.app
+        ((SpanPull.All.pull splitEndpoints presheaf (selectPoint true)).obj wholeAtOne) ≫
+      (Iterates.packedMap endpoints splitEndpoints presheaf collapse.op).map
+        ((SpanPull.All.evaluationBase splitEndpoints presheaf (selectPoint true)).hom.app wholeAtOne)

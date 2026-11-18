@@ -152,3 +152,9 @@ For an indexed family of actual spans, chosen component lifts and an ordinary pa
 At fixed ordinary Cat-valued payload and arbitrary base arrows, the actual tagged evaluation square of SumChange.taggedBase commutes with identity and composition. This is the tagged operand of SpanPull.All.evaluationBase, not its full law.
 
 Independent scoped review passed for this operand. See evidence/tagged-base-laws-independent/Review.tex, the fresh own-source replay, and the zero/successor noninvertible-arrow probe.
+
+## Fixed-payload base coherence of actual all-length evaluation (after #200)
+
+For the common-size, all-length telescope over an ordinary base with the existing split endpoints and a fixed ordinary Cat-valued presheaf, evaluationUnitDiagram and evaluationCompDiagram prove the identity and composition equations for the actual SpanPull.All.evaluationBase natural isomorphisms. The source constraints are those of the chosen weighted cleavage of the single coproduct span. The target constraints come from the existing tagged iterate presheaf, not a newly defined action. The composition diagram pulls back along the second arrow and then the first. All lengths, including zero, occur in the same functor. This closes the two base diagrams at fixed payload; it does not prove mixed coherence with changes of payload for this all-length single-span comparison, bundled higher coherence, flattening or strict algebra recovery.
+
+Independent scoped review passed for the fixed-payload base diagrams. See evidence/mate-laws-independent/Review.tex, the fresh 1,400-declaration replay, and the integer-valued mate and noninvertible-base probes.
