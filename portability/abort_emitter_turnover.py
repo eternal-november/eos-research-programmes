@@ -206,6 +206,9 @@ def check_bounds(c, geometry, itinerary):
                                  + age + poll + maximum + 1)
     assert reliable_initial_entering < 25_000_000 < Q(10 * c["POWER_AT"], 11)
     fresh_full = 2 * switch_wash + age + maximum + poll + settle + 1
+    sample_gap=Q(record("threshold_gate_source_results.json")["costs"]["sample_delay_addition"])/42
+    assert sample_gap==Q(101,100) and sample_gap<Q(phase["local_clearing"]["abort_stroke_min"])
+    assert sample_gap+switch_wash<Q(c["BLEND_LIMIT"]*10,11)
     half_off = Q(60)
     assert half_off + settle < Q(100000, 11)
     full_to_seat = (fresh_full + 2 * half + settle + Q(itinerary["abort_allocation"])
@@ -231,7 +234,8 @@ def check_bounds(c, geometry, itinerary):
     assert Q(costs["conditional_sequence"]) == Q(itinerary["corrected_sequence_allocation"]) + 42 * delta
     assert sampled_envelope - envelope == 96 * delta == Q(2424,25)
     assert sampled_envelope < Q(costs["H"]) == Q(itinerary["H"])
-    return {"sampled_one_restart_conditional_bound": str(sampled_envelope),
+    return {"sample_to_wash_before_keeper_switch_slack": str(Q(c["BLEND_LIMIT"]*10,11)-sample_gap-switch_wash),
+            "sampled_one_restart_conditional_bound": str(sampled_envelope),
             "sampled_donor_turnover": str(sampled_D),
             "sampled_sequence_additional_waits": 42, "restart_additional_waits": 54,
             "one_extra_excursion_allowance_test": str(envelope),
