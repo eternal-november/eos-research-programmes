@@ -75,3 +75,5 @@ public import ContextualComposition.PayloadLaws
 public import ContextualComposition.PackedFree
 public import ContextualComposition.NativeBlocks
 public import ContextualComposition.BlockCartesian
+public import ContextualComposition.NativeAssoc
+public import ContextualComposition.NativeTriple
