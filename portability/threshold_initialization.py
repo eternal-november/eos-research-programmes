@@ -16,14 +16,15 @@ import parent_realization as parent
 import parent_retirement as retirement
 import input_lifecycle as raw
 import shared_bank_charging as charging
+import threshold_gate_source as contacts
 
 HERE=program.HERE
 BASE='6a5f8aad0f0e5156edb21a054f8c72adcbf7120e'
 FIELD='215ecb755312f580cbd8c283b419f0958518766f'
 CAM_BASE='36d69bce7a4705fd54a915beb7c00cea55cce063'
 INPUT_BASE='186b0b922011239ea2ee46b5918790259de578cc'
-CHARGING_BASE='331698b578e3349de729857dd98378976e44ad88'
-GATE_BASE='bb3c68feb4777b1f98ae9e1056176c4525d5be43'
+CHARGING_BASE='747d3f292813da3d7ac5682abbf2e901d7f60fda'
+GATE_BASE='ea3b2478d9d3adff7340fda2a40989ab0fdaa257'
 PARENT_BASE='4672827a2717816ccc2d4ebbcee88a58c063c8b4'
 ITINERARY_BASE='bdeb1d2fd16c3ffbcd6b58f9d8431b3616cf8f2b'
 need=program.need
@@ -32,6 +33,71 @@ need(sys.version_info[:2]==(3,12) and not sys.flags.optimize,'Unoptimized Python
 
 def frozen(name):
     return legacy.text_at(BASE,'portability/'+name)
+
+
+def exercise_initial_contacts(p, owned, payer, funded_reset, population):
+    # One host in each alternative initial state. All gate and input operations
+    # in that alternative see the very same U and actual two operating banks.
+    machines=tuple(owned[side][0] for side in (0,1))
+    state=contacts.SharedContacts(p,0,payer,machines,initial_driver=0)
+    state.positions.update({"clamp0":Q(p["CLAMP_LIMIT"]), "act0:0":Q(p["WARM_AT"]),
+        "reset0":Q(p["RESET_LIMIT"]), "carrier0":Q(p["SEAT_LIMIT"]), "seat0:0":Q(p["SEAT_LIMIT"]),
+        "cut1":Q(p["CUT_LIMIT"]), "iso1":Q(p["ISO_LIMIT"]), "shunt1":Q(p["ISO_LIMIT"])})
+    state.check_rigid_seats()
+    banks=[];endpoints=[]
+    for side in (0,1):
+        machine,source,pulse,line=owned[side]
+        endpoint=cam.f.Destination(machine.setter.targets[0],1,42)
+        setter_line=cam.ControlLine(words=list(line.words),valid=list(line.valid))
+        rows=((endpoint,contacts.InitialPulseRow(pulse,line)),)
+        if side==0:
+            clone=raw.SourceWork(payer.origin,payer.capacity,payer.stock)
+            foreign=raw.LocalSourceBank(0,side,clone,population)
+            foreign.energy=source.energy
+            try: contacts.LiveSourceBank.at_initial(state,side,foreign,setter_line,rows)
+            except ValueError: pass
+            else: raise ValueError("Identical owner labels aliased different physical U stocks")
+            need(not state.installed_source_ports,"Failed initial wiring consumed a physical installation")
+        banks.append(contacts.LiveSourceBank.at_initial(state,side,source,setter_line,rows))
+        endpoints.append(endpoint)
+    live,cold=banks
+    source=owned[0][1]
+    need(live.gate and not cold.gate and live.native_input is source and
+         cold.capture(endpoints[1],0,0)=="cut","Initial gate topology is wrong")
+    reset_before=live.rows[endpoints[0]].pulse.reset_source_reserve.stock
+    need(live.capture(endpoints[0],0,0)=="latched" and live.deliver(endpoints[0],0,0)=="active",
+         "Initial ordinary source failed with its own actual paid parcel")
+    energy_before=state.E
+    initial_u=payer.stock
+    sampler=contacts.ThresholdSampler(state)
+    sampler.flow_clock(1)
+    need(sampler.strobe()=="captured" and initial_u-payer.stock==contacts.gates.PREDICATE_WORK
+         and state.E==energy_before,"Coherent snapshot did not spend its actual host U")
+    # Separate local boundary test. The terminal cut pose is supplied by the
+    # mechanical trajectory. The following assignments exhibit the two sides
+    # of that cut, and make no reachability claim from the initial guard in 1q.
+    step=Q(1,2**23)
+    state.positions["cut0"]=p["CUT_LIMIT"]-step
+    need(live.capture(endpoints[0],1,1)=="latched" and source.source_start("fast",(0,))=="accepted",
+         "Ordinary source cannot issue immediately before the cut")
+    pending=live.rows[endpoints[0]].pulse.pending[1]
+    adc=source.job
+    state.positions["cut0"]=p["CUT_LIMIT"]
+    live.disconnect()
+    need(live.capture(endpoints[0],1,1)=="cut" and source.source_start("fast",(0,))=="cut"
+         and not machines[0].powered and not source.powered and source.job is adc and
+         live.rows[endpoints[0]].pulse.pending[1] is pending and not live.gate,
+         "Bank cut lost a child or left an issuing power live")
+    live.drain_source_leaves(Q(1,2**20))
+    pulse=live.rows[endpoints[0]].pulse
+    need(pulse.cut and pulse.reset_control_inhibit and pulse.reset_source_reserve.stock==reset_before
+         and live.deliver(endpoints[0],1,1+step+Q(1,2**20))=="active" and not live.row_quench[endpoints[0]].stock,
+         "Local quench revoked an already accepted pulse, or consumed an empty reset reserve")
+    state.check_U_balance();live.switch_balance()
+    return dict(reset_initially_funded=funded_reset,host_U_capacity=payer.capacity,
+        common_E=energy_before,source_and_cpu_cut=True,adc_claim_retained=True,
+        pending_field_after_cut="active",initial_local_quench_per_aperture=8,
+        physical_snapshot_debit=initial_u-payer.stock,quench_heat_for_one_aperture_and_setter=live.local_switch_heat)
 
 
 def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity,source_capacity):
@@ -46,12 +112,13 @@ def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity,sou
     need(capacity.denominator==1 and capacity>0,'Initial operating capacity is not a physical integer')
     owners={full:raw.SourceWork(0,source_capacity,source_capacity) for full in (False,True)}
     cases=[]
+    owned={full:{} for full in (False,True)}
     for active in (False,True):
         for funded_reset in (False,True):
-            pulse=field.PulseSelector(cut=not active,native_inhibit=not active,
+            pulse=field.PulseSelector(cut=not active,native_inhibit=not active,reset_control_inhibit=not active,
                 initial_reset_energy=(field.RESET_SOURCE_ENERGY,field.RESET_RECEIVER_ENERGY)
                                     if funded_reset else (Q(0),Q(0)))
-            setter=field.SettingWriter(targets,cut=not active,native_inhibit=not active,
+            setter=field.SettingWriter(targets,cut=not active,native_inhibit=not active,reset_control_inhibit=not active,
                 reset_stock=field.SETTER_RESET_ENERGY if funded_reset else Q(0))
             operating=charging.OperatingBank((0,0 if active else 1),int(capacity),capacity if active else Q(0))
             cpu=charging.FramedParent(isa,c,bank=operating,targets=targets)
@@ -97,13 +164,16 @@ def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity,sou
             line.phases=[Q(i+1,64) for i in range(8)]
             need(all(x is None for x in line.snapshots) and all(x==0 for x in line.remaining),
                  'Initial control has an old pending snapshot')
+            owned[funded_reset][source.bank]=(cpu,source,pulse,line)
             initial_control=dict(committed_modes=list(line.words),valid=list(line.valid),
                 pending_snapshots=[None]*8,dispatch_bits=[0]*dispatch_bits,
                 receiver_armed=active,source_trigger_open=active,
                 ownership='ordinary pulse supplier' if active else 'actual cut; no reset episode inferred')
             arrivals=[]
-            line.flow(2*cam.CONTROL_DELAY,mode,lambda dt:None,arrivals.append)
-            need(all(x==mode for x in line.words) and all(x==mode for x in arrivals),
+            clock_test=cam.ControlLine(words=list(line.words),valid=list(line.valid))
+            clock_test.phases=list(line.phases)
+            clock_test.flow(2*cam.CONTROL_DELAY,mode,lambda dt:None,arrivals.append)
+            need(all(x==mode for x in clock_test.words) and all(x==mode for x in arrivals),
                  'Conforming initial control mode changed before any new request')
             # Clock-state preservation only; actual control work is charged by
             # the joined cam U envelope, not by this no-op observer callback.
@@ -135,7 +205,12 @@ def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity,sou
     retained.cut=True
     need((retained.slots[0],retained.force,retained.energy[0].stock)==before and
          not retained.counter_bound_holds(),'Cut relabelled old native debt as initialized')
+    limits=contacts.parameters(c)
+    gate_entry=[exercise_initial_contacts(limits,owned[full],owners[full],full,population) for full in (False,True)]
+    active_stock=8*(2*field.DEGREE*field.L+1)+8
+    need(active_stock<=32+8*(4*field.DEGREE*field.L+2),"Initial gate parcels exceed bought capacity")
     return dict(representative_role_cases=cases,distinct_channel_stores=True,
+        initial_gate_projections=gate_entry,actual_initial_added_stock=active_stock,
         product_index='(region,source host,source bank,target ordinal,target bank,bit,slot)',
         release_or_cut_is_not_initialization=True,
         retained_after_cut=dict(counter=retained.slots[0][1],force=retained.force,
