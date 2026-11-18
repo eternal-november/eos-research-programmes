@@ -57,3 +57,4 @@ public import ContextualComposition.FibreValue
 public import ContextualComposition.ValueConstraints
 public import ContextualComposition.EvalPaste
 public import ContextualComposition.PayloadLift
+public import ContextualComposition.EvalPayload
