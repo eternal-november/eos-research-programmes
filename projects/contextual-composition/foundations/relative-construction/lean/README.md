@@ -68,3 +68,7 @@ Independent scoped review passed: see `evidence/native-successor-independent/Rev
 ChainIdentity proves the independent decorated identity and unit laws, and a fixed-payload, pointwise categorical equivalence of the disjoint union of decorated length fibres with the packed iterates. This is not yet a natural equivalence in the base. 758 indexed declarations; separate review pending.
 
 Independent scoped pass: see `evidence/chain-identity-independent/Review.tex` and its fresh own-project replay (758 distinct named axiom audits; nine pinned external dependency caches reused). Source restriction and naturality in the base remain open.
+
+ChainRestriction constructs cartesian lifts on the independent chains, proves unique factorization through the chosen lifts, and assembles a source presheaf. The forward equivalence of all-length fibres commutes strictly with each base restriction for fixed payload. See the final crosswalk for the universe and endofunctor boundaries. Candidate: 787 indexed declarations; review pending.
+
+Independent scoped pass: see `evidence/chain-restriction-independent/Review.tex` and the fresh 787-declaration replay (nine pinned external caches reused). The source arrow is the unique solution of the cartesian square; its proof uses comparison. Payload naturality and sequential span-product identification remain open.
