@@ -64,3 +64,4 @@ public import ContextualComposition.FinalCube
 public import ContextualComposition.ZeroPower
 public import ContextualComposition.CoproductSpan
 public import ContextualComposition.SumChange
+public import ContextualComposition.SpanPull
