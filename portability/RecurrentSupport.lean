@@ -185,27 +185,54 @@ structure Adapter (W : World) where
   repair : ∀ q n {r a} (s : W.seed q r a), r ≤ n → ¬ W.covered (W.owner s) n q →
     Repair W q n r a s
 
-def attributeCap {W : World} (adapter : Adapter W) (n : Nat) (history : Earlier W n)
+/-- A source patch at one cut. Instantiating a protected prefix does not
+    require valid operational suppliers beyond that prefix. -/
+structure CutRule (W : World) (n : Nat) where
+  active : ∀ q, W.demand q = none → W.bad q n → W.cap q n
+  missed : ∀ q op, W.demand q = some op → W.bad q n → Miss W q n op
+  repair : ∀ q {r a} (s : W.seed q r a), r ≤ n → ¬ W.covered (W.owner s) n q →
+    Repair W q n r a s
+
+def Adapter.cutRule {W : World} (a : Adapter W) (n : Nat) : CutRule W n where
+  active q := a.active q n
+  missed q := a.missed q n
+  repair q := a.repair q n
+
+def CutRule.attributeCap {W : World} {n : Nat} (rule : CutRule W n) (history : Earlier W n)
     (q : W.Query) (x : W.cap q n) : Charge W q n :=
   Authority.coveredOrigin W.clock W.forward (W.initial q) (W.predecessor q)
     W.owner (fun t k => W.covered t k q) (fun t k => W.stableCover t k q)
     (fun _ _ (_ : Unit) => True) (fun t _ => W.affects t q)
     (fun s _ _ => W.seedFoot s) (fun _ _ _ _ _ _ => True.intro) n x () True.intro
-    (fun s before expired => (adapter.repair q n s before expired).fence history)
+    (fun s before expired => (rule.repair q s before expired).fence history)
 
-def resolveAt {W : World} (adapter : Adapter W) (n : Nat) (history : Earlier W n)
+def CutRule.resolve {W : World} {n : Nat} (rule : CutRule W n) (history : Earlier W n)
     (q : W.Query) (bad : W.bad q n) : Charge W q n := by
   cases h : W.demand q with
-  | none => exact attributeCap adapter n history q (adapter.active q n h bad)
+  | none => exact rule.attributeCap history q (rule.active q h bad)
   | some op =>
-    let miss := adapter.missed q n op h bad
+    let miss := rule.missed q op h bad
     let a := miss.job.run history
     cases a.result with
     | closed result => exact False.elim (miss.missing _ _ a.sameRun a.fits result)
     | charged stop =>
       cases miss.classify _ (miss.byChallenge _ _ a.sameRun a.fits stop) stop with
-      | inl residue => exact attributeCap adapter n history q residue
+      | inl residue => exact rule.attributeCap history q residue
       | inr prior => exact prior.follow history
+
+def attributeCap {W : World} (adapter : Adapter W) (n : Nat) (history : Earlier W n)
+    (q : W.Query) (x : W.cap q n) : Charge W q n :=
+  (adapter.cutRule n).attributeCap history q x
+
+def resolveAt {W : World} (adapter : Adapter W) (n : Nat) (history : Earlier W n)
+    (q : W.Query) (bad : W.bad q n) : Charge W q n :=
+  (adapter.cutRule n).resolve history q bad
+
+/-- All answers through one cut, with no premise on any later cut. -/
+def through {W : World} {endCut : Nat} (rules : ∀ k, k ≤ endCut → CutRule W k)
+    (n : Nat) (within : n ≤ endCut) : (q : W.Query) → Answer W q n :=
+  (rules n within).resolve (fun j before => through rules j (by omega))
+termination_by n
 
 /-- Finite-prefix closure across roles. It constructs a covering token for
     each failure with the local source certificates. -/
