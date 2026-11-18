@@ -336,7 +336,17 @@ class RawCapture:
 
 
 def held_rates(
-    host, cells, capture, *, chi, bleed, cpu_enabled, efforts, gross_input=Q(0), other_local_load=Q(0)
+    host,
+    cells,
+    capture,
+    *,
+    chi,
+    bleed,
+    cpu_enabled,
+    efforts,
+    gross_input=Q(0),
+    other_local_load=Q(0),
+    mechanical=None,
 ):
     """Instantaneous port evaluation; the returned rates are not independent histories."""
     check(
@@ -363,10 +373,20 @@ def held_rates(
     transit_in = tuple(g * Q(41, 10) * host.Tcap * x for x in chi)
     tnet = tuple(i - Q(41, 10) * t for i, t in zip(transit_in, host.T))
     tspill = tuple(max(0, n) if t == host.Tcap else 0 for n, t in zip(tnet, host.T))
-    if host.held_plane:
-        law = gate.actuator_rates(host, efforts)
+    pilot_draw = pilot_return = pilot_heat = Q(0)
+    if mechanical is not None or host.held_plane:
+        if mechanical is not None:
+            check(
+                getattr(mechanical, "__self__", None) is host
+                and mechanical == getattr(host, "motion", None),
+                "Foreign mechanical port",
+            )
+            law = mechanical(efforts)
+            pilot_draw, pilot_return, pilot_heat = law["pilot"]
+        else:
+            law = gate.actuator_rates(host, efforts)
         drives = law["banks"]
-        mechanical = law["mechanical_dissipation"]
+        housing_heat = law["mechanical_dissipation"]
         field_power = law["external_input_power"]
         velocities = law["velocities"]
     else:
@@ -376,7 +396,7 @@ def held_rates(
         )
         drives = [dict(draw=0, returned=0, heat=0) for _ in cells]
         velocities = {k: Q(0) for k in host.positions}
-        mechanical = field_power = Q(0)
+        housing_heat = field_power = Q(0)
     enet = tuple(
         4 * t + a["returned"] - a["draw"] - k * e - cpu
         for t, e, k, a, cpu in zip(host.T, host.E, bleed, drives, e_to_cpu)
@@ -385,11 +405,11 @@ def held_rates(
     # The displayed trace chooses the least admitted efficiency 1/2 on the
     # transit and remote raw converters. Local CPU chargers use ideal transfer.
     local_load = g * other_local_load
-    u_out = 2 * (sum(transit_in) + raw_power) + local_load
-    unet = gross_input - u_out
+    u_out = 2 * (sum(transit_in) + raw_power) + local_load + pilot_draw
+    unet = gross_input + pilot_return - u_out
     uspill = max(0, unet) if host.U == host.Ucap else 0
-    heat_conv = sum(transit_in) + raw_power + sum(a["heat"] for a in drives)
-    heat_loss = local_load + sum(host.T) / 10 + sum(k * e for k, e in zip(bleed, host.E)) + mechanical
+    heat_conv = sum(transit_in) + raw_power + sum(a["heat"] for a in drives) + pilot_heat
+    heat_loss = local_load + sum(host.T) / 10 + sum(k * e for k, e in zip(bleed, host.E)) + housing_heat
     heats = heat_conv + heat_loss + uspill + sum(tspill) + sum(espill)
     dU = unet - uspill
     dT = tuple(n - s for n, s in zip(tnet, tspill))
@@ -412,6 +432,7 @@ def held_rates(
         CPU=e_to_cpu,
         capture=raw_power,
         Uout=u_out,
+        Urefund=pilot_return,
         Usupply=gross_input,
         field=field_power,
         velocities=velocities,
@@ -421,12 +442,16 @@ def held_rates(
     )
 
 
-def constant_arc(host, cells, capture, dt, *, native_returns=None, **inputs):
+def constant_arc(host, cells, capture, dt, *, native_returns=None, receiver_winding=None, **inputs):
     """Analytic linear subarc at a stated constant drift, ending exactly at most at its first cap."""
     dt = Q(dt)
     check(
-        dt > 0 and all(k == 0 for k in inputs["bleed"]) and not any(inputs["efforts"]),
-        "This exact elapsed witness holds zero bleed and external field effort",
+        dt > 0
+        and (
+            inputs.get("mechanical") is not None
+            or (all(k == 0 for k in inputs["bleed"]) and not any(inputs["efforts"]))
+        ),
+        "This exact elapsed witness requires a declared constant port chart",
     )
     native_returns = {} if native_returns is None else native_returns
     end = host.now + dt
@@ -442,13 +467,28 @@ def constant_arc(host, cells, capture, dt, *, native_returns=None, **inputs):
             "Split at the existing raw capture terminal",
         )
     law = held_rates(host, cells, capture, **inputs)
+    receiving_heat = Q(0)
+    cross_input = law["field"]
+    if receiver_winding is not None:
+        line, receiving_heat, shaft = receiver_winding
+        check(
+            inputs.get("mechanical") is not None
+            and receiving_heat >= 0
+            and line == receiving_heat + shaft,
+            "Unmatched receiving-zone winding port",
+        )
+        cross_input += line - shaft  # The wiring moved that shaft interface inside this material zone.
     check(
         all(x == 0 for x in law["T"])
         and law["spill"] == 0
         and host.U >= 1
         and host.U + dt * law["U"] >= 1
         and 0 <= host.U + dt * law["U"] <= host.Ucap
-        and all(e >= 1 and 1 <= e + dt * n <= host.p["EMAX"] for e, n in zip(host.E, law["E"])),
+        and all(
+            (e >= 1 and 1 <= e + dt * n <= host.p["EMAX"]) or (e == 0 and n == 0)
+            for e, n in zip(host.E, law["E"])
+        )
+        and all(k == 0 or n == 0 for k, n in zip(inputs["bleed"], law["E"])),
         "Crossed a stock regime; use the general held-flow solution",
     )
     check(
@@ -463,7 +503,7 @@ def constant_arc(host, cells, capture, dt, *, native_returns=None, **inputs):
     if not host.held_plane:
         host.sampler.flow_clock(dt)
     host.U += dt * law["U"]
-    host.non_gate_deposits += dt * law["Usupply"]
+    host.non_gate_deposits += dt * (law["Usupply"] + law["Urefund"])
     host.non_gate_withdrawals += dt * law["Uout"]
     host.converter_heat += dt * law["conversion"]
     host.stroke_heat += dt * law["loss"]
@@ -477,8 +517,8 @@ def constant_arc(host, cells, capture, dt, *, native_returns=None, **inputs):
     capture.energy += dt * law["capture"]
     capture.received += dt * law["capture"]
     native_heat = sum((c.price / (c.due - c.started) for c in cells if c.active), Q(0))
-    host.zone.advance(dt, law["conversion"] + law["loss"] + native_heat + law["spill"])
-    host.zone.cross_in += dt * (law["Usupply"] + law["field"])
+    host.zone.advance(dt, law["conversion"] + law["loss"] + native_heat + law["spill"] + receiving_heat)
+    host.zone.cross_in += dt * (law["Usupply"] + cross_input)
     host.zone.cross_out += dt * law["capture"]
     capture.thermal_zone.cross_in += dt * law["capture"]
     capture.thermal_zone.advance(dt, 1024 / DELTA if capture.pending is not None else Q(0))
