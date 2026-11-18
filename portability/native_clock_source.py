@@ -89,6 +89,9 @@ class Oscillator:
         return cls(1 / rate, first)
 
 
+_UNSPECIFIED = object()
+
+
 class NativeClock:
     """Source event interface, including a single optional observed RX lane.
 
@@ -109,7 +112,10 @@ class NativeClock:
         rx_base_rate=4096,
         rx_first=None,
         receipt_clock_specs=None,
-        pending_record_delays=None
+        pending_record_delays=None,
+        existing_bus=None,
+        prior_rx_return=_UNSPECIFIED,
+        installed_cut=None,
     ):
         need(
             isinstance(cpu, charging.FramedParent)
@@ -132,7 +138,32 @@ class NativeClock:
             bool(self.lanes) or not (receipt_clock_specs or pending_record_delays),
             "No installed receiver for these clock or pending service inputs",
         )
-        self.now = Q(0)
+        if existing_bus is not None:
+            need(
+                isinstance(existing_bus, charging.JointCharge)
+                and getattr(cpu.bank, "charging", None) is existing_bus
+                and getattr(cpu, "charging", None) is existing_bus
+                and existing_bus.bank is cpu.bank and existing_bus.parent is cpu
+                and source.energy is cpu.bank and existing_bus.delta == DELTA
+                and len(existing_bus.slots) == len(source.slots)+1
+                and all(a is b for a,b in zip(existing_bus.slots, (*source.slots, source.adc)))
+                and all(cell.charge_owner is existing_bus for cell in (cpu.cell, *(s.cell for s in existing_bus.slots))),
+                "Paced entry requires the original, complete operating-bank installation",
+            )
+            need(getattr(existing_bus, "native_dispatch", None) is None,
+                 "This operating installation already has an elapsed-time dispatcher")
+            need(all(v is not None for v in (adc_first, tx_first, rx_first))
+                 and prior_rx_return is not _UNSPECIFIED,
+                 "Supply the actual retained base phases and prior RX return")
+            if self.lanes:
+                need(receipt_clock_specs is not None and set(receipt_clock_specs) == set(self.lanes[0].records),
+                     "An already installed receiver needs every retained record phase")
+            existing_bus.balance()
+        need(installed_cut is None or (existing_bus is not None and callable(installed_cut)),
+             "A complex cut must belong to the existing physical installation")
+        self.installed_cut=installed_cut
+        self.requires_cut_owner=existing_bus is not None
+        self.now = Q(0)  # Elapsed origin of this observation, never a device reset.
         self.clocks = {}
         for name, rate, first in (
             ("ADC", adc_rate, adc_first),
@@ -145,7 +176,16 @@ class NativeClock:
             self.clocks[name] = Oscillator.at_rate(rate, first, Q(4096), Q(4096 * 101, 100))
         rx_clock = self.clocks["RX"]
         self.rx_suffix = Q(raw.RX_WORK, raw.RX_POWER)
-        self.rx_aperture = (rx_clock.due + self.rx_suffix) % rx_clock.period
+        if prior_rx_return is _UNSPECIFIED:
+            self.rx_aperture = (rx_clock.due + self.rx_suffix) % rx_clock.period
+        else:
+            previous = rx_clock.due - rx_clock.period + self.rx_suffix
+            if prior_rx_return is None:
+                need(previous <= 0, "A future return from the preceding RX edge was dropped")
+            else:
+                prior_rx_return = charging.natural_quantity(prior_rx_return)
+                need(prior_rx_return == previous, "Return does not belong to the preceding RX edge")
+            self.rx_aperture = prior_rx_return
         self.read_jobs = {}
         # RX[608] and RX[609:618] are a valid bit and selected physical
         # head inside the existing 8192 raw controller bits. A second
@@ -172,8 +212,12 @@ class NativeClock:
         self.retired_flights_count = 0
         # Attach only after the entire requested initial clock/endpoint
         # interface has been validated. An invalid clock cannot strand E.
-        self.bus = charging.JointCharge(cpu.bank, cpu, (*source.slots, source.adc), DELTA)
-        source.receivers_live = MappingProxyType(dict(source.receivers_live))
+        self.bus = (existing_bus if existing_bus is not None
+                    else charging.JointCharge(cpu.bank, cpu, (*source.slots, source.adc), DELTA))
+        self.bus.native_dispatch = self
+        # Freeze the physical lookup itself. Existing claim destinations, captures
+        # and lane objects keep their identity; this does not copy/reseat any row.
+        source.receivers_live = MappingProxyType(source.receivers_live)
 
     @staticmethod
     def _needs_service(record):
@@ -204,6 +248,12 @@ class NativeClock:
             self.read_jobs[key] = (self.now + delay, kind, binding)
 
     def flight_heads(self):
+        # The read-only view retains the original mapping. A historical writer
+        # alias or a new physical rewiring root cannot silently retarget a
+        # paid arrival in a chart which still claims its old installed family.
+        need(len(self.source.receivers_live) == len(self.lanes) and all(
+            self.source.receivers_live.get(lane.identity) is lane for lane in self.lanes),
+            "The fixed receiving installation changed; re-establish its physical routing")
         # Output lines are FIFO. Choices from distinct lines are independent
         # until the receiving port's actual constraints relate them.
         for branch in self.source.branches:
@@ -396,6 +446,9 @@ class NativeClock:
         return result
 
     def cut(self):
+        if self.installed_cut is not None:
+            return self.installed_cut()
+        need(not self.requires_cut_owner, "Supply the physical gate for this installed clock's cut")
         self.cpu.inhibit()
         self.source.cold_cut()
 

@@ -16,6 +16,7 @@ import parent_realization as parent
 import parent_retirement as retirement
 import input_lifecycle as raw
 import shared_bank_charging as charging
+import native_clock_source as paced
 import threshold_gate_source as contacts
 
 HERE=program.HERE
@@ -219,8 +220,7 @@ def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity,sou
 
 def local_source_at_initial_entry(payer, operating, active, funded_reset, population):
     """One-time native controls; queued payloads and old reservations are separate."""
-    origin, side = operating.owner
-    source = raw.LocalSourceBank(origin, side, payer, population)
+    source = paced.TimedSource(operating,payer,population)
     source.control[:] = [0] * source.BITS
     for slot in source.slots + [source.adc]:
         slot.admission = active
@@ -322,7 +322,8 @@ def old_native_claims(payer, lanes, population, isa, compiled, capacity, funded_
 
 def paid_source_reentry(payer, population, isa, compiled, capacity):
     """Separate post-cold local entry segment with an actual connected bank."""
-    source=raw.LocalSourceBank(2,1,payer,population)
+    operating=charging.OperatingBank((2,1),capacity,Q(capacity))
+    source=paced.TimedSource(operating,payer,population)
     need(source.reform()=="formed-unpowered" and source.reset_work.spent==504329,
          "Later rearm lacks its paid source-local cold preparation")
     slots=source.slots+[source.adc]
@@ -330,7 +331,6 @@ def paid_source_reentry(payer, population, isa, compiled, capacity):
          "Post-dump work is not at its actual floors")
     # Actual connected E and eligible PC0 are supplied by the separate POWER
     # and prior parent-retirement orbit. This example does not refill E.
-    operating=charging.OperatingBank((2,1),capacity,Q(capacity))
     cpu=charging.FramedParent(isa,compiled,bank=operating)
     bus=charging.JointCharge(operating,cpu,slots,raw.LocalSourceBank.DELTA)
     old=payer.spent
@@ -472,10 +472,23 @@ def pc0_boot_prefix(isa,c,bounds,bank_capacity,targets,source_capacity,populatio
     # native clocks continue. Its full port contribution is identically zero.
     cpu_only=charging.JointCharge(operating,paid,(),native.DELTA)
     paid.W[:]=[isa.WORD_MASK]*len(paid.W)
-    paid_ports=raw.native_source_ports(isa)(c,native)
+    paid_ports=paced.timed_ports(isa)(c,native)
+    # Independent nominal 4096/q edge on the zero-deficit prefix, with a
+    # fixed nominal CPU period 1/2^26. No flight, receiver, ADC job or TX
+    # request exists here. Resolve a tied retired-CPU edge first.
+    next_edge=Q(1,4096)
+    native_edges=0
     while not paid.io_counts['cpu_count'] and paid.steps<bounds['boot_active_upper']+100:
         cpu_only.flow_full_delivery(2*native.DELTA,source_powered=native.powered)
         need(paid.step(paid_ports),'Timed PC0 boot prefix blocked')
+        if Q(paid.steps,2**26)>=next_edge:
+            native.adc_tick()
+            native.tx_phase=(native.tx_phase+1)%4
+            if native.tx_phase==0:
+                for branch in native.branches: branch.tick()
+            native.rx_phase=1-native.rx_phase
+            native_edges+=1
+            next_edge+=Q(1,4096)
     need(paid.steps==machine.steps and paid.pc==machine.pc and paid.R==machine.R
          and paid.W==machine.W and paid.C==machine.C and paid_ports.world_latch==ports.world_latch
          and paid.pending is None and paid.fabric.token is None and not paid.fabric.link_storage_busy(),
@@ -513,7 +526,7 @@ def pc0_boot_prefix(isa,c,bounds,bank_capacity,targets,source_capacity,populatio
             nominal_work_time_upper=paid.nominal_work_time_upper,
             parent_empty_and_no_pending=paid.pending is None and paid.cell.stock==0,
             actual_routed_parent=True,actual_shared_E_owner=operating.owner,
-            source_I_native=True,old_completed_ADC_status_invalidated=True,initial_DATA_ADC_cells_framed=len(installed),
+            source_I_native=True,paced_source_at_physical_allocation=True,independent_native_base_edges=native_edges,old_completed_ADC_status_invalidated=True,initial_DATA_ADC_cells_framed=len(installed),
             DATA_ADC_work_in_this_idle_prefix=0,timed_CPU_recharge_each=2*native.DELTA,
             root_token_consumed=paid.fabric.token is None,
             no_retained_link_storage=not paid.fabric.link_storage_busy(),
@@ -695,7 +708,7 @@ def generate():
            'cam_reformation.py','CAM-REFORMATION.md','cam_reformation_results.json','threshold_field_source.py',
            'parent_realization.py','PARENT-REALIZATION.md','parent_realization_results.json',
            'parent_retirement.py','PARENT-RETIREMENT.md','parent_retirement_results.json',
-           'input_lifecycle.py','INPUT-LIFECYCLE.md','input_lifecycle_results.json','shared_bank_charging.py','SHARED-BANK-CHARGING.md',
+           'input_lifecycle.py','INPUT-LIFECYCLE.md','input_lifecycle_results.json','native_clock_source.py','shared_bank_charging.py','SHARED-BANK-CHARGING.md',
            'interrupted_renewal.py','INTERRUPTED-RENEWAL.md','interrupted_renewal_results.json',
            'LEGACY-REALIZATION.md','legacy_realization_results.json','threshold_field_source_results.json','THRESHOLD-FIELD-SOURCE.md')
     frozen_inputs={BASE+':portability/threshold_geometry_results.json':geometry_text,
