@@ -1308,3 +1308,14 @@ import ContextualComposition
 #print axioms ContextualComposition.GrothendieckStep.CoproductSpan.All.dst
 #print axioms ContextualComposition.GrothendieckStep.CoproductSpan.All.component
 #print axioms ContextualComposition.GrothendieckStep.CoproductSpan.All.evaluation
+#print axioms ContextualComposition.GrothendieckStep.SumChange.inverseSquare
+#print axioms ContextualComposition.GrothendieckStep.SumChange.Tagged.square
+#print axioms ContextualComposition.GrothendieckStep.SumChange.leaf
+#print axioms ContextualComposition.GrothendieckStep.SumChange.target
+#print axioms ContextualComposition.GrothendieckStep.SumChange.componentPayload
+#print axioms ContextualComposition.GrothendieckStep.SumChange.taggedPayload
+#print axioms ContextualComposition.GrothendieckStep.SumChange.inversePayload
+#print axioms ContextualComposition.GrothendieckStep.SumChange.evaluationPayload
+#print axioms ContextualComposition.GrothendieckStep.SumChange.leafPull
+#print axioms ContextualComposition.GrothendieckStep.SumChange.componentBase
+#print axioms ContextualComposition.GrothendieckStep.SumChange.taggedBase
