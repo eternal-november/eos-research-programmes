@@ -1261,3 +1261,15 @@ import ContextualComposition
 #print axioms ContextualComposition.GrothendieckStep.FinalCube.full
 #print axioms ContextualComposition.GrothendieckStep.FinalCube.fullLaw
 #print axioms ContextualComposition.GrothendieckStep.FinalCube.fullDiagram
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.endpoint
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.weighted
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.eval
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.evalEquivalence
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.pull
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.baseSquare
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.payloadSquare
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.Sum.map
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.Sum.equiv
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.nativeLayer
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.layerEquiv
+#print axioms ContextualComposition.GrothendieckStep.ZeroPower.packedEquiv
