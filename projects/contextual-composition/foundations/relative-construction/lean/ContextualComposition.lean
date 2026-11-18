@@ -52,3 +52,4 @@ public import ContextualComposition.SpanApex
 public import ContextualComposition.ChainSnoc
 public import ContextualComposition.SpanArrows
 public import ContextualComposition.SpanPayload
+public import ContextualComposition.NativeCleavage
