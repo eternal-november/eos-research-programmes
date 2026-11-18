@@ -29,7 +29,7 @@ CURRENT={"a80_prefix_mission.py","a80_g3.py","a80_handoff_trip.py","a80_candidat
          "frame_pacing.py","normal_response_transport.py","quiet_window.py","premise_audit.py",
          "world_channel.py","spatial_coverage.py","receiver_lease.py","sender_eligibility.py",
          "current_publication_comparison.py","baseline_adapter.py","projected_work_flow.py",
-         "b_cut_induction.py","b_lead_installation.py","phase_ten_history.py"}
+         "b_cut_induction.py","b_lead_installation.py","b_phase_ten_history.py"}
 PRINT_LOCK=Lock()
 
 
@@ -98,6 +98,39 @@ def is_main(tree):
     return False
 
 
+
+def held_out_probes(repo,point,entries):
+    listing=git(repo,"ls-tree","-r","--name-only",point,"--",PORT+"/heldout").decode().splitlines()
+    start=PORT+"/"
+    tracked={p[len(start):] for p in listing if p.startswith(start)}
+    out=[]
+    for name in sorted(p for p in tracked if p.endswith("/replay-manifest.json")):
+        folder=Path(name).parent
+        data=json.loads(git(repo,"show",point+":"+start+name))
+        require(type(data.get("checks")) is list and data["checks"],"Held-out manifest has no actual checks")
+        for test in data["checks"]:
+            file=test["script"]
+            prefix=folder.as_posix()+"/"
+            require(type(file) is str and Path(file).name==file and file.endswith(".py")
+                    and prefix+file in tracked,"Held-out checker must be a real sibling file")
+            arguments=test.get("args",[])
+            require(isinstance(arguments,list) and all(type(x) is str for x in arguments)
+                    and "--write" not in arguments,"Held-out verification must be read-only")
+            receipt=test.get("receipt")
+            if receipt is not None:
+                require(type(receipt) is str and Path(receipt).name==receipt and prefix+receipt in tracked,
+                        "Missing target-local evidence record")
+            out.append(Probe("heldout/"+folder.name+"/"+file[:-3],point,"frozen transfer",prefix+file,
+                             tuple(arguments),prefix+receipt if receipt else None))
+    if "RP6-FREEZE.json" in entries:
+        frozen=json.loads(git(repo,"show",point+":"+start+"RP6-FREEZE.json"))
+        base=frozen["payload"]["reference"]["commit"]
+        out.append(Probe("transfer/unchanged",point,"frozen core","freeze_portability.py",
+                   ("--at",base,"--verify","RP6-FREEZE.json","--candidate",point,
+                    "--research-repo","{research}"),"RP6-FREEZE.json"))
+    return out
+
+
 def plan(repo,point):
     entries=files(repo,point)
     src=texts(repo,entries)
@@ -127,6 +160,7 @@ def plan(repo,point):
     # An unclassified result must never quietly disappear from reproduction.
     records={name for name in entries if name.endswith("_results.json")}
     require(records==accounted,"Unclassified or multiply named receipts: "+str(sorted(records^accounted)))
+    probes.extend(held_out_probes(repo,point,entries))
     probes.append(Probe("current/lean",point,"current checked declarations","",(),None))
     probes.append(Probe("baseline/aggregate",HISTORICAL,"archived baseline","../local-control/verify.py",
                         ("--check","--lean","{lean}"),"../local-control/verification.json"))
@@ -186,9 +220,11 @@ def worker(source,sandbox,cases,lean,research):
                 out=lean_build(checkout,current,lean,env)
             else:
                 assert c.script
-                cmd=[sys.executable,"-B",str(checkout/PORT/c.script)]
+                script=(checkout/SOURCE/"local-control"/"verify.py" if c.name=="baseline/aggregate"
+                        else checkout/PORT/c.script)
+                cmd=[sys.executable,"-B",str(script)]
                 cmd.extend((str(research) if a=="{research}" else str(lean) if a=="{lean}" else a) for a in c.args)
-                proc=subprocess.run(cmd,cwd=checkout/PORT,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+                proc=subprocess.run(cmd,cwd=script.parent,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
                 out=proc.stdout.replace(b"\r\n",b"\n")
                 require(proc.returncode==0,f"Exit {proc.returncode}\n"+out[-5000:].decode("utf-8","replace"))
             after=git(checkout,"status","--porcelain","--untracked-files=all")
@@ -196,7 +232,9 @@ def worker(source,sandbox,cases,lean,research):
             record["status"]="passed"
             record["stdout_sha256"]=sha256(out).hexdigest()
             if c.receipt:
-                raw=(checkout/PORT/c.receipt).read_bytes().replace(b"\r\n",b"\n")
+                receipt=(checkout/SOURCE/"local-control"/"verification.json" if c.name=="baseline/aggregate"
+                         else checkout/PORT/c.receipt)
+                raw=receipt.read_bytes().replace(b"\r\n",b"\n")
                 record["receipt"]=c.receipt
                 record["receipt_sha256_lf"]=sha256(raw).hexdigest()
         except (ValueError,OSError,subprocess.SubprocessError) as exc:
