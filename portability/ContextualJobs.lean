@@ -154,4 +154,189 @@ def oldQueueDrain {P : Type u} (clock : BudgetClock P)
 #print axioms joinPersistent
 #print axioms closeOnRun
 #print axioms bindOrCharge
+/-- For a first-defect proof, request a step only at a point already reached
+    from this job's start with enough of its original budget remaining. -/
+def closeInBudget {P : Type u} (clock : BudgetClock P)
+    (Closed : P → Type v) (Charged : P → Type w) (rank remaining : P → Nat) (start : P)
+    (step : (i : P) → (used : Nat) → clock.within start i used →
+      used + remaining i ≤ remaining start → Local clock Closed Charged rank remaining i) :
+    Arrival clock (Disposition Closed Charged) start (remaining start) :=
+  let rec go (i : P) (used : Nat) (before : clock.within start i used)
+      (room : used + remaining i ≤ remaining start) :
+      Arrival clock (Disposition Closed Charged) i (remaining i) :=
+    match step i used before room with
+    | .terminal cert => ⟨i,0,Nat.zero_le _,clock.now i,.closed cert⟩
+    | .interrupted p cost same fits cert => ⟨p,cost,fits,same,.charged cert⟩
+    | .advance p cost same _smaller fits =>
+      let later := go p (used+cost) (clock.append before same) (by omega)
+      ⟨later.point,cost+later.elapsed,
+        Nat.le_trans (Nat.add_le_add_left later.fits cost) fits,
+        clock.append same later.sameRun,later.result⟩
+  termination_by rank i
+  go start 0 (clock.now start) (by omega)
+
+#print axioms closeInBudget
+
+namespace Authority
+
+/-- One actual route along which the same consequential authority survives.
+    A legitimate response depending on old data need not carry that authority. -/
+inductive Line {C : Nat → Type u} (keeps : (k : Nat) → C k → C (k+1) → Prop)
+    {r : Nat} (a : C r) : (n : Nat) → C n → Prop where
+  | root : Line keeps a r a
+  | carry {k : Nat} {b : C k} {c : C (k+1)} :
+      Line keeps a k b → keeps k b c → Line keeps a (k+1) c
+
+theorem lineOrder {C : Nat → Type u} {keeps : (k : Nat) → C k → C (k+1) → Prop}
+    {r n : Nat} {a : C r} {b : C n} (line : Line keeps a n b) : r ≤ n := by
+  induction line with
+  | root => exact Nat.le_refl _
+  | carry _ _ earlier => exact Nat.le_trans earlier (Nat.le_succ _)
+
+theorem crossesCut {C : Nat → Type u} {keeps : (k : Nat) → C k → C (k+1) → Prop}
+    {r n : Nat} {a : C r} {b : C n} (line : Line keeps a n b)
+    (j : Nat) (after : r ≤ j) (before : j ≤ n) : ∃ x : C j, Line keeps a j x := by
+  induction line with
+  | root =>
+    have eq : j = r := by omega
+    subst j
+    exact ⟨a, .root⟩
+  | @carry k x y past step ih =>
+    by_cases h : j ≤ k
+    · exact ih h
+    · have eq : j = k+1 := by omega
+      subst j
+      exact ⟨y, .carry past step⟩
+
+theorem carryMark {C : Nat → Type u} {keeps : (k : Nat) → C k → C (k+1) → Prop}
+    {r n : Nat} {a : C r} {b : C n} (line : Line keeps a n b)
+    (mark : (k : Nat) → C k → Prop) (born : mark r a)
+    (preserve : ∀ k x y, keeps k x y → mark k x → mark (k+1) y) : mark n b := by
+  induction line with
+  | root => exact born
+  | carry _ step ih => exact preserve _ _ _ step ih
+
+inductive SourceOrParent {C : Nat → Type u} (Seed : (k : Nat) → C k → Type v)
+    (keeps : (k : Nat) → C k → C (k+1) → Prop) (n : Nat) (out : C (n+1)) where
+  | source : Seed (n+1) out → SourceOrParent Seed keeps n out
+  | parent (old : C n) : keeps n old out → SourceOrParent Seed keeps n out
+
+/-- The source occurrence, local receipt and actual chain are recoverable.
+    A split or a fanout is traced separately for each consumed liability. -/
+def traceRoot {C : Nat → Type u} {Seed : (k : Nat) → C k → Type v}
+    {keeps : (k : Nat) → C k → C (k+1) → Prop}
+    (initial : (a : C 0) → Seed 0 a)
+    (step : (n : Nat) → (b : C (n+1)) → SourceOrParent Seed keeps n b) :
+    (n : Nat) → (b : C n) → Σ r, Σ a : C r, Seed r a × PLift (Line keeps a n b)
+  | 0, b => ⟨0,b,initial b,⟨.root⟩⟩
+  | n+1, b =>
+    match step n b with
+    | .source witness => ⟨n+1,b,witness,⟨.root⟩⟩
+    | .parent old edge =>
+      let ⟨r,a,witness,line⟩ := traceRoot initial step n old
+      ⟨r,a,witness,⟨.carry line.down edge⟩⟩
+
+/-- Data for a particular expired receipt. A local mark over possible carriers
+    is propagated on ordinary retention edges. A bounded job on this run
+    excludes that mark at ONE actual cut, including dormant rearming powers.
+    The adapter must construct the job for this liability and this consumer. -/
+structure Retirement {C : Nat → Type u} (keeps : (k : Nat) → C k → C (k+1) → Prop)
+    (clock : BudgetClock Nat) {r : Nat} (a : C r) (challenge : Nat) where
+  mark : (k : Nat) → C k → Prop
+  born : mark r a
+  carry : ∀ k x y, keeps k x y → mark k x → mark (k+1) y
+  start : Nat
+  afterBirth : r ≤ start
+  budget : Nat
+  job : Arrival clock (fun j => PLift (∀ x, ¬ mark j x)) start budget
+  fitsPrefix : ∀ j cost, clock.within start j cost → cost ≤ budget → j ≤ challenge
+
+theorem excludesLine {C : Nat → Type u} {keeps : (k : Nat) → C k → C (k+1) → Prop}
+    {clock : BudgetClock Nat} (forward : ∀ i j cost, clock.within i j cost → i ≤ j)
+    {r n : Nat} {a : C r} {b : C n} (fence : Retirement keeps clock a n) :
+    ¬ Line keeps a n b := by
+  intro line
+  have after := Nat.le_trans fence.afterBirth (forward _ _ _ fence.job.sameRun)
+  have before := fence.fitsPrefix _ _ fence.job.sameRun fence.job.fits
+  obtain ⟨x,past⟩ := crossesCut line _ after before
+  exact fence.job.result.down x (carryMark past fence.mark fence.born fence.carry)
+
+/-- Obtain the *particular* still-covered origin and its physical footprint.
+    Cover membership needs only logical stability. The computed owner comes from the causal receipts.
+    The caller may build each fence under a strictly earlier prefix. -/
+def coveredOrigin {C : Nat → Type u} {Seed : (k : Nat) → C k → Type v}
+    {keeps : (k : Nat) → C k → C (k+1) → Prop} {T S : Type w}
+    (clock : BudgetClock Nat) (forward : ∀ i j cost, clock.within i j cost → i ≤ j)
+    (initial : (a : C 0) → Seed 0 a)
+    (step : (i : Nat) → (c : C (i+1)) → SourceOrParent Seed keeps i c)
+    (owner : {k : Nat} → {a : C k} → Seed k a → T)
+    (covered : T → Nat → Prop)
+    (stable : ∀ t i, (¬ ¬ covered t i) → covered t i)
+    (reach : (i : Nat) → C i → S → Prop) (footprint : T → S → Prop)
+    (originReach : ∀ {i a} (s : Seed i a) q, reach i a q → footprint (owner s) q)
+    (keepReach : ∀ k x y, keeps k x y → ∀ q, reach (k+1) y q → reach k x q)
+    (n : Nat) (effect : C n) (q : S) (applies : reach n effect q)
+    (retire : ∀ {r a} (s : Seed r a), r ≤ n → ¬ covered (owner s) n → Retirement keeps clock a n) :
+    {t : T // covered t n ∧ footprint t q} := by
+  obtain ⟨r,a,s,⟨line⟩⟩ := traceRoot initial step n effect
+  have active := stable (owner s) n (fun absent =>
+    excludesLine forward (retire s (lineOrder line) absent) line)
+  have pull : ∀ {j} {x : C j}, Line keeps a j x → reach j x q → reach r a q := by
+    intro j x h
+    induction h with
+    | root => exact id
+    | carry _ hop ih => exact fun hx => ih (keepReach _ _ _ hop q hx)
+  exact ⟨owner s,active,originReach s q (pull line applies)⟩
+
+/-- A source realization for one named physical query, new TX from an old FIFO
+    claim. A charged interruption can close this owner's route only on evidence
+    that every surviving liability has been reattributed at that event. Flight,
+    parser and receiver authority have other marks and their own clearance. -/
+def oldTxRetirement {C : Nat → Type u} {keeps : (k : Nat) → C k → C (k+1) → Prop}
+    (clock : BudgetClock Nat) {r n : Nat} (a : C r)
+    (mark : (k : Nat) → C k → Prop) (born : mark r a)
+    (carry : ∀ k x y, keeps k x y → mark k x → mark (k+1) y)
+    (old : Nat → List Nat) (Interrupt : Nat → Type w)
+    (positive : ∀ i, old i ≠ [] → 0 < (old i).sum)
+    (start : Nat) (afterBirth : r ≤ start)
+    (opportunity : (i used : Nat) → clock.within start i used →
+      used + (old i).sum ≤ (old start).sum → old i ≠ [] → TxOpportunity clock old Interrupt i)
+    (emptyClears : ∀ j, old j = [] → ∀ x, ¬ mark j x)
+    (transfer : ∀ j, Interrupt j → ∀ x, ¬ mark j x)
+    (margin : ∀ j cost, clock.within start j cost → cost ≤ (old start).sum → j ≤ n) :
+    Retirement keeps clock a n := by
+  let result := closeInBudget clock (fun j => PLift (old j = [])) Interrupt
+    (fun j => (old j).sum) (fun j => (old j).sum) start (fun j used before room =>
+      if empty : old j = [] then .terminal ⟨empty⟩ else
+        match opportunity j used before room empty with
+        | .interrupt k time receipt => .interrupted k 1 time (positive j empty) receipt
+        | .service k time event =>
+          have smaller := oldTxDecrease event
+          .advance k 1 time (by omega) smaller)
+  have clear : ∀ x, ¬ mark result.point x := by
+    cases result.result with
+    | closed h => exact emptyClears _ h.down
+    | charged receipt => exact transfer _ receipt
+  exact ⟨mark,born,carry,start,afterBirth,(old start).sum,
+    ⟨result.point,result.elapsed,result.fits,result.sameRun,⟨clear⟩⟩,margin⟩
+
+/-- Every failed support judgment, including the failure of a required action
+    to occur, must actually expose a liability. This composes that local
+    source decoder with the covered-origin theorem at the same cut. -/
+def supportForViolation {C S T : Type u} (Bad : S → Type v)
+    (reach : C → S → Prop) (covered : T → Prop) (footprint : T → S → Prop)
+    (expose : (q : S) → Bad q → Σ e : C, PLift (reach e q))
+    (locate : (e : C) → (q : S) → reach e q → {t : T // covered t ∧ footprint t q})
+    (q : S) (violation : Bad q) : {t : T // covered t ∧ footprint t q} :=
+  let ⟨effect,witness⟩ := expose q violation
+  locate effect q witness.down
+
+#print axioms supportForViolation
+#print axioms oldTxRetirement
+#print axioms traceRoot
+#print axioms crossesCut
+#print axioms excludesLine
+#print axioms coveredOrigin
+end Authority
+
 end ContextualJobs
