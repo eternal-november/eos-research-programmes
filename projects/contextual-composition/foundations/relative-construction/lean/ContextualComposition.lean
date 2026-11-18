@@ -59,3 +59,4 @@ public import ContextualComposition.EvalPaste
 public import ContextualComposition.PayloadLift
 public import ContextualComposition.EvalPayload
 public import ContextualComposition.DecoderCube
+public import ContextualComposition.NativeCube
