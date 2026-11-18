@@ -1195,3 +1195,10 @@ import ContextualComposition
 #print axioms ContextualComposition.GrothendieckStep.EvalPayload.embedSquare
 #print axioms ContextualComposition.GrothendieckStep.EvalPayload.valueSquare
 #print axioms ContextualComposition.GrothendieckStep.EvalPayload.evalSquare
+#print axioms ContextualComposition.GrothendieckStep.DecoderCube.mappedLift
+#print axioms ContextualComposition.GrothendieckStep.DecoderCube.squarePure
+#print axioms ContextualComposition.GrothendieckStep.DecoderCube.decodedPure
+#print axioms ContextualComposition.GrothendieckStep.DecoderCube.natural
+#print axioms ContextualComposition.GrothendieckStep.DecoderCube.mixed
+#print axioms ContextualComposition.GrothendieckStep.DecoderCube.iterateMixed
+#print axioms ContextualComposition.GrothendieckStep.DecoderCube.CommonLift.compare
