@@ -98,6 +98,55 @@ def weak_path(va, vb, ua, ub, cap_v=Q(0)):
     return current,d*current
 
 
+
+def differential_bit_point():
+    """Capacitor, finite bilateral unpowered shunt, and real bounded disturbances."""
+    c = Q(1, 2**64)
+    drive = Q(1, 2**14)
+    noise = 16 * Q(1, 2**24)
+    shunt_limit = Q(1, 2**17)
+
+    def sat(x):
+        return min(Q(1), max(Q(-1), x))
+
+    def branch(v, command, leakage, powered):
+        j = shunt_limit * sat(4 * max(Q(0), abs(v) - Q(3, 4))) * (1 if v >= 0 else -1)
+        i = drive * sat(2 * (command - v)) if powered else Q(0)
+        net = i + leakage - j
+        heat = v * j
+        need(heat >= 0 and abs(j) <= shunt_limit, "Shunt injected stored work")
+        need(v*(i+leakage) == v*net+heat, "Lost differential capacitor or shunt power")
+        return net, heat
+
+    checked = 0
+    for v, command, leakage, powered in product(
+            (Q(-1), -Q(7,8), -Q(3,4), -Q(1,2), Q(0), Q(1,2), Q(3,4), Q(7,8), Q(1)),
+            (-1, 1), (-noise, 0, noise), (False, True)):
+        net, heat = branch(v, command, leakage, powered)
+        need((v != 1 or net < 0) and (v != -1 or net > 0), "Outward capacitor face")
+        need(heat <= shunt_limit, "Rated heat exceeded in the physical band")
+        if powered and command*v <= Q(1,2):
+            need(command*net >= drive-noise-shunt_limit, "Lost settling current")
+        checked += 1
+    # Without the shunt, the source can be dark at +1 while a weak conductor still injects noise.
+    need(noise > 0 and branch(Q(1), 1, noise, False)[0] == noise-shunt_limit < 0,
+         "Missing unpowered upper-face discriminator")
+    need(branch(Q(-1), -1, -noise, False)[0] == shunt_limit-noise > 0,
+         "Missing unpowered lower-face discriminator")
+    settle = 3*c/(2*(drive-noise-shunt_limit))
+    prior_allowance = 4*c/drive
+    need(settle < prior_allowance and 2*settle < Q(1, 1000*2**30),
+         "Two new settling intervals exceeded the existing private timing margin")
+    # Allow a receiving differential shunt at either end of each private signal position.
+    per_host = 2*2*81*4096
+    return {"tested_voltage_branches": checked, "leaf_capacity":str(c),
+            "outward_without_shunt":str(noise), "inward_current_margin_at_either_face":str(shunt_limit-noise),
+            "holding_threshold_current_lower":str(drive-noise-shunt_limit),
+            "settling_to_signed_half_q":str(settle), "previous_wire_allowance_q":str(prior_allowance),
+            "shunt_heat_per_leaf_upper":str(shunt_limit), "shunt_positions_per_host":per_host,
+            "aggregate_shunt_heat_upper":str(per_host*shunt_limit)}
+
+
 def interface_fixture():
     tests = 0
     for left, right, uraw, ubank, cap in product((Q(-2**30),Q(1,4),Q(3)),
@@ -120,7 +169,7 @@ def interface_fixture():
     vulnerable = Q(40)*2**40
     need(vulnerable > 2**45 and vulnerable < 2**58, "Weld witness at wrong grade")
     return {"two_ended_cuts":tests,"fault_weld_current":str(vulnerable),
-            "one_native_perturbation_settling":str(Q(4,2**64)*2**14)}
+            "qualified_wire_bound":differential_bit_point()["settling_to_signed_half_q"]}
 
 
 def neutral(points, current, loss):
@@ -180,10 +229,11 @@ def retirement(j, neutral_bounds):
     on,off,em=map(Q,(old["actual_Eon"],old["actual_Eoff"],old["actual_Emax"]))
     t=Q(native["new_bank_rate"])/2
     refund=Q(2**52)
-    ret=Q(old["residual_input_power"])+2**44
+    shunt_heat=Q(differential_bit_point()["aggregate_shunt_heat_upper"])
+    ret=Q(old["residual_input_power"])+2**44+shunt_heat/2
     rho=ret+refund/10
     need(rho < off/40 and em+t+refund < 4*off and off+t+refund < on,"Cutoff bridge fails")
-    extra_rate=Q(2**44)
+    extra_rate=Q(2**44)+shunt_heat/2
     startup=Q(native["startup_margin"])-6*extra_rate-refund
     post=Q(native["post_on_margin"])-6*extra_rate-refund
     need(min(startup,post)>0 and Q(native["new_bank_rate"])>10*extra_rate,
@@ -194,7 +244,7 @@ def retirement(j, neutral_bounds):
     zone=Q(host["paid_trigger"]["all_mode_bath_margin_after_slot_terminals"])
     # Two bank hard clamps and pad returns plus both adjacent neutral enclosures and all
     # added damage strands, and a conservative allowance for frame power at the 20-hop source interface.
-    allocated = 4*41*(2*(2**65+2**64)+Q(neutral_bounds["two_adjacent_exhaust_peak"])
+    allocated = 4*41*(2*shunt_heat+2*(2**65+2**64)+Q(neutral_bounds["two_adjacent_exhaust_peak"])
                       +2**48*2**30 + 40*1280*2**56 + 40*4*900*2**48)
     reaction = Q(host["paid_trigger"]["remaining_reaction"])-Q(41*(16*2**35+8),2**62)
     tmax = Q(native["new_bank_rate"])/2
@@ -202,7 +252,7 @@ def retirement(j, neutral_bounds):
          "New mount force, carrier voltage or supply current out of bounds")
     need(zone>allocated and 2*extra_rate < Q(read("world_channel_results.json")["source"]["remaining_supply_rate"]),
          "Reference bills exceed the changed host")
-    return {"remaining_mechanical_reaction":str(reaction), "Fmax_over_off":str((em+t+refund)/off),"fourfold_rho_over_kEoff":str(40*rho/off),
+    return {"continuous_reference_allowance_per_bank":str(extra_rate), "remaining_mechanical_reaction":str(reaction), "Fmax_over_off":str((em+t+refund)/off),"fourfold_rho_over_kEoff":str(40*rho/off),
             "low_sample_to_rearm_margin":str(on-off-t-refund),"six_q_startup_margin":str(startup),
             "post_on_margin":str(post),"U_working_quarter_margin":str(remaining),
             "remaining_zone_work_margin":str(zone-allocated),"added_capacity":str(capacity)}
@@ -219,7 +269,7 @@ def main():
     return {"local_sha256_lf":{f:sha256((HERE/f).read_text(encoding="utf-8").encode()).hexdigest() for f in files},
             "historical_current_cut":{f:sha256(old_document(f).encode()).hexdigest()
                                       for f in ("CURRENT-CUT.md","current_cut_model.py","current_cut_results.json")},
-            "working_cut":curr,"charge":charge_point(j),"physical_pairs":interface_fixture(),
+            "working_cut":curr,"differential_bits":differential_bit_point(),"charge":charge_point(j),"physical_pairs":interface_fixture(),
             "midpoints":bus,"retirement":retirement(j,bus)}
 
 
