@@ -37,8 +37,12 @@ def need(ok, message):
         raise ValueError(message)
 
 
+INPUT_BASE = "318b343be4953f8ec58121ac1785b121c17794d2"
+
+
 def binding(name):
-    committed = subprocess.check_output(["git", "show", BASE + ":" + PREFIX + name], cwd=REPO)
+    source = INPUT_BASE if name == "input_lifecycle.py" else BASE
+    committed = subprocess.check_output(["git", "show", source + ":" + PREFIX + name], cwd=REPO)
     clean = lambda b: b.replace(b"\r\n", b"\n")
     need(clean((HERE / name).read_bytes()) == clean(committed), "Supplier changed: " + name)
     return sha256(clean(committed)).hexdigest()
@@ -235,7 +239,7 @@ def generate():
     itinerary=json.loads((HERE/"interrupted_renewal_results.json").read_text(encoding="utf-8"))
     need(Q(itinerary["H"])==H,"History must be rebound for this H")
     return encode(dict(scope="Connected regional raw schedule and conditional realized finite-window/unbounded load theorem",
-                       base_commit=BASE, regions=region_regressions(), schedule=raw_checks(),
+                       base_commit=BASE, input_commit=INPUT_BASE, regions=region_regressions(), schedule=raw_checks(),
                        source_inputs=input_checks(), paid_output=output_checks(),
                        service_lower=service, net_service_lower=service-Q(1,10), combined_active_rung_prefix_dissipation_lower_per_Rm="256/5",
                        spatial_compatibility_proved_at_stated_support=True,

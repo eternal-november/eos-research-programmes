@@ -1,6 +1,6 @@
 # A spatial fault calendar with a coupled-history admission test
 
-**Status.** Derived raw spatial and temporal envelopes for the actual ladder, bounded source-operation witnesses, and a conditional theorem for repeated positive-duration impairment on one continuing history. The population and event-count arguments are independent of the controller winning. The physical prefix-extension and recurring opportunity suppliers below are still open. A full admitted positive RP2 history and service theorem do not follow from these checks alone.
+**Status.** Derived raw spatial and temporal envelopes for the actual ladder, bounded source-operation witnesses, and a conditional theorem for repeated positive-duration impairment on one continuing history. The population and event-count arguments are independent of the controller winning. The physical prefix-extension and recurring opportunity suppliers below are still open. The raw-lane comparison uses the integrated native input-source version 318b343; the claims about source opportunities still consume their separate timing and funding conditions. A full admitted positive RP2 history and service theorem do not follow from these checks alone.
 
 ### One region identity for each event, with room for straddling exports
 
