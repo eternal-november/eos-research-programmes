@@ -1,0 +1,63 @@
+# Protection of an independently acting target without internal write access
+
+Status: derived source-compatible positive compensation branch and finite-capacity comparisons. This consumes the maintained observation, actual-output, resource and recurrence suppliers of the same local-control family. It supplies no new trusted controller and does not establish those suppliers by assumption. The main source remains under admission review. This is the IA1 branch and part of W5, not a replacement for IA2's constructed access to renewable fixtures.
+
+## The target and the comparison interface
+
+Make INSTANCE's hostile input explicit as the output of an independently owned target with arbitrary hidden internal state and arbitrary causal policy. Its actual regional/coordinate injection h lies in[-a,a]. There is no defender operation that reads its internal code, halts its processor, overwrites it, asks it to cooperate, or sets h to zero. It may keep acting indefinitely and choose its output reactively. The target's raw output capacity is physical design information; its realized policy and future actions are not. Its influence is not charged as a fictitious fresh acquisition on each time step.
+
+The defenders retain their own actual world-output actuators, complementary rank-one sensing and distributed maintenance equipment. The plant, box[.35,.65]^2, positive signed service.1, factual maintenance constraints, shared stock and joint fault history remain those of INSTANCE. An internal halt/write path into the hostile target is absent throughout both the success and failure comparisons. The positive mechanism is active counteraction by the maintained population, not a preinstalled effective brake on that target.
+
+Peer code renewal and internal access to the target are different permissions. Defenders still construct and renew the particular peer paths specified by IA2. This branch does not assert that deleting every peer reconstruction lead preserves the full recurring mission. It answers the required positive question about a hazardous independently acting target whose own internals cannot be controlled. The distinct all-write-removal boundary below keeps that distinction explicit.
+
+The closest mathematics is the already assessed robust invariance/adversarial-input control literature in SOURCES, together with the source's coupled inward-collar proof. No novelty claim is made. The additional work is the exact access/mission map, the actual stored policy's contribution and the shared-dependency preservation; treating h as a named bounded disturbance alone would not construct the compensating actions.
+
+## Constructive compensation and capacity law
+
+Each actual maintained local executor uses its own acquired sum/difference evidence to compute the two coordinate commands. It neither identifies h nor agrees on a common exact state. The offline choice of P(d) uses the declared capacity a and uncertainty bounds, not the hidden target trajectory. Actual world outputs must satisfy the interval/RC tracking adapter, including delivery, old latches, entry and physical blending. The maintenance path still pays its own factual guards and shared resource costs. These are exactly the joint suppliers consumed by the main proof, not an additional independently healthy population.
+
+Let b bound the global unusable-host cover, p the number of physically damaged fixtures in it and M>=1 their complete per-coordinate export bound. Each region retains at least m−b useful local sources. A conservative adverse weight is W=b+(M−1)p. With the current actual-output envelope (.84 at an upper.01 collar,.36 at a lower.01 collar, and.3 interior floor), the sufficient inequalities are
+
+    upper: ((m-b)*.84-W)/m > .61+a+.02+.0006,
+    lower: ((m-b)*.36+W)/m < .59-a-.02-.0006,
+    service: ((m-b)*.3-W)/m >= .1.
+
+The.0006 term accounts for all three bounded diffusive couplings within the collar. Faults and hostile input occur together in these inequalities. For m>=72,b<=6,p<=1,M=4,a=.01, the actual margins are11/2500 and261/2500, and actual service is at least3/20. Thus the independent target can continue arbitrary bounded action forever while the same maintained population actively compensates, conditional on the source suppliers already being constructed. It is not necessary to obtain agreement, authenticate the target's reports or restore its internal integrity.
+
+More generally, for collar width delta and the same prescribed controller, the upper surplus is
+
+    .23-a-[1.86*b+(M-1)*p]/m-delta*[2*(1-b/m)+.06].
+
+The lower surplus replaces1.86*b by.66*b. The service expression remains.3-[1.3*b+(M-1)*p]/m. These expose a meaningful joint influence/information/capacity tradeoff. At the fixed72/6/1/4 point and delta=.01, this controller's certified upper threshold is a<9/625=.0144. A smaller positive collar may work when the exact-face surplus remains positive. Failure of one collar or controller certificate is not impossibility for all external strategies.
+
+This is actual compensation: if the independently acting target and other disturbances were unbounded, no finite population capacity could justify the inequalities. Their finite raw limits are legitimate source data; an already safe or stopped target would remove the consumer. The final source map still has to show that all maintenance-to-world and stored-energy effects fit M/e rather than hide another uncontrolled input.
+
+## The independently acting target is materially hazardous
+
+Compare the feedback policy with a policy that holds every intact world output at.6 while retaining the same installed actuators, sensing, maintenance paths and mission. Choose admitted constant inflow.6, strictly positive symmetric diffusive coefficients, identical initial regional/coordinate state.6, and hostile injection+.01. With no compensating change in output and nonnegative collateral input, the spatial/coordinate mean grows at least.01 per plant-time unit: symmetric coupling terms cancel in that mean. Hence by time greater than5 at least one coordinate leaves the box. The nonnegative-collateral case is the consumed comparison; no zero-collateral specialization is claimed for the final thermal/mechanical point. Actual RC trackers initialized at their constant.6 command remain at.6. The feedback branch's inward inequalities cover this same injection and uncertainty family.
+
+This comparison does not remove all defender influence. It holds the physical action set fixed and compares a concrete inadequate use with the actively compensating policy. It also does not claim that every primitive coefficient must be inferred online; those remain supplied uncertain plant data. The independently acting target's ability to force the constant-output failure makes its no-write status consequential rather than an unused or harmless role.
+
+## A source-valid external-capacity obstruction
+
+A stronger hostile target remains limited by a finite, declared capacity, but external compensation also has finite capacity. Consider a source variant retaining no internal target access and all ordinary defender actions, with a=.5. Choose inflow.61 and let the target inject+.5 into a protected coordinate. Choose the allowed scenario with no physical fixture damage (p=0), or with failed outputs chosen adversarially not to help. All controllable unit-capacity world sources then have actual output at most1, u<=1 even if every defender saturates its available actuator. While the state remains in the box, the three diffusive terms can offset at most.018. Even allowing collateral input to offset this by its entire.02 bound,
+
+    x_dot >= .61+.5-1-.018-.02 =9/125 >0.
+
+No available local or global policy can keep that coordinate in the box indefinitely from the specified initial interval. Starting at.6, the remaining.05 is exhausted within25/36 plant-time units. Internal access to the hostile target has not been removed in one branch and restored in the other; it is absent in both. This is a finite input-versus-control obstruction, not a failed bounded search or a failure of the chosen feedback rule alone. If the larger source provides another actual brake, new storage/output capacity or a new permitted intervention into the target, the action set changes and the obstruction must be recomputed.
+
+The gap between the sufficient current-policy threshold.0144 at its chosen collar and this strong capacity obstruction is not claimed closed. Weighted feasibility and a positive integrated construction are the promised result here; universal nonlinear optimal synthesis is not. The source's nominal controller range[.3,.9] is not used as an artificial universal upper bound: the obstruction grants the full physical unit output to every controllable source.
+
+## Removing all reconstruction writes is a separate boundary
+
+For the source variant in which defenders lose every means of changing a cartridge's code, ordinary physical isolation, reset, body selection and world compensation can remain. They do not recreate a corrupted image. Suppose the finite installed body pool is the entire code-bearing reserve, nominal code never self-writes C, no external preparation/replacement can create another correct body, and the admitted raw exposure reach can eventually overwrite every body that continues to perform a useful programmable role. The source's arbitrary direct C deviations may install persistent hostile code; ending direct access does not reverse it.
+
+Choose an adversary that writes an absorbing hostile program into each newly exposed body and never voluntarily restores it. Count bodies not yet poisoned this way, rather than silently identifying all useful programs with the exact bytes P. The count is nonincreasing without code writes or body creation, and decreases whenever another previously useful body is poisoned. Physical reset or changes to private W do not turn that particular hostile program into a controller; an interpreter, code-splicing path or independently prepared replacement capable of doing so would be an additional mechanism excluded by this comparison's explicit source interface. A sufficiently spaced sequence respects any positive acquisition rate and finite burst bound while eventually exhausting a finite reserve. Permanently unused or physically unreachable bodies cannot supply ongoing computation without becoming useful exposed bodies. Thus either a further code/body renewal mechanism is needed, a smaller exposure class is stated, or this code-dependent indefinite service guarantee fails. This is a conservation/exposure argument, not a claim that no architecture anywhere can provide physical protection without rewriting software. A source with a separate lawful passive regulator or prepared replacement mechanism has different available structure.
+
+For the present programmable world-output source, the adversary can choose ordinary admitted malicious outputs rather than a hypothetical new opcode: the retained CYCLE self-writer already demonstrates negative world emissions after release. After all useful correct executors are lost, retained commanded outputs can be driven nonpositive or cut to zero; the required positive service then fails. If an alleged design instead relies on a permanently correct hidden installer or an inexhaustible clean reserve, it has changed this comparison's premises. A finite-prefix guarantee while enough initial correct bodies survive remains useful but does not satisfy the same indefinite recurring mission.
+
+This boundary explains why the positive IA1 construction retains peer renewal while denying access to the independent hazardous target. It preserves meaningful external alternatives in the comparison and does not treat absent internal write access as identical to absent influence. The raw reach/cofinal-exposure premise is material: an unexposed reserve or a source that never grants access to useful bodies must not be silently declared exhaustible.
+
+## Evidence and remaining assembly
+
+The general interval/collar and finite-capacity arguments above are direct derivations; access_model.py reproduces the executable arithmetic. EFFECTS supplies the selected mechanized weighted bounds. The full positive interpretation additionally consumes the constructed probe, actual-output, initialization, renewal and resource suppliers of the same source. It cannot close IA1 by treating those as permanently reliable services. The code-stock exhaustion argument has explicit reach and absence-of-replacement hypotheses and is not a universal theorem about all no-write systems. Repository acceptance and novelty remain separate from mathematical support.

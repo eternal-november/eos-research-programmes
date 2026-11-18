@@ -1,0 +1,60 @@
+# Full Byzantine-control program: live obligation ledger
+
+The independent full-program scientific/original-intent verdict is PASS, with exact aggregate reproduction and a retained checked commit required before the Goal-completion act. The objective remains the whole program at7343f54e2c839cc7898c6f0e6c86bea8f4b53f25: W0–W6, BC1–BC7, RN1–RN5, IA1–IA4, AC1–AC6,45 mandatory families and18 joint chains under the stronger asymmetric assumption-admissibility rule. The user resumed execution through completion. No component milestone, smaller replacement Goal or repository acceptance closes it.
+
+This ledger holds live state. Earlier authoring history and intermediate electrical inventories remain in Git and their scoped artifacts; they are not active assignments. The controlling construction account is [COMPOSITION](COMPOSITION.md). The primary source is a typed stateful hybrid/port system. The detailed electrical apparatus remains a separate conditional refinement, not a source that has been certified by changing its interpretation.
+
+## Integrated scientific state
+
+[PORT-SOURCE](PORT-SOURCE.md), frozen at worker95f4a0938c689dcb9d1ff13af2d077d70a21bbf0, and [PORT-RESOURCES](PORT-RESOURCES.md), integrated ate666c823a55be7486888cb3b581722ec797d48e8, passed independent component review and root reproduction. They give the actual state/port/fault graph and one direct bill. Retained momentum/deformation, spring-side force, actual gap, independent input/private execution placement, causal holds, finite work stores, real overflow, initialized pending state and WORLD units are explicit. Generic smooth throttling is not applied to fully prepaid finite operations. The receiver-owned eight-edge timer works under independent phases without waiting on raw ready/busy.
+
+[PRIMARY-ASSEMBLY](PRIMARY-ASSEMBLY.md) passed independent scientific adapter review at worker712112c12f350daf7ed2acfeda50c9753af79fc8 and is integrated at205d54664aeec69a46182a30b8b8f24e0adfbbcc. Root reproduced the record and checked equality of all mathematical fields after review-status/hash edits. It supplies the local-policy lift, nonblocking coupled modes, simultaneous initial family and initialized causal recurrence. The scientific review found no remaining concrete adapter objection at the declared source scope. Its scientific adapter pass remains distinct from the separately passed whole-contract admission.
+
+The actual return bound is H=10456118540795 at unchanged lambda=1/104548602495950. The six-incident cover is derived over complete attempt/lookback windows. An incident's host execution/output, recipient-specific input and physical export projections remain distinct. Persistent E(i,o) poison may retain healed-origin labels inside its already charged footprint; return removes uncharged old power at conforming consumers, not every historical descendant or adversary memory.
+
+[PRIMARY-COMPARISONS](PRIMARY-COMPARISONS.md) passed independent W5 review at workerd6b529e269f2b0f110bdef784e6d7984242c33ca; the root copy reproduces and retains all mathematical fields. It binds the actual source-sized no-write/capacity bounds, differing-command and guard witnesses, ordinary-memory/private-custody replacement, unchanged-rate comparison, timing/history restrictions, recurring supply and complete-boundary finite health. Review repaired a wrong physical candidate index, the enlarged-inlet sensing bound, an inflated timing-counterexample claim and a weaker-mission substitution. The positive and negative result directions remain explicit.
+
+The core point is deliberately conservative, not a practical hardware claim or optimal frontier. m changes the actual world capacity m/tau, not just a voting denominator. Physically intact funding boundaries receive the derived usable reserve and service; damaged paths retain hard stock/thermal/export laws without a promised full reserve. E may rise after a low-E observation while retained E+T still prevents rearm. These distinctions must survive the final synthesis.
+
+## Completion evidence and actual owners
+
+| Obligation | Live state and next action |
+|---|---|
+| W0 / source adequacy | Scientific source eligibility and initialized adapter passed. Full-contract assumption/original-intent admission has passed against ASSUMPTIONS and COVERAGE. No outcome-aware gate or achieved renewal premise is permitted. |
+| W1–W4 / joint theory | The selected source's scientific adapter is checked. Reopen only on an actual failed supplier or audit objection, not a stale earlier circuit task. Preserve every admitted unsuccessful maximal outcome and one Gamma. |
+| W5 / comparisons | Independent artifact review passed atd6b529e and is integrated at0b8807e50f3693856f7a8ec8e07ab6e47b3f9ee3. Dense/threshold versus local ordinary memory is an open-interface mechanism replacement, not an equally priced full-network benchmark. |
+| W6 / coverage and assumptions | Coordinator drafted [COVERAGE](COVERAGE.md),45/18 mode maps, and [ASSUMPTIONS](ASSUMPTIONS.md),A01–A18 plus conditional/excluded boundaries. The read-only reviewer completed the independent full-program scientific/original-intent audit with PASS; the maps alone are not their own verdict. |
+| W6 / reproducibility | [verify.py](verify.py) independently passed its evidence-binding/inventory review. It anchors the exact contract and historical manifests, preserves the old FULL-PROGRAM body under a historical-scope wrapper, inventories39 local model/probes, distinguishes optimization rejection from checked assert-free exceptions, and checks strict Lean dependencies. AUDIT and SYNTHESIS are completed and independently reviewed. Matching verification.json from the final write/check is the remaining execution condition; absence or mismatch leaves it open. |
+| Integrated explanation | SYNTHESIS supplies the independently reviewed theorem family, design consequences, imported mathematics, primitive assumptions, large conservative point and limitations. Do not claim publication novelty, arbitrary-plant synthesis or deployed apparatus. |
+
+Coordinator owns the integration checkout, ledger, coverage/assumptions, final audit transcription, synthesis and aggregate. The control worker retains the frozen PORT-SOURCE and PRIMARY-COMPARISONS artifacts in its isolated worktree and supplied the read-only verifier audit. The evolution worker owns PRIMARY-ASSEMBLY and supplied the independent W5 audit. The receiver/prior-art reviewer completed the full program audit read-only. No separate user-owned chat is needed.
+
+The independent reviewer issued the full-program scientific/original-intent PASS conditional only on freezing the reviewed package and matching aggregate reproduction; no mandatory research supplier remains identified. Retained BC7 means the actual three-party synchronous signed-broadcast/repeated-ledger baseline and correctly scoped finite synchronous/perfect-recall hierarchy import. It is not HotStuff, an executed general synthesizer or resource-bounded indefinite cryptographic renewal.
+
+## Required final integration discipline
+
+All identified independent-review findings are repaired in the named artifacts. Bind the corrected comparison and whole-contract audit to the final aggregate. Every mandatory mode must have its required result; a row count, stated residual or certificate failure is not completion. Keep source-negative results distinct from failure of a sufficient bound, selected-policy counterexamples and scenario restrictions. The fixed-rule rival remains an intact design-time policy comparison, not a runtime fault assigned after it acts badly.
+
+Run the final source-bound aggregate with unoptimized Python3.12 and Lean4.33.0, then reproduce its exact record without mutation. The aggregate must retain the current contract, source/proofs/code, all audit/assumption/coverage/synthesis files and old evidence at its actual hypotheses. A matching executable record does not substitute for the independent scientific/original-intent verdict. If a changed input invalidates reproduction, inspect and re-review the affected result before deliberate regeneration.
+
+Only after the independent full-contract verdict and matching aggregate support completion may the Goal be marked complete. Preserve the coherent checked commit and worktree, and report limitations and acceptance separately. Do not merge or push the primary checkout. An actual execution limit calls for a resumable checkpoint, not success or a smaller objective.
+
+## Retained scopes and reopening conditions
+
+The old a943e3cef475591fe285961128636b8bf619c89d recurring package remains mathematically checked only under its f88e212 requirements; its completion label does not close AC. Its encoded scientific inputs remain unchanged. FULL-PROGRAM's newly added navigation prefix exposes the older R1–R8 scope while the original body is checked exactly against its historical manifests. No old verification.json is refreshed to imply a new result.
+
+INFORMATION/TIMING/RETURN, PROGRAM/RUNTIME-PORTS, ACQUISITION/STREAMING/RECEIVER, CLAMP/OPERATIONS/CONTINUITY, HYBRID/GEOMETRY/INITIAL-RETURN, EFFECTS/FAULT-MAP/PROBE-MAP, and the coupled/composition/flow/boundary kernels retain their explicit meanings. New force, world, timer and retained-transit suppliers are transported by PRIMARY-ASSEMBLY; old additive-force, M4-world or hard-cycle timing numbers are not silently reused. Former opaque future-ready or full-image predicates are not new source primitives.
+
+The optional detailed electrical branch retains its exact-zero/capacitive path and complete-cut inventory limitations. Do not restart its expansion as a mandatory prerequisite without a new consumed claim. Material removal of damping/dump floors, extra stores or routes, a different contact decoder, external impulse energy or stronger physical common causes reopens the corresponding source result. Even one such removal can be material; disclosure alone does not confer tolerance of it. C09 deployment/fabrication evidence remains separate.
+
+The primary indefinite source uses explicitly repeatable elementary laws. PRIMARY-COMPARISONS supplies a finite-health consequence on complete actual WORLD flow, with nonempty unavailable continuations at exhaustion. It does not claim indefinite wearing operation or supplied useful replacement. A later wearing-source claim activates actual preparation, placement, integrity and shared-cost obligations.
+
+## Workspace and usage state
+
+Integration: C:\Users\Sean\.codex\worktrees\byzantine-program-enactment\eos-garden, branch codex/byzantine-control-full-20261023. Retained writing worktrees are byzantine-joint-control on codex/byzantine-conduit-20261104 and byzantine-joint-evolution on codex/byzantine-energy-20261104. The retained information checkout is on codex/byzantine-receiver-power-20261104. Older research and contribution branches remain recoverable. Worker commits do not imply root integration unless recorded above.
+
+The primary checkout C:\Users\Sean\Desktop\eos-garden-workspace\eos-garden remains read-only with unrelated work. Last recorded audited HEAD is6fd7b83123de03ceb1c47f8d2d5f014b089976bd; do not revert later user-owned changes. No primary staging, reset, stash, cleanup, merge or remote push occurred.
+
+The one authorized banked usage reset was consumed: the user confirmed approval, and the2026-11-05 13:37:05 UTC read showed0% used with credits reduced2→1. Resets used under that authorization:1. No second reset is authorized. The last read at2026-11-05 23:58:26 UTC showed51% used; it is a timestamped snapshot, not a current guarantee. Capacity errors and actual usage exhaustion remain different.
+
+Checkpoint kernel: this ledger retains the full objective, selected source, exact checked scopes, ownership, pending completion conditions and reopening boundaries. It intentionally omits authoring chronology and retired implementation branches as active work. Their intellectual results and counterexamples remain in the linked artifacts and Git; no live mandatory obligation is discarded by this compression.

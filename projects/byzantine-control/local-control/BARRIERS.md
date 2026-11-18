@@ -1,0 +1,60 @@
+# Prospective physical capacity under independently fallible barriers
+
+Status: proved conditional inference/continuation theorem and an ordinary finite-source adapter under construction/checking. The selected repair observes a capacity for future adverse flow, rather than treating an instantaneous low current as a guarantee about a later reconnected contact. The factual rule, actual local information, deceptive inputs and pending pressure remain unchanged. Physical placement, all-path current/energy containment and delivery are explicit unclosed source obligations; this file is not W0 admission.
+
+The conditional resistor construction in CONDUITS remains a comparison. Its current-source and fixed-coefficient hypotheses do not survive arbitrary new bypasses. This construction changes the raw-measurement-to-guard refinement instead of pretending those hypotheses were established. It does not add a protected global controller or a permission-aware circuit.
+
+## Prior foundation and the remaining adapter
+
+[✓] [IAEA SSG-53](https://nucleus.iaea.org/sites/nss-oui/Published%20Collections/m_d2f19127-ee0d-43e8-97b8-d4d4adda3d53/m_d2f19127-ee0d-43e8-97b8-d4d4adda3d53__11_0.Html), paragraphs4.154,4.159–4.160, inspected for this construction: independently actuated series isolation, preservation of needed functions, and trapped-region overpressure are separate design duties. This is engineering precedent for examining the whole path; it supplies neither our fault budget nor a mathematical certificate. The targeted NRC failure-dependency page was indexed but returned403 on opening and is not credited as a verified passage. Conventional series/parallel network reasoning and the elementary order-statistic argument below are imported/reconstructed mathematics, not novelty claims. Our required adapter is their composition with actual Byzantine inputs, delayed pressure, reopened service, retained internal energy and this finite mutable program.
+
+## The source interface, with its kernel exposed
+
+For one actual constrained conduit, use two physically disjoint parallel transport paths. Each path has three series barrier mechanisms. A barrier is an ordinary passive impedance/attenuation mechanism whose physically controlled capacity can change; it does not inspect code, intention or permission. Its actual motion, resistance, stores, terminal voltage, control ports and failure zone belong to the source. A physically conforming barrier's capacity `q_e(t)>=0` is an upper bound on the adverse flow attributable to its path when that barrier is the surviving restriction. This is a physical implication to prove from the complete circuit, not the definition of successful control.
+
+The logical interface is, for every time `t`,
+
+    actual_conduit_load(t) <= residual_load(t) + sum_path min_{e physically conforming on path} q_load,e(t),
+    actual_isolation_deficit(t) <= residual_isolation(t) + sum_path min_{e physically conforming on path} q_iso,e(t).
+
+The right-hand sides may be clipped at a rejecting upper sensor cap; only a low passing bound is used. At most one of the six barrier mechanisms is physically nonconforming over the entire consumed observation/pressure window. This is an actual joint physical-incidence claim, not six independently assigned budgets. A direct code/input compromise can coexist and can send arbitrary commands; its motion remains inside the constitutive capacity-rate law unless the actual physical mechanism is itself among the counted failures. The program sees no such labels.
+
+Every path from any continuing source or retained store to the actual constrained contact must be included. A source on the contact side of the surviving barrier, a cross-conduit return, a bypass between common ends, an intermediate charged capacitor, or a wrong physical binding invalidates the displayed implication unless its actual effect is included in the residual. Conservation alone does not bound instantaneous residual current. In particular, a failed final barrier may release old charge after upstream shutdown; its peak is governed by its real discharge path/voltage, not by the mere finiteness of its stock. Zero-storage islands are not silently substituted for that duty. Neither the written network nor its compiled evidence adapter establishes this missing physical implication.
+
+## Delayed order-statistic envelope
+
+An intact provider samples the three capacities of a path at actual, possibly different times `s_0,s_1,s_2`. For each physically conforming barrier, its raw decoded sample `y_e` satisfies the required one-sided error law `q_e(s_e)<=y_e+epsilon`, even though the provider does not know which barrier is faulty. A missing/invalid sample is represented as rejecting maximum capacity. A faulty barrier's value may be arbitrary. Let `m` be the second-smallest of the three samples.
+
+Among the two samples no greater than `m`, at least one comes from a physically conforming barrier throughout the consumed window. Fix such a barrier `e`; the proof may select it, while the program does not. If its actual future envelope is `q_e(t)<=q_e(s_e)+v(t-s_e)+j`, then
+
+    min_good q_e(t) <= m + epsilon + v(t-s_e) + j.
+
+Apply this separately to both parallel paths and sum. The two witnesses need not be the same physical site, need not be sampled simultaneously and need not remain the numerically smallest samples at later times. Each receives the full oldest-member-to-last-pressure horizon. A max over all eleven constrained conduits preserves the resulting upper envelope. Ordinary13-origin robust inference then applies to these provider-computed bounds under its separate same-history origin cover. The provider fold is not a trusted estimator service; its raw operands, code, calibration and publications remain faultable.
+
+With per-raw-head error `.005`, the two path witnesses consume total error `.01`, preserving the previous guard's error allowance. This is a changed raw head precision requirement, not a claim that the old ten-unit raw-error relation somehow adds to ten after summing two paths. The ordinary range checks may retain their wider ten-unit allowance. A saturated or rejecting high capacity can never manufacture a low passing estimate; the decode proof is one-sided.
+
+One concrete prospective capacity profile has load capacity at most1.5 per path, with each conforming barrier driven through a40000-length shunt stroke at speed at most1.1. Its normalized capacity-rate bound is33/800000 per path, so the two path witnesses consume at most33/400000 <1/10000. Isolation capacity at most.5 per path has rate11/800000 per path, giving exactly11/400000 in total. Nonzero residual variations and current carried by intermediate stores still need their own actual bounds before the remaining `.2` load and `.1` isolation allowances may be consumed. The profile does not license arbitrary instantaneous conductance jumps at a supposedly conforming barrier.
+
+## Safety and reopened service require different redundancy
+
+Two series barriers and the larger of their two sampled capacities suffice for a one-failure safety bound, but a barrier jammed open can keep that maximum high forever and prevent needed shutdown. Three series barriers with the second-smallest sample tolerate one such jam while establishing the same bound. They still fail the service requirement when one barrier jams fully closed: a series path cannot reconnect through it.
+
+The two parallel paths repair this latter obstruction at the graph level. With one physical failure among six independently reached mechanisms, at least one complete path remains physically conforming. If each complete path has actual full required delivery capacity, reopening its three conforming barriers can restore needed service while the other path remains blocked. For shutdown, each path retains at least two conforming members, so both medians become low even if one member jams high. Parallel delivery is not credited at half the required rate: each path's complete supply, losses and charging must be provisioned and proved. Every additional mechanical stroke and actuator field must be paid; a single2-unit command is not free6-fold force.
+
+This is conditional progress at the actual network interface. It still needs ordinary local code that drives enough conforming barriers to their stops, sound aggregate stop/formation information, compatible stale-command drainage and enough powered control through the transition. An existing target switch standing for one old sleeve is not evidence that all six new mechanisms reached their required states. The source must also explain how one physical event cannot reach several series members or both parallel paths; ownership names alone do not prove that property.
+
+## Finite provider implementation
+
+`conduit_program_source.py` replaces only PROGRAM's `publish_fast` body at offline compilation. All other procedures and machine instructions remain the current base source. The result is ordinary encoded mutable instructions; no median opcode, truth label or protected run-time callback is added. The adapter expands each original physical conduit into six actually sampled barrier members, giving66 raw members per side and264 functional heads per target across both quantity kinds/sides. FAST_BATCH24 is a candidate schedule whose exact work and ages are computed by the existing compiler/certificate, not assumed.
+
+The provider uses retained input-operation scratch `I6` for the max over finished conduits, `I7/I8` for the first two members' min/max, and `I9` for the two path medians' sum. Ordinary comparisons select the third member's median and ordinary additions sum the two paths. These ten256-bit source scratch words fit the existing4096-bit allocation. Query processing may mutate `I0..I5` between invocations; it must not overwrite the four retained fold slots. Every raw copy remains in the source's I/operation map, not a hidden trusted private input snapshot.
+
+An invalid/missing member becomes rejecting upper capacity rather than poisoning the whole fold. One such member does not remove the useful two-good-member bound. Two unsupported bad members in one triplet can fabricate a low median; the executable keeps this countercase. Partial fold state is cleared on the actual first member of each group, then published only after the finite complete sweep. Startup/debt/formation rules and actual source publication timing remain consumed.
+
+This implementation is a provider inference adapter. It does not yet change the helper's physical SHUNT/ISO stop policy, instantiate six independent actuators, or bind all new paths to the complete source resource history. Old target-status predicates cannot be promoted to correct aggregate stop facts by this file. Likewise the measured capacity's actual circuit refinement remains the first interface above, not the old PROBE-MAP equality to instantaneous current.
+
+## Evidence and remaining construction
+
+`barrier_model.py --write` and a separate `--check` compile the composed source, execute median/sum/max folds with actual interleaved query routines, derive finite code/work/age bounds, and check order-statistic continuation and safety-versus-service counterexamples. The written proof quantifies arbitrary bounded values and sample times; finite enumeration checks its encoding. The record binds the actual base and replacement sources.
+
+The theorem changes a real source-admission choice: future safety may follow from obtained bounds on surviving physical capacities even when instantaneous contact current or a shared status report has no useful future envelope. It does not remove the difficult physical part. The exact live obligations are the common fault/cutset and residual-current map, complete finite delivery/reopening construction, actual actuation/stop adapter, new sensor precision and all additional hardware/resource costs. Until those are checked together, this remains a substantial conditional supplier and a tested program component, not the full positive family or permission to stop the Goal.
