@@ -1,0 +1,42 @@
+evaluationUnitDiagram splitEndpoints
+  Bool : (SumChange.evaluationPayload splitEndpoints (𝟙 presheaf) Bool).inv ≫
+    (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.whiskerLeft (eqToHom ⋯) =
+  Functor.whiskerRight (eqToHom ⋯) (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor
+evaluationCompDiagram splitEndpoints Bool M
+  T : (SumChange.evaluationPayload splitEndpoints (M ≫ T) Bool).inv ≫
+    (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.whiskerLeft (eqToHom ⋯) =
+  Functor.whiskerRight (eqToHom ⋯) (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor ≫
+    (PayloadLaws.All.whole splitEndpoints Bool M).whiskerLeft (SumChange.evaluationPayload splitEndpoints T Bool).inv ≫
+      Functor.whiskerRight (SumChange.evaluationPayload splitEndpoints M Bool).inv (iterates splitEndpoints Bool T)
+evaluationComp splitEndpoints Bool M T
+  (whole
+    ⟨0,
+      z⟩) : (SumChange.evaluationPayload splitEndpoints (M ≫ T) Bool).symm.hom.app (whole ⟨0, z⟩) ≫
+    (eqToHom ⋯).app ((CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.obj (whole ⟨0, z⟩)) =
+  (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.map ((eqToHom ⋯).app (whole ⟨0, z⟩)) ≫
+    (SumChange.evaluationPayload splitEndpoints T Bool).symm.hom.app
+        ((ChainPayload.fibreMap M
+              (CoproductSpan.wholeLeg (CoproductSpan.All.src splitEndpoints) (CoproductSpan.All.dst splitEndpoints)
+                Bool)).obj
+          (whole ⟨0, z⟩)) ≫
+      (ZeroPower.Sum.map (SumChange.target splitEndpoints T Bool)).map
+        ((SumChange.evaluationPayload splitEndpoints M Bool).symm.hom.app (whole ⟨0, z⟩))
+evaluationComp splitEndpoints Bool M T
+  (whole
+    ⟨2,
+      two⟩) : (SumChange.evaluationPayload splitEndpoints (M ≫ T) Bool).symm.hom.app (whole ⟨2, two⟩) ≫
+    (eqToHom ⋯).app ((CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.obj (whole ⟨2, two⟩)) =
+  (CoproductSpan.All.evaluation splitEndpoints presheaf Bool).functor.map ((eqToHom ⋯).app (whole ⟨2, two⟩)) ≫
+    (SumChange.evaluationPayload splitEndpoints T Bool).symm.hom.app
+        ((ChainPayload.fibreMap M
+              (CoproductSpan.wholeLeg (CoproductSpan.All.src splitEndpoints) (CoproductSpan.All.dst splitEndpoints)
+                Bool)).obj
+          (whole ⟨2, two⟩)) ≫
+      (ZeroPower.Sum.map (SumChange.target splitEndpoints T Bool)).map
+        ((SumChange.evaluationPayload splitEndpoints M Bool).symm.hom.app (whole ⟨2, two⟩))
+strongComponent splitEndpoints Bool
+  presheaf : ((strong splitEndpoints Bool).app { as := presheaf }).toFunctor.IsEquivalence
+strongCell splitEndpoints Bool
+  (M ≫
+    T) : Cat.Hom.toNatIso ((strong splitEndpoints Bool).naturality { as := M ≫ T }) =
+  (SumChange.evaluationPayload splitEndpoints (M ≫ T) Bool).symm
