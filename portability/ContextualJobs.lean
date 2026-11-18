@@ -177,6 +177,27 @@ def closeInBudget {P : Type u} (clock : BudgetClock P)
 
 #print axioms closeInBudget
 
+/-- Open the obligation at a consumer's demand, before an attempted issue.
+    A lawful abstention or fallback belongs in Done when the source contract
+    permits it. A genuinely missing terminal yields the particular blocking
+    receipt on this same bounded run, even if no command was ever emitted. -/
+def explainMiss {P : Type u} (clock : BudgetClock P)
+    (Done : P → Type v) (Stopped : P → Type w) (rank remaining : P → Nat)
+    (demand : P)
+    (step : (i : P) → (used : Nat) → clock.within demand i used →
+      used + remaining i ≤ remaining demand → Local clock Done Stopped rank remaining i)
+    (missing : ∀ j cost, clock.within demand j cost →
+      cost ≤ remaining demand → Done j → False) :
+    Arrival clock Stopped demand (remaining demand) := by
+  let arrival := closeInBudget clock Done Stopped rank remaining demand step
+  cases arrival.result with
+  | closed terminal =>
+    exact False.elim (missing _ _ arrival.sameRun arrival.fits terminal)
+  | charged actual =>
+    exact ⟨arrival.point,arrival.elapsed,arrival.fits,arrival.sameRun,actual⟩
+
+#print axioms explainMiss
+
 namespace Authority
 
 /-- One actual route along which the same consequential authority survives.
