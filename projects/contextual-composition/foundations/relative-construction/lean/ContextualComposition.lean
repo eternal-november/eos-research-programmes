@@ -94,3 +94,5 @@ public import ContextualComposition.TripleFibre
 public import ContextualComposition.TripleCuts
 public import ContextualComposition.ChartRestriction
 public import ContextualComposition.SuffixCell
+public import ContextualComposition.ChartTotalCell
+public import ContextualComposition.MovingFrames
