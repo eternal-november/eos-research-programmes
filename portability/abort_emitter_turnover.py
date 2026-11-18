@@ -168,7 +168,29 @@ def check_bounds(c, geometry, itinerary):
                     + half_off + 2 * settle + 10000)
     envelope = Q(itinerary["corrected_sequence_allocation"]) + entering_edge + full_to_seat
     assert envelope == Q(24344546690768962437, 67108864) < Q(itinerary["H"])
-    return {"one_extra_excursion_allowance_test": str(envelope),
+    # Add only waits on the critical paths of this single-restart proof.
+    # Donor halves run concurrently across hosts. Their 26 waits per turnover
+    # can be charged once only if the same eligible coverage persists.
+    gate = record("threshold_gate_source_results.json")
+    orbit = record("normal_orbit_results.json")["B_sampled_candidate"]
+    assert gate["image_sha256"] == geometry["changed_image_sha256"]
+    costs = gate["costs"]
+    delta = Q(costs["sample_delay_addition"]) / costs["maximum_conditional_added_sample_waits"]
+    sampled_D = Q(orbit["two_half_cut_bound"])
+    assert sampled_D == 2 * half + 26 * delta
+    assert Q(orbit["reaction"]) == Q(costs["combined_joint_reaction"]) < Q(324,1000)
+    extra_abort_waits = 2 * delta  # pre-park, then complete cleanup at the actual cam entry
+    assert Q(costs["full_return_join_with_energy_and_samples"]) < Q(100000,11)
+    sampled_enter = entering_edge + sampled_D - 2 * half
+    sampled_full = full_to_seat + sampled_D - 2 * half + extra_abort_waits
+    sampled_envelope = Q(costs["conditional_sequence"]) + sampled_enter + sampled_full
+    assert Q(costs["conditional_sequence"]) == Q(itinerary["corrected_sequence_allocation"]) + 42 * delta
+    assert sampled_envelope - envelope == 96 * delta == Q(2424,25)
+    assert sampled_envelope < Q(costs["H"]) == Q(itinerary["H"])
+    return {"sampled_one_restart_conditional_bound": str(sampled_envelope),
+            "sampled_donor_turnover": str(sampled_D),
+            "sampled_sequence_additional_waits": 42, "restart_additional_waits": 54,
+            "one_extra_excursion_allowance_test": str(envelope),
             "full_to_seat_conditional": str(full_to_seat),
             "first_eligible_exit_lower": str(lower), "joined_by_if_return_persists": str(upper),
             "distance_after_first_possible_exit_before_join": str(distance),

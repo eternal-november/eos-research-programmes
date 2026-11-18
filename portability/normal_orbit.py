@@ -20,7 +20,8 @@ REPO=HERE.parents[2]
 BASE="4e5c770ff6cc6b2970a16ebe5714e88c90cc04f4"
 FROZEN="fb85a7606f45e52d0cd48e023ab9776dd526640c"
 PREFIX="theories-and-designs/byzantine-control/"
-GATE_CANDIDATE="8ff7f946d375fd799d4b635023524d4e25b76775"
+GATE_SOURCE="bb3c68feb4777b1f98ae9e1056176c4525d5be43"
+INITIAL_SOURCE="819c97af3887536968d6b87c45dc60a76f012d80"
 
 
 def need(ok,why):
@@ -149,7 +150,8 @@ def generate():
     local_names=("threshold_program_model.py","threshold_program_source.py","threshold_design.py",
                  "threshold_geometry_results.json","gate_source_completion_results.json",
                  "threshold_initialization_results.json","interrupted_renewal_results.json","watchdog_progress_results.json")
-    for name in local_names:bound[name]=bind(BASE,"portability",name)
+    sources={"gate_source_completion_results.json":GATE_SOURCE,"threshold_initialization_results.json":INITIAL_SOURCE}
+    for name in local_names:bound[name]=bind(sources.get(name,BASE),"portability",name)
     spec=importlib.util.spec_from_file_location("_orbit_primary",HERE.parent/"local-control/program_model.py")
     old=importlib.util.module_from_spec(spec);sys.modules[spec.name]=old;spec.loader.exec_module(old)
     legacy=load(HERE.parent/"local-control/geometry_results.json")
@@ -171,16 +173,12 @@ def generate():
     b_budget=timer_budget(c.constants,Q(517),Q(phase["frames"]["max"]),Q(phase["polling"]),
         Q(phase["band_travel"])/13,phase["phase_bounds"],Q(phase["watchdog"]["ACT_milestone"]),
         0,Q(phase["watchdog"]["complete_timer_job"]),Q(g["overlap_after_first_useful_vector"]))
-    # Read the separate one-body contact candidate from its own immutable
-    # commit. Do not pretend that those files are part of this older checkout.
-    def gate_blob(name):
-        return subprocess.check_output(["git","show",GATE_CANDIDATE+":"+PREFIX+"portability/"+name],
-                                       cwd=REPO).replace(b"\r\n",b"\n")
-    blob=gate_blob("threshold_gate_source_results.json")
-    candidate=json.loads(blob)
+    gate_name="threshold_gate_source_results.json"
+    gate_digest=bind(GATE_SOURCE,"portability",gate_name)
+    candidate=load(HERE/gate_name)
     need(candidate["image_sha256"]==b_hash,"B sampler supplies a different image")
     for name,sha in candidate["sources_sha256_lf"].items():
-        need(sha256(gate_blob(name)).hexdigest()==sha,"B sampler source binding differs")
+        need(bind(GATE_SOURCE,"portability",name)==sha,"B sampler source binding differs")
     cc=candidate["costs"]
     delay=Q(cc["sample_delay_addition"])/cc["maximum_conditional_added_sample_waits"]
     need(delay==Q(101,100) and Q(cc["combined_joint_reaction"])<=Q(324,1000),
@@ -195,7 +193,7 @@ def generate():
     need(startup+2*half<2*10**13,"Conditional donor half budget too large")
     return serial(dict(base=BASE,frozen_primary=FROZEN,primary_image_little_endian_sha256=a_hash,
         threshold_image_json_sha256=b_hash,primary_timer=ap_budget,threshold_timer=b_budget,
-        B_sampled_candidate=dict(commit=GATE_CANDIDATE,record_sha256_lf=sha256(blob).hexdigest(),
+        B_sampled_candidate=dict(commit=GATE_SOURCE,record_sha256_lf=gate_digest,
             timer=sampled_budget,fresh_half_bound=half+13*delay,
             first_half_from_initial_upper=startup+half+13*delay,
             two_half_cut_bound=2*(half+13*delay),reaction=cc["combined_joint_reaction"],
@@ -204,7 +202,7 @@ def generate():
         no_motion_bad_effort_margin=stop,threshold_first_half_from_initial_upper=startup+half,
         threshold_two_half_cut_bound=2*half,threshold_nominal_phase2_revisit_from_fresh_handoff=half,
         startup_counted_once=True,phase_rank_does_not_trust_energy_monotonicity=True,
-        computed_budget_scope="Zero extra sampled-predecessor delay for B until its own gate adapter is supplied; rebind for every changed contact/visibility bound.",
+        computed_budget_scope="The unsampled B column is the geometry-only comparison. Use the sampled column for the integrated contact source. Rebind if contact or visibility changes.",
         normal_reachable_orbit_certified=False,program_complete=False,
         inputs_sha256_lf=bound,own_sha256_lf={n:sha256((HERE/n).read_bytes().replace(b"\r\n",b"\n")).hexdigest()
                                   for n in ("NORMAL-ORBIT.md","normal_orbit.py")}))
