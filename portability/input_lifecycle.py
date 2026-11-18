@@ -36,6 +36,11 @@ TICK_WORK=128
 RX_WORK=16384
 TICK_POWER=1<<26
 RX_POWER=1<<31
+WIRE_BURST=4
+WIRE_RATE=1040
+FLIGHT_CAPACITY=264
+FLIGHT_PROBE_WORK=208
+FLIGHT_DROP_WORK=32
 MASK_MODE,CHARGE,DUMP,CLEAR,OPEN=range(5)
 CONTROL_DELAY=cam.CONTROL_DELAY
 VMAX=F(11,10)
@@ -111,7 +116,8 @@ class DataSlot:
     def complete(self,callback,claim):
         if claim is not self.claim:return False
         if claim is None or not claim.live or not self.output:return False
-        if not self.cell.debit(4096-self.progress_work):return False
+        reported_remaining=4096-self.progress_work
+        if reported_remaining<0 or not self.cell.debit(max(F(32),reported_remaining)):return False
         self.progress_work=F(4096)
         return claim.dispatch(callback)
     def mask(self):
@@ -507,38 +513,511 @@ class RawLane:
             and self.rx==[int(i==19) for i in range(RX_BITS)]
             and self.decode_control==[int(i==1) for i in range(DEC_BITS)])
 
+
+class Bits:
+    """A view of already allocated native bits; it owns no second array."""
+    def __init__(self,store,start,width):self.store=store;self.start=start;self.width=width
+    def get(self,start,width=1):
+        need(0<=start and start+width<=self.width,"Native field outside allocation")
+        return sum(self.store[self.start+start+j]<<j for j in range(width))
+    def put(self,start,width,value):
+        nat(value,1<<width,"Native field")
+        need(0<=start and start+width<=self.width,"Native field outside allocation")
+        for j in range(width):self.store[self.start+start+j]=(value>>j)&1
+
+class IWords:
+    def __init__(self,bits):self.bits=bits
+    def __len__(self):return 8
+    def __iter__(self):return (self[i] for i in range(8))
+    def __getitem__(self,index):nat(index,8,"Source I index");return self.bits.get(256*index,256)
+    def __setitem__(self,index,value):nat(index,8,"Source I index");self.bits.put(256*index,256,value&MASK)
+
+class BankEnergy(Work):
+    def __init__(self,origin,bank,capacity,stock):
+        self.identity=(origin,bank);super().__init__(capacity,stock)
+
+class SourceSlot(DataSlot):
+    """One existing1024-bit descriptor and4096 ready/pending work cell."""
+    def __init__(self,body,bits):
+        self.bits=bits;super().__init__(body)
+        self.admission=False;self.output=False;self.reset=False
+    @property
+    def progress_work(self):return F(self._progress)
+    @progress_work.setter
+    def progress_work(self,v):
+        v=F(v);need(v.denominator==1,"Fractional native work counter")
+        self._progress=nat(v.numerator,1<<13,"Source descriptor work counter")
+    def complete(self,callback,claim):
+        if hasattr(self,"source_bank_owner") and (not self.source_bank_owner.powered or not self.source_bank_owner.emit_gate):return False
+        return super().complete(callback,claim)
+    @property
+    def admission(self):return bool(self.bits.get(0))
+    @admission.setter
+    def admission(self,v):self.bits.put(0,1,int(v))
+    @property
+    def output(self):return bool(self.bits.get(1))
+    @output.setter
+    def output(self,v):self.bits.put(1,1,int(v))
+    @property
+    def reset(self):return bool(self.bits.get(2))
+    @reset.setter
+    def reset(self,v):self.bits.put(2,1,int(v))
+
+class SymbolFlight:
+    """One already emitted symbol with actual transferred, finite work."""
+    def __init__(self,destination,symbol):
+        self.claim=Claim(destination,symbol);self.stock=F(128);self.spent=F(0)
+        self.remaining=F(1,4)
+    def flow(self,dt,deliver):
+        dt=min(F(dt),self.remaining)
+        work=512*dt;self.stock-=work;self.spent+=work;self.remaining-=dt
+        if self.remaining==0:self.claim.dispatch(deliver)
+
+class SourceBranch:
+    #129*15+113=2048 native bits, inside existing descriptor allocations.
+    def __init__(self,bank,ordinal):
+        self.bank=bank;self.ordinal=ordinal
+        self.bits=Bits(bank.control,ordinal*2048+1935,113)
+        self.slots=bank.slots[129*ordinal:129*(ordinal+1)]
+        self.fifo=[0]*128  #8-bit selectors in the existing128*384 TX array.
+        # Existing physical serial lead and fixed flight cells. The native
+        # selector may address a busy or absent cell but cannot create one.
+        self.flight_cells=[None]*FLIGHT_CAPACITY
+        self.flights=[]         # Sparse simulation index of the same objects.
+        self.wire_credit=F(WIRE_BURST)
+        self.sent=0;self.rejected=0
+    def advance_wire(self,dt,deliver):
+        need(dt>=0,"Negative elapsed lead time")
+        if self.wire_credit<WIRE_BURST:
+            self.wire_credit=min(F(WIRE_BURST),self.wire_credit+WIRE_RATE*dt)
+        for child in tuple(self.flights):
+            old_spent=child.spent;child.flow(dt,deliver)
+            self.bank.flight_heat+=child.spent-old_spent
+            # Dead delivery authority does not discard positive residual work.
+            if child.remaining==0 and child.stock==0 and not child.claim.live:
+                need(self.flight_cells[child.physical_slot] is child,"Flight lost its physical binding")
+                self.flight_cells[child.physical_slot]=None
+                self.flights.remove(child)
+    @property
+    def destination(self):
+        return LaneId(self.bank.origin,self.bank.bank,
+                      self.bank.receivers[self.ordinal//2],self.ordinal%2)
+    def offer(self,key,value):
+        if not self.bank.powered or not self.bank.admission or not self.bits.get(28):return "cut"
+        if not(0<=key<KEYS and 0<=value<=MASK):self.rejected+=1;return "malformed"
+        self.bank.recharge_elapsed()
+        count=self.bits.get(7,8);head=self.bits.get(0,7)
+        if count>=128:self.rejected+=1;return "full"
+        for index,slot in enumerate(self.slots):
+            if slot.claim is None or not slot.claim.live:
+                if slot.admission and slot.cell.stock==4096:break
+        else:self.rejected+=1;return "unfunded"
+        need(slot.offer((key,value))=="accepted","Native selector chose unavailable cell")
+        need(slot.cell.debit(1280),"Captured publication lacks admission work")
+        slot.progress_work=F(1280)
+        self.fifo[(head+count)%128]=index;self.bits.put(7,8,count+1)
+        self.bank.publications+=1;self.bank.local_heat+=1280
+        return "accepted"
+    def tick(self):
+        if not self.bits.get(27):return "stopped"
+        if not self.bits.get(26):
+            count=self.bits.get(7,8);head=self.bits.get(0,7)
+            if not 0<count<=128:return "idle"
+            index=self.fifo[head]
+            self.bits.put(0,7,(head+1)%128);self.bits.put(7,8,count-1)
+            self.bits.put(15,8,index);self.bits.put(23,3,0);self.bits.put(26,1,1)
+        index=self.bits.get(15,8);part=self.bits.get(23,3)
+        if index>=129 or part>=4:return "invalid-state"
+        slot=self.slots[index];token=slot.claim
+        if token is None or not token.live:return "stale-busy"
+        if not self.bank.powered or not self.bank.emit_gate:
+            #A funded local claim can be dropped after the real source cut.
+            #Only the32-work control action dissipates now; unused residue
+            #stays in its actual cell for the subsequent rated dump.
+            if slot.progress_work+32>4096 or not slot.cell.debit(32):return "unfunded-cut-drop"
+            slot.progress_work+=32;self.bank.local_heat+=32;token.retire()
+            self.bits.put(26,1,0);self.bits.put(23,3,0)
+            self.bank.recharge_needed.add(slot)
+            return "cut-drop"
+        suffix=768 if part==3 else 0
+        if slot.progress_work+512+suffix>4096:return "invalid-work-counter"
+        # Reserve the defined unsuccessful outcome before even probing. No
+        # other actor can consume this private reservation during this step.
+        if not slot.output or slot.cell.stock<FLIGHT_PROBE_WORK+FLIGHT_DROP_WORK:return "unfunded"
+        need(slot.cell.debit(FLIGHT_PROBE_WORK),"Missing flight qualification work")
+        slot.progress_work+=FLIGHT_PROBE_WORK;self.bank.local_heat+=FLIGHT_PROBE_WORK
+        index_on_lead=self.bits.get(29,9)
+        if index_on_lead>=FLIGHT_CAPACITY:refusal="invalid-flight-selector"
+        elif self.flight_cells[index_on_lead] is not None:refusal="flight-busy"
+        elif self.wire_credit<1:refusal="lead-busy"
+        elif slot.cell.stock<512-FLIGHT_PROBE_WORK+suffix:refusal="unfunded-symbol"
+        else:refusal=None
+        if refusal is not None:
+            need(slot.cell.debit(FLIGHT_DROP_WORK),"Missing reserved rejection work")
+            slot.progress_work+=FLIGHT_DROP_WORK;self.bank.local_heat+=FLIGHT_DROP_WORK
+            token.retire();self.bits.put(26,1,0);self.bits.put(23,3,0)
+            self.bank.recharge_needed.add(slot)
+            return refusal+"/drop"
+        need(slot.cell.debit(512-FLIGHT_PROBE_WORK),"Missing reserved symbol work")
+        key,value=token.payload
+        symbol=symbols(key,value)[part]
+        child=SymbolFlight(self.destination,symbol);child.physical_slot=index_on_lead
+        self.flight_cells[index_on_lead]=child;self.flights.append(child);self.wire_credit-=1
+        self.bits.put(29,9,(index_on_lead+1)%FLIGHT_CAPACITY)
+        slot.progress_work+=512-FLIGHT_PROBE_WORK;self.sent+=1
+        self.bank.local_heat+=384-FLIGHT_PROBE_WORK;self.bank.transferred_flight+=128
+        self.bits.put(23,3,part+1)
+        if part==3:
+            need(slot.cell.debit(suffix),"Missing reserved serializer retirement")
+            slot.progress_work+=768;self.bank.local_heat+=768
+            token.retire()  #No source callback can dispatch it after slot reuse.
+            self.bits.put(26,1,0);self.bits.put(23,3,0)
+            self.bank.recharge_needed.add(slot)
+        return "symbol"
+
 class LocalSourceBank:
-    """Only the cold source bank's DATA/ADC controls, never its sibling."""
+    """Finite TX/ADC state with separate U-reset and E-operation funding."""
     BITS=80*2048+4096+256
-    def __init__(self,origin,bank,payer):
+    # The final gate strobe has its own fixed price, regardless of the
+    # writable work countdown. Both suffix parts fit the original 256.
+    ENTRY_COMMIT_WORK=128
+    ENTRY_WORK=6*(80*129+1)+4*80+4+256
+    CPU_RATE=1<<26
+    TX_TICKS=CPU_RATE//1024
+    ADC_TICKS=CPU_RATE//4096
+    DELTA=F(1,1<<30)
+    def __init__(self,origin,bank,payer,population=None):
+        nat(bank,2,"Source bank")
         need(isinstance(payer,SourceWork) and payer.origin==origin,"Local reset changed its U owner")
         self.origin=origin;self.bank=bank;self.payer=payer
+        self.population=population if population is not None else 12*(6+2**98)+2
+        self.receivers=incidence.neighbors(self.population,origin)
         self.reset_work=Work(RESET_CAP);self.control=[1]*self.BITS
-        self.admission=False;self.emit_gate=False;self.cursor=0
-        self.slots=[DataSlot((origin,bank,"DATA",i),4096) for i in range(80*129)]
-        self.adc=DataSlot((origin,bank,"ADC"),4096)
+        self.engine=Bits([0]*96,0,96)
+        self.dispatch=Bits(self.control,80*2048+4096,256)
+        self.admission=False;self.emit_gate=False;self.powered=False;self.energy=None
+        self.cursor=0;self.reset_phase=F(0);self.entry_cursor=0
+        self.slots=[SourceSlot((origin,bank,"DATA",i//129),Bits(self.control,(i//129)*2048+(i%129)*15,15))
+                    for i in range(80*129)]
+        self.adc_bits=Bits(self.control,80*2048,4096)
+        self.I=IWords(self.adc_bits)
+        self.adc=SourceSlot((origin,bank,"ADC"),Bits(self.control,80*2048+3000,15))
+        self.branches=[SourceBranch(self,j) for j in range(80)]
+        for index,slot in enumerate(self.slots+[self.adc]):
+            slot.native_index=index;slot.source_bank_owner=self
         self.independent_children=[];self.old_wire=[]
+        self.recharge_needed=set();self.native_time=0;self.next_tick=self.ADC_TICKS;self.flow_time=0;self.charge_time=0
+        self.adc_elapsed=0;self.tx_phase=0;self.rx_phase=0
+        self.receivers_live={};self.raw_heads={};self.functional={}
+        self.publications=0;self.samples=0;self.adc_completed=0
+        self.local_heat=F(0);self.transferred_flight=F(0);self.flight_heat=F(0)
+        self.reset_setup=0;self.abort_cursor=0;self.reset_stage="idle"
+        self.entry_remaining=0;self.entry_phase=F(0);self.elapsed_entry=F(0)
+    @property
+    def cursor(self):return self.engine.get(0,18)
+    @cursor.setter
+    def cursor(self,v):self.engine.put(0,18,v)
+    @property
+    def abort_cursor(self):return self.engine.get(18,14)
+    @abort_cursor.setter
+    def abort_cursor(self,v):self.engine.put(18,14,v)
+    @property
+    def reset_setup(self):return self.engine.get(32,18)
+    @reset_setup.setter
+    def reset_setup(self,v):self.engine.put(32,18,v)
+    @property
+    def entry_cursor(self):return self.engine.get(50,16)
+    @entry_cursor.setter
+    def entry_cursor(self,v):self.engine.put(50,16,v)
+    @property
+    def entry_remaining(self):return self.engine.get(66,16)
+    @entry_remaining.setter
+    def entry_remaining(self,v):self.engine.put(66,16,v)
+    @property
+    def tx_phase(self):return self.engine.get(82,2)
+    @tx_phase.setter
+    def tx_phase(self,v):self.engine.put(82,2,v)
+    @property
+    def rx_phase(self):return self.engine.get(84,1)
+    @rx_phase.setter
+    def rx_phase(self,v):self.engine.put(84,1,v)
+    @property
+    def reset_micro(self):return self.engine.get(85,3)
+    @reset_micro.setter
+    def reset_micro(self,v):self.engine.put(85,3,v)
+    @property
+    def entry_micro(self):return self.engine.get(88,1)
+    @entry_micro.setter
+    def entry_micro(self,v):self.engine.put(88,1,v)
+    @property
+    def native_mode(self):return self.engine.get(89,4) if self.engine.get(93) else 15
+    def apply_native_mode(self,mode):
+        nat(mode,16,"Local source native mode")
+        if mode==0:return self.begin_reset()=="masked"
+        if not self.payer.debit(256):return False
+        self.engine.put(89,4,mode);self.engine.put(93,1,1)
+        return True
+    @property
+    def valid(self):return bool(self.adc_bits.get(2049))
+    @valid.setter
+    def valid(self,v):self.adc_bits.put(2049,1,int(v))
+    @property
+    def job(self):
+        return self.adc.claim if self.adc.claim is not None and self.adc.claim.live else None
+    def attach(self,lane):
+        need(lane.population==self.population and lane.identity.receiver in self.receivers and
+             lane.identity.origin==self.origin and lane.identity.source_bank==self.bank,
+             "Source attached a foreign origin/bank")
+        self.receivers_live[lane.identity]=lane
     def cold_cut(self):
-        self.admission=False;self.emit_gate=False
-        for slot in self.slots+[self.adc]:slot.mask()
-    def reform(self):
+        self.admission=False;self.emit_gate=False;self.powered=False
+        self.recharge_needed.clear()
+    def clear_value(self,index):
+        if index<80*2048:
+            local=index%2048
+            return int(local<1935 and local%15==2)
+        return int(index==80*2048+3002)
+    def begin_reset(self):
         self.cold_cut()
         if not self.payer.debit(256):return "control-unfunded"
-        self.cursor=0
+        self.engine.store[:]=[0]*96
+        self.engine.put(93,1,1)  #MASK: no old reset or entry clock remains selected.
+        self.cursor=0;self.reset_phase=F(0);self.abort_cursor=0
+        self.reset_setup=self.BITS//2+1281;self.reset_micro=0;self.reset_stage="setup"
+        return "masked"
+    def reset_native(self,dt):
+        if self.native_mode not in (2,3):return False
+        if self.abort_cursor>len(self.slots)+1 or self.cursor>self.BITS:return False
+        if self.abort_cursor==len(self.slots)+1 and self.reset_micro>1:return False
+        total=self.reset_phase+F(dt)*CLEAR_RATE
+        opportunities=int(total);self.reset_phase=total-opportunities
+        take=min(opportunities,self.reset_setup,int(self.reset_work.stock))
+        if take:self.reset_work.debit(take);self.reset_setup-=take;opportunities-=take
+        slots=self.slots+[self.adc]
+        if self.reset_setup==0 and self.abort_cursor<len(slots):
+            take=min(opportunities,8*(len(slots)-self.abort_cursor)-self.reset_micro,
+                     int(self.reset_work.stock))
+            if take:
+                self.reset_work.debit(take);opportunities-=take
+                funded=self.reset_micro+take;complete=funded//8;self.reset_micro=funded%8
+                start=self.abort_cursor
+                for i in range(start,start+complete):
+                    slots[i].mask();slots[i].abort_after_cut()
+                self.abort_cursor+=complete
+        if self.native_mode==3 and self.abort_cursor==len(slots) and self.cursor<self.BITS:
+            take=min(opportunities,2*(self.BITS-self.cursor)-self.reset_micro,
+                     int(self.reset_work.stock))
+            if take:
+                self.reset_work.debit(take);opportunities-=take
+                funded=self.reset_micro+take;complete=funded//2;self.reset_micro=funded%2
+                start=self.cursor
+                for index in range(start,start+complete):self.control[index]=self.clear_value(index)
+                self.cursor+=complete
+        #Only already PAID partial operation steps survive, never unused time.
+        return self.cursor==self.BITS
+    def reform(self):
+        if self.begin_reset()!="masked":return "control-unfunded"
+        if not self.apply_native_mode(1):return "charge-control-unfunded"
         self.reset_work.charge(RESET_REFILL,self.payer)
-        setup=self.BITS//2+1281
-        if not self.reset_work.debit(setup):return "unfunded"
-        for slot in self.slots+[self.adc]:
-            if not self.reset_work.debit(8):return "partial-abort"
-            slot.abort_after_cut();slot.cell.dump(DUMP_TIME)
-        for index in range(self.BITS):
-            if not self.reset_work.debit(2):return "partial"
-            self.control[index]=0;self.cursor+=1
-        return "formed-unpowered"
-    def rearm(self):
-        # A separate ACT/E/parent-entry supplier must supply this event.
-        # No test of C=P or a successful-reset flag is inserted.
+        if not self.apply_native_mode(2):return "dump-control-unfunded"
+        #The paid abort/setup prefix precedes the actual parallel dump.
+        prefix=F(self.BITS//2+1281+8*(80*129+1),CLEAR_RATE)
+        self.reset_native(prefix)
+        for slot in self.slots+[self.adc]:slot.cell.dump(DUMP_TIME)
+        if not self.apply_native_mode(3):return "clear-control-unfunded"
+        self.reset_native(F(2*self.BITS,CLEAR_RATE))
+        return "formed-unpowered" if self.cursor==self.BITS else "partial"
+    def begin_entry(self,energy):
+        need(isinstance(energy,BankEnergy) and energy.identity==(self.origin,self.bank),
+             "Source entry borrowed another operating bank")
+        self.energy=energy;self.powered=True
+        #The physical connection is real even if its native request cannot
+        #be paid. It grants no free overwrite of retained entry control.
+        if not self.apply_native_mode(4):return False
+        self.entry_cursor=0;self.entry_remaining=self.ENTRY_WORK-self.ENTRY_COMMIT_WORK
+        self.entry_phase=F(0);self.entry_micro=0
+        self.elapsed_entry=F(0);self.engine.put(94,1,1)
+        return True
+    def entry_flow(self,dt):
+        #Fixed native entry sequence, not a success/correct-code gate.
+        dt=F(dt)
+        need(dt>=0 and 0<=self.entry_phase<1,"Invalid elapsed time or entry clock phase")
+        self.elapsed_entry+=dt
+        if not self.powered or self.native_mode!=4 or not self.engine.get(94):return False
+        total=self.entry_phase+dt*CLEAR_RATE;steps=int(total);self.entry_phase=total-steps
+        slots=self.slots+[self.adc];writes=3*len(slots)+2*80+2
+        if self.entry_cursor>writes:return False
+        if self.entry_cursor<writes:
+            take=min(steps,2*(writes-self.entry_cursor)-self.entry_micro,
+                     self.entry_remaining,int(self.reset_work.stock))
+            if take:
+                self.reset_work.debit(take);steps-=take;self.entry_remaining-=take
+                funded=self.entry_micro+take;complete=funded//2;self.entry_micro=funded%2
+                start=self.entry_cursor
+                for i in range(start,start+complete):
+                    if i<3*len(slots):
+                        slot=slots[i//3];which=i%3
+                        if which==0:slot.admission=True
+                        elif which==1:slot.output=True
+                        else:slot.reset=False
+                    elif i<3*len(slots)+160:
+                        j=i-3*len(slots);self.branches[j//2].bits.put(27+j%2,1,1)
+                    elif i==3*len(slots)+160:self.adc_bits.put(2050,1,1)
+                    else:self.dispatch.put(1,1,1)
+                self.entry_cursor+=complete
+        if self.entry_cursor==writes and self.entry_remaining:
+            take=min(steps,self.entry_remaining,int(self.reset_work.stock))
+            if take:
+                self.reset_work.debit(take);steps-=take;self.entry_remaining-=take
+        # A terminal control word selects the strobe. Only an actual clock
+        # edge with actual local work can drive it. A forged request can buy
+        # a premature opening under the same physical guards and price.
+        if (steps==0 or self.entry_remaining!=0 or self.entry_cursor!=writes
+                or self.entry_micro!=0 or not self.reset_work.debit(self.ENTRY_COMMIT_WORK)):
+            return False
+        self.reset_work.heat+=self.ENTRY_COMMIT_WORK
+        # The request-gated clock stops on its actual completion edge.
+        # Unused time after that edge cannot advance this stopped phase.
+        self.entry_phase=F(0)
+        self.engine.put(94,1,0)
         self.admission=True;self.emit_gate=True
+        # Sparse simulation index of idle physical chargers. They each have
+        # their own busy/power/cap guards and draw from the same actual E.
+        self.recharge_needed.update(slot for slot in slots if slot.claim is None or not slot.claim.live)
+        return True
+    def recharge(self,dt):
+        if not self.powered or self.energy is None:return F(0)
+        delivered=F(0);cap=4096*F(dt)/self.DELTA
+        for slot in sorted(self.recharge_needed,key=lambda x:x.native_index):
+            if slot.claim is not None and slot.claim.live:continue
+            amount=min(4096-slot.cell.stock,cap,self.energy.stock)
+            need(amount>=0 and self.energy.debit(amount),"E recharge overdrew its real stock")
+            slot.cell.stock+=amount;slot.cell.received+=amount;delivered+=amount
+            if slot.cell.stock==4096:self.recharge_needed.discard(slot)
+        return delivered
+    def recharge_elapsed(self):
+        dt=F(self.native_time-self.charge_time,self.CPU_RATE)
+        self.charge_time=self.native_time
+        return self.recharge(dt)
+    def rearm(self,energy=None):
+        if energy is None:return "missing-physical-E-entry"
+        if not self.begin_entry(energy):return "entry-control-unfunded"
+        committed=self.entry_flow(F(self.ENTRY_WORK,CLEAR_RATE))
+        self.recharge(self.DELTA)
+        return "entered" if committed else "partial-entry"
+    def source_start(self,kind,args):
+        if not self.powered or not self.admission or not self.adc_bits.get(2050):return "cut"
+        if self.job is not None or self.adc_bits.get(2048):return "busy"
+        self.recharge_elapsed()
+        if kind=="fast":
+            key=args[0]
+            valid=0<=key<KEYS and key!=2 and (key<2 or (key-3)%50<46)
+            value=self.raw_heads.get(key,MASK) if valid else MASK
+            self.I[0]=key
+            desc=(0,key,0,0,0,0,value)
+        else:
+            target,side,member,metric=args
+            valid=0<=target<40 and side in (0,1) and 0<=member<11 and metric in (0,1)
+            value=self.functional.get(tuple(args),MASK) if valid else MASK
+            desc=(1,0,target if valid else 0,side if valid else 0,member if valid else 0,metric if valid else 0,value)
+        if self.adc.offer(self.adc_bits)!="accepted":return "unfunded"
+        kind,key,target,side,member,metric,value=desc
+        for at,width,v in ((2060,1,kind),(2061,11,key if 0<=key<2048 else 2047),
+                           (2072,6,target),(2078,1,side),(2079,4,member),(2083,1,metric),(2084,256,value)):
+            self.adc_bits.put(at,width,v)
+        need(self.adc.cell.debit(1280),"ADC admission lacks funded work")
+        self.adc.progress_work=F(1280);self.local_heat+=1280;self.valid=False
+        self.adc_bits.put(2048,1,1);self.adc_bits.put(2052,6,63)
+        self.samples+=1
+        return "accepted"
+    def adc_tick(self):
+        if not self.adc_bits.get(2050) or not self.adc_bits.get(2048):return
+        token=self.job
+        if token is None:return  #A forged busy bit creates no completion claim.
+        count=self.adc_bits.get(2052,6)
+        if count:
+            if self.adc.progress_work+16>4096:return
+            if not self.adc.cell.debit(16):return
+            self.adc.progress_work+=16;self.local_heat+=16;count-=1;self.adc_bits.put(2052,6,count)
+        if count==0:
+            reported_remaining=4096-self.adc.progress_work
+            if reported_remaining<0:return
+            remaining=max(F(768),reported_remaining)
+            if not self.adc.cell.debit(remaining):return
+            self.adc.progress_work=F(4096);self.local_heat+=remaining
+            def commit(_destination,payload):
+                self.I[1]=payload.get(2084,256);self.valid=True
+            token.dispatch(commit)
+            self.adc_bits.put(2048,1,0);self.adc_completed+=1
+            self.recharge_needed.add(self.adc)
+    def deliver_symbol(self,destination,value):
+        lane=self.receivers_live.get(destination)
+        if lane is not None:lane.receive_symbol(value)
+    def native_tick(self):
+        self.adc_tick();self.tx_phase=(self.tx_phase+1)%4
+        self.rx_phase=(self.rx_phase+1)%2
+        if self.tx_phase==0:
+            for branch in self.branches:branch.tick()
+        if self.rx_phase==0:
+            for lane in self.receivers_live.values():
+                lane.process_one()
+                for record in lane.ordered:
+                    for _ in range(3):
+                        if record.service() in ("idle","stopped","stale-busy","unfunded"):break
+    def advance_cpu(self,ticks=1):
+        need(type(ticks) is int and ticks>=0,"Invalid local elapsed instruction ticks")
+        end=self.native_time+ticks
+        while self.next_tick<=end:
+            self.native_time=self.next_tick;self.recharge_elapsed()
+            dt=F(self.next_tick-self.flow_time,self.CPU_RATE)
+            for branch in self.branches:
+                branch.advance_wire(dt,self.deliver_symbol)
+            self.flow_time=self.next_tick;self.next_tick+=self.ADC_TICKS
+            self.native_tick()
+        self.native_time=end
+
+def native_source_ports(isa):
+    Parent=program.ports_class(isa)
+    class NativeSourcePorts(Parent):
+        """Actual source-I/ADC/TX operations; old ideal due lists stay unused."""
+        def __init__(self,compiled,source):
+            super().__init__(compiled);self.source=source;self.I=source.I
+        def advance(self,machine):self.source.advance_cpu()
+        def elapse(self,quanta):
+            ticks=F(quanta)*self.source.CPU_RATE
+            need(ticks.denominator==1,"Native trace uses exact CPU-tick durations")
+            self.source.advance_cpu(ticks.numerator)
+        def perform(self,name,args,machine):
+            source=self.source
+            if name in program.FORBIDDEN:
+                if name=="source_capture_request" and source.admission:source.I[0]=MASK
+                return 0
+            if name.startswith("source_"):
+                if not source.powered or not source.admission or not source.dispatch.get(1) or source.dispatch.get(0):return 0
+                source.dispatch.put(0,1,1)
+                try:return self.source_operation(name,args,machine)
+                finally:source.dispatch.put(0,1,0)
+            return super().perform(name,args,machine)
+        def source_operation(self,name,args,machine):
+            source=self.source
+            if name=="source_start_fast":
+                source.source_start("fast",args);return 0
+            if name=="source_start_functional":
+                source.source_start("functional",args);return 0
+            if name=="source_ready":return int(source.powered and source.admission and source.valid and source.job is None and not source.adc_bits.get(2048))
+            if name=="source_offer_fast":
+                client,key=args
+                if type(client) is int and 0<=client<80:
+                    source.branches[client].offer(key,source.I[1])
+                return 0
+            if name=="source_invalidate":
+                if source.admission:source.valid=False;source.I[5]=MASK
+                return 0
+            if name.startswith("source_") and not source.admission:return 0
+            return super().perform(name,args,machine)
+    return NativeSourcePorts
+
+
 
 def support(population,receiver,providers,event):
     incidence.check_population(population);nat(receiver,population,"receiver")
@@ -774,6 +1253,376 @@ def control_checks():
     return dict(independent_event_traces=128,level_actions_reassert_on_every_receiver_commit=True,
                 old_pending_snapshots_and_independent_phase_checked=True)
 
+
+
+def source_partition_checks():
+    population=12*(6+2**98)+2
+    pair=[LocalSourceBank(2,0,SourceWork(2,1<<60,1<<60),population) for _ in range(2)]
+    for bank in pair:
+        bank.begin_reset();bank.apply_native_mode(1);bank.reset_work.charge(1000,bank.payer)
+        bank.apply_native_mode(2)
+    setup=LocalSourceBank.BITS//2+1281;aborts=80*129+1
+    chunks=[setup-1,1,1,7,1,7,8*(aborts-2)]
+    pair[0].reset_native(F(setup+8*aborts,CLEAR_RATE))
+    for ticks in chunks:
+        for _ in range(3):pair[1].reset_native(F(ticks,3*CLEAR_RATE))
+    for bank in pair:
+        for slot in bank.slots+[bank.adc]:slot.cell.dump(100)
+        bank.apply_native_mode(3)
+    pair[0].reset_native(F(2*LocalSourceBank.BITS,CLEAR_RATE))
+    for ticks in (1,1,2*LocalSourceBank.BITS-2):
+        for _ in range(3):pair[1].reset_native(F(ticks,3*CLEAR_RATE))
+    need(pair[0].control==pair[1].control and pair[0].cursor==pair[1].cursor==LocalSourceBank.BITS
+         and pair[0].reset_micro==pair[1].reset_micro==0
+         and pair[0].reset_work.spent==pair[1].reset_work.spent==504329,
+         "Reset depends on the caller's time partition")
+    for bank in pair:bank.begin_entry(BankEnergy(2,0,1<<60,1<<60))
+    price=LocalSourceBank.ENTRY_WORK
+    pair[0].entry_flow(F(price,CLEAR_RATE))
+    for ticks in (1,1,1,1,1,price-5):
+        for _ in range(3):pair[1].entry_flow(F(ticks,3*CLEAR_RATE))
+    need(pair[0].control==pair[1].control and pair[0].admission and pair[1].admission
+         and pair[0].entry_cursor==pair[1].entry_cursor
+         and pair[0].entry_micro==pair[1].entry_micro==0
+         and pair[0].reset_work.spent==pair[1].reset_work.spent==566835,
+         "Entry depends on the caller's time partition")
+    #A later physical cut cannot be undone by an old entry completion.
+    late=pair[1];late.begin_entry(BankEnergy(2,0,1<<60,1<<60));late.cold_cut()
+    late.entry_flow(F(price,CLEAR_RATE))
+    need(late.branches[0].offer(0,500)=="cut","Old entry completion reopened a physical cut")
+    late.begin_reset();stock=late.reset_work.stock;late.entry_flow(1000)
+    need(late.reset_work.stock==stock and late.native_mode==0,
+         "Old entry job consumed reset recharge or survived MASK")
+    unpaid=pair[0];unpaid.cold_cut()
+    unpaid.entry_cursor=17;unpaid.entry_remaining=9;unpaid.engine.put(94,1,0)
+    unpaid.payer.stock=F(0)
+    before=(list(unpaid.engine.store),unpaid.entry_phase,unpaid.payer.spent)
+    new_E=BankEnergy(2,0,1<<60,1<<60)
+    need(unpaid.begin_entry(new_E) is False and unpaid.powered and unpaid.energy is new_E
+         and before==(list(unpaid.engine.store),unpaid.entry_phase,unpaid.payer.spent),
+         "Unfunded mode action minted or overwrote an entry request")
+    need(unpaid.rearm(new_E)=="entry-control-unfunded" and
+         before==(list(unpaid.engine.store),unpaid.entry_phase,unpaid.payer.spent),
+         "Rearm bypassed failed native entry control")
+    return dict(reset_partition_subintervals=30,entry_partition_subintervals=18,
+        unfunded_entry_preserves_control_but_keeps_actual_E_connection=True,
+        paid_reset_micro_bits=3,paid_entry_micro_bits=1,
+        source_engine_used_bits=95,source_engine_allocated_bits=96,
+        held_local_mode_disables_old_reset_and_entry=True,
+        late_entry_cannot_reopen_actual_power_cut=True,
+        whole_and_partitioned_control_work_equal=True)
+
+
+def source_entry_strobe_checks():
+    """Source of work, gate, clock and old bindings at final opening."""
+    source=LocalSourceBank(2,0,SourceWork(2,1<<60,1<<60))
+    need(source.reform()=="formed-unpowered","Missing genuine cold reset for strobe probe")
+    energy=BankEnergy(2,0,1<<60,1<<60)
+    need(source.rearm(energy)=="entered","Genuine source entry failed")
+    # Keep an accepted, independently funded ADC job and one emitted symbol.
+    source.raw_heads[0]=333
+    need(source.source_start("fast",(0,))=="accepted","Missing live ADC job")
+    claim=source.job;adc_stock=source.adc.cell.stock
+    branch=source.branches[0]
+    need(branch.offer(0,500)=="accepted" and branch.tick()=="symbol","Missing real transmitted parcel")
+    flight=branch.flights[0];flight_claim=flight.claim;flight_stock=flight.stock
+    writes=3*(len(source.slots)+1)+2*len(source.branches)+2
+    price=source.ENTRY_COMMIT_WORK
+    source.admission=False;source.emit_gate=False
+    source.entry_cursor=writes;source.entry_remaining=0;source.entry_micro=0;source.engine.put(94,1,1)
+    source.entry_phase=F(0);source.reset_work.stock=F(0)
+    spent=source.reset_work.spent
+    need(not source.entry_flow(0) and not source.entry_flow(1000) and not source.admission
+         and not source.emit_gate and source.engine.get(94) and source.reset_work.spent==spent,
+         "Forged terminal controls created a free opening")
+    # Distinct retained-stock cases on this same digital control tuple.
+    # These are boundary fixtures, not free recharge during native mode 4.
+    source.reset_work.stock=price-1
+    need(not source.entry_flow(F(1,CLEAR_RATE)) and source.reset_work.spent==spent
+         and source.reset_work.stock==price-1,
+         "A partial parcel energized a complete terminal strobe")
+    source.reset_work.stock=F(price);heat=source.reset_work.heat
+    # A genuinely powered controller with forged terminal controls may open
+    # on the next funded edge; opening does not certify slot preparation.
+    source.slots[-1].admission=False
+    need(not source.entry_flow(0) and not source.entry_flow(F(1,3*CLEAR_RATE))
+         and not source.entry_flow(F(1,3*CLEAR_RATE)) and not source.admission
+         and source.reset_work.spent==spent,"Unfunded past time bought the terminal strobe")
+    need(source.entry_flow(F(1,3*CLEAR_RATE)) and source.admission and source.emit_gate
+         and source.reset_work.spent==spent+price and source.reset_work.stock==0
+         and source.reset_work.heat==heat+price and not source.engine.get(94) and not source.slots[-1].admission,
+         "Actual paid edge failed its exact gate/stock transition")
+    need(not source.entry_flow(1000) and source.reset_work.spent==spent+price,
+         "An already consumed request replayed")
+    need(source.job is claim and claim.live and source.adc.cell.stock==adc_stock
+         and flight.claim is flight_claim and flight.claim.live and flight.stock==flight_stock
+         and source.energy is energy,"Entry changed other accepted work, binding or destination")
+    source.cold_cut();source.engine.put(94,1,1);source.reset_work.stock=price
+    need(not source.entry_flow(1000) and not source.admission and not source.emit_gate
+         and source.reset_work.spent==spent+price and source.reset_work.stock==price,
+         "Paid terminal fields bypassed the physical source cut")
+    # Probe a future fault as a consumer of the *retained oscillator phase*.
+    # A whole 1.5-tick call and a call split at the commit edge must leave
+    # the same clock state, even if request 94 is later corrupted again.
+    continuations=[]
+    for segments in ((F(3,2),),(F(1),F(1,2))):
+        other=LocalSourceBank(2,0,SourceWork(2,1<<60,1<<60))
+        other.begin_entry(BankEnergy(2,0,1<<60,1<<60))
+        other.entry_cursor=writes;other.entry_remaining=0
+        other.reset_work.stock=F(2*price)
+        for ticks in segments:other.entry_flow(ticks/CLEAR_RATE)
+        need(other.admission and not other.engine.get(94) and other.entry_phase==0,
+             "A blocked clock retained time beyond its actual strobe")
+        other.engine.put(94,1,1)
+        first=other.entry_flow(F(1,2*CLEAR_RATE))
+        second=other.entry_flow(F(1,2*CLEAR_RATE))
+        continuations.append((first,second,other.reset_work.stock,other.entry_phase))
+    need(continuations==[(False,True,0,0)]*2,
+         "Time subdivision changed a future forged request's affordances")
+    # One successful clear/entry sequence pays the same total; quiescence
+    # and time partition are checked separately on the real native state.
+    return dict(strobe_work=price,zero_stock_terminal_request_rejected=True,
+        zero_clock_and_subtick_rejected=True,partial_stock_retained=True,
+        paid_edge_can_open_with_corrupt_ordinary_controls=True,admission_is_not_formation=True,
+        consumed_request_not_replayed=True,stopped_clock_partition_under_later_recorruption=True,
+        cold_power_cut_dominates=True,
+        fixed_E_accepted_ADC_and_emitted_symbol_preserved=True)
+
+
+def finite_flight_checks():
+    """Exercise the raw divider, the physical limiter, and actual old stock."""
+    bank=LocalSourceBank(2,0,SourceWork(2,1<<60,1<<60))
+    bank.reform();bank.rearm(BankEnergy(2,0,1<<60,1<<60))
+    lane=bank.branches[0]
+    for i in range(67):
+        need(lane.offer(0,i)=="accepted","Unfunded saturated-flight setup")
+    # Each iteration represents a distinct raw divider overwrite, with the
+    # underlying physical tick and lead propagation still advancing in time.
+    for i in range(265):
+        bank.tx_phase=3;bank.advance_cpu(bank.ADC_TICKS)
+        need(lane.sent<=WIRE_BURST+WIRE_RATE*F(i+1,4096)
+             and len(lane.flights)<=FLIGHT_CAPACITY,"Mutable divider bypassed the physical lead")
+    need(lane.sent<265 and all(f.stock+f.spent==128 for f in lane.flights),
+         "Divider pressure copied a symbol or lost its parcel")
+    b=bank.branches[1]
+    need(b.offer(0,23)=="accepted" and b.tick()=="symbol","Missing original physical flight")
+    old=b.flights[0];old_token=old.claim
+    active=b.slots[b.bits.get(15,8)];source_claim=active.claim
+    # Price a full retained-state boundary fixture explicitly. This tests
+    # the native port on full input without assuming its whole prefix.
+    supply=Work(128*(FLIGHT_CAPACITY-1),128*(FLIGHT_CAPACITY-1))
+    for j in range(1,FLIGHT_CAPACITY):
+        need(supply.debit(128),"Initial retained symbol has no stock")
+        child=SymbolFlight(b.destination,j);child.physical_slot=j
+        b.flight_cells[j]=child;b.flights.append(child)
+    before=(active.cell.stock,bank.local_heat,bank.transferred_flight)
+    refusal_price=FLIGHT_PROBE_WORK+FLIGHT_DROP_WORK
+    need(b.tick()=="flight-busy/drop" and len(b.flights)==FLIGHT_CAPACITY
+         and not b.bits.get(26) and not source_claim.live and old.claim is old_token and old_token.live
+         and active.cell.stock==before[0]-refusal_price
+         and bank.local_heat==before[1]+refusal_price
+         and bank.transferred_flight==before[2],"A full carrier lost or copied work")
+    need(b.tick()=="idle" and active.cell.stock==before[0]-refusal_price,
+         "The rejected local claim could retire itself twice")
+    need(b.offer(0,24)=="accepted","Failed to queue a new record after refusal")
+    b.bits.put(29,9,511);need(b.tick()=="invalid-flight-selector/drop","An absent physical slot accepted work")
+    b.bits.put(29,9,0)
+    old_token.retire();received=[]
+    b.advance_wire(F(1,8),lambda dst,value:received.append((dst,value)))
+    need(b.offer(0,25)=="accepted" and old.stock==64 and old.remaining==F(1,8)
+         and b.flight_cells[0] is old and b.tick()=="flight-busy/drop",
+         "A half-drained physical slot was recycled")
+    b.advance_wire(F(1,8),lambda dst,value:received.append((dst,value)))
+    need(old.stock==0 and old.spent==128 and b.flight_cells[0] is None and not b.flights
+         and len(received)==FLIGHT_CAPACITY-1,"A retired flight was delivered twice or lost work")
+    need(b.offer(0,26)=="accepted","Fresh data claim could not use the drained branch")
+    transferred=bank.transferred_flight
+    for _ in range(4):need(b.tick()=="symbol","Fresh coherent record could not complete after actual drain")
+    need(not b.bits.get(26) and len(b.flights)==4 and b.flights[0] is not old
+         and b.flights[0].physical_slot==0 and bank.transferred_flight==transferred+512,
+         "Paid record reuse failed after actual flight drainage")
+    # The 5th immediate symbol cannot use nominal timing merely because it
+    # is funded. Reject once; preserve all older flights. At the next
+    # nominal symbol time the physical rate residual admits one again.
+    need(b.offer(0,27)=="accepted" and b.tick()=="lead-busy/drop"
+         and not b.bits.get(26) and len(b.flights)==4,"Rate refusal stranded old sender state")
+    need(b.offer(0,28)=="accepted","Fresh record could not follow a rate refusal")
+    for _ in range(4):
+        b.advance_wire(F(100,101*1024),lambda dst,val:None)
+        need(b.tick()=="symbol","First fresh record following rate refusal remained poisoned")
+    # Unfund the terminal suffix after three actual emissions. A refusal
+    # before the fourth preserves all old symbols, consumes the source
+    # claim and leaves its actual unused work on the elected DATA cell.
+    b.advance_wire(F(1,4),lambda dst,val:None)
+    need(b.offer(0,29)=="accepted","No DATA claim for the short-terminal probe")
+    for _ in range(3):need(b.tick()=="symbol","Short-terminal preparation failed")
+    current=b.slots[b.bits.get(15,8)];claim=current.claim;old_symbols=tuple(b.flights)
+    need(current.cell.stock==1280 and current.cell.debit(1),"Short-terminal countercase lost its physical debit")
+    bank.local_heat+=1
+    need(b.tick()=="unfunded-symbol/drop" and not claim.live and not b.bits.get(26)
+         and current.cell.stock==1279-refusal_price and tuple(b.flights)==old_symbols,
+         "A doomed terminal attempt started a fourth parcel or left a stuck serializer")
+    return dict(physical_slots=FLIGHT_CAPACITY,elapsed_divider_override_ticks=265,
+        emitted_under_divider_pressure=lane.sent,first_old_failure_time=F(265,4096),
+        full_reject_work=refusal_price,old_partial_work_preserved=64,
+        grant_before_emit=True,old_delivery_revocation_retains_work=True,
+        full_or_rate_refusal_retires_only_the_local_claim=True,
+        valid_record_after_flight_drain_and_after_rate_refusal=True,
+        terminal_suffix_qualified_before_fourth_symbol=True,
+        true_drain_before_reuse=True,invalid_9_bit_flight_selector_rejected=True,
+        initial_full_fixture_work=supply.spent+128)
+
+
+def source_native_checks():
+    population=12*(6+2**98)+2;u=SourceWork(2,1<<60,1<<60)
+    bank=LocalSourceBank(2,0,u,population)
+    need(bank.reform()=="formed-unpowered","Literal source reset failed")
+    cold_work=bank.reset_work.spent
+    need(cold_work==504329 and all(v==0 for v in bank.I),"Source I was not literally cleared")
+    need(all(not s.admission and not s.output and s.reset and s.cell.stock==F(1,2)
+             for s in bank.slots+[bank.adc]),"Cold reset silently rearmed source cells")
+    need(bank.rearm()=="missing-physical-E-entry","U row OPEN fabricated operating E")
+    bank.admission=True;bank.emit_gate=True
+    need(bank.branches[0].offer(0,500)!="accepted","Bank flags alone restored source service")
+    bank.admission=False;bank.emit_gate=False
+    E=BankEnergy(2,0,1<<60,1<<60)
+    need(bank.rearm(E)=="entered","Actual source E entry failed")
+    entry_work=bank.reset_work.spent-cold_work
+    need(entry_work==bank.ENTRY_WORK==62506,"Source entry writes were not counted")
+    need(E.spent==F(84539311,2),"Full source refill debit differs from actual floor stock")
+    need(all(s.admission and s.output and not s.reset and s.cell.stock==4096
+             for s in bank.slots+[bank.adc]),"Bank entry left slots masked/unfunded")
+    branch=bank.branches[0]
+    #Literal bit identity: a stale scheduler clock cannot be cured by an offer.
+    branch.bits.put(27,1,0)
+    need(branch.offer(0,500)=="accepted" and branch.tick()=="stopped",
+         "A data offer repaired the serializer clock")
+    branch.bits.put(27,1,1)
+    for j in range(127):need(branch.offer(0,j)=="accepted","Native128 queue rejected prematurely")
+    need(branch.offer(0,1)=="full","Native queue exceeded128")
+    need(branch.tick()=="symbol" and branch.offer(0,999)=="accepted",
+         "One active plus128 queued claims did not fit129 cells")
+    need(sum(s.claim is not None and s.claim.live for s in branch.slots)==129,
+         "Queue/serializer duplicated or dropped claim ownership")
+    old_flight=branch.flights[0];old_claim=branch.slots[0].claim
+    stock_before=old_flight.stock;bank.cold_cut();energy_before=E.stock
+    need(old_claim.live,"Source cut erased a still-local claim without its paid drop")
+    need(not branch.slots[0].complete(lambda d,p:None,old_claim),
+         "Per-slot callback bypassed the actual source cut")
+    bank.advance_cpu(bank.CPU_RATE//4)
+    need(stock_before==128 and old_flight.stock==0 and old_flight.spent==128,
+         "CPU/source cut froze or erased emitted work")
+    need(E.stock==energy_before,"Cold source recharged an operating cell")
+    need(not old_claim.live and branch.slots[0].cell.stock>0,
+         "Nominal cut drop did not consume the claim while retaining unused work")
+    need(bank.reform()=="formed-unpowered" and not old_claim.live,
+         "Native cold reset left an old local publication claim")
+    need(not old_claim.dispatch(lambda d,p:(_ for _ in ()).throw(AssertionError("old child"))),
+         "Old queue claim replayed after native clear")
+    need(bank.rearm(E)=="entered","Repeated actual source entry failed")
+    initial_slots=sum(s.cell.stock for s in bank.slots+[bank.adc])
+    initial_E=E.stock;initial_heat=bank.local_heat;initial_flight=bank.flight_heat
+    bank.raw_heads[0]=42;bank.raw_heads[1]=900
+    need(bank.source_start("fast",(0,))=="accepted","ADC rejected actual source request")
+    token=bank.job;bank.I[1]=777;bank.valid=False
+    need(bank.source_start("fast",(1,))=="busy" and bank.job is token,
+         "Busy start replaced an actual captured descriptor")
+    bank.adc_bits.put(2050,1,0);remaining=bank.adc_bits.get(2052,6)
+    bank.advance_cpu(bank.CPU_RATE//64)
+    need(bank.job is token and bank.adc_bits.get(2052,6)==remaining,
+         "Stopped ADC clock progressed or a payload restarted it")
+    bank.adc_bits.put(2050,1,1);bank.advance_cpu(bank.CPU_RATE//64)
+    need(bank.valid and bank.I[1]==42 and bank.job is None,
+         "ADC did not return its captured raw sample")
+    need(not token.dispatch(lambda d,p:None),"Consumed ADC claim replayed")
+    branch=bank.branches[1]
+    for j in range(3):need(branch.offer(j,500+j)=="accepted","Post-reset publication unavailable")
+    bank.advance_cpu(bank.CPU_RATE)
+    final_slots=sum(s.cell.stock for s in bank.slots+[bank.adc])
+    live_flight=sum(child.stock for b in bank.branches for child in b.flights)
+    need(initial_slots+(initial_E-E.stock)==final_slots+(bank.local_heat-initial_heat)+
+         (bank.flight_heat-initial_flight)+live_flight,"Native E/heat/flight balance failed")
+    #Partial/faulted reset and entry are real retained states, not READY gates.
+    poor=LocalSourceBank(2,1,u,population);poor.begin_reset();poor.apply_native_mode(2)
+    poor.reset_native(10**18)
+    need(poor.cursor==0 and poor.reset_phase<1,"Unfunded reset replayed clock credit")
+    empty=BankEnergy(2,1,0,0);poor.begin_entry(empty)
+    poor.entry_flow(10**18)
+    need(not poor.admission and poor.entry_cursor==0 and poor.entry_phase<1,
+         "Unfunded entry opened native service")
+    need(poor.reset_work.charge(1,u)>0,"Actual partial reset recharge failed")
+    before=poor.entry_cursor;poor.entry_flow(F(1,2*CLEAR_RATE))
+    need(poor.entry_cursor<=before+1,"A past starved interval became present native work")
+    #Malformed digital scheduler state cannot invent a funded claim.
+    bank.branches[2].bits.put(26,1,1);bank.branches[2].bits.put(15,8,255)
+    need(bank.branches[2].tick()=="invalid-state","Invalid selector acquired another slot")
+    wrong=BankEnergy(3,0,1<<20,1<<20)
+    try:bank.begin_entry(wrong)
+    except AssertionError:pass
+    else:raise AssertionError("Source rearm pooled another bank's E")
+    #A funded ADC continues without CPU/source recharge; only its own clock
+    #or work failure may stall it. The later literal reset still owns its claim.
+    bank.raw_heads[0]=123
+    need(bank.source_start("fast",(0,))=="accepted","Fresh ADC did not rearm")
+    accepted=bank.job;bank.cold_cut();E_before=E.stock
+    bank.advance_cpu(bank.CPU_RATE//64)
+    need(not accepted.live and bank.I[1]==123 and E.stock==E_before,
+         "Source power loss cancelled a funded ADC or refilled its cell")
+    bank.adc_bits.put(2048,1,1)
+    #This stale control has no physical job and cannot be normalized by start.
+    bank.admission=True;bank.powered=True
+    need(bank.source_start("fast",(0,))=="busy","A new ADC request repaired stale busy state")
+    bank.admission=False;bank.powered=False
+    lane=RawLane(population,LaneId(2,0,0,0),u)
+    record=next(r for r in lane.ordered if r.key<2)
+    for symbol in reversed(symbols(record.source_key,500)):
+        lane.receive_symbol(symbol);lane.process_one()
+    need(record.readable()==MASK,"Reordered raw limbs were a complete nominal frame")
+    lane.offer_frame(record.source_key,500)
+    need(record.readable()==500,"A fresh ordered frame failed to replace an old partial prefix")
+    poor.apply_native_mode(3);poor.abort_cursor=(1<<14)-1
+    need(poor.reset_native(1) is False,"Malformed reset selector was interpreted as an operation")
+    poor.begin_entry(empty);poor.entry_remaining=0
+    need(not poor.entry_flow(1) and not poor.admission,"Zero forged entry work produced service")
+    #A writable progress counter is neither work nor a paid return strobe.
+    forged=LocalSourceBank(2,1,SourceWork(2,1<<60,1<<60),population)
+    forged.reform();forged.rearm(BankEnergy(2,1,1<<60,1<<60))
+    forged.raw_heads[0]=333;forged.source_start("fast",(0,))
+    pending=forged.job;forged.adc_bits.put(2052,6,0)
+    forged.adc.progress_work=4096;forged.adc.cell.stock=F(0)
+    before=(forged.I[1],forged.valid,forged.adc_completed)
+    forged.adc_tick()
+    need(pending.live and before==(forged.I[1],forged.valid,forged.adc_completed),
+         "A forged work counter paid an unfunded ADC commit")
+    slot=DataSlot(("fixed","source"));slot.offer(9);slot.progress_work=4096;slot.cell.stock=F(0)
+    need(not slot.complete(lambda d,v:None,slot.claim) and slot.claim.live,
+         "A logical counter funded the generic return strobe")
+    partition=source_partition_checks()
+    partition["final_entry_strobe"]=source_entry_strobe_checks()
+    partition["finite_flight"]=finite_flight_checks()
+    return dict(TX_branches=80,
+        mutable_counter_cannot_fund_ADC_or_slot_completion=True,
+        ADC_physical_commit_floor=768,generic_physical_commit_floor=32,queue_capacity_each=128,claim_cells_each=129,
+        partition=partition,stale_ADC_busy_requires_reset=True,
+        funded_ADC_continues_after_source_power_cut=True,malformed_native_control_has_bounded_wait=True,
+        independent_symbol_reordering_is_not_nominal_FIFO_service=True,
+        live_claim_max=129,TX_state_bits_per_branch=2048,
+        descriptor_allocation="129*15 live/reset fields +113 scheduler bits in existing1024-bit descriptor units; queue selectors use existing TX payload array",
+        ADC_I_words=8,ADC_I_bits=2048,ADC_block_bits=4096,
+        source_shared_dispatch_bits=256,separate_reset_engine_bits=96,
+        cold_reset_work=cold_work,source_entry_work=entry_work,combined_work=cold_work+entry_work,
+        E_initial_refill_work=F(84539311,2),
+        entry_time=F(entry_work,CLEAR_RATE)+bank.DELTA,
+        power_contact_to_source_entry_upper=CONTROL_DELAY+F(entry_work,CLEAR_RATE)+bank.DELTA,
+        source_clock_stop_survives_payload=True,ADC_busy_does_not_replace_capture=True,
+        old_ADC_and_TX_claims_consumed=True,emitted_child_survives_cut=True,
+        no_cold_E_recharge=True,paid_nominal_cut_drop_preserves_unused_stock=True,
+        unfunded_reset_and_entry_wait=True,
+        no_credit_replay=True,wrong_bank_E_rejected=True,native_energy_balance=True,
+        work_scope="TX/ADC actual cells and reset/entry; funded CPU-parent invocation/native-I arithmetic remain explicit inherited leaf joins",
+        physical_scope="constant admissible native clocks and exact finite state transitions; not a complete hybrid cam/parent/plant execution")
+
+
 def footprint_checks():
     population=12*(6+2**98)+2
     rows=[]
@@ -830,13 +1679,22 @@ def consumer_checks(isa,c,b):
         inactive.masked=True;inactive.ingress=False;inactive.write_gate=False
         lanes[(provider,0)]=inactive
         lane=RawLane(population,LaneId(provider,1,receiver,rb),payers[provider],shared)
-        ports=program.ports_class(isa)(c);value=(500,1000)[incidence.head_type(provider)]
-        ports.fast[("head",0)]=value;ports.fast[("head",1)]=value
+        source=LocalSourceBank(provider,1,payers[provider],population)
+        need(source.reform()=="formed-unpowered","Actual producer source reset failed")
+        energy=BankEnergy(provider,1,1<<60,1<<60)
+        need(source.rearm(energy)=="entered","Actual producer source entry failed")
+        source.attach(lane);value=(450,1050)[incidence.head_type(provider)]
+        source.raw_heads[0]=source.raw_heads[1]=value
+        ports=native_source_ports(isa)(c,source)
         m=program.call(isa,c,ports,"publish_plant",(),b["instruction_upper_bounds"]["publish_plant"]+10)
-        source_steps+=m.steps;ports.elapse(2)
-        client=2*incidence.neighbors(population,provider).index(receiver)+rb
-        for _,kind,args,val in ports.delivered:
-            if kind=="source_offer_fast" and args[0]==client:lane.offer_frame(args[1],val)
+        source_steps+=m.steps;ports.elapse(1)
+        print("native producer",provider,"instructions",m.steps,flush=True)
+        need(source.samples==source.adc_completed==2 and source.publications==160,
+             "Compiled source did not use actual ADC/TX operations")
+        need(ports.job is None and ports.offer_pending==[],
+             "Ideal RawPorts job/offer queue bypassed the source controller")
+        need(all(r.value==value and r.ttl==8 for k,r in lane.records.items() if k<2),
+             "Native source symbols did not reach their installed receiver record")
         lanes[(provider,1)]=lane
     Parent=program.ports_class(isa)
     class Inputs(Parent):
@@ -854,16 +1712,16 @@ def consumer_checks(isa,c,b):
                 if name=="fast_equal":return int(value==bounds[0])
                 return int(bounds[0]<=value<=bounds[1])
             return super().perform(name,args,machine)
-    ports=Inputs(c);ports.fast[("head",0)]=500;ports.fast[("head",1)]=500
+    ports=Inputs(c);ports.fast[("head",0)]=450;ports.fast[("head",1)]=450
     m=program.initialized(isa,c);m.W[c.constants["ENTRY"]]=1;m.enter("frame")
     while not m.io_counts["world"] and m.steps<b["active_frame_upper"]:need(m.step(ports),"Input consumer stopped")
-    need(m.C==c.image and ports.world_latch==(60,60),"Actual framed input did not reach WORLD")
+    need(m.C==c.image and ports.world_latch==(50,80),"Actual framed input did not reach WORLD")
     # Intact inference still consumes forged whole-primary input at a boundary.
     key=1;group=incidence.plant_group(population,receiver,1)
     for slot,origin in enumerate(group):
         lanes[(origin,1)].offer_frame(1,1000 if slot<8 else 999)
     def world_once():
-        pp=Inputs(c);pp.fast[("head",0)]=pp.fast[("head",1)]=500
+        pp=Inputs(c);pp.fast[("head",0)]=pp.fast[("head",1)]=450
         mm=program.initialized(isa,c);mm.W[c.constants["ENTRY"]]=1;mm.enter("frame")
         while not mm.io_counts["world"]:need(mm.step(pp),"Intact inference stopped")
         need(mm.C==c.image and not mm.code_writes,"Input attack changed execution")
@@ -871,10 +1729,13 @@ def consumer_checks(isa,c,b):
     before=world_once()
     lanes[(group[0],1)].records[1].value=999
     after=world_once()
-    need(before==(60,60) and after==(60,59),"Primary frame is no longer genuinely consumed")
+    need(before==(50,70) and after==(50,69),"Primary frame is no longer genuinely consumed")
     need(len({id(payers[o]) for o in providers})==len(providers),"Source budgets were pooled")
     return dict(actual_producers=len(providers),distinct_source_U_ledgers=len(payers),source_bank=1,receiver_bank=rb,
         producer_instructions=source_steps,consumer_prefix_instructions=m.steps,
+        producers_use_native_ADC_TX_and_E_recharge=True,ideal_RawPorts_job_and_offer_pending_unused=True,
+        native_nominal_trace_clock="one retired instruction per1/2^26q; ADC4096 ticks/q; TX1024 symbols/q; receiver2048 steps/q",
+        source_traces_are_compatible_constant_head_fixtures_not_full_hybrid_history=True,
         actual_world=list(ports.world_latch),primary_before=list(before),primary_after=list(after),
         intact_receiver_C_R_W_not_corrupted=True,full_paced_frame_not_run=True,
         staged_records_and_clock_control_are_actual_input=True)
@@ -896,7 +1757,17 @@ def resource_checks():
     lane_max=KEYS*REC_BITS+RX_BITS+DEC_BITS
     lane_price=2*lane_max+lane_max//2+1281
     local_price=2*LocalSourceBank.BITS+LocalSourceBank.BITS//2+1281+8*(80*129+1)
-    need(max(lane_price,local_price)<RESET_CAP,"Reset job cannot use its actual cell")
+    need(max(lane_price,local_price+LocalSourceBank.ENTRY_WORK)<RESET_CAP,"Reset and later entry exceed their one actual cell")
+    need((80*129+1)*4096/LocalSourceBank.DELTA<=F(legacy_record["actual_ordinary_recharge_peak"])/2,
+         "Source E chargers exceed retained ordinary recharge inventory")
+    need((1<<60)<=F(legacy_record["actual_keeper_energy_word"])*F(legacy_record["actual_energy_head_unit"]),
+         "Native test bank exceeds the actual connected-cap lower bound")
+    need(F(62)/(F(101,100)*4096)>F(1,128) and F(63,4096)<F(1,64),
+         "Nominal ADC counter/clock misses conversion interval")
+    need(F(1280+2816)/(F(4,3)*16384*2**27)<F(3,4)/(F(101,100)*2**26),
+         "Source admission cannot fit the retained parent native interval")
+    need(CONTROL_DELAY+F(LocalSourceBank.ENTRY_WORK,CLEAR_RATE)+LocalSourceBank.DELTA<F(300,101),
+         "Source native entry can outlast the initial residual boot drain")
     need(max(lane_price,local_price)/F(CLEAR_RATE)<F(1,2),"Clear band understates complete work")
     for _mode,left,right,native in MODES:
         need((right-left)/VMAX>CONTROL_DELAY+native,"Physical mode overtakes its work")
@@ -908,7 +1779,7 @@ def resource_checks():
     native_burst=2*records*(TICK_WORK+2048)+2*lanes*RX_WORK
     control_delivered_burst=4*cam.CONTROL_PRICE*lanes
     control_delivered_rate=2*cam.CONTROL_PRICE*lanes*cam.CONTROL_MAX
-    action_burst=2*256*lanes;action_rate=256*lanes*cam.CONTROL_MAX
+    action_burst=2*256*reset_cells;action_rate=256*reset_cells*cam.CONTROL_MAX
     reset_charge=2*reset_cells*RESET_CAP/RESET_REFILL
     holding=F(control_bits,1024)
     added_rate=2*(native_rate+control_delivered_rate+action_rate)+reset_charge+holding
@@ -917,8 +1788,17 @@ def resource_checks():
     D=F(old["upstream_rate"])+added_rate;B=F(old["upstream_burst"])+added_burst
     reserve=new_U-B-2*D;supply=F(cam_record["resources"]["unchanged_supply_rate"])
     need(D<supply and reserve>added_burst+1,"Same supply/capacity cannot fund raw reset")
-    physical_peak=(native_rate+2*lanes*cam.CONTROL_PRICE*2**20+
-                   2*256*lanes*2**20+reset_cells*2**21+holding)
+    # A local terminal strobe can release 128 local work on one native
+    # edge. Count BOTH local sources even under repeated forged requests.
+    # Fixed-coincidence qualification: 16 cursor, 16 remainder, 1
+    # microstep, 1 request, 5 mode/valid and 1 physical power input.
+    strobe_inputs=16+16+1+1+5+1
+    strobe_price=2*strobe_inputs+(strobe_inputs-1)+3*2+3
+    need(strobe_price==LocalSourceBank.ENTRY_COMMIT_WORK<=256,
+         "Terminal stencil or differential suffix price changed")
+    strobe_peak=2*LocalSourceBank.ENTRY_COMMIT_WORK*CLEAR_RATE
+    physical_peak=(strobe_peak+native_rate+2*lanes*cam.CONTROL_PRICE*2**20+
+                   2*256*reset_cells*2**20+reset_cells*2**21+holding)
     combined=F(cam_record["resources"]["combined_native_peak"])+physical_peak
     need(41*combined<2**93 and 4*41*combined<2**94,"Added raw circuits exceed physical ratings")
     reaction=F(2*lanes+2)*cam.f.U_BIT/1000
@@ -946,6 +1826,24 @@ def resource_checks():
         record_data_control_bits=record_bits,existing_record_unit_bits=2048,
         additional_control_bits=control_bits,lane_reset_bitmap_upper=lane_max,
         lane_reset_work_upper=lane_price,local_source_reset_work_upper=local_price,
+        local_source_entry_work=LocalSourceBank.ENTRY_WORK,
+        local_final_strobe_work=LocalSourceBank.ENTRY_COMMIT_WORK,
+        local_final_strobe_inputs=strobe_inputs,local_final_strobe_qualification_work=strobe_price,
+        local_final_strobe_peak_upper=strobe_peak,
+        local_final_strobe_closed_interval_burst=2*LocalSourceBank.ENTRY_COMMIT_WORK,
+        local_entry_nominal_edges=LocalSourceBank.ENTRY_WORK-LocalSourceBank.ENTRY_COMMIT_WORK+1,
+        local_source_reset_plus_entry_work=local_price+LocalSourceBank.ENTRY_WORK,
+        local_source_entry_time=CONTROL_DELAY+F(LocalSourceBank.ENTRY_WORK,CLEAR_RATE)+LocalSourceBank.DELTA,
+        native_entry_execution_time=F(LocalSourceBank.ENTRY_WORK,CLEAR_RATE)+LocalSourceBank.DELTA,
+        source_initial_E_refill_deficit=(80*129+1)*F(8191,2),
+        source_all_cell_E_recharge_peak=(80*129+1)*4096/LocalSourceBank.DELTA,
+        source_record_work=4096,source_record_emitted_work=512,source_record_local_heat=3584,
+        actual_flight_slots_per_branch=FLIGHT_CAPACITY,physical_burst_symbols=WIRE_BURST,
+        physical_symbol_rate=WIRE_RATE,clock_divider_override_attempt_rate=F(101,100)*4096,
+        flight_admission_or_rejection_probe_work=FLIGHT_PROBE_WORK,
+        refused_flight_closure_work=FLIGHT_DROP_WORK,
+        actual_flight_selector_bits=9,
+        source_TX_control_bits=80*2048,source_ADC_I_control_bits=4096,source_shared_control_bits=256,
         controller_clear_rate=CLEAR_RATE,actual_modes=MODES,prepared_position=OPEN_AT,
         source_row_prepared_upper=prepared_upper,old_field_preparation=cam_record["physical_prepared_upper"],
         added_upstream_rate=added_rate,added_upstream_burst=added_burst,
@@ -986,21 +1884,22 @@ def generate():
         hashes["../local-control/"+name]=program.hash_text(legacy.text_at(BASE,"local-control/"+name))
     isa=program.load_isa();c=program.compile_program(isa,design.design(isa));b=program.bounds(isa,c)
     need((c.constants["FAST_KEYS"],c.constants["ORIGINS"],c.constants["BAYS"])==(2003,15,1),"Wrong finite layout")
+    resources=resource_checks()
     print("checking coherent records, retained effects and actual source-row reset",flush=True)
-    record=record_checks();slots=slot_checks();reset=reset_checks();footprints=footprint_checks();control=control_checks()
+    record=record_checks();slots=slot_checks();reset=reset_checks();footprints=footprint_checks();control=control_checks();native=source_native_checks()
     print("executing actual publications and compiled input consumption",flush=True)
     consumed=consumer_checks(isa,c,b)
     return serial(dict(scope="Constructed source-row ordinary input lifecycle; full source/return admission remains open",
         base=BASE,python_version=sys.version,image_sha256=program.hash_text(json.dumps(c.image)),
         frozen_ISA_sha256=isa.source_hash,record_checks=record,slot_checks=slots,reset_checks=reset,
-        fault_footprints=footprints,control_checks=control,compiled_consumers=consumed,resources=resource_checks(),
+        fault_footprints=footprints,control_checks=control,source_native_checks=native,compiled_consumers=consumed,resources=resources,
         sources_sha256_lf={n:program.digest(HERE/n) for n in ("INPUT-LIFECYCLE.md","input_lifecycle.py")},
         immutable_inputs_sha256_lf=hashes,
         initial_relation="One-time active raw engines have running clocks/coherent native entry; payloads/countdowns/queued symbols may be arbitrary. Later broad control corruption is never initialized by release.",
         residuals=["actual source-bank cold/data-gate contact and immutable fanout/fault containment",
             "actual source-sibling continuous publication and complete pair-read interval cover",
             "source-root renewal ancestry for every recurrent lane/primary/pair incident",
-            "parent retirement and local accepted-child/capsule reset/rearm composition",
+            "paid parent invocation/no-late-offer and actual source power/contact entry composition",
             "initial ordinary control-state relation or a separately executed initial normalization",
             "full all-history source/core/world and independent frozen-transfer contracts"],
         full_hybrid_energy_trace=False,full_source_admission=False,program_completion=False,
