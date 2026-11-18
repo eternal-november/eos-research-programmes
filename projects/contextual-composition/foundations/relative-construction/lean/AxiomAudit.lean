@@ -1164,3 +1164,16 @@ import ContextualComposition
 #print axioms ContextualComposition.GrothendieckStep.FibreValue.Paste.compLaw
 #print axioms ContextualComposition.GrothendieckStep.FibreValue.evalUnit
 #print axioms ContextualComposition.GrothendieckStep.FibreValue.evalComp
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.mapPayload
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.mapLiftPayload
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.correctedCart
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.mapLiftCart
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.projection
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.over
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.action
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.selectedCart
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.after
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.square
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.square_fac
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.nativeSquare
+#print axioms ContextualComposition.GrothendieckStep.PayloadLift.iterateSquare
