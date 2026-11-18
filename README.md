@@ -2,6 +2,8 @@
 
 Research manuscripts and reproducible developments.
 
+- [Byzantine control](projects/byzantine-control/): distributed safety, service and recovery under faults.
+
 - [Contextual Composition](projects/contextual-composition/): relative computation, dependent protocols, and controlled recovery.
 
 - [Categorical phenomenology](projects/categorical-phenomenology/): observations, warranted structure, and realizations.
