@@ -1,0 +1,43 @@
+taggedUnitLaw splitEndpoints presheaf
+  Bool : FibreValue.Paste.UnitLaw (SumChange.taggedBase splitEndpoints presheaf (𝟙 Bool))
+  (sourceUnit splitEndpoints presheaf Bool) (eqToHom ⋯)
+taggedCompLaw splitEndpoints presheaf collapse
+  (selectPoint
+    true) : FibreValue.Paste.CompLaw (SumChange.taggedBase splitEndpoints presheaf (collapse ≫ selectPoint true))
+  (SumChange.taggedBase splitEndpoints presheaf collapse)
+  (SumChange.taggedBase splitEndpoints presheaf (selectPoint true))
+  (sourceComp splitEndpoints presheaf collapse (selectPoint true)) (eqToHom ⋯)
+Zero.compLaw presheaf collapse (selectPoint true)
+  zInput : (ZeroPower.baseSquare presheaf (collapse ≫ selectPoint true)).hom.app zInput ≫
+    (eqToHom ⋯).app ((ZeroPower.eval presheaf Bool).obj zInput) =
+  (ZeroPower.eval presheaf Bool).map ((Zero.comp presheaf collapse (selectPoint true)).hom.app zInput) ≫
+    (ZeroPower.baseSquare presheaf collapse).hom.app ((ZeroPower.pull presheaf (selectPoint true)).obj zInput) ≫
+      (presheaf.map collapse.op).toFunctor.map ((ZeroPower.baseSquare presheaf (selectPoint true)).hom.app zInput)
+taggedCompLaw splitEndpoints presheaf collapse (selectPoint true)
+  ⟨0,
+    zInput⟩ : (SumChange.taggedBase splitEndpoints presheaf (collapse ≫ selectPoint true)).hom.app ⟨0, zInput⟩ ≫
+    (eqToHom ⋯).app
+      ((ZeroPower.Sum.equiv (CoproductSpan.All.component splitEndpoints presheaf Bool)).functor.obj ⟨0, zInput⟩) =
+  (ZeroPower.Sum.equiv (CoproductSpan.All.component splitEndpoints presheaf Bool)).functor.map
+      ((sourceComp splitEndpoints presheaf collapse (selectPoint true)).app ⟨0, zInput⟩) ≫
+    (SumChange.taggedBase splitEndpoints presheaf collapse).hom.app
+        ((ZeroPower.Sum.map (SumChange.leafPull splitEndpoints presheaf (selectPoint true))).obj ⟨0, zInput⟩) ≫
+      (Iterates.packedMap endpoints splitEndpoints presheaf collapse.op).map
+        ((SumChange.taggedBase splitEndpoints presheaf (selectPoint true)).hom.app ⟨0, zInput⟩)
+taggedCompLaw splitEndpoints presheaf collapse (selectPoint true)
+  ⟨1,
+    (CoproductSpan.All.component splitEndpoints presheaf Bool 1).inverse.obj
+      sourcePair⟩ : (SumChange.taggedBase splitEndpoints presheaf (collapse ≫ selectPoint true)).hom.app
+      ⟨1, (CoproductSpan.All.component splitEndpoints presheaf Bool 1).inverse.obj sourcePair⟩ ≫
+    (eqToHom ⋯).app
+      ((ZeroPower.Sum.equiv (CoproductSpan.All.component splitEndpoints presheaf Bool)).functor.obj
+        ⟨1, (CoproductSpan.All.component splitEndpoints presheaf Bool 1).inverse.obj sourcePair⟩) =
+  (ZeroPower.Sum.equiv (CoproductSpan.All.component splitEndpoints presheaf Bool)).functor.map
+      ((sourceComp splitEndpoints presheaf collapse (selectPoint true)).app
+        ⟨1, (CoproductSpan.All.component splitEndpoints presheaf Bool 1).inverse.obj sourcePair⟩) ≫
+    (SumChange.taggedBase splitEndpoints presheaf collapse).hom.app
+        ((ZeroPower.Sum.map (SumChange.leafPull splitEndpoints presheaf (selectPoint true))).obj
+          ⟨1, (CoproductSpan.All.component splitEndpoints presheaf Bool 1).inverse.obj sourcePair⟩) ≫
+      (Iterates.packedMap endpoints splitEndpoints presheaf collapse.op).map
+        ((SumChange.taggedBase splitEndpoints presheaf (selectPoint true)).hom.app
+          ⟨1, (CoproductSpan.All.component splitEndpoints presheaf Bool 1).inverse.obj sourcePair⟩)
