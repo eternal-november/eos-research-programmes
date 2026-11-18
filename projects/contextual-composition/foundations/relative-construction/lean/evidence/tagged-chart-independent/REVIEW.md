@@ -1,0 +1,7 @@
+# Tagged binary chart recognition and fixed-chart ternary pasting: independent review
+
+Candidate ZIP SHA-256: 1fb62dd0e2fefec4d1597dbac7ed22074a0c3cf40ee9275b39769cabc3fc863b. Compared all 990 Git blobs at the #215 merge and main: identical Lean subtree (see git-delta.json), 19 candidate additions, six replacements, none removed. The 87 frozen hashes, all 85 source hashes, and nine clean pinned dependency checkouts agreed.
+
+Lean 4.35.0: fresh project build with cached, pinned dependencies; all 819 jobs passed. The 2,228 indexed declarations are unique, ordered, preserve the original 2,203 entries, and produced a byte-identical axiom audit (SHA-256 21861c25851b3e40322c1a9f5f51319b05cb5f59c33db803d0bc4405e93a1557). Both author Lean probes, the cyclic group model, and the independent probes passed. MovingBase retains a nonidentity base arrow and a noninvertible suffix cell simultaneously; NonVertical rejects a total natural transformation without verticality. The finite conjugation model checks all 36 chart pairs, detects the missing inverse unit in 30, and detects wrong orientation in 12. Under transposition transport only 27/729 fibre-map pairs assemble.
+
+The specified binary compositor is recognized uniquely after chart transport. Arbitrary *total vertical* cells lift; arbitrary fibre families do not. The fixed-chart square compares the pre-descent binary total faces. Neither identification of a totalization of the published fibre cells nor an intrinsic global tagged ternary pasting is asserted. Issue #105 remains open.
