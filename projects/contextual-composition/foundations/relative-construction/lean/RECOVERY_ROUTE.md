@@ -63,3 +63,7 @@ Independent scoped pass: read `evidence/tail-pasting-independent/Review.tex` and
 After #177, read Aligned and its same-hom equality lemma; then native_tail_decomposition together with compared_paste_tail from TailPasting, the induction square_comp_native, and decorated_assoc. The source operation was defined earlier in SquarePasting. Next compare the independent identities and derive unit laws before building a category-level equivalence. See NATIVE_SUCCESSOR_FREEZE.json and evidence/native-successor-author-fresh.
 
 Independent scoped review passed: see `evidence/native-successor-independent/Review.tex` and the isolated 728-declaration replay (external dependency binaries cached). Identity preservation and source unit laws remain open.
+
+After #178, read tail_identity and square_id_native, decorated_left_unit/right_unit, Fibre.paste and its comparison, Fibre.category, then Fibre.equivalence and Fibre.allEquivalence. Distinguish the fixed-base equivalences from as-yet unconstructed independent base restriction and its naturality. See CHAIN_IDENTITY_FREEZE.json and evidence/chain-identity-author-fresh.
+
+Independent scoped pass: see `evidence/chain-identity-independent/Review.tex` and its fresh own-project replay (758 distinct named axiom audits; nine pinned external dependency caches reused). Source restriction and naturality in the base remain open.

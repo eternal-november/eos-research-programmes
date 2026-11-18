@@ -64,3 +64,7 @@ TailPasting verifies arbitrary-length tail transport and a full length-one compo
 NativeSuccessor proves the full all-length binary comparison for general split endpoints and associativity of the independent decorated paste over composable base arrows. Unit laws and categorical assembly remain open. 728 indexed declarations; separate review pending.
 
 Independent scoped review passed: see `evidence/native-successor-independent/Review.tex` and the isolated 728-declaration replay (external dependency binaries cached). Identity preservation and source unit laws remain open.
+
+ChainIdentity proves the independent decorated identity and unit laws, and a fixed-payload, pointwise categorical equivalence of the disjoint union of decorated length fibres with the packed iterates. This is not yet a natural equivalence in the base. 758 indexed declarations; separate review pending.
+
+Independent scoped pass: see `evidence/chain-identity-independent/Review.tex` and its fresh own-project replay (758 distinct named axiom audits; nine pinned external dependency caches reused). Source restriction and naturality in the base remain open.
