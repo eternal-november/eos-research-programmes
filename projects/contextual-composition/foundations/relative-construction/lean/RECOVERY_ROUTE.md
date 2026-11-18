@@ -75,3 +75,7 @@ Independent scoped pass: see `evidence/chain-restriction-independent/Review.tex`
 For payload-variable eq:telescope inspect ChainPayload.base_square/layerMap and the independently defined onSquare before compared_square, mixed, sourceConstruction, iterateConstruction and allComparison_square. Next isolate the sequential-product comparison in the actual span equipment; higher modifications, universe closure and monad laws are distinct. See CHAIN_PAYLOAD_FREEZE.json and evidence/chain-payload-author-fresh.
 
 Independent scoped pass: see `evidence/chain-payload-independent/Review.tex` and the fresh 822-declaration replay (nine pinned external caches reused). The forward maps commute with ordinary payload and base change; identification with sequential products of spans remains open.
+
+For the span bridge, read SpanApex.right, Strict.commute/universal, strictFactor/strictEquivalence, then chainObjects/chainHoms/chainEndpoint_map. Next assemble an all-length functor: the span append extends the right end, while chain induction removes the left head. A decomposition at the last grade or a proved reassociation is required; a hom bijection alone proves no composition law.
+
+Independent scoped pass: see `evidence/span-apex-independent/Review.tex` and the fresh 881-declaration replay (nine pinned dependency caches reused). Strict forward projections do not give a strict inverse over both legs; all-length pasting remains open.

@@ -76,3 +76,7 @@ Independent scoped pass: see `evidence/chain-restriction-independent/Review.tex`
 ChainPayload makes both all-length constructions functorial on ordinary payload-presheaf transformations and proves the independent forward equivalences commute with payload and base change. This does not identify chain spans with the equipment's sequential products. 822 indexed declarations; independent scoped review passed.
 
 Independent scoped pass: see `evidence/chain-payload-independent/Review.tex` and the fresh 822-declaration replay (nine pinned external caches reused). The forward maps commute with ordinary payload and base change; identification with sequential products of spans remains open.
+
+SpanApex compares a dependent Grothendieck step with an independently defined strict CAT pullback and with the corresponding iso-comma. It identifies binary chains and squares over prescribed base arrows with the binary apex and computes both legs. It does not identify all chains with all span powers.
+
+Independent scoped pass: see `evidence/span-apex-independent/Review.tex` and the fresh 881-declaration replay (nine pinned dependency caches reused). Strict forward projections do not give a strict inverse over both legs; all-length pasting remains open.
