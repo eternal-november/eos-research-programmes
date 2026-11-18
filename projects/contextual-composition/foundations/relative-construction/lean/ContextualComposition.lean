@@ -79,3 +79,6 @@ public import ContextualComposition.NativeAssoc
 public import ContextualComposition.NativeTriple
 public import ContextualComposition.PackedCuts
 public import ContextualComposition.NativePacked
+public import ContextualComposition.BoundaryPaste
+public import ContextualComposition.BlockEvaluation
+public import ContextualComposition.CutCompositor
