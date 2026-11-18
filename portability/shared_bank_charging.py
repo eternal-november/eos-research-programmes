@@ -87,6 +87,89 @@ def closed_segment(stock, deficits, rates, exposure):
     return Charge(final, retained, Clock(linear, tuple(sorted(terms.items()))))
 
 
+@dataclass(frozen=True)
+class ExposureBand:
+    lower: Q
+    upper: Q
+
+
+def log_bounds(ratio, tolerance):
+    """Enclose log(ratio) for ratio>=1 using rational series with an explicit tail."""
+    need=natural_quantity
+    ratio = need(ratio); tolerance = need(tolerance)
+    if ratio < 1 or tolerance == 0:
+        raise ValueError("Expected ratio >= 1 and a positive tolerance")
+    exponent = ratio.numerator.bit_length() - ratio.denominator.bit_length()
+    if (1 << exponent) > ratio:
+        exponent -= 1
+    reduced = ratio/(1 << exponent)
+    def small(value):
+        z = (value-1)/(value+1)
+        term, odd, lower = z, 1, Q(0)
+        while True:
+            tail = 2*term/(odd*(1-z*z))
+            if (exponent+1)*tail <= tolerance:
+                return lower,lower+tail
+            lower += 2*term/odd
+            term *= z*z
+            odd += 2
+    tiny=small(reduced)
+    if not exponent:
+        return tiny
+    two=small(Q(2))
+    return tuple(tiny[i]+exponent*two[i] for i in (0,1))
+
+
+def elapsed_bounds(clock, tolerance):
+    tolerance=natural_quantity(tolerance)
+    if not tolerance:
+        raise ValueError("Positive clock tolerance required")
+    lower=upper=clock.linear
+    for rate,ratio in clock.logarithms:
+        lo,hi=log_bounds(ratio,tolerance*rate/len(clock.logarithms))
+        lower+=lo/rate
+        upper+=hi/rate
+    return lower,upper
+
+
+def exposure_at_time(stock, deficits, rates, duration, tolerance):
+    """Constructively enclose actual availability at a specified elapsed time.
+
+    Held unit-efficiency, no other inflow or consumers. A genuine time endpoint
+    is represented even when its stock is irrational. No endpoint of the band
+    is silently installed as the state of an actual receiving cell.
+    """
+    stock=natural_quantity(stock);duration=natural_quantity(duration)
+    deficits=tuple(map(natural_quantity,deficits));rates=tuple(map(natural_quantity,rates))
+    tolerance=natural_quantity(tolerance)
+    if not tolerance or len(deficits)!=len(rates):
+        raise ValueError("Invalid time resolution or port inventory")
+    if not stock or not duration or not any(d and r for d,r in zip(deficits,rates)):
+        exact=min(Q(1),stock)*duration
+        return ExposureBand(exact,exact)
+    if stock-sum(min(d,r*duration) for d,r in zip(deficits,rates))>=1:
+        return ExposureBand(duration,duration)
+    # Cap hits and the E=1 boundary are handled inside each exact exposure
+    # probe. An exposure that exhausts the bank has no finite-time preimage.
+    lower,upper=Q(0),min(Q(1),stock)*duration
+    while upper-lower>tolerance:
+        mid=(lower+upper)/2
+        if sum(min(d,r*mid) for d,r in zip(deficits,rates))>=stock:
+            upper=mid
+            continue
+        at=closed_segment(stock,deficits,rates,mid)
+        lo,hi=elapsed_bounds(at.clock,tolerance/4)
+        if hi<duration:lower=mid
+        elif lo>duration:upper=mid
+        else:
+            # dA/dt<=1. Equal/near-equal endpoint clocks need no exact
+            # comparison between a rational duration and a logarithm.
+            radius=max(hi-duration,duration-lo)
+            lower=max(lower,mid-radius);upper=min(upper,mid+radius)
+            break
+    return ExposureBand(lower,upper)
+
+
 class OperatingBank(original.BankWork, inputs.BankEnergy):
     """One installed source. Untimed parent recharge is unavailable here."""
     def __init__(self, owner, capacity, stock):
@@ -325,6 +408,20 @@ def source_checks():
     else:
         raise AssertionError("Generic proportional export reached zero at finite time")
 
+    # At t=1 two equal ceilings and the E=1 contact occur together.
+    assert exposure_at_time(5,(1,1,8),(1,1,2),1,Q(1,10**8))==ExposureBand(1,1)
+    lo,hi=log_bounds(2,Q(1,10**12))
+    assert Q(69,100)<lo<=hi<Q(7,10) and hi-lo<=Q(1,10**12)
+    assert exposure_at_time(0,(20,),(7,),100,1)==ExposureBand(0,0)
+    for tolerance in (Q(1,10**4),Q(1,10**7)):
+        band=exposure_at_time(5,(1,1,8),(1,1,2),Q(5,4),tolerance)
+        assert band.upper-band.lower<=tolerance and 1<band.lower<band.upper<Q(3,2)
+        # The endpoints have clocks below/above 5/4, verified by narrower
+        # rational bounds on the exact logarithmic clock.
+        left=closed_segment(5,(1,1,8),(1,1,2),band.lower)
+        right=closed_segment(5,(1,1,8),(1,1,2),band.upper)
+        assert elapsed_bounds(left.clock,tolerance/100)[1]<=Q(5,4)
+        assert elapsed_bounds(right.clock,tolerance/100)[0]>=Q(5,4)
     print("Exact exposure/elapsed subdivision checks:", tested)
     print("Routed parent and two DATA cells shared E; remaining stock:", bank.stock)
     print("Low-stock exact elapsed certificate:", low.clock)
