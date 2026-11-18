@@ -106,7 +106,7 @@ class SharedContacts:
     operating balances are read-only projections. No second E is installed.
     Positive gate work on U is transferred into fixture heat exactly once.
     """
-    def __init__(self, p, owner, source_work, machines):
+    def __init__(self, p, owner, source_work, machines, *, initial_driver=None):
         require(isinstance(source_work,inputs.SourceWork) and source_work.origin == owner,
                 "Wrong physical U owner")
         require(len(machines) == 2 and all(isinstance(m,retirement.RetirableParent) for m in machines)
@@ -132,6 +132,13 @@ class SharedContacts:
         self.held_plane, self.jammed = False, set()
         self.escrow = {(side, kind):field.WorkCell(Q(8),Q(0)) for side in (0,1) for kind in ("arm","driver")}
         self.heat = self.gate_work = self.mechanical_input = self.mechanical_heat = Q(0)
+        self.initial_driver = initial_driver
+        self.initial_route_stock = Q(0)
+        if initial_driver is not None:
+            require(type(initial_driver) is int and initial_driver in (0,1), "Invalid initial serving bank")
+            self.escrow[initial_driver,"driver"] = field.WorkCell(Q(8),Q(8))
+            self.initial_route_stock = Q(8)
+            self.output[f"vector-driver:{initial_driver}"] = 1
 
     def abort_arc(self, velocity, duration):
         require(not self.held_plane and self.positions["abort"]==self.abort_carrier.position,
@@ -199,7 +206,7 @@ class SharedContacts:
         self.gate_work += amount
 
     def check_U_balance(self):
-        require(self.heat+sum(cell.stock for cell in self.escrow.values()) == self.gate_work and self.source_work.spent >= self.gate_work and self.U >= 0,
+        require(self.heat+sum(cell.stock for cell in self.escrow.values()) == self.initial_route_stock+self.gate_work and self.source_work.spent >= self.gate_work and self.U >= 0,
                 "Unmatched fixture heat or U debit")
 
     def held_takeover(self, block, value):
@@ -265,6 +272,13 @@ class CapturePort:
         self.trigger_energy=pulse.trigger_energy
 
 
+@dataclass(frozen=True)
+class InitialPulseRow:
+    """An installed transmitting aperture and its receiving control line at time zero."""
+    pulse: field.PulseSelector
+    control: cam.ControlLine
+
+
 class LiveSourceBank:
     """One common local source strobe route, with the installed endpoint rows.
 
@@ -274,27 +288,18 @@ class LiveSourceBank:
     its own paid aperture and independently retained packets/motor.
     """
     def __init__(self, fixture, side, dispatcher, endpoint, setter_control, additional_rows=()):
-        require(type(side) is int and side in (0,1), "Unknown source bank")
-        self.fixture, self.side = fixture, side
-        self.machine = fixture.machines[side]
-        self.setter = self.machine.setter
-        require(side not in fixture.installed_source_ports, "This bank already has an installed source gate")
-        require(type(setter_control) is cam.ControlLine and setter_control is not dispatcher.line,
-                "Separate actual bank-local setter control line required")
-        self.setter_control=setter_control
-        self.rows = {}
-        self._attach(dispatcher, endpoint)
-        for more_dispatcher, more_endpoint in additional_rows:
-            self._attach(more_dispatcher,more_endpoint)
-        self.rows=MappingProxyType(self.rows)
+        self._bind_bank(fixture,side,setter_control)
+        rows=[]
+        for sender, target in ((dispatcher,endpoint), *additional_rows):
+            h=sender.ordinary_handoff
+            require(type(h) is cam.PulseHandoff and h.pulse is sender.p and h.setter is sender.s is self.setter
+                    and h.control is sender.line and h.resident is sender.resident,
+                    "Actual transferred row and source setter required")
+            rows.append((target,h))
         require(self.activation == dispatcher.activation == cam.DRIVER, "Inconsistent actual handoff pose")
-        self.cut = False
-        self.row_quench={e:field.WorkCell(Q(8),Q(0)) for e in self.rows}
-        self.setter_quench=field.WorkCell(Q(8),Q(0))
-        self.local_switch_debit=Q(0)
-        self.local_switch_heat=Q(0)
         require(self.machine.powered and not dispatcher.p.cut, "No actual source opening event")
-        fixture.installed_source_ports[side] = self
+        self.cut = False
+        self._install(rows,Q(0))
         self._grant("driver")
         for e,row in self.rows.items():
             if not self._reserve_quench(row.pulse.reset_source_reserve,self.row_quench[e]):
@@ -309,17 +314,67 @@ class LiveSourceBank:
     def activation(self):
         return self.fixture.positions[f"act{self.side}:0"]
 
-    def _attach(self, dispatcher, endpoint):
-        h = dispatcher.ordinary_handoff
-        require(type(h) is cam.PulseHandoff and h.pulse is dispatcher.p and
-                h.setter is dispatcher.s is self.setter and h.control is dispatcher.line and
-                h.resident is dispatcher.resident, "Actual transferred row and source setter required")
-        require(type(endpoint) is field.Destination and endpoint.body in self.setter.targets and
-                type(endpoint.bank) is int and endpoint.bank in (0,1) and type(endpoint.bit) is int
-                and 0 <= endpoint.bit < field.L, "Uninstalled physical endpoint")
-        require(endpoint not in self.rows and all(row.pulse is not h.pulse for row in self.rows.values()),
-                "Duplicate endpoint or pulse stock")
-        self.rows[endpoint] = h
+    def _bind_bank(self, fixture, side, setter_control):
+        require(type(side) is int and side in (0,1), "Unknown source bank")
+        require(side not in fixture.installed_source_ports, "This bank already has an installed source gate")
+        require(type(setter_control) is cam.ControlLine, "Actual bank-local setter control required")
+        self.fixture, self.side = fixture, side
+        self.machine = fixture.machines[side]
+        self.setter = self.machine.setter
+        self.setter_control = setter_control
+        self.native_input = None
+
+    def wire_input(self, source):
+        require(self.native_input is None and isinstance(source,inputs.LocalSourceBank) and
+                source.origin==self.fixture.owner and source.bank==self.side and
+                source.payer is self.fixture.source_work and source.energy is self.machine.bank,
+                "Native input and contacts must use the same host U and bank E")
+        self.native_input=source
+
+    def _install(self, rows, entry_stock):
+        installed = {}
+        pulse_ids = {id(r.pulse) for b in self.fixture.installed_source_ports.values() for r in b.rows.values()}
+        for endpoint, row in rows:
+            require(type(endpoint) is field.Destination and endpoint.body in self.setter.targets and
+                    type(endpoint.bank) is int and endpoint.bank in (0,1) and type(endpoint.bit) is int
+                    and 0 <= endpoint.bit < field.L, "Uninstalled physical endpoint")
+            require(type(row.pulse) is field.PulseSelector and type(row.control) is cam.ControlLine
+                    and row.control is not self.setter_control, "Separate pulse and receiver control required")
+            require(endpoint not in installed and id(row.pulse) not in pulse_ids,"Duplicated aperture or physical pulse")
+            installed[endpoint]=row
+            pulse_ids.add(id(row.pulse))
+        require(installed,"Empty source row installation")
+        self.rows=MappingProxyType(installed)
+        self.row_quench={e:field.WorkCell(Q(8),entry_stock) for e in installed}
+        self.setter_quench=field.WorkCell(Q(8),entry_stock)
+        self.initial_quench = (len(installed)+1)*entry_stock
+        self.local_switch_debit=self.local_switch_heat=Q(0)
+        self.fixture.installed_source_ports[self.side]=self
+
+    @classmethod
+    def at_initial(cls, fixture, side, source, setter_control, rows):
+        """Elaborate the initial physical product. Re-entry uses the ordinary causal operations."""
+        bank=cls.__new__(cls)
+        bank._bind_bank(fixture,side,setter_control)
+        require(fixture.initial_driver is not None and fixture.gate_work==0 and not fixture.held_plane
+                and fixture.normal,"Expected an intact time-zero fixture")
+        active=side==fixture.initial_driver
+        bank.wire_input(source)
+        require(source.powered==bank.machine.powered==active and source.admission==active and
+                bank.activation==(cam.WARM if active else 0) and bank.gate==active
+                and fixture.positions[f"cut{side}"]==(0 if active else fixture.p["CUT_LIMIT"])
+                and bank.setter.cut==bank.setter.reset_control_inhibit==(not active),"Wrong initial gate or setter")
+        rows=tuple(rows)
+        mode=10 if active else 0
+        require(setter_control.words==[mode]*8 and all(setter_control.valid),"Wrong initial setter control")
+        for _,row in rows:
+            require(type(row) is InitialPulseRow and row.pulse.cut==row.pulse.reset_control_inhibit==(not active)
+                    and row.control.words==[mode]*8 and all(row.control.valid),"Wrong initial aperture")
+        bank.cut=not active
+        bank._install(rows,Q(8) if active else Q(0))
+        bank.switch_balance()
+        fixture.check_U_balance()
+        return bank
 
     @property
     def arm(self):
@@ -351,7 +406,7 @@ class LiveSourceBank:
 
     def switch_balance(self):
         retained=sum(cell.stock for cell in self.row_quench.values())+self.setter_quench.stock
-        require(retained+self.local_switch_heat==self.local_switch_debit,
+        require(retained+self.local_switch_heat==self.initial_quench+self.local_switch_debit,
                 "Endpoint switching parcel was duplicated or lost")
 
     def _reserve_quench(self, payer, cell):
@@ -441,6 +496,8 @@ class LiveSourceBank:
         self.cut = True
         self._break()
         self.machine.inhibit()
+        if self.native_input is not None:
+            self.native_input.cold_cut()
 
     def reconnect(self):
         require(self.fixture.positions[f"cut{self.side}"] == 0, "Supply cut still engaged")
