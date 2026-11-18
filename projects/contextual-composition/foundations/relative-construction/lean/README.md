@@ -60,3 +60,7 @@ Independent scoped pass: see `evidence/telescope-squares-independent/Review.tex`
 SquarePasting constructs independent finite-chain identity/pasting and proves preservation by the terminal endpoint map. Only head and zero-length comparisons are claimed, not categorical equivalence. Independent scoped pass: 702 audited declarations; see evidence/square-pasting-independent/Review.tex.
 
 TailPasting verifies arbitrary-length tail transport and a full length-one composite in the dependent-sum model. General tail recursion is distinguished from full outer composition equality in the final source crosswalk. Independent scoped pass: 713 indexed declarations; see `evidence/tail-pasting-independent/Review.tex`.
+
+NativeSuccessor proves the full all-length binary comparison for general split endpoints and associativity of the independent decorated paste over composable base arrows. Unit laws and categorical assembly remain open. 728 indexed declarations; separate review pending.
+
+Independent scoped review passed: see `evidence/native-successor-independent/Review.tex` and the isolated 728-declaration replay (external dependency binaries cached). Identity preservation and source unit laws remain open.

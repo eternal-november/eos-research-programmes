@@ -59,3 +59,7 @@ Independent scoped pass: see `evidence/square-pasting-independent/Review.tex` an
 After #176, inspect tail_paste (source), comparison_rebase (transport), compared_paste_tail (arbitrary-length tail), one_tail_native (general length-one payload component), and FamilyComparison.one_comp (full arrow, specialized model). Next obtain an inductive decomposition of nativePaste for general outer Grothendieck homs; matching only the independently compared tail is not yet that theorem. See TAIL_PASTING_FREEZE.json and evidence/tail-pasting-author-fresh.
 
 Independent scoped pass: read `evidence/tail-pasting-independent/Review.tex` and the adjacent fresh replay before resuming the general native outer decomposition.
+
+After #177, read Aligned and its same-hom equality lemma; then native_tail_decomposition together with compared_paste_tail from TailPasting, the induction square_comp_native, and decorated_assoc. The source operation was defined earlier in SquarePasting. Next compare the independent identities and derive unit laws before building a category-level equivalence. See NATIVE_SUCCESSOR_FREEZE.json and evidence/native-successor-author-fresh.
+
+Independent scoped review passed: see `evidence/native-successor-independent/Review.tex` and the isolated 728-declaration replay (external dependency binaries cached). Identity preservation and source unit laws remain open.
