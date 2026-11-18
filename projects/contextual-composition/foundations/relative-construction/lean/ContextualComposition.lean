@@ -45,3 +45,4 @@ public import ContextualComposition.TelescopeSquares
 public import ContextualComposition.SquarePasting
 public import ContextualComposition.TailPasting
 public import ContextualComposition.NativeSuccessor
+public import ContextualComposition.ChainIdentity
