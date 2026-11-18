@@ -76,6 +76,50 @@ def check_helper(isa, compiled, bounds):
 
 
 
+def check_stable_profiles(threshold_isa, threshold_image, threshold_bounds):
+    # Use each actual compiler and image. The two observation fixtures are
+    # local witnesses for the two sign classes, not physical fault histories.
+    import importlib.util
+    import hashlib
+    path=HERE.parent/"local-control"/"program_model.py"
+    assert program.digest(path)==program.hash_text(program.frozen("program_model.py"))
+    spec=importlib.util.spec_from_file_location("_abort_primary_model",path)
+    primary=importlib.util.module_from_spec(spec)
+    sys.modules[spec.name]=primary
+    spec.loader.exec_module(primary)
+    frozen=json.loads(program.frozen("geometry_results.json"))
+    d=dict(frozen["design"])
+    d["physical_parameters"]=tuple(map(tuple,d["physical_parameters"]))
+    primary_image=primary.compile_check(primary.Design(**d))
+    assert hashlib.sha256(b"".join(w.to_bytes(24,"little") for w in primary_image.image)).hexdigest()==frozen["compiler"]["encoded_image_sha256"]
+    cases=[]
+    for family,isa,image,Ports,bounds in (
+        ("A-prime",primary,primary_image,primary.RawPorts,frozen["compiler"]["instruction_bounds"]),
+        ("B",threshold_isa,threshold_image,program.ports_class(threshold_isa),threshold_bounds)):
+        k=image.constants
+        for half in (0,1):
+            ports=Ports(image)
+            view=isa.populated_view(image,half,6)
+            for field,value in (("MODE",1),("ABORT_FULL",0),("NORMAL_STOP",0)):
+                view[k[field]]=value
+            ports.set_view(0,view)
+            for exiting in (0,1):
+                machine=isa.Machine(image)
+                machine.W=[0]*len(machine.W)
+                base=k["TARGET_BASE"]
+                for name,value in (("EXITING_ABORT",exiting),("EXIT_OBSERVED",1),("EXIT_WAIT",17),
+                                   ("STAGE_ID",27),("TIMER",0),("ABORT",1)):
+                    machine.W[base+k[name]]=value
+                machine.enter("helper",(0,))
+                limit=bounds["instruction_upper_bounds"]["helper"]+100
+                assert machine.run(ports,budget=limit,until_yield=False)=="halt"
+                op=next(e for e in reversed(ports.events) if e[0]=="command")
+                assert op[2]==26 and op[5]==(20 if exiting==0 else -20)
+                assert machine.W[base+k["EXITING_ABORT"]]==exiting
+                cases.append((family,half,exiting,op[5]))
+    return cases
+
+
 def check_full_readiness(isa, compiled, bounds):
     """A fresh exit birth needs every tested contact on the chosen side."""
     k = compiled.constants
@@ -208,6 +252,7 @@ def main():
     assert image == geometry["changed_image_sha256"] == itinerary["actual_image_sha256"]
     bounds = program.bounds(isa, compiled)
     assert bounds == geometry["bounds"]
+    print("Stable ENTERING profiles:",check_stable_profiles(isa,compiled,bounds))
     check_helper(isa, compiled, bounds)
     print("FULL readiness branch cases:", check_full_readiness(isa, compiled, bounds))
     print(json.dumps(check_bounds(compiled.constants, geometry, itinerary), indent=2))
