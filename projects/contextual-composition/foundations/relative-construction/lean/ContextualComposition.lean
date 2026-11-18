@@ -82,3 +82,6 @@ public import ContextualComposition.NativePacked
 public import ContextualComposition.BoundaryPaste
 public import ContextualComposition.BlockEvaluation
 public import ContextualComposition.CutCompositor
+public import ContextualComposition.WordTrace
+public import ContextualComposition.NativeTrace
+public import ContextualComposition.BlockCompositor
