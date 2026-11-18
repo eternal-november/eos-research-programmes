@@ -31,6 +31,33 @@ def need(condition, message):
         raise ValueError(message)
 
 
+def rx_select(lane):
+    """Select this lane's actual installed head at its local start aperture."""
+    if lane.rx[608]:
+        return "busy"
+    if not (lane.write_gate and lane.queue.enabled and lane.decode_control[1]
+            and not lane.servicing and not lane.decode_control[0]):
+        return "stopped"
+    if not 0 < lane.queue.number(9,10) <= 512:
+        return "empty"
+    if not lane.payer.debit(32):
+        return "unfunded"
+    lane.queue.set_number(609,9,lane.queue.number(0,9))
+    lane.rx[608]=1
+    return "selected"
+
+
+def rx_return(lane):
+    """Consume one funded selection. Failed funding retains its physical claim."""
+    if not lane.write_gate or not lane.rx[608] or not lane.payer.debit(32):
+        return None
+    head=lane.queue.number(609,9)
+    lane.rx[608]=0
+    if head!=lane.queue.number(0,9) or not 0<lane.queue.number(9,10)<=512:
+        return "changed-or-empty-head/drop"
+    return lane.process_one()
+
+
 class TimedSource(raw.LocalSourceBank):
     """All actual E transfers enter through the attached JointCharge."""
 
@@ -116,6 +143,7 @@ class NativeClock:
         existing_bus=None,
         prior_rx_return=_UNSPECIFIED,
         installed_cut=None,
+        external_receivers=False,
     ):
         need(
             isinstance(cpu, charging.FramedParent)
@@ -123,11 +151,17 @@ class NativeClock:
             and cpu.bank is source.operating_bank,
             "CPU and source need the same timed E",
         )
-        need(len(source.receivers_live) <= 1, "This adapter covers one observed RX lane")
+        need(type(external_receivers) is bool, "Unknown receiver-clock ownership")
+        need(external_receivers or len(source.receivers_live) <= 1,
+             "Use the keyed receiving product for multiple independent lanes")
         self.cpu = cpu
         self.source = source
-        self.lanes = tuple(source.receivers_live.values())
-        for lane in self.lanes:
+        self.installed_lanes = tuple(source.receivers_live.values())
+        self.lanes = () if external_receivers else self.installed_lanes
+        if external_receivers:
+            need(rx_first is None and rx_base_rate == 4096 and prior_rx_return is _UNSPECIFIED,
+                 "External receiver clocks retain all RX phases and return choices")
+        for lane in self.installed_lanes:
             need(
                 lane.payer is source.payer
                 and all(c.payer is source.payer for c in lane.captures.values()),
@@ -152,8 +186,8 @@ class NativeClock:
             )
             need(getattr(existing_bus, "native_dispatch", None) is None,
                  "This operating installation already has an elapsed-time dispatcher")
-            need(all(v is not None for v in (adc_first, tx_first, rx_first))
-                 and prior_rx_return is not _UNSPECIFIED,
+            need(adc_first is not None and tx_first is not None
+                 and (external_receivers or (rx_first is not None and prior_rx_return is not _UNSPECIFIED)),
                  "Supply the actual retained base phases and prior RX return")
             if self.lanes:
                 need(receipt_clock_specs is not None and set(receipt_clock_specs) == set(self.lanes[0].records),
@@ -170,13 +204,17 @@ class NativeClock:
             ("TX", tx_base_rate, tx_first),
             ("RX", rx_base_rate, rx_first),
         ):
+            if external_receivers and name == "RX":
+                continue
             rate = charging.natural_quantity(rate)
             need(rate > 0, "A running oscillator needs positive rate")
             first = 1 / rate if first is None else first
             self.clocks[name] = Oscillator.at_rate(rate, first, Q(4096), Q(4096 * 101, 100))
-        rx_clock = self.clocks["RX"]
+        rx_clock = self.clocks.get("RX")
         self.rx_suffix = Q(raw.RX_WORK, raw.RX_POWER)
-        if prior_rx_return is _UNSPECIFIED:
+        if external_receivers:
+            self.rx_aperture = None
+        elif prior_rx_return is _UNSPECIFIED:
             self.rx_aperture = (rx_clock.due + self.rx_suffix) % rx_clock.period
         else:
             previous = rx_clock.due - rx_clock.period + self.rx_suffix
@@ -251,8 +289,8 @@ class NativeClock:
         # The read-only view retains the original mapping. A historical writer
         # alias or a new physical rewiring root cannot silently retarget a
         # paid arrival in a chart which still claims its old installed family.
-        need(len(self.source.receivers_live) == len(self.lanes) and all(
-            self.source.receivers_live.get(lane.identity) is lane for lane in self.lanes),
+        need(len(self.source.receivers_live) == len(self.installed_lanes) and all(
+            self.source.receivers_live.get(lane.identity) is lane for lane in self.installed_lanes),
             "The fixed receiving installation changed; re-establish its physical routing")
         # Output lines are FIFO. Choices from distinct lines are independent
         # until the receiving port's actual constraints relate them.
@@ -392,43 +430,18 @@ class NativeClock:
                     branch.tick()
         elif event == "rx-commit":
             for lane in self.lanes:
-                if not lane.write_gate or not lane.rx[608] or not lane.payer.debit(32):
-                    continue
-                head = lane.queue.number(609, 9)
-                lane.rx[608] = 0
-                if head != lane.queue.number(0, 9) or not 0 < lane.queue.number(9, 10) <= 512:
-                    self.rx_work.append("changed-or-empty-head/drop")
-                else:
-                    self.rx_work.append(lane.process_one())
-                    for key in lane.records:
-                        self._arm_record(key)
+                result = rx_return(lane)
+                if result is not None:
+                    self.rx_work.append(result)
+                    if result != "changed-or-empty-head/drop":
+                        for key in lane.records:
+                            self._arm_record(key)
         elif event == "RX":
             self.rx_aperture = self.now + self.rx_suffix
             self.source.rx_phase = 1 - self.source.rx_phase
             if self.source.rx_phase == 0:
                 for lane in self.lanes:
-                    # A fixed native RX service slot binds its front cell;
-                    # the selected port must remain guarded for this subarc.
-                    # Selection price 32 is inside the 16,384-work per-symbol
-                    # envelope and belongs to this lane's actual U owner.
-                    if lane.rx[608]:
-                        self.rx_work.append("busy")
-                    elif not (
-                        lane.write_gate
-                        and lane.queue.enabled
-                        and lane.decode_control[1]
-                        and not lane.servicing
-                        and not lane.decode_control[0]
-                    ):
-                        self.rx_work.append("stopped")
-                    elif not 0 < lane.queue.number(9, 10) <= 512:
-                        self.rx_work.append("empty")
-                    elif not lane.payer.debit(32):
-                        self.rx_work.append("unfunded")
-                    else:
-                        lane.queue.set_number(609, 9, lane.queue.number(0, 9))
-                        lane.rx[608] = 1
-                        self.rx_work.append("selected")
+                    self.rx_work.append(rx_select(lane))
 
     def run_before(self, moment, choose):
         """Resolve earlier native/arrival events; leave endpoint ties to caller."""
