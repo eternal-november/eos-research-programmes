@@ -10,6 +10,7 @@ from itertools import pairwise
 
 import parent_retirement as retirement
 import parent_realization as original
+import input_lifecycle as inputs
 
 
 def natural_quantity(value):
@@ -86,7 +87,7 @@ def closed_segment(stock, deficits, rates, exposure):
     return Charge(final, retained, Clock(linear, tuple(sorted(terms.items()))))
 
 
-class OperatingBank(original.BankWork):
+class OperatingBank(original.BankWork, inputs.BankEnergy):
     """One installed source. Untimed parent recharge is unavailable here."""
     def __init__(self, owner, capacity, stock):
         if not (isinstance(owner, tuple) and len(owner) == 2 and
@@ -94,8 +95,25 @@ class OperatingBank(original.BankWork):
             raise ValueError("Expected the host and bank within one region")
         if type(capacity) is not int or not 0 <= natural_quantity(stock) <= capacity:
             raise ValueError("Invalid operating stock")
-        super().__init__(capacity, Q(stock))
+        original.BankWork.__init__(self, capacity, Q(stock))
         self.owner = owner
+        # The source-local BankEnergy and routed CPU name the same object.
+        self.identity = owner
+
+    @property
+    def spent(self):
+        """Actual E transfers since construction in this zero-inflow chart."""
+        bus = getattr(self, "charging", None)
+        return self.supplied + (sum(bus.input_received) if bus is not None else 0)
+
+    def debit(self, amount):
+        raise RuntimeError("Use the timed shared bank for source charger draws")
+
+    def charge(self, elapsed, payer):
+        raise RuntimeError("External inflow requires its own timed bank flow")
+
+    def dump(self, elapsed):
+        raise RuntimeError("Bank drainage requires its own timed bank flow")
 
     def transfer(self, cell):
         raise RuntimeError("Use the timed charging boundary")
@@ -228,6 +246,15 @@ def source_checks():
 
     isa, image, ports_class = retirement.source_inputs()
     bank = OperatingBank((2, 0), 100000, Q(100000))
+    source = inputs.LocalSourceBank(2, 0, inputs.SourceWork(2, 1000, 1000))
+    assert isinstance(bank, inputs.BankEnergy) and source.begin_entry(bank)
+    assert source.energy is bank and source.powered and bank.stock == 100000
+    try:
+        bank.debit(1)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("A source-local debit bypassed the timed shared bank")
     cpu = FramedParent(isa, image, bank=bank)
     cpu.C[0] = isa.encode(isa.LI, 3, 0, 0, 7)
     slots = [inputs.DataSlot((2, 0, "DATA", j), 0) for j in (0, 1)]
