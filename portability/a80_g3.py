@@ -234,7 +234,7 @@ class JoinedSeat(seat.ReturnFixture):
             self.heat += paid
             self.check_U_balance()
             return "unfunded"
-        return super().sample(self.motion(self.efforts)["force"]["abort"])
+        return self._funded_sample(self.motion(self.efforts)["force"]["abort"])
 
     def sample(self, pressure):
         if self.held_plane or self.U < seat.PRICE:
@@ -243,6 +243,9 @@ class JoinedSeat(seat.ReturnFixture):
         require(
             Q(pressure) == actual, "A reported or earlier pressure is not the current mechanical port"
         )
+        return self._funded_sample(actual)
+
+    def _funded_sample(self, actual):
         return super().sample(actual)
 
     def _commit(self, request):
@@ -250,7 +253,7 @@ class JoinedSeat(seat.ReturnFixture):
             self.return_force = self.motion(self.efforts)["force"]["abort"]
         return super()._commit(request)
 
-    def advance(self, cells, capture, dt, **ports):
+    def advance(self, cells, capture, dt, *, native_returns=None, **ports):
         """Exact plateau on a fixed chart. Other elapsed histories use the held-flow theorem."""
         dt = Q(dt)
         require(self.positions["abort"] == self.carriage.position, "Duplicate carriage state")
@@ -314,6 +317,7 @@ class JoinedSeat(seat.ReturnFixture):
             mechanical=self.motion,
             efforts=self.efforts,
             receiver_winding=received,
+            native_returns=native_returns,
             **ports,
         )
         if electrical is not None:
@@ -428,8 +432,8 @@ def layout(host):
     return cells, raw
 
 
-def fixture(p, up, phase, z, cam, keeper=0, upstream=None):
-    h = JoinedSeat(p, up, keeper, upstream=upstream)
+def fixture(p, up, phase, z, cam, keeper=0, upstream=None, fixture_type=JoinedSeat):
+    h = fixture_type(p, up, keeper, upstream=upstream)
     h.zone_capacity = Q(up["thermal"]["thermal_capacity"])
     h.bath = Q(up["thermal"]["passive_bath_coefficient"])
     tc = Q(up["point"]["per_bank_transit_capacity"])
