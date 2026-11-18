@@ -67,3 +67,7 @@ Independent scoped review passed: see `evidence/native-successor-independent/Rev
 After #178, read tail_identity and square_id_native, decorated_left_unit/right_unit, Fibre.paste and its comparison, Fibre.category, then Fibre.equivalence and Fibre.allEquivalence. Distinguish the fixed-base equivalences from as-yet unconstructed independent base restriction and its naturality. See CHAIN_IDENTITY_FREEZE.json and evidence/chain-identity-author-fresh.
 
 Independent scoped pass: see `evidence/chain-identity-independent/Review.tex` and its fresh own-project replay (758 distinct named axiom audits; nine pinned external dependency caches reused). Source restriction and naturality in the base remain open.
+
+After #179, inspect pullChain/endLift before realized_pull, then liftDecorated, compared_lift, Cartesian.unique_factor and Fibre.pullHom_square. The source arrow action has a cartesian specification. Compare Fibre.sourcePresheaf/allSourcePresheaf and allComparison_square with the previous allEquivalence. Next distinguish payload-change naturality and equipment-level sequential product identification from this base-only comparison. See CHAIN_RESTRICTION_FREEZE.json and evidence/chain-restriction-author-fresh.
+
+Independent scoped pass: see `evidence/chain-restriction-independent/Review.tex` and the fresh 787-declaration replay (nine pinned external caches reused). The source arrow is the unique solution of the cartesian square; its proof uses comparison. Payload naturality and sequential span-product identification remain open.
