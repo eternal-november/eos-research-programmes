@@ -72,3 +72,7 @@ Independent scoped pass: see `evidence/chain-identity-independent/Review.tex` an
 ChainRestriction constructs cartesian lifts on the independent chains, proves unique factorization through the chosen lifts, and assembles a source presheaf. The forward equivalence of all-length fibres commutes strictly with each base restriction for fixed payload. See the final crosswalk for the universe and endofunctor boundaries. Candidate: 787 indexed declarations; review pending.
 
 Independent scoped pass: see `evidence/chain-restriction-independent/Review.tex` and the fresh 787-declaration replay (nine pinned external caches reused). The source arrow is the unique solution of the cartesian square; its proof uses comparison. Payload naturality and sequential span-product identification remain open.
+
+ChainPayload makes both all-length constructions functorial on ordinary payload-presheaf transformations and proves the independent forward equivalences commute with payload and base change. This does not identify chain spans with the equipment's sequential products. 822 indexed declarations; independent scoped review passed.
+
+Independent scoped pass: see `evidence/chain-payload-independent/Review.tex` and the fresh 822-declaration replay (nine pinned external caches reused). The forward maps commute with ordinary payload and base change; identification with sequential products of spans remains open.
