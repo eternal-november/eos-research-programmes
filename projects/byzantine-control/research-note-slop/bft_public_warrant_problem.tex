@@ -1,0 +1,172 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black,citecolor=blue!50!black}
+\setlist[itemize]{leftmargin=1.5em,itemsep=0.3em,topsep=0.35em}
+\setlist[enumerate]{leftmargin=1.7em,itemsep=0.35em,topsep=0.35em}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+
+\newtheorem{problem}{Problem}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newtheorem{desideratum}{Desideratum}
+\newtheorem{hint}{Hint}
+
+\newcommand{\Pow}{\mathcal{P}}
+\newcommand{\Up}[1]{\uparrow\!#1}
+\newcommand{\Acc}{\mathsf{Acc}}
+\newcommand{\Wit}{\mathsf{Wit}}
+\newcommand{\Conf}{\mathsf{Conf}}
+\newcommand{\Boxm}{\mathord{\Box}}
+\newcommand{\State}{\mathsf{State}}
+\newcommand{\Claim}{\mathsf{Claim}}
+\newcommand{\Ev}{\mathsf{Ev}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{A Problem Statement for a BFT Doctrine of Public Warrant}}\\[0.5em]
+    {\large Safety-first, adversary-indexed, and institution-sensitive}\\[0.8em]
+    \textsc{Research Note}
+\end{center}
+
+\begin{abstract}
+This note formulates a restricted but nontrivial problem: construct a categorical or doctrine-like semantics for Byzantine fault tolerant (BFT) finality that treats finalized claims as \emph{institutionally warranted} rather than merely believed. The target is not a full theory of distributed systems. It is a safety-only account of when a protocol-valid authenticated evidence pattern licenses acceptance of a claim as publicly stable under an explicit adversary model. We isolate the output object, specify admissibility and adequacy conditions, and record a small number of solution hints. The scope is deliberately narrow: liveness, scheduling, randomization, incentives, and accountability are left outside the core problem, except as extension directions.
+\end{abstract}
+
+\section*{1. Motivation and scope}
+A BFT protocol does not simply aggregate private beliefs. It turns authenticated local artifacts---votes, certificates, locks, and related protocol objects---into a publicly checkable institutional fact such as ``block $b$ is final at height $h$'' or ``ledger prefix $L$ is canonical.'' The philosophical question is whether one can package this transformation as a doctrine: a logic of admissible acceptance, indexed by adversary assumptions, and precise enough to support proof.
+
+This note proposes a \emph{restricted} target. The task is to formalize \emph{safety/finality acceptance} only. One should not try to swallow all of BFT in one move. At least four adjacent layers are intentionally omitted from the core problem: termination, probabilistic liveness, economic incentives, and blame/accountability. A good solution may mention them, but it should not require them.
+
+\section*{2. Core data}
+Fix a protocol instance
+\[
+\Pi = (V,w,\mathcal{A},\Ev,\preceq,\Claim,\Conf,\Wit).
+\]
+The intended roles are as follows.
+\begin{itemize}
+    \item $V$ is the validator set and $w:V\to \mathbb{R}_{>0}$ is voting power, normalized so total weight is $1$.
+    \item $\mathcal{A}$ is an adversary structure; the classical threshold case is corrupted weight $<1/3$.
+    \item $\Ev$ is a class of admissible authenticated evidence states.
+    \item $s\preceq t$ means that $t$ is an evidence extension of $s$ in the same protocol world.
+    \item $\Claim$ is a class of institutional claims, for example canonical ledger prefixes or finality claims.
+    \item $\Conf(c,d)$ expresses conflict between claims $c,d\in \Claim$.
+    \item $\Wit(s,c)$ means that state $s$ contains a protocol-valid public witness for claim $c$.
+\end{itemize}
+The witness notion is protocol-specific. For PBFT it should correspond to the relevant commit-side certificate; for Tendermint it should encode the finality-relevant precommit witness together with the locking discipline in the metatheory; for HotStuff it may be a commit-generating $3$-chain or an equivalent commit witness.
+
+\section*{3. Restricted problem statement}
+\begin{problem}[adversary-indexed doctrine of public warrant]
+Construct an indexed logical object
+\[
+P : \Ev^{op} \longrightarrow \mathbf{Pos}
+\]
+or a comparably expressive categorical substitute, together with, for each claim $c\in \Claim$, a fiberwise proposition $W_c\in P(s)$ and an acceptance operator $\Acc_c\in P(s)$, such that the following conditions hold.
+
+\begin{enumerate}[label=\textbf{P\arabic*.}]
+    \item \textbf{Evidence reindexing.} If $s\preceq t$, the reindexing map $P(s)\to P(t)$ is functorial and interprets admissible information growth.
+    \item \textbf{Public warrant representation.} The proposition $W_c$ correctly represents the protocol-specific witness predicate $\Wit(-,c)$.
+    \item \textbf{Conflict exclusion.} The doctrine internalizes the protocol safety fact that no admissible state can support witnesses for conflicting claims.
+    \item \textbf{Acceptance as stable admissibility.} The proposition $\Acc_c$ means, at least extensionally, that $c$ is already publicly warranted and that no admissible future extension supports a conflicting publicly warranted claim.
+    \item \textbf{Soundness theorem.} From a witness for $c$ one can derive acceptance of $c$. Ideally the two coincide extensionally on admissible states.
+    \item \textbf{Protocol adequacy.} The abstract construction instantiates without cheating to at least one concrete BFT protocol family.
+\end{enumerate}
+\end{problem}
+
+\section*{4. Extra desiderata}
+The following strengthen the problem and prevent trivial solutions.
+
+\begin{desideratum}[scope discipline]
+A solution should be explicit about its scope. It is acceptable to solve only the safety/finality fragment. It is not acceptable to silently smuggle in liveness assumptions or to redefine ``acceptance'' so weakly that the BFT content disappears.
+\end{desideratum}
+
+\begin{desideratum}[public checkability]
+Acceptance should be grounded in \emph{publicly checkable} artifacts. A merely semantic clause such as ``$c$ is true in all admissible runs'' is too weak unless it is tied back to a witness form that a participant can actually verify from authenticated evidence.
+\end{desideratum}
+
+\begin{desideratum}[monotonicity under evidence extension]
+If $s\preceq t$ and $c$ is acceptable at $s$, then $c$ remains acceptable at $t$. Likewise, a valid witness should persist under evidence extension.
+\end{desideratum}
+
+\begin{desideratum}[non-collapse]
+The doctrine should distinguish at least three scales: local artifact verification, protocol-valid witnessing, and institutional acceptance. Collapsing all three into a single primitive predicate obscures the problem.
+\end{desideratum}
+
+\begin{desideratum}[adversary sensitivity]
+The construction should make clear where the adversary assumptions enter. Changing the admissible corruption family or quorum assumptions should change the acceptance logic.
+\end{desideratum}
+
+\begin{desideratum}[reconfiguration tolerance, optional]
+A stronger solution should admit epoch changes or validator-set reconfiguration, at least as indexed base change rather than as an external patch.
+\end{desideratum}
+
+\section*{5. A canonical stratification}
+A solution may reasonably proceed in three layers.
+
+\textbf{Layer I: evidence semantics.} Build a preorder or category of admissible authenticated evidence states. This is the smallest scale on which signatures, certificates, and extension become visible.
+
+\textbf{Layer II: witness semantics.} For each claim $c$, define the witness predicate $W_c$. This is the protocol-specific scale and should carry the actual BFT content.
+
+\textbf{Layer III: acceptance semantics.} Define acceptance as a stability condition over admissible futures. At this scale one moves from ``a certificate exists'' to ``the claim is institutionally settled.''
+
+This stratification is not cosmetic. It blocks a common failure mode in which the intended doctrine is never more than a relabeling of a protocol invariant.
+
+\section*{6. Hints toward a solution}
+\begin{hint}[future-cone semantics]
+A conservative starting point is to take the fiber over $s\in \Ev$ to be a poset of predicates on the future cone $\Up{s}=\{t\in \Ev\mid s\preceq t\}$. In the Boolean case one may take $P(s)=\Pow(\Up{s})$ ordered by inclusion.
+\end{hint}
+
+\begin{hint}[modal operator]
+Define a necessity-style operator by
+\[
+\Boxm_s(U)=\{t\in \Up{s}\mid \forall u\succeq t,\ u\in U\}.
+\]
+Then $\Boxm$ expresses stability under admissible evidence growth. This is a natural home for the claim that acceptance means ``no conflicting future witness can arise.''
+\end{hint}
+
+\begin{hint}[witness and acceptance]
+Set
+\[
+W_c^s := \{t\in \Up{s}\mid \Wit(t,c)\},
+\]
+and try
+\[
+\Acc_c^s := W_c^s \cap \bigcap_{d:\Conf(c,d)} \Boxm_s(\Up{s}\setminus W_d^s).
+\]
+The main soundness step is then the implication $W_c^s\subseteq \Acc_c^s$, discharged by witness monotonicity plus conflict exclusion.
+\end{hint}
+
+\begin{hint}[fixed-point or nucleus viewpoint]
+A stronger solution may ask whether accepted propositions are exactly the fixed points of a closure operator or nucleus induced by the finality modality. This is not required for a first solution, but it would produce a cleaner doctrinal package.
+\end{hint}
+
+\section*{7. Minimal success criterion}
+A satisfactory solution should prove, in one precise formal setting, a theorem of the following shape:
+\[
+\Wit(s,c) \Longrightarrow \Acc(s,c),
+\]
+with $\Acc(s,c)$ interpreted as stable public admissibility under the specified adversary model. A stronger result proves extensional coincidence between witnessing and acceptance on admissible states. The point is not to force philosophical language into the proof. The point is to make the acceptance rule mathematically respectable.
+
+\section*{8. Extension directions}
+Once the safety doctrine is in hand, one may ask for orthogonal enrichments: an eventuality operator for liveness under partial synchrony or randomization; a game-theoretic or accountability layer for slashing and blame; and a treatment of dynamic validator sets. These are worthwhile, but they should be built as adjacent layers, not confused with the core problem.
+
+\section*{References}
+\begin{itemize}
+    \item F. W. Lawvere, \emph{Adjointness in Foundations}, 1969.
+    \item B. Jacobs, \emph{Categorical Logic and Type Theory}, 1999.
+    \item L. Lamport, R. Shostak, and M. Pease, \emph{The Byzantine Generals Problem}, 1982.
+    \item M. Castro and B. Liskov, \emph{Practical Byzantine Fault Tolerance}, 1999.
+    \item E. Buchman, \emph{Tendermint: Byzantine Fault Tolerance in the Age of Blockchains}, 2016.
+    \item M. Yin et al., \emph{HotStuff: BFT Consensus with Linearity and Responsiveness}, 2019.
+\end{itemize}
+
+\end{document}
