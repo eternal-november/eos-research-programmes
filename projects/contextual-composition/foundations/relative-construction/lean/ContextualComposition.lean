@@ -54,3 +54,4 @@ public import ContextualComposition.SpanArrows
 public import ContextualComposition.SpanPayload
 public import ContextualComposition.NativeCleavage
 public import ContextualComposition.FibreValue
+public import ContextualComposition.ValueConstraints
