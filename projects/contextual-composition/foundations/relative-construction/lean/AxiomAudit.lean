@@ -1154,3 +1154,13 @@ import ContextualComposition
 #print axioms ContextualComposition.GrothendieckStep.FibreValue.valueUnit
 #print axioms ContextualComposition.GrothendieckStep.FibreValue.valueComp
 #print axioms ContextualComposition.GrothendieckStep.FibreValue.evalApp
+#print axioms ContextualComposition.GrothendieckStep.FibreValue.Paste.unit
+#print axioms ContextualComposition.GrothendieckStep.FibreValue.Paste.comp
+#print axioms ContextualComposition.GrothendieckStep.FibreValue.Paste.UnitLaw
+#print axioms ContextualComposition.GrothendieckStep.FibreValue.Paste.unitDiagram_iff
+#print axioms ContextualComposition.GrothendieckStep.FibreValue.Paste.unitLaw
+#print axioms ContextualComposition.GrothendieckStep.FibreValue.Paste.CompLaw
+#print axioms ContextualComposition.GrothendieckStep.FibreValue.Paste.compDiagram_iff
+#print axioms ContextualComposition.GrothendieckStep.FibreValue.Paste.compLaw
+#print axioms ContextualComposition.GrothendieckStep.FibreValue.evalUnit
+#print axioms ContextualComposition.GrothendieckStep.FibreValue.evalComp
