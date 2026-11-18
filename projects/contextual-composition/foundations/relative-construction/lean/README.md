@@ -94,3 +94,7 @@ SpanPayload proves the positive-length fibre of the presented span extension, ev
 Independent scoped pass for the positive payload result: see `evidence/span-payload-independent/Review.tex` and its fresh 989-declaration replay. Next outstanding obligation: chosen native base reindexing and comparison with the iterate presheaf. Neither the strict fibre inclusion square nor cartesianness preservation supplies this datum.
 
 NativeCleavage constructs chosen reindexing functors for the actual positive weighted span powers, along arbitrary base arrows. It compares these to the standard pulls of the iterate total by a natural isomorphism on strict fibres. Identity and composition comparisons are isomorphisms; no strict cleavage, mixed base/payload theorem or telescope-monad conclusion is asserted.
+
+FibreValue explicitly identifies the strict Grothendieck fibre with its presheaf value on objects and vertical arrows, and compares positive native evaluation to the actual iterate map. It verifies the identity and composition diagrams for the previous strict-fibre evaluation squares. The native restrictions still compose up to specified isomorphisms, not by equality.
+
+Independent scoped pass: see evidence/fibre-value-independent/Review.tex and the isolated 1,129-declaration replay. Nine pinned dependency caches were reused. The proved constraint diagrams concern the strict-fibre squares, not the pasted value-target squares.
