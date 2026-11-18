@@ -7,21 +7,21 @@ import subprocess
 
 
 HERE = Path(__file__).resolve().parent
-BASE = "75a9e365a7565ede076b5e83fed90ada2cc2ec4a"
+BASE = "169be129b9aa090acf8175e79d5114aa84f1cda9"
 KINDS = {"primitive", "import", "local", "finite", "comparison", "assembly", "open"}
 PRIMITIVES = {"design", "mission", "material", "history", "initial"}
 IMPORTS = {"legacy", "flow-existence", "composition", "retained-history", "paced-rules",
            "all-raw", "safe-fibre", "menu-descent", "finite-health"}
-A_OPEN = {"a-use", "a-physical", "a-cover", "a-witness"}
-B_COUPLER = {"coupler-material", "coupler-ingress"}
-B_OPEN = {"b-use", "b-physical", "b-cover", "b-witness"} | B_COUPLER
+A_OPEN = {"a-use", "a-cover", "a-witness"}
+B_PHYSICAL = {"b-reference", "b-sender-join"}
+B_OPEN = {"b-use", "b-cover", "b-witness"} | B_PHYSICAL
 WITNESSES = {
     "positive-a": A_OPEN,
     "positive-b": B_OPEN,
     "reuse": A_OPEN | B_OPEN | {"burden"},
-    "b-g2": B_COUPLER | {"b-use", "b-cover"},
-    "b-g3": B_COUPLER | {"b-physical"},
-    "matched-coupled": B_COUPLER | {"b-use", "b-physical"},
+    "b-g2": B_PHYSICAL | {"b-use", "b-cover"},
+    "b-g3": B_PHYSICAL,
+    "matched-coupled": B_PHYSICAL | {"b-use", "b-cover"},
     "a-window-applied": {"a-window-cover"},
     "b-window-applied": {"b-window-cover"},
 }
@@ -29,13 +29,33 @@ REQUIRED_INPUTS = {
     "flows": {"flow-existence"}, "chronology": {"retained-history", "paced-rules"},
     "query": {"all-raw"}, "remote-debit": {"all-raw"},
     "tracker": {"safe-fibre"}, "factual-menu": {"menu-descent", "intervention"},
-    "b-region": {"coupler-law", "b-field"}, "b-g2": {"b-region", "b-world", "factual-menu"},
-    "b-g3": {"coupler-law", "b-world", "flows"}, "matched-coupled": {"coupler-law", "matched", "b-world"},
-    "positive-a": {"a-region"}, "positive-b": {"b-g2", "b-g3"},
+    "b-region": {"coupler-law", "b-field"},
+    "coupler-material": {"coupler-law", "topology", "flows"},
+    "coupler-ingress": {"coupler-material", "topology"},
+    "regional-world": {"b-world", "coupler-material", "coupler-ingress"},
+    "b-g2": {"prefix-mission", "b-region", "b-world", "factual-menu", "b-lease",
+             "b-frame", "b-normal-action", "b-sender", "b-sender-join", "b-reference"},
+    "b-g3": {"coupler-law", "b-host-roster", "flows", "b-host-flow", "b-physical"},
+    "matched-coupled": {"coupler-law", "matched", "b-world", "regional-world", "b-physical"},
+    "positive-a": {"a-region", "a-custody", "a-trip", "a-physical", "prefix-mission"},
+    "positive-b": {"b-g2", "b-g3", "prefix-mission", "b-frame", "b-normal-action"},
     "a-window": {"quiet-window", "a-seat"}, "b-window": {"quiet-window", "b-seat"},
     "wear-boundary": {"finite-health"},
     "b-world": {"b-image", "b-native", "flows", "tracker", "b-region"},
     "spatial-world": {"b-world", "spatial"},
+    "b-sender": {"b-sender-port", "b-frame", "b-lease"},
+    "a-physical": {"a-g3-seat", "a-tap-install", "a-trip-install"},
+    "a-trip": {"a-custody", "a-trip-install"}, "a-custody": {"a-seat", "a-tap-install"},
+    "a-g3-seat": {"a-flow", "a-seat-source"},
+    "b-physical": {"b-host-flow", "b-reference", "b-sender-port", "b-sender-join"},
+    "b-host-flow": {"b-host-roster", "coupler-material", "coupler-ingress", "flows"},
+    "b-frame": {"b-image", "b-compare", "b-native", "b-world", "b-field"},
+    "b-lease": {"b-rx", "b-data", "b-seat"},
+    "b-normal-action": {"intervention", "b-image", "b-compare", "b-lease"},
+    "b-sender-window": {"b-sender", "quiet-window", "b-seat"},
+    "prefix-rules": {"ancestry", "temporal"}, "prefix-use": {"prefix-rules", "temporal"},
+    "prefix-guard": {"prefix-rules", "projection"},
+    "prefix-mission": {"prefix-use", "prefix-guard", "flows", "initial", "mission"},
 }
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 
@@ -103,19 +123,28 @@ def validate(nodes):
         missing = required - set(nodes[owner][1])
         require(not missing, f"Missing inputs at {owner}: {sorted(missing)}")
     for owner in ("ancestry", "a-flow", "a-seat", "b-image", "b-compare", "query", "intervention",
-                  "factual-menu", "wear-boundary", "a-window", "b-window"):
+                  "factual-menu", "wear-boundary", "a-window", "b-window", "prefix-mission",
+                  "a-physical", "coupler-material", "coupler-ingress", "b-host-flow", "b-frame",
+                  "b-lease", "b-normal-action", "b-sender", "b-sender-window"):
         require(all(nodes[name][0] != "open" for name in leaves[owner]),
                 f"Open application relabelled as a conditional result: {owner}")
-    # The shared constructor postdates both original itineraries. Their
-    # subsequent refinements may use it without changing the old proofs.
-    for earlier in ("a-seat", "b-seat"):
-        pending = list(nodes[earlier][1])
+    # Successful nominal jobs cannot establish all-mode continuation. The
+    # generic mission theorem also precedes both positive source applications.
+    forbidden = {
+        "a-seat": {"quiet-window"}, "b-seat": {"quiet-window"},
+        "a-physical": {"a-use", "a-custody", "a-trip", "orbit", "prefix-mission"},
+        "b-host-flow": {"b-frame", "b-normal-action", "b-lease", "orbit", "prefix-mission"},
+        "prefix-mission": {"positive-a", "positive-b", "a-physical", "b-host-flow",
+                           "a-seat", "b-seat", "a-use", "b-use"},
+    }
+    for owner, barred in forbidden.items():
+        pending = list(nodes[owner][1])
         seen = set()
         while pending:
             current = pending.pop()
             if current in seen:
                 continue
-            require(current != "quiet-window", f"Later arithmetic backdated into {earlier}")
+            require(current not in barred, f"Out-of-scope premise for {owner}: {current}")
             seen.add(current)
             pending.extend(nodes[current][1])
     return leaves
@@ -138,7 +167,13 @@ def main():
               if filename.startswith(prefix) and "/" not in filename[len(prefix):]
               and filename.endswith((".md", ".lean"))}
     require(bool(papers), "Could not enumerate the base's source documents")
-    require(papers <= references, f"Pinned source files without an entry: {sorted(papers - references)}")
+    # These two documents are the previous audit itself. Its appearance in the
+    # pinned tree supplies provenance, never a premise for its own conclusions.
+    audit_documents = {"CLASS-ADMISSION.md", "EXPORT-DEPENDENCIES.md"}
+    require(audit_documents <= papers, "Pinned historical audit documents are missing")
+    proof_sources = papers - audit_documents
+    require(proof_sources <= references,
+            f"Pinned source files without an entry: {sorted(proof_sources - references)}")
 
     admission = (HERE / "CLASS-ADMISSION.md").read_text(encoding="utf-8")
     expected = [f"A{i:02}" for i in range(1, 19)]
@@ -149,7 +184,8 @@ def main():
     for filename in LINK.findall(admission):
         local_register = filename == "EXPORT-DEPENDENCIES.md" and (HERE / filename).is_file()
         require(local_register or has_reference(filename), f"Missing admission reference: {filename}")
-    print(f"{len(nodes)} typed nodes; {len(papers)} pinned local source and proof files referenced.")
+    print(f"{len(nodes)} typed nodes; {len(proof_sources)} pinned local source and proof files "
+          f"referenced; {len(audit_documents)} earlier audit documents classified separately.")
     for owner in WITNESSES:
         open_leaves = sorted(name for name in leaves[owner] if nodes[name][0] == "open")
         print(f"{owner}: {', '.join(open_leaves)}")
