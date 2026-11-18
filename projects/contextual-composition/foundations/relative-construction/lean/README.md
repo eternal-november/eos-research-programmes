@@ -84,3 +84,7 @@ Independent scoped pass: see `evidence/span-apex-independent/Review.tex` and the
 ChainSnoc proves binary identity and composition preservation, splits any nonempty chain and its squares at the final grade, and identifies the objects and both endpoint objects of every positive presented span power. All-length equivalence of categories remains open.
 
 Independent scoped pass: see evidence/chain-snoc-independent/Review.tex and the isolated 901-declaration replay (nine pinned external caches reused). Positive-power index zero is one primitive; all-length native arrow comparison remains open.
+
+SpanArrows proves that each positive left-associated presented span apex is equivalent to the category of independently formed chains and squares over arbitrary base arrows. The comparison preserves identity and pasting and commutes with both span legs as functors. This does not include length zero, a payload-extension comparison for these span powers, or flattening.
+
+Independent scoped pass: see evidence/span-arrows-independent/Review.tex and the 936-declaration replay. Both forward leg equations are propositional functor equalities. Payload and nullary extensions remain open.
