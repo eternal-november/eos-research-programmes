@@ -99,39 +99,232 @@ def is_main(tree):
 
 
 
-def held_out_probes(repo,point,entries):
-    listing=git(repo,"ls-tree","-r","--name-only",point,"--",PORT+"/heldout").decode().splitlines()
-    start=PORT+"/"
-    tracked={p[len(start):] for p in listing if p.startswith(start)}
-    out=[]
-    for name in sorted(p for p in tracked if p.endswith("/replay-manifest.json")):
-        folder=Path(name).parent
-        data=json.loads(git(repo,"show",point+":"+start+name))
-        require(type(data.get("checks")) is list and data["checks"],"Held-out manifest has no actual checks")
-        for test in data["checks"]:
-            file=test["script"]
-            prefix=folder.as_posix()+"/"
-            require(type(file) is str and Path(file).name==file and file.endswith(".py")
-                    and prefix+file in tracked,"Held-out checker must be a real sibling file")
-            arguments=test.get("args",[])
-            require(isinstance(arguments,list) and all(type(x) is str for x in arguments)
-                    and "--write" not in arguments,"Held-out verification must be read-only")
-            receipt=test.get("receipt")
+FREEZE_RECORD = PORT + "/RP6-FREEZE.json"
+TRIALS = PORT + "/heldout"
+DISPOSITIONS = {"positive", "failed", "out-of-class", "inconclusive"}
+
+
+def is_ancestor(repo, earlier, later):
+    result = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor", earlier, later])
+    require(result.returncode in (0, 1), "Could not compare Git ancestry")
+    return result.returncode == 0
+
+
+def full_commit(repo, value):
+    require(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{40}", value),
+            "Transfer anchors must be externally supplied full Git commit IDs")
+    require(rev(repo, value) == value, "An anchor must name the commit itself")
+    return value
+
+
+def regular_files(repo, point, directory):
+    """Only actual regular files can serve as runnable checks or immutable primitive evidence."""
+    rows = git(repo, "ls-tree", "-rz", point, "--", directory)
+    result = {}
+    for row in rows.split(b"\0"):
+        if row:
+            meta, name = row.split(b"\t", 1)
+            mode, kind, oid = meta.split()
+            require(mode in {b"100644", b"100755"} and kind == b"blob",
+                    "Non-regular file in transfer evidence: " + name.decode())
+            result[name.decode()] = oid.decode()
+    return result
+
+
+def json_blob(repo, oid):
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            require(key not in result, "Repeated transfer record field: " + key)
+            result[key] = value
+        return result
+
+    value = json.loads(git(repo, "cat-file", "blob", oid), object_pairs_hook=unique)
+    require(type(value) is dict, "Expected a JSON object in transfer evidence")
+    return value
+
+
+def sibling(name):
+    return isinstance(name, str) and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", name)
+
+
+def assessment_history(repo, point):
+    """Include superseded or removed trial outcomes reachable from the requested candidate."""
+    selector = TRIALS + "/*/assessment.json"
+    revisions = git(repo, "rev-list", "--reverse", "--topo-order", "--full-history", point,
+                    "--", selector).decode().splitlines()
+    history = []
+    for commit in revisions:
+        paths = git(repo, "diff-tree", "--root", "-m", "--no-commit-id", "--name-only",
+                    "-r", "-z", commit, "--", selector).decode().split("\0")
+        for path in sorted(set(filter(None, paths))):
+            relative = path.removeprefix(TRIALS + "/").split("/")
+            if len(relative) != 2 or relative[1] != "assessment.json":
+                continue
+            blob = regular_files(repo, commit, path).get(path)
+            if not blob:
+                continue
+            value = json_blob(repo, blob)
+            history.append(dict(trial=relative[0], recorded_at=commit, blob=blob,
+                                disposition=value.get("disposition", "unclassified"),
+                                selection_commit=value.get("selection_commit")))
+    return history
+
+
+def selected_trial(repo, point, freeze, selection, current):
+    full_commit(repo, freeze)
+    full_commit(repo, selection)
+    require(freeze != selection and is_ancestor(repo, freeze, selection)
+            and is_ancestor(repo, selection, point), "Expected freeze < selection <= candidate")
+    freeze_blob = regular_files(repo, freeze, FREEZE_RECORD).get(FREEZE_RECORD)
+    require(freeze_blob, "The independent freeze commit must contain the canonical manifest")
+    for commit in (selection, point):
+        require(regular_files(repo, commit, FREEZE_RECORD).get(FREEZE_RECORD) == freeze_blob,
+                "The selection/candidate changed the independently anchored freeze blob")
+    manifest = json_blob(repo, freeze_blob)
+    base = full_commit(repo, manifest["payload"]["reference"]["commit"])
+    seal_parents = git(repo, "rev-list", "--parents", "-n", "1", freeze).decode().split()[1:]
+    changes = git(repo, "diff", "--name-status", "--no-renames", "-z", base, freeze)
+    require(seal_parents == [base] and changes == b"A\0" + FREEZE_RECORD.encode() + b"\0",
+            "The seal must be the direct sole-manifest-addition child of its scientific base")
+    require(manifest.get("payload", {}).get("format") == 2, "Transfer requires a format-2 freeze")
+    frozen_entries = manifest["payload"]["code_and_interface"]
+    for name in ("freeze_portability.py", "program_replay.py"):
+        path = PORT + "/" + name
+        anchored = git(repo, "ls-tree", base, "--", path)
+        fields = anchored.split(b"\t", 1)[0].decode().split()
+        require(len(fields) == 3 and fields[0] in {"100644", "100755"} and fields[1] == "blob",
+                "Missing regular scientific verification procedure: " + name)
+        require(frozen_entries.get(path) == dict(mode=fields[0], kind=fields[1], object=fields[2]),
+                "Seal payload does not bind its verification procedure: " + name)
+        for commit in (freeze, selection, point):
+            require(git(repo, "ls-tree", commit, "--", path) == anchored,
+                    "Verification procedure differs from its independent source: " + name)
+
+    selected_files = regular_files(repo, selection, TRIALS)
+    parents = git(repo, "rev-list", "--parents", "-n", "1", selection).decode().split()[1:]
+    inherited = set()
+    for parent in parents:
+        inherited.update(regular_files(repo, parent, TRIALS))
+    records = [path for path in selected_files.keys() - inherited
+               if path.endswith("/selection.json") and path.count("/") == TRIALS.count("/") + 2]
+    require(len(records) == 1, "Selection commit must introduce one unique trial selection record")
+    record_path = records[0]
+    trial_dir = record_path.rsplit("/", 1)[0]
+    trial = trial_dir.rsplit("/", 1)[1]
+    require(sibling(trial), "Invalid trial directory")
+    source = json_blob(repo, selected_files[record_path])
+    require(source.get("schema") == "rp6-selection-v1" and source.get("freeze_commit") == freeze
+            and source.get("freeze_manifest_blob") == freeze_blob,
+            "Selection record does not bind the supplied freeze commit and canonical blob")
+    primitives = source.get("primitive_files")
+    require(type(primitives) is dict and primitives, "Selection has no primitive specification")
+    expected = {record_path: selected_files[record_path]}
+    for filename, digest in primitives.items():
+        require(sibling(filename) and filename not in {"selection.json", "assessment.json", "replay-manifest.json"}
+                and isinstance(digest, str) and re.fullmatch(r"[0-9a-f]{64}", digest),
+                "Invalid declared primitive filename or SHA-256")
+        path = trial_dir + "/" + filename
+        blob = selected_files.get(path)
+        require(blob and sha256(git(repo, "cat-file", "blob", blob)).hexdigest() == digest,
+                "Primitive specification does not match its exact selected Git bytes: " + path)
+        expected[path] = blob
+    prefix = trial_dir + "/"
+    at_selection = {path: oid for path, oid in selected_files.items() if path.startswith(prefix)}
+    require(at_selection == expected, "Adaptation or undeclared files already present at selection")
+
+    changes = git(repo, "rev-list", "--full-history", point, "--", trial_dir).decode().splitlines()
+    for commit in changes:
+        if commit == selection:
+            continue
+        require(is_ancestor(repo, selection, commit),
+                "Trial content entered history before, or independently of, selection")
+        tree = regular_files(repo, commit, trial_dir)
+        require(all(tree.get(path) == oid for path, oid in expected.items()),
+                "Selected primitive or selection record changed during adaptation")
+    require(all(current.get(path) == oid for path, oid in expected.items()),
+            "Candidate lacks the exact immutable selected specification")
+    assessment_path = prefix + "assessment.json"
+    assessment = {}
+    if assessment_path in current:
+        require(point != selection, "An assessment must follow selection")
+        assessment = json_blob(repo, current[assessment_path])
+        require(assessment.get("schema") == "rp6-assessment-v1" and assessment.get("freeze_commit") == freeze
+                and assessment.get("selection_commit") == selection and isinstance(assessment.get("disposition"), str)
+                and assessment["disposition"] in DISPOSITIONS,
+                "Assessment must bind the selected trial, freeze and disposition")
+    return dict(trial=trial, freeze_commit=freeze, freeze_manifest_blob=freeze_blob,
+                scientific_base=base, selection_commit=selection, selection_blob=selected_files[record_path],
+                primitive_files=primitives, assessment_blob=current.get(assessment_path),
+                declared_disposition=assessment.get("disposition", "unassessed"))
+
+
+def held_out_probes(repo, point, freeze=None, selection=None):
+    require(bool(freeze) == bool(selection), "Pass both --freeze-commit and --selection-commit for an anchored transfer")
+    tracked = regular_files(repo, point, TRIALS)
+    identity = selected_trial(repo, point, freeze, selection, tracked) if freeze else None
+    history = assessment_history(repo, point)
+    probes = []
+    target_checks = []
+    for name in sorted(path for path in tracked if path.endswith("/replay-manifest.json")):
+        directory = name.rsplit("/", 1)[0]
+        trial = directory.removeprefix(TRIALS + "/")
+        require(sibling(trial), "Each held-out replay manifest needs its own trial directory")
+        manifest = json_blob(repo, tracked[name])
+        checks = manifest.get("checks")
+        require(type(checks) is list and checks, "Trial manifest has no actual checks")
+        selected = identity is not None and trial == identity["trial"]
+        has_receipt = False
+        for test in checks:
+            script = test["script"]
+            require(sibling(script) and script.endswith(".py") and directory + "/" + script in tracked,
+                    "Trial checker must be a regular sibling file")
+            arguments = test.get("args", [])
+            require(type(arguments) is list and all(type(a) is str for a in arguments) and "--write" not in arguments,
+                    "Trial verification must be read-only")
+            receipt = test.get("receipt")
             if receipt is not None:
-                require(type(receipt) is str and Path(receipt).name==receipt and prefix+receipt in tracked,
-                        "Missing target-local evidence record")
-            out.append(Probe("heldout/"+folder.name+"/"+file[:-3],point,"frozen transfer",prefix+file,
-                             tuple(arguments),prefix+receipt if receipt else None))
-    if "RP6-FREEZE.json" in entries:
-        frozen=json.loads(git(repo,"show",point+":"+start+"RP6-FREEZE.json"))
-        base=frozen["payload"]["reference"]["commit"]
-        out.append(Probe("transfer/unchanged",point,"frozen core","freeze_portability.py",
-                   ("--at",base,"--verify","RP6-FREEZE.json","--candidate",point,
-                    "--research-repo","{research}"),"RP6-FREEZE.json"))
-    return out
+                require(sibling(receipt) and directory + "/" + receipt in tracked, "Missing trial-local evidence record")
+                require(receipt not in {script, "replay-manifest.json", "selection.json", "assessment.json"},
+                        "Trial evidence must be distinct from its checker, selection and assessment")
+                has_receipt = True
+            if selected:
+                require(script not in identity["primitive_files"] and receipt not in identity["primitive_files"],
+                        "The selector's primitive specification cannot be an adaptation or its receipt")
+            label = "heldout/" + trial + "/" + script[:-3]
+            prefix = directory.removeprefix(PORT + "/") + "/"
+            probes.append(Probe(label, point, "selected trial check" if selected else "unanchored trial diagnostic",
+                                prefix + script, tuple(arguments), prefix + receipt if receipt else None))
+            if selected:
+                target_checks.append(label)
+        if selected and identity["declared_disposition"] == "positive":
+            require(has_receipt, "Positive assessment has no committed target-local check receipt")
+    if identity:
+        require(target_checks or identity["declared_disposition"] != "positive",
+                "Positive assessment has no target-local replay manifest")
+        # Use the verifier and manifest in the independently supplied freeze commit.
+        # The candidate's checker cannot certify that its own implementation was unchanged.
+        probes.append(Probe("transfer/unchanged", freeze, "anchored freeze verification", "freeze_portability.py",
+                            ("--at", identity["scientific_base"], "--verify", "RP6-FREEZE.json",
+                             "--candidate", point, "--freeze-commit", freeze, "--selection-commit", selection,
+                             "--research-repo", "{research}"), "RP6-FREEZE.json"))
+    return probes, dict(identity=identity, assessment_history=history, target_checks=target_checks)
 
 
-def plan(repo,point):
+def transfer_result(transfer, rows):
+    identity = transfer["identity"]
+    rows_by_name = {row["name"]: row for row in rows}
+    freeze_ok = rows_by_name.get("transfer/unchanged", {}).get("status") == "passed"
+    expected = transfer["target_checks"]
+    complete = bool(expected) and all(rows_by_name.get(name, {}).get("status") == "passed" for name in expected)
+    positive = bool(identity and freeze_ok and complete and identity["declared_disposition"] == "positive")
+    if positive:
+        for name in expected:
+            rows_by_name[name]["role"] = "frozen transfer"
+    return dict(**transfer, unchanged_freeze_reproduced=freeze_ok,
+                all_target_checks_reproduced=complete, positive_heldout_evidence_reproduced=positive)
+
+def plan(repo,point,held_out=None):
     entries=files(repo,point)
     src=texts(repo,entries)
     probes=[]
@@ -160,7 +353,9 @@ def plan(repo,point):
     # An unclassified result must never quietly disappear from reproduction.
     records={name for name in entries if name.endswith("_results.json")}
     require(records==accounted,"Unclassified or multiply named receipts: "+str(sorted(records^accounted)))
-    probes.extend(held_out_probes(repo,point,entries))
+    if held_out is None:
+        held_out, _ = held_out_probes(repo, point)
+    probes.extend(held_out)
     probes.append(Probe("current/lean",point,"current checked declarations","",(),None))
     probes.append(Probe("baseline/aggregate",HISTORICAL,"archived baseline","../local-control/verify.py",
                         ("--check","--lean","{lean}"),"../local-control/verification.json"))
@@ -271,6 +466,8 @@ def main():
     require(sys.version_info[:2]==(3,12) and not sys.flags.optimize,"Run unoptimized Python 3.12")
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--at",required=True,help="Immutable scientific source revision or local Git reference")
+    ap.add_argument("--freeze-commit",help="Independently supplied full original freeze commit")
+    ap.add_argument("--selection-commit",help="Independently supplied full target selection commit")
     ap.add_argument("--list",action="store_true")
     ap.add_argument("--only",action="append",help="Exact check name; repeat for a bounded partial run")
     ap.add_argument("--jobs",type=int,default=2)
@@ -282,13 +479,18 @@ def main():
     point=rev(source,args.at)
     require(subprocess.run(["git","-C",str(source),"merge-base","--is-ancestor",PROPOSAL,point]).returncode==0,
             "Requested programme revision does not descend from its contract")
-    cases=plan(source,point)
+    held_out, transfer=held_out_probes(source,point,args.freeze_commit,args.selection_commit)
+    cases=plan(source,point,held_out)
     if args.only:
         ids=set(args.only)
         require(ids<={x.name for x in cases},"Unknown requested check(s): "+str(ids-{x.name for x in cases}))
+        if ids.intersection(transfer["target_checks"]):
+            ids.add("transfer/unchanged")
         cases=[x for x in cases if x.name in ids]
     if args.list:
         for c in cases:print(c.name,c.revision,c.role,c.receipt or "-")
+        for past in transfer["assessment_history"]:
+            print("# recorded trial disposition", past["trial"], past["recorded_at"], past["disposition"])
         return
     require(1<=args.jobs<=8,"Choose 1 to 8 isolated checkers")
     path=shutil.which("lean") if not args.lean else args.lean
@@ -314,7 +516,8 @@ def main():
             for t in tasks:rows.extend(t.result())
     rows.sort(key=lambda x:x["name"])
     full=not args.only
-    evidence=dict(binding=tree_binding(source,point),proposal=PROPOSAL,historical_baseline=HISTORICAL,
+    transfer = transfer_result(transfer, rows)
+    evidence=dict(transfer=transfer,binding=tree_binding(source,point),proposal=PROPOSAL,historical_baseline=HISTORICAL,
                   python=".".join(map(str,sys.version_info[:3])),lean=version,all_listed_checks_selected=full,
                   runner_sha256_lf=sha256(Path(__file__).read_bytes().replace(b"\r\n",b"\n")).hexdigest(),
                   referenced_research=research_sources(source,point,research) if research else {},
