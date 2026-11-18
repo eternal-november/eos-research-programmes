@@ -88,3 +88,7 @@ Independent scoped pass: see evidence/chain-snoc-independent/Review.tex and the 
 SpanArrows proves that each positive left-associated presented span apex is equivalent to the category of independently formed chains and squares over arbitrary base arrows. The comparison preserves identity and pasting and commutes with both span legs as functors. This does not include length zero, a payload-extension comparison for these span powers, or flattening.
 
 Independent scoped pass: see evidence/span-arrows-independent/Review.tex and the 936-declaration replay. Both forward leg equations are propositional functor equalities. Payload and nullary extensions remain open.
+
+SpanPayload proves the positive-length fibre of the presented span extension, evaluated at an ordinary category-valued payload, is equivalent to the corresponding iterate at each base object. The comparison accounts for genuine vertical lifts and terminal payload arrows. It supplies a payload-change isomorphism and preservation/reflection of strongly cartesian arrows over arbitrary base maps, not a chosen split reindexing on native powers or the full telescope-monad theorem.
+
+Independent scoped pass for the positive payload result: see `evidence/span-payload-independent/Review.tex` and its fresh 989-declaration replay. Next outstanding obligation: chosen native base reindexing and comparison with the iterate presheaf. Neither the strict fibre inclusion square nor cartesianness preservation supplies this datum.
