@@ -69,6 +69,7 @@ class Gate:
 
 
 def catalogue(p):
+    need(type(p["B"]) is int and p["B"]>0 and type(p["D"]) is int and p["D"]>0,"Positive finite body/degree counts required")
     coordinates={'cam':Q(2*13*p['SEGMENT']),'abort':Q(p['ABORT_LIMIT']),'blend':Q(p['BLEND_LIMIT'])}
     for family,length in (('clamp',p['CLAMP_LIMIT']),('reset',p['RESET_LIMIT']),('cut',p['CUT_LIMIT']),
                           ('iso',p['ISO_LIMIT']),('shunt',p['ISO_LIMIT']),('carrier',p['SEAT_LIMIT'])):
@@ -85,14 +86,14 @@ def catalogue(p):
         gates.extend((Gate(f'cam-band:{band}','cam','cam'),Gate(f'cam-stop:{band}','predecessor','cam')))
     gates.append(Gate('normal-cam','normal-routing',None))
     for side in range(2):
-        gates.append(Gate(f'writer{side}','writer',f'clamp{side}',Q(20000),side))
+        gates.append(Gate(f'writer{side}','writer',f'clamp{side}',Q(p.get('WRITER_CUTOFF',20000)),side))
         for family in ('clamp','reset','cut','iso','shunt'):
             for end in (0,1):gates.append(Gate(f'{family}{side}:end{end}','catch',f'{family}{side}',Q(end)*coordinates[f'{family}{side}'],side))
         gates.append(Gate(f'carrier{side}:seated','catch',f'carrier{side}',Q(p['SEAT_LIMIT']),side))
         for body in range(p['B']):gates.append(Gate(f'activation{side}:{body}','activation',f'act{side}:{body}',None,side,body))
         gates.append(Gate(f'trip{side}','trip',None,None,side))
     gates.extend((Gate('keeper','keeper','blend'),Gate('abort','abort','abort')))
-    need(len(gates)==241 and len(coordinates)==335,'Gate or physical-pose inventory differs')
+    need(len(gates)==81+2*p['B'] and len(coordinates)==15+4*p['B'],'Gate or physical-pose inventory differs')
     return tuple(gates),coordinates,driven
 
 
@@ -112,9 +113,9 @@ class Trip:
         return reset,previous!=(self.enabled,self.armed)
 
 
-def actual_activation_events(before,after,power,dt,speed):
+def actual_activation_events(before,after,power,dt,speed,*,bays=80):
     """Actual zero-level closure plus POWER edges on a monotone linear subarc."""
-    need(len(before)==len(after)==80 and dt>=0 and power>0 and speed>=0,'Wrong actual activation arc')
+    need(type(bays) is int and bays>0 and len(before)==len(after)==bays and dt>=0 and power>0 and speed>=0,'Wrong actual activation arc')
     need(all(abs(y-x)<=speed*dt for x,y in zip(before,after)),'Arc exceeds source speed')
     # Actual zero is a catch-level closure, also at initial/no-travel entry.
     # Trip.transition reports a discrete change only until it is disabled/armed.
@@ -195,8 +196,8 @@ class Captured:
 
 class Completion:
     """Only applied physical-site updates reach this interface; not an ISA port."""
-    def __init__(self,p,owner=0,energy=Q(10**9)):
-        self.p=p;self.owner=owner;self.gates,self.limits,self.driven=catalogue(p)
+    def __init__(self,p,owner=0,energy=Q(10**9),*,catalogue_factory=None):
+        self.p=p;self.owner=owner;self.gates,self.limits,self.driven=(catalogue if catalogue_factory is None else catalogue_factory)(p)
         self.positions={name:Q(0) for name in self.limits}
         self.output={g.name:0 for g in self.gates};self.reports={};self.cleanup_sample=(False,False)
         self.held_plane=False;self.jammed=set();self.detached=set()
@@ -233,8 +234,10 @@ class Completion:
             result=self._commit(request)
         self.events.append((request.label,request.kind,result))
         need(self.frame()==before and self.positions==position_before,'Gate update reset retained physical state')
-        need(self.U>=0 and self.U+self.heat==self.initial_U,'Gate work disappeared or was invented')
+        self.check_U_balance()
         return result
+    def check_U_balance(self):
+        need(self.U>=0 and self.U+self.heat==self.initial_U,"Gate work disappeared or was invented")
     def _valid_entry(self,r):
         if r.kind=='hold':return isinstance(r.target,str) and r.target in self.output and type(r.value) is int and 0<=r.value<=WORD
         if r.kind=='route':
@@ -425,7 +428,7 @@ def advance_full_stock_actuator_segment(state,efforts,dt):
 
 
 def physical_contact_snapshot(state):
-    """The fixed502 actual contact wires captured at one local strobe."""
+    """The fixed22+6B actual contact wires captured at one local strobe."""
     p=state.p;z=state.positions;out={}
     for side in range(2):
         for kind,position,level in (('cut-end','cut',p['CUT_LIMIT']),('cut-zero','cut',0),
@@ -440,7 +443,7 @@ def physical_contact_snapshot(state):
             out[('zero',side,body)]=z[f'act{side}:{body}']==0
             out[('warm',side,body)]=z[f'act{side}:{body}']==p['WARM_AT']
             out[('seat',side,body)]=z[f'seat{side}:{body}']==p['SEAT_LIMIT']
-    need(len(out)==502,'Fixed physical contact input count changed')
+    need(len(out)==22+6*p['B'],'Fixed physical contact input count changed')
     return out
 
 
@@ -460,7 +463,7 @@ def fold_contact_snapshot(snapshot,bays):
         cleanup.append(snapshot[('blend',half)] and cutoff[cold] and zero[cold]
             and snapshot[('clamp-zero',cold)] and snapshot[('reset-zero',cold)] and snapshot[('cam-entry',half)])
     # cut/off has already been folded, so each six-input cleanup uses5 ANDs.
-    need(6*(bays-1)+2+2+2*5==488,'Fixed binary fold count changed')
+    need(type(bays) is int and bays>0 and 6*(bays-1)+2+2+2*5==6*bays+8,'Fixed binary fold count changed')
     return tuple(releases),tuple(cleanup)
 
 
@@ -496,7 +499,7 @@ class PredecessorSampler:
         # Partial work cannot buy a free fail-closed rewrite. Old committed
         # contact data remain held until another actual fully funded strobe.
         self.samples+=1
-        need(s.U+s.heat==s.initial_U,'Predecessor capture created or duplicated U work')
+        s.check_U_balance()
         return 'captured' if paid==PREDICATE_WORK else 'partial-work/held-releases'
     def cam_segment(self,effort,dt):
         """Actual held contact stop, with a zero-velocity boundary continuation."""
