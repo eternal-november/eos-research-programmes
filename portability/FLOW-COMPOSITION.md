@@ -51,6 +51,8 @@ Between consecutive events apply the held-mode result to actual retained state. 
 
 No common runtime clock or roster-uniform minimum delay is needed here. Each fixed finite design has finite installed channels and bounds. Uniform locality, per-unit service and horizon as the roster grows remain RP2 obligations; finite-roster existence does not discharge them.
 
+The [projected-work extension](PROJECTED-WORK-FLOW.md) allows a real stop velocity to enter winding and bank work even when the resulting drift is discontinuous as a pointwise function of position at the stop. It supplies the held-mode G3 proof for that case. [A′ on one physical source](A-PRIME-SOURCE-ASSEMBLY.md) connects this result to the frozen elementary port inventory and independently charged gate events. It gives all-mode continuation for the specified member with its explicit exterior WORLD converter and closed-face material trip. On the frozen throughput-only exterior the result instead covers an open neighborhood of the protected box; the initialized collar argument must keep the actual world there.
+
 ## Baseline suppliers, without its whole-run conclusion
 
 The primary source retains q/phi, geometric strokes/cams, E/T/U/J_par, ready/pending one-shot work, field/tracker states, digital state, finite queue slots and physical destinations. Mechanical ports are explicitly reduced through
