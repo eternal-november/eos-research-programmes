@@ -15,12 +15,15 @@ import cam_reformation as cam
 import parent_realization as parent
 import parent_retirement as retirement
 import input_lifecycle as raw
+import shared_bank_charging as charging
 
 HERE=program.HERE
 BASE='6a5f8aad0f0e5156edb21a054f8c72adcbf7120e'
 FIELD='215ecb755312f580cbd8c283b419f0958518766f'
 CAM_BASE='36d69bce7a4705fd54a915beb7c00cea55cce063'
-INPUT_BASE='4672827a2717816ccc2d4ebbcee88a58c063c8b4'
+INPUT_BASE='186b0b922011239ea2ee46b5918790259de578cc'
+CHARGING_BASE='331698b578e3349de729857dd98378976e44ad88'
+GATE_BASE='bb3c68feb4777b1f98ae9e1056176c4525d5be43'
 PARENT_BASE='4672827a2717816ccc2d4ebbcee88a58c063c8b4'
 ITINERARY_BASE='bdeb1d2fd16c3ffbcd6b58f9d8431b3616cf8f2b'
 need=program.need
@@ -31,7 +34,7 @@ def frozen(name):
     return legacy.text_at(BASE,'portability/'+name)
 
 
-def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity):
+def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity,source_capacity):
     need(type(dispatch_bits) is int and 0<dispatch_bits<=64,
          'Initial dispatch state exceeds its existing reset allocation')
     cam.fixture(controller_residue=(1<<dispatch_bits)-1)
@@ -41,6 +44,7 @@ def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity):
     targets=tuple('region0/host'+str(x) for x in incidence.neighbors(population,0))
     capacity=Q(bank_capacity)
     need(capacity.denominator==1 and capacity>0,'Initial operating capacity is not a physical integer')
+    owners={full:raw.SourceWork(0,source_capacity,source_capacity) for full in (False,True)}
     cases=[]
     for active in (False,True):
         for funded_reset in (False,True):
@@ -49,8 +53,13 @@ def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity):
                                     if funded_reset else (Q(0),Q(0)))
             setter=field.SettingWriter(targets,cut=not active,native_inhibit=not active,
                 reset_stock=field.SETTER_RESET_ENERGY if funded_reset else Q(0))
-            cpu=retirement.RetirableParent(isa,c,
-                bank=parent.BankWork(int(capacity),capacity if active else Q(0)),targets=targets)
+            operating=charging.OperatingBank((0,0 if active else 1),int(capacity),capacity if active else Q(0))
+            cpu=charging.FramedParent(isa,c,bank=operating,targets=targets)
+            source=local_source_at_initial_entry(owners[funded_reset],operating,active,funded_reset,population)
+            joint=charging.JointCharge(operating,cpu,source.slots+[source.adc],source.DELTA)
+            need(cpu.bank is source.energy is joint.bank and len(joint.slots)==10321,
+                 'The actual source and parent must share the same input/operating owners')
+            joint.balance()
             # This is the same physical setter, not an extra installed store.
             cpu.setter=setter
             if not active:
@@ -62,6 +71,11 @@ def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity):
             need(cpu.fabric.cut==cpu.fabric.return_cut==cpu.native_inhibit==(not active),
                  'Initial actual route cutset disagrees with the selected bank')
             if not active:
+                pre=(operating.stock,cpu.cell.stock,source.reset_work.stock)
+                joint.flow_full_delivery(1,source_powered=source.powered)
+                need((operating.stock,cpu.cell.stock,source.reset_work.stock)==pre and
+                     source.source_start('fast',(0,))=='cut' and source.branches[0].offer(0,42)=='cut',
+                     'An initially cold ordinary source drew power or accepted new work')
                 before=tuple(cpu.C)
                 need(not cpu.recharge() and not cpu.launch() and tuple(cpu.C)==before,
                      'The cold initial CPU can rearm or rewrite without its physical entry')
@@ -106,8 +120,12 @@ def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity):
                 actual_parent_state=dict(operating_stock=cpu.bank.stock,parent_stock=cpu.cell.stock,
                     root_cut=cpu.fabric.cut,return_cut=cpu.fabric.return_cut,native_inhibit=cpu.native_inhibit,
                     powered=cpu.powered,no_live_token=True,no_pending_child=True,
+                    shared_ordinary_E_owner=operating.owner,source_energy_is_CPU_bank=True,
+                    input_charger_cells=len(joint.slots),source_reset_stock=source.reset_work.stock,
+                    source_native_mode=source.native_mode,source_admission=source.admission,
+                    native_entry_request=source.engine.get(94),source_reset_spent=source.reset_work.spent,
                     shared_setter_object=True,cold_arbitrary_code_inhibited=not active),
-                no_pending_parent_or_packet=True,held_setting_default=0,force=0))
+                no_old_pulse_or_setter_or_cpu_parent=True,held_setting_default=0,force=0))
     a=field.PulseSelector();b=field.PulseSelector()
     need(all(x is not y for x in a.energy for y in b.energy),'Two installed channels share a stock')
     # The initial relation is not a reset method. Release does not turn a
@@ -124,17 +142,161 @@ def native_initial_points(field,population,dispatch_bits,isa,c,bank_capacity):
                                 actual_work=retained.energy[0].stock))
 
 
-def ordinary_input_initial_points(population,resource):
+def local_source_at_initial_entry(payer, operating, active, funded_reset, population):
+    """One-time native controls; queued payloads and old reservations are separate."""
+    origin, side = operating.owner
+    source = raw.LocalSourceBank(origin, side, payer, population)
+    source.control[:] = [0] * source.BITS
+    for slot in source.slots + [source.adc]:
+        slot.admission = active
+        slot.output = active
+        slot.reset = not active
+    for branch in source.branches:
+        branch.bits.put(27, 1, int(active))
+        branch.bits.put(28, 1, int(active))
+    source.adc_bits.put(2050, 1, int(active))
+    source.dispatch.put(1, 1, int(active))
+    source.engine.store[:] = [0] * 96
+    source.engine.put(89, 4, 4 if active else 0)
+    source.engine.put(93, 1, 1)
+    source.powered = source.admission = source.emit_gate = active
+    source.energy = operating
+    source.reset_work.stock = Q(raw.RESET_CAP if funded_reset else 0)
+    for j in range(8):
+        source.I[j] = raw.MASK if j % 2 else 0
+    need(source.job is None and not source.engine.get(94) and source.reset_work.spent == 0,
+         "One-time native entry minted a reset request or spent unavailable reset work")
+    need(all(s.cell.capacity == 4096 and s.cell.stock == 4096 for s in source.slots+[source.adc]),
+         "Boundary representative did not initially hold the stated slot work")
+    return source
+
+
+def old_native_claims(payer, lanes, population, isa, compiled, capacity, funded_reset):
+    """An actual old paid queue and in-flight parcel with the local CPU present."""
+    operating = charging.OperatingBank((2,0), capacity, Q(capacity))
+    cpu = charging.FramedParent(isa,compiled,bank=operating)
+    source = local_source_at_initial_entry(payer, operating, True, funded_reset, population)
+    for lane in lanes:
+        if lane.identity.source_bank == 0:
+            source.attach(lane)
+    joint = charging.JointCharge(operating,cpu,source.slots+[source.adc],raw.LocalSourceBank.DELTA)
+    need(source.energy is cpu.bank is joint.bank and source.payer is payer,
+         "CPU, source slots or raw rows use a duplicated owner")
+
+    # Construct a possible coherent initial queue by actual funded offers.
+    # The preparation is a witness for stored state, not 129 new simultaneous
+    # physical CPU offers at initialization.
+    j = 2*source.receivers.index(0)+1
+    branch = source.branches[j]
+    need(branch.offer(1, raw.MASK) == "accepted" and branch.tick() == "symbol",
+         "Paid source slot did not emit its first actual symbol")
+    first = branch.slots[0]
+    child = branch.flights[0]
+    destination = raw.LaneId(2,0,0,1)
+    need(child.claim.destination == destination and branch.flight_cells[child.physical_slot] is child,
+         "Old symbol changed its fixed receiver or physical slot")
+    need(first.cell.stock == 2304 and first.cell.spent == 1792
+         and source.local_heat == 1664 and child.stock == 128
+         and first.cell.stock+source.local_heat+child.stock == 4096,
+         "Parent DATA parcel, dissipation and flight do not partition its 4096 work")
+    for i in range(128):
+        value = 0 if i % 2 else raw.MASK
+        need(branch.offer(1, value) == "accepted", "A legal old queue was excluded")
+    need(branch.bits.get(7,8)==128 and branch.bits.get(26) and
+         sum(s.claim is not None and s.claim.live for s in branch.slots)==129
+         and branch.offer(1, 1)=="full", "Full plus serializing native claim bound failed")
+
+    source.raw_heads[0] = raw.MASK
+    need(source.source_start("fast",(0,))=="accepted", "Old paid ADC claim missing")
+    old_adc = source.job
+    need(source.adc.cell.stock==2816 and old_adc.payload is source.adc_bits,
+         "Old ADC reservation and descriptor differ")
+    need(source.reset_work.spent==0 and not source.engine.get(94),
+         "Initial active source was secretly rearmed by spending reset stock")
+    # Idle source cells are full; busy source cells cannot be refilled.
+    elapsed=joint.flow_full_delivery(raw.LocalSourceBank.DELTA,source_powered=source.powered)
+    need(elapsed==charging.Clock(raw.LocalSourceBank.DELTA,()) and cpu.cell.stock==10240
+         and sum(joint.input_received)==0 and operating.stock==capacity-10240,
+         "CPU half-charge funded or duplicated an already reserved input")
+    source.cold_cut()
+    seen=[]
+    def receive(d,payload):
+        seen.append((d,payload))
+        source.deliver_symbol(d,payload)
+    raw_spent_before_delivery = payer.spent
+    branch.advance_wire(Q(1,8),receive)
+    need(child.stock==child.spent==64 and not seen and source.job is old_adc,
+         "Half-spent emitted parcel or concurrent ADC claim disappeared on source cut")
+    branch.advance_wire(Q(1,8),receive)
+    branch.advance_wire(Q(1,4),receive)
+    need(seen==[(destination,raw.symbols(1,raw.MASK)[0])] and child.stock==0
+         and payer.spent==raw_spent_before_delivery+8 and child.spent==128 and source.flight_heat==128
+         and branch.flight_cells[child.physical_slot] is None
+         and source.receivers_live[destination].queue.number(9,10)==512,
+         "Old symbol failed once-only delivery/drop at its actual full receiver")
+    need(first.claim.live and source.job is old_adc and not source.powered,
+         "Receiving the emitted symbol retired a different still-local operation")
+    joint.balance()
+    return dict(reset_store_initially_full=funded_reset,old_queue=128,serializer_claims=1,
+        queue_and_serializer_live=129,ADC_claim_retained=True,raw_I_words=8,
+        recipient=destination.__dict__,per_record_work=4096,first_symbol_spent_from_parent=1792,
+        source_heat_at_first_emission=1664,source_remaining_at_first_emission=2304,
+        issued_symbol_work=128,half_remaining=64,symbol_flight_work_dissipated=128,
+        receiver_full_drop=True,emitted_child_survives_cut=True,timed_parent_half_charge=10240)
+
+
+def paid_source_reentry(payer, population, isa, compiled, capacity):
+    """Separate post-cold local entry segment with an actual connected bank."""
+    source=raw.LocalSourceBank(2,1,payer,population)
+    need(source.reform()=="formed-unpowered" and source.reset_work.spent==504329,
+         "Later rearm lacks its paid source-local cold preparation")
+    slots=source.slots+[source.adc]
+    need(all(s.cell.stock==Q(1,2) and s.reset for s in slots),
+         "Post-dump work is not at its actual floors")
+    # Actual connected E and eligible PC0 are supplied by the separate POWER
+    # and prior parent-retirement orbit. This example does not refill E.
+    operating=charging.OperatingBank((2,1),capacity,Q(capacity))
+    cpu=charging.FramedParent(isa,compiled,bank=operating)
+    bus=charging.JointCharge(operating,cpu,slots,raw.LocalSourceBank.DELTA)
+    old=payer.spent
+    need(source.begin_entry(operating) and source.energy is cpu.bank and payer.spent-old==256,
+         "Actual U-paid entry request or operating identity changed")
+    need(source.engine.get(94) and not source.admission and not source.emit_gate,
+         "The new E connection supplied a free completed entry")
+    delta=source.DELTA
+    clock=bus.flow_full_delivery(delta,source_powered=source.powered)
+    inputs_received=sum(bus.input_received)
+    need(clock==charging.Clock(delta,()) and inputs_received==Q(84539311,2)
+         and cpu.cell.stock==10240 and all(s.cell.stock==4096 for s in slots),
+         "Timed shared post-dump cell recharge failed")
+    clock=bus.flow_full_delivery(delta,source_powered=source.powered)
+    need(clock==charging.Clock(delta,()) and cpu.recharge() and cpu.cell.stock==20480
+         and operating.stock+inputs_received+20480==capacity,
+         "Second CPU charge double-spent DATA or duplicated E")
+    before=source.reset_work.spent
+    need(source.entry_flow(Q(source.ENTRY_WORK,raw.CLEAR_RATE))
+         and source.reset_work.spent-before==62506 and source.reset_work.spent==566835
+         and source.admission and source.emit_gate and not source.engine.get(94),
+         "Source did not consume the real paid strobe on the same bank")
+    bus.balance()
+    return dict(cpu_and_source_bank_identical=True,actual_charged_destinations=len(slots)+1,
+        initial_operating_stock=capacity,remaining_operating_stock=operating.stock,
+        DATA_ADC_transfers=inputs_received,cpu_timed_transfer=operating.supplied,
+        cpu_charger_duration=2*delta,DATA_ADC_charger_duration=delta,
+        actual_U_request_work=256,cold_native_work=504329,source_entry_work=62506,
+        combined_reset_work=source.reset_work.spent,full_delivery_zero_other_draw_segment=True)
+
+
+def ordinary_input_initial_points(population,resource,isa,compiled,capacity,source_capacity):
     """One-time native entry, retaining arbitrary bounded evidence values.
 
     The product law uses fixed LaneId incidence and distinct reset stores;
     representative boundary values exercise its physical state constructors.
     It is not a reset operation or a temporal publication theorem.
     """
-    cases=[]
+    cases=[];reservations=[]
     for funded_reset in (False,True):
-        payer=raw.SourceWork(2,Q(resource['updated_upstream_capacity']),
-                            Q(resource['updated_upstream_capacity']))
+        payer=raw.SourceWork(2,source_capacity,source_capacity)
         captures={rb:{kind:raw.SharedCapture((2,0,rb),kind,payer)
                       for kind in ('primary','auxiliary')} for rb in (0,1)}
         lanes=[]
@@ -188,29 +350,23 @@ def ordinary_input_initial_points(population,resource):
             need(all(pair[0].captures[kind] is pair[1].captures[kind]
                      for kind in ('primary','auxiliary')),
                  'Source banks duplicated an existing shared capture')
-        # A real already emitted child has a transferred parcel, not another
-        # charge in addition to the same DATA cell. Its fixed target survives.
-        slot=raw.DataSlot((2,0,'DATA',0));need(slot.cell.debit(4096),'Initial parcel unavailable')
-        child=raw.WireChild(raw.LaneId(2,0,0,0),(0,0),4096)
-        events=[];child.advance(raw.WIRE_DELAY,lambda destination,payload:events.append((destination,payload)))
-        need(slot.cell.stock+child.stock+child.spent==4096 and len(events)==1,
-             'Initial emitted data copied or lost its physical work')
+        reservations.append(old_native_claims(payer,lanes,population,isa,compiled,capacity,funded_reset))
     need(resource['new_reset_cells']==162 and resource['new_reset_stock']==162*raw.RESET_CAP,
          'Initial source-row store product differs from the full owner inventory')
     return dict(representative_boundary_cases=cases,distinct_reset_cells=True,
         shared_capture_identity_preserved=True,initial_wire_tail=raw.WIRE_DELAY,
-        transferred_initial_wire_work=4096,
+        native_source_reservations=reservations,transferred_work_per_emitted_symbol=128,
         product_index='(region, source host, source bank, fixed receiver neighbor, receiver bank)',
         ordinary_records='arbitrary bounded payload/countdown; enabled coherent native control, no stale tick/receipt claim',
         ordinary_queues='arbitrary bounded symbols/occupancy with coherent FIFO and native parser entry',
         capture_entry='enabled clock, arbitrary snapshot, no pending old read, fixed source/receiver/kind identity',
         active_control='OPEN code4 at all eight stages; no pending copy/reset job',
         cold_control='MASK code0 at all eight stages; hard ingress/write inhibition',
-        source_TX_ADC_entry='actual coherent nominal native queue/slot entry outside initial charged footprints; complete field mapping remains a source refinement obligation',
+        source_TX_ADC_entry='source-affine native controls, 10321 actual cells, fixed flight slots and matched physical stock/reservations in each coherent active old-operation state',
         initial_only=True,release_does_not_restore_this_relation=True)
 
 
-def pc0_boot_prefix(isa,c,bounds,bank_capacity,targets):
+def pc0_boot_prefix(isa,c,bounds,bank_capacity,targets,source_capacity,population):
     Ports=program.ports_class(isa);ports=Ports(c);machine=isa.Machine(c,poison=isa.WORD_MASK)
     need(machine.pc==0,'Initial processor did not start at actual PC0')
     while not machine.io_counts['cpu_count'] and machine.steps<bounds['boot_active_upper']+100:
@@ -226,16 +382,37 @@ def pc0_boot_prefix(isa,c,bounds,bank_capacity,targets):
     need(machine.C==c.image and not machine.code_writes,'PC0 prefix changed current C')
     capacity=Q(bank_capacity)
     need(capacity.denominator==1,'Initial bank capacity lost its exact integer type')
-    paid=retirement.RetirableParent(isa,c,bank=parent.BankWork(int(capacity),capacity),targets=targets)
+    operating=charging.OperatingBank((0,0),int(capacity),capacity)
+    paid=charging.FramedParent(isa,c,bank=operating,targets=targets)
+    payer=raw.SourceWork(0,source_capacity,source_capacity)
+    native=local_source_at_initial_entry(payer,operating,True,False,population)
+    native.valid=True
+    native.I[5]=0  # Old completed evidence. BOOT's real invalidation is observable.
+    installed=native.slots+[native.adc]
+    need(all(not slot.claim and slot.cell.stock==4096 and slot.cell.spent==0 for slot in installed)
+         and not native.recharge_needed and native.reset_work.stock==0 and native.admission,
+         'CPU-only charging projection requires full, idle initialized input cells')
+    # Exact zero-deficit projection during THIS particular prefix. No start
+    # or offer is executed, no old job, flight or queue can spend a cell, and
+    # native clocks continue. Its full port contribution is identically zero.
+    cpu_only=charging.JointCharge(operating,paid,(),native.DELTA)
     paid.W[:]=[isa.WORD_MASK]*len(paid.W)
-    paid_ports=legacy.absence_ports_class(isa)(c)
+    paid_ports=raw.native_source_ports(isa)(c,native)
     while not paid.io_counts['cpu_count'] and paid.steps<bounds['boot_active_upper']+100:
-        need(paid.step(paid_ports),'Paid PC0 boot prefix blocked')
+        cpu_only.flow_full_delivery(2*native.DELTA,source_powered=native.powered)
+        need(paid.step(paid_ports),'Timed PC0 boot prefix blocked')
     need(paid.steps==machine.steps and paid.pc==machine.pc and paid.R==machine.R
          and paid.W==machine.W and paid.C==machine.C and paid_ports.world_latch==ports.world_latch
          and paid.pending is None and paid.fabric.token is None and not paid.fabric.link_storage_busy(),
          'Actual routed parent does not refine the initial caller state')
     paid.balance()
+    need(paid_ports.I is native.I and paid.bank is native.energy is operating and
+         not native.publications and not native.samples and native.job is None
+         and not native.valid and native.I[5]==raw.MASK and native.reset_work.spent==0
+         and all(not slot.claim and slot.cell.stock==4096 and slot.cell.spent==0 for slot in installed),
+         'PC0 prefix did not preserve the zero-deficit source frame')
+    need(2*native.DELTA<Q(1,4*2**26)/Q(101,100),
+         'Timed CPU recharge exceeds fastest allowed ordinary charging window')
     routine=program.production_boot_prefix(isa,c,bounds,Ports)
     extra=machine.steps-routine['retired_instructions']
     need(extra==3 and extra<=16,'Actual entry exceeds the existing boot reserve')
@@ -260,7 +437,10 @@ def pc0_boot_prefix(isa,c,bounds,bank_capacity,targets):
             retained_operating_stock=paid.bank.stock,initial_operating_stock=bank_capacity,
             nominal_work_time_upper=paid.nominal_work_time_upper,
             parent_empty_and_no_pending=paid.pending is None and paid.cell.stock==0,
-            actual_routed_parent=True,root_token_consumed=paid.fabric.token is None,
+            actual_routed_parent=True,actual_shared_E_owner=operating.owner,
+            source_I_native=True,old_completed_ADC_status_invalidated=True,initial_DATA_ADC_cells_framed=len(installed),
+            DATA_ADC_work_in_this_idle_prefix=0,timed_CPU_recharge_each=2*native.DELTA,
+            root_token_consumed=paid.fabric.token is None,
             no_retained_link_storage=not paid.fabric.link_storage_busy(),
             fixed_setter_targets=list(targets)),
         routine_harness_is_not_initial_caller_state=True)
@@ -300,10 +480,30 @@ def generate():
     retirement_point=json.loads(retirement_text)
     for name,sha in retirement_point['sources_sha256_lf'].items():
         need(program.digest(HERE/name)==sha,'Retirable initial parent supplier changed: '+name)
+    input_text=legacy.text_at(INPUT_BASE,'portability/input_lifecycle_results.json')
+    input_point=json.loads(input_text)
+    for name,sha in input_point['sources_sha256_lf'].items():
+        need(program.digest(HERE/name)==sha,'Initial ordinary input supplier changed: '+name)
+    incoming=input_point['resources']
+    charging_text=legacy.text_at(CHARGING_BASE,'portability/shared_bank_charging.py')
+    need(program.hash_text(charging_text)==program.digest(HERE/'shared_bank_charging.py'),
+         'Initial operating-bank law differs from its bound physical source')
+    gate_text=legacy.text_at(GATE_BASE,'portability/threshold_gate_source_results.json')
+    gate_record=json.loads(gate_text)
+    need(program.hash_text(gate_text)==program.digest(HERE/'threshold_gate_source_results.json') and
+         gate_record['image_sha256']==image_hash, 'Startup and gate require the same source point')
+    for name, sha in dict(gate_record['immutable_inputs_sha256_lf'], **gate_record['sources_sha256_lf']).items():
+        need(program.digest(HERE/name)==sha,'Startup gate supplier changed: '+name)
+    gate=gate_record['costs']
+    source_capacity=Q(gate['upstream_capacity'])
+    need(source_capacity+gate['new_recoverable_storage']==Q(incoming['updated_upstream_capacity']),
+         'Gate parcels and native input cells must have distinct capacity owners')
+    actual_bank=Q(parent_point['cost_bounds']['actual_bank_capacity'])
+    need(actual_bank.denominator==1,'Physical ordinary E capacity must be an exact integer')
     native=native_initial_points(field,population,cam_point['control_line']['dispatch_entry_clear_bits'],
-        isa,c,parent_point['cost_bounds']['actual_bank_capacity'])
+        isa,c,actual_bank,source_capacity)
     targets=tuple('region0/host'+str(x) for x in incidence.neighbors(population,0))
-    changed_prefix=pc0_boot_prefix(isa,c,bounds,parent_point['cost_bounds']['actual_bank_capacity'],targets)
+    changed_prefix=pc0_boot_prefix(isa,c,bounds,actual_bank,targets,source_capacity,population)
     need(geometry['changed_paced_frame']['retired_instructions']+changed_prefix['frame_return_and_main_spine']
          <=bounds['padded_frame_upper'],'Main-loop instructions exceed actual frame allocation')
     a=geometry['arithmetic'];k=c.constants
@@ -368,11 +568,6 @@ def generate():
     joined_reserve=Q(resources['upstream_capacity'])-joined_burst-2*joined_rate
     need(joined_reserve==Q(controls['usable_reserve_lower'])>1,
          'Initial source spent the old field-only reserve after adding cam control')
-    input_text=legacy.text_at(INPUT_BASE,'portability/input_lifecycle_results.json')
-    input_point=json.loads(input_text)
-    for name,sha in input_point['sources_sha256_lf'].items():
-        need(program.digest(HERE/name)==sha,'Initial ordinary input supplier changed: '+name)
-    incoming=input_point['resources']
     need(Q(incoming['updated_upstream_capacity'])+incoming['new_reset_stock']==Q(resources['upstream_capacity'])
          and Q(incoming['unchanged_total_host_capacity'])==Q(resources['unchanged_total_host_stock']),
          'Initial input reset stores lack a conserved source inventory')
@@ -392,7 +587,31 @@ def generate():
          'Parent cleanup changes the input/cam formation budget')
     joint_reaction=Q(incoming['complete_joint_reaction'])+Q(pr['added_parent_gate_reaction'])
     need(joint_reaction<field.REACTION,'Separately checked input/parent reactions exceed the joint field bound')
-    ordinary_inputs=ordinary_input_initial_points(population,incoming)
+    pre_gate_reaction=joint_reaction
+    joint_reaction+=Q(gate['added_joint_reaction'])
+    need(joint_reaction==Q(gate['combined_joint_reaction'])<field.REACTION,'Gate mechanical load omitted')
+    joined_capacity=source_capacity
+    joined_rate+=Q(gate['upstream_rate_added'])
+    joined_burst+=Q(gate['upstream_burst_added'])
+    joined_reserve=joined_capacity-joined_burst-2*joined_rate
+    need(joined_rate==Q(gate['combined_upstream_rate'])<Q(gate['offered_supply'])
+         and joined_reserve==Q(gate['minimum_U_after_additions'])>2048,
+         'One host U must fund all gate and source operations, including its sampler strobe')
+    ordinary_inputs=ordinary_input_initial_points(population,incoming,isa,c,int(actual_bank),source_capacity)
+    reentry_payer=raw.SourceWork(2,source_capacity,source_capacity)
+    reentry=paid_source_reentry(reentry_payer,population,isa,c,int(actual_bank))
+    entry_bound=Q(incoming['local_source_entry_time'])
+    need(entry_bound==raw.CONTROL_DELAY+Q(raw.LocalSourceBank.ENTRY_WORK,raw.CLEAR_RATE)+raw.LocalSourceBank.DELTA
+         ==Q(1139845121,2**30),'Native POWER-to-entry/charge budget changed')
+    old_residence=Q(129,256)+Q(1,4)+Q(513,2048)
+    receipt_suffix=2*Q(incoming['receipt_job_delay'])
+    total_native_tail=entry_bound+Q(1,64)+old_residence+receipt_suffix
+    parent_suffix=Q(1,64)+Q(1,2**26)
+    need(old_residence==Q(2057,2048) and receipt_suffix==Q(1,8192)
+         and total_native_tail==Q(2235213825,2**30)
+         and parent_suffix+total_native_tail<remaining_drain,
+         'Real input/parent effects may outlive the prepublication drain')
+
     need(ordinary_inputs['initial_wire_tail']<remaining_drain,
          'The new input source leaves old emitted evidence beyond the initial drain')
     files=('THRESHOLD-INITIALIZATION.md','threshold_initialization.py','threshold_program_model.py',
@@ -401,7 +620,7 @@ def generate():
            'cam_reformation.py','CAM-REFORMATION.md','cam_reformation_results.json','threshold_field_source.py',
            'parent_realization.py','PARENT-REALIZATION.md','parent_realization_results.json',
            'parent_retirement.py','PARENT-RETIREMENT.md','parent_retirement_results.json',
-           'input_lifecycle.py','INPUT-LIFECYCLE.md','input_lifecycle_results.json',
+           'input_lifecycle.py','INPUT-LIFECYCLE.md','input_lifecycle_results.json','shared_bank_charging.py','SHARED-BANK-CHARGING.md',
            'interrupted_renewal.py','INTERRUPTED-RENEWAL.md','interrupted_renewal_results.json',
            'LEGACY-REALIZATION.md','legacy_realization_results.json','threshold_field_source_results.json','THRESHOLD-FIELD-SOURCE.md')
     frozen_inputs={BASE+':portability/threshold_geometry_results.json':geometry_text,
@@ -412,13 +631,15 @@ def generate():
         PARENT_BASE+':portability/parent_realization_results.json':parent_text,
         PARENT_BASE+':portability/parent_retirement_results.json':retirement_text,
         INPUT_BASE+':portability/input_lifecycle_results.json':input_text,
+        CHARGING_BASE+':portability/shared_bank_charging.py':charging_text,
+        GATE_BASE+':portability/threshold_gate_source_results.json':gate_text,
         ITINERARY_BASE+':portability/interrupted_renewal_results.json':itinerary_text}
     for name in ('INITIAL-RETURN.md','PORT-SOURCE.md','CYCLE.md','HYBRID.md'):
         frozen_inputs[program.BASE+':local-control/'+name]=program.frozen(name)
     return normalize(dict(status='constructed initial relation and derived conditional split-bootstrap supplier',
-        base=BASE,field_base=FIELD,cam_base=CAM_BASE,parent_base=PARENT_BASE,input_base=INPUT_BASE,itinerary_base=ITINERARY_BASE,python_version=sys.version,frozen_isa_sha256=isa.source_hash,
+        base=BASE,field_base=FIELD,cam_base=CAM_BASE,parent_base=PARENT_BASE,input_base=INPUT_BASE,shared_bank_base=CHARGING_BASE,gate_base=GATE_BASE,itinerary_base=ITINERARY_BASE,python_version=sys.version,frozen_isa_sha256=isa.source_hash,
         actual_image_sha256=image_hash,code_cells=len(c.image),population=population,
-        initial_native_state=native,initial_ordinary_input_state=ordinary_inputs,changed_image_boot_prefix=changed_prefix,
+        initial_native_state=native,initial_ordinary_input_state=ordinary_inputs,later_paid_source_entry=reentry,changed_image_boot_prefix=changed_prefix,
         joined_initial_resources=dict(upstream_capacity=joined_capacity,
             upstream_burst=joined_burst,upstream_rate=joined_rate,usable_reserve_lower=joined_reserve,
             additional_cam_information_bits=controls['added_control_bits'],
@@ -429,7 +650,8 @@ def generate():
             parent_retirement_new_reset_stock=pr['new_reset_capacity'],
             parent_retirement_shared_reset_work=pr['combined_shared_reset_work'],
             parent_reset_bitmap_bits=pr['parent_control_bits'],
-            input_parent_cam_field_joint_reaction=joint_reaction,
+            input_parent_cam_field_joint_reaction=pre_gate_reaction,
+            combined_gate_reaction=joint_reaction,additional_gate_stock=gate['new_recoverable_storage'],
             initial_cam_words_are_state_not_READY=True),
         initial_relation=dict(keeper='A; symmetric relabeling permitted',
             active_code='actual changed compiled C at its physical rails; BOOT or a prefix of that same image, never frozen B80 addresses',
@@ -450,10 +672,14 @@ def generate():
             upstream_initial_stock=joined_capacity,
             total_host_capacity_envelope=Q(resources['unchanged_total_host_stock']),
             fault_overlays='actual raw direct/physical footprints within hard state/flow caps; charged from time0',
-            parent_route_initial_state='actual RetirableParent root/return cuts and no live token; same physical setter; PC0 or the actual routed same-image paid prefix',
+            parent_route_initial_state='actual timed FramedParent root/return cuts and no live token; same physical setter; PC0 or the actual routed same-image paid prefix',
             initial_debt_clearing='conditional on actual finite initial-pipeline drainage, clock and custody suppliers'),
         bootstrap=dict(initial_drain_elapsed_max_instructions=prefix_elapsed_max,
-            actual_remaining_initial_drain_min=remaining_drain,
+            actual_remaining_initial_drain_min=remaining_drain,native_source_entry_upper=entry_bound,
+            old_ADC_upper=Q(1,64),old_accepted_TX_flight_RX_upper=old_residence,
+            old_retained_tick_receipt_upper=receipt_suffix,old_input_total_after_POWER=total_native_tail,
+            nominal_old_parent_upper=parent_suffix,old_parent_plus_native_tail=parent_suffix+total_native_tail,
+            prepublication_native_slack=remaining_drain-parent_suffix-total_native_tail,
             latest_accurate_DAC=world_accurate,latest_world_tracking=world_settled,
             early_commissioning=commissioning,world_tracking_slack=commissioning-world_settled,
             initial_displacement=tube,initial_reserve=Q(1,20),
@@ -481,8 +707,8 @@ def generate():
             'positive spatial-density history and independent frozen transfer'],
         sources_sha256_lf={name:program.digest(HERE/name) for name in files},
         immutable_inputs_sha256_lf={name:program.hash_text(text) for name,text in frozen_inputs.items()},
-        full_hybrid_trace=False,independent_review_pending=False,
-        independent_review_scope='bounded initial-state/input/resource review, including actual routed-parent prefix, shared setter identity, cold cutset and combined input/parent reaction',
+        full_hybrid_trace=False,independent_review_pending=True,
+        independent_review_scope='prior bounded initial-state/input/resource review; the timed shared-bank/native entry, physical flight and expanded old-tail join await independent review',
         program_completion=False))
 
 
