@@ -8,6 +8,12 @@ The [97-check receipt](portability/PROGRAM-VERIFICATION.json) applies to the Git
 
 ```powershell
 $research = (git rev-parse --show-toplevel)
+git show-ref --verify --quiet refs/heads/archive/byzantine-control-evidence
+if ($LASTEXITCODE -ne 0) {
+    git fetch --no-tags origin refs/heads/archive/byzantine-control-evidence:refs/heads/archive/byzantine-control-evidence
+    if ($LASTEXITCODE -ne 0) { throw 'The evidence archive is unavailable from origin.' }
+}
+if ((git rev-parse refs/heads/archive/byzantine-control-evidence) -ne '5803f72336f92bfd24d2955b6141e73ef5c52eec') { throw 'Unexpected evidence archive revision.' }
 $replay = Join-Path ([IO.Path]::GetTempPath()) ('byzantine-verification-' + [guid]::NewGuid().ToString('N'))
 git clone --no-local --single-branch --no-tags --branch archive/byzantine-control-evidence $research $replay
 git -C $replay switch --detach cb358a77f0bcbfd42f92422aa2367e2323f08bc3
