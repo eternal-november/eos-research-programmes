@@ -131,3 +131,11 @@ public import ContextualComposition.ContextadUnit
 public import ContextualComposition.ContextadTensor
 public import ContextualComposition.ContextadRepresentable
 public import ContextualComposition.ContextadTensorLift
+public import ContextualComposition.ContextadCartesian
+public import ContextualComposition.ContextadChart
+public import ContextualComposition.ContextadFinal
+public import ContextualComposition.ContextadRecognition
+public import ContextualComposition.ContextadSpecialize
+public import ContextualComposition.ContextadTotal
+public import ContextualComposition.ContextadUnary
+public import ContextualComposition.ContextadVertical

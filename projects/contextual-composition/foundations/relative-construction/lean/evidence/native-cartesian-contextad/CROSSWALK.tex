@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,url}
+\begin{document}
+\section*{Native cartesian multiplication and its exterior base square}
+Base: EOS main commit \texttt{9dacf5f5d1cc428982136acd5b5c1b50ace993b6} (\#224).
+Earlier-first issue \#105; neither \#105 nor umbrella \#93 is closed.
+The pinned source is \texttt{projects/contextual-composition/foundations/relative-construction/delivery/One\_relative\_construction\_for\_context\_content\_and\_effects.tex},
+Git blob \texttt{b1e84592f59558c851faabb5291d7392d2b2f908}, section Internal constructors,
+equations \texttt{eq:groth}, \texttt{eq:grothmonad} and proposition \texttt{prop:groth}.
+Here the indexed category of contexts $p$ and endpoint $e$ give the action
+$LY(A)=\int_{g\in p^{-1}(A)}Y(e(g))$ in the repo's contravariant convention.
+The native sequential multiplication is a functor $k:E_2\to E_1$ strictly over the incoming base,
+carrying cartesian arrows to cartesian arrows, together with a natural transformation
+$\delta:k;e_1\Rightarrow e_2$. It is not an arbitrarily chosen presheaf multiplication.
+Compare the cited primary reference, \url{https://hexagonmath.org/pdf/2610.00302v1},
+Definitions 2.10(ii), 2.11(iii), 2.12--2.13: the cartesian-functor requirement is not literal
+preservation of each selected lift. Identity colaxators in its strict case are stronger than the
+endpoint hypothesis used here; identity endpoint colaxators alone do not identify the domains of
+two cartesian lifts.
+\paragraph{Input and mechanism.} The Lean fragment fixes a strict Cat-valued grade presheaf,
+normal endpoint restriction comparisons, and the existing native cleavage. One native multiplication
+1-cell suffices; no external naturality square or unit, associativity, pentagon, or monad laws are
+premises. \texttt{weightedCartesian} factors every payload arrow over a grade arrow into a vertical
+payload map and a cartesian lift. Weighting by $Y(\delta)$ carries the latter to a cartesian lift:
+the payload correction is invertible by naturality, although $\delta$ need not be. Composition with
+cartesian $k$ gives the assertion over the exterior base. Conjugation by the exact native
+power evaluation on total categories gives a cartesian functor from the total category of $L^2Y$
+to that of $LY$. Comparing two lifts of the same arrow by their universal factorization yields
+a natural \emph{isomorphism}, not generally equality, on the actual presheaf values.
+\paragraph{Independent chart.} \texttt{Agrees} tests the restriction of $k$ on vertical grade
+\emph{functors}, including their arrows, and the restriction of $\delta$ as a natural transformation:
+no $Y$ and no moving exterior square occur. \texttt{ContextadSpecialize.data} constructs the \#224
+fibre tensor by restricting $k$ to a strict fibre and descending $\delta$ through the invertible grade
+chart; \texttt{agrees} proves both tests. For other independently specified \#224 data the tests are
+hypotheses, not universal assertions. \texttt{weightedVertical} establishes equality after weighting for
+every $Y$. The unary interface checks actual grade edges and final payload edges, including the transport
+caused by base identity. It does not quotient out endpoint witnesses. \texttt{ContextadFinal.identify} identifies the
+two literal fibre functors. \texttt{ContextadFinal.nativeExterior} transports the native exterior
+isomorphism to the canonical \#224 binary.
+\paragraph{Discriminator.} \texttt{checks/SwitchProbe.lean} uses the ordinary nonidentity base arrow
+$0\to1$ in $\mathbb N$ and constant fibres the indiscrete groupoid on two distinct colors. A native
+cartesian tensor over the same incoming base chooses white over $0$ and black elsewhere; its endpoint
+component is the identity. Its image of a selected lift is cartesian but has white domain grade,
+whereas the selected lift of its target has black domain grade. For the particular $Y$ constant at the terminal category, \texttt{notStrict} also refutes equality
+of the two exterior functors of the specialized \#224 binary: every accumulated grade at $0$ is white;
+pulling back the output at $1$ leaves it black. The positive exterior natural isomorphism is checked
+beside this negation. No strict choice-preservation
+is inferable from a cartesian 1-cell and identity endpoint components. This witness concerns the
+multiplication 1-cell only; it is not exhibited as a full unital associative contextad.
+\paragraph{Boundary.} This increment concerns the exterior square of the binary for each base arrow.
+No new pseudonaturality identity/composition or payload-modification package, no change-of-cleavage
+comparison, and no unit/associativity law is claimed for the resulting candidate multiplication.
+Consequently this does not produce a strict presheaf monad, a Kleisli equivalence, or a strict
+Tel(span)-algebra recovery. \texttt{eq:telescope} and the \#223 free comparison have not been
+instantiated with an assumed strict target. Strict chosen-lift preservation or another demonstrated
+strictification would be additional input for replacing these isomorphisms by equality.
+\end{document}
