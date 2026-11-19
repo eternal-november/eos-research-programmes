@@ -1,0 +1,76 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb}
+\begin{document}
+\section*{Native unit and binary action: audit and boundary}
+Issue 105; base 223, commit \texttt{6933abe13d0cc79fff9ef28a23eacc32b7afc68d}.
+The TeX source \emph{One relative construction for context, content and effects},
+blob \texttt{b1e84592f59558c851faabb5291d7392d2b2f908}, section Internal
+constructors, labels \texttt{eq:groth}, \texttt{eq:grothmonad},
+\texttt{prop:groth}, works in a 2-category and generally yields a pseudomonad.
+Here $B$ is an ordinary category, the indexed grades and all presheaves
+are strict, and the supplied endpoint presentation $P$ is split. The
+following statements concern actual functors and natural transformations.
+\paragraph{Global unit.} Native inputs: $I_A$, $\epsilon_A:e_AI_A\to A$,
+$a^*I_A=I_D$, and equality of endpoint pastes over $a:D\to A$, including
+the grade transport. None mentions $Y$. \texttt{ContextadUnit.unit} gives
+$1\Rightarrow L$ on the category of strict Cat-valued presheaves for the
+actual Grothendieck step $L$. On objects this is $(I_A,Y(\epsilon_A)y)$.
+The grade arrow is identity; the payload is the image of the given arrow
+under $Y(\epsilon_A)$ up to its prescribed dependent target. Naturality in
+both exterior base and payload transformation is equality on whole functors.
+Neither invertibility of discharge nor a target unit is assumed. This is
+not the free telescope length-one generator $L\Rightarrow T$.
+\paragraph{Binary.} At each $A$, the input is a tensor functor on the
+actual source fibre of native two-step grade chains and a natural
+$\delta:\otimes;e_A\Rightarrow e_{\rm last}$. The grade category keeps
+both changing grades and their induced moving intermediate boundary. The
+output \texttt{ContextadTensor.binary} has actual domain $L^2Y(A)$, not a
+quotient of its objects. A strict isomorphism of realization charts and
+\texttt{read} identify its action on all independent decorated squares.
+On $(P,(R,y))$ the output is $(P\otimes R,Y(\delta_{P,R})y)$.
+\texttt{rowsGrade} tensors the native grade arrow; \texttt{rowsPayload}
+applies $Y(\delta_{\rm source})$ to its transported terminal payload arrow
+and then the dependent correction from $\delta$-naturality.
+\texttt{binary\_natural} is naturality in $Y$ on full fibre functors.
+Exterior naturality across bases is \emph{not} inferred:
+\texttt{baseChange\_iff} reflects precisely its missing square to the
+native decorated rows, not merely their objects.
+\paragraph{Positive exterior result.} \texttt{ContextadTensorLift.Data}
+imposes two presheaf-independent component laws on chosen lifts: equality
+of reindexed accumulated grades and equality of the two $\delta$/endpoint
+pastes (including grade transport). These imply exterior base change on
+every actual nested object and on the entire payload-coordinate functor
+at each fixed two-step chain. Naturality on changing-grade arrows is
+neither assumed nor concluded there.
+\paragraph{Representables.} \texttt{ContextadRepresentable} specializes
+to discrete Yoneda: $f$ is sent to $\epsilon_A;f$ or $\delta;f$, respectively,
+and a payload over a specified grade arrow $\alpha$ exists exactly when
+$f=e_A(\alpha);g$. These are component computations for \texttt{prop:groth},
+not its local equivalence nor an equivalence between the whole presheaf
+Kleisli bicategory and its representable part.
+\paragraph{Witnesses and sharpness.} The first probe uses a presheaf of
+coordinate-indexed word arrows. The noninvertible unit compares $2\to5$;
+word order is distinguished at retained positions, but difference at
+coordinate 4 disappears. In a varying-cap tensor $\min(r,A)$ with
+noninvertible $\delta$, a square moves the outer and inner grades
+$1\to4$, $5\to7$; parallel payloads remain distinguished in the actual
+nested action. Another square yields noninvertible output grade $1\to2$.
+Exterior restriction $2\to4$ disagrees even on the output grade of a
+row ending in 5; a fixed cap, in contrast, satisfies the lift laws.
+The second probe is sharper: $K_A=\mathbb N\times W$ for the one-object
+free word category $W$, and $e_A$ forgets the word component. The tensor
+returns $(r,*)$, with $\delta$ identity, and maps $i\le j$ to $j-i$ copies
+of letter $A$. Differences add under composition. Both native lift laws
+hold; nevertheless the same moving grade arrow $1\to2$ gives words
+$[2]$ versus $[4]$ on restriction along $2\to4$. This violates strict
+base change without violating even one fixed-coordinate or object law.
+Neither fixture is claimed to be a contextad satisfying the missing law.
+\paragraph{Residual and consumer.} Construct the source's cartesian
+compatibility of tensor on arbitrary grade arrows and use the native
+$\delta$ square to prove the reflected row square. Then assemble global
+$L^2\Rightarrow L$ and derive unit/associativity from grade and endpoint
+coherence. Only then may 223's universal morphism extend $1_L:L\Rightarrow
+L$ to $T\to L$ for an independently constructed native strict target.
+No global multiplication, general pseudomonad, equivalence of strict
+Tel(span)-algebras with contextads, or issue closure is claimed.
+\end{document}

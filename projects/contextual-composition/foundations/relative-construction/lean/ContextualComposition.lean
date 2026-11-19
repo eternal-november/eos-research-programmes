@@ -127,3 +127,7 @@ public import ContextualComposition.JoinedChartFrames
 public import ContextualComposition.AccumulationAlgebra
 public import ContextualComposition.TelescopeInterpretation
 public import ContextualComposition.EndpointInterpretation
+public import ContextualComposition.ContextadUnit
+public import ContextualComposition.ContextadTensor
+public import ContextualComposition.ContextadRepresentable
+public import ContextualComposition.ContextadTensorLift
