@@ -125,3 +125,5 @@ public import ContextualComposition.FrameRecognition
 public import ContextualComposition.JoinedTarget
 public import ContextualComposition.JoinedChartFrames
 public import ContextualComposition.AccumulationAlgebra
+public import ContextualComposition.TelescopeInterpretation
+public import ContextualComposition.EndpointInterpretation
