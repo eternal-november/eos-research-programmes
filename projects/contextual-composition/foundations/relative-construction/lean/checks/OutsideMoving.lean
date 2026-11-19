@@ -1,0 +1,53 @@
+import ContextualComposition.ContextadOutsidePayload
+open CategoryTheory CategoryTheory.Functor Opposite ContextualComposition.GrothendieckStep SpanApex NativeBlocks NativeCleavage TelescopeSquares SpanPayload.Power
+namespace MovingOutsideSquare
+noncomputable section
+set_option backward.isDefEq.respectTransparency false
+set_option maxHeartbeats 1600000
+def P : Endpoints.{0,0,0,0} Nat where
+  grades := (Functor.const _).obj (Cat.of Nat)
+  extend _ := 𝟭 Nat
+  lift _ := 𝟙 _
+theorem S : P.Split := ⟨fun _ => HEq.rfl,fun _ _ => HEq.rfl⟩
+abbrev src := (power S 2).source
+def tensor : (power S 2).apex ⥤ Apex P where
+  obj x := pair _ _ (src.obj x) (0 : Nat)
+  map f := arrow (src.map f) (𝟙 (0 : Nat))
+  map_id _ := (homEquiv _ _).injective (Sigma.ext (Subsingleton.elim _ _) HEq.rfl)
+  map_comp _ _ := (homEquiv _ _).injective (Sigma.ext (Subsingleton.elim _ _) HEq.rfl)
+def m : ContextadTotal.Native S where
+  grade := tensor
+  over := rfl
+  delta := { app := fun x => homOfLE (Nat.zero_le _) }
+  cart {x y} f _ := by
+    have : IsIso (payloadMap (tensor.map f)) := (inferInstance : IsIso (𝟙 (0:Nat)))
+    exact ContextadCartesian.cart_of_payload _ _ (tensor.map f)
+def gradeRow (a p r : Nat) : (power S 2).apex := pair _ _ (pair _ _ a p) r
+example : ¬ IsIso (m.delta.app (gradeRow 4 1 3)) := by
+  intro h; exact (by decide : ¬3 ≤ 0) (leOfHom (inv (m.delta.app (gradeRow 4 1 3))))
+inductive W | pt
+instance : Category W where
+  Hom _ _ := List Nat
+  id _ := []
+  comp f g := f ++ g
+  id_comp _ := List.nil_append _
+  comp_id _ := List.append_nil _
+  assoc _ _ _ := List.append_assoc _ _ _
+def Y : Natᵒᵖ ⥤ Cat.{0,0} where
+  obj a := Cat.of (Fin (a.unop+1) → W)
+  map {a _} f := (Pi.comap (fun _ : Fin (a.unop+1) => W) (Fin.castLE (Nat.succ_le_succ f.unop.le))).toCatHom
+  map_id _ := rfl
+  map_comp _ _ := rfl
+def Z : Natᵒᵖ ⥤ Cat.{0,0} := (Functor.const _).obj (Cat.of (Discrete Unit))
+def erase : Y ⟶ Z where
+  app a := ((Functor.const (Y.obj a)).obj (Discrete.mk ())).toCatHom
+  naturality _ _ _ := rfl
+def row (p q r : Nat) : Fibre.asCat (Y := Y) S 3 4 := ⟨.cons p (.cons q (.cons r (.nil _))), fun _ => W.pt⟩
+def step (w : Fin 4 → List Nat) : row 1 2 3 ⟶ row 2 4 5 :=
+  ⟨⟨(show (1:Nat) ⟶ 2 from homOfLE (by decide)),(show (2:Nat) ⟶ 4 from homOfLE (by decide)),(show (3:Nat) ⟶ 5 from homOfLE (by decide)),PUnit.unit⟩,w⟩
+abbrev D := Fibre.comparison (Y := Y) S 3 4
+example := ContextadOuterRigidity.tensorPayload m 4 erase (D.obj (row 1 2 3))
+example := ContextadOuterRigidity.tensorPayload m 4 erase (D.obj (row 2 4 5))
+example (w : Fin 4 → List Nat) := (ContextadOuterCharts.outerTensor Y m 4).hom.naturality (D.map (step w))
+end
+end MovingOutsideSquare
