@@ -124,3 +124,4 @@ public import ContextualComposition.TripleStageRead
 public import ContextualComposition.FrameRecognition
 public import ContextualComposition.JoinedTarget
 public import ContextualComposition.JoinedChartFrames
+public import ContextualComposition.AccumulationAlgebra
