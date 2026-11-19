@@ -1,0 +1,116 @@
+\section*{Universal strict target interpretation of the packed telescope}
+\paragraph{Source audit.} Base: issue 105, merge
+\texttt{eecbe1098de788ab4c1a0c1028fcf10b9578624f}.
+The manuscript's \texttt{eq:telescope} identifies the span extension at a
+telescope with a coproduct of iterates. Its right side is free as a monad in
+the specified setting. Its following sentences concern evaluation against
+an actual contextad and the separate native strict recovery.
+\texttt{eq:grothmonad} specifies native $I_A,\varepsilon_A, P\otimes R,
+\delta_{P,R}$, not an arbitrary target monad. Prior production modules
+supply the presheaf one-step extension $L$, packed monad $T$, free
+algebras and their two-block native square. No general constructor of
+the target pseudomonad from these four native data and their laws was
+identified in the pinned package. In particular $T$ is not that missing
+monad. This tranche proves a universal strict-target consequence of
+\texttt{eq:telescope}; the source's native recovery is not assumed.
+\paragraph{Interface and pins.}
+$C=[B^{\mathrm{op}},\mathbf{Cat}]$ is the ordinary category of strict
+Cat-valued presheaves and strict natural transformations. On the packed
+side the base has independent object/hom universes $b,w$, grade and
+payload categories have universes $u,\max(u,v)$, and the given
+\texttt{Endpoints.Split} supplies reindexing identity and composition
+of the endpoint lifts. These are not by themselves the normal-cleavage
+and strict-map theorem for native telescope algebras. The native
+two-block comparison specializes $b=u, w=\max(u,v)$ as inherited.
+\paragraph{Exact crosswalk: free target.}
+In \texttt{GrothendieckStep.TelescopeInterpretation} (all namespaces
+are relative to \texttt{ContextualComposition}), let $M$ be a supplied
+ordinary mathlib monad on $C$ and $q:L\Rightarrow M$ a natural
+transformation of endofunctors. Semicolon denotes diagrammatic
+composition. \texttt{action,action\_map,action\_mul} construct the
+one-step algebra on $MX$ by $q_{MX};\mu_X$, and its map laws for $Mf$
+and $\mu_X$. \texttt{interpret,empty,singleton,successor,two}
+give the fold seeded by $\eta_X$, zero branch $\eta_X$, singleton
+branch $q_X$, and the genuine binary value $Lq_X;q_{MX};\mu_X$.
+\texttt{natural,multiplication,extend} yield a bundled mathlib
+\texttt{MonadHom} $T\to M$. The equation is
+$\mu^T_X;\alpha_X=T\alpha_X;\alpha_{MX};\mu^M_X$;
+both sides are transformations of presheaves, not counts or only object
+equations. \texttt{read,read\_extend,hom\_of\_monad,extend\_read,universal}
+establish the inverse on arbitrary actual monad morphisms.
+In particular, on such a morphism its multiplication law at one
+outer generator forces preservation of the predecessor action; the unit
+law fixes the empty seed. \texttt{extend\_post,on\_generator} give
+strict compatibility with target monad morphisms and recovery of the
+identity on the free monad. This is naturality in the target on hom
+sets for the fixed $L$, not a pseudo-universal property.
+\paragraph{Source-label crosswalk: native arrows.}
+\texttt{TelescopeInterpretation.nestedRoute,packedSquare,nativeSquare}
+specialize multiplication at $A$ and paste with
+\texttt{NativePacked.actualSquare} postcomposed with $\alpha_X(A)$.
+One path applies $T\alpha_X$, $\alpha_{MX}$ and the actual $\mu^M_X$
+to the ordered packed comparison. The other embeds the native pair as
+a two-block row, uses the actual weighted flattening in its fibre,
+evaluates the single concatenated chain and interprets it under
+$\alpha_X$. This is a natural isomorphism on all native arrows for two
+arbitrary block lengths, including zero; the native input is not
+identified modulo its total length. It is not a native modification
+over arbitrary base change or a theorem on arbitrary native rows.
+\paragraph{Change of endpoint presentation.}
+For \texttt{eq:groth}'s one-step action and \texttt{eq:telescope}'s
+functorial interpretation, \texttt{GrothendieckStep.EndpointInterpretation.Map}
+takes actual grade functors $H_A$ and natural endpoint comparisons
+$H_A;e'_A\Rightarrow e_A$. The grade functors commute strictly with
+reindexing, and the two endpoint pastes agree after that equality
+(the \texttt{grade\_square,endpoint\_square} fields). These are laws
+of the input grade and endpoint maps, not hypotheses about the target
+presheaf transformations. \texttt{fibre,base,onPayload,oneStep}
+use the actual contravariant Grothendieck restriction on both grade
+and payload arrows, deriving base change and payload naturality.
+\texttt{packed,onOne,oneLayer} give an actual monad map between
+the two independently constructed packed monads, with generator value
+the specified native functor followed by length-one inclusion.
+\texttt{layer,targetAction,row} identify every $n$-branch with an
+independently recursive transformation between fixed iterates, followed
+by inclusion at the \emph{same} $n$. This stronger length preservation
+is specific to this native specialization; it is not asserted for all
+$q:L\to M$. Nor need any slice be faithful on payload arrows.
+\paragraph{Discriminating probes.}
+\texttt{MovingInterpretationProbe} uses $e_A(k)=A+2k$ and
+$e'_A(k)=A+k$, with the comparison in its native noninvertible
+direction. At $A=3$, $k=2\to4$, the terminal contexts move
+$7\to11$ on the source and $5\to7$ on the target. The comparison
+at $k=2$ is $5\to7$. The transported packed singleton arrow
+distinguishes the parallel word labels $[3,9]$ and $[9,3]$.
+Changing only position $6$ of a seven-coordinate payload gives
+different source arrows whose images coincide: forgetting all arrows
+and treating the operation as faithful both fail on the same model.
+\texttt{MultiplicationProbe} constructs a natural endotransformation of
+the actual packed endofunctor which erases its Boolean grades only at
+length two. It agrees with the true unit and on every singleton. A
+native nested pair with both singleton grades true yields different
+head grades on the two sides of the monad-morphism multiplication law.
+Thus those two surface tests plus naturality do not prove extension.
+\texttt{IndependentTargetProbe} also constructs $q$ for the separately
+defined mathlib identity monad on presheaves over a one-object discrete
+base. The input one-step functor has an inhabited grade fibre; projection
+to the actual presheaf value defines $q$ on every payload presheaf and
+strict carrier map, using the native strict-fibre decoder. The
+interpretation identifies the empty and singleton copies of an object
+while distinguishing the constant-false and constant-true payload
+endomaps. It is not full at that presheaf: an identity between the
+coincident outputs has no source arrow across the two lengths. This
+tests a target other than either packed monad, not merely a formal
+specialization back to the generator.
+\paragraph{Remainder.}
+A strict target built from an actual contextad would require constructing
+the unit from $(I,\varepsilon)$, multiplication from $(\otimes,\delta)$
+and native Grothendieck arrows, their parameter naturality and their
+laws, before applying this universal theorem to its one-step generator.
+For weak data the associativity/unit constraints and their modifications
+cannot be replaced by the ordinary monad equations used here. A theorem
+on strict span-level telescope algebras needs its own normal cleavage,
+strict-map interfaces and both native reconstructions. None follows
+from strict maps of presheaves, this sufficient endpoint-map
+presentation, or the assumed $M$. No representable restriction,
+four-block pentagon, or closure of issue 105/93 is claimed.
