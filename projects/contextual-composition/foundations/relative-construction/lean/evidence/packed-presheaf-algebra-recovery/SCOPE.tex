@@ -1,0 +1,84 @@
+\section*{Strict actions of the packed telescope on presheaves}
+\paragraph{Status and base.}
+Issue 105; checked against the source at commit
+\texttt{265d2a80b3db05ef7d797f776f13224dd0050edd}.
+This tranche concerns the right side of \texttt{eq:telescope} and its
+specific binary native comparison, not the strict span-algebra theorem.
+Write $L=\mathcal P_V$ and $T=\coprod_{n\ge0}L^n$ on the ordinary category
+$[B^{\mathrm{op}},\mathbf{Cat}]$, with strict natural transformations.
+The existing \texttt{PackedFree.monad} supplies the length-zero unit
+and multiplication $\mu$. Here $L$ acts on actual Grothendieck arrows.
+An $L$-algebra is a presheaf $Z$ and an arbitrary natural
+$a:LZ\to Z$. This $a$ is supplied, not interpreted automatically as
+a contextad's dependent multiplication.
+\paragraph{Source-label crosswalk.}
+All unqualified identifiers below lie in
+\texttt{ContextualComposition.GrothendieckStep.AccumulationAlgebra}.
+Under \texttt{eq:telescope}, \texttt{eval,empty,singleton} give
+$E_a:TZ\to Z$ by the pre-existing layer recursion, with zero layer
+identity and one layer $a$. \texttt{flatten,algebra} prove on actual
+natural transformations that $T E_a;E_a=\mu_Z;E_a$, and install $E_a$
+as a mathlib Eilenberg--Moore algebra. \texttt{ordered} restricts the
+equation to the ordered cut (inner $m$, outer $n$): transport by the
+actual iterate nesting equality followed by $m+n$ recursive steps.
+The inputs of $(1,0)$ and $(0,1)$ have the same total but different
+outer tags. No claim that arbitrary accumulation preserves these
+tags at the output. \texttt{singleton\_join,recovered,restrict,extend\_restrict}
+use length one of the genuine multiplication to recover an arbitrary
+$T$-algebra on its very carrier (literal equality, using its two laws).
+\texttt{map\_eval,strictMap,hom} characterize strict homomorphisms in
+both directions. \texttt{extend,readOne,unitComponent,counitComponent,unitIso,counitIso,triangle,equivalence}
+give the category equivalence with a specified inverse: restrict the
+structure map along the length-one generator, without changing the
+carrier map. Both comparison isomorphisms are identities on carriers.
+No fullness of a functor forgetting cuts is being presumed.
+\paragraph{Native interface.} \texttt{atFlatten} takes the packed law at
+a base object $A$, as equality of functors including their maps.
+\texttt{nativeFlatten} then pastes this equality with the actual
+\texttt{NativePacked.actualSquare}, postcomposed with $E_a(A)$.
+The domain is the $Z$-weighted fibre over $A$ of the native sequential
+product of two all-length spans. One route uses its ordered chart
+equivalence, applies $T E_a$, then $E_a$. The other embeds the two-block
+row, passes into the source fibre, uses the actual weighted flattening
+functor there, exits the fibre, evaluates the resulting single chain
+into $TZ(A)$, and finally applies $E_a(A)$. The comparison is an
+isomorphism of functors on native arrows, not an equality of output
+observables. All binary lengths and the moving internal boundary are
+in scope. No global modification in $A$ for the native comparison
+is asserted; the packed algebra is natural in $A$.
+\paragraph{Size and split law.} For the packed portion the base has
+object/hom universes $b,w$ independent of the grade and payload
+universes $u,\max(u,v)$. The native fibre comparison inherits
+$b=u,w=\max(u,v)$. Both parts take the specified split endpoint data
+with identity/composition laws for the endpoint reindexing comparisons.
+No invertibility of a general contextad endpoint unit or multiplication
+is asserted or used.
+\paragraph{Obstruction to a larger conclusion.} The structure map here
+is $LZ\to Z$ on a presheaf. A strict algebra for the telescope monad
+on spans has a map $\operatorname{Tel}(V)\to V$, with a different
+length-one unit. A proof for presheaf carriers cannot be inverted to
+recover native span maps, unit, binary accumulation, endpoint squares,
+or normal-cleavage/strict-map laws. To reach the last sentence following
+\texttt{eq:telescope}, construct the native algebra interface and both
+recovery maps under those laws, then compare its prescribed dependent
+accumulation with the presheaf action. Nor is the pseudomonad of
+\texttt{eq:grothmonad} the monad $T$: it uses an input contextad's $I$,
+$\varepsilon$, tensor and $\delta$. No general pseudomonad, weak
+strictification, or representable recovery is proved here. The strict
+packed equation covers its full nested input; the native witness is
+for two arbitrary-length blocks, not a native arbitrary row of blocks.
+An auxiliary pentagon before multiplication of four independently
+tagged blocks is neither needed nor claimed by this construction.
+\paragraph{Discriminating checks.} In \texttt{AccumulationProbe}, a
+single-object base has Boolean endomaps. The one-step algebra projects
+the grade arrow, while empty evaluation retains the payload arrow.
+Opposite constant endomaps yield different outputs; a retained constant
+is noninvertible. The two-cut paths are evaluated on actual nested
+arrows and opposite placements of an empty cut retain different tags.
+In \texttt{MovingAccumulation}, based on the previously reviewed
+moving cut fixture, an internal boundary moves $4\to6$ while the
+terminal context moves $6\to10$. At the free algebra, accumulation on
+the actual weighted native domain distinguishes parallel arrows with
+payload words $[4,9]$ and $[9,4]$; naturality of the new comparison
+is applied to both. Faithfulness in this last test is special to
+the chosen free action, not an extra assumption on $a$.
