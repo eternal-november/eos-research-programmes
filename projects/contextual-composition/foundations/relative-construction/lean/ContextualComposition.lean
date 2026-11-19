@@ -116,3 +116,11 @@ public import ContextualComposition.TaggedFixedSquare
 public import ContextualComposition.TaggedChartTest
 public import ContextualComposition.TaggedSquareRecognition
 public import ContextualComposition.TripleFaceBase
+public import ContextualComposition.JoinedBinary
+public import ContextualComposition.WhiskerSquares
+public import ContextualComposition.NativeFoldChart
+public import ContextualComposition.NativeRegroupChart
+public import ContextualComposition.TripleStageRead
+public import ContextualComposition.FrameRecognition
+public import ContextualComposition.JoinedTarget
+public import ContextualComposition.JoinedChartFrames
