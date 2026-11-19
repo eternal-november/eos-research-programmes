@@ -1,0 +1,191 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,geometry,url}
+\geometry{margin=1in}
+\title{Native whiskers and the limit of a freely fitted seam}
+\author{Independent component review: contextual composition, issue 105}
+\date{19 November 2026}
+\begin{document}\maketitle
+\paragraph{Verdict.}
+Accept the frozen candidate as an arrow-level chart and fixed-seam coherence
+transport result. Do not close issue 105 as a presheaf pseudomonad or
+representable Kleisli theorem. No correction to the Lean source is required for
+this bounded reading. The acceptance-critical distinction concerns \emph{when and
+how the seams are chosen}, not whether Lean can fill a given target diagram.
+\paragraph{The verified result.}
+For a split endpoint datum over an ordinary base $B$, let $d$ be its native unit,
+$m$ a native multiplication preserving cartesian grade arrows, and $C$ the
+triple of native constraint cells (left and right unitors, associator).
+A native operation has a functor on all grade arrows and a directed endpoint
+transformation. Let $R$ denote evaluation at payload $Y$ and base object $A$,
+and let $L$ on total functors denote the specified one-step action. At the
+relevant arities the four identifications are
+\[
+ R_{\mathrm{suffix}(d)}\cong\eta_{LY},\qquad
+ R_{\mathrm{inside}_1(d)}=L\eta_Y,\qquad
+ R_{\mathrm{suffix}(m)}\cong\mu_{LY},\qquad
+ R_{\mathrm{inside}_1(m)}=L\mu_Y .
+\]
+These charts need the indicated operation but not $C$ or a higher law.
+With $C$, the three ordinary fibre natural isomorphisms have the usual
+standard-form functors as their ends. Native cells on cartesian routes
+also decode to actual strong-transformation modifications. Given three
+specified triangle seams (or five pentagon seams), equality of the grade
+components of the two source paths implies equality of their evaluated
+pastes for every payload, and of their base modifications. This is a forward
+transport theorem, not a reflection theorem or an unconditional coherence law.
+\paragraph{Discriminating obstruction, with a Lean witness.}
+Let $P:a\Rightarrow b$ be the already-aligned prefix and $Q:a\Rightarrow c$
+the competing complete path, written as native composite cells. With
+left-to-right composition, $j=P^{-1};Q:b\Rightarrow c$ is a native cell.
+It is the \emph{unique} terminal cell satisfying
+$P_x;j_x=Q_x$ on all grade components: cancellation proves uniqueness of
+the components, and equality of components determines the cell.
+\texttt{IndependentSeams.finish\_iff} proves this before evaluation;
+\texttt{triangleFit\_eq} and \texttt{pentagonFit\_eq} specialize it to the
+actual paths. Two earlier triangle seams or four earlier pentagon seams must
+already be supplied; no general construction of those is inferred. Thus an
+existentially fitted last seam adds no coherence condition beyond existence
+of the earlier cells with their required source-purity and endpoint equations. Once a terminal seam is independently fixed, the grade equation
+can be substantive. The result does not show that the canonical seam, if
+one is constructed, fails.
+\paragraph{Statement audit and the source labels.}
+The source pinned by issue 105 (Git blob \texttt{b1e84592f59558c851faabb5291d7392d2b2f908})
+has three distinct claims: the morphisms of the Grothendieck fibres
+(\texttt{eq:groth}); the unit, multiplication, and pseudomonad supplied by the
+monoidal extension (\texttt{eq:grothmonad}); and the composition-compatible
+representable restriction with endpoint squares (\texttt{prop:groth}). The
+candidate advances the second, and tests the first on actual morphisms while
+doing so. It neither constructs the monoidal extension on the ambient
+presheaf bicategory nor establishes the third. The specialized Lean base
+objects have universe $u$, homs $\max(u,v)$, and the presheaf fibre categories
+have object/hom universes $u,\max(u,v)$. The underlying presheaves and
+payload changes are strict. The moving exterior base for a decoded strong
+transformation is $\mathrm{LocallyDiscrete}(B^{\mathrm{op}})$, which does not
+supply the $2$-cells or pseudonatural payload changes of an independently
+declared presheaf bicategory.
+\paragraph{Why the charts recognize arrows.}
+For a total functor $F$ over $B$, \texttt{action} is obtained by pulling $F$
+through the strict endpoint match. \texttt{actionGrade} and \texttt{actionLeaf}
+are equations of functors: both the unchanged grade \emph{arrow} and the
+moving total payload arrow can be recovered. Joint projection uniqueness gives
+identity and composite laws. \texttt{splitInside} uses both projections;
+\texttt{insideTensor} compares the restricted route to the action of the true
+total multiplication. For the unit, identification with the total of the
+strict presheaf unit requires the separate \texttt{pureUnit} theorem: agreement
+on source fibres and equality of the projected arrows alone is not carte
+blanche to equate two moving total functors. The proof factors an arbitrary
+arrow into a vertical arrow followed by the chosen lift; the payload of its
+unit image is pure. Only after this step does \texttt{insideEta} specialize to
+the ordinary action on a strict payload map.
+\par The outside comparisons have a different strength: isomorphism, not
+strict equality. Both transformations into the old last grade lie above the
+same outgoing endpoint component after transport (\texttt{baseAligned},
+\texttt{outOver}); each is cartesian. Factor in each direction, use cartesian
+uniqueness for naturality on arbitrary arrows and inversion, and reconstruct
+the match from its common head and the resulting isomorphism of tips
+(\texttt{stageComparison}). This does not invert discharge or the multiplicative
+endpoint. Conjugation and fibre decoding supply \texttt{outerUnit} and
+\texttt{outerTensor}. The exterior base modifications returned by
+\texttt{outerUnitMod} and \texttt{outerTensorMod} are between the decoded
+strong transformations: the corresponding standard fibre functors are
+identified in the charts. Do not replace that description by a claim about an
+already supplied horizontal action on arbitrary pseudonatural transformations.
+\paragraph{What actually pastes.}
+A native cell has a natural isomorphism of grade functors, pure projection at
+the source, and the commutative triangle at the directed outgoing endpoint.
+\texttt{fibreMod} compares two lifts and cancels the common cartesian arrow;
+\texttt{decodedMod} inserts the two fibre/ordinary value conversions.
+\texttt{nativeModification} and its law instances therefore land in
+Mathlib's actual \texttt{StrongTrans.Modification}. The strict-payload result
+is an aligned arrow equation, with boundaries aligned by equality transports,
+not mere equality of objects or postcomposition with a nonfaithful projection.
+The proof transports the raw weighted-arrow square through totals and reflects
+it through a faithful, object-injective fibre inclusion.
+\par The eight law edges are not arbitrary formal inputs. For the triangle
+insert the unit between the two inputs, switch by the associator, then apply
+the inside left unitor; compare the suffix right unitor. For the pentagon
+the long side rotates within the first three inputs, then across the middle
+pair, then within the last three; the short side runs through the two-pairs
+bracketing. \texttt{before} and \texttt{after} have raw chart whiskering laws;
+\texttt{insideCell} literally cuts and rejoins a matched pair, and
+\texttt{suffixCell} uses the endpoint triangle on the reindexed grade.
+\texttt{modMore} identifies the vertical composition when the intermediate
+routes are cartesian. \texttt{triangleModification} and
+\texttt{pentagonModification} transport equality of the two resulting grade
+pastes, for any payload. This is not a proof of an arbitrary source grade
+equation: that is explicitly a hypothesis. The drawn conclusions do not
+presuppose target cells or any evaluated coherence equation.
+\paragraph{Next acceptance test.}
+First construct junctions by a fixed rule from the block cuts, including
+interchange of the disjoint contractions, with a uniqueness or normalization
+law that makes them independent of the coherence equation under test. Next
+identify the evaluated inside and suffix \emph{cells}, not just their
+source/target functors, and those junctions with the declared horizontal
+whiskering and compositors of the ambient extension. Then an actual coherent
+native contextad law can be transported to that presentation's triangle and
+pentagon. This leaves the representable Kleisli theorem logically separate.
+\paragraph{Which tests may be combined.}
+On the word-valued payload fixture, the value of the native unit grade is zero
+and discharge $0\to4$ has no inverse; the native multiplication's endpoint
+$0\to3$ has no inverse either. The unit tests use the one-grade arrow
+$3\to5$; the tensor tests use a three-grade arrow
+$(1,2,3)\to(2,3,5)$ over the same exterior object $4$, with a word at each
+of the four source payload coordinates. These are not nonidentity
+\emph{exterior} base arrows. Distinct input words are discriminated before the
+whisker; this does not claim output faithfulness. The separate exterior test
+in the inherited fixture moves on $1\to4$. The two-color switch is another
+model: it admits a whole triple of native constraint cells and does not have
+strict multiplication exterior functors. Its output apex is locally thin, so
+a native comparison between specified endpoints can be chosen without
+consulting either composite, and all the higher grade components agree.
+That is an inhabited-instance test, not a separation of coherence laws in a
+nonthin model. No single evaluator or example is claimed to have all these
+properties at once.
+\paragraph{Quantifier boundary for payload coherence.}
+\texttt{evalAligned} is for an input native cell and \texttt{strictPayload} for
+a path of them. Neither theorem applies directly to an arbitrary vertical
+isomorphism constructed \emph{after} payload evaluation. In particular the
+exterior chart identifications have explicit base modifications, but no new
+strict change-of-payload theorem for those exterior chart isomorphisms
+themselves was located. Thus their conjugation gives the indicated
+\emph{fibre} unitors/associator; it is not, by word substitution, a
+simultaneously base- and payload-natural assertion for every standard-form
+ambient comparator.
+
+\paragraph{Reproduction boundary.}
+The frozen ZIP has digest \path{b156720b5eb0885bbae82eecd435fd885f3b6f5b6aaf1a3288fd22cd0fe12460};
+its repository parent is \path{bffd114368e810bcf1e1ba4afe1b45d8e2dedf4d}.
+The independent reconstruction matched 149 parent source/configuration files
+and four additional replay fixtures; the candidate's 174 target digests matched.
+Apart from generated aggregate/index/audit inputs and the audit driver, no
+inherited source was replaced. The 20 added Lean modules supply 214 explicit
+indexed declarations and one new boundary probe joins three inherited probes.
+All nine dependency revisions matched, with clean tracked files; the two
+additional Mathlib modification modules were compiled separately from the
+pinned checkout and produced byte-identical public oleans. This is not a
+cold rebuild of all dependencies, nor a compiler bootstrap.
+\par The independent project build started without project binaries,
+stopped in a cloud interruption, and resumed in the same tree. Before
+resumption 102 completed module products were recovered with nonsynthetic
+Lake compile traces, original local source paths, post-start timestamps,
+and their output hash records. The union of these verified outputs and
+subsequent compile records covers all 162 project modules plus the aggregate.
+The complete fresh named-declaration audit on the resulting graph emitted
+3,063 entries in order, identical byte for byte to the author transcript.
+The only named axioms were propositional extensionality (2,852 entries),
+classical choice (2,701), and quotient soundness (2,760); entries can count
+toward more than one category. The transcript SHA-256 is
+\path{db177607a5cec4fc0a423a7acd952a01ceaab439e6c50e2213427d1adc01204d}.
+\par Four candidate probes and three independent files passed. In the
+candidate's new boundary probe, \texttt{\#check\_failure} only rejects a
+type ascription from the constraint triple straight to the seam structure;
+it is not a nonexistence result. The earlier discrete-Boolean fixture rules
+out any transformation from a multiply-after-insertion composite to the
+identity in that fixture. The independent files are categorized above:
+universal free-finish theorem, moving word-input tests, and a positive
+thin-apex instance. They are supplements, not modifications to the candidate.
+\par The archive also records observed phase times. Elapsed wall time across
+the reset is not uninterrupted execution or a scientific authoring benchmark.
+The reviewer did not modify a repository, open a pull request or merge anything.
+\end{document}
