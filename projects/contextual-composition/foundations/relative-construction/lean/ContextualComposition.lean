@@ -139,3 +139,12 @@ public import ContextualComposition.ContextadSpecialize
 public import ContextualComposition.ContextadTotal
 public import ContextualComposition.ContextadUnary
 public import ContextualComposition.ContextadVertical
+public import ContextualComposition.ContextadCoherence
+public import ContextualComposition.ContextadMixed
+public import ContextualComposition.ContextadStrong
+public import ContextualComposition.WeightedCells
+public import ContextualComposition.ContextadRoutes
+public import ContextualComposition.ContextadLawTransport
+public import ContextualComposition.ContextadNativeLaws
+public import ContextualComposition.ContextadCellPasting
+public import ContextualComposition.ContextadStrictRoutes
