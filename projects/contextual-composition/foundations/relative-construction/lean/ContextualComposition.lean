@@ -472,3 +472,5 @@ public import ContextualComposition.StrictTelMapLaws
 public import ContextualComposition.StrictTelFunctorial
 public import ContextualComposition.StrictTelCategories
 public import ContextualComposition.StrictTelNativeFaces
+public import ContextualComposition.DiscreteTransposition
+public import ContextualComposition.ContinuationTranspositionObstruction

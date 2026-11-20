@@ -1,0 +1,127 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{xurl}
+\title{Discrete-context transposition: claim-to-Lean crosswalk}
+\date{20 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Audit and boundary.}
+This formalization covers the discrete-transposition obstruction paragraph of
+issue \#105 and the negative theorem in \emph{Wreath-extension candidates},
+\S 8, at source revision
+\nolinkurl{458ff36a4798e432dee5947afc402f9903a47f14}.
+It proves a necessary condition on the stated hom-level interface, then
+exhibits a particular monad that violates it. It is not an existence or
+reconstruction theorem for contextads, a statement about arbitrary
+Kleisli-category equivalence with no pure-map condition, an obstruction to
+non-discrete or quotient presentations, a categorical-size generalization,
+or a proof of the positive Appendix A.4 result.
+
+\paragraph{Set/Type convention and actual maps.}
+The categorical base is mathlib's \texttt{Type u}. Small sets are represented
+by types in that universe and their morphisms by actual functions with the
+\texttt{TypeCat} wrapper. Tags and domains are in the same universe as the
+base. There are no finiteness or inhabitedness premises for that generic
+claim; the finite witness is on \texttt{Type 0}. For each fixed source
+$A$, the presentation has an equivalence
+\[
+ \mathrm{Hom}(A,T B)\simeq \sum_{p:E(A)}\mathrm{Hom}(D(A,p),B)
+\]
+at every $B$, and one law for every actual pure arrow induced by $f:B\to C$.
+On the left this is composition by $\eta_C f$ in the Kleisli category; on
+the right it is $(p,h)\mapsto(p,f h)$, with no quotient or change of tag.
+No other contextad operation is imposed to derive the obstruction.
+
+\section*{Generic chain}
+The following names are under
+\nolinkurl{ContextualComposition.DiscreteTransposition}.
+
+\begin{description}
+\item[Both postcomposition actions.]
+\nolinkurl{Presentation}, \nolinkurl{polynomial_map},
+\nolinkurl{purePost_eq_map}, and \nolinkurl{Presentation.homEquiv_natural}.
+\nolinkurl{ContextualComposition.MonadRecovery.kleisli_comp} is the inherited
+native-composition identification. Mathlib's monad right-unit law reduces
+$\mu_C\,T(\eta_C f)\,k$ to $T(f)\,k$.
+\item[Singleton extraction.]
+\nolinkurl{singletonEval} and \nolinkurl{Presentation.singletonIso}.
+Constant sections and evaluation give mutually inverse maps at $A=1$.
+The component square uses \nolinkurl{Presentation.homEquiv_natural}; the
+result is a bundled natural isomorphism to \nolinkurl{polynomial}, not just
+objectwise equality of cardinalities or equivalence of carriers.
+\item[Arbitrary cospan.]
+\nolinkurl{MappedPullback}, \nolinkurl{imageCone},
+\nolinkurl{comparison} and \nolinkurl{polynomial_comparison_bijective}.
+Both projections come from mathlib's explicit limit pullback cone for
+\texttt{Type}. The target is the subtype of pairs agreeing under the
+mapped legs. Equality in the coproduct forces equality of tags. With equal
+tags the lifts pair pointwise over their common domain, and equality on both
+projections implies equality of the original lifts.
+\item[Transport and categorical reading.]
+\nolinkurl{comparison_bijective_of_iso},
+\nolinkurl{Presentation.comparison_bijective}, and
+\nolinkurl{Presentation.imageConeIsLimit}.
+Naturality on both legs ensures that the transported pair is in the target.
+Naturality on both projections makes the comparison square commute.
+The explicit image cone is limiting by mathlib's equivalence between that
+property and bijectivity of the canonical comparison.
+\end{description}
+
+\section*{Continuation witness}
+The following names are under
+\nolinkurl{ContextualComposition.ContinuationTranspositionObstruction}.
+
+\begin{description}
+\item[Actual monad and square.]
+\nolinkurl{continuationFunctor}, \nolinkurl{continuationMonad},
+\nolinkurl{continuation_map}, \nolinkurl{toUnit}, and
+\nolinkurl{terminal_map}. The action is $k\mapsto(q\mapsto k(qf))$;
+unit is evaluation and multiplication is
+$K\mapsto(q\mapsto K(k\mapsto k(q)))$. Functoriality, the two
+naturality equations and the three monad equations are proved. Both legs
+are $\mathrm{Bool}\to\mathrm{Unit}$.
+\item[Exact source and target.]
+\nolinkurl{source_card}, \nolinkurl{terminal_card},
+\nolinkurl{fiberEquiv}, \nolinkurl{fiber_card},
+\nolinkurl{targetFibers}, and \nolinkurl{target_card}.
+The source is the continuation type of the four-point pullback, so it
+has $2^{2^4}=65536$ elements. A continuation on the singleton fixes exactly
+the values on the two constant Boolean predicates. Its lifts freely set
+the values on the identity and negation predicates, exhibited by an
+explicit inverse for each fiber. The target subtype splits over the four
+common images, giving $4\cdot4\cdot4=64$.
+\item[Obstructions.]
+\nolinkurl{comparison_not_bijective}, \nolinkurl{no_polynomial},
+and \nolinkurl{no_presentation}. A bijection of the actual comparison
+would identify the two cardinalities. This rules out a natural
+coproduct-of-representables presentation, hence the given discrete
+transposition. It does not use cardinalities of an abstract substitute
+for either endpoint of the comparison.
+\end{description}
+
+\paragraph{Discriminating checks.}
+\nolinkurl{checks/DiscreteTransposition.lean} verifies an invertible Boolean
+chart for the identity monad whose square fails under a particular
+nonidentity pure map; the chart example is local and does not deny that
+the identity monad has a different lawful presentation. It also checks
+the two different actual projection outputs on a pure evaluation, rejects
+an ambient pair whose constant-predicate values disagree, and witnesses
+an actual collision on the source comparison using a mixed predicate
+invisible to either projection separately. These checks do not rely on
+the cardinal arithmetic and do not replace the generic proof.
+
+\paragraph{Provenance and replay.}
+The inherited projection is locked to 507 source paths of merged parent
+\nolinkurl{f458186590df968a516ba73a8eb76fcf044544b0},
+tree \nolinkurl{1c829c869d1c15e907b1f2404cad74e6fd88f1b7}.
+The target toolchain is Lean 4.35.0 with mathlib
+\nolinkurl{56a005855ea17e0b0958f73ec801ae140b0a1679} and all transitive
+pins in the inherited Lake manifest. The change adds two production
+modules and one probe, and updates the umbrella and paired audit/index.
+Warm author replay imports copied, digest-verified inherited products.
+A cold replay must start with no project products and rerun the complete
+ordered audit and all probes. The repository evidence includes a cold replay runner
+and exact input manifests. The warm run is not the independent replay.
+\end{document}
