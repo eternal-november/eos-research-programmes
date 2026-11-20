@@ -1,0 +1,18 @@
+module
+public import ContextualComposition.AmbientWeightCoordinates
+public import ContextualComposition.AmbientFoldReading
+@[expose] public section
+namespace ContextualComposition.GrothendieckStep.AmbientWeightLetters
+open CategoryTheory CategoryTheory.Functor CategoryTheory.Bicategory TelescopeSquares
+open NativeBlocks ContextadRoutes ContextadLawTransport ContextadModification ContextadNativeLaws ContextadOuterCharts
+open AmbientCoordinates AmbientBicategory AmbientHorizontalFrames AmbientHorizontalDiagrams AmbientHorizontalNaturality AmbientFoldReading AmbientFlatWeight
+open scoped CategoryTheory.Pseudofunctor.StrongTrans CategoryTheory.Bicategory
+set_option backward.isDefEq.respectTransparency false
+set_option maxHeartbeats 650000
+attribute [local irreducible] BlockEvaluation.global AmbientModificationAction.totalCell ContextadAmbientPayload.totalStrong
+universe u v
+variable {B : Type u} [Category.{max u v} B] {P : Endpoints.{u,max u v,u,max u v} B} {S : P.Split}
+variable {X Y : Obj.{u,v} B} (f : X ⟶ Y)
+theorem unitQ (r : Map S 0 1) (p : gradeCart r) :
+    QRead (i := 1) (j := 2) f (inside 1 r) (cell S 1 (comparison S r p f).inv) := unitView f r p
+end ContextualComposition.GrothendieckStep.AmbientWeightLetters
