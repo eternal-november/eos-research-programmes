@@ -1,0 +1,55 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\newcommand{\Tel}{\operatorname{Tel}}
+\newcommand{\CC}{\mathsf{Ctx}}
+\newcommand{\AA}{\mathsf{Alg}}
+\title{Strict recovery on the native split-indexed telescope\\\large Contextual composition, issue \#105}
+\author{}
+\date{20 November 2026}
+\begin{document}
+\maketitle
+\noindent\textbf{Exact interface.}
+Fix an ordinary category \(B\), a concrete split indexed system \(P,S\) in the repository's common size bound, and its primitive actual span
+\(B\xleftarrow{\ell} U\xrightarrow{r}B\).
+On each primitive carrier take a normal cleavage of \(\ell\), carried as data. The chosen cleavage need not be its canonical split choice; no composition law for these chosen lifts is imposed. A map of span carriers is an actual apex functor commuting strictly with both feet and preserving \emph{all} cartesian arrows, not necessarily the chosen lifts. A strict algebra is such a functor \(a:\Tel U\to U\) satisfying the \emph{actual} native equations
+\[
+  a\eta_U=1_U,\qquad a\mu_U=a\,\Tel(a).
+\]
+The equations are literal functor equalities. The recovered algebra category uses these component equations directly. No extra identification with a chosen bundled \texttt{Monad.Algebra} across all carrier presentations is asserted. Lean checks an isomorphism of ordinary categories
+\[
+  \AA(B)\ \cong\ \CC(B)
+\]
+on these concrete carriers. The right side uses strict unit and product with strict associativity and units, and maps with identity unit and multiplication comparisons. The functors fix the carrier and chosen cleavage and fix each map's apex functor in its original direction. The split-indexed presentation is kept as part of the carrier, not quotiented by equivalence of presentations. Both round trips are equalities of objects and functors, not just isomorphisms in the fibres. Not claimed: an arbitrary fibration without a given split-indexed presentation, invariance of equality under an equivalence of presentations, an enhanced EM 2-category, maps with merely invertible comparisons, or the remaining broader issue \#105.
+
+\paragraph{Source boundary.}
+The issue and K1 acceptance ledger point to the pinned manuscript source, blob
+\texttt{b1e84592f59558c851faabb5291d7392d2b2f908}, lines 930--951, especially
+\verb|eq:telescope|. This section works in the split left-fibrant indexed presentation. It refers to \href{https://hexagonmath.org/pdf/2610.00302v1}{Kamiya, arXiv:2610.00302v1}, Definitions 2.9--2.13 and Corollary 2.20. The strict-algebra map corresponds to the identity-comparison subclass; Definition 2.13's not-necessarily-identity isomorphism comparisons are not identified with equalities. A normal cleavage is not assumed split; optional normalization of an available cleavage leaves every other lift unchanged, but is \emph{not} used to modify a supplied normal choice in either recovery. The Lean class uses \verb|B : Type b| and \verb|Category.{max b w} B|, with the grade and apex bounds matching the manuscript interface already encoded in native modules. No resizing principle or strictification claim is implicit.
+The displayed equation \verb|eq:telescope| itself is the comparison with the coproduct of coefficient iterates. This tranche addresses the strict recovery paragraph adjacent to that equation, not a new proof of its coefficient-extension comparison: inherited \verb|CoproductSpan.All.evaluation| and \verb|NativePacked.actualSquare| supply relevant native-versus-coefficient bridges in their own scope. They are not used as the native action.
+
+\paragraph{Native carrier, not the packed proxy.}
+The \(n\)-th exact \verb|NativeBlocks.power S n| is \(B\) at length zero, the actual Grothendieck middle category \(U\) at length one, and the chosen native dependent strict matches at larger lengths. Their coproduct is \(\Tel U\). The domain of multiplication is the actual coproduct of \verb|Nested.word S k|, whose \(k\) composable arrows are themselves arbitrarily long native words. The flattening functor is \verb|Nested.flatten S| on its original domain. \verb|StrictTelNested.map| applies \(a\) to each inner block and rejoins with the same outer tag; it preserves the actual matched legs. Thus the hypothesis used in restriction has the original native multiplication interface, rather than a supplied monoid law on object data or an action of the earlier packed presheaf free construction.
+
+The length-one tag is the native \(\eta_U\); composing with the action is identity. The length-zero tag is not this inclusion; applying the action to it reconstructs the nullary contextad operation. When the telescope is used to form a free endofunctor on coefficients, its empty word supplies that \emph{different} length-zero unit. Native singleton-row and singletons-per-row laws and the original three-level associativity are pinned separately in \verb|StrictTelNativeFaces|. The targeted strict action does not follow from a presheaf endofunctor unit statement.
+
+\paragraph{Restriction and construction.}
+Restrict \(a\) to length zero, and to length two with the actual strict matching chart, to obtain the unit and binary map. Testing the actual multiplication equation on the full outer-two domain yields preservation of native binary concatenation. The strict section of \(a\) by the singleton inclusion then reflects the native left/right/associativity laws, including tests with inputs of lengths \((0,1),(1,0),(2,1),(1,2)\). Strict left, right and associativity equations are expressed over every diagram of the allowed size; taking the identity diagrams of the universal matching domains recovers the usual exact functor equations. No choice of a cleavage lift is used to prove a multiplication law.
+
+Conversely, build an action by the empty-case unit, literal singleton identity, and the ordered native comb on the last cut. The concatenation equation is proved by induction on the right block using exact head/tail transport and the given ordinary strict contextad laws. Applying that result to the actual outer lengths, not to object lists, derives the native two-level algebra equation. Its head--tail specialization proves that the implemented left fold equals the source's right-comb evaluation on every diagram. Uniqueness is first shown on all such diagrams using the native singleton/tagged concatenation; restriction of those equalities to each length summand and full functor extensionality give equality on the coproduct, including its maps.
+
+The cartesian estimates are independent of the strict equations. Comparison to a chosen lift is by an actual vertical isomorphism over its fixed incoming base arrow, from the universal factorization property. In a strict matched product a cartesian arrow has two cartesian components, and conversely; the proof does not infer cartesianness just from component object values. The exact native cut is an isomorphism of categories over both legs, so induction extends preservation of cartesian arrows from the unit and binary operations to the comb. Restriction uses the actual tag inclusions and the native binary chart. Reindexing in the input base is never inverted.
+
+\paragraph{Maps and discrimination.}
+\verb|StrictTelMap| applies a given strict two-legged apex functor to each actual primitive, through the native cut/rejoin charts, including on directed homs. Identity and composition are checked by the two native cut projections, not posited. From an actual strict algebra-map equality, restrict to lengths zero and two to recover the two comparison equalities. Conversely, the exact monoid-map equalities extend through every cut by induction; they give the original strict algebra-map square. The ordered categories and their inverse functors are assembled in \verb|StrictTelCategories|.
+
+The positive probe uses the directed base \(\mathbb N\) in its order category and a constant, nonthin one-object grade category with additive natural-number morphisms. On the actual two-leaf native arrow moving from \(0\) to \(4\), labels \((2,3)\) evaluate to \(5\); an actual strict algebra map doubling the labels gives \(10\) on the other side of the native map square. The base arrow has no reverse and distinct payload labels remain distinct. The negative probe uses the same directed nonthin data but each primitive advances its right endpoint by one; the real length-zero word at \(0\) has endpoints \((0,0)\). No action strict over both feet can send it to a primitive, already before asking for algebra equations. Hence the recovery does not make arbitrary native spans into algebras, suppress the nullary field, or identify all arrows by their base image.
+
+A separate supplemental probe (not in the ordered official suite) chooses two normal cleavages of the same native split-indexed carrier with different lift sources over the same noninvertible base arrow. The identity span map preserves all cartesian arrows but not these choices. The flip choice is also not split: reindexing successively along \(0\to1\to2\) gives a different chosen object than reindexing along the composite. This demonstrates why the theorem keeps the split indexed data and the independently chosen normal cleavage distinct.
+
+\paragraph{Replay boundary.}
+The underlying commit is \texttt{63077f542cca563f28a3b333b74025fc8ecb546a}, tree
+\texttt{909e4b1414e7ab30e031b99a2d6ac6cdddedfcdf}. The baseline is the 490-entry mathematical projection of that checkout, not the entire repository. The source-only overlay changes no inherited production file; it adds 15 modules and two official probes and extends the import umbrella, ordered axiom transcript requests and theorem index. The exact projection and both cold and warm replay are described in \verb|REPRODUCE.txt|; the source-to-theorem crosswalk is in \verb|guide/CROSSWALK.tsv|. Independent review of this tranche is distinct from the enclosed author replay.
+On the frozen cut, all 4,879 ordered declaration audits and 33 official probes passed, with the additional normal-cleavage probe run separately. No audit added an axiom outside the usual three Lean foundational axioms. The production delta is 1,242 physical lines; the new total is 31,702 in 466 implementation modules, excluding import umbrella, audit, and controls. UTC phase durations and the verification transcripts travel in the source-only ZIP.
+\end{document}
