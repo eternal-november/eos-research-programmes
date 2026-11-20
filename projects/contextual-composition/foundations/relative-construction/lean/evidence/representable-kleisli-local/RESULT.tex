@@ -1,0 +1,150 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{mathtools,amssymb,booktabs}
+\usepackage[hidelinks]{hyperref}
+\newcommand{\code}[1]{\nolinkurl{#1}}
+\newcommand{\hash}[1]{\par\noindent{\footnotesize\ttfamily #1}\par}
+\title{Representable Kleisli recovery: structured arrows, actual cells, and pure bending}
+\author{Author-side construction and verification, contextual composition \#105}
+\date{20 November 2026, UTC}
+\begin{document}\maketitle
+\section*{Audit and claim}
+\textbf{Scope.} Ordinary base in the displayed common universe, strict category-valued presheaves, split endpoint data and the original normalized unit interface. The fibre category need not be thin or a groupoid. The proof uses only the established fixed-data ambient pseudomonad: $K$ is the one-step extension, the unit and multiplication are the original strong transformations, and the constraints are the original invertible modifications. The whole ambient presheaf carrier is not replaced by its representable restriction. The covariant contentad, any unprinted opposite convention, and the rest of \#105 and \#93 are not addressed. The formal universe statement takes base objects, base homs, grade objects and grade homs at a common level so the literal discrete hom-valued representables fit; this construction does not assert a universe-resizing lemma.
+
+\textbf{Checked.} There is a local equivalence from the category of \emph{all} actual strong arrows $yA\to K yD$ and their modifications to the original native category $(P.\mathrm{extend}(A)\downarrow D)$. The identity, pure map and multiplication formula have their original bodies. Composition and its structural comparison are functorial in \emph{both} cell variables. A directed strong cell remains a native directed cell. The original native endpoint-square type is in bijection with the actual bent modification type, using the actual pure Yoneda arrows, multiplication and unitors. The three original mixed-endpoint constraint components are defined, both unitors are natural in every modification, and the actual mixed-endpoint triangle commutes (\code{RepresentableKleisliTriangle.original}). The original associator is natural in its first arbitrary modification, while the actual ambient associator's inverse naturality corner is also verified. \textbf{Boundary.} No full mixed-endpoint pentagon, full mixed associator naturality, assembled bicategory/local biequivalence, or coherent pure pseudofunctor structure is certified by this cut. Pure identity and compositors are constructed, not advertised as an assembled pseudofunctor. The proof route below isolates the remaining assembly.
+
+\section*{Exact reconstruction}
+The merged base is \#232, merge \code{15faa31bb5fbf4f92a3676e4e89771d7f7074070}, head \code{c2411161c5772cae96193c5d41eff3e4da350ce7}, tree \code{b1a60063bca59d400839a7766814b026e93c634b}. The independent \#232 review accepts the coherent fixed-data ambient presentation but makes no Kleisli claim. The manuscript blob \code{b1e84592f59558c851faabb5291d7392d2b2f908}, lines 333--411 and 855--910, pins the body and grade formulas and separates the two carriers. The parent \code{ContextadRepresentable} only evaluated the native unit, tensor and a discrete payload triangle; it neither built the strong Yoneda equivalence nor related arbitrary actual Kleisli cells. The next dependency to read is \code{AmbientCoordinates.mapEncode/opEncode}, then \code{AmbientOperationBoundaries.nativeMultiplication}, and the actual horizontal diagram definitions. The grade-and-leaf charts describe the entire arrow, not representatives modulo isomorphism.
+
+\subsection*{A local equivalence, not an identification}
+An evaluated point in $K yD(A)$ is $(P,f)$ with $f:e_AP\to D$. Its morphism over $\alpha:P\to P'$ is a morphism in a discrete category, and therefore exists precisely when $f=e_A\alpha;f'$. It is then unique \emph{over that grade map}; different grade maps are not identified. The two functors of \code{RepresentableComma.iso} preserve their maps literally and satisfy both inverse functor equalities.
+
+For any strict Cat-valued target $Q$, not merely $K yD$, a seed $x\in Q(A)$ extends to the strong map with components $f\mapsto Q(f)x$. Its homogeneous and compositional pseudonaturality laws follow from two pure transport routes between the same endpoints of a known strict functor equality. This does not claim a general strong map has pure comparison. For an arbitrary strong $F:yA\to Q$, reconstruction at $f:D\to A$ is the transport from $F_D(f)$ to $F_D(f;1_A)$ followed by the actual strong comparison at $f$, evaluated at $1_A$. Its naturality uses the composition axiom for $F$; its naturality in $F$ uses the equation of an arbitrary modification. The inverse sends an arbitrary $k:x\to x'$ to the modification with components $Q(f)k$. Evaluation on extending is strictly the identity functor after $Q(1_A)=1_{Q(A)}$; the other inverse law is the displayed natural isomorphism. \code{RepresentableKleisli.commaEquiv} composes this equivalence with the strict comma identification and the exact induced-hom wrapper.
+
+\subsection*{The actual multiplication and its two cell columns}
+When the second arrow is the canonical extension of $(R,g)$, the first arrow may be arbitrary. Its body $f$ at $1_A$ determines exactly the restriction functor along $f$. On that row the actual $K$ sends the second canonical arrow to the nested row $(P,f^*(R,g))$. This is an equality of object values of the actual $K$ action, obtained by comparing \emph{full functors} via the fixed one-layer chart, not by treating a weak strong arrow as strict. At the actual multiplication, \code{RepresentableNativeComposition.tensorFormula} decodes that point as
+\[
+  \left(P\otimes f^*R,\;
+    \delta_{P,f^*R}\ ;\ e_f(R)\ ;\ g\right).
+\]
+There is no inversion of $f$, $e_f(R)$, $\delta$ or $\varepsilon$. A natural composition comparison for arbitrary second and first strong arrows is built by the local reconstruction isomorphisms, not by replacing whichever squares are convenient. The result for actual comma objects is \code{RepresentableCommaComposition.original}, with the natural comparison in the same module.
+
+\code{RepresentableCompositionCells.actualCell} projects the actual horizontal composite modification to a completely typed evaluated edge. The equality retains the endpoints and morphism. Read its first column using the actual one-layer functor at the fixed grade, and its second column using the actual one-layer action on a modification (identity outer grade and exact total leaf arrow). Reflecting both projections through the unary chart gives the local second column, not a conclusion from grade alone. \code{RepresentableNativeCellColumns.canonicalLeaf} reads the second leaf, on a canonical map, as \emph{the actual restriction functor applied to the given native cell} along the body's possibly noninvertible map $f$. The final column is the independent native tensor functor on the resulting nested cell. Equality on arbitrary folded cells therefore does not depend on a uniqueness assumption in a thin test model.
+
+\subsection*{Pure maps, directed squares, and exact limits}
+The pure Yoneda map is genuinely postcomposition by a base arrow $u$, preserving identity and composition. After insertion, its value at the identity is $(I_A,\varepsilon_A;u)$, and the source identity is $(I_A,\varepsilon_A)$. The two endpoint bending isomorphisms are made from the actual unitors, exact associativity frames, and strict $K$ composition. Evaluation of the ambient square on one side is strict postcomposition with $v$; on the other it is compared by the arbitrary target arrow's strong square at $u$ to the original pre-reindexing. The resulting bijection is
+\[
+\mathrm{Hom}\bigl(f\star Jv,\ Ju\star g\bigr)
+\ \cong\
+\left\{\alpha:P\to u^*P'\,\middle|\,
+ f;v=e_A\alpha\ ;\ e_u(P')\ ;\ f'\right\}.
+\]
+Here the two occurrences of $f$ refer, respectively, to the actual strong arrow on the left and its evaluated native body on the right. The direction of $\alpha$ is not reversed.
+
+The directed model over natural numbers checks a noninvertible $0\to1$ base lift with a forward native grade cell and without a reverse arrow (\code{DirectedNativeEndpoints}). A second model chooses a one-object grade category with arithmetic addition as composition, so that grade maps $0$ and $1$ are genuinely distinct and the latter has no additive inverse. Both over the same directed $0\to1$ and $0\to2$ endpoint legs, they decode to distinct actual strong modifications and are separately recovered by the bijection (\code{NonthinDirectedNative.bothOriginal} and \code{NonthinDirectedNative.exactRead}). This model tests the local theorem under the split hypotheses used by that theorem, not a claim of ambient pseudomonad coherence for this example. The non-strict control uses the \emph{same certified coherent} thin-moving native model as the parent canonical-schedule probe, not a loss of native coherence: two different choices of strong components at base $0$ evaluate to exactly the same row at $1$. Thus even with the stated coherent hypotheses the local evaluation functor need not be injective on objects, so it cannot have a literal inverse. This is distinct from an additional strict native \code{ContextadStrictRoutes.StrictData} assumption about equality of native constraint maps. In a different direction, the constant empty ambient presheaf has no Kleisli arrow from any representable: applying a purported arrow to the identity gives a row whose presheaf payload lies in the empty category. The full ambient Kleisli carrier must therefore not be asserted equivalent to the representable restriction.
+
+\section*{Coherence transport and remaining certification}
+\paragraph{Machine-checked constraints and next typed obligations.}
+\code{RepresentableLeftUnitor.original} and \code{RepresentableRightUnitor.original} are the actual one-port naturality squares on arbitrary modifications. The original mixed associator is the transported inverse multiplication square followed by the original ambient associator, with the declared strict functorial composition frame. \code{RepresentableAssociatorPrefix.original} verifies its first modification column through that same frame. \code{RepresentableAssociatorFoldCells.first} and \code{RepresentableAssociatorFoldCells.second} give the generic, natural two-column strict composition frame that the remaining two mixed associator columns consume; they are not a replacement for those columns. In the middle column, compare the expanded internal whiskering with the actual inverse fold using the first generic folded equality. In the last column also use naturality of the original inverse multiplication square in an arbitrary modification, transporting along the specific iterated functor comparison rather than erasing it. Horizontal composition is already functorial, so once all three single-variable squares are checked, their composite checks the full square. No incompatible transports are identified by fiat.
+
+\code{RepresentableKleisliTriangle.original} checks the actual paths for arbitrary representable Kleisli arrows, not just reconstructed representatives: the proof reads the actual left unitor through functorial folding, swaps the two independent cells by interchange, and uses the parent's actual triangle and right-constraint naturality. \code{RepresentablePentagonCorner.original} checks the exact inverse-pasted ambient associator naturality square needed for the long pentagon route, on an arbitrary strong arrow. The paragraph below records a mathematical comparison route for the full mixed pentagon, not a claim that its full typed specialization has passed Lean. The two stated parent constraint faces, not a new independent Kleisli law, are to be consumed in the final pasting.
+
+\paragraph{The Kleisli triangle and pentagon as evaluated words.}
+There is a distinction between the original ambient schema and the new
+Kleisli schema on morphisms $f:X_0\to KX_1$. An ambient polygon does not itself
+mention such mixed endpoints. The following is a typed proof route in the
+strict ambient. It keeps the canonical structure casts supplied by the strict
+endofunctor but omits them typographically, as all words below have the
+indicated parenthesization transports. No directed base arrow is inverted.
+
+Write $e_X,\mu_X,a_X,l_X,r_X$ for the original unit, multiplication,
+associator, left and right constraint. For $h:X\to Y$, abbreviate the inverse
+of its multiplication comparison by
+\[
+D_h:\mu_X\,Kh\Longrightarrow K^2h\,\mu_Y,\quad
+V_h:e_X\,Kh\Longrightarrow h\,e_Y
+\]
+where $V$ is the inverse unit comparison. Products of arrows are in
+execution order. All displayed occurrences of cells inside arrow words
+denote the corresponding whiskering. The actual Kleisli associator on
+$f:X_0\to KX_1$, $g:X_1\to KX_2$, $h:X_2\to KX_3$ moves $D_h$ and then
+$a_{X_3}$; this is precisely the constructor's two substantive cells after
+the structural associators and strict $K$ composition comparison have
+been accounted for. The left unitor moves $V_f$ and then $l$; the right
+unitor is simply $r$. These are not replacements obtained by choosing
+native grade identifications after evaluation.
+
+For the Kleisli triangle use $g:X_1\to KX_2$, suppress the common prefix
+$f$, and set $X=X_1,Y=X_2$. Both paths start at
+$Ke_X\,\mu_X\,Kg\,\mu_Y$. The long route first moves $D_g$ and then
+$a_Y$:
+\[
+Ke_X\,K^2g\,\mu_{KY}\,\mu_Y
+ \Longrightarrow Ke_X\,K^2g\,K\mu_Y\,\mu_Y.
+\]
+The remaining cells are $KV_g$ followed by $Kl_Y$ with their right
+multipliers. Interchange moves $KV_g$ before $a_Y$; this is a swap of
+2-cells on disjoint factors, not an inversion of their underlying
+1-cells. The final two operations are then exactly the ambient triangle
+at $Y$, now under $Kg$. Replace them by $r_{KY}$ and the common left
+unitor. The prefix after this swap consists precisely of the two inverse
+comparison cells in the right-constraint naturality square at $g$.
+That square replaces the complete word by $r_X\,Kg\,\mu_Y$, the
+Kleisli short path.
+
+For the Kleisli pentagon let
+$f:X_0\to KX_1,\ g:X_1\to KX_2,\ h:X_2\to KX_3,\ i:X_3\to KX_4$.
+For readability write $X=X_2$, $Y=X_3$, $Z=X_4$ and suppress the
+common initial $f\,Kg$. The initial and terminal words are
+\[
+\mu_X\,Kh\,\mu_Y\,Ki\,\mu_Z,\qquad
+K^2h\,K^3i\,K^2\mu_Z\,K\mu_Z\,\mu_Z .
+\]
+The common initial three crossings, obtained without imposing equality
+of the underlying multiplication maps, are
+\begin{align*}
+\mu_X\,Kh\,\mu_Y\,Ki\,\mu_Z
+&\xRightarrow{D_h}
+K^2h\,\mu_{KY}\,\mu_Y\,Ki\,\mu_Z\\
+&\xRightarrow{D_i}
+K^2h\,\mu_{KY}\,K^2i\,\mu_{KZ}\,\mu_Z\\
+&\xRightarrow{D_{Ki}}
+K^2h\,K^3i\,\mu_{K^2Z}\,\mu_{KZ}\,\mu_Z .
+\end{align*}
+On the long side, move $KD_i$ across $a_Z$ by interchange. The resulting
+$ a_Y\,Ki$ followed by the two inner-route inverse comparisons is equal,
+by the original associator naturality square at $i$, to the two
+outer-route inverse comparisons followed by $K^3i\,a_{KZ}$. This
+exhibits the three common crossings and leaves exactly
+\[
+ a_{KZ}\,\mu_Z;\quad K\mu_{KZ}\,a_Z;\quad Ka_Z\,\mu_Z
+\]
+under $K^2h\,K^3i$. On the short side, expand
+$D_{h\,Ki\,\mu_Z}$ by the composition axiom of the actual strong
+multiplication. Its three ordered factors have atoms $D_h$, $D_{Ki}$ and
+$D_{\mu_Z}$. Interchange moves the first two over the independent
+comparison and associator of the short side's first step, yielding the
+same initial three crossings. The remaining atoms under the same prefix are
+\[
+ \mu_{K^2Z}\,a_Z;\quad D_{\mu_Z}\,\mu_Z;\quad K^2\mu_Z\,a_Z .
+\]
+These are the two original ambient words at $Z$ from the parent gate.
+The second short atom is \emph{the genuine exchange}, not an
+associativity cast. The parent pentagon gives their equality. The
+paragraph is a proof by coherence pasting; a separate Lean application
+must still account for the concrete cast and whisker normalizations
+between these words and the presented mixed-endpoint constraint constructors.
+
+
+\section*{Verification}
+
+The exact parent manifest has 385 mathematical source paths. A normal merged Git checkout has extra files and must be projected by per-path digest before assembly. The final manifest has 427 exact sources, SHA-256
+\hash{9d82e46150cdbc28d443e9678685b19e7a49470a796f7b37c334aba29713ba9a}.
+There are 38 added production modules, 1,578 added physical implementation lines (27,341 total, 392 modules). These counts exclude the umbrella, the axiom audit, and all probes. Regenerated paths are only the import umbrella, theorem index and axiom audit. The inherited audit logic and other parent paths remain byte-identical.
+
+The source-only replay checks all 4,326 ordered named declarations (4,057 inherited and 269 new) under the standard Lean axiom allowlist; 27 official probes consist of 23 unchanged parents and four additions. Lean is 4.35.0, commit \code{eb6cafb7290e8bd5f2937522d8d804f58f02bafc}; mathlib commit \code{56a005855ea17e0b0958f73ec801ae140b0a1679}; all nine external revisions are pinned. Author exact replay rebuilt each changed production module into a separate output directory, with the independently compiled unchanged \#232 base. It reran every parent probe before final assembly, verified every source digest, rebuilt the final umbrella, regenerated the full ordered audit, and ran the four added probes. The reproduction scripts support a separate cold replay from pinned checkouts; the author result doesn't mislabel its warm reuse as a cold all-dependency build.
+
+UTC time: exploration, proof and author checks overlapped, from 07:45:39 to the last selected proof cut 08:47:40 (elapsed 1:02:01). Recorded replay phases (overlapping this interval, not time added to it): initial 08:08:15 to 08:09:50; inherited 08:22:49 to 08:25:32; extended 08:31:27 to 08:32:35; pentcorner 08:37:26 to 08:37:47; triangle 08:38:04 to 08:38:07; associator-prefix 08:44:28 to 08:44:30; fold-check 08:47:39 to 08:47:40; final 08:47:42 to 08:48:01. Evidence includes the exact phase receipts and compiler logs. No proof placeholders, external proof provider, or compiler products enter the frozen overlay. The manuscript SHA-256 is
+\hash{150296632be4e1aade0db558704578962d973cff64017aa6d5cb25cfcaeb4f20}.
+
+\end{document}
