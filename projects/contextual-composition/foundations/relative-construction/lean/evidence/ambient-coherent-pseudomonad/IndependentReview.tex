@@ -1,0 +1,257 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage[hidelinks]{hyperref}
+\newcommand{\nm}[1]{\nolinkurl{#1}}
+\newcommand{\hash}[1]{\par\noindent{\footnotesize\ttfamily #1}\par}
+\title{When native coherence is exactly ambient coherence}
+\author{Independent review of the fixed-data Grothendieck construction, issue \#105}
+\date{20 November 2026}
+\begin{document}
+\maketitle
+\section*{Disposition and exact boundary}
+On the specified strict bicategory of strict category-valued presheaves on
+$B$, with all strong transformations as arrows and their modifications as
+2-cells, the terminal horizontal coherence gate passes. This is a fixed-data
+presentation: fixing the split endpoints $S$, the native unit $d$, Cartesian
+multiplication $m$, and three invertible native constraints $C$ fixes the
+endofunctor, the unit and multiplication, their components and arrow squares,
+and the five ambient faces. It does not supply a route to choosing alternate
+maps or ambient constraints to make a diagram commute. The exact criterion is
+\[
+  \mathrm{Coherent}(d,m,C)\quad\Longleftrightarrow\quad
+  \mathrm{Laws}(S,d,m,C).
+\]
+The three naturality faces require neither native polygon, and the two polygon
+laws remain separately identifiable. Actual invertible modifications live in
+the hom category of strong transformations; equality of the literal
+threefold carrier includes action on 2-cells. This is not a Lean instance of
+an unspecified tricategorical pseudomonad interface. There is no construction
+of its representable Kleisli bicategory or comparison with structured arrows
+in this gate.
+
+\section*{Consumer and proof audit}
+The issue's manuscript, lines 855--901 of the pinned blob below, places the
+pseudomonad assertion after the unit and multiplication formulas but before a
+separate proposition about representables.\hash{b1e84592f59558c851faabb5291d7392d2b2f908}
+In particular the reindexings along
+the discharge and multiplication legs need not be invertible. The ambient
+arrows are strong: their naturality comparisons are required to be invertible;
+a modification between two such arrows need not be. Changing either cut
+changes the claim. The scoping charter and ledger distinguish the split Grothendieck extension from the extra fibrewise comprehension-equivalence condition for display-contextad transport; no comprehension equivalence enters this gate. The cited source also asks about strict versus iso-only
+recovery; accepting this gate does not settle those alternatives.
+
+The original naturality predicates from the unmodified parent use the
+isomorphism $\operatorname{serial}(s,t)$, with associator, right and left
+whiskerings, and intervening reassociation retained. The modification square
+reads $a\mathbin{\triangleleft}n\,;\,t=s\,;\,m\mathbin{\triangleright}b$.
+The left source is the outer unit square at $Kf$ followed by the multiplication
+square at $f$; the right source folds the square at $f$ by $K$ before that
+same multiplication; both targets are the actual identity-naturality square of
+$Kf$. For associativity, the two origin squares are respectively
+$\mu_{Kf}$ and $K(\mu_f)$ with its compositors, each followed by $\mu_f$.
+The three exports \nm{AmbientLeftSquare.original},
+\nm{AmbientRightSquare.original} and \nm{AmbientAssociativity.original}
+have precisely those types at every strong $f$. Neither a presumed equality of
+the pasted maps nor an external coherence theorem is a parameter. In
+particular the right-hand inner weight consumes the accepted actual inside
+unit, not an arbitrarily chosen boundary. For the outer unit/multiplication
+reads, the new suffix corridor compares two chosen decorated lift cones;
+\nm{AmbientSuffixCorridor.packed} fixes the cone and
+\nm{.terminal} uses Cartesian cancellation after the base transports agree.
+The source/target and grade component then recover the full arrow in
+\nm{AmbientSuffixMateRead.read}. No inverse of a directed leg appears.
+\nm{MovingSuffixProbe} supplies a directed $0\to4$ case;
+\nm{SuffixSignedCone} makes the failure of a grade-only reading observable:
+even with pure grade, the full comparison is not transport.
+
+The triangle's long and short words retain the common terminal unitor; the
+native comparison is not substituted as the ambient equality. The pentagon's
+short word includes the right-whiskering of the inverse naturality square of
+$m$ at $M_X$. Both paths are framed by \texttt{rfl} against the inherited
+ambient isomorphisms. The crossing is a real dependency in the proof term:
+\nm{AmbientActualIsoEdges.cross} applies \nm{AmbientScheduleFragment.post}
+to \nm{AmbientFourToTwo.exchange} from \#231;
+\nm{rPJ} reads precisely the middle short edge $PJ$.
+\nm{AmbientPentagon.row} uses it in forward composition and
+\nm{AmbientCoherentObserver.rawPentagon} uses it in reflection. This step
+does not infer equality before multiplication from equality after
+multiplication. The exact native triangle and pentagon are tests of
+componentwise equality of the complete original schedule words, with cast
+seams and the disjoint edge. Sufficiency carries each native word to its
+actual ambient word at arbitrary $X$. Necessity tests the respective ambient
+word at the one observer \nm{AmbientObserverRead.Eye}, the constant presheaf at the category $B$. For each raw grade $x$
+a decorated point with grade $x$ and payload its destination is available.
+Equality there projects to equality of the prescribed native grade
+components. This is not a faithfulness assertion about projection from
+arbitrary decorated arrows, or about multiplication.
+
+\section*{What the bundle contains}
+\nm{AmbientCoherentPseudomonad.Data} stores $d,m,C$ and the five fixed faces;
+its maps $1\Rightarrow K$ and $K^2\Rightarrow K$ are projections on
+literal identity and square carriers, with their original comparison squares
+up to the specified dependent transports. \nm{AmbientTypedConstraint.map}
+rebases the existing strong transformation onto prescribed object
+components, transporting its naturality isomorphisms and the three proofs
+(naturality on modifications, identities and composition). The constraint
+isomorphisms are built by \nm{StrongTrans.isoMk}, not just by collecting
+pointwise isomorphisms. The five
+\nm{AmbientConstraintIdentifications} (outer/inner unit, identity, first/last
+multiplication) pin the arrow squares of their endpoints to the original
+horizontal composites, not only the object components.
+\nm{AmbientPseudomonadProjections.fixedPower} is equality of the complete
+strict pseudofunctors $K^{[3]}=(K\circ K)\circ K$, not a list of object
+identities. It transports the associator modification to the literal domain.
+The package is an intrinsic presentation by components and all comparison
+squares; no equality to a separately supplied universal construction in an
+arbitrary tricategory is asserted.
+
+\section*{Independent negative controls}
+The benchmark family has constant grade groupoid $BC_2$ over the base
+$\mathbb N$, binary grade multiplication by XOR and fixed unit grade. For
+each of the eight triples $(l,r,a)$ of central signs the three candidate
+constraints are legal isomorphisms. This family distinguishes equal objects
+from equal arrows. Under the fixed native schedule cuts, the long and short
+triangle signs are $a\oplus l$ and $r$. The long pentagon sign is
+$a\oplus a\oplus a=a$, and the short sign is $a\oplus a=0$: its
+actual exchange was checked neutral in this particular family, not deleted
+from the generic theorem. Necessity tests explicit arity-two and arity-four
+rows. For sufficiency, equal bits give equal arrows since the base hom is
+subsingleton in this model; this step is not generalized to arbitrary models.
+This yields all four combinations of polygon truth values:
+\[
+\begin{array}{c|cc}
+(l,r,a)&\text{triangle}&\text{pentagon}\\ \hline
+(1,1,0)&\mathrm{yes}&\mathrm{yes}\\
+(1,0,1)&\mathrm{yes}&\mathrm{no}\\
+(1,0,0)&\mathrm{no}&\mathrm{yes}\\
+(1,1,1)&\mathrm{no}&\mathrm{no}
+\end{array}
+\]
+Thus it is not merely that the uncoherent control fails: neither polygon
+can be omitted in favour of the other. The positive controls do not
+trivialize both unitors. At the observer the same classification holds for
+the actual ambient polygons; the five-face package exists precisely when
+$l=r$ and $a=0$ in this family.
+
+The independent literal-endpoint controls distinguish the representation of a
+pseudonatural transformation from its mathematical contents. On fixed
+pseudofunctors, equality of object components \emph{and} heterogeneous
+equality of naturality isomorphisms on all arrows determine the entire
+strong transformation. The remaining structure fields are proofs, which
+cannot smuggle in a different action. The equality criterion by itself does
+not remove the obligation to supply both sets of identifications.
+As a separate check on the actual modifications, their inverse components at
+every object were derived from the known forward pins and pointwise inverse
+uniqueness, including the transported associator on the literal cube. On the
+positive $BC_2$ assignment use as payload the constant category
+$(\mathbb N,\leq)$. The modification between the constant strong maps at
+$0$ and $1$ remains noninvertible after the \emph{literal threefold}
+action: a reversed image evaluated on an explicit arity-three raw row
+would produce $1\leq0$. This argument establishes absence of every reverse
+arrow at that boundary, not merely failure of one guessed inverse. The
+witness uses the same positive signed native constraints; the payload
+here is thin but genuinely directed, while the native grade groupoid is
+nonthin. It is logically separate from the nonpure suffix-payload test.
+\paragraph{Supplemental versus production evidence.}
+The model fixtures \nm{CentralNoncoherent} and \nm{OriginalCentralObstruction}
+are exact, recompiled copies of official sources, not additional tests credited
+as independent proofs. Independent checks add the all-sign native and ambient
+classification, the explicit failed observer triangle with an everywhere
+pentagon, the inverse-component pin for all three invertible modifications,
+the directed obstruction on the literal threefold carrier, the strong
+transformation uniqueness criterion, and the high-budget negative
+ascriptions. The official typed-pins probe also checks the five endpoint
+identifications, the original objectwise forward components and the transferred
+multiplication square.
+
+For the endpoints of the literal associator, two additional reviewer proofs
+carry the first and last rebased comparison squares through the full
+threefold-source transport. Their conclusions at each $f$ are heterogeneous
+equalities to the \emph{original} serial squares, with first letter by
+definition $\mu_{Kf}$ and last letter by definition $K(\mu_f)$ with
+its compositors. This tests the horizontal identification after actual
+transport, not just the threefold identity on objects. The original unit is
+also uniquely determined by its components and actual arrow squares.
+An optional monolithic uniqueness ascription for the multiplication hit an
+elaboration heartbeat bound; it is not counted as a checked theorem or as
+a mathematical obstruction. The actual native multiplication square, its
+component readback, and the generic two-field uniqueness criterion are
+separately verified. All official tests passed on their declared settings.
+\section*{Independent native replay and controls}
+Native Git merge:\hash{2c45ffcd765253b42de92eac98968595a00a661f}
+Repository tree:\hash{75c35236cfdbdc78b8963a4fd4e59d48d5d2c7ae}
+All 295 projected files
+matched their Git blobs, out of 1,409 tracked blobs in its Lean subtree.
+The author ZIP SHA-256 is
+\hash{7edbe396340b815a23147e34e94fdcb36d61329d6ec8c94dd798f574675d63dc}
+and its 325 members had no missing, duplicate, or hash-mismatched entry
+relative to the internal content manifest. Its result TeX has SHA-256
+\hash{69955663c248a3c30bb82ae1d4a6cbc2c9a3b9e2b618dc3c0985ed50d63a14cf}
+All 385 reconstructed source/replay files match the frozen manifest
+\hash{f02c2b3103eba932b6accff0c8bec1a7d24950d00680a29e3a82ad453e670a2d}
+and the candidate's prepared tree. The native projection rejects a changed
+or absent parent crossing module, rejects a README-contaminated strict
+assembly input and accepts the projected checkout containing the verified native
+README. With all 1,409 Git-listed path names present and all 1,114
+excluded payloads replaced by unrelated bytes, projection still returned
+the exact 295 intended inputs. The overlay adds 84 umbrella-reachable
+production modules and six official probes, changing only the umbrella,
+name index, audit source and Python audit reader. Physical implementation
+lines: 23,146 + 2,617 = 25,763 across 270 + 84 modules; tests, generated
+indices and umbrella excluded. This is not a count of mathematical proofs.
+
+\begin{center}\small\begin{tabular}{lll}\toprule
+Independent phase, UTC & Interval & Elapsed\\\midrule
+Fresh project compilation & 06:36:31--07:26:59 & 50 min 28 s\\
+Named audit, including verifier & 07:26:59--07:27:06 & 7 s\\
+All 23 official probes & 07:27:06--07:30:10 & 3 min 4 s\\
+Total official gate & 06:36:31--07:30:10 & 53 min 39 s\\\bottomrule
+\end{tabular}\end{center}
+Lean 4.35.0 commit:\hash{eb6cafb7290e8bd5f2937522d8d804f58f02bafc}
+Mathlib commit:\hash{56a005855ea17e0b0958f73ec801ae140b0a1679}
+Only the pinned toolchain and external dependency caches were reused.
+There were no initial project objects or cached author products in the
+build. All nine external Git pins and tracked source cleanliness were
+checked; the external libraries were not freshly recompiled. Lake reported
+1,102 total jobs, of which 355 were actual independently compiled project
+modules (354 production plus umbrella). Across the 355 setup records,
+all 153,652 project artifact references resolved in the fresh output tree.
+The 1,151,728 total import artifact references include repeated uses;
+2,920 distinct external referenced files were additionally fingerprinted.
+The package records all source, per-project product, setup and trace digests,
+plus the external-artifact manifest.
+
+The 4,057 ordered, unique top-level names (3,750 historical and 307 new)
+were re-audited individually by native Lean. The final transcript is
+byte-identical to the frozen author's:
+\hash{bde60935bdad0103aa7e73f538f84ac11f7924717d7b1e9d967c19b3c3525e8b}
+207 declarations use none of the named axioms; the counts of
+\texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound} are
+3,830, 3,662 and 3,722 respectively (overlapping), and for the new 307
+they are 299, 298 and 298, with eight axiom-free. No other axiom is reported.
+A separate physical-line decoder agreed on every (name, axiom list); the
+old transcript is an exact prefix on those pairs. The only new indexed name
+requiring the lexer change is \nm{AmbientAssocPins.B'}. The actual historical
+verifier rejects it on the otherwise-correct extended index and transcript.
+Both verifiers accept the original 3,750 rows. With the candidate's fixed
+index, missing, swapped, duplicate, de-primed, forbidden-axiom,
+trailing-junk and broken-quotation variants were rejected, as was a prohibited
+token in a source fixture. As with the predecessor audit, this is a verifier
+for actual compiler output, not authentication of an arbitrary producer;
+the replay, anchors, and ordered member checks supply provenance. Use ordinary
+non-optimized Python so assertions are active. The inherited
+\nm{AmbientBoundary} first negative originally accepts a bounded elaboration
+timeout; at two million heartbeats both original wrong ascriptions produced
+real type mismatches in the supplemental test, with no timeout.
+
+\paragraph{Publication notes.}
+No mathematical or replay blocker was found. The sealed author TeX's last
+verification paragraph contains literal \texttt{code} and \texttt{sha}
+before two braced strings (missing backslashes); this is an optional
+typesetting correction, not a claim change. Before citing this as a Kleisli
+result, supply a separate construction on representables, its action on the
+structured arrows and their composition, and the precise comparison
+(equality or equivalence) under its own assumptions. Nothing in the
+five-face criterion implies that recovery by itself.
+\end{document}
