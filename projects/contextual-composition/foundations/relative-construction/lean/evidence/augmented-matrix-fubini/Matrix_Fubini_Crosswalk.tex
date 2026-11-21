@@ -1,0 +1,161 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Native augmented-family calculus and dependent Fubini\\
+       Finite-free matrix milestone for issue 92}
+\date{20 November 2026}
+\begin{document}
+\maketitle
+
+\section*{Claim and scope}
+The checked result is a native augmented Fubini isomorphism for finite-free
+matrix coefficients over an arbitrary commutative semiring $R$. The naturality
+square is equality of full augmented maps, including both carriers and
+entire aggregated coefficient matrices. The inverse laws and squares
+for addressed regrouping, permutation, dependent associativity, both
+dependent units, and the empty occurrence set are checked. No bound on
+finite carriers, finite bases, or finite occurrence sets is assumed.
+No faithfulness of the carrier or of the augmentation is used.
+
+Carriers, bases, occurrence sets and projection base sets are in Lean
+\texttt{Type u}; $R$ is separately in \texttt{Type v}. Base sets can be
+infinite. Finite types carry \texttt{Fintype} instances. Coefficient addition
+uses tagged disjoint sums of bases, with empty basis as zero. Coefficient
+tensor uses products of bases, with singleton basis as unit. Morphisms are
+arbitrary matrices; composition is ordinary matrix multiplication.
+This is a proper specialization of the manuscript's V1, with no
+strictification of native position tags and no quotient by augmentation.
+It does not complete issue 92.
+
+\section*{Exact source and declaration crosswalk}
+Issue 92 fixes \emph{General Independent Interaction Criterion}, sections 2--3,
+at commit
+\href{https://github.com/eternal-november/eos-research-programmes/blob/458ff36a4798e432dee5947afc402f9903a47f14/projects/contextual-composition/interaction/independent-criterion/General_Independent_Interaction_Criterion.tex}
+{\texttt{458ff36a4798e432dee5947afc402f9903a47f14}},
+TeX blob \texttt{1315e4b4fca69e1899498ae831f4fe41b60b4d52}.
+The formal baseline is repository \texttt{main} at
+\texttt{ff237fbea8897aeca3ecd2a3bc6212bbc7f88394}, including PR 238.
+The checked aggregate import list shares blob
+\texttt{fcc7fb778716a0845e4bcfcb750321e2b878a8a7} with the local assembly.
+No corresponding augmented-family/Fubini module is in that inventory.
+The candidate is standalone rather than a modification of the baseline
+package or manuscript. Unless otherwise indicated, declaration names below
+are relative to \texttt{ContextualComposition.AugmentedMatrixFubini}.
+
+\begin{description}
+\item[Section 3, augmented-family definition and composition.]
+\verb|Family| retains finite raw positions, finite coefficient bases and one
+global augmentation row with domain the sum of those bases.
+\verb|NativeCoefficients| is the actual matrix on the sum indexed by the
+fibre $fx=z$ at target $z$. \verb|nativeColumns| proves the equivalence of
+these matrices with the presentation by source-indexed columns. This retains
+entries from distinct sources with the same target. \verb|augmentation_iff|,
+\verb|Hom.globalAug| and \verb|Hom.ofNative_native| compare preservation of
+the global row with the columnwise obligation. \verb|Hom.id_comp|,
+\verb|Hom.comp_id|, \verb|Hom.comp_assoc| and \verb|totalMap_comp| check the
+actual composition laws.
+
+\item[\texttt{lem:terminal}.]
+\verb|toUnit| and \verb|unit_terminal| construct the unique native arrow
+to the singleton family with singleton-basis identity augmentation.
+
+\item[\texttt{eq:depaug}, \texttt{eq:depmap}, \texttt{lem:depfunctor}.]
+\verb|dependent| uses sigma choices and tensor-basis products.
+The augmentation of \verb|DepHom.accumulate| is checked using
+actual Kronecker multiplication and both input augmentation equations.
+\verb|DepHom.accumulate_native_factor| computes the \emph{whole matrix}
+on each target fibre as the inner stage followed by the outer stage.
+The intermediate domain retains the as-yet-unmerged outer tags.
+\verb|DepHom.accumulate_id| and \verb|DepHom.accumulate_comp| check map
+laws; \verb|dependentAssoc|, \verb|dependentLeftUnit| and
+\verb|dependentRightUnit| give the actual structural maps used below.
+
+\item[\texttt{eq:tensor}, \texttt{eq:tensormap}.]
+\verb|occurrence| and \verb|occurrenceMap| implement the addressed tensor.
+\verb|occurrenceMap_native_apply| identifies every native fibre entry with
+the corresponding entry of the tensor of the input arrows.
+\verb|occurrenceMap_id| and \verb|occurrenceMap_comp| check the map laws;
+\verb|occurrencePermute| and \verb|occurrenceRegroup| realize address
+permutation and partition. \verb|occurrenceEmpty| gives the native
+comparison to the unit for an empty address set.
+
+\item[\texttt{prop:fubini}.]
+\verb|fubini| and \verb|fubiniInv| transport the raw choice tuples and
+permute the actual coefficient bases. \verb|fubini_hom_inv| and
+\verb|fubini_inv_hom| check both inverse equations.
+\verb|fubini_natural| compares full native maps, including when both
+levels of carrier maps are many-to-one. \verb|fubini_regroup|,
+\verb|fubini_permute|, \verb|fubini_dependentAssoc|,
+\verb|fubini_leftUnit|, \verb|fubini_rightUnit| and \verb|fubini_empty|
+check the indicated equations between native composites.
+\verb|Wiring.compare| licenses comparison of structural paths only after
+both tagged carrier routing and tagged coefficient-basis routing agree.
+
+\item[\texttt{J1}, admitted projections.]
+\verb|ProjectionClass| admits isomorphisms and is closed under composition
+and pullback. \verb|reindexPullback|, \verb|admits_reindex|,
+\verb|dependentExtension|, \verb|admits_dependent| and \verb|admits_unit|
+check the corresponding projection calculations. These conditions restrict
+extension projections, never the carrier maps of native arrows.
+Polynomial preservation $T\mathcal J\subseteq\mathcal J$ is outside this
+calculus alone.
+\end{description}
+
+\section*{Coefficient witness and boundary tests}
+The positive checks work over $\mathbb{Q}$. In each of two addressed
+occurrences, both outer and inner carrier maps merge two choices to a
+singleton. The continuation uses first-coordinate augmentation.
+Its coefficient arrow is identity at the false outer branch and the
+shear $(u,v)\mapsto(u,v+u)$ at the true branch. Two selected input columns
+have augmentation $1$, equal early outer carrier and coefficient images,
+and the same continuation address. For the fixed output basis selecting
+the second continuation coordinate at the true occurrence and the first
+at the other occurrence, the two columns of the native aggregated
+coefficient matrix give $0$ and $1$. The two full Fubini routes agree by
+\verb|Issue92Probes.routes_agree|; selected entries are calculated in
+\verb|Issue92Probes.shear_separates_native_columns|.
+
+Repeated instances of the same family have independently variable choices.
+An empty occurrence has one choice with unit coefficient; an empty
+continuation removes its branch. A missed target has an empty native
+source basis and exactly one matrix from it in this regime. A raw
+zero-augmented witness still has its own carrier, and distinguishes the
+identity map from the zero matrix. Two expected-negative Lean files demand
+the false scalar-proxy equality and the false zero-to-empty carrier shortcut;
+the replay accepts their specific failure diagnostics.
+
+\section*{Untransported obligations and reconstruction}
+The decisive property behind \verb|nativeColumns| is that maps out of
+a coefficient sum in the matrix rig are exactly indexed families of their
+restrictions. The manuscript assumes neither coproducts nor initiality of
+additive zero. For example, finite sets opposite has the same object
+formulas for disjoint-sum addition and Cartesian-product multiplication,
+with the opposite structural isomorphisms. A map from additive zero to
+the two-point coefficient is a function $\mathsf{Bool}\to\varnothing$;
+no such map exists, while an empty family of component maps does exist.
+The Lean check \verb|Issue92Probes.opposite_finset_empty_obstruction|
+checks that type-level difference, without packaging the opposite rig.
+
+The abstract tranche must retain aggregated maps as primitive data,
+derive the regular addressed distributor and partition equations without
+splitting maps out of sums, and handle arbitrary maps from noninitial
+additive zero when they exist. The full contextad integration also needs the
+bundled restriction/endpoint structure and its separate global calculus
+coherences, including the dependent pentagon and triangle.
+
+Recovery route: read the pinned issue and TeX V1 and J1, then
+\texttt{eq:depmap}, which makes the ordering obligation visible. Verify
+\verb|nativeColumns| and \verb|DepHom.accumulate_native_factor| before
+using the Fubini equality. Use the shear witness and the opposite-set
+obstruction to test changed interfaces. Recheck pins, baseline inventory
+and this crosswalk when any of their sources changes.
+
+The toolchain is Lean 4.35.0 (commit
+\texttt{eb6cafb7290e8bd5f2937522d8d804f58f02bafc}); mathlib is
+\texttt{56a005855ea17e0b0958f73ec801ae140b0a1679}. The author replay checks
+the frozen source into a fresh output tree using verified pinned dependency
+checkouts and their pre-existing caches. Independent replay and independent
+statement-adequacy review were not performed. No repository change,
+publication, or issue closure is claimed.
+\end{document}
