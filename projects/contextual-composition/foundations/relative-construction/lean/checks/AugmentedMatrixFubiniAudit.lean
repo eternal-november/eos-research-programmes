@@ -1,0 +1,15 @@
+import checks.AugmentedMatrixFubini
+
+#print axioms Issue92Probes.routes_agree
+#print axioms Issue92Probes.shear_separates_native_columns
+#print axioms Issue92Probes.same_augmentation
+#print axioms Issue92Probes.equal_before_branch_sensitive_action
+#print axioms Issue92Probes.merges_both_levels
+#print axioms Issue92Probes.repeated_occurrences_are_not_diagonal
+#print axioms Issue92Probes.raw_zero_witness_retained
+#print axioms Issue92Probes.empty_preimage_has_empty_native_domain
+#print axioms Issue92Probes.empty_continuation_is_not_unit
+#print axioms Issue92Probes.empty_occurrence_has_unit_coefficient
+#print axioms Issue92Probes.empty_native_block_unique
+#print axioms Issue92Probes.opposite_finset_empty_obstruction
+#print axioms Issue92Probes.zero_augmentation_is_not_faithful

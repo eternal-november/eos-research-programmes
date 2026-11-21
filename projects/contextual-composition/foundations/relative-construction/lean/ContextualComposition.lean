@@ -474,3 +474,4 @@ public import ContextualComposition.StrictTelCategories
 public import ContextualComposition.StrictTelNativeFaces
 public import ContextualComposition.DiscreteTransposition
 public import ContextualComposition.ContinuationTranspositionObstruction
+public import ContextualComposition.AugmentedMatrixFubini
