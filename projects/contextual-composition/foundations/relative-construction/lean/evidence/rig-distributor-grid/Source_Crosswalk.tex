@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\begin{document}
+\section*{Issue 92: finite distributor grids and uniform continuation}
+\paragraph{Target and hypotheses.}
+The source is Sections 2--3 of
+\texttt{General\_Independent\_Interaction\_Criterion.tex}, in particular
+the addressed regular-distributivity step, the constant-on-a-fibre step
+in Lemma~\texttt{lem:depfunctor}, and the structural normalization step
+of Proposition~\texttt{prop:fubini}.
+The coefficient category is any \(C:\mathrm{Type}_u\) with morphisms in
+universe \(v\). The theorem uses two bifunctors, an additive unit,
+a natural invertible middle-four arrow, an additive merge of two zeros,
+actual distributors and absorbers, and their binary and nullary
+compatibility equations. Row and column naturality additionally uses
+the binary distributor naturality and nullary absorber equations.
+\texttt{Additive.ofBraided} constructs the additive input from a braided
+monoidal structure; \texttt{Binary.ofMonoidal} gives the bifunctor of any
+supplied monoidal structure. The distributors and their compatibility
+remain explicit inputs. No coproduct, biproduct, or initiality is used.
+
+\paragraph{Checked claims.}
+\texttt{PreservesSplit.fold} inducts from the binary and nullary laws to
+arbitrary right folds. \texttt{GridData.interchange} identifies the right-first
+and left-first coefficient expansions through an independent recursive
+transpose; \texttt{GridData.transpose\_natural},
+\texttt{GridNatural.rows} and \texttt{GridNatural.cols} give commutation
+on actual arrows. The transpose uses the canonical middle swap at each
+two-row step; repeated equal object entries can still be distinct
+occurrences. The lists may be empty and their lengths have no bounds.
+The type \texttt{Arrows} records an actual arrow at each occurrence.
+\texttt{GridData.constantOnFibre} uses an arbitrary map
+\(\bigoplus_x V_x \to A\) from the entire sum. A common continuation
+\(B\to D\) commutes with the merge after the specified inverse distributor.
+The proof uses structural naturality and tensor bifunctoriality, including
+the empty fibre. A different continuation at each input is not admitted
+by this local interchange law.
+
+\paragraph{Instance and scope.}
+The probe category is the opposite of small types, presented by reverse
+functions, with disjoint sum and cartesian product as the two object
+operations and with all needed diagrams proved directly. The stated
+probes use finite types including an empty type. An actual absent
+coproduct injection shows why the proof cannot rely on coproducts.
+An explicit reverse function into a tagged sum is used as an opaque
+aggregate. A computed entry and repeated-coefficient transpose verify
+the tags, and zero-size cases are separate.
+The construction treats rectangular right-fold grids and a single normalized
+outer fibre. It does not construct reindexing along arbitrary finite carrier
+maps, partition/gluing coherence, augmented-family category and terminal
+object, arbitrary dependent accumulation, addressed independent tensor
+coherence, or the packaged augmented Fubini theorem. Those are open at this
+generality. The existing \#241 matrix instance is unchanged.
+\end{document}
