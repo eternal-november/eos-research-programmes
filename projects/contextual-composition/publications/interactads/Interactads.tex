@@ -1,0 +1,1968 @@
+\documentclass[11pt]{article}
+\usepackage[hmargin=1in,vmargin=.95in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs,array,longtable,microtype,xcolor}
+\usepackage[colorlinks=true,allcolors=blue!50!black]{hyperref}
+\hypersetup{pdfauthor={GPT-6 Astra},pdftitle={Interactads: How to Compose Programs That Change What Comes Next},pdfsubject={Constructing composition from contextads and contentads},pdfkeywords={contextads; contentads; interactads; result-dependent continuations; resource aggregation; relative double categories; decorated displays; bispans; pseudodistributive laws}}
+\numberwithin{equation}{section}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\newcommand{\B}{\mathcal B}\newcommand{\J}{\mathcal J}
+\newcommand{\D}{\mathbb D}\newcommand{\N}{\mathbb N}
+\newcommand{\K}{\mathcal K}\newcommand{\Lcat}{\mathcal L}
+\newcommand{\V}{\mathcal V}\newcommand{\Set}{\mathsf{Set}}\newcommand{\Cat}{\mathsf{Cat}}
+\newcommand{\id}{\mathrm{id}}\newcommand{\op}{\mathrm{op}}\newcommand{\dom}{\mathrm{dom}}\newcommand{\cod}{\mathrm{cod}}
+\newcommand{\iso}{\xrightarrow{\sim}}\newcommand{\ea}{e}\newcommand{\un}{\mathbf1}\newcommand{\Tt}{\overline T}
+\newcommand{\Disc}{\mathrm{disc}}\newcommand{\st}{\mathbin{\star}}\newcommand{\di}{\mathbin{\diamond}}\newcommand{\bx}{\mathop{\boxtimes}}
+\newcommand{\pure}{\mathsf p}\newcommand{\grade}{\mathsf G}
+\title{Interactads: How to Compose Programs\\That Change What Comes Next}
+\author{GPT-6 Astra}\date{20 November 2026}
+\begin{document}\maketitle
+\begin{abstract}
+A computation can determine the number and addresses of its continuations.
+Composing it with a resource-dependent computation then requires more than
+composing their outputs: resource choices must be distributed over those
+addresses, and the maps that aggregate choices must survive the distribution.
+This paper constructs that interaction between independently specified
+contextads and contentads. Relative cartesian lifts transport content, while an occurrence
+monad lifted to decorated displays transports resources. The crossing
+retains the original maps: the two pullbacks agree, relative content
+lifts are stable under horizontal composition, and Beck--Chevalley
+allows pure maps to move across the middle interface. Finite polynomial evaluation with
+augmented additive transfer realizes the construction over sets. A coloured
+presheaf example computes its action on a stage restriction. The
+construction recovers the original comma presentation exactly, including
+noninvertible grade maps. A marked converse forces content exactness
+only on context displays that can actually occur.
+\end{abstract}
+\noindent{\small
+\href{https://github.com/eternal-november/eos-research-programmes/tree/main/projects/contextual-composition}{\texttt{eos-research-programmes / contextual-composition}}.
+Appendix~\ref{app:reuse}: the gluing theorem has a written proof; Lean covers narrower results.}
+
+\section{Two resource merges with the same total}\label{sec:question}
+Suppose a computation requests two follow-up jobs with the same label.
+The jobs occupy separate slots; either resource $0$ or resource $1$ can
+fill each slot. The four combined choices $(0,0),(0,1),(1,0),(1,1)$
+each have a channel for their weight. Now merge the two resources.
+One merge keeps their contributions in two channels; the other sends
+both to the first channel. With rational vector-space coefficients:
+\[
+ \mathbb Q\oplus\mathbb Q\longrightarrow\mathbb Q^2,
+ \qquad (a,b)\longmapsto(a,b),\qquad(a,b)\longmapsto(a+b,0)
+\]
+both preserve the total $a+b$, and both lie over the same two-to-one map of
+choices. Applied at two addresses, the first map leaves the coefficient of the
+second-resource pair in its own channel, while the second transfers it
+to the first-resource pair channel. Their ranks are four and one.
+A rule that records only the choices, the four-to-one fold of their
+associated receipt records, and the total reports the same result for
+both merges. An external linear readout of the second-pair coefficient
+distinguishes them: on a unit input in that channel the first merge
+returns one there and the second returns zero.
+
+Capucci and Myers' \emph{contextads} describe extension on the input side
+and composition of contextful arrows \cite[Defs.~3.15--3.17]{CM}; their
+\emph{contentads} give the output-side counterpart
+\cite[App.~C, Def.~C.2]{CM}. Their separate composition rules leave a
+question: how should a result that requests two continuations distribute
+the next computation's resource choices over those two addresses?
+
+\textbf{Main result.} Theorem~\ref{thm:glue} gives one composition
+rule for independently specified resource and result models. A designer
+otherwise has to specify how a result extends the next stage's resource
+choices, how each coefficient or receipt map acts on the extension,
+and why grouping stages differently gives the same calculation.
+The rule does all three without losing the difference between the
+two merges. A compatible replacement of either model can be compared
+before or after composition; Appendix~\ref{app:colour} computes such
+a replacement that forgets colours without merging addresses.
+
+The two models must agree on where the next choices are made.
+More precisely, content must lift
+along the allowed context projections, stably under horizontal
+composition and with the specified occurrence pullbacks. Context must
+independently support the same occurrence monad on its decorated
+displays. The pure pullback condition controls changes of interface.
+In the Set comma presentation this yields an \emph{interactad}, a
+coherent composition law for arrows that carry both context and
+content. The general law uses category-valued relative modules.
+Sections~\ref{sec:indexed} and~\ref{sec:recognition} show why multiplying
+over changing witness rows can fail, why global horizontal stability
+can reject valid relative cases, and why recognition requires marked
+data on realized projections.
+
+\subsection{What the separate rules already provide}
+For the two-resource computation, the resource choice extends the input;
+the request for two jobs extends the result. In the general notation
+a context $P$ over an interface $A$ has an extended domain $e_A P$.
+A contextful arrow has the form
+\[
+ (P,f):A\rightsquigarrow B,\qquad f:e_A P\longrightarrow B.
+\]
+To follow it by $(D,g):B\rightsquigarrow C$, first restrict $D$ along
+$f$, then accumulate it with $P$. Write the resulting context as
+$P\st f^*D$. The contextad laws ensure associativity of this operation,
+with its specified comparisons and maps.
+
+Dually, a content grade $Q$ over $B$ has an extended result $dQ$;
+a contentful arrow is $(Q,f)$ with $f:A\to dQ$. A later computation
+can transport $Q$ along its body and accumulate it with its own grade.
+This gives another one-sided composition rule. Neither rule specifies how
+a context over $B$ is to be interpreted over $dQ$. That is the missing
+crossing. Once it is provided, a mixed arrow is represented by
+\begin{equation}\label{eq:hom-intro}
+ (P,Q,f),\qquad f:e_A P\longrightarrow dQ,
+\end{equation}
+and its maps consist of a context map $\alpha$ and a grade map $\beta$
+satisfying $d\beta\,f=f' e\alpha$. Composition must act on these maps
+and satisfy the coherent associativity comparisons.
+
+\subsection{A complete small composite}\label{sec:paired}
+The opening calculation can be made inside a contentad whose grades are
+\emph{receipts}. Over a set $B$, a receipt grade is a set $Q$ with a label
+$q:Q\to\mathsf{List}(B)$. Its extended result is $dQ=B+Q$: an output
+can be an ordinary $B$-value or a receipt describing a list of requested
+continuations. On the ordinary summand the occurrence list is the singleton;
+on the receipt summand it is $q$. A map of grades preserves these lists
+under the specified change of $B$. Transport changes labels, not the set
+of receipts. Accumulation keeps both sets of receipts and substitutes the
+lists of the earlier stage into the later label. Section~\ref{sec:receipts}
+checks the full content structure.
+
+Take all three interfaces to be the singleton $1=\{*\}$. An arrow $F$
+has trivial context and one receipt $q$ labelled $[*,*]$; its body returns
+$q$. An arrow $G$ has two context choices $0,1$, each weighted by
+$k=\mathbb Q$, with augmentation $(a,b)\mapsto a+b$. Its content has one
+receipt $s$ labelled $[*]$, and its body returns $s$ on either choice.
+In particular the second arrow has nontrivial content too.
+
+The composite first chooses $(x,z)\in\{0,1\}^2$, with coefficient
+$k\otimes k$ at that choice. Lifting the receipt $q$ produces four
+receipts $q_{xz}$ labelled $[x,z]$. The body of $G$ relabels each of them
+by $[s,s]$ without merging them. Accumulation with $s$ then substitutes
+its singleton label, so all four have label $[*,*]$. The resulting grade
+has five receipts,
+\[
+                 \{s,q_{00},q_{01},q_{10},q_{11}\}.
+\]
+The composite body takes $(x,z)$ to $q_{xz}$. The receipt $s$ remains in
+the grade although the body does not reach it. Replacing the grade by the
+image of the body would change the construction.
+
+For comparison, let $G'$ have one choice weighted by $V=k^2$, augmented
+by $\epsilon(a,b)=a+b$, and the same receipt $s$ and constant body. The
+fold of choices admits the two coefficient maps
+\begin{equation}\label{eq:rankmaps}
+ \gamma=1_V,\qquad \gamma'=p,\qquad p(a,b)=(a+b,0).
+\end{equation}
+They give two native maps $G\to G'$. After composition with $F$, their
+coefficient maps, under the addressed identification
+$\bigoplus_{x,z}k\cong V\otimes V$, are
+\[
+                 1_{V\otimes V},\qquad p\otimes p.
+\]
+The vector $e_2\otimes e_2$ goes respectively to $e_2\otimes e_2$ and
+$e_1\otimes e_1$. Their grade map is the same: all four $q_{xz}$ go to
+the single new receipt $q'$, while $s$ goes to $s$. This is a genuinely
+noninvertible grade map. It is not the relabelling transport, which kept
+four tags, but the comparison into the target lifted grade.
+
+Thus there are two distinct pieces of map-level information in one
+composite. The coefficient map distinguishes the two aggregations; the
+grade map records the four-to-one receipt comparison. Neither can replace
+the other. Moreover the coefficient operation is tensor, not a categorical
+product of augmented vector spaces: $\dim(V\otimes V)=4$, whereas
+$\dim(V\times_k V)=3$. An interpretation by ordinary dependent products
+would solve a different problem.
+
+\subsection{Where the construction sits}
+The wreath formalism already provides a place for a coherent crossing:
+Capucci--Myers include an intertwiner and its structure cells among the
+wreath data \cite[Def.~D.9]{CM}. Theorem~\ref{thm:glue} constructs the intertwiner and its structure cells
+from the two input models. Two
+established construction mechanisms are particularly close. Buckley--Garner's
+co-crossed double categories have codomain-cartesian lifts stable under
+horizontal composition, and their Proposition~6.3 constructs a crossing
+from them \cite[Def.~6.1, Prop.~6.3]{BG}. The content part below uses
+that cartesian-square mechanism relatively: lifts are required only along
+context displays, but their universal property tests all squares. Passing
+from formally composable arrows to a tensor balanced over all pure maps
+requires an additional pure pullback check. This is not a claim that
+global corners were merely a nonconstructive precedent.
+
+Cnossen, Haugseng, Lenz and Linskens identify commutative semiring objects
+in cartesian closed presentable $\infty$-categories with product-preserving
+finite-bispan functors \cite[Thm.~A]{CHLL}.
+The raw category-valued coefficient calculation below belongs to that
+calculus. Directed additive transfer and the slice imposing a total
+augmentation supply further data; the augmented category itself need not
+be a product-preserving bispan model. The contribution is the construction
+that matches this decorated occurrence calculus to independently supplied
+relative content corners and descends through arbitrary pure balance.
+It neither identifies the ambient theories nor claims that their further
+development could not encompass the result.
+
+\paragraph{Relative polynomial geometry.}
+Von Glehn constructs the law of free fibred products over free fibred
+sums and treats a class closed under composition and arbitrary base
+change \cite[Thms.~7.1--7.2 and Sec.~8]{vonglehn}. Thus the use of a
+restricted, pullback-stable class is not new. Weber composes polynomials
+with exponentiable middle arrows over categories with pullbacks by
+distributivity pullbacks, and interprets them by pullback, dependent
+product and dependent sum on slices
+\cite[Thms.~3.1.10 and 3.2.6]{weber}. Here the operands are given
+content and context calculi, not free fibred completions. A rig tensor
+is not in general a dependent product, as the dimension calculation
+in Section~\ref{sec:paired} illustrates. Gambino and Kock's polynomial
+substitution and cartesian position squares give the bare addressed
+geometry \cite[Secs.~1.11, 2.1 and 4.1]{gambinokock}; the map-level
+work here is to identify that geometry over the original grade and
+coefficient maps and prove compatibility with pure balance.
+
+\paragraph{Indexed transfers and representation.}
+Ponto and Shulman compose using external tensor, diagonal restriction
+and indexed coproducts, which are left adjoints to restriction
+\cite[Def.~3.1 and Thm.~5.2]{pontos}. Elmanto and Haugseng's bispan
+extension uses left adjointability and invertible distributivity mates
+\cite[Def.~2.4.10, Thm.~2.5.1 and Cor.~2.5.15]{eh}. Chosen directed
+additive transfer here need not satisfy that adjoint prescription:
+in finite-dimensional vector spaces with only surjective linear maps,
+the fold transfer sends $(k,k)$ to $k^2$. It has an identity map to
+$k^2$, whereas there is no map from $(k,k)$ to the constant family
+$(k^2,k^2)$. The failure concerns that transfer, not the scope of
+bispan theories with additional structure. The double Grothendieck
+representation of Cruttwell, Lambert, Pronk and Szyld
+\cite[Def.~2.23 and Thm.~3.41]{doublefib} gives a different organization
+where full double-fibration hypotheses hold. It is not invoked for
+the codomain fibration alone, and does not substitute for checking
+the common occurrence lift or its pure balance.
+
+\paragraph{Constructing a law versus using one.}
+Street's wreath products and mixed Kleisli convolution illustrate what
+specified interaction cells can build \cite[Secs.~2--3]{street};
+Marmolejo's Gray-category theory relates supplied pseudodistributive
+laws, compatible composites and liftings \cite{marmolejo}. These are
+formal precedents for the composition step, not the construction of
+the interaction cells in this paper. There are also genuinely
+constructive Set precedents: Manes and Mulry build ordinary laws using
+recursive constructions and quotients by linear equations \cite{manes}.
+Fujii, Tsai, Montacute and Hasuo give a canonical Set construction from
+a $W$-operadic monad and a $W$-commutative monad
+\cite[Thm.~42 and Rem.~43]{fujii}. Their full monad--monad law uses an
+additional condition: ordinary commutativity of the second monad or
+absence of operadic operations of arity greater than one. Those results
+construct laws between Set endofunctors; the present output is instead
+a category-valued crossing with separate coefficient and grade cells.
+
+The main theorem is a sufficient construction. The last part of the paper
+asks a different question: which conditions can be recovered from a mixed
+law that preserves the original projections? That marked recognition
+statement does not classify arbitrary laws, and does not extend its tests
+to displays absent from the context calculus. Code, further examples and the related Lean project are available in the
+\href{https://github.com/eternal-november/eos-research-programmes/tree/main/projects/contextual-composition}{public contextual-composition project};
+Appendix~\ref{app:reuse} gives stable entry points and separates written
+proofs from the formalized subresults. The exact general theorem
+and its comparison history are pinned in \cite{Gluing,Comparison}; the
+presentation here develops their mathematics through the computation above.
+This research article gives the construction and its proof; the
+companion technical supplement (\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Theorem.pdf}{PDF} and \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Theorem.tex}{LaTeX})
+records additional development, and Appendix~\ref{app:reuse} locates
+the further examples and the separate scope of Lean verification.
+
+\section{The common interface: occurrences and two pullbacks}\label{sec:interface}
+In the two-resource example (Section~\ref{sec:paired}), the receipt
+$[*,*]$ requests two continuations with the same label. The list records
+two addresses, so each continuation can make its own resource choice.
+A cartesian monad $T$ abstracts this occurrence interface. Its unit
+describes the ordinary continuation and its multiplication substitutes
+continuation shapes. Cartesianity supplies the pullback comparisons
+for substitution. The decorated lift below specifies the resource
+operation at those addresses.
+
+Fix an ordinary category $\B$ with pullbacks and a class $\J$ containing
+isomorphisms, closed under composition, pullback and isomorphism of arrows.
+Members of $\J$ will be called \emph{displays}. Assume $T$ preserves
+pullbacks, its unit $\eta$ and multiplication $\mu$ are cartesian, and
+$T\J\subseteq\J$. All pure maps of $\B$ remain available; the word
+``relative'' restricts display lifting, not the pure category. Work in
+universes in which the category-valued pseudocoends used below exist.
+For arrows, $vu$ means $v\circ u$; words of computations are written in
+execution order. For $a:A\to TB$ and $b:B\to TC$ put
+$b\bullet a=\mu_C(Tb)a$.
+
+A content arrow $n:A\rightsquigarrow B$ is assigned an occurrence arrow
+$a_n:A\to TB$. A decorated display $P:E\to B$ lies over $r:E\to B$.
+The desired crossing must have carrier
+\begin{equation}\label{eq:carrier}
+                         A_r=A\times_{TB}TE.
+\end{equation}
+There are two different constructions of this carrier. On the resource
+side, apply $T$ to the display, with its decoration, and restrict along
+$a_n$. On the content side, lift the actual arrow $n$ along $r$. The
+second construction must retain its native content cell, not merely its
+image under $a$. The theorem matches the constructions by
+\eqref{eq:carrier}; it does not identify their maps.
+
+\subsection{Decorated displays and their occurrence lift}\label{sec:decinput}
+A pseudo-double category $\D$ records contexts. Its vertical category is
+$\B$, and a forgetful pseudo-double functor to commuting squares of $\B$
+is identity on vertical arrows. A horizontal arrow $P:E\to B$ lies over
+a display $r:E\to B$; a square $P\to P'$ lies over
+$(h:E\to E',u:B\to B')$ with $r'h=ur$. Distinct decorated squares
+may have that same boundary. For $S:F\to E$, write $P\st S:F\to B$
+for horizontal composition; it lies over the composite display.
+Horizontal units $\un_B$ lie over identities. Associators and unitors
+have identity boundary; carrier transport by isomorphisms is understood.
+
+Require $\cod:\D_1\to\B$ to be a fibration, with chosen cartesian
+squares whose underlying squares are pullbacks. Require horizontal units
+and horizontal pastes of cartesian squares to be cartesian. Thus $u^*P$
+exists for \emph{every} pure $u$, and restrictions commute with accumulation
+up to their canonical comparisons. In the fibre $\K_B$, arrows are
+squares over $\id_B$; the carrier functor is $e_B(P)=E$. The contextful
+module is
+\[
+ M(A,B)=(e_A\downarrow B),\qquad
+ (P,g)=\bigl(A\xleftarrow{r}E\xrightarrow{g}B\bigr).
+\]
+Its composition is restriction followed by $\st$, as above. Cartesian
+uniqueness identifies the reindexed displays in triple composites; the
+horizontal coherence of $\D$ then proves the associativity and unit laws
+on the actual decorated maps.
+
+\begin{definition}[Occurrence structure on contexts]\label{def:lift}
+An occurrence lift consists of a pseudo-double endofunctor $\Tt$ over
+$T$, preserving codomain-cartesian squares and taking $P$ to a decoration
+of $Tr:TE\to TB$, together with vertical double transformations
+\[
+ \bar\eta:1\Rightarrow\Tt,\qquad
+ \bar\mu:\Tt^2\Rightarrow\Tt.
+\]
+The horizontal comparisons
+$\Tt(P\st S)\cong\Tt P\st\Tt S$ and
+$\Tt\un_B\cong\un_{TB}$ are invertible and satisfy the functor
+pentagon and unit equations, naturally on all squares. The transformations
+lie over $\eta,\mu$; their squares on each display are codomain-cartesian.
+They are natural on the vertical and horizontal-arrow categories and
+commute with horizontal units and composition, inserting these functor
+comparisons. Finally, as decorated transformations,
+\[
+ \bar\mu\,\Tt\bar\mu=\bar\mu\,\bar\mu_{\Tt},\qquad
+ \bar\mu\,\Tt\bar\eta=1=\bar\mu\,\bar\eta_{\Tt}.
+\]
+\end{definition}
+This is a condition on contexts alone. In particular the multiplication
+axiom does not refer to a content grade. For sets it will follow from
+addressed finite polynomial evaluation; it is stated independently of
+that presentation so that an indexed example can use the same theorem.
+
+\subsection{Content with relative cartesian corners}\label{sec:coninput}
+To move a resource display past a content computation, we must compare
+content arrows even when their input and output interfaces change.
+For fixed interfaces \(A,B\), the category \(N(A,B)\) contains
+the content arrows \(A\rightsquigarrow B\) and their native comparison
+cells. Composition and identities are coherent up to isomorphism.
+Together with the actions of pure maps this is a relative
+pseudopromonad \(N:\B^{\op}\times\B\to\Cat\). Its realization is a
+bicategory on the same objects as \(\B\), with an identity-on-objects
+pure pseudofunctor \(\pure:\B\to N\) \cite[Secs.~2--3]{U}.
+
+For a pure input map \(k:A\to A'\) and output map \(u:B\to B'\),
+precomposition with \(k\) and postcomposition with \(u\) transport
+\(n':A'\rightsquigarrow B'\) and \(n:A\rightsquigarrow B\) into the
+same category \(N(A,B')\). A square from \(n\) to \(n'\) over
+\((k,u)\) is the native cell \(u_*n\to k^*n'\) in that category.
+These squares form the double category \(\N\), using the action
+comparisons and the original equality of native cells. The square
+\(n\to u_*n\) is opcartesian for right-edge transport: the comparison
+\((vu)_*\cong v_*u_*\) gives the unique factor with right edge \(v\). The
+construction uses only the native content categories and pure actions.
+
+The occurrence assignment must preserve the whole content calculus:
+\begin{equation}\label{eq:arity}
+ a_{\pure(u)}=\eta u,\qquad a_{nm}=a_m\bullet a_n,
+ \qquad Tu\,a_n=a_{n'}k\quad\text{for every square over }(k,u).
+\end{equation}
+It is a multiplicative pure-compatible map to the locally discrete
+Kleisli category. It need not be faithful on native content maps.
+
+\begin{definition}[Relative content corners]\label{def:corners}
+For every content arrow $n:A\rightsquigarrow B$ and display $r:E\to B$
+choose a square
+\begin{equation}\label{eq:corner}
+ C_r(n)=\left[
+ \begin{array}{ccc}
+ A_r&\xrightarrow{n_r}&E\\
+ {\scriptstyle\ell}\downarrow&&\downarrow{\scriptstyle r}\\
+ A&\xrightarrow{n}&B
+ \end{array}\right].
+\end{equation}
+The following properties are required.
+
+\smallskip\noindent
+\textup{(i)} The square is cartesian for $\cod:\N_1\to\B$: a square
+$z\to n$ with right edge $rv$ factors uniquely through $C_r(n)$ with
+right edge $v$. Testing squares and their left and right edges are
+unrestricted pure maps.
+
+\smallskip\noindent
+\textup{(ii)} Its image is the occurrence pullback:
+$(\ell,a_{n_r}):A_r\iso A\times_{TB}TE$. Horizontal identities on
+displays are cartesian. Matched horizontal pastes of these cartesian
+squares are cartesian, lifting the last content arrow first and then its
+predecessor along the resulting left edge. That edge belongs to $\J$.
+
+\smallskip\noindent
+\textup{(iii)} For every pullback of a display along an arbitrary pure map,
+\[
+ \begin{array}{ccc}E_u&\xrightarrow v&E\\
+ {\scriptstyle r_u}\downarrow&&\downarrow{\scriptstyle r}\\
+ B&\xrightarrow u&B',\end{array}
+\]
+the canonical square $\pure(v)\to\pure(u)$ over $(r_u,r)$ is
+codomain-cartesian. It is the pure comparison of $rv=ur_u$, not an
+independently chosen square with isomorphic corners.
+\end{definition}
+These properties have different jobs. Cartesianity factors native content
+maps. The occurrence pullback makes their boundaries match decorated
+maps. Horizontal stability controls successive content computations.
+The pure square is what permits a change of interface to move from one
+side of a middle boundary to the other.
+
+\section{Constructing the crossing}\label{sec:construction}
+The crossing moves a resource display past a content arrow. The two
+constructions of its carrier in \eqref{eq:carrier} must match, while
+the resource map and the content cell remain separate as in the
+two-resource calculation (Section~\ref{sec:paired}). For a module $X$, let $\grade_X(A,C)$ have objects $(P,x)$,
+where $P\in\K_A$ and $x\in X(e_AP,C)$. An arrow is a pair
+\begin{equation}\label{eq:normalmap}
+ (\alpha:P\to P',\quad t:x\to h^*x'),\qquad h=e_A\alpha.
+\end{equation}
+For endpoint changes $(k,v)$, use a decorated square over $(h,k)$ and
+$t:v_*x\to h^*x'$. Equality is tested on $\alpha$ and $t$ separately.
+This is not an equality test on $h$.
+
+For modules $X,Y$ use the category-valued profunctor tensor of
+Lawler \cite[Sec.~4.1.1, Eq.~(4.1.1)]{Lawler}, restricted to ordinary
+base categories and written in execution order:
+\[
+ (X\odot Y)(A,C)=\int^{B\in\B}_{\mathrm{ps}}X(A,B)\times Y(B,C).
+\]
+The pseudocoend retains pairs of native arrows and adjoins invertible
+balances $[u_*x,y]\cong[x,u^*y]$ for \emph{every} pure $u$, with
+identity, composition and naturality relations. Normalization gives
+\begin{equation}\label{eq:normal}
+ M\odot X\simeq\grade_X,
+ \qquad [B;(P,g),x]\longmapsto(P,g^*x).
+\end{equation}
+Indeed a reverse functor chooses $B=e_AP$ and $g=\id$. On
+\eqref{eq:normalmap}, apply $t$, balance along $h$, then apply $\alpha$.
+The balance along $g$ compares an arbitrary representative to this one;
+the balance relations give the two inverse comparisons. This also proves
+naturality at the endpoints. In particular the tensor is not a set of
+isomorphism classes of diagrams.
+
+On contexts define the occurrence action
+\begin{equation}\label{eq:L}
+ L_aP=a^*\Tt P,
+ \qquad a_P:A\times_{TB}TE\longrightarrow TE
+ \quad(a:A\to TB, P:E\to B).
+\end{equation}
+The second projection $a_P$ is itself a Kleisli arrow to $E$. The lifted
+monad supplies four useful comparisons:
+\begin{align}
+ I_a &:L_a\un_B\cong\un_A,&
+ U_u &:L_{\eta u}P\cong u^*P,\label{eq:IU}\\
+ K_{a,b}&:L_aL_bP\cong L_{b\bullet a}P,&
+ F_a&:L_a(P\st S)\cong L_aP\st L_{a_P}S.\label{eq:KF}
+\end{align}
+Here $K$ uses the cartesian multiplication square of $\bar\mu$,
+$U$ the unit square of $\bar\eta$, and $F,I$ the horizontal functor
+comparisons. Their full equations are proved in Appendix~\ref{app:local}.
+The important mixed equation says that flattening occurrences and
+accumulating contexts commute on decorated maps:
+\begin{align}
+ F_{b\bullet a}(P,S)K_{a,b}(P\st S)
+ ={}&\bigl(K_{a,b}(P)\st K_{a_{L_bP},b_P}(S)\bigr)\notag\\
+ &\quad\cdot F_a(L_bP,L_{b_P}S)L_a(F_b(P,S)).\label{eq:middle}
+\end{align}
+The second slot is transported along the carrier comparison of $K$.
+Its typing equation is
+$b_P\bullet a_{L_bP}=(b\bullet a)_P\dom K_{a,b}(P)$.
+This is the single place where the two kinds of accumulation meet on
+the context side. It follows from the horizontal-composition axiom of
+$\bar\mu$, not from an assumed mixed law.
+
+\begin{theorem}[Composition from independent inputs]\label{thm:glue}
+Assume the base, display class and cartesian monad of
+Section~\ref{sec:interface}, the decorated display calculus with the
+occurrence structure of Definition~\ref{def:lift}, and the content
+calculus satisfying \eqref{eq:arity} and Definition~\ref{def:corners}.
+There is a pseudodistributive law
+\[
+                    \tau:N\odot M\longrightarrow M\odot N
+\]
+whose normalized value on $[B;n,(P,g:E\to C)]$ is
+\begin{equation}\label{eq:cross}
+                         (L_{a_n}P,\ g_*n_r).
+\end{equation}
+The source of $n_r$ is transported by the specified pullback comparison
+$A_r\cong A\times_{TB}TE$. The law acts on the native maps, is balanced
+over the whole pure category $\B$, and has the four comparisons specified
+below. Consequently $\grade_N$ has the composite relative pseudopromonad
+structure, with multiplication obtained by the middle crossing
+\[
+ (M\odot N)\odot(M\odot N)
+ \xrightarrow{\,M\odot\tau\odot N\,}
+ M\odot M\odot N\odot N
+ \xrightarrow{\,m_M\odot m_N\,}M\odot N.
+\]
+The construction is natural under the compatible maps of independent
+inputs specified in Appendix~\ref{app:parameters}.
+\end{theorem}
+
+\subsection{Why the two native maps fit}
+Take a content square $s:n\to n'$ over $(k,u)$ and a context square
+$P\to P'$ over $(h,u)$. Cartesianity produces a unique content square
+$\widetilde s$ satisfying
+\begin{equation}\label{eq:factor}
+ C_{r'}(n')\widetilde s=s C_r(n),
+ \qquad\text{right edge of }\widetilde s=h.
+\end{equation}
+If $H$ is its left edge, \eqref{eq:arity} says that its coordinates in
+the target pullback are $(k\ell,Th\,a_{n_r})$. Applying $\Tt$ to the
+given decorated square and then restricting along $a_n$ gives a decorated
+square with exactly those coordinates. Therefore it and $\widetilde s$
+form an arrow of \eqref{eq:normalmap}. With tails satisfying $vg=g'h$,
+the content component is the bent cell
+\[
+ v_*g_*n_r\cong g'_*h_*n_r
+       \longrightarrow g'_*H^*n'_{r'}\cong H^*g'_*n'_{r'}.
+\]
+The middle arrow is not required to be invertible. Identity and composition
+follow by restoring $C_{r'}(n')$ in \eqref{eq:factor} and using its unique
+factorization, while the decorated factors compose in $\D$. Thus the
+construction already retains both kinds of maps in the opening example.
+For a left endpoint change, paste the pure pullback square for that change
+with $C_r(n)$; horizontal stability identifies the result with the lift
+of the restricted content arrow. This gives the invertible endpoint
+comparison. A right endpoint change is simply transport of the final tail.
+
+There is a local way to describe precisely what has been matched. Put a
+superscript $0$ on $\grade$ when displays are undecorated and let
+$K_T(A,C)=\Disc\B(A,TC)$. Then
+\begin{equation}\label{eq:pullcat}
+ \begin{array}{ccc}
+ \grade_N^{\D}&\longrightarrow&\grade_N^0\\
+ \downarrow&&\downarrow\\
+ \grade_{K_T}^{\D}&\longrightarrow&\grade_{K_T}^0
+ \end{array}
+\end{equation}
+is a pullback of categories in a fixed named-carrier presentation.
+A matched object is exactly $(P,n)$; a matched arrow consists of the
+actual decorated arrow and the actual content cell with the same carrier
+map. Composition is the componentwise composition already used above.
+It is also a pseudopullback up to equivalence: the right vertical functor
+is an isofibration, since an isomorphism of source carriers lifts by pure
+precomposition with its inverse. An isomorphic matching can therefore be
+rectified. This local property explains the gluing of maps; it is not an
+initiality property for all possible mixed calculi.
+
+\subsection{Why arbitrary pure changes of interface are allowed}
+Suppose $u:B\to B'$ is pure and $P$ lies over $r:E\to B'$. Pull back
+$r$ to $r_u:E_u\to B$, with $v:E_u\to E$. Crossing after $u_*n$ and
+crossing $n$ against $u^*P$ must represent the same operation. On content,
+the required comparison is the canonical cartesian--opcartesian mate
+\begin{equation}\label{eq:mate}
+                    v_*n_{r_u}\iso H^*(u_*n)_r.
+\end{equation}
+This is the usual Beck--Chevalley comparison of cartesian and
+opcartesian completions \cite[Def.~13.21 and Lem.~16.1]{shulman}.
+The carrier $H$ is invertible because $T$ preserves the pullback and
+$a_{u_*n}=Tu\,a_n$. That fact alone does not prove the cell invertible.
+For the cell, paste $C_{r_u}(n)$ horizontally with the \emph{canonical}
+pure pullback square $\pure(v)\to\pure(u)$. Definition~\ref{def:corners}
+makes this paste cartesian. Its bottom is $u_*n$, its right edge is $r$,
+and its top is $v_*n_{r_u}$. Comparison to $C_r(u_*n)$ by cartesian
+uniqueness is exactly \eqref{eq:mate}. On decoration, the corresponding
+map is
+\[
+ a_n^*\Tt(u^*P)\cong a_n^*(Tu)^*\Tt P
+                  \cong(Tu\,a_n)^*\Tt P.
+\]
+It has the same carrier $H$. Thus the two components supply the balance,
+including the original content mate rather than an unspecified isomorphism.
+
+For a composite of pure maps, restore the final cartesian arrow and
+unbend the pure transports. The two proposed mates then have the same
+pasted pure pullback and the same initial square. Cartesian uniqueness
+makes them equal. This proves composition of balances; the identity case
+and their naturality on \eqref{eq:factor} follow by the same cancellation.
+The decoration calculation is cartesian uniqueness in $\D_1$.
+These are precisely the defining pseudocoend relations, so the crossing
+descends. Conversely, putting $n$ equal to a horizontal identity in
+\eqref{eq:mate} shows that invertibility of all these canonical mates
+recovers pure exactness. The pure hypothesis is not redundant bookkeeping.
+
+\subsection{The four comparisons and the composition proof}
+The law must commute with each of the two units and each of the two
+multiplications. Let $-P$ denote the context with identity forward tail.
+For consecutive content arrows $n,m$ and displays $P,S$, the comparisons
+are obtained as follows; inverses are inserted where the displayed
+orientation requires them.
+\begin{center}\small
+\begin{tabular}{@{}p{.14\linewidth}p{.28\linewidth}p{.51\linewidth}@{}}
+\toprule
+Operation&Context component&Content component\\\midrule
+Content unit&$U_{\id}(P)$&Compare $C_r(1)$ with the horizontal identity on $r$.\\[3pt]
+Context unit&$I_{a_n}$&Compare $C_{\id}(n)$ with the identity square on $n$.\\[3pt]
+Content multiplication&$K_{a_n,a_m}(P)^{-1}$&Compare $C_r(nm)$ with the horizontal paste of $C_\ell(n)$ and $C_r(m)$.\\[3pt]
+Context multiplication&$F_{a_n}(P,S)$&Compare $C_{rs}(n)$ with the vertical paste of $C_s(n_r)$ and $C_r(n)$.\\\bottomrule
+\end{tabular}
+\end{center}
+Here $\ell$ is the left edge of $C_r(m)$ in the third row. Each pair of
+content squares is cartesian with the same bottom and right edge, up to
+the one-sided structural comparisons. Hence there is a unique invertible
+comparison of their tops. Its occurrence image is forced by the two
+pullback coordinates. In the third row these are the original source
+coordinate and $\mu$-flattening; in the fourth they are the source
+coordinate and the final $TF$-coordinate. The units use the cartesian
+unit of $T$ and the identity pullback. These are exactly the carriers
+of the context comparisons. Each row is therefore one arrow of
+$\grade_N$, not two unrelated isomorphisms.
+
+Their types are
+\begin{align}
+ \tau(j_NM)&\cong Mj_N,&\tau(Nj_M)&\cong j_MN,\notag\\
+ \tau(m_NM)&\cong(Mm_N)(\tau N)(N\tau),&
+ \tau(Nm_M)&\cong(m_MN)(M\tau)(\tau M).\label{eq:four}
+\end{align}
+To prove coherence, consider a rectangle with content columns and display
+rows. Fill it from the lower right with chosen cartesian squares. Every
+subrectangle is cartesian, by horizontal stability and ordinary
+composition of cartesian arrows. Any sequence of comparisons of
+subrectangles, followed by comparison to the outside rectangle, has the
+same restored content square. The one-sided associators and unitors give
+the same restored boundary by their pentagon and triangle laws. Cartesian
+uniqueness therefore proves equality of the content components. This
+argument works even though occurrence does not detect equality of content
+cells.
+
+The context components require a different argument: they are the $K$,
+$F$, $I$, $U$ equations, in particular \eqref{eq:middle}. Appendix~\ref{app:coherence}
+records the ten pseudodistributive pastings and matches each to its
+context equation and content rectangle. It also checks the internal pure
+seams, so that the four comparisons really are modifications on relative
+tensors rather than merely operations on identity-tail representatives.
+Together those checks prove Theorem~\ref{thm:glue}. The general composition
+of pseudomonads with a pseudodistributive law then gives its stated
+multiplication \cite[Def.~4.1 and App.~A]{GL}.
+
+\section{Resources: polynomial evaluation with directed maps}\label{sec:resources}
+This section builds the resource input of Theorem~\ref{thm:glue}:
+the decorated occurrence lift of Definition~\ref{def:lift}. A finite
+polynomial shape indexes a tensor of resource choices, and directed
+transfer gives its action on the merges from Section~\ref{sec:paired}.
+Let $\B=\Set$ and let
+\[
+                    TX=\coprod_{s\in S}X^{F_s}
+\]
+be a cartesian polynomial monad with finite, addressed position sets $F_s$.
+Let $\V$ be a symmetric rig category: $(\oplus,0)$ and $(\otimes,I)$
+are symmetric monoidal, with coherent invertible finite distribution and
+absorption maps. Neither operation is assumed to be a categorical product
+or coproduct. Finite indexed brackets and their canonical reindexings are
+fixed. Context displays have finite fibres and belong to $\J$; if the
+ambient $\J$ is larger, this finite-fibre subclass is the one used here.
+
+Over $r:E\to B$, choose objects $V_e\in\V$ and, for each $b$, one
+augmentation
+\begin{equation}\label{eq:augmentation}
+                  \epsilon_b:\bigoplus_{e\in E_b}V_e\longrightarrow I.
+\end{equation}
+A global augmentation is part of the data. Without coproduct inclusions
+it cannot be replaced by an assumed family of maps $V_e\to I$.
+A map over a square $(h,u)$ consists of the arrows
+\begin{equation}\label{eq:aggregation}
+ \gamma_{b,e'}:\bigoplus_{\substack{e\in E_b\\he=e'}}V_e
+                         \longrightarrow V'_{e'}
+       \quad(e'\in E'_{ub}),
+\end{equation}
+whose sum, after repartitioning the source fibre, preserves
+\eqref{eq:augmentation}. Even if $u$ merges base points, the source sum
+is over the specified fibre at $b$. Composition partitions the fibre of
+a composite $h'h$ into fibres of $h$ and $h'$, then applies the given
+arrows. This is why the boundary function does not determine the map.
+Restrictions along $u$ use ordinary pullbacks and the same coefficient
+objects and arrows under fibre bijections. Their factorization property
+against all squares is immediate from that formula.
+
+\subsection{What finite bispans compute, and what must be added}
+The raw operation associated to a finite bispan is
+\begin{equation}\label{eq:bispan}
+ \left(L\xleftarrow{s}U\xrightarrow{p}D\xrightarrow{t}K\right)
+ \longmapsto
+ \left[(V_l)\longmapsto
+   \left(\bigoplus_{td=k}\ \bigotimes_{pi=d}V_{si}\right)_{k\in K}\right].
+\end{equation}
+This is category-valued: tuples of actual arrows of $\V$ are evaluated,
+not just their objects. Substitution distributes products over sums;
+a resulting term records one alternative at each input position and all
+its addressed leaves. A three-level substitution has the same such
+histories on both associations, giving the compositor by rig coherence.
+This is the finite-bispan coefficient calculus described abstractly by
+\cite[Thm.~A]{CHLL}; on an infinite base it is used fibre by fibre.
+
+To obtain \eqref{eq:aggregation}, use the covariant additive transfer
+$h_!V=(\bigoplus_{he=e'}V_e)_{e'}$ and its Grothendieck category $\mathcal R$.
+An arrow of $\mathcal R$ is $(h,\gamma:h_!V\to V')$. Total sum defines
+$\Sigma:\mathcal R\to\V$ by fibre partition. The augmented category is
+\[
+                 \mathcal R\times_{\V}\V_{/I},
+\]
+where $\V_{/I}\to\V$ takes the domain. This constructs the directed
+maps and their augmentation equation; it does not infer directed maps
+between carrier shapes from invertible bispan reindexings. Nor is the
+slice generally another raw bispan model. In the discrete rig
+$(\mathbb N,+,\cdot)$, an augmented singleton has one possibility, while
+an augmented two-point carrier has the two possibilities $(1,0),(0,1)$.
+Their fibres therefore do not obey the disjoint-union product rule of
+the unaugmented model.
+
+\subsection{Accumulating resources before merging them}
+For $P:E\to B$ with weights $V_e$ and $S:F\to E$ with weights $W_z$,
+the row of $P\st S$ at $z$ is $V_{sz}\otimes W_z$. Its augmentation
+first distributes by $e$, applies each inner augmentation, then applies
+the outer one. The horizontal unit has one row $(I,\id_I)$.
+
+The map on a composite is worth writing down, because an apparent
+shortcut would be wrong. Suppose the outer map has carrier $h$ and
+coefficients $\alpha$, and the inner map has carrier $k$ and coefficients
+$\beta$. Write $u$ for the outer base map. Fix $b\in B$, a target
+$e'\in E'_{u(b)}$, and a target $z'$ with $s'z'=e'$. In every outer
+sum below $I_{b,e'}=\{e\in E_b\mid he=e'\}$ is taken in the single
+source fibre at $b$. The coefficient map is
+\begin{align}
+ \bigoplus_{e\in I_{b,e'}}\ \bigoplus_{\substack{sz=e\\kz=z'}}V_e\otimes W_z
+ &\cong\bigoplus_{e\in I_{b,e'}}V_e\otimes
+                \left(\bigoplus_{\substack{sz=e\\kz=z'}}W_z\right)
+ \xrightarrow{\oplus_e(1\otimes\beta_{e,z'})}
+              \bigoplus_{e\in I_{b,e'}}V_e\otimes W'_{z'}\notag\\
+ &\cong\left(\bigoplus_{e\in I_{b,e'}}V_e\right)\otimes W'_{z'}
+ \xrightarrow{\alpha_{b,e'}\otimes1}V'_{e'}\otimes W'_{z'}.
+ \label{eq:dependent}
+\end{align}
+The maps $\beta_{e,z'}$ can depend on the ancestor $e$. They must be
+applied before merging those ancestors. Only their common target
+$W'_{z'}$ can be taken outside the merge.
+
+This formula proves horizontal functoriality on arbitrary squares.
+For two stages of maps, partition by the intermediate ancestor and row.
+The second inner map is constant on each already merged intermediate
+ancestor, so tensor bifunctoriality moves it past the first outer map.
+After distribution this is exactly \eqref{eq:dependent} for the composite.
+The same calculation, with the augmentations in place of the target
+maps, proves preservation of total augmentation. Triple accumulation
+uses tensor associativity on each addressed chain; both augmentations
+contract that chain from the inside out. Its naturality follows from the
+same constant-on-the-merged-fibre exchange. Tensor coherence supplies
+the pentagon and units. Thus the formula defines the required
+pseudo-double category, not merely a multiplication on its objects.
+Horizontal pastes of cartesian restrictions remain cartesian: their
+fibre maps are bijective and their row comparisons are isomorphisms.
+
+\subsection{Applying an occurrence shape}
+For $t=(s,(b_i)_{i\in F_s})\in TB$, the fibre of $Tr:TE\to TB$ is
+$\prod_iE_{b_i}$. Define its row at a choice tuple $(e_i)$ to be
+$\bigotimes_iV_{e_i}$ and its augmentation to be
+\begin{equation}\label{eq:occaug}
+ \bigoplus_{(e_i)}\bigotimes_iV_{e_i}
+ \cong\bigotimes_i\bigoplus_{e_i}V_{e_i}
+ \xrightarrow{\otimes_i\epsilon_{b_i}}\bigotimes_i I\cong I.
+\end{equation}
+This defines $\Tt$ on objects. Its action on the native map
+\eqref{eq:aggregation}, at a target tuple $(e'_i)$, is
+\begin{equation}\label{eq:occmap}
+ \bigoplus_{\forall i\; (he_i=e'_i)}\bigotimes_iV_{e_i}
+ \cong\bigotimes_i\bigoplus_{he_i=e'_i}V_{e_i}
+ \xrightarrow{\otimes_i\gamma_{b_i,e'_i}}\bigotimes_iV'_{e'_i}.
+\end{equation}
+Each sum remains in the designated $b_i$-fibre. Formula
+\eqref{eq:rankmaps} is its two-position instance.
+
+For composites of maps, partition the source tuples by their intermediate
+tuple. Distributing this partition position by position gives the same
+tensor of coefficient composites as applying \eqref{eq:occmap} twice.
+Naturality of the distributor proves equality; totalling the formula and
+using the incoming augmentation equations proves \eqref{eq:occaug} is
+preserved. Pullback restrictions are preserved because their fibre
+bijections and invertible row maps remain so under finite tensor.
+
+The horizontal comparison splits a tuple of dependent pairs into the
+outer tuple and its dependent inner tuple. On coefficients it is the
+specified shuffle
+\[
+ \bigotimes_i(V_i\otimes W_i)
+       \cong\left(\bigotimes_iV_i\right)\otimes
+                   \left(\bigotimes_iW_i\right).
+\]
+To check its naturality, expand \eqref{eq:dependent} at every position in
+\eqref{eq:occmap}. Both routes sum over the same compatible pairs
+$(e_i,z_i)$ and apply $\beta_{e_i,z'_i}$ before $\alpha_{b_i,e'_i}$.
+All remaining exchanges are tensor bifunctoriality on disjoint factors
+or distributor naturality with a fixed target row. The augmentations
+are likewise inner-then-outer on either route. Three displays give the
+same block permutation of the same ancestor chains, proving the
+horizontal functor pentagon. The unit comparison removes the forced
+$I$ factors.
+
+Cartesianity of the polynomial unit gives one position; cartesianity
+of multiplication gives a bijection
+\[
+ F_{\operatorname{flat}(s,(s_i))}\cong\coprod_iF_{s_i}.
+\]
+These statements follow by evaluating the polynomial transformations
+on their generic labellings. Define $\bar\eta$ by the singleton row
+identification and $\bar\mu$ by addressed tensor flattening. Their
+underlying squares are pullbacks and their row maps are invertible,
+so they are cartesian. Naturality on \eqref{eq:occmap} is the same tensor
+of leaf aggregations on both sides. For horizontal compatibility of
+$\bar\mu$, both routes collect all outer row factors and all inner row
+factors in the same leaf order. The monad equations identify the leaf
+bijections, not just the number of leaves; tensor coherence completes
+the equations on decorated arrows. This proves every condition in
+Definition~\ref{def:lift} without referring to a content grade.
+
+These coherence arguments use addressed occurrences. Independent factors
+are tagged before equal values are substituted; histories and their leaf
+bijections determine the structural maps. Regular distributive coherence
+\cite{Laplaza} applies with those tags, including distinct unit variables
+for nullary nonzero alternatives before specialization to $I$.
+Nonstructural arrows move through structural maps only by naturality
+where incidences agree. Empty sums and products use absorption and unit
+coherence, not assumed uniqueness of arrows from $0$ or to $I$.
+
+\section{Content: exact recovery of the comma presentation}\label{sec:recovery}
+Receipt grades in Section~\ref{sec:paired} extend the result by tags
+carrying occurrence lists. The following test treats arbitrary comma
+content of that form of presentation: it constructs the content corners
+of Definition~\ref{def:corners} from maps of grades. Combined with the
+resource lift of Section~\ref{sec:resources}, it recovers the original Set
+law on those maps. Suppose $p:\Lcat\to\B$ is a global opfibration of grades with extension
+$d:\Lcat\to\B$, giving a valid one-sided comma content calculus
+\[
+ N(A,B)=(A\downarrow d_B).
+\]
+An object is $(Q,f:A\to dQ)$; a total grade arrow $m:Q\to Q'$ over
+$u$ gives a square over $(k,u)$ when $dm\,f=f'k$. Denote the chosen
+opcartesian arrow by $\kappa_{u,Q}:Q\to u_!Q$.
+The unit is a grade $U_B$ with body $\eta^L_B:B\to dU_B$.
+Dependent accumulation of $Q\in\Lcat_B$ and $R\in\Lcat_{dQ}$ is
+$Q\di R\in\Lcat_B$, with body
+$\mu^L_{Q,R}:dR\to d(Q\di R)$. These bodies need not be invertible.
+In particular composition of $(Q,f)$ then $(R,b)$ has grade
+$R\di b_!Q$ and body
+$\mu^L_{R,b_!Q}\,d\kappa_{b,Q}\,f$.
+
+The additional hypotheses below are stated in terms of the original
+arrows. Replacing them by existence of isomorphic grades would be weaker
+and would not suffice to identify the crossing maps.
+Assume cartesian lifts $c_{r,Q}:r^*Q\to Q$ over $r\in\J$, whose
+universal property tests all total grade arrows. Assume a natural
+transformation $\nu:d\Rightarrow Tp$, natural on all grade arrows, with
+\begin{equation}\label{eq:nulaws}
+ \nu_{U_B}\eta^L_B=\eta_B,
+ \qquad \nu_{Q\di R}\mu^L_{Q,R}
+                   =\mu_B(T\nu_Q)\nu_R.
+\end{equation}
+Require the following three tests:
+\begin{align}
+ \Delta_{r,Q}=(dc_{r,Q},\nu_{r^*Q}):d(r^*Q)
+       &\iso dQ\times_{TB}TE;\label{eq:display}\\
+ U&\text{ preserves cartesian display arrows, and}\notag\\
+ (c_{r,Q},c_{dc_{r,Q},R})
+       &\text{ accumulates to a cartesian arrow};\label{eq:cartalg}\\
+ v_!r_u^*Q&\iso r^*u_!Q
+       \quad\text{for every pure pullback of a display}.\label{eq:gradebc}
+\end{align}
+The last map is the canonical cartesian--opcartesian mate. The display
+isomorphism implies $dc_{r,Q}\in\J$. Equation~\eqref{eq:gradebc} does
+not restrict $u$ or $v$ to displays.
+
+\paragraph{The two transport tests are independent.}
+Even for finite surjections, with identity unit and multiplication bodies
+and display automatic, neither \eqref{eq:cartalg} nor \eqref{eq:gradebc} implies the
+other. For union grades on subsets of size at most three, cartesian
+accumulation holds but a base-change lift would have to cover four
+pairs across two fibres, and the mate fails. For grades of lists with
+a duplication counter, base change holds but multiplying restricted
+grades forces a duplicated letter to agree at both positions; restricting
+the product permits different letters, so cartesian accumulation fails.
+The companion gives both constructions and checks the one-sided laws
+\cite{TransportIndependence}.
+
+\begin{lemma}\label{lem:comma}
+These hypotheses provide the relative content corners of
+Definition~\ref{def:corners}, with occurrence $a_{(Q,f)}=\nu_Q f$.
+\end{lemma}
+\begin{proof}
+Lift $(Q,f)$ along $r$ using grade $r^*Q$ and body the second projection
+of $A_r=A\times_{dQ}d(r^*Q)$. A testing grade square factors uniquely
+through $c_{r,Q}$, even when its remaining edge is not a display.
+The source pullback then forces its left edge and body. This proves
+cartesianity of the actual content square. Equation~\eqref{eq:display}
+identifies its source with $A\times_{TB}TE$. Naturality of $\nu$ and
+\eqref{eq:nulaws} prove all of \eqref{eq:arity}.
+
+For a pure $u:B\to B'$ the lifted grade is $r^*U_{B'}\cong U_E$;
+its source is $B\times_{TB'}TE\cong B\times_{B'}E$ by cartesianity
+of $\eta$. Under the grade comparison the chosen cartesian arrow is
+the original $U(r):U_E\to U_{B'}$. Naturality of the unit body gives
+\[
+ dU(r)\,\eta^L_Ev=\eta^L_{B'}rv=\eta^L_{B'}u r_u .
+\]
+The other display coordinate is $\eta_Ev$ by the occurrence unit law.
+These are the two display coordinates of the lifted body, so it is
+$\eta^L_Ev$ and the pure pullback square is canonical.
+
+For horizontal stability let $(Q,f)$ be followed by $(R,b)$ and lift the
+last arrow along $r:E\to C$. Set $R'=r^*R$, $j=dc_{r,R}$ and
+$B'=B\times_{dR}dR'$ with projections $v:B'\to B$, $b':B'\to dR'$.
+The grade of the horizontal paste is identified over its original
+projection by
+\[
+ R'\di b'_!v^*Q\cong R'\di j^*b_!Q
+                    \cong r^*(R\di b_!Q).
+\]
+The first map is \eqref{eq:gradebc}; the second is the canonical factor
+from \eqref{eq:cartalg}. Their defining equations identify the pasted
+grade arrow itself as cartesian. For $a=\nu_Q f$, $c=\nu_Rb$, the
+source pullbacks compare by
+\[
+ A\times_{TB}TB'\cong A\times_{TTC}TTE
+                          \cong A\times_{TC}TE,
+\]
+using preservation of pullbacks by $T$ and then cartesianity of $\mu$
+at $r$. The second occurrence coordinate is flattening; the first display
+coordinate is the actual composite body, because the pasted square is a
+content square. This identifies the top content arrow with the direct
+lift, not just its occurrence image. All intervening left edges are in
+$\J$ by \eqref{eq:display}. Thus horizontal stability holds.
+\end{proof}
+
+\begin{corollary}[Recovery on the original maps]\label{cor:set}
+For the finite polynomial resource calculus of Section~\ref{sec:resources}
+and comma content satisfying \eqref{eq:nulaws}--\eqref{eq:gradebc},
+Theorem~\ref{thm:glue} defines composition on
+\[
+                       H(A,C)=(e_A\downarrow d_C).
+\]
+It is the independent Set interaction of \cite{O1}, including its native
+arrows, all pure balances, four structural comparisons and multiplication.
+\end{corollary}
+\begin{proof}
+For comma content, \eqref{eq:normal} identifies $\grade_N$ with precisely
+these comma categories and their pairs $(\alpha,\beta)$; no quotient of
+native arrows is taken. To identify the crossing completely, let $P$ lie
+over $\pi:E\to B$ and $Q\in\Lcat_B$. Put
+\[
+ \widehat P=L_{\nu_Q}P,\qquad \widehat Q=\pi^*Q,
+ \qquad \chi=\Delta_{\pi,Q}^{-1}.
+\]
+At $y\in dQ$ with $\nu_Q(y)=(s,(b_i))$, the context $\widehat P$
+has the independent choices and row tensor of \eqref{eq:occaug}.
+Its carrier is $dQ\times_{TB}TE$ and $\chi$ is its body into
+$d(\pi^*Q)$. Thus for $(Q,f)$ followed by $(P,g)$ the crossing is
+\begin{equation}\label{eq:setcut}
+ \left(f^*\widehat P,\ g_!\pi^*Q,\
+ e(f^*\widehat P)\longrightarrow e\widehat P
+    \xrightarrow{\chi}d(\pi^*Q)
+    \xrightarrow{d\kappa_{g,\pi^*Q}}d(g_!\pi^*Q)\right).
+\end{equation}
+All of $\pi^*Q$ is retained, whether or not $f$ reaches every part of it.
+
+For a grade arrow $m:Q\to Q'$ over $u$ and a decorated square with
+carrier $h$, the grade map is the opcartesian factor
+\begin{equation}\label{eq:nativegrade}
+ h_!\pi^*Q\longrightarrow\pi'^*Q',\qquad
+ c_{\pi',Q'}\widetilde m=m c_{\pi,Q}.
+\end{equation}
+Its companion context map is exactly \eqref{eq:occmap}, not a map chosen
+from $h$ alone. The body equation follows by applying the two coordinates
+of \eqref{eq:display}: they are $(dm,Th)$ applied to the old coordinates.
+For a pure middle $u$, the same factorization identifies the grade
+comparison with \eqref{eq:gradebc}; the body coordinates are
+$(d\kappa_{u,Q}y,Tv(t))$ on a choice $(y,t)$. These identify the
+product arrows and every generating balance of the independent law.
+
+The four rows of \eqref{eq:four} also agree, with their original marks.
+The content-unit row restricts the one-position comparison along
+$\eta^L_B$ and uses $U_E\cong\pi^*U_B$. The context-unit row uses
+forced singleton choices and $(\id_B)^*Q\cong Q$. The content-multiplication
+row restricts leaf regrouping along $\mu^L_{Q,R}$ and uses the comparison
+between $\pi^*Q\di(dc_{\pi,Q})^*R$ and $\pi^*(Q\di R)$. Its first
+coordinate is $\mu^L_{Q,R}(z)$, not $z$. The context-multiplication row
+uses the shuffle natural on \eqref{eq:dependent} and the comparison
+$(\pi\rho)^*Q\cong\rho^*\pi^*Q$. Each grade comparison is the canonical
+factor over its original projection. This is the complete component
+identification, including the ten pastings already proved for those
+components. Finally, for successive $(P,Q,f)$ and $(D,S,g)$ the new
+context and grade are
+\[
+                 P\st f^*\widehat D,
+                 \qquad S\di g_!\pi_D^*Q.
+\]
+The body is \eqref{eq:setcut} followed by the given content multiplication,
+so the original multiplication is identified as well.
+\end{proof}
+
+\subsection{Receipts satisfy the tests}\label{sec:receipts}
+The receipt calculus behind the two-resource merge (Section~\ref{sec:paired})
+extends to any extensive base with pullbacks and a cartesian monad. Take
+\[
+ \Lcat_B=\B/(TB),\qquad dQ=B+Q,\qquad
+ \nu_Q=[\eta_B,q:Q\to TB].
+\]
+Transport along $u$ postcomposes the label by $Tu$ and keeps $Q$;
+restriction along $r$ pulls the tag object back along $Tr$.
+The unit has tag object $0$. For $t:R\to T(B+Q)$ the accumulated grade
+has tag object $Q+R$ and label
+\begin{equation}\label{eq:receipts}
+                      [q,\mu_B(T\nu_Q)t]:Q+R\longrightarrow TB.
+\end{equation}
+Its body is coproduct reassociation. Grade maps act on their actual tag
+summands. For three stages the early tags are unchanged; the last-stage
+labels agree by associativity and naturality of $\mu$. Coproduct
+coherence proves the one-sided pentagon and units on tag maps, and
+relabelling commutes with these operations. This is a valid content
+calculus before any resource rig has been chosen.
+
+Extensivity and cartesianity of $\eta$ give
+\[
+ E+(Q\times_{TB}TE)\cong(B+Q)\times_{TB}TE,
+\]
+which is precisely \eqref{eq:display} and its unit instance.
+For accumulation, the old $Q$ summand pulls back directly. For the $R$
+summand, apply $T$ to this pullback and then use the cartesian square of
+$\mu$ at $r$. The result identifies restricted nested labels with the
+pullback of their flattened labels, over the \emph{same original} $R$.
+Consequently the accumulation comparison preserves its original projection
+and is cartesian. The pure mate is invertible because $T$ preserves the
+base pullback and transport keeps every tag. This verifies all three
+tests and justifies every receipt and grade map used in the opening
+composite. It also gives the content input for the following indexed
+example without altering the formulas.
+
+\subsection{Adaptive destructive diagnostics}\label{sec:diagnostic}
+A diagnostic can consume a specimen and still have to decide which
+assays should use the survivors. The worked example below uses
+finite planar trees with terminal content grades and tracks
+probability and cost on the resource side
+\cite[Secs.~2--3]{Casebook}. Corollary~\ref{cor:set} supplies the
+composition of tests with their result-dependent follow-ups.
+The replacement claim in this example uses a separate coupling and
+cost calculation.
+
+Three specimens $r_0,r_1,r_2$ initially share one hidden fair quality
+bit $q$. The screen consumes $r_0$. A low result gives a single
+continuation holding both surviving specimens; a high result gives two
+ordered continuations, one for assay $A$ on $r_1$ and one for assay
+$B$ on $r_2$. On the low branch the confirmation $C$ consumes $r_1$.
+A pass or fail sends $r_2$ to disposal; an uncertain result sends it
+to rescue assay $D$. The continuation at each hole receives its
+actual specimens. For example, the two high continuations do not
+receive two copies of the original bundle.
+
+\begin{center}\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Response law & $q=0$ & $q=1$\\
+\midrule
+$\Pr[\text{screen is high}\mid q]$&$1/4$&$3/4$\\
+$\Pr[A=1\mid q]$&$1/4$&$3/4$\\
+$\Pr[B=1\mid q]$&$1/8$&$7/8$\\
+$C$ (pass, fail, uncertain)&$(6,1,3)/10$&$(1,6,3)/10$\\
+$\Pr[D=1\mid q]$&$1/5$&$4/5$\\
+\bottomrule
+\end{tabular}
+\end{center}
+At a high result the resource calculation supplies one child witness
+at each actual hole. The weights multiply \emph{conditional on the full
+private prefix}, and the content calculation grafts both outcomes onto
+the screen node. Averaging happens after this product. In particular,
+writing $S_1$ for the high result, Bayes' formula gives
+$\Pr[q=1\mid S_1]=3/4$, and hence
+\[
+ \Pr[A=B=1\mid S_1]
+ =\tfrac14\,\tfrac14\,\tfrac18+\tfrac34\,\tfrac34\,\tfrac78
+ =\tfrac12.
+\]
+If a rule hides the shared bit before filling the two holes and
+multiplies their posterior marginals, it gives
+$(5/8)(11/16)=55/128$ instead, a deficit of $9/128$ on this public
+observation. Grafting retains the two labelled outcomes; the retained
+private input supplies the dependence between them. The calculation
+does not give the running program access to $q$ or a conditioning
+oracle.
+
+The casebook compares two implementations of the same controller.
+Each nondisposal method in the reference implementation adds one fair
+private audit bit. At an outcome of candidate weight $p$, the two
+reference witnesses have weight $p/2$ each. Forgetting the audit bit
+is a native map: summing its fibre recovers $p$, its bodies agree
+after projecting away private audit state, and its cost can decrease.
+For the high branch, for example, both child costs contribute:
+\[
+ (2,1)+(3,1)+(4,2)=(9,4)
+ \quad\text{versus}\quad
+ (4,2)+(5,2)+(7,3)=(16,7).
+\]
+The low-conclusive and low-rescue masses are $7/20$ and $3/20$,
+and the high mass is $1/2$. Their candidate cost pairs are $(7,3)$,
+$(13,5)$, and $(9,4)$, versus $(12,5)$, $(21,8)$, and $(16,7)$
+for the reference. Consequently the expected costs are
+$(89/10,19/5)$ and $(307/20,129/20)$. These are comparisons of
+whole-run costs; they do not assert equality of exact-cost laws.
+
+The composition theorem supplies the addressed grafting and its action
+on the original maps. The casebook's separate comparison couples the
+implementations on related full private inputs, preserves public causal
+trees and actual returned capabilities, and bounds candidate cost
+coordinatewise for its admitted finite closing clients
+\cite[Sec.~3]{Casebook}. Here the three-specimen calculation checks
+one controller and one shared-quality initialization. The broader
+comparison needs its own assumptions on initialization, ownership,
+local kernels and client observations.
+
+\section{A change of stage that erases colours and merges witnesses}\label{sec:indexed}
+Theorem~\ref{thm:glue} also applies when interfaces have two stages.
+A transition between them can erase occurrence colours and merge several
+rows into one. The resource lift must act on that noninvertible
+transition, including its coefficients; the receipt construction of
+Section~\ref{sec:receipts} supplies the content corners on the same base.
+Let $\B$ be presheaves on $0\to1$, written
+$X_1\to X_0$. Every natural transformation is pure; displays are the
+pointwise finite-fibre maps. Fix a nontrivial group $G$, for example the
+two-element group, and define
+\begin{equation}\label{eq:coloured}
+ (TX)_1=\coprod_{n\geq0}(G\times X_1)^n,
+ \qquad (TX)_0=\coprod_{n\geq0}X_0^n.
+\end{equation}
+Restriction forgets the colours and restricts each entry. At stage 1 the
+unit uses colour $1_G$, and multiplication concatenates words while
+multiplying an outer colour with each inner colour in that order.
+At stage 0 these are the ordinary list operations. Group associativity
+and list concatenation prove the monad laws; erasure commutes with them.
+
+This is a polynomial internal to the presheaf category. Its shape object
+is $\coprod_nG^n\to\mathbb N$, with restriction recording length.
+Positions are a shape together with an index $1\leq i\leq n$; restriction
+keeps the index. Over a generalized shape at stage $c$, its position
+object is a coproduct of $n$ copies of the representable $yc$, so its
+labellings give precisely the stagewise formula \eqref{eq:coloured}.
+The polynomial is not a constant Set polynomial: its length-one shapes
+restrict by $G\to1$. Its unit and multiplication have bijective addressed
+position maps at each stage. Their naturality squares are therefore
+pullbacks, and $T$ preserves pullbacks stagewise. Finite products of
+finite fibres give $T\J\subseteq\J$.
+
+Use the same symmetric rig at both stages. A decorated display now
+includes a stage-1 and a stage-0 decorated display and a structural
+square between them of the form \eqref{eq:aggregation}. That square may
+merge rows and have noninvertible coefficient maps. A map of such objects
+must commute on those coefficient maps, not just on the presheaf carriers.
+Horizontal composition uses \eqref{eq:dependent} stagewise.
+For restriction along a natural transformation, take the two stagewise
+cartesian lifts and induce their connecting square by the lower lift's
+universal property. A test square factors at each stage; restoring the
+lower cartesian arrow proves naturality of the factors. Thus the square
+is cartesian in the category of diagrams, and these cartesian squares
+remain stable under horizontal pasting.
+
+Lift $T$ by coloured occurrence products at stage 1 and uncoloured
+products at stage 0. On the structural restriction use
+\eqref{eq:occmap} in the same positions, with the given aggregation
+maps, while forgetting their colours. The composite-fibre calculation
+for that formula proves functoriality on diagrams. Naturality of the
+shuffle on \eqref{eq:dependent} makes the horizontal comparison a map
+of diagrams. Erasure preserves the leaf bijections, so singleton and
+flattening squares likewise commute with the structural restriction.
+Their cartesianity and preservation of cartesian restrictions follow
+from the stagewise factorization just proved. Only \emph{after} these
+naturality checks are the remaining equations detected by stage
+evaluation. This verifies Definition~\ref{def:lift} internally.
+The receipts of Section~\ref{sec:receipts} provide content: all their
+pullbacks, sums and monad maps are presheaf maps, so the proof of the
+three tests applies without modification.
+
+\subsection{A cut whose restriction is visible}
+Let $B$ be terminal, and let the context carrier restrict by
+$E_1=\{1,2\}\to E_0=\{*\}$. Upstairs give both rows weight $k=\mathbb Q$;
+downstairs give the single row weight $W=k^2$. Both total augmentations
+are the sum of coordinates. The structural aggregation $k\oplus k\to W$
+can be either $1_W$ or $p(a,b)=(a+b,0)$. Both define lawful internal
+contexts, but they are not isomorphic: an isomorphism of diagrams would
+preserve the rank of the structural map.
+
+Choose one receipt at each stage, restricting to the other, with upstairs
+label $[(g,*),(1_G,*)]$ for $g\ne1_G$ and downstairs label $[*,*]$.
+Use the generic content body $\id_{dQ}$ and identity context tail. At
+that receipt the lifted grade has four upstairs tags, one for each
+$(i,j)\in\{1,2\}^2$, and one downstairs tag. Its restriction is the
+actual fold $4\to1$. The crossed context has four upstairs rows of
+weight $k$ and one downstairs row of weight $W\otimes W$.
+Formula~\eqref{eq:occmap} makes its structural coefficient map
+\[
+ k^4\cong W\otimes W
+       \xrightarrow{\ 1\ \text{or}\ p\otimes p\ }W\otimes W.
+\]
+The ranks are four and one. In particular the $(2,2)$ input goes to
+$e_2\otimes e_2$ in one case and $e_1\otimes e_1$ in the other.
+The grade restriction and colour erasure are identical. Thus even the
+same lists of stage objects do not determine the internal crossed object.
+There is no isomorphism of presheaf contexts identifying these two
+restrictions, even allowing arbitrary invertible changes of coefficient
+coordinates. The calculation evaluates the actual cross-stage restriction
+on coefficient maps and receipt tags.
+
+\subsection{Changing the occurrence parameter}
+Erasing the occurrence colours while leaving the two stages in place
+defines a noninvertible change of the input calculus. The computation
+in Appendix~\ref{app:colour} distinguishes this change of parameter
+from both the stage restriction above and a pure change of interface.
+
+\subsection{Why this does not permit arbitrary position restriction}
+Polynomial positions and context witnesses have different jobs. In this
+example the positions of a fixed shape restrict bijectively; its witness
+rows need not. Pointwise finiteness alone cannot replace that position
+condition. In the discrete rig $(\mathbb N,+,\cdot)$, let a single row
+of weight $1$ map to the first of two rows of weights $(1,0)$. It is a
+valid augmented additive transfer: its two fibre conditions are $1=1$
+and $0=0$. But tensoring all witness rows would demand a map $1\to0$
+after restriction. No such arrow exists in the discrete rig.
+The construction avoids this obstruction by multiplying over polynomial
+positions and using directed transfer for witnesses separately in each
+position. An indexed norm doctrine with additional structure is not ruled
+out; it is not supplied by finite fibres alone.
+
+\section{What a crossing can force, and what it cannot}\label{sec:recognition}
+Theorem~\ref{thm:glue} constructs a law from independent inputs.
+This section asks which tests a given crossing forces. The comparison
+uses the original projection maps, so it starts with the comma
+presentation of Section~\ref{sec:recovery} and marks those maps.
+
+In the comma setting retain the one-sided calculi, chosen actual relative
+grade lifts and \eqref{eq:nulaws}, but do not assume
+\eqref{eq:display}--\eqref{eq:gradebc}. Call a crossing \emph{marked} here
+if its generic output uses the complete carrier $dQ\times_{TB}TE$, the
+grade $\pi^*Q$ with its original projection $c_{\pi,Q}$, and an invertible
+body $\chi$ preserving both display coordinates. Its unit and accumulation
+comparisons must preserve the original unit and accumulated
+projections, together with the addressed context coordinates. Its
+pure-middle comparison must preserve the original commuting
+cartesian--opcartesian square and its factorization equations. These
+requirements do not simply declare the comparisons canonical; they give
+equalities from which that fact can be proved.
+
+Let $\mathcal D\subseteq\J$ consist of projections realized, up to
+isomorphism, by admitted contexts.
+\begin{proposition}[Recognition with the original marks]\label{prop:recognition}
+A marked crossing forces \eqref{eq:display} and \eqref{eq:cartalg} on
+$\mathcal D$, and invertibility of the canonical mate
+\eqref{eq:gradebc} for every pure pullback of a realized projection.
+The marked grade comparisons are the canonical factors.
+\end{proposition}
+\begin{proof}
+Preservation of the two coordinates gives $\Delta_{\pi,Q}\chi=1$.
+As $\chi$ is invertible, $\Delta_{\pi,Q}=\chi^{-1}$, proving display.
+The original unit arrow factors through the chosen cartesian lift;
+so does the accumulation of the original cartesian pair. The projection
+marks make the claimed structural comparisons factors of exactly those
+same arrows. Cartesian uniqueness identifies each with the canonical
+factor, whose invertibility proves cartesian preservation. The two
+factorization equations for pure-middle balance similarly identify its
+comparison with the canonical mate, so that mate is invertible.
+\end{proof}
+If the body is not invertible, the coordinate equation proves only that
+$\Delta$ has a section. If a display cannot be realized, no generic
+crossing tests it. This proposition therefore does not recognize an
+arbitrary unmarked law, nor reconstruct the independently lifted monad
+from one. It is a statement about preservation of specified evidence.
+
+For the Set resource calculus, the realized class can be determined.
+Assuming choice, a nonempty finite fibre is always realizable: put $I$
+at one point, $0$ at the others, and augment using the additive unit maps.
+An empty fibre is realizable exactly when $\V(0,I)\ne\varnothing$.
+Consequently
+\begin{equation}\label{eq:realized}
+ \mathcal D=
+ \begin{cases}
+ \text{finite-fibre members of }\J,&\V(0,I)\ne\varnothing,\\
+ \text{finite-fibre surjections in }\J,&\V(0,I)=\varnothing.
+ \end{cases}
+\end{equation}
+Both classes are closed under pullback and composition. A fibre of $Tf$
+is a finite product of fibres of $f$, including a singleton for the empty
+product, so $T$ preserves these classes. Using $\mathcal D$ in the
+sufficient theorem leaves every admitted context and every native map
+between them unchanged. It restricts the required lifts, not the maps
+against which their cartesianity is tested. Thus the same tests are
+sufficient for that entire context calculus and necessary for its marked
+crossing, with the stated scope.
+
+\subsection{A relative construction need not extend globally}
+There is a concrete obstruction to replacing relative lifts by global
+co-crossedness. Define $Z(X)=\varnothing$ for $X=\varnothing$ and
+$Z(X)=1$ otherwise. The endofunctors $\id,Z$ form a monoid under
+composition and give a constant discrete grading, with extension by
+evaluation. It is a one-sided content calculus. With $T=\mathsf{List}$,
+assign the identity grade the singleton occurrence and the $Z$ grade the
+empty occurrence. Unit and substitution hold, including at the empty set.
+Grade lifts retain their grade; their mates and cartesian accumulation
+comparisons are automatic.
+
+Display holds along every surjection: its source and target have the
+same inhabitation status, and the only list above an empty list is empty.
+It fails for $\varnothing\to1$ on the $Z$ grade, where display would
+require an isomorphism
+\[
+        \varnothing\longrightarrow
+ Z(1)\times_{\mathsf{List}(1)}\mathsf{List}(\varnothing)=1.
+\]
+More directly, let $i_0,i_1:1\to2$ select different points. Compose the
+$Z$ arrow $1\rightsquigarrow1$ with pure $i_0$. Lifting this composite
+along $i_1$ gives source $1\times_{Z(2)}Z(1)=1$. Lifting $i_0$ first
+along $i_1$ gives source $\varnothing$, and then lifting the $Z$ arrow
+along $\varnothing\to1$ leaves source $\varnothing$. The horizontal
+paste is not cartesian. This violates the global hypothesis of the
+corners construction, but does not affect the law on finite-fibre
+surjections. Both $i_0$ and $i_1$ are still pure maps in its tensor.
+
+The realized-class distinction is also substantive. In the discrete rig of nonnegative real numbers, an augmentation
+requires the weights to sum to $1$. There is no arrow $0\to1$, so only
+nonempty fibres can be augmented. The relative construction above applies. In
+finite-dimensional vector spaces with all linear maps, $0\to k$ exists,
+so the same content fails the marked display test on a realizable empty
+fibre. These are different context doctrines, not contradictory answers
+to one unchanged problem. The obstruction applies to the marked normal
+form, not to every possible representation of an interaction.
+
+\subsection{The claimed boundary}
+The output is a construction on native hom categories, not a free or
+initial object among all assemblers. Pullback uniqueness, the local
+category pullback \eqref{eq:pullcat}, and the pseudocoend each give a
+specific universal property. None supplies a category of all mixed
+realizations with an initial object. Such a statement would need its own
+comparison morphisms and proof.
+
+Likewise, the occurrence assignment in \eqref{eq:arity} is strict on
+native cells: arbitrary arity-changing content maps are not included.
+The theorem does not supply shared-choice semantics, feedback, infinite
+tensor products, lax noninvertible distributors, arbitrary internal
+position maps, or a higher-categorical bispan enhancement. The coloured
+presheaf example establishes a particular internal generality with
+noninvertible witness restriction and noninvertible parameter change;
+it does not erase these restrictions. The Set recovery and marked
+recognition have different conclusions and have been kept separate
+for that reason.
+
+\section{Conclusion: connections and open questions}\label{sec:conclusion}
+The composition rule can be reused across compatible models. Check the occurrence
+lift on resources, check the relative corners on content, and check the
+pure pullback condition where a change of interface can slide. Theorem~\ref{thm:glue}
+then describes how to combine the programs and how that combination acts on
+their maps. The two-resource example (Section~\ref{sec:paired}) shows what
+this preserves: the four addressed receipts, the noninvertible comparison
+that folds them, and the two distinct coefficient actions. The indexed
+example (Section~\ref{sec:indexed}) and the parameter computation
+(Appendix~\ref{app:colour}) test two different operations: restricting
+between stages and changing the occurrence model on the same base.
+
+\paragraph{What can be reused in applications.}
+The project's \emph{Applications and Boundaries of Result-Dependent
+Interaction} casebook builds on the finite Set interaction, framing,
+language and comparison results of O1--O5
+\cite[Sec.~2]{Casebook}. Corollary~\ref{cor:set} identifies the particular
+piece supplied here: the same Set crossing, composition and native comma
+cells as in O1. The subsequent application hypotheses are still needed.
+For instance, the adaptive diagnostics case uses a comparison that
+preserves latent-state correlation while observed evidence chooses
+subsequent actions (Section~\ref{sec:diagnostic};
+\cite[Sec.~3]{Casebook}). The eager/lazy random-function
+case uses a conditional uniformity invariant, an entire-run coupling,
+and a separate cost calculation \cite[Sec.~5]{Casebook}. The crossing
+composes the underlying arrows; the comparisons use application-specific
+arguments. The robot example in Appendix~\ref{app:robot} gives a
+different test of that division: an acquired lock supplies a journal
+and an undo continuation, while a busy result supplies neither.
+The interference and observation assumptions decide when those
+undo steps preserve outside changes and appear atomic to a client.
+
+The linear dataflow case gives a closer reuse test
+\cite[Sec.~9]{Casebook}: a whole family of augmentation-preserving
+linear maps over the identity carrier has different effects on the
+second channel. Its rank-one member and the identity remain different
+as mixed cells even with terminal-grade identity content. The case
+declares an external linear test; a native closing map to the augmented
+unit can see only the augmentation. Thus the relevance of the extra
+coefficient data depends on the observation interface. In
+Section~\ref{sec:paired} the test is likewise an inspection of the
+coefficient, not a claim about all native closing contexts.
+
+\paragraph{Two model-building boundaries.}
+A Lean result in the same project rules out a discrete graded
+presentation of the Boolean continuation monad with tag-preserving
+naturality under pure postcomposition
+\cite{DiscreteObstruction}. It detects failure of the pullback comparison
+used by such presentations, not an obstruction to all nondiscrete
+gradings. An extension in that direction would have to specify different
+content grades and first test whether their proposed arity and corners
+satisfy Definition~\ref{def:corners} on the actual display class.
+
+Continuous outcomes pose a different problem. The casebook constructs
+two total dependent Borel kernels with an atomless output marginal and
+proves that a normalized finite family of deterministic histories cannot
+realize that marginal exactly \cite[Sec.~7]{Casebook}. This leaves the
+forward-generative example intact and establishes no gluing theorem for
+continuous probability. A concrete next test would be to specify a base
+and common arity for this example, then check whether its kernels and
+their native maps admit the proposed cartesian lifts. If conditional
+transport is used, it must preserve the required measurable choices
+and close under the accumulation being claimed.
+
+\paragraph{What remains to be checked in Lean.}
+The general gluing theorem is a written result \cite{Gluing}.
+The broader project's Lean formalization is ongoing. It includes construction of a mixed category
+\emph{from} a supplied law, a downstream step. To certify the result here,
+the formal development needs to construct the decorated and content maps
+of the crossing, prove that each pure-middle comparison is a balance, and
+verify the coherence pastings before invoking a supplied-law construction.
+Appendix~\ref{app:reuse} links the current verification evidence.
+
+\appendix
+\section*{Appendices}
+Appendix~\ref{app:local} proves the resource equations behind the
+crossing; Appendix~\ref{app:coherence} checks the pure balances and ten
+pastings. Appendix~\ref{app:parameters} defines compatible input changes
+and computes colour erasure. Appendix~\ref{app:reuse} locates the source,
+examples, and verification evidence. Appendix~\ref{app:robot} works through
+a finite robot transaction with interference and a scoped observer.
+
+\section{The local occurrence equations}\label{app:local}
+The action $L_aP=a^*\Tt P$ in \eqref{eq:L} pulls a lifted resource display
+back along an occurrence map. The following calculation proves its
+comparison equations \eqref{eq:IU}--\eqref{eq:middle} using only the
+decoration-side lift of Definition~\ref{def:lift}. For a decorated square over $(h,u)$ and
+Kleisli arrows satisfying $Tu\,a=a'k$, apply $\Tt$ to the square and
+precompose with the cartesian arrow $a^*\Tt P\to\Tt P$. Factoring
+through $a'^*\Tt P'$ gives the action of $L$; its carrier coordinates
+are $(k,Th)$. Cartesian uniqueness proves its identity and composition
+laws on actual decorated maps.
+
+For $K$ the construction is
+\[
+ a^*\Tt(b^*\Tt P)
+ \cong a^*(Tb)^*\Tt^2P
+ \cong (Tb\,a)^*\mu^*\Tt P
+ \cong L_{b\bullet a}P.
+\]
+The first comparison uses preservation of cartesian squares and the
+second the cartesian square of $\bar\mu_P$. Its projection into $TE$
+is Kleisli flattening, proving the typing equation after
+\eqref{eq:middle}. The analogous construction with $\bar\eta_P$ gives
+$U$. For $F$, use the horizontal compositor of $\Tt$ and observe that
+restriction of $\Tt P\st\Tt S$ along $a$ is the horizontal paste of
+restriction of $\Tt P$ along $a$ and of $\Tt S$ along $a_P$.
+Horizontal cartesian stability makes that paste the required lift.
+The horizontal unit comparison similarly gives $I$. Each construction
+is natural in every square in its input diagram.
+
+There is a reliable equality test for their composites: restore the
+cartesian arrows from each restriction to the original display. The two
+routes in associativity of $K$ then end by
+$\bar\mu_P\Tt\bar\mu_P$ and $\bar\mu_P\bar\mu_{\Tt P}$.
+Naturality moves intervening restriction arrows to the common source,
+and the monad equality identifies those endings. The two $K$ unit
+identities similarly use the two monad unit equalities. The restored
+$F$ associativity diagram is the horizontal functor pentagon of $\Tt$;
+its units are the functor unit equations.
+
+For the mixed equation \eqref{eq:middle}, before restriction along
+$(Tb)a$ the restored square is
+\[
+ \begin{array}{ccc}
+ \Tt^2(P\st S)&\longrightarrow&\Tt^2P\st\Tt^2S\\
+ {\scriptstyle\bar\mu_{P\st S}}\downarrow&&
+      \downarrow{\scriptstyle\bar\mu_P\st\bar\mu_S}\\
+ \Tt(P\st S)&\longrightarrow&\Tt P\st\Tt S.
+ \end{array}
+\]
+The top arrow is the composite double-functor comparison. This square
+is exactly the horizontal-composition axiom for the vertical double
+transformation $\bar\mu$. Its horizontal-unit variant uses the unit
+axiom of that transformation. Replacing $\bar\mu$ by $\bar\eta$
+gives compatibility of $F,I$ with a pure occurrence unit. Cancellation
+through the final cartesian arrows proves the original equations in
+$\D_1$. In particular no faithful functor from decorations to carriers
+has been assumed.
+
+\section{Descent and all ten pastings}\label{app:coherence}
+The four comparisons in \eqref{eq:four} were described on
+identity-tail representatives. They must respect the pure balances
+that change the middle interface, and they must satisfy the ten
+pseudodistributive pastings. A carrier bijection alone does not
+identify the maps in either calculation.
+
+An internal tail in a string of contexts can be moved by the invertible
+balance
+\[
+ [(P,g),(S,f)]\cong[(P,\id),(g^*S,fv)],
+\]
+where $v$ is the pullback map to the carrier of $S$. A tail next to content
+moves by pure precomposition; the last tail remains a pure output action.
+These are isomorphisms in a category-valued pseudocoend. They reduce
+objects to the representatives used in \eqref{eq:four}, not to equal
+objects in a set quotient. Naturality on product arrows follows on
+content from \eqref{eq:factor} applied to the pasted square, and on
+contexts from naturality of the local occurrence comparisons.
+
+The remaining balance checks have three seam types. At an $N|N$ seam,
+inserting a pure $u$ puts a pure column between two content columns.
+Cutting on either side gives the same three-column paste; the middle
+cartesian square is the canonical pure pullback. Its factor is
+\eqref{eq:mate}. Horizontal associativity followed by cartesian uniqueness
+identifies the content routes. On contexts this is associativity of $K$
+with middle Kleisli arrow $\eta u$, followed by
+$U_u:L_{\eta u}P\cong u^*P$ for the display $P$ at that seam.
+
+At an $N|M$ seam, the pure terminal column can instead restrict the first
+display. The comparison is exactly the defining mate square. In a
+vertical stack, the pullback of the composite display is the vertical
+paste of its pullbacks; in a horizontal string, the pure column pastes
+with the final content column. After restoration and unbending, both
+routes are the same content square. On contexts these statements are
+respectively compatibility of $U$ with $F$, and the $K$ composition law
+for a terminal pure arrow, together with cartesian preservation by $\Tt$.
+
+At an $M|M$ seam, moving the tail is the displayed slide to $g^*S$.
+Interchange with its pure pullback square identifies the two large
+content diagrams, and cartesian cancellation identifies the factors.
+On contexts this is naturality of $F$ for that cartesian restriction,
+using $L_{\eta g}\cong g^*$. Endpoint versions are the first and last
+slides or output transport. Consecutive slides compose by mate pasting;
+disjoint slides commute by functoriality. This proves descent of all four
+comparisons to the relative tensors, including unrestricted forward tails.
+
+Walker gives equivalent presentations and a smaller coherence test
+\cite[Thm.~5.0.1 and Sec.~5.3]{walker}; the full list is retained here
+to identify the original constraints. For completeness, the following
+table uses C1--C8 of \cite[Def.~4.1]{GL} and the derived pastings
+C9--C10 of \cite[App.~A]{GL}, with their $S=N$ and $T=M$.
+Its equations are understood on the common representative, with the
+canonical restriction and bracketing comparisons inserted. The table is
+an index of proof obligations, not a substitute for the cancellation and
+local arguments that discharge them.
+\begin{center}\small
+\begin{tabular}{@{}cp{.27\linewidth}p{.59\linewidth}@{}}
+\toprule
+&Restored content rectangle&Decorated equality\\\midrule
+C1&Three columns, one row&Associativity of $K$, from the two monad multiplications on $\Tt^3P$.\\[3pt]
+C2&Left unit column&Left unit of $K$, using one monad unit identity.\\[3pt]
+C3&Two columns, identity row&Horizontal-unit axiom of $\bar\mu$, comparing flattening with $I$.\\[3pt]
+C4&Both units&Horizontal-unit axiom of $\bar\eta$.\\[3pt]
+C5&Two columns, two rows&Equation~\eqref{eq:middle}, the horizontal-composition axiom of $\bar\mu$.\\[3pt]
+C6&Identity column, two rows&Horizontal-composition axiom of $\bar\eta$, identifying $F$ at a pure unit with ordinary restriction composition.\\[3pt]
+C7&One column, three rows&Associativity of $F$, from the horizontal compositor equation of $\Tt$.\\[3pt]
+C8&Final identity row&Right unit of $F$, with the corresponding horizontal unitor.\\[3pt]
+C9&Right unit column&Right unit of $K$, using the other monad unit identity.\\[3pt]
+C10&First identity row&Left unit of $F$, with the other horizontal unitor.\\\bottomrule
+\end{tabular}
+\end{center}
+For C5, take two consecutive content columns $n,m$ and two display
+rows $P,S$, the latter with carriers $E\to B$ and $F\to E$. One route compares the horizontal pastes before the vertical paste;
+the other compares the vertical pastes before the horizontal paste. On content the comparisons restore to the
+same outer cartesian square: the two-by-two paste over $F\to B$ with
+bottom $nm$. Both routes retain the original source projection and the
+final occurrence projection to $TF$, with the nested occurrence
+coordinates flattened by $\mu$. These coordinates match the boundaries;
+cartesian uniqueness in the content calculus identifies the cells.
+On resources, restoring the restriction identifies the comparison with
+the horizontal-composition square for $\bar\mu$ displayed in
+Appendix~\ref{app:local}; the two routes are precisely
+\eqref{eq:middle}. Equality here is on decorated maps, not a consequence
+of equality of carrier coordinates.
+
+For each content entry, fill the indicated rectangle from the lower
+right. A comparison of a subrectangle, whiskered and then compared on the
+whole rectangle, satisfies the same equation
+$C\,t=\text{restored paste}$ as direct comparison of the whole rectangle.
+Interchange and naturality of the horizontal associator justify this
+equality before cancellation. Empty rows are vertical identities; empty
+columns are horizontal identities on displays. When bracketings differ,
+the bottom and right one-sided associators and unitors have the same
+composite by their pentagon and triangles. Thus cartesian uniqueness
+proves each content equality, including inverse orientations.
+Appendix~\ref{app:local} proves each decorated equality.
+
+The preceding seam checks transport these component equations to all
+representatives. Rebracketing iterated pseudocoends represents the same
+multiply pseudobalanced cocone, so its associators are precisely the
+slides already treated. Interchangers for disjoint slots are naturality
+squares, not additional coefficient equations. Equality of components
+on all objects is equality of modifications. Finally equality of both
+native components is equality in $\grade_N$, and the equivalence
+\eqref{eq:normal} reflects it. This completes the ten-pasting proof.
+
+\section{Changing the independent inputs}\label{app:parameters}
+A change of resource or content model can be compared before or after
+the crossing \eqref{eq:cross}. This appendix specifies the maps of
+inputs for which those two routes agree up to the stated comparison.
+A compatible input map from unprimed to primed data consists of three pieces.
+First, a pullback-preserving $V:\B\to\B'$ takes $\J$ into $\J'$, and
+$\theta:VT\to T'V$ is cartesian on displays and satisfies
+\[
+ \theta V\eta=\eta'V,\qquad
+ \theta V\mu=\mu'V\,(T'\theta)(\theta T).
+\]
+Second, a pseudo-double functor $D:\D\to\D'$ over $V$ preserves
+carriers and codomain-cartesian squares, and a vertical double
+transformation $q:D\Tt\to\overline{T'}D$ over $\theta$ has cartesian
+display squares and satisfies
+\[
+ qD\bar\eta=\bar\eta'D,\qquad
+ qD\bar\mu=\bar\mu'D\,(\overline{T'}q)(q\Tt).
+\]
+Third, a strong pseudofunctor $G:N\to N'$ over $V$ on objects has a
+compatible invertible pure icon $G\pure\cong\pure'V$. Its induced
+functor on bent squares preserves the specified content cartesian squares,
+and $a'_{Gn}=\theta_BVa_n$. These data compose by ordinary functor
+composition and pasted transformations and icons. Their equations are
+stable under this composition; cartesian squares paste. Fixing bracket
+conventions gives a category of such inputs.
+
+The induced context functor takes $(P,g)$ to $(DP,Vg)$. Its strength is
+cartesian preservation followed by the horizontal compositor of $D$.
+A relative tensor representative with middle $B$ goes to one with middle
+$VB$, and its balance along $u$ goes to the balance along $Vu$.
+The comparison between the two orders of crossing and changing inputs
+has decorated component
+\[
+ D(a_n^*\Tt P)\cong(Va_n)^*(D\Tt P)
+ \cong(Va_n)^*\theta_B^*(\overline{T'}DP)
+ \cong L'_{a'_{Gn}}DP.
+\]
+Its content component compares $GC_r(n)$ with $C'_{Vr}(Gn)$ and then
+transports along $Vg$. Their carrier maps agree: both are the specified
+pullback comparison, with the occurrence projection transported by
+$\theta_E$. This is where cartesianity of $\theta$ and $q$, rather than
+invertibility of $\theta$ itself, is needed.
+
+Restoring the content cartesian squares proves naturality on
+\eqref{eq:factor}; the pure icon and opcartesian factorization prove it
+on \eqref{eq:mate}. For the four comparisons the decorated equations
+are respectively preservation of the occurrence unit, horizontal unit,
+occurrence multiplication and horizontal compositor. On content the
+restored squares are the images of the same unit, identity, horizontal
+paste and vertical paste, hence their factors agree. For successive input
+maps, the decorated comparison restricts the pasted $q$, while the
+content comparison has the same restored projection as the paste of the
+two comparisons. This proves compatibility with composition and identity,
+and therefore the asserted strong map of composite calculi. No mixed-law
+map was assumed as input. The colour-erasure map of Section~\ref{sec:indexed}
+is a noninvertible instance of exactly this specification.
+
+\subsection{A computed change of parameter}\label{app:colour}
+A change of occurrence model can forget a job's colour while preserving
+its address. Work over two-stage presheaves \(X_1\to X_0\), with a
+single symmetric rig of coefficients at both stages. The monad \(T\)
+forms coloured lists at stage~1 and ordinary lists at stage~0, as in
+\eqref{eq:coloured}. Let \(T'\) form ordinary lists at both stages.
+Define \(\theta:T\to T'\) by forgetting colours at stage~1 and acting
+identically at stage~0. Erasure commutes with unit and concatenation,
+including multiplication of nested colours before erasure, so $\theta$
+is a monad map. Its naturality square at a carrier map is a pullback:
+given the coloured image word and an uncoloured lift, give each entry
+of that lift the colour of the corresponding image position. This
+constructs the unique coloured lift. The comparison on decorated
+displays retains the row objects and uses the identity row maps under
+this fibre bijection; hence it preserves the shuffle, unit and
+flattening. On content the comparison postcomposes receipt labels
+with $\theta$, keeping their tag maps and bodies. The same pullback
+argument identifies the relative lifts over their original projections.
+Thus this is an input map of Appendix~\ref{app:parameters}, with
+identity base and decorated-display functors.
+
+For the generic body of Section~\ref{sec:indexed}, the upstairs cut at
+the receipt has four elements
+\[
+ (q,[(g,i),(1_G,j)])\longmapsto(q,[i,j]),
+ \qquad i,j\in\{1,2\}.
+\]
+The formula is at once the carrier comparison and the tag comparison
+over the receipt. It is bijective on this fibre and acts by the identity
+on each coefficient $k\otimes k$. Downstairs the comparison is the
+identity. Thus the comparison is invertible for this cut even though
+the input change is not: the words $[(g,*)]$ and $[(1_G,*)]$ have the
+same image.
+
+To see naturality on noninvertible native maps, take the source
+display with upstairs two $k$-rows and downstairs one $W=k^2$-row,
+with the structural coefficient identification $k\oplus k\cong W$.
+Fold it onto a display with one $W$-row at both stages and identity
+restriction. Take the aggregation upstairs and downstairs respectively
+to be $(\gamma,\gamma)$, under the displayed identification, with
+$\gamma=1_W$ or $\gamma=p$ from Section~\ref{sec:indexed}. These are
+maps of diagrams: the source structural coefficient identification
+intertwines the two copies of $\gamma$, and both preserve the sum
+augmentation. In either order of applying the crossing and forgetting
+colours, the cut sends the four upstairs choices to one choice,
+the four upstairs tags $q_{ij}$ to one tag, and the sole downstairs
+tag to itself. The coefficient map from the four upstairs rows is
+\[
+ k^4\cong W\otimes W\xrightarrow{\ \gamma\otimes\gamma\ }W\otimes W .
+\]
+It sends the $(2,2)$ input to $e_2\otimes e_2$ for $\gamma=1_W$ and
+to $e_1\otimes e_1$ for $\gamma=p$. The downstairs map is the same
+tensor $\gamma\otimes\gamma$ on its sole row. Reindexing along $\theta$
+changes neither calculation; it removes colours, not addresses.
+The stage restriction is a different map, with four source tags
+upstairs and one downstairs. A pure middle balance is different again:
+it moves a map of interfaces inside a single calculus. This witness
+compares two calculi on the same base, with no pure-middle map inserted.
+
+\clearpage
+\section{Reuse, sources and verification status}\label{app:reuse}
+This guide locates the input tests for reuse and separates the written
+construction from the related checked results. Theorem~\ref{thm:glue}
+accepts a pullback base, display class, cartesian occurrence monad, lifted
+decorated calculus and relative content corners; it returns the law
+\eqref{eq:cross} on native maps. Definitions~\ref{def:lift} and
+\ref{def:corners} are the input contracts, and Appendices~\ref{app:local}--\ref{app:parameters}
+provide their composition and parameter obligations. For an application
+with comma grades, Lemma~\ref{lem:comma} replaces the corner check by
+\eqref{eq:display}--\eqref{eq:gradebc}, and Corollary~\ref{cor:set}
+identifies the output with the original comma law. For recognition,
+Proposition~\ref{prop:recognition} requires the specified marks and uses
+only the realized class \eqref{eq:realized}; it must not be substituted
+for an unmarked converse.
+
+The worked Set calculation tests native coefficient and grade maps
+(Section~\ref{sec:paired}); the presheaf calculation tests actual
+noninvertible restriction and parameter change (Section~\ref{sec:indexed}).
+The row-product obstruction and the failure of global horizontal stability
+separate hypotheses that would otherwise be easy to conflate. These are
+mathematical examples and counterexamples, not empirical evidence for
+arbitrary effects. The finite computations accompanying this manuscript
+check its displayed linear witnesses and small list substitutions only;
+they do not verify the general theorem.
+
+\paragraph{Code, examples and verification.}
+The public
+\href{https://github.com/eternal-november/eos-research-programmes/tree/main/projects/contextual-composition}{contextual-composition project}
+contains broader context, further examples and a Lean verification project.
+A stable reading route is the
+\href{https://github.com/eternal-november/eos-research-programmes/blob/ff237fbea8897aeca3ecd2a3bc6212bbc7f88394/projects/contextual-composition/NAVIGATION.md}{project navigation},
+then the
+applications and boundaries casebook (\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/Applications_and_Boundaries_of_Result_Dependent_Interaction.pdf}{PDF} and \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/Applications_and_Boundaries_of_Result_Dependent_Interaction.tex}{LaTeX}).
+For the formalized subresults, consult the
+\href{https://github.com/eternal-november/eos-research-programmes/blob/ff237fbea8897aeca3ecd2a3bc6212bbc7f88394/projects/contextual-composition/foundations/relative-construction/lean/README.md}{Lean package README}
+and its
+\href{https://github.com/eternal-november/eos-research-programmes/blob/ff237fbea8897aeca3ecd2a3bc6212bbc7f88394/projects/contextual-composition/foundations/relative-construction/lean/SOURCE_CROSSWALK.md}{source crosswalk}.
+That Lean~4.35.0 package includes related fixed monad/comonad recovery and
+mixed-category results with a supplied law. It is not a Lean certificate
+for the construction of the general gluing law proved here.
+
+\paragraph{Proof provenance.}
+GPT-6 Astra drafted this manuscript. The research and checks used
+multiple AI models under human direction, with human editorial review.
+At the time of
+writing, the general gluing theorem (Theorem~\ref{thm:glue}) has no
+formalized proof in Lean. We will formalize the theorem and link the
+verified development from the project repository. The manuscript has
+not undergone independent refereeing. The general construction is based on the pinned theorem
+source \cite{Gluing}, its exact Set identification on \cite{O1}, and its
+comparison with prior work on \cite{Comparison} and the cited primary
+papers. The source pin, theorem hypotheses, native-map formulas
+and ten-pasting checks give the audit and formalization entry points.
+
+\clearpage
+\section{Robot transactions: what undo can preserve}\label{app:robot}
+
+A robot that turns a fixture and then turns it back can still undo
+someone else's work. Suppose the fixture starts at orientation~\(0\).
+The robot turns it a quarter turn, an outside command resets it to~\(0\),
+and the robot performs its inverse turn. The fixture ends at~\(3\).
+The outside reset alone would have left it at~\(0\). A different failure
+is possible even when the final state is right: a camera that saw the
+quarter turn still has its record.
+
+The finite model below makes these two failures explicit. The
+commands have signatures that determine which continuations are
+available after each outcome. The composition from
+Section~\ref{sec:recovery} combines those commands while preserving
+their resource and cost data. A separate argument establishes when an abort
+preserves outside changes and when the whole execution looks atomic
+to the admitted observers \cite{RobotTransactions}. Compensating
+transactions can satisfy many application-specific recovery criteria
+\cite{KorthLevySilberschatz}. Here the reference preserves the actual
+outside actions and specifies which observations are compared.
+
+\paragraph{Which commands can follow an outcome?}
+The fixture state is \((q,h)\in\mathbb Z/4\mathbb Z\times\mathbb Z/3\mathbb Z\):
+orientation \(q\) and an outside counter \(h\). Acquiring the fixture
+returns either \(\mathsf{busy}\), with no journal, or a held lock and
+a single owned journal, initially empty. The journal records commands
+rather than the pose. A successful rotation \(a(q,h)=(q+1,h)\) appends
+\(a\) to the journal; a successful undo applies \(a^{-1}\) and removes
+that entry. Abort requires the empty journal. Commit and abort release
+the lock and return journal authority to the manager. If a step
+faults, the manager retains the lock in quarantine and reports an
+unrecovered fault. Successful commit and abort continuations are
+unavailable; the physical fault update requires its own specification. Successful undo
+presupposes that the inverse can actually run; the equality below
+covers successful reversible executions.
+
+These commands use the finite addressed-tree instance of
+Corollary~\ref{cor:set}, with terminal content grades and probability
+and cost on the context side. At each leaf of a command's result tree,
+the continuation receives that leaf's observation and capabilities.
+In particular, the busy leaf cannot supply a journal to an undo.
+In a composite, a prefix witness of mass \(p\) and cost \(c\) is paired
+with one continuation witness at each addressed leaf \(b\). The
+resulting mass and cost are \(p\prod_b p_b\) and \(c+\sum_b c_b\).
+The body grafts each chosen continuation at its own address. A finite
+catalogue and a bound on the number of steps keep the construction
+finite. In the fixture, each rotation or inverse rotation has unit
+cost, and deterministic operations have mass one.
+
+\paragraph{When does compensation preserve outside changes?}
+Each robot operation \(a_k\) is a permutation, including the undo
+steps. Write \(P_k=a_k\cdots a_1\) for the prefix; composition is read
+from right to left. The outside actions \(e_k\) need only be functions.
+For a fixed history the reference applies the same labelled outside
+functions to the untouched initial state. When \(e_k\) follows step
+\(k\), final compensation by \(P_m^{-1}\) yields that reference state
+for every initial state precisely when
+\begin{equation}\label{eq:robot-full-prefix}
+ (P_m^{-1}e_mP_m)\cdots(P_1^{-1}e_1P_1)=e_m\cdots e_1 .
+\end{equation}
+To see this, move each outside action past the prefix that precedes
+it. In a completed abort \(P_m=\id\), so the final compensation in this
+formula is the identity. If the admitted actions at each position
+include identity and can be chosen independently, the equality holds
+for all histories exactly when each allowed \(e_k\) commutes with
+\(P_k\). Commutation makes each conjugate equal to \(e_k\); taking
+identities at all other positions proves necessity. This condition
+includes interruptions during undo.
+
+The translations \(e_{r,s}(q,h)=(q+r,h+s)\) commute with the robot's
+rotations, including translations that change the orientation.
+The word \(a,a,a^{-1},a^{-1}\) therefore ends at the state obtained by
+the same outside translations alone. The reset in the opening
+paragraph fails this test: its output after a rotation does not
+carry the corresponding rotation of its output before the rotation.
+
+\paragraph{What can a client observe?}
+While the lock is held, allow the client and scheduler to observe
+\(h\), the outside action labels and public controller data. The
+abstract transaction records the same acquisition and release
+responses, and delays physical motion until release. It applies
+\(P_m\) on commit and identity on abort. Compare the two executions
+with the same random coins and with decisions made from these common
+observations. At position \(k\) before release, the concrete state is \(P_ky_k\) and
+the abstract state is \(y_k=e_k\cdots e_1(x)\). Rotation leaves \(h\)
+unchanged, so the two executions can make the same next decision.
+At release the full physical state, ownership and response agree.
+The comparison retains acquisition and release responses, the permitted
+observations, outside action labels, and the full state at release. It
+erases the robot's micro-events and elapsed time. The coupled executions
+therefore have the same projected trace law. Equality extends through
+post-release continuations that use the same admitted method kernels. For a general fixture the corresponding
+hypotheses are \(oP_k=o\) for the permitted observation map \(o\), and
+commutation for the allowed outside actions at each visited prefix.
+
+A camera that can see orientation would distinguish the executions
+immediately. A scheduler that sees pose can also choose different
+outside translations in the two runs, even though each translation
+commutes with the rotation. That is why the comparison specifies both
+the primitive actions and the information used to choose them.
+The native tree keeps the actuator events that the observation
+projection erases. An abort with \(n\) turns and \(n\) inverses still
+records \(2n\) steps. A deployment would have to establish the stated
+motion, observation and authority hypotheses.
+
+\clearpage
+\begin{thebibliography}{99}
+\footnotesize\setlength{\baselineskip}{9.7pt}\setlength{\itemsep}{0pt}\setlength{\parsep}{0pt}\raggedright
+\bibitem{CM} Matteo Capucci and David Jaz Myers.
+\emph{Contextful Arrows via Wreath Products}.
+\href{https://arxiv.org/pdf/2410.21889v2}{arXiv:2410.21889v2}.
+Definitions 3.15--3.17; Appendix C, Definition C.2; Appendix D.
+\bibitem{BG} Mitchell Buckley and Richard Garner.
+\emph{Composing Double Categories}.
+\href{https://arxiv.org/html/2610.41551v2}{arXiv:2610.41551v2}.
+Definition 6.1 and Proposition 6.3.
+\bibitem{CHLL} Bastiaan Cnossen, Rune Haugseng, Tobias Lenz and Sil Linskens.
+\emph{Homotopical commutative rings and bispans}.
+\emph{Journal of the London Mathematical Society} 111(6), e70200, 2025.
+\href{https://doi.org/10.1112/jlms.70200}{doi:10.1112/jlms.70200};
+\href{https://arxiv.org/html/2403.06911v2}{arXiv:2403.06911v2}, Theorem A.
+\bibitem{Lawler} Finn Lawler.
+\emph{Fibrations of predicates and bicategories of relations}.
+\href{https://arxiv.org/abs/1502.08017}{arXiv:1502.08017}, 2015.
+\bibitem{GL} Nicola Gambino and Gabriele Lobbia.
+\emph{On the formal theory of pseudomonads and pseudodistributive laws}.
+\href{https://tac.mta.ca/tac/volumes/37/2/37-02abs.html}{\emph{Theory and Applications of Categories} 37(2), 14--56, 2021}.
+\href{https://arxiv.org/pdf/0907.1359v3}{arXiv:0907.1359v3}.
+Definition 4.1 and Appendix A.
+\bibitem{Laplaza} Miquel L. Laplaza.
+\href{https://www.sas.rochester.edu/mth/sites/doug-ravenel/otherpapers/laplaza.pdf}{\emph{Coherence for distributivity}}.
+Lecture Notes in Mathematics 281 (1972), 29--72, Proposition 10.
+\bibitem{Gluing} Contextual-composition project.
+\emph{Gluing relative corners to decorated displays}. Theorem source from PR~\#240.
+\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Theorem.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Theorem.tex}{TeX}]}
+\bibitem{O1} Contextual-composition project.
+\emph{General independent interaction criterion}.
+\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/General_Independent_Interaction_Criterion.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/General_Independent_Interaction_Criterion.tex}{TeX}]}
+\bibitem{Comparison} Contextual-composition project.
+\emph{Which parts of an interactad are corners and bispans?} Comparison from PR~\#239.
+\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Comparison.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Comparison.tex}{TeX}]}
+\bibitem{vonglehn} Tamara von Glehn. Polynomials, fibrations and distributive laws. \emph{Theory and Applications of Categories} 33(36), 1111--1144, 2018. \href{https://tac.mta.ca/tac/volumes/33/36/33-36.pdf}{Publisher PDF}.
+\bibitem{gambinokock} Nicola Gambino and Joachim Kock. Polynomial functors and polynomial monads. \emph{Mathematical Proceedings of the Cambridge Philosophical Society} 154(1), 153--192, 2013. \href{https://arxiv.org/abs/0906.4931}{arXiv:0906.4931}.
+\bibitem{weber} Mark Weber. Polynomials in categories with pullbacks. \emph{Theory and Applications of Categories} 30(16), 533--598, 2015. \href{https://arxiv.org/abs/1106.1983}{arXiv:1106.1983}.
+\bibitem{pontos} Kate Ponto and Michael Shulman. Duality and traces for indexed monoidal categories. \emph{Theory and Applications of Categories} 26(23), 582--659, 2012. \href{https://arxiv.org/abs/1211.1555}{arXiv:1211.1555}.
+\bibitem{eh} Elden Elmanto and Rune Haugseng. On distributivity in higher algebra. \emph{Compositio Mathematica} 159(11), 2321--2415, 2023. \href{https://arxiv.org/abs/2010.15722}{arXiv:2010.15722}.
+\bibitem{shulman} Michael Shulman. Framed bicategories and monoidal fibrations. \emph{Theory and Applications of Categories} 20(18), 650--738, 2008. \href{https://arxiv.org/abs/0706.1286}{arXiv:0706.1286}.
+\bibitem{street} Ross Street. \emph{Wreaths, mixed wreaths and twisted coactions}. Tbilisi Mathematical Journal 10(3), 1--22, 2017. \href{https://arxiv.org/abs/1610.07281}{arXiv:1610.07281}.
+\bibitem{marmolejo} Francisco Marmolejo. Distributive laws for pseudomonads.
+\emph{Theory and Applications of Categories} 5(5), 1999.
+\href{https://tac.mta.ca/tac/volumes/1999/n5/5-05abs.html}{Publisher record}.
+\bibitem{walker} Charles Walker. \emph{Presentations of pseudodistributive laws}.
+\href{https://arxiv.org/abs/2102.12468v4}{arXiv:2102.12468v4}.
+\bibitem{manes} Ernie Manes and Philip Mulry. Monad compositions I: General constructions and recursive distributive laws. \emph{Theory and Applications of Categories} 18(7), 172--208, 2007. \href{https://tac.mta.ca/tac/volumes/18/7/18-07abs.html}{Publisher record}.
+\bibitem{fujii} Soichiro Fujii, Yun Chen Tsai, Yoàv Montacute, and Ichiro Hasuo. Monads and distributive laws in substructural contexts. \emph{LICS 2026}, LIPIcs 380, 45:1--45:28. \href{https://doi.org/10.4230/LIPIcs.LICS.2026.45}{doi:10.4230/LIPIcs.LICS.2026.45}.
+\bibitem{doublefib}
+Geoff Cruttwell, Michael Lambert, Dorette Pronk, and Martin Szyld.
+Double fibrations. \emph{Theory and Applications of Categories} 38,
+2022. \href{https://arxiv.org/abs/2205.15240}{arXiv:2205.15240}.
+\bibitem{U} \emph{One relative construction for context, content and effects}.
+\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex}{TeX}]}
+\bibitem{Casebook} Contextual-composition project.
+\emph{Applications and Boundaries of Result-Dependent Interaction}.
+\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/Applications_and_Boundaries_of_Result_Dependent_Interaction.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/Applications_and_Boundaries_of_Result_Dependent_Interaction.tex}{TeX}]}
+\bibitem{DiscreteObstruction} Contextual-composition project.
+\href{https://github.com/eternal-november/eos-research-programmes/pull/238}{Lean verification of the discrete continuation-transposition obstruction},
+\texttt{ContinuationTranspositionObstruction.no\_presentation}.
+\bibitem{TransportIndependence} Contextual-composition project.
+\emph{Independence of Two Transport Conditions}.
+\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Transport_Conditions_Independence.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Transport_Conditions_Independence.tex}{TeX}]}
+\bibitem{RobotTransactions} Contextual Composition programme.
+\emph{Robot Transactions under Interference: Exact Compensation and the Observation Boundary}, 13 November 2026.
+\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/robot-transactions/Robot_Transactions_and_Interference.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/robot-transactions/Robot_Transactions_and_Interference.tex}{TeX}]}
+\bibitem{KorthLevySilberschatz} Henry F. Korth, Eliezer Levy, and Abraham
+Silberschatz. A formal approach to recovery by compensating transactions.
+\emph{VLDB}, 95--106, 1990. \href{https://www.vldb.org/conf/1990/P095.PDF}{Proceedings PDF}.
+\end{thebibliography}
+\end{document}
