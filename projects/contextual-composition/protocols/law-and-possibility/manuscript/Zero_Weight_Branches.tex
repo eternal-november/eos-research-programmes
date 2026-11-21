@@ -1,0 +1,510 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.12in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,allcolors=blue!55!black]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newcommand{\D}{\mathsf D}
+\newcommand{\May}{\mathsf{May}}
+\newcommand{\Addr}{\operatorname{addr}}
+\newcommand{\push}{_{*}}
+\newcommand{\C}{\mathcal C}
+\newcommand{\R}{\mathcal R}
+\newcommand{\obs}{\mathsf{obs}}
+\title{Zero-weight branches in finite probabilistic protocols:\\
+  an exact span criterion for sound contextual replacement}
+\author{}
+\date{Working draft, 20 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Two finite probabilistic protocols can have the same joint law of completed
+trees, typed results, and costs, yet disagree on a budget required of every
+declared execution. The discrepancy is a zero-weight branch, not a loss of
+correlation or a change to the law's observable coordinates. We give a
+finite replacement criterion that combines a relation-supported coupling
+with coverage of the candidate's declared possibilities. The two conditions
+are equivalent to existence of a common weighted history presentation whose
+maps preserve probability and tree structure, with a surjective candidate
+projection and a directed cost comparison. The criterion composes in a
+finite dependent protocol calculus with disjoint ownership and result-dependent
+continuation arities. A rational max-flow construction gives local witnesses
+or certificates of failure once legal matching pairs are supplied.
+The result concerns declared finite executions, not almost-sure safety or
+arbitrary schedulers.
+\end{abstract}
+
+\paragraph{Provenance.}
+AI agents generated most of the underlying mathematical development,
+including candidate statements, written proofs and examples, and prepared
+this draft. The human project lead directed the research programme and
+selected this result for manuscript development. The main arguments are
+written proofs, not Lean formalizations. The executable companion checks
+finite rational instances of the local criterion under supplied compatibility
+data. This draft makes no claim of completed human proof verification,
+peer review, or exhaustive priority review.
+
+\section{Equal joint law, unequal all-path budgets}
+
+An annotated finite execution table has \emph{declared} rows with
+nonnegative weights summing to one. A zero-weight row is not a stochastic
+event to which an execution engine must assign positive frequency. It
+describes a branch retained by the specification and counted by its
+universal obligations. If an interface treats a row of weight zero as
+absent, the distinction studied here disappears at that interface.
+
+Consider a screen with three distinct owned resources: the screen token
+itself and two reserve tokens. The screen consumes its token at cost one.
+Its low branch returns one continuation hole owning both remaining tokens.
+Confirmation uses one token at cost two, and disposal consumes the other
+at zero cost. Its high branch returns two different holes, one for each
+remaining token. The two assays cost three and five, respectively. They
+both run in this declared high branch, without duplicating an owner.
+All completed leaves are owner-free. Take the assays deterministic for
+this example; adding bit outcomes changes neither the argument nor the
+same-law comparison.
+
+\begin{center}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+Completed tree & Continuation holes after screen &
+Cost & Pruned table & Full table\\
+\midrule
+$\tau_L$ & one bundle & 3 & 1 & 1\\
+$\tau_H$ & two disjoint bundles & 9 & absent & 0\\
+\bottomrule
+\end{tabular}
+\end{center}
+Both tables have the law $\delta_{(3,\tau_L)}$ on the \emph{full} joint
+outcome, including costs and typed results. The pruned table satisfies
+an all-path budget of three; the full table does not. Any decision rule
+factoring through this law gives the same answer to both tables, irrespective
+of its internal representation. Replacing the two completed costs by
+integers $1\leq \ell<H$ works with the same owned transitions: charge
+$\ell-1$ for confirmation and $H-1,0$ for the two assays after the unit
+screen cost.
+
+This also separates two notions of an implementation map. Sending
+the one pruned row to the matching full row is a cost-exact native map
+in the original model (defined below): the extra target row has an
+empty preimage, zero mass and no incoming cost to compare. Its image at
+the law level is an identity. But the map is not onto the declared
+rows, so this direction of comparison cannot certify that \emph{all}
+declarations of the full table are covered.
+
+\section{The finite protocol interface}
+
+\paragraph{Rows and outcomes.}
+Write $C=\mathbb N^d$ with coordinatewise addition and order. A fixed
+ranked public event signature determines finite planar trees $TX$ with
+leaves in $X$ (nullary constructors are allowed). Leaf positions are
+addresses, not equivalence classes of equal leaf labels. A full
+configuration consists of its public control and the typed private state
+of its actual owned tokens. Each continuation leaf is assigned its
+declared owned bundle, disjoint from those at the other leaves of the
+same tree. Ordinary token names can be carried as data; this does not
+confer another owner. All local tables have finite nonempty raw carriers,
+normalized weights and finite costs. At each full input a raw table $P$
+has a finite set $I$ of distinct row indices, numbers $p_i\geq0$ with
+$\sum_i p_i=1$, and outcomes $a_i=(c_i,t_i)\in C\times TX$. A fixed
+comparison may erase designated private unary nodes only when its
+normalization respects grafting at the corresponding retained addresses;
+after any such normalization, the native map equations are asserted on
+the normalized presentations, not on the unnormalized body trees.
+Retain the private semantic
+state needed by subsequent calls. This is not a private-state oracle
+for the client.
+
+The law and the possible outcomes are
+\[
+ \mu_P=\sum_{i\in I}p_i\delta_{a_i},\qquad S_P=\{a_i:i\in I\},
+ \qquad \obs(P)=(\mu_P,S_P).
+\]
+Here $S_P$ is a set of \emph{joint} outcomes, not separate sets of
+possible costs and results. In particular $\operatorname{supp}\mu_P
+\subseteq S_P$, not necessarily with equality. A predicate $A$ on
+joint outcomes holds for all declared rows exactly when $S_P\subseteq A$.
+Thus two presentations have the same law and agree on all such predicates
+exactly when their pairs agree: a point of the symmetric difference
+separates distinct sets. This is an exact observation quotient, not a
+faithful representation of row multiplicities or maps of raw rows.
+Nor is the whole may-set necessary for scalar upper-bound tests alone:
+those see only the maximum cost. Even the law and separate may-marginals
+are insufficient for general joint assertions. At law $\delta_{(0,v)}$,
+the may-sets
+\[
+ \{(0,v),(1,t),(2,u)\} \quad\text{and}\quad \{(0,v),(2,t),(1,u)\}
+\]
+have the same projections onto costs and trees but disagree on the
+assertion that every declared outcome with tree $t$ costs at most one.
+
+\paragraph{Native row maps.}
+At fixed input, a native map from a table $(I,p,c,t)$ to
+$(I',p',c',t')$ over a leaf-state map $v$ consists of a function $r:I\to I'$
+such that, for every target row $j$ and source row $i$,
+\[
+ p'_j=\sum_{r(i)=j}p_i,\qquad
+ c'_j\leq\min_{r(i)=j}c_i,\qquad
+ t'_{r(i)}=Tv(t_i).
+ \tag{1}\label{eq:native}
+\]
+The minimum is componentwise, with empty minimum $\infty$ in every
+coordinate. Equivalently the second condition is the pointwise
+inequality $c'_{r(i)}\leq c_i$. A map is cost-exact if equality holds
+on each source row; it need not be surjective. A family of these
+equations indexed by input pairs gives the native endpoint squares
+used here; the input maps select the relevant candidate and reference
+fibres.
+
+\paragraph{Related outcomes.}
+Use candidate first. Let $P$ and $Q$ be at a related full input pair.
+Fix a relation on their typed private configurations that identifies
+the compared public interface and matches token identities and kinds
+as declared. Put $a\R b$ for outcomes $a=(c,t)$, $b=(d,u)$ when the
+compared trees have the same public shape and event labels, their
+corresponding leaves have related full configurations, and $c\leq d$.
+The first two conditions allow a paired tree over the relation carrier;
+they also identify the two sets of addresses. All costs in a certificate
+below are taken at the comparison interface, before any unrelated
+external erasure.
+
+\section{An exact finite certificate}
+
+\begin{definition}
+The local replacement judgment at a related input holds if there is a
+coupling $G$ of $\mu_P$ and $\mu_Q$ whose positive entries lie in $\R$,
+and for every $x\in S_P$ there is a $y\in S_Q$ with $x\R y$.
+The second condition is \emph{candidate coverage}. It does not require
+positive mass on its witness or any converse coverage.
+\end{definition}
+
+\begin{theorem}[Exact marked-span criterion]\label{thm:span}
+The candidate refines the reference if and only if there is a finite
+common raw table with two maps satisfying \eqref{eq:native}, to $P$
+and $Q$. Require that each common row project to a compatible pair,
+have the paired tree over the related configurations, and have exactly
+its reference row's cost. Mark the candidate projection as surjective.
+The reference projection need not be surjective. These statements hold
+at a fixed related input, and the constructions assemble fibrewise
+over a finite carrier of related inputs.
+\end{theorem}
+\begin{proof}
+Write $j\in J$ for reference rows, $q_j$ for their weights and $b_j$
+for their outcomes, and abbreviate $\mu_P,\mu_Q$ to $\mu,\nu$.
+Given the coupling and coverage, first place mass
+\[
+ \gamma_{ij}=G(a_i,b_j)\frac{p_i}{\mu(a_i)}
+                  \frac{q_j}{\nu(b_j)}
+\]
+on each pair with both denominators positive, and use zero otherwise.
+For a positive candidate row, summing the reference factors in any
+positive outcome fibre gives one; then the corresponding row sum of
+$G$ gives $p_i$. Zero candidate rows have sum zero. The same reasoning
+gives the reference marginals. Keep the positive pairs. Each is legal
+and every positive candidate row is covered. For each uncovered
+candidate row $i$, choose a reference row above a compatible possible
+outcome and adjoin that pair with weight zero. Separate candidate rows
+require separate lifts even when their outcomes are equal. The
+reference partner may itself have zero weight. Neither marginal changes.
+
+Give each common row the paired tree and the reference cost. Equation
+\eqref{eq:native} on weights is exactly the two marginal identities;
+it holds for costs because compatible candidate cost is no larger
+than reference cost, and holds for bodies by projection of paired
+leaves. An unmatched reference row is allowed, but its marginal must
+be zero. Candidate surjectivity follows by construction.
+
+Conversely push the common weights along the two row maps and then
+along the outcome maps. The native marginal equations give a
+relation-supported coupling. Lifting a raw representative of any
+candidate outcome by the marked surjection gives a declared reference
+partner, even when the lifted row has no mass.
+\end{proof}
+
+\begin{proposition}[Transfer and exact equality]
+Assume candidate coverage. If $x\R y$ and $y\in A_Q$ imply $x\in A_P$,
+reference all-path
+validity of $A_Q$ implies candidate all-path validity of $A_P$.
+In particular this holds for common coordinatewise upper budgets.
+At an identical full endpoint, equality of the observation pairs is
+equivalent to the existence of a common table with equal joint outcomes
+on each pair, cost-exact projections and both projections surjective.
+\end{proposition}
+\begin{proof}
+For transfer, choose a declared reference partner for each declared
+candidate row. For equality, if the two observations are equal,
+retain every pair of rows with an equal joint outcome $z$. Both
+projections are onto. Use pair weight $p_iq_j/\mu(z)$ on positive
+outcomes and zero on zero-weight outcomes. This has the required
+marginals by summation over each outcome fibre. Conversely the two
+surjections give equality of image sets and the two marginal equations
+give equality of laws.
+\end{proof}
+
+The two conditions in the theorem are independent. The full screen
+compared to the pruned screen gives equal laws and no coverage for the
+high row. For the other direction use candidates $a,b$ of masses
+$3/4,1/4$ and reference rows $a',b'$ of masses $1/4,3/4$. Allow only
+matching labels with equal costs, so each candidate row has a partner
+but the mass on $a$ cannot be sent to its permitted targets.
+
+\section{Composition at actual continuation addresses}
+For a prefix row $i$ with tree $t_i$ and a continuation table at each
+actual leaf $s\in\Addr(t_i)$, the composite rows and weights are
+\[
+ \coprod_i\ \prod_{s\in\Addr(t_i)} I_s,\qquad
+ p_i\prod_{s\in\Addr(t_i)}p_{s,k_s}.
+ \tag{2}\label{eq:bind}
+\]
+The composite cost is $c_i+\sum_s c_{s,k_s}$ and the tree is obtained
+by grafting each child at its address. The empty tuple has weight one
+and adds no cost. Continuations depend only on their full typed leaf
+input and admitted framed data, not discarded raw row labels. Leaf
+bundles have to be disjoint. If a shared random input is needed across
+children it must already be represented in the retained input or
+prefix; \eqref{eq:bind} is not a way to construct a missing joint law.
+Repeated occurrences with equal labels still make distinct conditional
+choices.
+
+For an outcome $z=(c,t)$, let $g_z$ graft and sum a tuple of child
+outcomes, and write $(\nu_s,R_s)$ for the child law and may-set at
+address $s$. Then the observations of the composite are
+\[
+ \left(\sum_z \mu(z)(g_z)_*\!\bigotimes_{s\in\Addr(t)}\nu_s,       \bigcup_{z\in S}g_z\!\left[\prod_{s\in\Addr(t)}R_s\right]\right).
+ \tag{3}\label{eq:obsbind}
+\]
+The law uses conditional product followed by mixing, the may-set
+uses a Cartesian product followed by union, and both use the same
+grafting map. A zero-weight prefix contributes to the union, not the
+mixture. To obtain \eqref{eq:obsbind} from \eqref{eq:bind}, first
+take the image at each addressed child, then group all prefix rows
+with equal full outcome. The child factors are identical within
+those groups by the continuation restriction. Relabelling commutes
+with grafting; the split between conditional products and mixtures
+does not justify multiplying the unconditional marginals.
+
+These formulas are unital and associative. A unit is the single
+weight-one zero-cost leaf; this is different from a nullary event,
+which receives no children. Both three-stage associations index the
+same outer outcome, tuple of middle outcomes and tuple of inner
+outcomes at the actual middle addresses. The address bijection for
+grafted trees identifies the final tree, the weights are the same
+product, and total costs are the same sum. Taking law pushforwards or
+images proves the respective equations. Nothing here requires a
+nondeterministic set of alternative probability laws.
+
+\begin{theorem}[Closure under finite typed contexts]\label{thm:closure}
+Consider finite client terms generated by return, matched public case,
+addressed continuation, separated batch on disjoint owned bundles, and
+ordinary-data framing and substitution. Acyclic or decreasing-rank
+invocation, including finite callbacks, is admitted when its expansion
+uses these clauses with the same typed boundaries. Assume:
+\begin{enumerate}
+\item Initial joint laws have a relation-supported coupling and every declared
+candidate initial possibility has a related reference initial possibility.
+\item At every common public valuation, every primitive pair (including fixed client primitives) satisfies Theorem~\ref{thm:span}'s criterion
+at \emph{every} related full method input, not just those with positive
+probability. Case observations, typed interpretations and any public
+normalizations are compatible with the compared signatures and grafting.
+\item The state relation restricts and reassembles along the designated
+disjoint bundles, and related framed ordinary data preserve that relation.
+No clause copies a token's ownership or consults a discarded row label.
+\end{enumerate}
+Then each admitted comparison has the two local conditions on its
+composite outcomes and an actual composed native certificate with
+surjective candidate projection. For each closing context, all compatible
+reference all-path assertions transfer to the candidate.
+\end{theorem}
+\begin{proof}
+Use a local marked span for the prefix and one at each related
+addressed child input. Retain a common prefix row with its paired
+private states, then choose a tuple of common continuation rows. Give
+the tuple the weight, cost and grafting of \eqref{eq:bind}. On fixing
+a candidate composite row $(i,(k_s)_s)$, summing the common weights
+over lifts of each $k_s$ gives its original child weight at the
+candidate's full input. Those marginal sums are independent of which
+common prefix row over $i$ was chosen. Summing over the prefix lifts
+gives $p_i\prod_s p_{s,k_s}$. The same holds for the reference.
+One can also lift any candidate composite row by choosing a prefix
+lift, then a child lift at each address irrespective of mass. Empty
+tuples are covered. Costs are reference sums and dominate candidate
+sums. Related trees graft over the reassembled state relation, so the
+native body equations hold and Theorem~\ref{thm:span} applies.
+
+Induct on the well-founded expansion rank (finite acyclic expansions
+admit one) and the finite typing derivation at each rank, simultaneously
+at all common valuations and related full inputs. Return uses one paired
+row, carrying related private entries unchanged. A matched public case uses the
+inductive certificate in the selected arm on both sides. A separated
+batch uses the same finite-tuple proof conditional on the complete
+paired pre-state, with the unused reserve retained unchanged. Ordinary
+framing and substitution use the relation preservation assumption.
+Public code dispatch has the same tag and equal ordinary, data-only
+captures on both sides. Invoke the induction on the callee at strictly
+lower rank whenever a call is expanded. Finite acyclic plugging and
+callbacks obey the same boundary and rank requirements, including
+resource reindexing along typed substitution. Finally apply the raw lift from the proof of
+Theorem~\ref{thm:span} to the initial relation (with no tree or cost
+comparison needed) and use it as the outer prefix. This preserves any
+given initial cross-token correlation. The transfer assertion follows
+from coverage.
+\end{proof}
+
+For vertical composition at the observation level, use witnesses
+$G(x,y),H(y,z)$ with the same middle observation $(\nu,S_Q)$ and compatible full
+interfaces. Paste by summing over
+$y$ the weights $G(x,y)H(y,z)/\nu(y)$ for $\nu(y)>0$ and zero
+otherwise. The row and column sums give the outer laws, and
+composing the relations gives compatibility; middle private state
+witnesses can be retained before taking images. Compose coverage by
+choosing two successive declared partners, even if the middle one
+has zero weight. This proves transitivity of the existence judgment
+with the composed relation, not canonical interchange of chosen
+certificates.
+
+\begin{example}[A nonidentity replacement with zero rows]
+At every related method input let the reference split each candidate row
+$i$ into an independently supplied finite nonempty audit set $A_i$.
+Reference weights are $p_i\alpha_i(a)$ with $\sum_{a\in A_i}\alpha_i(a)=1$;
+costs are $c_i+\Delta_{i,a}$, $\Delta_{i,a}\geq0$. Keep the same public
+constructor, partition and compared leaf configuration, allowing redundant
+related private audit state or designated unary audit nodes the common
+normalization removes. Projection to $i$ is onto even if $p_i=0$.
+Use its raw indices, weights and costs for the common table at each
+related input, with the paired tree over the relation carrier. The
+reference map is the identity on indices, and the candidate map is the
+indicated projection; both project the normalized paired tree. The map
+can decrease cost and identify several positive or zero-weight rows.
+By Theorem~\ref{thm:closure}, this local certificate gives all-path
+transfer through finite clients satisfying the stated ownership,
+initialization and continuation assumptions. No independence of audit
+weights from the actual method input or result is needed.
+\end{example}
+
+\section{An exact rational checker}
+At a single related input, suppose the two raw tables have rational
+weights and the legal row pairs have already been determined. Build a
+finite network with capacities $p_i$ from the source to each candidate
+row, $q_j$ from each reference row to the sink, and capacity one on
+allowed candidate--reference edges. A flow of value one is precisely a
+compatible raw coupling. When legality is exactly the pullback of $\R$ along the outcome maps,
+an outcome coupling lifts to such a flow by Theorem~\ref{thm:span}. For
+arbitrary supplied row-level legality, the checker instead solves the
+raw-row problem; it does not infer legality from aggregated outcomes. Relative to this requirement, every
+positive candidate row is covered. Check each zero candidate row
+separately and attach a zero-weight pair to any legal partner, including
+a zero-weight reference row when necessary.
+
+If the flow cannot reach one, a minimum cut of capacity less than one
+crosses no allowed pair edge, since each such edge alone has capacity
+one. For its source-side candidate set $D$, the adjacent reference set
+$N(D)$ lies on the source side and $p(D)>q(N(D))$. The inequality
+can be checked without rerunning the flow solver. If the zero-row check
+fails, the certificate is a declared candidate row with no legal
+partner. Conversely either certificate rules out a marked span. For
+existence, any cycle in the positive bipartite flow support can be
+cancelled by subtracting the smallest alternating edge weight on one
+parity and adding it to the other. This leaves both marginals unchanged
+and deletes at least one positive edge. Repeating gives a forest on
+the two positive supports and a witness with at most
+$|I_+|+|J_+|-1$ positive rows. Both supports are nonempty by normalization.
+The zero fillers give a total bound of $|I|+|J_+|-1$ rows.
+
+The companion script works with exact rational arithmetic, accepts
+the relation as a supplied finite set, and reports either kind of
+failure or a witness checked against the two marginals and coverage.
+It does not type-check the language, find the intended relation, decide
+closure for all contexts, or serve as a Lean proof.
+
+\section{Scope and relation to prior work}
+Support relations have a long history in probabilistic simulation:
+the finite weight-function formulation of Segala and Lynch requires a
+matching relation on positive entries \cite{segalalynch}. Probabilistic
+product programs can express coupling witnesses with the original
+marginals \cite{barthe}. Our mass condition is of this familiar kind.
+It does not enforce coverage of a declared row that carries no mass.
+The additional condition here is exact for a specific certificate:
+two original directed row maps, with surjectivity on the candidate
+side. It is not an assertion that an arbitrary program admits an
+executable product program or that contextual validity implies a span.
+
+Varacca and Winskel's indexed valuations retain positive
+multiplicity while identifying zero indices; their goal is to combine
+probabilistic and nondeterministic choice by a distributive law
+\cite[Defs.~4.1--4.5]{varaccawinskel}. Here there is one fixed law, a
+separate may-set, and no nondeterministic choice among laws. Row
+multiplicity is discarded in the observation and retained in its native
+certificate. In particular, the construction does not give a
+distributive law between the ordinary finite distribution and powerset
+monads for arbitrarily combining these effects.
+
+Outcome Logic defines support relative to the chosen weight semiring
+\cite[Def.~3.6 and Sec.~6.1]{outcomelogic}. Ordinary probability weight
+zero does not contribute to that support. This is different from
+claiming that semiring-parametric reasoning cannot see a declared
+zero-weight row: pairs $(p,b)$ where $b$ is a presence bit and $p>0$
+implies $b=1$ give a concrete way to encode it. Addition uses
+$(+,\lor)$ and multiplication uses $(\cdot,\land)$; $(0,1)$ is then
+not the additive zero. Normalized finite distributions in those
+weights recover the law and may-set. We use the elementary
+bookkeeping directly and do not claim to instantiate the general proof
+system of Outcome Logic. The native cost-lowering projections and
+one-sided raw coverage are the additional certificate structure.
+
+The theorem does not say that a single direct native map must exist.
+Nor does allowing marked spans make the old category faithful under
+the observation quotient: duplicate equal outcomes and distinct row
+maps can still be identified. The proof uses finite independent
+choices \emph{conditional on the retained prefix}; changing to joint
+new draws across holes or allowing one continuation to see hidden
+raw identities changes the composition law. Nor does the result
+extend to arbitrary recursion or almost-sure semantics by replacing
+finite sums with limits. The present comparison intentionally
+preserves the distinction between declared and measure-supported paths.
+
+\paragraph{Source and evidence.}
+The manuscript develops a finite publication slice of the project
+dossier \href{https://github.com/eternal-november/eos-research-programmes/blob/f458186590df968a516ba73a8eb76fcf044544b0/projects/contextual-composition/protocols/law-and-possibility/Law_and_Possibility_Repair_for_Dependent_Protocols.tex}{\emph{Law and Possibility Repair for Dependent Protocols}}
+(especially the sections on the exact marked original span and
+contextual closure). The original calculus supplies the native map
+equations and finite typed protocol operations; the earlier
+refinement development supplies conditional coupling induction and the
+raw-lift formula. The addition emphasized here is exact recognition
+by a candidate-surjective history span and its all-path use in the
+same occurrence calculus, not the novelty of conditional couplings or
+of distinguishing distributions from sets. The project dossier also
+contains an enriched coefficient presentation and a restricted
+reconstruction comparison; neither is needed for the statements above.
+\begin{thebibliography}{9}
+  \raggedright
+\bibitem{segalalynch}
+Roberto Segala and Nancy A. Lynch.
+Probabilistic simulations for probabilistic processes.
+In \emph{CONCUR '94}, LNCS 836, pp.~481--496. Springer, 1994.
+\href{https://doi.org/10.1007/978-3-540-48654-1_35}{doi:10.1007/978-3-540-48654-1\_35}.
+
+\bibitem{barthe}
+Gilles Barthe, Benjamin Gr\'egoire, Justin Hsu, and Pierre-Yves Strub.
+Coupling proofs are probabilistic product programs.
+In \emph{POPL '17}, pp.~161--174. ACM, 2017.
+\href{https://doi.org/10.1145/3009837.3009896}{doi:10.1145/3009837.3009896}.
+
+\bibitem{varaccawinskel}
+Daniele Varacca and Glynn Winskel.
+Distributing probability over non-determinism.
+\emph{Mathematical Structures in Computer Science}, 16(1):87--113, 2006.
+\href{https://doi.org/10.1017/S0960129505005074}{doi:10.1017/S0960129505005074}.
+
+\bibitem{outcomelogic}
+Noam Zilberstein.
+Outcome Logic: A unified approach to the metatheory of program logics with
+branching effects.
+\emph{ACM Transactions on Programming Languages and Systems}, 47(3),
+article 14, 2025.
+\href{https://doi.org/10.1145/3743131}{doi:10.1145/3743131}.
+\end{thebibliography}
+\end{document}
