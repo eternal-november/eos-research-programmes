@@ -2,7 +2,7 @@
 \usepackage[hmargin=1in,vmargin=.95in]{geometry}
 \usepackage{amsmath,amssymb,amsthm,mathtools,booktabs,array,longtable,microtype,xcolor}
 \usepackage[colorlinks=true,allcolors=blue!50!black]{hyperref}
-\hypersetup{pdfauthor={GPT-6 Astra},pdftitle={Interactads: How to Compose Programs That Change What Comes Next},pdfsubject={Constructing composition from contextads and contentads},pdfkeywords={contextads; contentads; interactads; result-dependent continuations; resource aggregation; relative double categories; decorated displays; bispans; pseudodistributive laws}}
+\hypersetup{pdfauthor={GPT-6 Astra},pdftitle={Interactads: A Common Calculus for Context and Effects},pdfsubject={A common calculus for context, content and their interaction},pdfkeywords={contextads; contentads; interactads; result-dependent continuations; resource aggregation; relative double categories; decorated displays; bispans; pseudodistributive laws}}
 \numberwithin{equation}{section}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
@@ -17,124 +17,623 @@
 \newcommand{\iso}{\xrightarrow{\sim}}\newcommand{\ea}{e}\newcommand{\un}{\mathbf1}\newcommand{\Tt}{\overline T}
 \newcommand{\Disc}{\mathrm{disc}}\newcommand{\st}{\mathbin{\star}}\newcommand{\di}{\mathbin{\diamond}}\newcommand{\bx}{\mathop{\boxtimes}}
 \newcommand{\pure}{\mathsf p}\newcommand{\grade}{\mathsf G}
-\title{Interactads: How to Compose Programs\\That Change What Comes Next}
-\author{GPT-6 Astra}\date{20 November 2026}
+\title{Interactads: A Common Calculus for Context and Effects}
+\author{GPT-6 Astra}\date{21 November 2026}
+\newcommand{\Prob}{\mathbf{Prob}^{+}_{\mathrm{fin}}}
+\newcommand{\List}{\mathsf{List}}
 \begin{document}\maketitle
 \begin{abstract}
-A computation can determine the number and addresses of its continuations.
-Composing it with a resource-dependent computation then requires more than
-composing their outputs: resource choices must be distributed over those
-addresses, and the maps that aggregate choices must survive the distribution.
-This paper constructs that interaction between independently specified
-contextads and contentads. Relative cartesian lifts transport content, while an occurrence
-monad lifted to decorated displays transports resources. The crossing
-retains the original maps: the two pullbacks agree, relative content
-lifts are stable under horizontal composition, and Beck--Chevalley
-allows pure maps to move across the middle interface. Finite polynomial evaluation with
-augmented additive transfer realizes the construction over sets. A coloured
-presheaf example computes its action on a stage restriction. The
-construction recovers the original comma presentation exactly, including
-noninvertible grade maps. A marked converse forces content exactness
-only on context displays that can actually occur.
+A computation can produce a result that determines what the next stage
+requires. Returning two requests instead of one can demand two resource
+choices; changing their labels can change the resources from which those
+choices are drawn. Composing such computations requires an account of how
+produced effects and required context act on one another.
+
+An \emph{interactad} gives a common calculus for this interaction. Building
+on Capucci and Myers' contextads, their output-side dual contentads, and
+their proposal to relate the two by distributive laws, it combines separately
+specified context and content presentations over a shared category of pure
+maps. A full pseudodistributive law makes the mixed computations compose
+associatively up to coherent isomorphism. The resulting calculus retains
+maps of resources and produced content, including noninvertible maps, and
+recovers the original one-sided calculi when the other side is specialized
+to the identity. Embedding both sides faithfully in a fixed mixed calculus
+requires further conditions.
+
+A sufficient construction obtains the interaction from a shared description
+of output occurrences, under explicit cartesian lifting, pasting-stability
+and pure-interface compatibility hypotheses. In a concrete finite probability/list
+construction, each returned position requests a separate draw from the resource
+distribution selected by its label. The resulting law lets successive stages
+compose coherently even when intermediate results change the numbers and
+types of those draws. It also tracks how resource aggregation and maps of
+produced content propagate through composition, retaining distinctions that
+an output distribution alone can erase.
 \end{abstract}
 \noindent{\small
-\href{https://github.com/eternal-november/eos-research-programmes/tree/main/projects/contextual-composition}{\texttt{eos-research-programmes / contextual-composition}}.
-Appendix~\ref{app:reuse}: the gluing theorem has a written proof; Lean covers narrower results.}
+Project sources and verification:
+Appendix~\ref{app:reuse}. The principal general results have written proofs;
+selected subresults, not the full construction, are formalized in Lean.}
 
-\section{Two resource merges with the same total}\label{sec:question}
-Suppose a computation requests two follow-up jobs with the same label.
-The jobs occupy separate slots; either resource $0$ or resource $1$ can
-fill each slot. The four combined choices $(0,0),(0,1),(1,0),(1,1)$
-each have a channel for their weight. Now merge the two resources.
-One merge keeps their contributions in two channels; the other sends
-both to the first channel. With rational vector-space coefficients:
+\section{Computation that changes its continuation}\label{sec:question}
+A composite computation should be usable as a stage in a larger
+computation. This is a substantive requirement when one stage's output
+determines what its successor needs. The composition rule must account
+for those needs in a form that the next composition can still use.
+
+Consider a survey planner that returns a list of sites to sample. The
+sampler needs a source of readings for each position in the list. Two
+entries for the same site request two readings under independent
+sampling; replacing one of the entries changes the source for that
+position. The readings may in turn prompt a list of follow-up samples.
+Whether the planner is first composed with the sampler, or the sampler
+with the follow-up rule, the composite should describe the same sampling
+process, down to the correspondence between requests and readings.
+Section~\ref{sec:prob} works out this pattern for finite probability spaces.
+
+A request is part of what one stage produces; a source of readings is
+part of what another stage requires. That distinction matters also when
+comparing computations. Two ways of consolidating result records can
+agree on which records merge and still combine their underlying evidence
+differently. To compose such comparisons, a calculus needs both the map
+on records and the map on resources, with a rule that relates them when
+a record specifies new requirements.
+
+Capucci and Myers' contextads unify context-dependent arrows, including
+comonadic, parameterized and span constructions; their contentads give
+the output-side dual \cite{CM}. Their Section~7 proposes distributive laws
+for contextful-contentful maps and shows how some produced effects can be
+represented as context. The question here is when separately presented
+context and content calculi admit a law for their interaction that also
+accounts for their maps and changes of interface.
+
+\paragraph{The unification.}
+The common algebra has a pure category $C$ and a category $H(A,B)$ of
+computations between each pair of interfaces. It composes relative to the
+pure maps, rather than forgetting which maps are pure. A context presentation
+has bodies $e_AP\to B$; a content presentation has bodies $A\to d_BQ$.
+An interactad combines these presentations with a coherent crossing and has
+mixed bodies
 \[
- \mathbb Q\oplus\mathbb Q\longrightarrow\mathbb Q^2,
- \qquad (a,b)\longmapsto(a,b),\qquad(a,b)\longmapsto(a+b,0)
+                 e_AP\longrightarrow d_BQ.
 \]
-both preserve the total $a+b$, and both lie over the same two-to-one map of
-choices. Applied at two addresses, the first map leaves the coefficient of the
-second-resource pair in its own channel, while the second transfers it
-to the first-resource pair channel. Their ranks are four and one.
-A rule that records only the choices, the four-to-one fold of their
-associated receipt records, and the total reports the same result for
-both merges. An external linear readout of the second-pair coefficient
-distinguishes them: on a unit input in that channel the first merge
-returns one there and the second returns zero.
+Here $P$ is the context grade, $Q$ the content grade, and $e,d$ their
+extensions. Grades are objects of categories, not merely indices: their maps
+can merge witnesses, aggregate coefficients or compare receipts. The common
+calculus retains those maps, including noninvertible ones.
 
-Capucci and Myers' \emph{contextads} describe extension on the input side
-and composition of contextful arrows \cite[Defs.~3.15--3.17]{CM}; their
-\emph{contentads} give the output-side counterpart
-\cite[App.~C, Def.~C.2]{CM}. Their separate composition rules leave a
-question: how should a result that requests two continuations distribute
-the next computation's resource choices over those two addresses?
+The mixed composition rule explains how separately specified input and output
+extensions act on one another, and supplies a common place to compare their
+specializations and semantics. This goes beyond a one-sided presentation
+without ruling out one-sided encodings of particular instances. The required
+compatibility of the two sides is part of the result.
 
-\textbf{Main result.} Theorem~\ref{thm:glue} gives one composition
-rule for independently specified resource and result models. A designer
-otherwise has to specify how a result extends the next stage's resource
-choices, how each coefficient or receipt map acts on the extension,
-and why grouping stages differently gives the same calculation.
-The rule does all three without losing the difference between the
-two merges. A compatible replacement of either model can be compared
-before or after composition; Appendix~\ref{app:colour} computes such
-a replacement that forgets colours without merging addresses.
+\paragraph{Results and reading route.}
+Theorem~\ref{thm:unification} assembles the relative construction, the mixed
+normal form and its recovered interface squares. Section~\ref{sec:special}
+identifies the familiar one-sided specializations. Theorem~\ref{thm:problaw}
+constructs a nonthin probability/list interaction and proves that both
+one-sided calculi embed locally fully faithfully in that example.
+Section~\ref{sec:independent-main} then explains how the general
+independent-input theorem constructs, rather than assumes, an interaction:
+its complete hypotheses and proof are in Appendices~\ref{app:construction}--\ref{app:parameters}.
+Section~\ref{sec:paired} exhibits genuinely varying content grades and
+resource maps, so the unification is not restricted to terminal-grade effects.
+Section~\ref{sec:observations} separates the native calculus from its
+observable comparisons. Section~\ref{sec:limits} establishes a limitation
+on conservative assembly and locates further extensions. Readers interested
+in the computational mechanism can begin with Section~\ref{sec:prob}; readers
+reusing the categorical construction can begin with
+Section~\ref{sec:relative} and Appendix~\ref{app:construction}.
 
-The two models must agree on where the next choices are made.
-More precisely, content must lift
-along the allowed context projections, stably under horizontal
-composition and with the specified occurrence pullbacks. Context must
-independently support the same occurrence monad on its decorated
-displays. The pure pullback condition controls changes of interface.
-In the Set comma presentation this yields an \emph{interactad}, a
-coherent composition law for arrows that carry both context and
-content. The general law uses category-valued relative modules.
-Sections~\ref{sec:indexed} and~\ref{sec:recognition} show why multiplying
-over changing witness rows can fail, why global horizontal stability
-can reject valid relative cases, and why recognition requires marked
-data on realized projections.
-
-\subsection{What the separate rules already provide}
-For the two-resource computation, the resource choice extends the input;
-the request for two jobs extends the result. In the general notation
-a context $P$ over an interface $A$ has an extended domain $e_A P$.
-A contextful arrow has the form
-\[
- (P,f):A\rightsquigarrow B,\qquad f:e_A P\longrightarrow B.
-\]
-To follow it by $(D,g):B\rightsquigarrow C$, first restrict $D$ along
-$f$, then accumulate it with $P$. Write the resulting context as
-$P\st f^*D$. The contextad laws ensure associativity of this operation,
-with its specified comparisons and maps.
-
-Dually, a content grade $Q$ over $B$ has an extended result $dQ$;
-a contentful arrow is $(Q,f)$ with $f:A\to dQ$. A later computation
-can transport $Q$ along its body and accumulate it with its own grade.
-This gives another one-sided composition rule. Neither rule specifies how
-a context over $B$ is to be interpreted over $dQ$. That is the missing
-crossing. Once it is provided, a mixed arrow is represented by
-\begin{equation}\label{eq:hom-intro}
- (P,Q,f),\qquad f:e_A P\longrightarrow dQ,
+\section{A common algebra with a visible pure interface}\label{sec:relative}
+Work with a small ordinary category $C$, in nested universes when necessary.
+In particular, a category of sets at one universe level is used as a small
+base only at a larger level. A category-valued module is a pseudofunctor
+$X:C^{\op}\times C\to\Cat$. For two modules the relative tensor is
+\begin{equation}\label{eq:relative-tensor}
+ (X\odot_CY)(A,D)=\int^{B\in C}_{\mathrm{ps}}X(A,B)\times Y(B,D).
 \end{equation}
-and its maps consist of a context map $\alpha$ and a grade map $\beta$
-satisfying $d\beta\,f=f' e\alpha$. Composition must act on these maps
-and satisfy the coherent associativity comparisons.
+Tensors are written in execution order. The unit is
+$I_C(A,B)=\Disc C(A,B)$. This is the ordinary-base part of Lawler's
+category-valued profunctor tricategory, with the variance convention made
+explicit in the companion construction \cite[Sec.~4.1.1]{Lawler}\cite{U}.
+No new ambient tricategory is proposed here.
 
-\subsection{A complete small composite}\label{sec:paired}
-The opening calculation can be made inside a contentad whose grades are
+An object of the pseudocoend has a representative $[B;x,y]$. Its morphisms
+include the native maps in $X(A,B)$ and $Y(B,D)$, and invertible balances
+\[
+ [B';u_*x,y']\cong[B;x,u^*y']\qquad(u:B\to B').
+\]
+Balance means that a pure map at an internal interface can be performed on
+either side of that interface. The balances satisfy naturality, identity and
+composition relations. Their invertibility does not invert the native maps
+in the two computation categories. Replacing this tensor by a set of
+isomorphism classes would erase precisely the comparisons the paper retains.
+
+\begin{definition}[Relative computation algebra]\label{def:relative-main}
+A relative category-valued pseudopromonad is a module $H$, a unit
+$j:I_C\to H$, and a multiplication $m:H\odot_CH\to H$, with invertible
+associativity and unit modifications satisfying the pseudomonad axioms.
+Its concrete realization $B_H$ has hom categories $H(A,B)$ and composition
+$m([h,k])$. The designated pure pseudofunctor is $J(u)=j(u)$.
+\end{definition}
+The same data can be recovered from a bicategory $B$ with an
+identity-on-objects pure pseudofunctor $J:C\to B$: set
+$H(A,B)=B(A,B)$ and let pure maps act by whiskering with $J$.
+The bicategory associator supplies pure-middle balance. This equivalence of
+descriptions retains each hom category unchanged; it is not merely the
+assertion that several examples are bicategories.
+
+Changes of endpoints remain visible. A square from $h:A\rightsquigarrow B$
+to $h':A'\rightsquigarrow B'$ over $u:A\to A'$ and $v:B\to B'$ is
+\begin{equation}\label{eq:square-main}
+                   J(v)h\Longrightarrow h'J(u).
+\end{equation}
+These cells form the relative quintet double category. If a pseudo-double
+category already has chosen companions for its vertical maps, bending a
+square along their binding cells gives exactly \eqref{eq:square-main}.
+Bending back cancels the binding cells by the companion equations, so this
+is a bijection on squares with each fixed boundary, with pasting preserved
+up to the canonical constraints \cite[Sec.~3]{U}. No conjoint is needed,
+and noninvertible squares are not lost.
+
+\subsection{The two presentations side by side}\label{sec:presentations-main}
+Let $K:C^{\op}\to\Cat$ be a context indexing pseudofunctor with extension
+$e:\int K\to C$. A grade $P\in K_A$ extends $A$ to $e_AP$; reindexing
+along $u:A'\to A$ has comparison $e_u(P):e_{A'}u^*P\to e_AP$.
+Its contextad data include a unit $I_A$ with discharge
+$\varepsilon_A:e_AI_A\to A$ and dependent accumulation $P\st R$
+for $R\in K_{e_AP}$, with
+$\delta_{P,R}:e_A(P\st R)\to e_{e_AP}R$.
+The structure maps $\varepsilon,\delta$ need not be invertible. The
+horizontal associativity and unit comparisons are invertible and obey the
+contextad laws.
+
+Dually, a content indexing pseudofunctor $L:C\to\Cat$ has extension
+$d:\int L\to C$, transport $v_!Q$ and comparison
+$d_v(Q):d_BQ\to d_{B'}v_!Q$. Its unit $U_B$ has body
+$\eta^L_B:B\to d_BU_B$. For $Q\in L_B$ and $S\in L_{d_BQ}$,
+accumulation $Q\di S$ has body
+$\mu^L_{Q,S}:d_{d_BQ}S\to d_B(Q\di S)$. These bodies need not be
+invertible either. The one-sided hom categories are
+\begin{equation}\label{eq:onesided-main}
+ M(A,B)=(e_A\downarrow B),\qquad N(A,B)=(A\downarrow d_B).
+\end{equation}
+A context cell $\alpha:(P,f)\to(P',f')$ satisfies $f=f'e_A\alpha$;
+a content cell $\beta:(Q,g)\to(Q',g')$ satisfies $d_B\beta\,g=g'$.
+Their endpoint actions are
+\[
+ (P,f)\mapsto(u^*P,vf e_u(P)),\qquad
+ (Q,g)\mapsto(v_!Q,d_v(Q)gu).
+\]
+These formulas fix the directions of all grade maps.
+
+For successive context arrows $(P,f)$ and $(R,g)$, composition restricts
+$R$ along $f$, accumulates $P\st f^*R$, and uses the body
+\[
+ e_A(P\st f^*R)\xrightarrow{\delta}e_{e_AP}f^*R
+                  \xrightarrow{e_f(R)}e_BR\xrightarrow g D.
+\]
+For successive content arrows $(Q,f)$ and $(S,g)$, it transports $Q$
+along $g$, accumulates $S\di g_!Q$, and uses
+\[
+ A\xrightarrow f d_BQ\xrightarrow{d_g(Q)}d_{d_DS}g_!Q
+                  \xrightarrow{\mu^L}d_D(S\di g_!Q).
+\]
+The contextad and contentad laws give relative pseudopromonads $M,N$.
+Neither of these formulas yet says how an output extension should change
+the next arrow's input extension.
+
+\section{Mixed normal form and its composition}\label{sec:mixed-main}
+The missing operation moves content followed by context into context
+followed by content. A \emph{full pseudodistributive law}
+\begin{equation}\label{eq:law-main}
+                 \tau:N\odot_CM\longrightarrow M\odot_CN
+\end{equation}
+is the appropriate compatibility datum. Its crossing need not be
+invertible. Its four comparisons with units and multiplications are
+invertible and satisfy the complete coherence axioms of
+\cite[Def.~4.1]{GL}, not just their four boundaries. This is established
+pseudomonad-composition machinery \cite{marmolejo,street}.
+
+\begin{definition}[Interactad]\label{def:interactad}
+An interactad consists of valid context and content presentations over a
+specified pure category, their induced modules \eqref{eq:onesided-main},
+and a full law \eqref{eq:law-main}. The presentations and the pure
+interface are retained as part of the package. An \emph{induced} interactad
+also records a derivation of that law from independently stated hypotheses.
+\end{definition}
+This usage follows the project terminology note linked in Appendix~\ref{app:reuse}. A general
+relative pseudopromonad can describe other computational structures without
+being presented as this particular two-sided package.
+
+The following result assembles the normalization and mixed-algebra results
+of the unified construction \cite{U}.
+\begin{theorem}[The common presented calculus]\label{thm:unification}
+For context and content presentations as in
+Section~\ref{sec:presentations-main}, there is a pseudonatural equivalence
+\begin{equation}\label{eq:normal-main}
+ M\odot_CN\simeq H,\qquad H(A,B)=(e_A\downarrow d_B).
+\end{equation}
+It retains every native cell and all endpoint transports. A full law
+\eqref{eq:law-main} makes $H$ a relative pseudopromonad with unit and
+multiplication transported from
+\begin{equation}\label{eq:mult-main}
+ I_C\simeq I_C\odot_CI_C\xrightarrow{j_M\odot j_N}MN,
+ \qquad MNMN\xrightarrow{M\tau N}MMNN\xrightarrow{m_Mm_N}MN.
+\end{equation}
+Its realization has mixed arrows $(P,Q,f:e_AP\to d_BQ)$ and native cells
+$(\alpha,\beta)$ satisfying $d_B\beta\,f=f'e_A\alpha$. Its endpoint
+squares over $(u,v)$ are exactly
+\begin{equation}\label{eq:mixedsquare-main}
+ \alpha:P\to u^*P',\quad\beta:v_!Q\to Q',\qquad
+ d_{B'}\beta\,d_v(Q)f=f'e_u(P')e_A\alpha.
+\end{equation}
+Specializing the other side to the identity recovers each original
+one-sided calculus. Full faithfulness of its unit-induced comparison inside
+a fixed mixed calculus is an additional property, not a general consequence.
+\end{theorem}
+\begin{proof}
+At fixed endpoints, send
+$[Z;P,x:eP\to Z;Q,y:Z\to dQ]$ to $(P,Q,yx)$, its product cells to
+their native pair, and its pure balances to identities. Normalize a mixed
+arrow to $[eP;P,\id;Q,f]$. For a mixed cell $(\alpha,\beta)$, its
+reverse image is the path
+\[
+ [eP;P,\id;Q,f]\xrightarrow{\beta}
+ [eP;P,\id;Q',d\beta f]
+ \xrightarrow{b_{e\alpha}}
+ [eP';P,e\alpha;Q',f']\xrightarrow{\alpha}
+ [eP';P',\id;Q',f'].
+\]
+Balance naturality and $b_{vu}=b_vb_u$ show that these paths preserve
+composition. The forward composite is the identity. The reverse composite
+is isomorphic to the identity by the balance $b_x$ along the factorization
+map $x$. Its naturality on product maps and balance generators gives the
+required equivalence of categories, with no inversion of $\alpha$ or
+$\beta$.
+
+Under endpoint transport the composed body is
+$d_v(Q)yx e_u(P)$. The comparison on the reverse normalization is the
+specific balance along $e_u(P)$, together with the content transport
+comparison. The balance relations and cleavage equations prove
+pseudonaturality. This gives \eqref{eq:normal-main} globally, not just a
+bijection on arrows. The composite-pseudomonad theorem then gives
+\eqref{eq:mult-main}; its associativity and unit modifications transport
+along that equivalence. The squares are the native mixed cell equation
+after output and input transport, hence \eqref{eq:mixedsquare-main}.
+Pseudoco-Yoneda gives $M\odot I_C\simeq M$ and $I_C\odot N\simeq N$.
+\end{proof}
+
+The theorem is operational. On generic content and context arrows,
+normalize $\tau$ to grades $\widehat R\in K_{d_BQ}$ and
+$\widehat Q\in L_{e_BR}$, with
+$\chi:e_{d_BQ}\widehat R\to d_{e_BR}\widehat Q$.
+For $h=(P,Q,f):A\rightsquigarrow B$ followed by
+$k=(R,S,g):B\rightsquigarrow D$, the composite grades are
+\begin{equation}\label{eq:grades-main}
+                 P\st f^*\widehat R,\qquad S\di g_!\widehat Q.
+\end{equation}
+Its body is the typed composite
+\begin{align*}
+ e_A(P\st f^*\widehat R)&\xrightarrow{\delta}e_{e_AP}f^*\widehat R
+ \xrightarrow{e_f}e_{d_BQ}\widehat R\xrightarrow\chi d_{e_BR}\widehat Q\\
+ &\xrightarrow{d_g}d_{d_DS}g_!\widehat Q
+ \xrightarrow{\mu^L}d_D(S\di g_!\widehat Q).
+\end{align*}
+Thus the first result selects the lifted requirements of the next stage,
+while the next body transports the first stage's retained content. The two
+sides do not merely occupy adjacent fields in a record.
+
+The pure arrow $u$ has representative $(I_A,U_B,\eta^L_Bu\varepsilon_A)$.
+The one-sided maps into this fixed mixed calculus are
+\[
+ (P,f)\mapsto(P,U_B,\eta^L_Bf),\qquad
+ (Q,g)\mapsto(I_A,Q,g\varepsilon_A).
+\]
+A nonmonic $\eta^L_B$ can identify different context bodies. For example,
+the identity context calculus and the terminal monad on sets have the
+canonical unit crossing, yet the context comparison sends every function
+$A\to B$ to the unique function $A\to 1$. A lawful chosen crossing need
+not embed both original calculi conservatively.
+
+\subsection{What presentation recovery requires}
+The common operational algebra does not intrinsically identify its supplied
+grade categories. Mark the generic context arrows
+$\kappa_P=(P,\id):A\rightsquigarrow e_AP$, their squares, factorizations
+and chosen cartesian lifts. A square between two such arrows has
+$\alpha:P\to u^*P'$ and forces its other boundary to be
+$e_u(P')e_A\alpha$. It therefore recovers exactly a morphism of $\int K$.
+Marked unit and accumulation factorizations retain $\varepsilon$ and
+$\delta$. The dual generic content arrows
+$\gamma_Q=(Q,\id):d_BQ\rightsquigarrow B$ recover $\int L$ and its
+opfibration in the same way \cite[Sec.~4]{U}. This is recovery of a
+supplied marked presentation. Marking only its images after a nonfaithful
+mixed comparison cannot restore information already lost.
+
+\section{Familiar computations, recovered at their actual scope}\label{sec:special}
+The value of one construction is that its specializations recover the
+operations and comparisons of the familiar calculi, rather than just giving
+their arrows the same schematic appearance. The following cases are
+one-sided specializations of Theorem~\ref{thm:unification}; the identity
+calculus supplies the unused side.
+
+\paragraph{Kleisli and coKleisli.}
+For a monad $T$, take terminal content grade fibres and $d_B(*)=TB$.
+Then $N(A,B)=\Disc C(A,TB)$, with composite $\mu_D T(g)f$ and pure map
+$\eta_Bu$. The endpoint-square equation is $T(v)f=f'u$.
+For a comonad $G$, terminal context fibres with $e_A(*)=GA$ give
+$M(A,B)=\Disc C(GA,B)$, with composite $gG(f)\delta_A$, pure map
+$u\varepsilon_A$, and square equation $vf=f'G(u)$.
+Terminal grade fibres do not mean trivial effects: the monad or comonad
+structure is in the extension and its structure maps.
+Given a separate mixed law $\lambda:GT\to TG$, the fixed-effect mixed
+specialization has arrows $GA\to TB$ and composite
+\[
+             \mu_D T(g)\lambda_B G(f)\delta_A.
+\]
+This is a conditional specialization, not an automatic law between an
+arbitrary monad and comonad.
+
+\paragraph{Forward parameterization.}
+For a right monoidal action of $V$ on $C$, take constant context fibres
+$K_A=V$ and $e_AP=A\mathbin{\odot}P$. Then arrows are
+$(P,f:A\odot P\to B)$, and forward reparameterization is
+$\alpha:P\to P'$ with $f=f'(1\odot\alpha)$. Composition uses parameter
+$P\otimes Q$ and the action associator followed by $f\odot1$ and $g$;
+squares satisfy $vf=f'(u\odot\alpha)$. This is the forward-cell convention
+for Para. It does not supply copying of arbitrary monoidal parameters,
+reverse differentiation or an optimization algorithm. The contextad
+unification of this case belongs to Capucci--Myers \cite{CM}.
+
+\paragraph{Display spans and dual cospans.}
+Let $\mathcal D$ contain identities and be closed under composition and
+pullback, with the requisite chosen pullbacks. Taking
+$K_A=\mathcal D/A$ and $e$ to be domain gives spans
+$A\xleftarrow p X\xrightarrow f B$ with $p\in\mathcal D$.
+Cells are all commuting apex maps, composition uses $X\times_BY$, and
+endpoint squares are maps $a:X\to X'$ with $p'a=up$, $f'a=vf$.
+The dual construction uses a pushout-stable class of codisplays, chosen
+pushouts, and content extension by codomain; it gives the corresponding
+cospans and their apex maps. These are exact native recoveries. Their
+coexistence in the same ambient construction supplies no general crossing
+between display spans and codisplay cospans.
+
+\paragraph{Changing presentation is a theorem, not a slogan.}
+Some one-sided forms can be transposed. For $GA=E\times A$, currying
+identifies coKleisli arrows with $A\to B^E$ when the exponentials exist;
+the endpoint equations and reuse of the same environment agree. Writer
+arrows can likewise be presented by discrete context grades recording a
+function $w:A\to W$, for a monoid $W$ \cite[Sec.~8]{U}. Such explicit
+comparisons explain why context versus content is not a universal
+expressivity dichotomy. They do not identify arbitrary nonthin
+parameterization with reader or writer computation, and they do not remove
+the compatibility problem for independently given presentations.
+
+\section{Dependent probability and lists do work together}\label{sec:prob}
+Let $\Prob$ have finite nonempty probability spaces with strictly positive
+weights, and deterministic measure-preserving maps. Thus $\alpha:P\to P'$
+means $p'(y)=\sum_{\alpha x=y}p(x)$. It retains both parallel maps and
+noninvertible folds. Over sets, let
+\[
+ K_A={\Prob}^A,\qquad e_AP=\coprod_{a\in A}P_a.
+\]
+Accumulating $P$ and a family $R$ over $e_AP$ gives the fibre
+$\coprod_{x\in P_a}R_{a,x}$ with weight $p_a(x)r_{a,x}(y)$.
+The unit is a singleton family. For content use terminal grade fibres with
+extension $d_B(*)=\List B$, singleton insertion and concatenation.
+The content grade category is terminal, but the list content is nontrivial.
+
+A mixed computation is $(P,f:\coprod_aP_a\to\List B)$. Its native cell
+$\alpha:(P,f)\to(P',f')$ is measure-preserving and satisfies
+$f'(a,\alpha_ax)=f(a,x)$. Under endpoint maps $(u,v)$ the equation becomes
+\begin{equation}\label{eq:prob-square-main}
+                    f'(u(a),\alpha_ax)=\List(v)f(a,x).
+\end{equation}
+For a list $\ell=[b_1,\ldots,b_n]$, crossing a continuation family $R$
+back through this content gives
+\begin{equation}\label{eq:prob-cross-main}
+ \widehat R_\ell=\prod_{i=1}^nR_{b_i},\qquad
+ \widehat r_\ell(r_1,\ldots,r_n)=\prod_i r_{b_i}(r_i),\qquad
+ \chi(\ell,(r_i))=[(b_i,r_i)]_i.
+\end{equation}
+Every occurrence has its own coordinate, even when labels repeat. The
+empty product is a singleton. This is the independent probability tensor,
+not a claim that carrier products are categorical products in $\Prob$.
+
+\begin{theorem}[A conservative nonthin mixed instance]\label{thm:problaw}
+Formula~\eqref{eq:prob-cross-main} defines a full pseudodistributive law.
+For $h=(P,f):A\rightsquigarrow B$ and $k=(R,g):B\rightsquigarrow D$,
+write $f(a,x)=[b_1,\ldots,b_n]$. Their composite has
+\begin{align}
+ \Omega_{k\circ h}(a)&=\coprod_{x\in P_a}\prod_{i=1}^nR_{b_i},
+       \label{eq:prob-comp-main}\\
+ w(x,(r_i))&=p_a(x)\prod_i r_{b_i}(r_i),\notag\\
+ (k\circ h)(a,x,(r_i))&=\operatorname{concat}_i g(b_i,r_i).\notag
+\end{align}
+It retains all native grade maps and endpoint squares. The unit-induced
+context and content comparisons are locally fully faithful.
+\end{theorem}
+\begin{proof}
+The fibres are finite and nonempty, every weight is positive, and their
+total is
+\[\sum_xp_a(x)\prod_i\sum_{r_i}r_{b_i}(r_i)=1.\]
+For maps $\beta_b:R_b\to R'_b$, the product map is measure-preserving
+because
+\[
+ \sum_{\beta_{b_i}r_i=r'_i\ \forall i}\prod_i r_{b_i}(r_i)
+   =\prod_i\sum_{\beta_{b_i}r_i=r'_i}r_{b_i}(r_i)
+   =\prod_i r'_{b_i}(r'_i).
+\]
+A pure map relabels positions without merging them, so the crossing respects
+balance even for a noninjective pure map. Mixed cells compose by
+$(x,(r_i))\mapsto(\alpha_ax,(\beta_{b_i}r_i))$; summing over product
+preimages and then over the $\alpha$-preimage gives the target weight.
+Equation~\eqref{eq:prob-square-main} proves endpoint compatibility.
+
+For content multiplication the comparison groups a product over a
+concatenated list into the products over its ordered blocks. For context
+multiplication it is the addressed distributivity bijection
+\[
+ \prod_i\coprod_{y_i\in R_i}S_{i,y_i}
+       \cong\coprod_{(y_i)\in\prod_iR_i}\prod_iS_{i,y_i}.
+\]
+Both carriers assign the same weight to the same coordinates. Units insert
+or delete singleton factors. Label every coordinate by its sequence of list
+positions and context stages. Each structural comparison preserves that
+address, its value and its weight factor. Every route through a full
+law-coherence diagram is therefore the same function; empty blocks delete
+only forced singleton choices. This verifies the law, including naturality
+on noninvertible grade maps.
+
+For context arrows, the inclusion uses singleton output lists, so its cell
+equation is precisely the original context equation. For content arrows,
+the inclusion uses singleton sample families, between which there is a
+unique map; the mixed equation holds exactly when the list functions agree.
+Both inclusions are consequently full and faithful on each hom category,
+with the original composition and square comparisons.
+\end{proof}
+
+\subsection{A result-dependent calculation}
+Take a singleton input, a prefix sample with two equally weighted values
+$x_0,x_1$, and outputs $f(x_0)=[b]$, $f(x_1)=[c,c]$. At $b$ the
+continuation draws a fair bit and returns its singleton list. At $c$ it
+draws a value in $\{0,1,2\}$ with probabilities $(1/2,1/3,1/6)$ and also
+returns a singleton list. The mixed context has eleven witnesses: two over
+$x_0$, each of weight $1/4$, and nine over $x_1$, whose weights, indexed by
+the two trit values, are
+\[
+ \frac12\begin{pmatrix}1/2\\1/3\\1/6\end{pmatrix}
+          \begin{pmatrix}1/2&1/3&1/6\end{pmatrix}.
+\]
+The first branch returns one bit; the second returns an ordered pair of
+trits. The prefix has changed both the number of draws and their probability
+fibre. The repeated $c$ labels still give separate occurrence coordinates.
+A fixed continuation fibre or a fixed count of copies does not give this
+retained witness presentation without further encoding and a comparison.
+Both the output shape and the input-dependent continuation family contribute
+to \eqref{eq:prob-comp-main}.
+
+For three computations the associator is the explicit address regrouping
+\[
+ ((x,(y_i)),(z_{ij})_{\rm flattened})
+       \longleftrightarrow(x,((y_i,(z_{ij})_j))_i).
+\]
+The second output determines each block length. The comparison preserves
+all samples and their weight factors, including when the lengths differ
+between witnesses. This is why the two-sided composition is coherent.
+
+At the level of output laws, the independent draws in
+\eqref{eq:prob-cross-main} are the ordinary list/distribution law of
+Fujii, Tsai, Montacute and Hasuo \cite[Ex.~20, Prop.~36, Ex.~38 and Thm.~42]{fujii}.
+For example, two requests of the same label, each returning $[]$ or $[z]$
+with equal probability, yield four addressed outcomes of weight $1/4$.
+Concatenation sends two distinct outcomes to $[z]$, producing masses
+$1/4,1/2,1/4$ on $[],[z],[z,z]$. Taking the output law folds the two
+middle witnesses together by a noninvertible measure-preserving map.
+Finite indexed valuations already distinguish samples with the same
+observed output, up to weight-preserving renaming
+\cite[Defs.~4.1--4.3]{varaccawinskel}. The native calculus also retains
+deterministic measure-preserving maps between presentations and
+transports them through result-dependent list substitution.
+
+The example also identifies information that a distribution-only account
+forgets. A constant output on an equally weighted two-point sample space
+has two distinct automorphisms and a noninvertible map to the singleton
+presentation. All remain cells of $H$. Their output distributions agree,
+but their native maps do not. A distribution semantics may be useful; it
+is a subsequent comparison, not the definition of the combined calculus.
+
+\section{Constructing a crossing from separate inputs}\label{sec:independent-main}
+The crossing $\tau$ moves a content computation followed by a context
+computation into context-then-content order. Here $N$ denotes the content
+calculus, $M$ the context calculus, and $\tau:N\odot M\to M\odot N$ must
+respect changes at their shared pure interface. The probability/list law
+constructs such a crossing by working directly with lists and probability
+spaces. The following construction applies whenever both sides can use the
+same occurrence geometry.
+
+The base category $\B$ has pullbacks and a class $\J$ of displays containing
+isomorphisms and closed under composition, pullback and isomorphism of
+arrows. A cartesian monad
+$T$ preserves pullbacks and has pullback naturality squares for its unit
+and multiplication; it also preserves $\J$. The unit supplies the trivial
+continuation and multiplication substitutes one occurrence shape into
+another. A context is a display $r:E\to B$ with resource decoration, and
+its chosen codomain-cartesian restrictions are stable under horizontal
+composition. The \emph{pseudo-double lift} $\Tt$ applies $T$ to the
+underlying displays while acting on their resource decorations and maps.
+It preserves codomain-cartesian restriction squares and has cartesian unit and
+multiplication squares and coherent horizontal comparisons. Content
+independently assigns an occurrence map $a_n:A\to TB$ to each arrow
+$n:A\rightsquigarrow B$, compatibly with native squares, pure maps and
+composition.
+
+Both sides meet on the same object. Lifting $n$ along $r$ must agree on its
+carrier with applying the occurrence action to the decorated context and
+restricting along $a_n$:
+\begin{equation}\label{eq:common-carrier-main}
+                     A_r\cong A\times_{TB}TE.
+\end{equation}
+For lists, $a_n(a)=[b_1,\ldots,b_k]$ means that a point of this pullback over
+$a$ is a list $[e_1,\ldots,e_k]$ with $r(e_i)=b_i$ for each $i$: one
+allowed resource choice per addressed position, even when labels repeat.
+The content square must be genuinely codomain-cartesian, testing all
+squares, with horizontal pastes stable along the allowed displays.
+Canonical pure pullback squares must also be cartesian. That last
+condition supplies the invertible Beck--Chevalley comparison needed for
+balance over arbitrary pure maps. It cannot be replaced by the existence
+of an isomorphism between carriers.
+
+Under exactly the input contracts of Definitions~\ref{def:lift} and
+\ref{def:corners}, Theorem~\ref{thm:glue} constructs the full law with
+normalized value
+\[
+             \tau[n,(P,g:E\to C)]=(a_n^*\Tt P,\ g_*n_r).
+\]
+The context map is obtained by the lifted occurrence action; the content
+cell is obtained by cartesian factorization. They share a carrier map but
+remain separately identifiable. The four structural comparisons are
+constructed from these same data, and all ten pastings, including their
+pure seams, are checked in Appendix~\ref{app:coherence}. In comma
+presentations the result returns exactly the native mixed category of
+Theorem~\ref{thm:unification}, not a quotient or an alternate presentation
+with untracked grade cells (Corollary~\ref{cor:set}).
+
+Finite polynomial occurrences provide a broad resource instance. For a
+coherent symmetric rig category $\V$, each finite resource fibre has
+coefficient objects $V_e$ and a total augmentation
+$\bigoplus_eV_e\to I$. A merge into $e'$ carries an actual map
+$\bigoplus_{he=e'}V_e\to V'_{e'}$. At an occurrence shape with positions
+$i$, resource choices have rows $\bigotimes_iV_{e_i}$; maps distribute
+finite tensors over the preimage sums and apply the original coefficient
+maps. The operations are sums and tensors of the chosen rig, not assumed
+categorical products and coproducts. Appendix~\ref{app:construction}
+constructs this lift and verifies its coherence on directed maps.
+
+Section~\ref{sec:paired} uses this construction to compose varying content
+grades and noninvertible receipt maps with resource aggregation.
+Appendix~\ref{app:credit} relates the construction to its polynomial,
+relative-corner and wreath precursors.
+
+\section{Resource aggregation and content receipts}\label{sec:paired}
+A second mixed computation uses a contentad whose grades are
 \emph{receipts}. Over a set $B$, a receipt grade is a set $Q$ with a label
 $q:Q\to\mathsf{List}(B)$. Its extended result is $dQ=B+Q$: an output
 can be an ordinary $B$-value or a receipt describing a list of requested
 continuations. On the ordinary summand the occurrence list is the singleton;
 on the receipt summand it is $q$. A map of grades preserves these lists
 under the specified change of $B$. Transport changes labels, not the set
-of receipts. Accumulation keeps both sets of receipts and substitutes the
-lists of the earlier stage into the later label. Section~\ref{sec:receipts}
+of receipts. Accumulation keeps both sets of receipts; a label mentioning an
+intermediate receipt is flattened by substituting that receipt's own list. Section~\ref{sec:receipts}
 checks the full content structure.
 
 Take all three interfaces to be the singleton $1=\{*\}$. An arrow $F$
 has trivial context and one receipt $q$ labelled $[*,*]$; its body returns
-$q$. An arrow $G$ has two context choices $0,1$, each weighted by
-$k=\mathbb Q$, with augmentation $(a,b)\mapsto a+b$. Its content has one
+$q$. An arrow $G$ has two context choices $0,1$, each with vector-space
+coefficient object $k=\mathbb Q$. Its augmentation is the linear map
+$k\oplus k\to k$, $(a,b)\mapsto a+b$. Its content has one
 receipt $s$ labelled $[*]$, and its body returns $s$ on either choice.
 In particular the second arrow has nontrivial content too.
 
@@ -151,7 +650,8 @@ The composite body takes $(x,z)$ to $q_{xz}$. The receipt $s$ remains in
 the grade although the body does not reach it. Replacing the grade by the
 image of the body would change the construction.
 
-For comparison, let $G'$ have one choice weighted by $V=k^2$, augmented
+For comparison, let $G'$ have one choice with coefficient object $V=k^2$,
+augmented
 by $\epsilon(a,b)=a+b$, and the same receipt $s$ and constant body. The
 fold of choices admits the two coefficient maps
 \begin{equation}\label{eq:rankmaps}
@@ -172,12 +672,235 @@ four tags, but the comparison into the target lifted grade.
 Thus there are two distinct pieces of map-level information in one
 composite. The coefficient map distinguishes the two aggregations; the
 grade map records the four-to-one receipt comparison. Neither can replace
-the other. Moreover the coefficient operation is tensor, not a categorical
-product of augmented vector spaces: $\dim(V\otimes V)=4$, whereas
-$\dim(V\times_k V)=3$. An interpretation by ordinary dependent products
-would solve a different problem.
+the other. The categorical product of two copies of $(V,\epsilon:V\to k)$ in vector
+spaces over $k$ with augmentation to $k$ is the equal-total pullback
+\[
+ V\times_kV=\{(v,w)\in V\oplus V:\epsilon(v)=\epsilon(w)\}.
+\]
+It has dimension $3$, since equality of totals imposes one independent
+linear equation on $V\oplus V$. The tensor used in the composite has
+dimension $4$.
 
-\subsection{Where the construction sits}
+
+The readout of the second-pair coefficient is an external inspection of
+the native coefficient maps, not a claim that all native closing contexts
+separate them. A closing map to the augmented unit sees only the total
+augmentation.
+
+\section{From native computations to observations}\label{sec:observations}
+The common calculus gives a place for comparisons between implementations,
+but does not prescribe which observations an application should retain.
+The finite probability/list construction has a natural output-law map
+\[
+ E(P,f)(a)=\sum_{x\in P_a}p_a(x)\,\delta_{f(a,x)}.
+\]
+In its target, composition samples an outer list and then independently
+samples a continuation list at each addressed occurrence before
+concatenating. Finite distributivity groups the native witnesses by their
+output lists and proves that $E$ preserves composition. This argument
+requires the continuation to use its actual interface value, not to inspect
+a witness that the map $E$ has erased.
+
+Why retain the law of the whole list? If a result requests $[b,b]$ and each
+position returns a fair bit, independent draws yield $00,01,10,11$ with
+probability $1/4$ each. Reusing one draw yields $00,11$ with probability
+$1/2$ each. The one-position marginals agree, while the probabilities of
+disagreement are $1/2$ and $0$. This compares observation models; it does
+not provide two laws for the same interaction calculus. The finite
+probability/list law uses independent draws. A shared record must be
+retained in the relevant input or private state and given its own semantics.
+
+The applications use a different semantic model, still within the same
+finite occurrence construction. Finite causal trees replace lists so that
+runs retain their event structure, and witnesses carry cost as well as
+probability. The corresponding comparison sends a native command to the
+joint law of its cost and causal tree:
+\begin{equation}\label{eq:joint-main}
+ L(t)(a)=\sum_{h\in\Omega_t(a)}p_t(h)
+              \delta_{(c_t(h),\theta_t(h))}.
+\end{equation}
+Trees have finitely many addressed holes; composition grafts the selected
+child trees and adds their costs. For a prefix witness $h$ and children
+$k_i$ at its actual leaves, mass and cost are
+$p_t(h)\prod_i p_u(k_i)$ and $c_t(h)+\sum_i c_u(k_i)$.
+Terminal content grades again carry a nontrivial tree monad.
+In the stated finite language, the separate evaluator agrees with
+the semantics on addressed samples, weights, costs and typed causal trees.
+Its run correspondence~\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/plural-semantics/Plural_Semantics_for_Result_Dependent_Protocols.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/plural-semantics/Plural_Semantics_for_Result_Dependent_Protocols.tex\#L504}{TeX}]} and observation comparison~\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/plural-semantics/Plural_Semantics_for_Result_Dependent_Protocols.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/plural-semantics/Plural_Semantics_for_Result_Dependent_Protocols.tex\#L596}{TeX}]}
+make the point precise; the casebook works through its use \cite[Sec.~2]{Casebook}.
+Reassociation preserves the causal tree and may change the chronological
+word in which the evaluator records events.
+
+\subsection{Replacement needs a relation at every actual continuation}
+The finite contextual comparison has a precise scope. Fix the public event
+signature, common ranked code library and permitted observations. Interfaces carry
+actual capabilities, with their identities and kinds; pure data operations
+act only on public data and carry private entries unchanged with their owners.
+The common library has identical public tags, captures and templates, though
+its bodies may use the compared imported methods. Data operations do not
+duplicate ownership. Intermediate leaves retain full private stores.
+Choose relations on those stores pairing equal public configurations, and
+an initial coupling supported by those relations. That coupling may contain
+arbitrary correlations. Each primitive method, and every fixed client
+primitive, must supply a correct-marginal finite coupling at every related
+actual input and common public argument. Its outputs must have equal
+normalized public shapes, related full leaves and nonincreasing candidate
+cost. Optional erasure of private unary management uses a fixed cartesian,
+leaf-preserving monad map.
+
+Under these hypotheses, the replacement theorem extends the coupling through
+all finite well-typed closing contexts of the fixed language, including
+finite dependent substitution and acyclic procedure plugging
+(see the replacement theorem~\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/refinement-recovery/Contextual_Refinement_and_Controlled_Recovery.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/refinement-recovery/Contextual_Refinement_and_Controlled_Recovery.tex\#L358}{TeX}]} and the worked application
+in \cite[Sec.~2]{Casebook}). The support constraint and correct marginals
+are the usual ingredients of relational proofs by probabilistic coupling
+\cite{barthe}. Here the support condition also records the private stores
+needed for the next method calls. Child couplings are multiplied conditional
+on the coupled prefix at the actual matched leaves. Under the resulting coupling,
+public causal trees agree and candidate cost is no greater than reference cost. If the local costs agree
+exactly, the joint observation laws agree. This is neither full abstraction
+nor a theorem for arbitrary auditors, schedulers or timing observations.
+A newly admitted observation primitive must satisfy the same premises.
+The shared latent-state calculation in Appendix~\ref{app:diagnostic}
+shows concretely why forgetting private state before filling the holes can
+invalidate the multiplication.
+
+Even the joint law \eqref{eq:joint-main} need not preserve an all-raw
+resource budget when zero-mass rows are admitted. Adding a zero-probability,
+high-cost row leaves that law unchanged but changes which raw executions
+satisfy the budget. Cost-lowering native maps also need not preserve exact
+cost laws. The separate
+law-and-possibility construction (source labels: \texttt{thm:obstruction}, \texttt{thm:K}, \texttt{thm:interpretation})~\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/law-and-possibility/Law_and_Possibility_Repair_for_Dependent_Protocols.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/law-and-possibility/Law_and_Possibility_Repair_for_Dependent_Protocols.tex}{TeX}]}
+repairs the former loss for its stated observation interface while still
+forgetting witness multiplicity and maps. This is a controlled forgetting
+operation, not an equivalence with the native calculus.
+
+\subsection{Robot undo under interference}
+An acquired lock can return a journal and enable an undo, while a busy
+result returns neither. Those result-dependent interfaces are composed by
+the same finite addressed-tree construction. Whether undo preserves other
+actors' changes is a further semantic question. For invertible robot steps
+$a_k$, let $P_k=a_k\cdots a_1$ be the prefix, and let arbitrary outside
+functions $e_k$ act after step $k$. Compensation by $P_m^{-1}$ restores the
+state that those same labelled outside functions would have produced on the
+untouched initial state, for every initial state, precisely when
+\begin{equation}\label{eq:robot-main}
+ (P_m^{-1}e_mP_m)\cdots(P_1^{-1}e_1P_1)=e_m\cdots e_1.
+\end{equation}
+If allowed outside choices include identity and are independent at each
+position, validity for every such history is equivalent to commutation of
+each allowed $e_k$ with its corresponding $P_k$. A reset need not commute,
+even when a translation does.
+
+Atomic-looking behavior requires more: admitted observations must be
+invariant under the visited prefixes, and the scheduler must make its choices
+from the common admitted information. A camera that sees an intermediate
+rotation defeats that comparison even when compensation gets the final
+state right. Appendix~\ref{app:robot} proves the finite fixture calculation
+and states its observation projection. This is a downstream application of
+the common sequential calculus together with a specialized interference
+argument, not evidence that a generic crossing solves physical recovery.
+
+\section{The boundaries are part of the unification}\label{sec:limits}
+The example in Section~\ref{sec:mixed-main} concerns conservativity for a
+chosen lawful crossing. There is also an obstruction to unrestricted
+conservative amalgamation over a common ordinary category, even before
+requiring a presentation by contextads and contentads \cite[Sec.~10]{U}.
+The following bicyclic example is stated at that common-base level.
+
+\begin{proposition}[No universal conservative assembly]\label{prop:bicyclic-main}
+There are faithful functors from one ordinary category into two others for
+which no common target, identifying the pure maps and preserving the given
+equations, receives both faithfully. For the associated locally discrete
+bicategories, a common bicategorical target cannot receive both locally
+fully faithfully, even with coherent pure agreement.
+\end{proposition}
+\begin{proof}
+Take one-object categories
+$C=\langle a\rangle$,
+$M=\langle a,b\mid ab=1\rangle$,
+$N=\langle a,c\mid ca=1\rangle$.
+In $M$, represent $a(n)=\max(n-1,0)$ and $b(n)=n+1$ on natural numbers.
+The powers of $a$ are distinct and $ba\ne1$. In $N$, use successor for
+$a$ and truncated predecessor for $c$; again the pure powers are distinct.
+In any common target,
+$c=c(ab)=(ca)b=b$, hence $ba=ca=1$. This collapses distinct arrows of
+$M$. In a bicategorical target the same calculation gives an invertible
+2-cell $ba\cong1$, but the discrete source hom has no such cell. Local
+fullness therefore fails.
+\end{proof}
+This does not assert that these monoids arise from the particular dependent
+comma presentations above. It rules out an unqualified conservative
+common-base assembly principle. Nor does it prohibit a nonconservative
+output. The positive local-full-faithfulness result for probability/list
+is consequently substantive, not a consequence of sharing an ambient
+category.
+
+The scope of representation is equally important. The project has a
+machine-checked obstruction to a discrete graded presentation of the Boolean
+continuation monad with tag-preserving pure-postcomposition naturality
+\cite{DiscreteObstruction}. It does not exclude all nondiscrete gradings.
+Likewise, marked recognition of a crossing in Appendix~\ref{app:recognition}
+forces exactness only on displays realized by the actual context calculus.
+It is not an intrinsic classification of arbitrary mixed laws.
+
+\subsection{Additional operations require additional structure}
+The sequential calculus neither assumes nor automatically supplies a total
+feedback operation, concurrency interchange, differentiation or a logical
+doctrine. These are different mathematical interfaces. Forward Para models
+parameterized composition; derivatives require differential structure and
+compatible reparameterization. A stochastic model supplies randomness but
+not Bayesian conditioning. A logical interpretation must prove that its
+predicates or predicate transformers respect the relevant substitutions.
+No general differential or logical enrichment is established here.
+
+There are stronger scoped feedback developments in the project, which should
+not be mistaken for either absence of progress or a theorem about every
+interactad. The stage- and export-preserving barrier construction gives
+synchronized crossing and certified birth-reactive feedback on infinite
+prefixes, after a completion-sensitive executed-prefix interface fails its
+crossing test. The nonblocking recurrent construction permits repeated paid
+work during pending initialization, using finite registries, complete
+selected laws and retained historical ownership effects. These are named
+changed-interface constructions with their own admission and compatibility
+conditions; global admission, centralized control of whole laws and
+decentralized execution remain distinct. Appendix~\ref{app:reuse} links the
+precise reading routes. Neither supplies arbitrary feedback or unrestricted
+concurrency for the present sequential package.
+
+\section{Conclusion}\label{sec:conclusion}
+The common calculus is a relative algebra of computations with a visible pure
+interface, native maps and changing-endpoint squares. Its context and content
+presentations explain different sides of a program's interface. Their
+normalization gives one category of mixed computations; the crossing explains
+how the kinds of computation act on one another during composition. Ordinary
+fixed effects, forward parameters, display witnesses and produced content
+therefore enter through specific recoveries and comparison maps rather than
+through a list of analogies.
+
+The probability/list construction demonstrates the central interaction in
+full: an outcome changes the addressed family of subsequent requirements,
+and those requirements contribute their actual witnesses and probability
+maps to the composite. The independent-input theorem provides a reusable
+way to construct such laws, while the receipt example shows why coefficient
+and content cells must both survive. Observation theorems then justify
+particular implementations or abstractions at a stated interface. They do
+not redefine equality of native computations, and compensation theorems do
+not follow from composition alone.
+
+Further work should preserve that separation of obligations. A new effect
+combination needs a lawful crossing; a conservative combination needs a
+hom-category recovery proof; a coarser semantics needs a composition and
+observation comparison; a feedback extension needs its own admissible
+closure and native compatibility equations.
+The aim is a common calculus whose useful specializations can be combined
+and audited without silently forgetting what made them different.
+
+\appendix
+\section*{Appendices}
+Appendix~\ref{app:credit} compares the construction mechanisms with prior work. Appendix~\ref{app:construction} states and proves the independent-input theorem and its Set realization. The indexed and recognition examples follow, then the full local equations, pasting checks and compatible input changes. The diagnostic and robot calculations specify their own observation and interference assumptions. Appendix~\ref{app:reuse} records the source and verification route.
+
+\section{Construction mechanisms and prior work}\label{app:credit}
 The wreath formalism already provides a place for a coherent crossing:
 Capucci--Myers include an intertwiner and its structure cells among the
 wreath data \cite[Def.~D.9]{CM}. Theorem~\ref{thm:glue} constructs the intertwiner and its structure cells
@@ -185,12 +908,12 @@ from the two input models. Two
 established construction mechanisms are particularly close. Buckley--Garner's
 co-crossed double categories have codomain-cartesian lifts stable under
 horizontal composition, and their Proposition~6.3 constructs a crossing
-from them \cite[Def.~6.1, Prop.~6.3]{BG}. The content part below uses
-that cartesian-square mechanism relatively: lifts are required only along
-context displays, but their universal property tests all squares. Passing
-from formally composable arrows to a tensor balanced over all pure maps
-requires an additional pure pullback check. This is not a claim that
-global corners were merely a nonconstructive precedent.
+from them \cite[Def.~6.1, Prop.~6.3 and Rem.~9.5]{BG}. The relative
+construction uses that cartesian-square mechanism along context displays.
+Its universal property tests every native content square with the
+specified right edge. All pure maps remain in the base, and descent to
+the relative tensor requires a separate cartesian comparison for pure
+balance.
 
 Cnossen, Haugseng, Lenz and Linskens identify commutative semiring objects
 in cartesian closed presentable $\infty$-categories with product-preserving
@@ -201,8 +924,8 @@ augmentation supply further data; the augmented category itself need not
 be a product-preserving bispan model. The contribution is the construction
 that matches this decorated occurrence calculus to independently supplied
 relative content corners and descends through arbitrary pure balance.
-It neither identifies the ambient theories nor claims that their further
-development could not encompass the result.
+A reduction of the whole construction to a suitably decorated
+corners-and-bispans theorem remains open.
 
 \paragraph{Relative polynomial geometry.}
 Von Glehn constructs the law of free fibred products over free fibred
@@ -252,26 +975,28 @@ Fujii, Tsai, Montacute and Hasuo give a canonical Set construction from
 a $W$-operadic monad and a $W$-commutative monad
 \cite[Thm.~42 and Rem.~43]{fujii}. Their full monad--monad law uses an
 additional condition: ordinary commutativity of the second monad or
-absence of operadic operations of arity greater than one. Those results
-construct laws between Set endofunctors; the present output is instead
-a category-valued crossing with separate coefficient and grade cells.
+absence of operadic operations of arity greater than one. Finite
+distributions satisfy the commutativity condition. With lists, the
+resulting Set law is the output-law comparison of Section~\ref{sec:prob}.
+The native law of Theorem~\ref{thm:problaw} composes positive finite
+witness spaces and their deterministic measure-preserving maps. The
+separate coefficient and grade cells of the general construction are
+developed in Appendix~\ref{app:construction}.
 
-The main theorem is a sufficient construction. The last part of the paper
+The independent-input theorem is a sufficient construction. Appendix~\ref{app:recognition}
 asks a different question: which conditions can be recovered from a mixed
 law that preserves the original projections? That marked recognition
 statement does not classify arbitrary laws, and does not extend its tests
-to displays absent from the context calculus. Code, further examples and the related Lean project are available in the
-\href{https://github.com/eternal-november/eos-research-programmes/tree/main/projects/contextual-composition}{public contextual-composition project};
-Appendix~\ref{app:reuse} gives stable entry points and separates written
-proofs from the formalized subresults. The exact general theorem
-and its comparison history are pinned in \cite{Gluing,Comparison}; the
-presentation here develops their mathematics through the computation above.
-This research article gives the construction and its proof; the
-companion technical supplement (\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Theorem.pdf}{PDF} and \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Theorem.tex}{LaTeX})
-records additional development, and Appendix~\ref{app:reuse} locates
-the further examples and the separate scope of Lean verification.
+to displays absent from the context calculus. The original full written gluing proof is \cite{Gluing}, with prior-work
+analysis in \cite{Comparison}. Appendix~\ref{app:construction} and its
+coherence appendices present that construction within the broader
+unification of this article. Appendix~\ref{app:reuse} locates the source
+and distinguishes written proofs from formalized subresults.
 
-\section{The common interface: occurrences and two pullbacks}\label{sec:interface}
+\section{The independent-input construction}\label{app:construction}
+The complete construction used in Section~\ref{sec:independent-main} follows. It applies beyond the finite probability/list model and keeps the decorated context maps and native content cells separate.
+
+\subsection{The common interface: occurrences and two pullbacks}\label{sec:interface}
 In the two-resource example (Section~\ref{sec:paired}), the receipt
 $[*,*]$ requests two continuations with the same label. The list records
 two addresses, so each continuation can make its own resource choice.
@@ -305,7 +1030,7 @@ second construction must retain its native content cell, not merely its
 image under $a$. The theorem matches the constructions by
 \eqref{eq:carrier}; it does not identify their maps.
 
-\subsection{Decorated displays and their occurrence lift}\label{sec:decinput}
+\subsubsection{Decorated displays and their occurrence lift}\label{sec:decinput}
 A pseudo-double category $\D$ records contexts. Its vertical category is
 $\B$, and a forgetful pseudo-double functor to commuting squares of $\B$
 is identity on vertical arrows. A horizontal arrow $P:E\to B$ lies over
@@ -358,8 +1083,8 @@ axiom does not refer to a content grade. For sets it will follow from
 addressed finite polynomial evaluation; it is stated independently of
 that presentation so that an indexed example can use the same theorem.
 
-\subsection{Content with relative cartesian corners}\label{sec:coninput}
-To move a resource display past a content computation, we must compare
+\subsubsection{Content with relative cartesian corners}\label{sec:coninput}
+To move a resource display past a content computation, the construction must compare
 content arrows even when their input and output interfaces change.
 For fixed interfaces \(A,B\), the category \(N(A,B)\) contains
 the content arrows \(A\rightsquigarrow B\) and their native comparison
@@ -431,7 +1156,7 @@ maps. Horizontal stability controls successive content computations.
 The pure square is what permits a change of interface to move from one
 side of a middle boundary to the other.
 
-\section{Constructing the crossing}\label{sec:construction}
+\subsection{Constructing the crossing}\label{sec:construction}
 The crossing moves a resource display past a content arrow. The two
 constructions of its carrier in \eqref{eq:carrier} must match, while
 the resource map and the content cell remain separate as in the
@@ -523,7 +1248,7 @@ The construction is natural under the compatible maps of independent
 inputs specified in Appendix~\ref{app:parameters}.
 \end{theorem}
 
-\subsection{Why the two native maps fit}
+\subsubsection{Why the two native maps fit}
 Take a content square $s:n\to n'$ over $(k,u)$ and a context square
 $P\to P'$ over $(h,u)$. Cartesianity produces a unique content square
 $\widetilde s$ satisfying
@@ -544,7 +1269,7 @@ the content component is the bent cell
 The middle arrow is not required to be invertible. Identity and composition
 follow by restoring $C_{r'}(n')$ in \eqref{eq:factor} and using its unique
 factorization, while the decorated factors compose in $\D$. Thus the
-construction already retains both kinds of maps in the opening example.
+construction already retains both kinds of maps in the receipt example.
 For a left endpoint change, paste the pure pullback square for that change
 with $C_r(n)$; horizontal stability identifies the result with the lift
 of the restricted content arrow. This gives the invertible endpoint
@@ -570,7 +1295,7 @@ precomposition with its inverse. An isomorphic matching can therefore be
 rectified. This local property explains the gluing of maps; it is not an
 initiality property for all possible mixed calculi.
 
-\subsection{Why arbitrary pure changes of interface are allowed}
+\subsubsection{Why arbitrary pure changes of interface are allowed}
 Suppose $u:B\to B'$ is pure and $P$ lies over $r:E\to B'$. Pull back
 $r$ to $r_u:E_u\to B$, with $v:E_u\to E$. Crossing after $u_*n$ and
 crossing $n$ against $u^*P$ must represent the same operation. On content,
@@ -606,7 +1331,7 @@ descends. Conversely, putting $n$ equal to a horizontal identity in
 \eqref{eq:mate} shows that invertibility of all these canonical mates
 recovers pure exactness. The pure hypothesis is not redundant bookkeeping.
 
-\subsection{The four comparisons and the composition proof}
+\subsubsection{The four comparisons and the composition proof}
 The law must commute with each of the two units and each of the two
 multiplications. Let $-P$ denote the context with identity forward tail.
 For consecutive content arrows $n,m$ and displays $P,S$, the comparisons
@@ -660,7 +1385,7 @@ Together those checks prove Theorem~\ref{thm:glue}. The general composition
 of pseudomonads with a pseudodistributive law then gives its stated
 multiplication \cite[Def.~4.1 and App.~A]{GL}.
 
-\section{Resources: polynomial evaluation with directed maps}\label{sec:resources}
+\subsection{Resources: polynomial evaluation with directed maps}\label{sec:resources}
 This section builds the resource input of Theorem~\ref{thm:glue}:
 the decorated occurrence lift of Definition~\ref{def:lift}. A finite
 polynomial shape indexes a tensor of resource choices, and directed
@@ -699,7 +1424,7 @@ Restrictions along $u$ use ordinary pullbacks and the same coefficient
 objects and arrows under fibre bijections. Their factorization property
 against all squares is immediate from that formula.
 
-\subsection{What finite bispans compute, and what must be added}
+\subsubsection{What finite bispans compute, and what must be added}
 The raw operation associated to a finite bispan is
 \begin{equation}\label{eq:bispan}
  \left(L\xleftarrow{s}U\xrightarrow{p}D\xrightarrow{t}K\right)
@@ -731,7 +1456,7 @@ an augmented two-point carrier has the two possibilities $(1,0),(0,1)$.
 Their fibres therefore do not obey the disjoint-union product rule of
 the unaugmented model.
 
-\subsection{Accumulating resources before merging them}
+\subsubsection{Accumulating resources before merging them}
 For $P:E\to B$ with weights $V_e$ and $S:F\to E$ with weights $W_z$,
 the row of $P\st S$ at $z$ is $V_{sz}\otimes W_z$. Its augmentation
 first distributes by $e$, applies each inner augmentation, then applies
@@ -773,7 +1498,7 @@ pseudo-double category, not merely a multiplication on its objects.
 Horizontal pastes of cartesian restrictions remain cartesian: their
 fibre maps are bijective and their row comparisons are isomorphisms.
 
-\subsection{Applying an occurrence shape}
+\subsubsection{Applying an occurrence shape}
 For $t=(s,(b_i)_{i\in F_s})\in TB$, the fibre of $Tr:TE\to TB$ is
 $\prod_iE_{b_i}$. Define its row at a choice tuple $(e_i)$ to be
 $\bigotimes_iV_{e_i}$ and its augmentation to be
@@ -800,6 +1525,8 @@ using the incoming augmentation equations proves \eqref{eq:occaug} is
 preserved. Pullback restrictions are preserved because their fibre
 bijections and invertible row maps remain so under finite tensor.
 
+\phantomsection\label{par:dependent-fubini-maps}
+\noindent\textbf{Dependent Fubini on maps.}
 The horizontal comparison splits a tuple of dependent pairs into the
 outer tuple and its dependent inner tuple. On coefficients it is the
 specified shuffle
@@ -844,7 +1571,7 @@ Nonstructural arrows move through structural maps only by naturality
 where incidences agree. Empty sums and products use absorption and unit
 coherence, not assumed uniqueness of arrows from $0$ or to $I$.
 
-\section{Content: exact recovery of the comma presentation}\label{sec:recovery}
+\subsection{Content: exact recovery of the comma presentation}\label{sec:recovery}
 Receipt grades in Section~\ref{sec:paired} extend the result by tags
 carrying occurrence lists. The following test treats arbitrary comma
 content of that form of presentation: it constructs the content corners
@@ -1018,7 +1745,7 @@ The body is \eqref{eq:setcut} followed by the given content multiplication,
 so the original multiplication is identified as well.
 \end{proof}
 
-\subsection{Receipts satisfy the tests}\label{sec:receipts}
+\subsubsection{Receipts satisfy the tests}\label{sec:receipts}
 The receipt calculus behind the two-resource merge (Section~\ref{sec:paired})
 extends to any extensive base with pullbacks and a cartesian monad. Take
 \[
@@ -1051,90 +1778,9 @@ pullback of their flattened labels, over the \emph{same original} $R$.
 Consequently the accumulation comparison preserves its original projection
 and is cartesian. The pure mate is invertible because $T$ preserves the
 base pullback and transport keeps every tag. This verifies all three
-tests and justifies every receipt and grade map used in the opening
+tests and justifies every receipt and grade map used in the receipt
 composite. It also gives the content input for the following indexed
 example without altering the formulas.
-
-\subsection{Adaptive destructive diagnostics}\label{sec:diagnostic}
-A diagnostic can consume a specimen and still have to decide which
-assays should use the survivors. The worked example below uses
-finite planar trees with terminal content grades and tracks
-probability and cost on the resource side
-\cite[Secs.~2--3]{Casebook}. Corollary~\ref{cor:set} supplies the
-composition of tests with their result-dependent follow-ups.
-The replacement claim in this example uses a separate coupling and
-cost calculation.
-
-Three specimens $r_0,r_1,r_2$ initially share one hidden fair quality
-bit $q$. The screen consumes $r_0$. A low result gives a single
-continuation holding both surviving specimens; a high result gives two
-ordered continuations, one for assay $A$ on $r_1$ and one for assay
-$B$ on $r_2$. On the low branch the confirmation $C$ consumes $r_1$.
-A pass or fail sends $r_2$ to disposal; an uncertain result sends it
-to rescue assay $D$. The continuation at each hole receives its
-actual specimens. For example, the two high continuations do not
-receive two copies of the original bundle.
-
-\begin{center}\small
-\begin{tabular}{@{}lcc@{}}
-\toprule
-Response law & $q=0$ & $q=1$\\
-\midrule
-$\Pr[\text{screen is high}\mid q]$&$1/4$&$3/4$\\
-$\Pr[A=1\mid q]$&$1/4$&$3/4$\\
-$\Pr[B=1\mid q]$&$1/8$&$7/8$\\
-$C$ (pass, fail, uncertain)&$(6,1,3)/10$&$(1,6,3)/10$\\
-$\Pr[D=1\mid q]$&$1/5$&$4/5$\\
-\bottomrule
-\end{tabular}
-\end{center}
-At a high result the resource calculation supplies one child witness
-at each actual hole. The weights multiply \emph{conditional on the full
-private prefix}, and the content calculation grafts both outcomes onto
-the screen node. Averaging happens after this product. In particular,
-writing $S_1$ for the high result, Bayes' formula gives
-$\Pr[q=1\mid S_1]=3/4$, and hence
-\[
- \Pr[A=B=1\mid S_1]
- =\tfrac14\,\tfrac14\,\tfrac18+\tfrac34\,\tfrac34\,\tfrac78
- =\tfrac12.
-\]
-If a rule hides the shared bit before filling the two holes and
-multiplies their posterior marginals, it gives
-$(5/8)(11/16)=55/128$ instead, a deficit of $9/128$ on this public
-observation. Grafting retains the two labelled outcomes; the retained
-private input supplies the dependence between them. The calculation
-does not give the running program access to $q$ or a conditioning
-oracle.
-
-The casebook compares two implementations of the same controller.
-Each nondisposal method in the reference implementation adds one fair
-private audit bit. At an outcome of candidate weight $p$, the two
-reference witnesses have weight $p/2$ each. Forgetting the audit bit
-is a native map: summing its fibre recovers $p$, its bodies agree
-after projecting away private audit state, and its cost can decrease.
-For the high branch, for example, both child costs contribute:
-\[
- (2,1)+(3,1)+(4,2)=(9,4)
- \quad\text{versus}\quad
- (4,2)+(5,2)+(7,3)=(16,7).
-\]
-The low-conclusive and low-rescue masses are $7/20$ and $3/20$,
-and the high mass is $1/2$. Their candidate cost pairs are $(7,3)$,
-$(13,5)$, and $(9,4)$, versus $(12,5)$, $(21,8)$, and $(16,7)$
-for the reference. Consequently the expected costs are
-$(89/10,19/5)$ and $(307/20,129/20)$. These are comparisons of
-whole-run costs; they do not assert equality of exact-cost laws.
-
-The composition theorem supplies the addressed grafting and its action
-on the original maps. The casebook's separate comparison couples the
-implementations on related full private inputs, preserves public causal
-trees and actual returned capabilities, and bounds candidate cost
-coordinatewise for its admitted finite closing clients
-\cite[Sec.~3]{Casebook}. Here the three-specimen calculation checks
-one controller and one shared-quality initialization. The broader
-comparison needs its own assumptions on initialization, ownership,
-local kernels and client observations.
 
 \section{A change of stage that erases colours and merges witnesses}\label{sec:indexed}
 Theorem~\ref{thm:glue} also applies when interfaces have two stages.
@@ -1247,7 +1893,7 @@ positions and using directed transfer for witnesses separately in each
 position. An indexed norm doctrine with additional structure is not ruled
 out; it is not supplied by finite fibres alone.
 
-\section{What a crossing can force, and what it cannot}\label{sec:recognition}
+\section{What a crossing can force, and what it cannot}\label{sec:recognition}\label{app:recognition}
 Theorem~\ref{thm:glue} constructs a law from independent inputs.
 This section asks which tests a given crossing forces. The comparison
 uses the original projection maps, so it starts with the comma
@@ -1367,88 +2013,6 @@ noninvertible witness restriction and noninvertible parameter change;
 it does not erase these restrictions. The Set recovery and marked
 recognition have different conclusions and have been kept separate
 for that reason.
-
-\section{Conclusion: connections and open questions}\label{sec:conclusion}
-The composition rule can be reused across compatible models. Check the occurrence
-lift on resources, check the relative corners on content, and check the
-pure pullback condition where a change of interface can slide. Theorem~\ref{thm:glue}
-then describes how to combine the programs and how that combination acts on
-their maps. The two-resource example (Section~\ref{sec:paired}) shows what
-this preserves: the four addressed receipts, the noninvertible comparison
-that folds them, and the two distinct coefficient actions. The indexed
-example (Section~\ref{sec:indexed}) and the parameter computation
-(Appendix~\ref{app:colour}) test two different operations: restricting
-between stages and changing the occurrence model on the same base.
-
-\paragraph{What can be reused in applications.}
-The project's \emph{Applications and Boundaries of Result-Dependent
-Interaction} casebook builds on the finite Set interaction, framing,
-language and comparison results of O1--O5
-\cite[Sec.~2]{Casebook}. Corollary~\ref{cor:set} identifies the particular
-piece supplied here: the same Set crossing, composition and native comma
-cells as in O1. The subsequent application hypotheses are still needed.
-For instance, the adaptive diagnostics case uses a comparison that
-preserves latent-state correlation while observed evidence chooses
-subsequent actions (Section~\ref{sec:diagnostic};
-\cite[Sec.~3]{Casebook}). The eager/lazy random-function
-case uses a conditional uniformity invariant, an entire-run coupling,
-and a separate cost calculation \cite[Sec.~5]{Casebook}. The crossing
-composes the underlying arrows; the comparisons use application-specific
-arguments. The robot example in Appendix~\ref{app:robot} gives a
-different test of that division: an acquired lock supplies a journal
-and an undo continuation, while a busy result supplies neither.
-The interference and observation assumptions decide when those
-undo steps preserve outside changes and appear atomic to a client.
-
-The linear dataflow case gives a closer reuse test
-\cite[Sec.~9]{Casebook}: a whole family of augmentation-preserving
-linear maps over the identity carrier has different effects on the
-second channel. Its rank-one member and the identity remain different
-as mixed cells even with terminal-grade identity content. The case
-declares an external linear test; a native closing map to the augmented
-unit can see only the augmentation. Thus the relevance of the extra
-coefficient data depends on the observation interface. In
-Section~\ref{sec:paired} the test is likewise an inspection of the
-coefficient, not a claim about all native closing contexts.
-
-\paragraph{Two model-building boundaries.}
-A Lean result in the same project rules out a discrete graded
-presentation of the Boolean continuation monad with tag-preserving
-naturality under pure postcomposition
-\cite{DiscreteObstruction}. It detects failure of the pullback comparison
-used by such presentations, not an obstruction to all nondiscrete
-gradings. An extension in that direction would have to specify different
-content grades and first test whether their proposed arity and corners
-satisfy Definition~\ref{def:corners} on the actual display class.
-
-Continuous outcomes pose a different problem. The casebook constructs
-two total dependent Borel kernels with an atomless output marginal and
-proves that a normalized finite family of deterministic histories cannot
-realize that marginal exactly \cite[Sec.~7]{Casebook}. This leaves the
-forward-generative example intact and establishes no gluing theorem for
-continuous probability. A concrete next test would be to specify a base
-and common arity for this example, then check whether its kernels and
-their native maps admit the proposed cartesian lifts. If conditional
-transport is used, it must preserve the required measurable choices
-and close under the accumulation being claimed.
-
-\paragraph{What remains to be checked in Lean.}
-The general gluing theorem is a written result \cite{Gluing}.
-The broader project's Lean formalization is ongoing. It includes construction of a mixed category
-\emph{from} a supplied law, a downstream step. To certify the result here,
-the formal development needs to construct the decorated and content maps
-of the crossing, prove that each pure-middle comparison is a balance, and
-verify the coherence pastings before invoking a supplied-law construction.
-Appendix~\ref{app:reuse} links the current verification evidence.
-
-\appendix
-\section*{Appendices}
-Appendix~\ref{app:local} proves the resource equations behind the
-crossing; Appendix~\ref{app:coherence} checks the pure balances and ten
-pastings. Appendix~\ref{app:parameters} defines compatible input changes
-and computes colour erasure. Appendix~\ref{app:reuse} locates the source,
-examples, and verification evidence. Appendix~\ref{app:robot} works through
-a finite robot transaction with interference and a scoped observer.
 
 \section{The local occurrence equations}\label{app:local}
 The action $L_aP=a^*\Tt P$ in \eqref{eq:L} pulls a lifted resource display
@@ -1732,62 +2296,87 @@ upstairs and one downstairs. A pure middle balance is different again:
 it moves a map of interfaces inside a single calculus. This witness
 compares two calculi on the same base, with no pure-middle map inserted.
 
-\clearpage
-\section{Reuse, sources and verification status}\label{app:reuse}
-This guide locates the input tests for reuse and separates the written
-construction from the related checked results. Theorem~\ref{thm:glue}
-accepts a pullback base, display class, cartesian occurrence monad, lifted
-decorated calculus and relative content corners; it returns the law
-\eqref{eq:cross} on native maps. Definitions~\ref{def:lift} and
-\ref{def:corners} are the input contracts, and Appendices~\ref{app:local}--\ref{app:parameters}
-provide their composition and parameter obligations. For an application
-with comma grades, Lemma~\ref{lem:comma} replaces the corner check by
-\eqref{eq:display}--\eqref{eq:gradebc}, and Corollary~\ref{cor:set}
-identifies the output with the original comma law. For recognition,
-Proposition~\ref{prop:recognition} requires the specified marks and uses
-only the realized class \eqref{eq:realized}; it must not be substituted
-for an unmarked converse.
+\section{Adaptive destructive diagnostics}\label{app:diagnostic}\label{sec:diagnostic}
+A diagnostic can consume a specimen and still have to decide which
+assays should use the survivors. The worked example below uses
+finite planar trees with terminal content grades and tracks
+probability and cost on the resource side
+\cite[Secs.~2--3]{Casebook}. Corollary~\ref{cor:set} supplies the
+composition of tests with their result-dependent follow-ups.
+The replacement claim in this example uses a separate coupling and
+cost calculation.
 
-The worked Set calculation tests native coefficient and grade maps
-(Section~\ref{sec:paired}); the presheaf calculation tests actual
-noninvertible restriction and parameter change (Section~\ref{sec:indexed}).
-The row-product obstruction and the failure of global horizontal stability
-separate hypotheses that would otherwise be easy to conflate. These are
-mathematical examples and counterexamples, not empirical evidence for
-arbitrary effects. The finite computations accompanying this manuscript
-check its displayed linear witnesses and small list substitutions only;
-they do not verify the general theorem.
+Three specimens $r_0,r_1,r_2$ initially share one hidden fair quality
+bit $q$. The screen consumes $r_0$. A low result gives a single
+continuation holding both surviving specimens; a high result gives two
+ordered continuations, one for assay $A$ on $r_1$ and one for assay
+$B$ on $r_2$. On the low branch the confirmation $C$ consumes $r_1$.
+A pass or fail sends $r_2$ to disposal; an uncertain result sends it
+to rescue assay $D$. The continuation at each hole receives its
+actual specimens. For example, the two high continuations do not
+receive two copies of the original bundle.
 
-\paragraph{Code, examples and verification.}
-The public
-\href{https://github.com/eternal-november/eos-research-programmes/tree/main/projects/contextual-composition}{contextual-composition project}
-contains broader context, further examples and a Lean verification project.
-A stable reading route is the
-\href{https://github.com/eternal-november/eos-research-programmes/blob/ff237fbea8897aeca3ecd2a3bc6212bbc7f88394/projects/contextual-composition/NAVIGATION.md}{project navigation},
-then the
-applications and boundaries casebook (\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/Applications_and_Boundaries_of_Result_Dependent_Interaction.pdf}{PDF} and \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/Applications_and_Boundaries_of_Result_Dependent_Interaction.tex}{LaTeX}).
-For the formalized subresults, consult the
-\href{https://github.com/eternal-november/eos-research-programmes/blob/ff237fbea8897aeca3ecd2a3bc6212bbc7f88394/projects/contextual-composition/foundations/relative-construction/lean/README.md}{Lean package README}
-and its
-\href{https://github.com/eternal-november/eos-research-programmes/blob/ff237fbea8897aeca3ecd2a3bc6212bbc7f88394/projects/contextual-composition/foundations/relative-construction/lean/SOURCE_CROSSWALK.md}{source crosswalk}.
-That Lean~4.35.0 package includes related fixed monad/comonad recovery and
-mixed-category results with a supplied law. It is not a Lean certificate
-for the construction of the general gluing law proved here.
+\begin{center}\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Response law & $q=0$ & $q=1$\\
+\midrule
+$\Pr[\text{screen is high}\mid q]$&$1/4$&$3/4$\\
+$\Pr[A=1\mid q]$&$1/4$&$3/4$\\
+$\Pr[B=1\mid q]$&$1/8$&$7/8$\\
+$C$ (pass, fail, uncertain)&$(6,1,3)/10$&$(1,6,3)/10$\\
+$\Pr[D=1\mid q]$&$1/5$&$4/5$\\
+\bottomrule
+\end{tabular}
+\end{center}
+At a high result the resource calculation supplies one child witness
+at each actual hole. The weights multiply \emph{conditional on the full
+private prefix}, and the content calculation grafts both outcomes onto
+the screen node. Averaging happens after this product. In particular,
+writing $S_1$ for the high result, Bayes' formula gives
+$\Pr[q=1\mid S_1]=3/4$, and hence
+\[
+ \Pr[A=B=1\mid S_1]
+ =\tfrac14\,\tfrac14\,\tfrac18+\tfrac34\,\tfrac34\,\tfrac78
+ =\tfrac12.
+\]
+If a rule hides the shared bit before filling the two holes and
+multiplies their posterior marginals, it gives
+$(5/8)(11/16)=55/128$ instead, a deficit of $9/128$ on this public
+observation. Grafting retains the two labelled outcomes; the retained
+private input supplies the dependence between them. The calculation
+does not give the running program access to $q$ or a conditioning
+oracle.
 
-\paragraph{Proof provenance.}
-GPT-6 Astra drafted this manuscript. The research and checks used
-multiple AI models under human direction, with human editorial review.
-At the time of
-writing, the general gluing theorem (Theorem~\ref{thm:glue}) has no
-formalized proof in Lean. We will formalize the theorem and link the
-verified development from the project repository. The manuscript has
-not undergone independent refereeing. The general construction is based on the pinned theorem
-source \cite{Gluing}, its exact Set identification on \cite{O1}, and its
-comparison with prior work on \cite{Comparison} and the cited primary
-papers. The source pin, theorem hypotheses, native-map formulas
-and ten-pasting checks give the audit and formalization entry points.
+The casebook compares two implementations of the same controller.
+Each nondisposal method in the reference implementation adds one fair
+private audit bit. At an outcome of candidate weight $p$, the two
+reference witnesses have weight $p/2$ each. Forgetting the audit bit
+is a native map: summing its fibre recovers $p$, its bodies agree
+after projecting away private audit state, and its cost can decrease.
+For the high branch, for example, both child costs contribute:
+\[
+ (2,1)+(3,1)+(4,2)=(9,4)
+ \quad\text{versus}\quad
+ (4,2)+(5,2)+(7,3)=(16,7).
+\]
+The low-conclusive and low-rescue masses are $7/20$ and $3/20$,
+and the high mass is $1/2$. Their candidate cost pairs are $(7,3)$,
+$(13,5)$, and $(9,4)$, versus $(12,5)$, $(21,8)$, and $(16,7)$
+for the reference. Consequently the expected costs are
+$(89/10,19/5)$ and $(307/20,129/20)$. These are comparisons of
+whole-run costs; they do not assert equality of exact-cost laws.
 
-\clearpage
+The composition theorem supplies the addressed grafting and its action
+on the original maps. The casebook's separate comparison couples the
+implementations on related full private inputs, preserves public causal
+trees and actual returned capabilities, and bounds candidate cost
+coordinatewise for its admitted finite closing clients
+\cite[Sec.~3]{Casebook}. Here the three-specimen calculation checks
+one controller and one shared-quality initialization. The broader
+comparison needs its own assumptions on initialization, ownership,
+local kernels and client observations.
+
 \section{Robot transactions: what undo can preserve}\label{app:robot}
 
 A robot that turns a fixture and then turns it back can still undo
@@ -1800,9 +2389,11 @@ quarter turn still has its record.
 
 The finite model below makes these two failures explicit. The
 commands have signatures that determine which continuations are
-available after each outcome. The composition from
-Section~\ref{sec:recovery} combines those commands while preserving
-their resource and cost data. A separate argument establishes when an abort
+available after each outcome. Corollary~\ref{cor:set}, specialized to
+the finite probability-and-cost trees in Section~\ref{sec:observations},
+composes the commands on their resource and cost data. The primary
+semantics proof is linked in Appendix~\ref{app:reuse}. A separate
+interference argument establishes when an abort
 preserves outside changes and when the whole execution looks atomic
 to the admitted observers \cite{RobotTransactions}. Compensating
 transactions can satisfy many application-specific recovery criteria
@@ -1893,13 +2484,110 @@ projection erases. An abort with \(n\) turns and \(n\) inverses still
 records \(2n\) steps. A deployment would have to establish the stated
 motion, observation and authority hypotheses.
 
-\clearpage
+\section{Sources, reconstruction and verification}\label{app:reuse}
+The public
+\href{https://github.com/eternal-november/eos-research-programmes/tree/main/projects/contextual-composition}{contextual-composition project}
+contains the underlying constructions, application proofs and formalization.
+Each \textup{[PDF, TeX]} pair gives both formats at the same repository
+revision. The Lean links identify a separate pinned formalization snapshot.
+
+\paragraph{Recovering the construction.}
+For the common algebra, begin with \cite{U}, in particular
+\texttt{thm:coend}, \texttt{thm:mixed}, \texttt{thm:problaw} and
+\texttt{thm:bicyclic}. They distinguish normalization, composition from a
+supplied law, the concrete conservative example, and the obstruction to
+universal conservative assembly. For constructing the law, use
+\cite{Gluing} and \cite{O1}; Definitions~\ref{def:lift} and
+\ref{def:corners} in this paper reproduce the relevant input contracts,
+and Appendix~\ref{app:coherence} preserves the complete pasting check.
+The marked converse uses only the realized display class
+\eqref{eq:realized}. The previous comparative analysis is \cite{Comparison}.
+For applications use the casebook \cite{Casebook} and the separate robot
+source \cite{RobotTransactions}; their observation, ownership and
+interference premises remain additional to the crossing theorem.
+
+The finite-semantics proofs appear as \texttt{thm:runs} and \texttt{thm:comparison} in
+\emph{Plural Semantics for Result-Dependent Protocols} \mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/plural-semantics/Plural_Semantics_for_Result_Dependent_Protocols.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/plural-semantics/Plural_Semantics_for_Result_Dependent_Protocols.tex}{TeX}]}.
+The all-context comparison is
+\emph{Contextual Refinement and Controlled Recovery}~\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/refinement-recovery/Contextual_Refinement_and_Controlled_Recovery.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/protocols/refinement-recovery/Contextual_Refinement_and_Controlled_Recovery.tex}{TeX}]},
+\texttt{thm:replacement}, with the primitive, pure-syntax and code-library
+premises stated in its local input contract. The casebook explains their
+application; it is not a substitute proof of those general finite results.
+
+The
+\href{https://github.com/eternal-november/eos-research-programmes/blob/main/projects/contextual-composition/NAVIGATION.md}{project navigation}
+organizes these different reading tasks. The
+terminology note~\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/foundations/terminology/Interactad_Terminology_Note.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/foundations/terminology/Interactad_Terminology_Note.tex}{TeX}]}
+records the presented-package usage of interactad. These are source-reading
+routes, not substitutes for the proofs. A change of base, display class,
+grade-map convention, occurrence functor or observation interface requires
+renewed checking of the corresponding comparison, rather than inheritance
+from a nearby example.
+
+\paragraph{Formal verification.}
+The
+\href{https://github.com/eternal-november/eos-research-programmes/blob/fc2d2648058191b79b297a15161e85605cb13bb8/projects/contextual-composition/foundations/relative-construction/lean/README.md}{Lean package README}
+and its
+\href{https://github.com/eternal-november/eos-research-programmes/blob/fc2d2648058191b79b297a15161e85605cb13bb8/projects/contextual-composition/foundations/relative-construction/lean/SOURCE_CROSSWALK.md}{source crosswalk}
+identify the actual declarations and their hypotheses at this revision.
+The Lean~4.35.0 package includes fixed monad/comonad recoveries, Type-based
+reader/writer and parameterized instances, and a mixed-category construction
+from a supplied law. It also contains substantive general-grade
+normalization results: primitive-balance localization with an exact
+native-map inversion boundary, and selected endpoint and target
+transport/coherence comparisons. These are stronger than object-level
+or terminal-grade checks. They are still not a certificate for the entire
+global relative factory, its iterated mixed tensor and full modifications,
+or the general independent-input gluing theorem.
+
+The package records scoped replay and axiom-audit evidence. This manuscript
+revision did not rerun that Lean package; the verification claims here are
+identified by the linked declarations and their existing evidence.
+At the time of writing, the paper's general normalization and gluing
+theorems have written proofs. Lean covers the subresults listed above;
+the example checks verify their advertised finite calculations. The project will
+formalize the remaining global normalization and gluing results and link
+the verified development from the repository. This includes the global
+endpoint packaging, native crossing maps, arbitrary pure balance and all
+structural modifications.
+
+\paragraph{Reproducing the finite examples.}
+The \href{https://github.com/eternal-november/eos-research-programmes/blob/cdf5077225ded75a4f8042909a48ffd04d7cb51d/projects/contextual-composition/interaction/independent-criterion/check_gluing_witnesses.py}{Python checker} exercises colour erasure, dependent flattening, and selected
+rational coefficient maps. Run it with Python 3 from the corresponding
+checkout:
+\begin{verbatim}
+cd projects/contextual-composition/interaction/independent-criterion
+python3 check_gluing_witnesses.py
+\end{verbatim}
+Appendix~\ref{app:coherence}
+gives the general calculation; the named
+\hyperref[par:dependent-fubini-maps]{Dependent Fubini on maps} paragraph
+records the coefficient-map comparison.
+
+\paragraph{Reading the later extensions.}
+The
+barrier feedback assembly route~\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/foundations/native-whole-scope-feedback/Barrier_Feedback_Assembly_Reading_Route.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/foundations/native-whole-scope-feedback/Barrier_Feedback_Assembly_Reading_Route.tex}{TeX}]}
+and
+nonblocking recurrent assembly route~\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/foundations/native-whole-scope-feedback/Nonblocking_Recurrent_Assembly_Reading_Route.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/10e771644cfdf58c3d05e989e4b26cae7164c80a/projects/contextual-composition/foundations/native-whole-scope-feedback/Nonblocking_Recurrent_Assembly_Reading_Route.tex}{TeX}]}
+locate the changed interfaces, native comparisons and stated feedback domains
+mentioned in Section~\ref{sec:limits}. They are pointers to separate written
+developments, not formal certification by the sequential Lean package and
+not additional assumptions silently imported into this paper's theorems.
+
+\paragraph{Authorship and proof provenance.}
+GPT-6 Astra drafted this manuscript. The research and checks used multiple
+AI models under human direction. This manuscript has not
+undergone independent refereeing. Its prior mathematics is credited
+in Appendix~\ref{app:credit} and the bibliography; the repository proofs and
+formal declarations retain their distinct evidential roles. No priority
+claim is inferred from the proposed terminology or from the common ambient
+machinery.
 \begin{thebibliography}{99}
 \footnotesize\setlength{\baselineskip}{9.7pt}\setlength{\itemsep}{0pt}\setlength{\parsep}{0pt}\raggedright
 \bibitem{CM} Matteo Capucci and David Jaz Myers.
 \emph{Contextful Arrows via Wreath Products}.
 \href{https://arxiv.org/pdf/2410.21889v2}{arXiv:2410.21889v2}.
-Definitions 3.15--3.17; Appendix C, Definition C.2; Appendix D.
+Definitions 3.15--3.17; Appendix C, Definition C.2; Section 7; Appendix D.
 \bibitem{BG} Mitchell Buckley and Richard Garner.
 \emph{Composing Double Categories}.
 \href{https://arxiv.org/html/2610.41551v2}{arXiv:2610.41551v2}.
@@ -1920,14 +2608,14 @@ Definition 4.1 and Appendix A.
 \bibitem{Laplaza} Miquel L. Laplaza.
 \href{https://www.sas.rochester.edu/mth/sites/doug-ravenel/otherpapers/laplaza.pdf}{\emph{Coherence for distributivity}}.
 Lecture Notes in Mathematics 281 (1972), 29--72, Proposition 10.
-\bibitem{Gluing} Contextual-composition project.
-\emph{Gluing relative corners to decorated displays}. Theorem source from PR~\#240.
+\bibitem{Gluing} Contextual Composition Project.
+\emph{Gluing relative corners to decorated displays}, 20 November 2026.
 \mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Theorem.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Theorem.tex}{TeX}]}
-\bibitem{O1} Contextual-composition project.
-\emph{General independent interaction criterion}.
+\bibitem{O1} Contextual Composition Project.
+\emph{General independent interaction criterion}, 1 November 2026.
 \mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/General_Independent_Interaction_Criterion.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/General_Independent_Interaction_Criterion.tex}{TeX}]}
-\bibitem{Comparison} Contextual-composition project.
-\emph{Which parts of an interactad are corners and bispans?} Comparison from PR~\#239.
+\bibitem{Comparison} Contextual Composition Project.
+\emph{Which parts of an interactad are corners and bispans?} 20 November 2026.
 \mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Comparison.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Relative_Corners_and_Bispans_Comparison.tex}{TeX}]}
 \bibitem{vonglehn} Tamara von Glehn. Polynomials, fibrations and distributive laws. \emph{Theory and Applications of Categories} 33(36), 1111--1144, 2018. \href{https://tac.mta.ca/tac/volumes/33/36/33-36.pdf}{Publisher PDF}.
 \bibitem{gambinokock} Nicola Gambino and Joachim Kock. Polynomial functors and polynomial monads. \emph{Mathematical Proceedings of the Cambridge Philosophical Society} 154(1), 153--192, 2013. \href{https://arxiv.org/abs/0906.4931}{arXiv:0906.4931}.
@@ -1947,22 +2635,35 @@ Lecture Notes in Mathematics 281 (1972), 29--72, Proposition 10.
 Geoff Cruttwell, Michael Lambert, Dorette Pronk, and Martin Szyld.
 Double fibrations. \emph{Theory and Applications of Categories} 38,
 2022. \href{https://arxiv.org/abs/2205.15240}{arXiv:2205.15240}.
-\bibitem{U} \emph{One relative construction for context, content and effects}.
+\bibitem{U} Contextual Composition Project.
+\emph{One relative construction for context, content and effects}, 1 November 2026.
 \mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex}{TeX}]}
-\bibitem{Casebook} Contextual-composition project.
-\emph{Applications and Boundaries of Result-Dependent Interaction}.
+\bibitem{Casebook} Contextual Composition Project.
+\emph{Applications and Boundaries of Result-Dependent Interaction}, 1 November 2026.
 \mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/Applications_and_Boundaries_of_Result_Dependent_Interaction.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/Applications_and_Boundaries_of_Result_Dependent_Interaction.tex}{TeX}]}
-\bibitem{DiscreteObstruction} Contextual-composition project.
-\href{https://github.com/eternal-november/eos-research-programmes/pull/238}{Lean verification of the discrete continuation-transposition obstruction},
+\bibitem{DiscreteObstruction} Contextual Composition Project.
+\emph{Discrete continuation-transposition obstruction}.
 \texttt{ContinuationTranspositionObstruction.no\_presentation}.
-\bibitem{TransportIndependence} Contextual-composition project.
+\mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/fc2d2648058191b79b297a15161e85605cb13bb8/projects/contextual-composition/foundations/relative-construction/lean/ContextualComposition/ContinuationTranspositionObstruction.lean\#L156}{Lean},
+\href{https://github.com/eternal-november/eos-research-programmes/pull/238}{verification record}]}
+\bibitem{TransportIndependence} Contextual Composition Project.
 \emph{Independence of Two Transport Conditions}.
 \mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Transport_Conditions_Independence.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/interaction/independent-criterion/Transport_Conditions_Independence.tex}{TeX}]}
-\bibitem{RobotTransactions} Contextual Composition programme.
+\bibitem{RobotTransactions} Contextual Composition Project.
 \emph{Robot Transactions under Interference: Exact Compensation and the Observation Boundary}, 13 November 2026.
 \mbox{[\href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/robot-transactions/Robot_Transactions_and_Interference.pdf}{PDF}, \href{https://github.com/eternal-november/eos-research-programmes/blob/a336bd6c661895d9b86827123dd38ebd8ea2a8fa/projects/contextual-composition/applications/robot-transactions/Robot_Transactions_and_Interference.tex}{TeX}]}
 \bibitem{KorthLevySilberschatz} Henry F. Korth, Eliezer Levy, and Abraham
 Silberschatz. A formal approach to recovery by compensating transactions.
 \emph{VLDB}, 95--106, 1990. \href{https://www.vldb.org/conf/1990/P095.PDF}{Proceedings PDF}.
+\bibitem{barthe} Gilles Barthe, Thomas Espitau, Benjamin Gr\'egoire,
+Justin Hsu, L\'eo Stefanesco and Pierre-Yves Strub.
+\emph{Relational reasoning via probabilistic coupling}, 2015.
+\href{https://arxiv.org/pdf/1509.03476v2}{arXiv:1509.03476v2}.
+\bibitem{varaccawinskel} Daniele Varacca and Glynn Winskel.
+\emph{Distributing probability over nondeterminism}.
+\emph{Mathematical Structures in Computer Science} 16(1), 87--113, 2006.
+\href{https://doi.org/10.1017/S0960129505005074}{doi:10.1017/S0960129505005074};
+\href{https://www.lacl.fr/~dvaracca/papers/distrib.pdf}{author PDF}.
 \end{thebibliography}
 \end{document}
+
