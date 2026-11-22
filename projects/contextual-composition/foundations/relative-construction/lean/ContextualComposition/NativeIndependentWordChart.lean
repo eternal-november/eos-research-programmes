@@ -5,7 +5,7 @@ public import ContextualComposition.NativeIndependentWord
 namespace ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter
 open CategoryTheory MonoidalCategory ContextualComposition.RigGrid
 open scoped MonoidalCategory
-universe u v w
+universe u v w z
 variable {C : Type u} [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
 local notation "𝒮" => binary (Additive.sum (Additive.ofBraided (C:=C)))
 local notation "Zₐ" => 𝟙_ C
@@ -47,7 +47,7 @@ theorem flat_independent_occurrence_outer (R : Gather 𝒮 T Zₐ) (L : LeftGath
   rw [reassoc_of% h, e]
 
 set_option backward.isDefEq.respectTransparency false in
-theorem compressGrid_over {I X : Type w} (A : I → C) (P : X → GridExpr I) (xs : List X) :
+theorem compressGrid_over {I : Type w} {X : Type z} (A : I → C) (P : X → GridExpr I) (xs : List X) :
     compressGrid A (GridExpr.over P xs) ≫ eqToHom (GridExpr.eval_over (S:=𝒮) (Z:=Zₐ) A P xs) =
       eqToHom (congrArg (fold 𝒮 Zₐ A) (GridExpr.leaves_over P xs)) ≫
         rowsChart A (fun x => (P x).leaves) xs ≫ act 𝒮 Zₐ (fun x => compressGrid A (P x)) xs := by
@@ -144,7 +144,7 @@ theorem compressGrid_leafWord {I X : Type w} (A : I → C) (f : X → I) (xs : L
   rw [j, j', ← Category.assoc (eqToHom e), eqToHom_trans, eqToHom_trans, eqToHom_trans]
 
 set_option backward.isDefEq.respectTransparency false in
-theorem rowsChart_rows_congr {I X : Type w} (A : I → C) {L M : X → List I}
+theorem rowsChart_rows_congr {I : Type w} {X : Type z} (A : I → C) {L M : X → List I}
     (h : ∀ x, L x = M x) (xs : List X) :
     rowsChart A L xs ≫ act 𝒮 Zₐ (fun x => eqToHom (congrArg (fold 𝒮 Zₐ A) (h x))) xs =
       eqToHom (congrArg (fold 𝒮 Zₐ A) (congrArg (fun k => xs.flatMap k) (funext h))) ≫ rowsChart A M xs := by

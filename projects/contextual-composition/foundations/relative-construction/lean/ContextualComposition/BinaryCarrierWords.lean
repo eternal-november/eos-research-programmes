@@ -5,8 +5,8 @@ public import ContextualComposition.BinaryNativeVariation
 /-! Exact raw words of the carrier-changing binary fibres. Both orders
 retain their original source positions, including if a branch is empty. -/
 namespace ContextualComposition.NativeFinitePush.DependentFibre
-universe u
-variable {I A : Type u}
+universe u w
+variable {I : Type u} {A : Type w}
 theorem GridExpr.leaves_over (g : A → GridExpr I) (xs : List A) :
     (GridExpr.over g xs).leaves = xs.flatMap (fun a => (g a).leaves) := by
   induction xs with
