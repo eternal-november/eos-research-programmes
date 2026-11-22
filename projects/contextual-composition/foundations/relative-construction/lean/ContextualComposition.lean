@@ -494,3 +494,8 @@ public import ContextualComposition.TaggedChart
 public import ContextualComposition.StandardDirectImage
 public import ContextualComposition.TaggedBlockSwap
 public import ContextualComposition.StandardNativePush
+public import ContextualComposition.NativeEquivalence
+public import ContextualComposition.NativeAugCollapse
+public import ContextualComposition.GridAddressBridge
+public import ContextualComposition.NativeWordPresentation
+public import ContextualComposition.NativeBinaryAugIso
