@@ -487,3 +487,4 @@ public import ContextualComposition.StandardRigLinearity
 public import ContextualComposition.ContextualRigAdapter
 public import ContextualComposition.ReverseNativeDecode
 public import ContextualComposition.RawBinaryChart
+public import ContextualComposition.BinaryAugmentationFubini
