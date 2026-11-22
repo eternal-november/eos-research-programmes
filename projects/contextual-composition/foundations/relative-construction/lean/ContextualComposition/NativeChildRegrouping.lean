@@ -6,11 +6,11 @@ public import ContextualComposition.NativeWholeContinuation
 /-! Move each actually prescribed child-target cell from child-major
 parent aggregation to parent-major whole continuation aggregation. -/
 namespace ContextualComposition.NativeFinitePush.DependentFibre
-universe u v w
+universe u v w z
 variable {C : Type u} {K : Coeff.{u,v} C} {S T : Bi K} {Z : C}
 variable (M : AddCross S Z) (R : Gather S T Z) (L : LeftGather S T Z)
 variable (N : GridBinary M R L) (NL : GatherLeftNat L)
-variable {X Y : Type w} (V : X → C) (W : Y → C) (A : X → Y → C)
+variable {X : Type w} {Y : Type z} (V : X → C) (W : Y → C) (A : X → Y → C)
 variable (xs : List X) (ys : List Y)
 variable (p : ∀ x y, K.Hom (A x y) (T.obj (V x) (W y)))
 variable {a : C} (α : K.Hom (fold S Z V xs) a)

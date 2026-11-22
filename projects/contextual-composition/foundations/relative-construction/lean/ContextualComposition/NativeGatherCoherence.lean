@@ -9,7 +9,7 @@ namespace ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAda
 open CategoryTheory MonoidalCategory ContextualComposition.RigGrid
 open scoped MonoidalCategory
 open Functor.LaxMonoidal
-universe u v w
+universe u v w z
 variable {C : Type u} [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
 local notation "𝒮" => binary (Additive.sum (Additive.ofBraided (C:=C)))
 local notation "Zₐ" => 𝟙_ C
@@ -164,7 +164,7 @@ end BraidedGather
 
 section Rows
 variable (F : C ⥤ C) [F.LaxMonoidal]
-variable {X Y : Type w} (A : X → C) (L : Y → List X)
+variable {X : Type w} {Y : Type z} (A : X → C) (L : Y → List X)
 
 set_option backward.isDefEq.respectTransparency false in
 theorem collect_rows (ys : List Y) :

@@ -7,7 +7,7 @@ blocks. A syntactic zero is represented separately from a leaf whose
 coefficient object happens to be zero. -/
 namespace ContextualComposition.NativeFinitePush.DependentFibre
 set_option backward.isDefEq.respectTransparency false
-universe u v w
+universe u v w x y
 variable {C : Type u} {K : Coeff.{u,v} C} {S : Bi K} {Z : C}
 inductive GridExpr (I : Type w)
   | zero
@@ -84,7 +84,7 @@ theorem GridCircuit.gather_commutes (A : I → C) {a b} (p : GridCircuit I a b) 
     simpa only [K.assoc] using h
 
 namespace GridExpr
-variable {X : Type w}
+variable {X : Type x}
 def over (A : X → GridExpr I) : List X → GridExpr I
   | [] => .zero
   | x::xs => .bin (A x) (over A xs)
@@ -96,7 +96,7 @@ theorem eval_over (V : I → C) (A : X → GridExpr I) (xs : List X) :
 end GridExpr
 namespace GridCircuit
 open GridExpr
-variable {X Y : Type w}
+variable {X : Type x} {Y : Type y}
 def zip (A B : Y → GridExpr I) : (ys : List Y) →
     GridCircuit I (.bin (over A ys) (over B ys)) (over (fun y => .bin (A y) (B y)) ys)
   | [] => .mergeZero
@@ -140,7 +140,7 @@ end Decode
 
 namespace GridCircuit
 open GridExpr
-variable {X Y : Type w} (A : I → C)
+variable {X : Type x} {Y : Type y} (A : I → C)
 theorem zip_eval (P Q : Y → GridExpr I) (ys : List Y) :
     HEq (eval M A (zip P Q ys))
       (zipBlock M (fun y => GridExpr.eval (S:=S) (Z:=Z) A (P y))
