@@ -43,7 +43,7 @@ theorem transpose_map (f : X → Y) {V : Type w} (ys : List V) (A : Y → V → 
         (HEq.rfl : HEq (𝟙 (P (f x))) (𝟙 (P (f x)))) ih
 
 section Grid
-variable {I : Type u} (A : I → C)
+variable {I : Type w} (A : I → C)
 def compressGrid : (t : GridExpr I) → fold 𝒮 𝟘ₐ A t.leaves ⟶ GridExpr.eval (S:=𝒮) (Z:=𝟘ₐ) A t
   | .zero => 𝟙 _
   | .leaf x => (ρ_ (A x)).hom

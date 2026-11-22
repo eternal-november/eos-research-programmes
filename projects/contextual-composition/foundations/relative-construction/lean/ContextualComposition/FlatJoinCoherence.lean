@@ -7,7 +7,7 @@ three blocks in either order with the actual additive associator. -/
 namespace ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter
 open CategoryTheory MonoidalCategory BraidedCategory ContextualComposition.RigGrid
 open scoped MonoidalCategory
-universe u v
+universe u v w
 variable {C : Type u} [Category.{v} C] [MonoidalCategory C]
 set_option backward.isDefEq.respectTransparency false
 def tailFold (xs : List C) (z : C) : C :=
@@ -196,7 +196,7 @@ theorem flat_middle (as bs cs ds : List C) (z : C) :
 end Four
 
 section Expression
-variable {I : Type u} (A : I → C)
+variable {I : Type w} (A : I → C)
 abbrev word (e : GridExpr I) := e.leaves.map A
 abbrev E (e : GridExpr I) := GridExpr.eval (S:=binary (Binary.ofMonoidal (C:=C))) (Z:=𝟙_ C) A e
 theorem nestedFlat (e f : GridExpr I) (z : C) :
@@ -327,7 +327,7 @@ end FourTrees
 end Expression
 
 section Circuit
-variable [SymmetricCategory C] {I : Type u} (A : I → C)
+variable [SymmetricCategory C] {I : Type w} (A : I → C)
 omit [SymmetricCategory C] in
 theorem tailMap_eqToHom (xs : List C) {a b : C} (e : a = b) :
     tailMap xs (eqToHom e) = eqToHom (congrArg (tailFold xs) e) := by

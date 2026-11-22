@@ -225,7 +225,7 @@ theorem binary_native_routes (H : MedialLinear m R L) (Q : MedialInner m R L) :
 end BinaryComparison
 
 namespace GridCircuit
-variable {I Zx : Type u}
+variable {I Zx : Type w}
 def foreach (a b : Zx → GridExpr I) (p : ∀ z, GridCircuit I (a z) (b z)) : (zs : List Zx) →
     GridCircuit I (GridExpr.over a zs) (GridExpr.over b zs)
   | [] => .ident _

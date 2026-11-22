@@ -90,7 +90,7 @@ theorem taggedTailMap_parallel {xs ys xs' ys' : List X}
   change _ = l ≫ l' ≫ _
   rw [reassoc_of% e]
 
-variable {I : Type u}
+variable {I : Type w}
 def gridOrder {e f : GridExpr I} (p : GridCircuit I e f) : AddressOrder I e.leaves f.leaves :=
   match p with
   | .ident _ => .ident _
