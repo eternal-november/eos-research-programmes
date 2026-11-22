@@ -1,0 +1,55 @@
+import ContextualComposition.OppositeNativeBridge
+import ContextualComposition.AbsorbingZero
+open ContextualComposition.NativeFinitePush
+#print axioms Hom.comp_assoc
+#print axioms AugHom.comp_assoc
+#print axioms AugHom.terminal
+#print axioms empty_fibre
+open ContextualComposition.NativeFinitePush.DependentFibre
+#print axioms gather_nat
+#print axioms post
+#print axioms shuffle_nat
+#print axioms addressedDep
+#print axioms boxMap_post
+#print axioms boxDep
+#print axioms Carrier.parent_mem
+#print axioms Carrier.child_mem
+#print axioms PairData.component
+#print axioms PairData.compat
+#print axioms Mask.outputs
+#print axioms Blocks.complete
+#print axioms Blocks.built_natural
+#print axioms gather_unit
+#print axioms augmentation_normal
+#print axioms collapse_preserves
+#print axioms grouped_augmentation
+#print axioms shuffleInv
+#print axioms carrierTo_from
+#print axioms carrierFrom_to
+#print axioms carrier_natural
+#print axioms Layer.square
+#print axioms flat_augmentation
+#print axioms first_exchange
+#print axioms two_stage
+#print axioms LinSquare.collect
+#print axioms rectangle_native
+#print axioms rectangle_dependent
+#print axioms inner_rect
+#print axioms ragged_binary
+#print axioms ReverseType.outerLaws
+#print axioms ReverseType.innerLaws
+#print axioms ReverseType.inv
+#print axioms ReverseType.unitCompat
+#print axioms ReverseType.push
+#print axioms ReverseType.different_address
+#print axioms ReverseType.inject_lookup
+#print axioms ReverseType.inject_tagged
+#print axioms ReverseType.nativePairData
+#print axioms ReverseType.Pair.ragged
+#print axioms zero_unique
+#print axioms global_empty_iff_initial
+#print axioms native_empty_dichotomy
+#print axioms ReverseType.total_ident
+#print axioms ReverseType.total_comp
+#print axioms ReverseType.from_to
+#print axioms ReverseType.to_from

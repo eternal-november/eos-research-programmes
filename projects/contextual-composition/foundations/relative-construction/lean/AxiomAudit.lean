@@ -5063,3 +5063,26 @@ import ContextualComposition
 #print axioms ContextualComposition.OppositeTypeFamilies.regroup_inv
 #print axioms ContextualComposition.OppositeTypeFamilies.inv_regroup
 #print axioms ContextualComposition.OppositeTypeFamilies.shuffle_regroup
+
+#print axioms ContextualComposition.NativeFinitePush.Hom.comp_assoc
+#print axioms ContextualComposition.NativeFinitePush.AugHom.comp_assoc
+#print axioms ContextualComposition.NativeFinitePush.AugHom.terminal
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.Blocks.built_natural
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.Blocks.complete
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.Carrier.child_mem
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.PairData.component
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.flat_augmentation
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.two_stage
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.shuffleInv
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.carrier_natural
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.boxDep
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.rectangle_dependent
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.ragged_binary
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.native_empty_dichotomy
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.ReverseType.different_address
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.ReverseType.Pair.ragged
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.ReverseType.inject_tagged
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.ReverseType.from_to
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.ReverseType.to_from
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.gatherOuter
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.multiplicativeUnit
