@@ -476,3 +476,4 @@ public import ContextualComposition.DiscreteTransposition
 public import ContextualComposition.ContinuationTranspositionObstruction
 public import ContextualComposition.AugmentedMatrixFubini
 public import ContextualComposition.RigGridMonoidal
+public import ContextualComposition.OppositeTypeFamilies
