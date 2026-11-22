@@ -477,3 +477,6 @@ public import ContextualComposition.ContinuationTranspositionObstruction
 public import ContextualComposition.AugmentedMatrixFubini
 public import ContextualComposition.RigGridMonoidal
 public import ContextualComposition.OppositeTypeFamilies
+public import ContextualComposition.OppositeNativeBridge
+public import ContextualComposition.AbsorbingZero
+public import ContextualComposition.RigGridNativeAdapter
