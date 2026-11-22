@@ -482,3 +482,5 @@ public import ContextualComposition.AbsorbingZero
 public import ContextualComposition.RigGridNativeAdapter
 public import ContextualComposition.ReverseFlatCoherence
 public import ContextualComposition.RawDependentAddresses
+public import ContextualComposition.ChartDistribution
+public import ContextualComposition.StandardRigLinearity
