@@ -499,3 +499,8 @@ public import ContextualComposition.NativeAugCollapse
 public import ContextualComposition.GridAddressBridge
 public import ContextualComposition.NativeWordPresentation
 public import ContextualComposition.NativeBinaryAugIso
+public import ContextualComposition.NativeReindexSquare
+public import ContextualComposition.NativeWordMap
+public import ContextualComposition.BinaryNativeVariation
+public import ContextualComposition.BinaryCarrierWords
+public import ContextualComposition.BinaryNativeSquare
