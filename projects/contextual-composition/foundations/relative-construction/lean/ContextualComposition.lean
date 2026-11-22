@@ -532,3 +532,6 @@ public import ContextualComposition.NativeDependentRowCollapse
 public import ContextualComposition.NativeWordChartSpan
 public import ContextualComposition.NativeDependentBlockPaste
 public import ContextualComposition.NativeDependentParentSquare
+public import ContextualComposition.NativeBinaryTreeProduct
+public import ContextualComposition.NativeBinaryRawProduct
+public import ContextualComposition.NativeBinaryAugmentedNaturality
