@@ -488,3 +488,9 @@ public import ContextualComposition.ContextualRigAdapter
 public import ContextualComposition.ReverseNativeDecode
 public import ContextualComposition.RawBinaryChart
 public import ContextualComposition.BinaryAugmentationFubini
+public import ContextualComposition.OccurrenceAssoc
+public import ContextualComposition.TaggedPermutation
+public import ContextualComposition.TaggedChart
+public import ContextualComposition.StandardDirectImage
+public import ContextualComposition.TaggedBlockSwap
+public import ContextualComposition.StandardNativePush
