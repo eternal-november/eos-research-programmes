@@ -484,3 +484,5 @@ public import ContextualComposition.ReverseFlatCoherence
 public import ContextualComposition.RawDependentAddresses
 public import ContextualComposition.ChartDistribution
 public import ContextualComposition.StandardRigLinearity
+public import ContextualComposition.ContextualRigAdapter
+public import ContextualComposition.ReverseNativeDecode
