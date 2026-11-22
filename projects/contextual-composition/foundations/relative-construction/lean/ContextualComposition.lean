@@ -480,3 +480,5 @@ public import ContextualComposition.OppositeTypeFamilies
 public import ContextualComposition.OppositeNativeBridge
 public import ContextualComposition.AbsorbingZero
 public import ContextualComposition.RigGridNativeAdapter
+public import ContextualComposition.ReverseFlatCoherence
+public import ContextualComposition.RawDependentAddresses

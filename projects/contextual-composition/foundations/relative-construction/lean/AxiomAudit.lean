@@ -5086,3 +5086,16 @@ import ContextualComposition
 #print axioms ContextualComposition.NativeFinitePush.DependentFibre.ReverseType.to_from
 #print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.gatherOuter
 #print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.multiplicativeUnit
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.Lin.collect_comp
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.native_binary_on_chart
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.ReverseType.Pair.native_binary
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.Branch.chartInv
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.compareFlat
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.flat_chart_natural
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.Branch.changeChart_natural
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.ReverseType.lookup_order
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.ReverseType.order_coherence
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.Carrier.toFlat_toRagged
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.Carrier.toRagged_toFlat
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.Carrier.flat_binary_round
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.Carrier.ragged_binary_round
