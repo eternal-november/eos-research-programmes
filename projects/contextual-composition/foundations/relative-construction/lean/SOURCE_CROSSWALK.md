@@ -1,5 +1,19 @@
 # Scope and reconstruction route
 
+## Finite-set pushout normalization and its obstructions
+
+The source is [the mixed normal-form reduction report](../../reduction/reduction_test_report.tex) at revision `458ff36a`, §§2 and 5. The following results concern its proposed finite-set composition recipe.
+
+| Source obligation | Lean declarations and scope |
+| --- | --- |
+| Equations (3)–(6), including partial domains and unused target blocks | In `FiniteNormalization`, `Presentation.comp` constructs the normalized presentation. Its labels form the pushout over active middle labels. `output_onto` proves surjectivity and `row_comp_iff` identifies its observed row with the pullback of the least difunctional relation containing the expanded incidence. The carrier types share a universe and may be empty. |
+| Equation (7) | `FiniteNormalization.row_comp_iff_ordinary_closure` proves the formula when every active label has a selector. `ordinary_closure_le` gives the unconditional inclusion. The hypothesis is sufficient for the equality. |
+| Unused-block binary descent failure following (7) | `FiniteDescent.coarsening_cell`, `same_input`, `fine_output`, `coarse_output` and `unused_block_binary_nondescent` give the actual coarsening, common observation, separating pure continuation and impossibility of descent for that continuation. |
+| Three-stage failure in §2 | `FiniteBalance.left_bracket_domain`, `right_bracket_domain` and `associativity_domain_obstruction` compare the two bracketings of `Presentation.comp` at the same finite endpoints. |
+| Pure-middle balancing in (12) | `FiniteBalance.balanced_representatives` identifies the pushout and preimage representatives by a pure-middle shift. `pure_middle_balance_obstruction` shows their computed crossing domains differ. This rules out the tested crossing on any quotient preserving the displayed identification. |
+
+Module names above are under `ContextualComposition`. The local adjunctions, complete cell and corelation comparison, linear control and wider inventory in #106 are separate obligations.
+
 ## Source and operation
 
 The source is `projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex` at EOS commit `458ff36a4798e432dee5947afc402f9903a47f14`, §“Internal constructors and familiar specializations” (`sec:constructors`). The adjacent displayed fixed-effect formulas, Para paragraphs and reader/writer paragraphs are the exact targets. Issue #105 tracks the much larger constructor programme; #91 sets formal-verification acceptance. Neither issue is closed by this package.

@@ -1,5 +1,8 @@
 module
 
+public import ContextualComposition.FiniteDescent
+public import ContextualComposition.FiniteNormalization
+public import ContextualComposition.FiniteBalance
 public import ContextualComposition.FixedEffects
 public import ContextualComposition.ReaderWriter
 public import ContextualComposition.Para
