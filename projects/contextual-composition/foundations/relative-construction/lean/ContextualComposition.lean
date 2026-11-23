@@ -25,6 +25,10 @@ public import ContextualComposition.MixedEffects
 public import ContextualComposition.DisplaySpanRecovery
 public import ContextualComposition.CodisplayCospanRecovery
 public import ContextualComposition.TerminalComma
+public import ContextualComposition.FactorizationDoubleEnvelope
+public import ContextualComposition.StrictCornerRecognition
+public import ContextualComposition.OrthogonalCornerCategory
+public import ContextualComposition.OrthogonalCornerRecognition
 public import ContextualComposition.Factorization
 public import ContextualComposition.PrimitiveBalance
 public import ContextualComposition.SourceCocone
