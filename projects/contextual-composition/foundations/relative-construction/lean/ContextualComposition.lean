@@ -3,6 +3,11 @@ module
 public import ContextualComposition.FiniteDescent
 public import ContextualComposition.FiniteNormalization
 public import ContextualComposition.FiniteBalance
+public import ContextualComposition.CorelationSplitting
+public import ContextualComposition.FinitePresentationCell
+public import ContextualComposition.FiniteRelationPresentation
+public import ContextualComposition.PresentationCorelation
+public import ContextualComposition.CorelationComposition
 public import ContextualComposition.FixedEffects
 public import ContextualComposition.ReaderWriter
 public import ContextualComposition.Para
