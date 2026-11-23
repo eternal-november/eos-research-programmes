@@ -895,6 +895,8 @@ import ContextualComposition
 #print axioms ContextualComposition.MixedOpwreath.pure_eq
 #print axioms ContextualComposition.MixedOpwreath.pure_eq_other
 #print axioms ContextualComposition.MixedOpwreath.convolution
+#print axioms ContextualComposition.Factorization.Endpoint.coconeTargetRecovery_identity
+#print axioms ContextualComposition.Factorization.Endpoint.coconeTargetRecovery_composition
 #print axioms ContextualComposition.recoverySquare_modification
 #print axioms ContextualComposition.recoverySquare_vertical
 #print axioms ContextualComposition.Factorization.Endpoint.pullbackChoiceComparison
