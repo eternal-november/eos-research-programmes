@@ -22,6 +22,14 @@ def rectangularWordAugCell {X Y : Type u} (A : X → C) (B : Y → C)
   rectWordChart (crossLabel T A B) xs ys ≫ independentCell R L A B xs ys p q ≫ c
 
 set_option backward.isDefEq.respectTransparency false in
+theorem totalNativeCell_wordAug {X : Type u}
+    (A : X → C) (xs : List X) (p : fold 𝒮 Zₐ A xs ⟶ I) :
+    totalNativeCell (wordAug A xs p) = eqToHom (wordTotalPin A xs) ≫ p := by
+  unfold totalNativeCell wordAug
+  simp only [eqToHom_refl, Category.id_comp]
+  rw [← Category.assoc, eqToHom_trans]
+
+set_option backward.isDefEq.respectTransparency false in
 theorem independentAug_ordered_eq {X Y : Type u} (A : X → C) (B : Y → C)
     (xs : List X) (ys : List Y) (p : fold 𝒮 Zₐ A xs ⟶ I) (q : fold 𝒮 Zₐ B ys ⟶ I) :
     independentAug R L c (wordAug A xs p) (wordAug B ys q) =
@@ -34,18 +42,8 @@ theorem independentAug_ordered_eq {X Y : Type u} (A : X → C) (B : Y → C)
   let b := totalNativeCell (wordAug B ys q)
   let e := wordTotalPin A xs
   let d := wordTotalPin B ys
-  have hp : HEq a p := by
-    have h : a = eqToHom e ≫ p := by
-      unfold a totalNativeCell wordAug
-      simp only [eqToHom_refl, Category.id_comp]
-      rw [← Category.assoc, eqToHom_trans]
-    exact (heq_of_eq h).trans (hom_source_pin_heq e p)
-  have hq : HEq b q := by
-    have h : b = eqToHom d ≫ q := by
-      unfold b totalNativeCell wordAug
-      simp only [eqToHom_refl, Category.id_comp]
-      rw [← Category.assoc, eqToHom_trans]
-    exact (heq_of_eq h).trans (hom_source_pin_heq d q)
+  have hp : HEq a p := (heq_of_eq (totalNativeCell_wordAug A xs p)).trans (hom_source_pin_heq e p)
+  have hq : HEq b q := (heq_of_eq (totalNativeCell_wordAug B ys q)).trans (hom_source_pin_heq d q)
   let H := crossLabel T A B
   let xx := independentWord S U
   have rd : xx.map (Prod.map f g) = xs.product ys := readPair_word xs ys

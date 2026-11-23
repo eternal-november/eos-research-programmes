@@ -550,3 +550,6 @@ public import ContextualComposition.NativeJointProductCharts
 public import ContextualComposition.NativeJointProductBridge
 public import ContextualComposition.NativeJointProductAug
 public import ContextualComposition.NativeOrderedRectProduct
+public import ContextualComposition.NativeBinaryProductComparison
+public import ContextualComposition.NativeOrderedDependentData
+public import ContextualComposition.NativeOrderedFubini
