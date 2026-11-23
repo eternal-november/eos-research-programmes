@@ -605,3 +605,6 @@ public import ContextualComposition.NativeWordReadIso
 public import ContextualComposition.NativeFubiniSymmetryLaw
 public import ContextualComposition.NativeIndependentSwapIso
 public import ContextualComposition.NativeFubiniSwap
+public import ContextualComposition.NativeIndependentSwapCells
+public import ContextualComposition.NativeIndependentSwapNaturality
+public import ContextualComposition.NativeIndependentSymmetry
