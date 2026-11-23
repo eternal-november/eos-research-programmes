@@ -487,6 +487,8 @@ public import ContextualComposition.NativeCommaProducts
 public import ContextualComposition.NativeCommaReindex
 public import ContextualComposition.NativeSpanProducts
 public import ContextualComposition.NativeSpanBaseChange
+public import ContextualComposition.ConeWiring
+public import ContextualComposition.DependentConeInterchange
 public import ContextualComposition.ContinuationTranspositionObstruction
 public import ContextualComposition.AugmentedMatrixFubini
 public import ContextualComposition.RigGridMonoidal
