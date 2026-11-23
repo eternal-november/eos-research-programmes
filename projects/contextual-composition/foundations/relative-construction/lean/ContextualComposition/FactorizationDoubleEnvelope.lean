@@ -1,0 +1,290 @@
+module
+
+public import ContextualComposition.PureSquareCalculus
+public import Mathlib.CategoryTheory.Widesubcategory
+public import Mathlib.CategoryTheory.MorphismProperty.Factorization
+public import Mathlib.CategoryTheory.CommSq
+
+/-! Ordinary marked pure-square envelopes. The horizontal restriction
+exists for any two wide classes. Strict and orthogonal factorization give
+additional recovery of morphisms from bottom-left corners. -/
+
+@[expose] public section
+namespace ContextualComposition.FactorizationDoubleEnvelope
+
+open CategoryTheory MorphismProperty
+universe u v
+variable {C : Type u} [Category.{v} C]
+variable (E M : MorphismProperty C) [E.IsMultiplicative] [M.IsMultiplicative]
+
+/-- Tight arrows belong to E. In the ambient envelope all horizontal arrows are retained. -/
+def envelope : PureSquareCalculus (WideSubcategory E) where
+  Hom A B := A.obj ⟶ B.obj
+  pure u := u.hom
+  comp f g := f ≫ g
+  id_comp _ := Category.id_comp _
+  comp_id _ := Category.comp_id _
+  assoc _ _ _ := Category.assoc _ _ _
+  pure_comp _ _ := rfl
+
+abbrev Marked (A B : WideSubcategory E) := {f : (envelope E).Hom A B // M f}
+
+def markedId (A : WideSubcategory E) : Marked E M A A := ⟨𝟙 _, M.id_mem _⟩
+
+def markedComp {A B D : WideSubcategory E} (f : Marked E M A B) (g : Marked E M B D) : Marked E M A D :=
+  ⟨f.val ≫ g.val, M.comp_mem _ _ f.property g.property⟩
+
+variable {A B A' B' : WideSubcategory E}
+
+omit [M.IsMultiplicative] in
+/-- The marked envelope restricts only the horizontal edges. Its square
+condition is precisely the commutativity of the square in the original category. -/
+theorem marked_square_iff (f : Marked E M A B) (g : Marked E M A' B') (u : A ⟶ A') (v : B ⟶ B') :
+    (envelope E).Square f.val g.val u v ↔ CommSq f.val u.hom v.hom g.val :=
+  ⟨fun h => ⟨h.symm⟩, fun h => h.w.symm⟩
+
+/-- A companion in this locally discrete ambient has the two binding
+squares. They force its horizontal arrow to equal the given tight arrow. -/
+def Companion {A B : WideSubcategory E} (u : A ⟶ B) (f : (envelope E).Hom A B) : Prop :=
+  (envelope E).Square (𝟙 A.obj) f (𝟙 A) u ∧ (envelope E).Square f (𝟙 B.obj) u (𝟙 B)
+
+theorem companion_iff (u : A ⟶ B) (f : (envelope E).Hom A B) : Companion E u f ↔ f = u.hom := by
+  change A.obj ⟶ B.obj at f
+  change ((𝟙 _ ≫ f = 𝟙 _ ≫ u.hom) ∧ (u.hom ≫ 𝟙 _ = f ≫ 𝟙 _)) ↔ _
+  simp only [Category.id_comp, Category.comp_id]
+  exact ⟨And.left, fun h => ⟨h,h.symm⟩⟩
+
+omit [M.IsMultiplicative] in
+theorem companion_survives_iff (u : A ⟶ B) :
+    (∃ f : Marked E M A B, Companion E u f.val) ↔ M u.hom := by
+  constructor
+  · rintro ⟨f,h⟩
+    exact (companion_iff _ _ _).mp h ▸ f.property
+  · intro h
+    exact ⟨⟨u.hom,h⟩, (companion_iff _ _ _).mpr rfl⟩
+
+/-- Bottom-left corners keep the actual midpoint object and both legs. -/
+structure Corner (E M : MorphismProperty C) (X Y : C) where
+  mid : C
+  e : X ⟶ mid
+  m : mid ⟶ Y
+  he : E e
+  hm : M m
+
+variable {X Y Z : C}
+
+def Corner.decode (c : Corner E M X Y) := c.e ≫ c.m
+
+def asFactorization (c : Corner E M X Y) : MapFactorizationData E M (c.decode E M) :=
+  ⟨c.mid,c.e,c.m,rfl,c.he,c.hm⟩
+
+def forgetValue (f : X ⟶ Y) (d : MapFactorizationData E M f) : Corner E M X Y :=
+  ⟨d.Z,d.i,d.p,d.hi,d.hp⟩
+
+/-- The typed fibre of corner composition is the ordinary factorization data. -/
+def cornerFibre (f : X ⟶ Y) :
+    {c : Corner E M X Y // c.decode E M = f} ≃ MapFactorizationData E M f where
+  toFun c := ⟨c.val.mid,c.val.e,c.val.m,c.property,c.val.he,c.val.hm⟩
+  invFun d := ⟨forgetValue E M f d,d.fac⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+def strictCornerEquiv (strict : ∀ {X Y : C} (f : X ⟶ Y), Unique (MapFactorizationData E M f)) :
+    Corner E M X Y ≃ (X ⟶ Y) where
+  toFun := Corner.decode E M
+  invFun f := forgetValue E M f (strict f).default
+  left_inv c := congrArg (forgetValue E M _) ((strict _).uniq (asFactorization E M c)).symm
+  right_inv f := (strict f).default.fac
+
+/-- Codomain-discreteness on the envelope side of Štěpán 3.3.7:
+a top-right corner is uniquely filled when every ambient morphism has a
+strictly unique E-then-M factorization. -/
+@[instance_reducible] def strictFiller {T : C} (m : X ⟶ T) (e : T ⟶ Y) (_hm : M m) (_he : E e)
+    (strict : ∀ {X Y : C} (f : X ⟶ Y), Unique (MapFactorizationData E M f)) :
+    Unique {c : Corner E M X Y // m ≫ e = c.decode E M} := by
+  let eqv : {c : Corner E M X Y // m ≫ e = c.decode E M} ≃ MapFactorizationData E M (m ≫ e) :=
+    (Equiv.subtypeEquivRight fun _ => eq_comm).trans (cornerFibre E M _)
+  letI := strict (m ≫ e)
+  exact eqv.unique
+
+/-- The vertical-to-horizontal comparison of bottom-left corners. -/
+structure Comparison (c d : Corner E M X Y) where
+  map : c.mid ⟶ d.mid
+  first : c.e ≫ map = d.e
+  second : map ≫ d.m = c.m
+
+variable {E M}
+
+omit [E.IsMultiplicative] [M.IsMultiplicative] in
+theorem Comparison.decode_eq {c d : Corner E M X Y} (t : Comparison E M c d) :
+    c.decode E M = d.decode E M := by
+  change c.e ≫ c.m = d.e ≫ d.m
+  rw [← t.first, Category.assoc, t.second]
+
+/-- Corner equivalence generated by comparison maps at fixed outer endpoints. -/
+abbrev CornerQuot (E M : MorphismProperty C) (X Y : C) :=
+  Quot (fun c d : Corner E M X Y => Nonempty (Comparison E M c d))
+
+def readCorner : CornerQuot E M X Y → (X ⟶ Y) :=
+  Quot.lift (Corner.decode E M) (fun _ _ ⟨t⟩ => t.decode_eq)
+
+variable (E M)
+
+/-- The factorization-side hypotheses of Štěpán, Definition 3.3.8.
+The intersection condition keeps the original two classes of arrows. -/
+structure OrthogonalData (E M : MorphismProperty C) where
+  factors : FactorizationData E M
+  comparison : ∀ {X Y : C} (c d : Corner E M X Y), c.decode E M = d.decode E M → Unique (Comparison E M c d)
+  common : ∀ {X Y : C} (f : X ⟶ Y), E f ∧ M f ↔ IsIso f
+
+/-- Equality of arrows in the given category is exactly equality in the
+corner quotient under the factorization and comparison hypotheses. -/
+def orthogonalCornerEquiv (H : OrthogonalData E M) : CornerQuot E M X Y ≃ (X ⟶ Y) where
+  toFun := readCorner
+  invFun f := Quot.mk _ (forgetValue E M f (H.factors f))
+  right_inv f := (H.factors f).fac
+  left_inv q := by
+    induction q using Quot.ind with
+    | _ c =>
+      apply Quot.sound
+      let f := c.decode E M
+      exact ⟨(H.comparison (forgetValue E M f (H.factors f)) c (H.factors f).fac).default⟩
+
+def Comparison.identity (c : Corner E M X Y) : Comparison E M c c :=
+  ⟨𝟙 _, Category.comp_id _, Category.id_comp _⟩
+
+def Comparison.comp {c d t : Corner E M X Y} (s : Comparison E M c d) (r : Comparison E M d t) :
+    Comparison E M c t :=
+  ⟨s.map ≫ r.map, by rw [← Category.assoc,s.first,r.first], by rw [Category.assoc,r.second,s.second]⟩
+
+/-- In the orthogonal case every comparison is uniquely invertible.
+Its midpoint belongs to both wide classes as an isomorphism. -/
+def midpointIso (H : OrthogonalData E M) {c d : Corner E M X Y} (s : Comparison E M c d) : c.mid ≅ d.mid := by
+  let t := (H.comparison d c s.decode_eq.symm).default
+  have h₁ := (H.comparison c c rfl).uniq (Comparison.comp E M s t)
+  have h₂ := (H.comparison c c rfl).uniq (Comparison.identity E M c)
+  have h₃ := (H.comparison d d rfl).uniq (Comparison.comp E M t s)
+  have h₄ := (H.comparison d d rfl).uniq (Comparison.identity E M d)
+  exact ⟨s.map, t.map, congrArg Comparison.map (h₁.trans h₂.symm), congrArg Comparison.map (h₃.trans h₄.symm)⟩
+
+omit [E.IsMultiplicative] [M.IsMultiplicative] in
+theorem comparison_in_both (H : OrthogonalData E M) {c d : Corner E M X Y} (s : Comparison E M c d) :
+    E s.map ∧ M s.map :=
+  (H.common _).mpr (midpointIso E M H s).isIso_hom
+
+/-- Paste two bottom-left corners by factoring precisely the middle M-then-E pair. -/
+def paste (F : FactorizationData E M) (c : Corner E M X Y) (d : Corner E M Y Z) : Corner E M X Z :=
+  let b := F (c.m ≫ d.e)
+  ⟨b.Z,c.e ≫ b.i,b.p ≫ d.m,E.comp_mem _ _ c.he b.hi,M.comp_mem _ _ b.hp d.hm⟩
+
+theorem decode_paste (F : FactorizationData E M) (c : Corner E M X Y) (d : Corner E M Y Z) :
+    (paste E M F c d).decode E M = c.decode E M ≫ d.decode E M := by
+  simp [paste, Corner.decode, Category.assoc]
+
+/-- Middle refactorization is a well-defined composition on the corner quotient. -/
+def quotientComp (H : OrthogonalData E M) (x : CornerQuot E M X Y) (y : CornerQuot E M Y Z) : CornerQuot E M X Z := by
+  refine Quot.lift (fun c => ?_) ?_ x
+  · refine Quot.lift (fun d => Quot.mk _ (paste E M H.factors c d)) ?_ y
+    rintro d d' ⟨t⟩
+    apply (orthogonalCornerEquiv E M H).injective
+    change (paste E M _ c d).decode E M = (paste E M _ c d').decode E M
+    rw [decode_paste, decode_paste, t.decode_eq]
+  · rintro c c' ⟨t⟩
+    induction y using Quot.ind with
+    | _ d =>
+      apply (orthogonalCornerEquiv E M H).injective
+      change (paste E M _ c d).decode E M = (paste E M _ c' d).decode E M
+      rw [decode_paste, decode_paste, t.decode_eq]
+
+theorem read_comp (H : OrthogonalData E M) (x : CornerQuot E M X Y) (y : CornerQuot E M Y Z) :
+    readCorner (quotientComp E M H x y) = readCorner x ≫ readCorner y := by
+  induction x using Quot.ind with
+  | _ c =>
+    induction y using Quot.ind with
+    | _ d => exact decode_paste E M _ c d
+
+/-- Corners consisting only of a tight or only of a horizontal arrow. -/
+def verticalCorner (e : X ⟶ Y) (he : E e) : Corner E M X Y :=
+  ⟨Y,e,𝟙 Y,he,M.id_mem Y⟩
+
+def horizontalCorner (m : X ⟶ Y) (hm : M m) : Corner E M X Y :=
+  ⟨X,𝟙 X,m,E.id_mem X,hm⟩
+
+omit [E.IsMultiplicative] in
+theorem read_vertical_class (H : OrthogonalData E M) (x : CornerQuot E M X Y) :
+    (∃ (e : X ⟶ Y) (he : E e), x = Quot.mk _ (verticalCorner E M e he)) ↔ E (readCorner x) := by
+  constructor
+  · rintro ⟨e,he,rfl⟩
+    simpa [readCorner, verticalCorner, Corner.decode] using he
+  · intro hx
+    refine ⟨readCorner x,hx,(orthogonalCornerEquiv E M H).injective ?_⟩
+    exact (Category.comp_id _).symm
+
+omit [M.IsMultiplicative] in
+theorem read_horizontal_class (H : OrthogonalData E M) (x : CornerQuot E M X Y) :
+    (∃ (m : X ⟶ Y) (hm : M m), x = Quot.mk _ (horizontalCorner E M m hm)) ↔ M (readCorner x) := by
+  constructor
+  · rintro ⟨m,hm,rfl⟩
+    simpa [readCorner, horizontalCorner, Corner.decode] using hm
+  · intro hx
+    refine ⟨readCorner x,hx,(orthogonalCornerEquiv E M H).injective ?_⟩
+    exact (Category.id_comp _).symm
+
+/-- The reconstructed quotient has a category structure and its decoding is
+homwise bijective and identity-on-objects (through the object wrapper). -/
+structure Reconstructed (H : OrthogonalData E M) where
+  obj : C
+
+instance (H : OrthogonalData E M) : Category (Reconstructed E M H) where
+  Hom x y := CornerQuot E M x.obj y.obj
+  id x := Quot.mk _ (verticalCorner E M (𝟙 x.obj) (E.id_mem _))
+  comp := quotientComp E M H
+  id_comp x := by
+    apply (orthogonalCornerEquiv E M H).injective
+    change readCorner (quotientComp E M H _ x) = readCorner x
+    rw [read_comp]
+    change (𝟙 _ ≫ 𝟙 _) ≫ _ = _
+    simp
+  comp_id x := by
+    apply (orthogonalCornerEquiv E M H).injective
+    change readCorner (quotientComp E M H x _) = readCorner x
+    rw [read_comp]
+    change _ ≫ (𝟙 _ ≫ 𝟙 _) = _
+    simp
+  assoc x y z := by
+    apply (orthogonalCornerEquiv E M H).injective
+    change readCorner (quotientComp E M H (quotientComp E M H x y) z) =
+      readCorner (quotientComp E M H x (quotientComp E M H y z))
+    simp only [read_comp, Category.assoc]
+
+def decodeFunctor (H : OrthogonalData E M) : Reconstructed E M H ⥤ C where
+  obj := Reconstructed.obj
+  map := readCorner
+  map_id _ := Category.id_comp _
+  map_comp := read_comp E M H
+
+def factorFunctor (H : OrthogonalData E M) : C ⥤ Reconstructed E M H where
+  obj x := ⟨x⟩
+  map := (orthogonalCornerEquiv E M H).symm
+  map_id X := by
+    apply (orthogonalCornerEquiv E M H).injective
+    rw [Equiv.apply_symm_apply]
+    exact (Category.id_comp _).symm
+  map_comp f g := by
+    apply (orthogonalCornerEquiv E M H).injective
+    rw [Equiv.apply_symm_apply]
+    change f ≫ g = readCorner (quotientComp E M H ((orthogonalCornerEquiv E M H).symm f) ((orthogonalCornerEquiv E M H).symm g))
+    rw [read_comp]
+    change _ = (orthogonalCornerEquiv E M H) ((orthogonalCornerEquiv E M H).symm f) ≫
+      (orthogonalCornerEquiv E M H) ((orthogonalCornerEquiv E M H).symm g)
+    simp
+
+theorem decode_factor (H : OrthogonalData E M) (f : X ⟶ Y) :
+    (decodeFunctor E M H).map ((factorFunctor E M H).map f) = f :=
+  (orthogonalCornerEquiv E M H).apply_symm_apply f
+
+theorem factor_decode (H : OrthogonalData E M) {x y : Reconstructed E M H} (f : x ⟶ y) :
+    (factorFunctor E M H).map ((decodeFunctor E M H).map f) = f :=
+  (orthogonalCornerEquiv E M H).symm_apply_apply f
+
+end ContextualComposition.FactorizationDoubleEnvelope
