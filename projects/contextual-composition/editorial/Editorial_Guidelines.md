@@ -85,15 +85,15 @@ Use explicit claim statuses: established background; proved here under named hyp
 
 Cite primary sources at the exact point where their hypotheses matter. Written proof, mechanized proof, historical replay, source checking, and numerical diagnostics must remain different evidence types.
 
-## 5. Always provide an explanatory design space; classification is an optional addition
+## 5. When a design-space approach is appropriate, make it explanatory
 
-Every manuscript must provide **at least an explanatory design space**, at a level of detail appropriate to its scope and intended readers. Explain the meaningful choices in the relevant theory or system, what each choice enables or changes, and how the choices can be assembled. Make the generative and compositional relationships intelligible; a collection of named examples does not meet this minimum.
+Use a design-space approach when it helps readers understand the paper's subject or contribution; it is **not mandatory for every manuscript**. When used, the design space must be **explanatory at a minimum**: show the meaningful choices, what each enables or changes, and how the choices fit together. Make the generative and compositional relationships intelligible, rather than relying only on a list of named constructions.
 
 A design space should help readers understand consequential choices: what interfaces count as pure, how context and content are represented, what resource and grade maps are available, which information is shared, which interaction or feedback operations are admitted, and what observations a comparison must preserve.
 
 For each major choice, explain **what changes**, **what composition requires**, and **what comparison or theorem is available**. Where useful, show how changing one choice affects the admissibility or meaning of another.
 
-Taxonomic, classificatory, encyclopedic, and observational presentations are **optional additions**, not approaches to avoid. A catalogue, comparison table, or classification theorem may help readers navigate the alternatives or may itself be a substantive contribution. Such material supplements rather than substitutes for the explanatory design space. Para, Kleisli, spans, cospans, logical doctrines, and tracing may be useful points of comparison; naming them alone does not explain how their structures relate or prove that one unrestricted construction implements them all.
+Taxonomic, classificatory, encyclopedic, and observational presentations are **optional additions**, not approaches to avoid. A catalogue, comparison table, or classification theorem may help readers navigate the alternatives or may itself be a substantive contribution. When a design-space approach is used, such material may supplement its explanatory core rather than replace it. Para, Kleisli, spans, cospans, logical doctrines, and tracing may be useful points of comparison; naming them alone does not explain how their structures relate or prove that one unrestricted construction implements them all.
 
 Do not describe axes as independent if changing one changes another's admissibility. Distinguish choosing a presentation, adding an operation, forgetting information, and recognizing an existing semantics. Where a combination is not proved, label it as a possible extension, not a feature of the current calculus.
 
