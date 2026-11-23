@@ -38,6 +38,8 @@ In §4 of [the finite reduction report](../../reduction/reduction_test_report.te
 
 The [structural-test inventory](../../reduction/structural-test-crosswalk.md) records the scope of the finite contextad and harder-test examples. `LabelSharingObstruction.merging_labels` and `flattening_singletons` compute the fair-bit disagreement counts of the two implicit-sharing failures in harder tests §4. Each compares 2 of 4 equiprobable atoms with 0 of 2. `FiniteWriterObstruction.no_associative_composition` proves the [finite contextad report](../../finite-contextads/report.txt) §4 obstruction on the one- and two-element objects. The proposed carrier pairs a deterministic XOR grade with a normalized, nonnegative real-valued kernel. Any operation on all finite sets with the required inclusions restricts to these objects. A joint random grade has a different carrier.
 
+[Relative tensors of weak Cat actions](RELATIVE_TENSOR.md)
+
 ## Source and operation
 
 The source is `projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex` at EOS commit `458ff36a4798e432dee5947afc402f9903a47f14`, §“Internal constructors and familiar specializations” (`sec:constructors`). The adjacent displayed fixed-effect formulas, Para paragraphs and reader/writer paragraphs are the exact targets. Issue #105 tracks the much larger constructor programme; #91 sets formal-verification acceptance. Neither issue is closed by this package.
