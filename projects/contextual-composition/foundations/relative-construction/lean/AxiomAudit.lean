@@ -2344,6 +2344,10 @@ import ContextualComposition
 #print axioms ContextualComposition.RelativeTensor.Iterated.mixedLeftIdentityComposite
 #print axioms ContextualComposition.RelativeTensor.Iterated.mixedLeftIdentityAt
 #print axioms ContextualComposition.RelativeTensor.Iterated.mixedLeftIdentityOnObjects
+#print axioms ContextualComposition.RelativeTensor.Iterated.leftContactDomain
+#print axioms ContextualComposition.RelativeTensor.Iterated.leftContactCodomain
+#print axioms ContextualComposition.RelativeTensor.Iterated.leftNativeAbsorption
+#print axioms ContextualComposition.RelativeTensor.Iterated.mixedLeftIdentityOnNativeProduct
 #print axioms ContextualComposition.RelativeTensor.Iterated.crossingSquare
 #print axioms ContextualComposition.RelativeTensor.Iterated.crossingSquare_app
 #print axioms ContextualComposition.RelativeTensor.Iterated.crossingPayload
