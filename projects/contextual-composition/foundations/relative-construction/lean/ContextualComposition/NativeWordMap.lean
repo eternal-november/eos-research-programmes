@@ -304,4 +304,79 @@ theorem wordNativeMap_square_iff :
     | exact lc.trans ((congrArg (fun z => eqToHom A₀ ≫ z) eq).trans rc.symm)
 
 end Variation
+
+section PresentationOrder
+variable {f : X → Y}
+variable (A : X → C) (B : Y → C)
+variable (ps : AddressOrder X xs xs') (pt : AddressOrder Y ys ys')
+
+/-- The raw fibre restriction of an address permutation is an isomorphism.
+Its inverse interprets the reversed restricted permutation, not a permutation
+of coefficient labels. -/
+noncomputable def wordFibreOrderIso (hx : xs.Nodup) (y : Y) :
+    fold 𝒮 Z A (wordFibre xs f y) ≅ fold 𝒮 Z A (wordFibre xs' f y) := by
+  let r := wordFibreOrder f ps y
+  let s := Classical.choice (AddressOrder.ofPerm r.perm.symm)
+  let R := fun {a b} (p : AddressOrder X a b) => AddressOrder.mapSum additiveStructure A p
+  have hn : (wordFibre xs f y).Nodup := hx.filter _
+  refine ⟨R r, R s, ?_, ?_⟩
+  · exact tagged_permutation_coherent A hn (.seq r s) (.ident _)
+  · exact tagged_permutation_coherent A (r.perm.nodup hn) (.seq s r) (.ident _)
+
+/-- Present the same coefficient family in a different order of its raw tags. -/
+noncomputable def wordReorderIso (A : X → C) (ps : AddressOrder X xs xs') (hx : xs.Nodup) :
+    NativeFamilyIso (wordFamily A xs) (wordFamily A xs') :=
+  nativeReindexIso (wordEquiv ps.perm hx) (wordComparisonCells A A ps hx fun x => Iso.refl (A x))
+
+include ps pt in
+omit [DecidableEq Y] in
+theorem wordReorder_support (h : ∀ x ∈ xs, f x ∈ ys) :
+    ∀ x ∈ xs', f x ∈ ys' :=
+  fun x hx => pt.perm.mem_iff.mp (h x (ps.perm.mem_iff.mpr hx))
+
+/-- Retag an opaque whole-fibre cell by precomposition with the inverse
+restricted order. Even if the fibre is empty, the target tag still indexes
+a cell; no initiality or component decomposition is used. -/
+noncomputable def wordNativeMap_reorderCell (hx : xs.Nodup)
+    (p : ∀ y ∈ ys, fold 𝒮 Z A (wordFibre xs f y) ⟶ B y)
+    (y : Y) (hy : y ∈ ys') : fold 𝒮 Z A (wordFibre xs' f y) ⟶ B y :=
+  (wordFibreOrderIso (f:=f) A ps hx y).inv ≫ p y (pt.perm.mem_iff.mpr hy)
+
+/-- Retagging at each target tag is faithful on the entire coefficient arrow,
+including a chosen unit-to-target arrow at an empty fibre. -/
+theorem wordNativeMap_reorderCell_eq_iff (hx : xs.Nodup)
+    (p q : ∀ y ∈ ys, fold 𝒮 Z A (wordFibre xs f y) ⟶ B y)
+    (y : Y) (hy : y ∈ ys') :
+    wordNativeMap_reorderCell A B ps pt hx p y hy =
+      wordNativeMap_reorderCell A B ps pt hx q y hy ↔
+    p y (pt.perm.mem_iff.mpr hy) = q y (pt.perm.mem_iff.mpr hy) := by
+  exact cancel_epi (wordFibreOrderIso (f:=f) A ps hx y).inv
+
+set_option backward.isDefEq.respectTransparency false in
+/-- Changing only the order of the raw occurrence lists commutes with the
+actual native arrow. Both horizontal arrows are constructed by
+`wordNativeMap` on the very same raw carrier map, with the new cells built
+by stable per-fibre transport. Coefficient labels may repeat, the carrier may
+be many-to-one, and empty fibres still carry their full arrows. -/
+theorem wordNativeMap_reorder (hx : xs.Nodup) (hy : ys.Nodup)
+    (h : ∀ x ∈ xs, f x ∈ ys)
+    (p : ∀ y ∈ ys, fold 𝒮 Z A (wordFibre xs f y) ⟶ B y) :
+    let U := wordNativeMap f h hy A B (fun j => p ys[j] (List.getElem_mem _))
+    let V := wordNativeMap f (wordReorder_support ps pt h) (pt.perm.nodup hy) A B
+      (fun j => wordNativeMap_reorderCell A B ps pt hx p ys'[j] (List.getElem_mem _))
+    U.comp (wordReorderIso B pt hy).hom = (wordReorderIso A ps hx).hom.comp V := by
+  intro U V
+  apply (wordNativeMap_square_iff A A B B ps pt hx hy h (wordReorder_support ps pt h)
+    (fun x => Iso.refl (A x)) (fun y => Iso.refl (B y)) p
+    (wordNativeMap_reorderCell A B ps pt hx p)).2
+  intro j
+  let y := ys'[j]
+  let e := wordFibreOrderIso (f:=f) A ps hx y
+  change p y _ ≫ 𝟙 (B y) = e.hom ≫
+    act 𝒮 Z (fun x => 𝟙 (A x)) (wordFibre xs' f y) ≫ (e.inv ≫ p y _)
+  have hAct : act 𝒮 Z (fun x => 𝟙 (A x)) (wordFibre xs' f y) = 𝟙 _ :=
+    occurrence_act_id A (wordFibre xs' f y)
+  rw [Category.comp_id, hAct, Category.id_comp, Iso.hom_inv_id_assoc]
+
+end PresentationOrder
 end ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter
