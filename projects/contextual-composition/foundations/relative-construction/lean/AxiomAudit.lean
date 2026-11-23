@@ -2153,6 +2153,15 @@ import ContextualComposition
 #print axioms ContextualComposition.RelativeTensor.Iterated.exposedCrossing_input
 #print axioms ContextualComposition.RelativeTensor.Iterated.contractChange
 #print axioms ContextualComposition.RelativeTensor.Iterated.mixedContractionInput
+#print axioms ContextualComposition.RelativeTensor.Iterated.reverseInputSquare
+#print axioms ContextualComposition.RelativeTensor.Iterated.pasteInputSquare
+#print axioms ContextualComposition.RelativeTensor.Iterated.outerInputAt
+#print axioms ContextualComposition.RelativeTensor.Iterated.outerAssociatorInput
+#print axioms ContextualComposition.RelativeTensor.Iterated.outerAssociatorInput_app
+#print axioms ContextualComposition.RelativeTensor.Iterated.firstPentagonInput
+#print axioms ContextualComposition.RelativeTensor.Iterated.exposeMiddleInput
+#print axioms ContextualComposition.RelativeTensor.Iterated.crossMiddleInput
+#print axioms ContextualComposition.RelativeTensor.Iterated.mixedMultiplicationInput
 #print axioms ContextualComposition.RelativeTensor.Iterated.rowMap_changeIso
 #print axioms ContextualComposition.RelativeTensor.Iterated.rowMap_changeIso_component
 #print axioms ContextualComposition.RelativeTensor.Iterated.transportRowSquare
