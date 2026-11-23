@@ -7,7 +7,7 @@ including both right-fold nullary tails. -/
 namespace ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter
 open CategoryTheory MonoidalCategory ContextualComposition.RigGrid
 open scoped MonoidalCategory
-universe u v
+universe u v w
 variable {C : Type u} [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
 local notation "𝒮" => binary (Additive.sum (Additive.ofBraided (C:=C)))
 local notation "Zₐ" => 𝟙_ C
@@ -85,7 +85,7 @@ theorem compressGrid_singleLeaf_nested {X : Type u} (A : X → C) (a : X) :
   exact k
 
 
-theorem wordFibre_identity_singleton {X : Type u} [DecidableEq X] {xs : List X}
+theorem wordFibre_identity_singleton {X : Type w} [DecidableEq X] {xs : List X}
     (n : xs.Nodup) {x : X} (h : x ∈ xs) :
     wordFibre xs id x = [x] := by
   unfold wordFibre
@@ -107,7 +107,7 @@ theorem wordFibre_identity_singleton {X : Type u} [DecidableEq X] {xs : List X}
         using ih (List.nodup_cons.mp n).2 hh
 
 set_option backward.isDefEq.respectTransparency false in
-theorem wordNativeMap_ident_of_singleton {X : Type u} [DecidableEq X]
+theorem wordNativeMap_ident_of_singleton {X : Type w} [DecidableEq X]
     {xs : List X} (hn : xs.Nodup) (A : X → C) (f : X → X)
     (hs : ∀ x ∈ xs, f x ∈ xs) (e : ∀ x ∈ xs, f x = x)
     (p : ∀ i : Fin xs.length, fold 𝒮 Zₐ A (wordFibre xs f xs[i]) ⟶ A xs[i])
