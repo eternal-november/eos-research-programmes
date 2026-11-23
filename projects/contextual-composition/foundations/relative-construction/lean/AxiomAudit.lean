@@ -2418,6 +2418,14 @@ import ContextualComposition
 #print axioms ContextualComposition.GrothendieckStep.PayloadLaws.All.strong
 #print axioms ContextualComposition.GrothendieckStep.PayloadLaws.All.strongComponent
 #print axioms ContextualComposition.GrothendieckStep.PayloadLaws.All.strongCell
+#print axioms ContextualComposition.GrothendieckStep.PayloadLaws.All.fixedBasePayloadEquivalence
+#print axioms ContextualComposition.GrothendieckStep.PayloadLaws.All.fixedBasePayloadEquivalence_hom
+#print axioms ContextualComposition.GrothendieckStep.TelescopeGradeChange.totalMap_leaf
+#print axioms ContextualComposition.GrothendieckStep.TelescopeGradeChange.totalMap_payload
+#print axioms ContextualComposition.GrothendieckStep.TelescopeGradeChange.gather_payload
+#print axioms ContextualComposition.GrothendieckStep.TelescopeGradeChange.compare_payload
+#print axioms ContextualComposition.GrothendieckStep.TelescopeGradeChange.inverse_payload
+#print axioms ContextualComposition.GrothendieckStep.TelescopeGradeChange.evaluation_of_components
 #print axioms ContextualComposition.GrothendieckStep.PackedFree.step
 #print axioms ContextualComposition.GrothendieckStep.PackedFree.free
 #print axioms ContextualComposition.GrothendieckStep.PackedFree.pow
