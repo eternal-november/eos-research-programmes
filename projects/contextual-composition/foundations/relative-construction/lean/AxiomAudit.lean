@@ -2335,6 +2335,15 @@ import ContextualComposition
 #print axioms ContextualComposition.RelativeTensor.Iterated.mixedUnit_app
 #print axioms ContextualComposition.RelativeTensor.Iterated.mixedUnit_input
 #print axioms ContextualComposition.RelativeTensor.Iterated.mixedUnit_output
+#print axioms ContextualComposition.RelativeTensor.Iterated.mixedLeftIdentityInsertion
+#print axioms ContextualComposition.RelativeTensor.Iterated.innerBefore
+#print axioms ContextualComposition.RelativeTensor.Iterated.innerAfter
+#print axioms ContextualComposition.RelativeTensor.Iterated.nativeRetained
+#print axioms ContextualComposition.RelativeTensor.Iterated.rowInputM
+#print axioms ContextualComposition.RelativeTensor.Iterated.rowInputN
+#print axioms ContextualComposition.RelativeTensor.Iterated.mixedLeftIdentityComposite
+#print axioms ContextualComposition.RelativeTensor.Iterated.mixedLeftIdentityAt
+#print axioms ContextualComposition.RelativeTensor.Iterated.mixedLeftIdentityOnObjects
 #print axioms ContextualComposition.RelativeTensor.Iterated.crossingSquare
 #print axioms ContextualComposition.RelativeTensor.Iterated.crossingSquare_app
 #print axioms ContextualComposition.RelativeTensor.Iterated.crossingPayload
