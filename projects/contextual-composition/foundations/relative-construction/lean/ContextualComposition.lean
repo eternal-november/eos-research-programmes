@@ -224,6 +224,9 @@ public import ContextualComposition.TelescopeAmbientIdentity
 public import ContextualComposition.TelescopeAmbientComposition
 public import ContextualComposition.TelescopeAmbientLeaf
 public import ContextualComposition.TelescopeAmbientMixed
+public import ContextualComposition.TelescopeAmbientTag
+public import ContextualComposition.TelescopePresentationPasting
+public import ContextualComposition.TelescopeValueLift
 public import ContextualComposition.PackedFree
 public import ContextualComposition.NativeBlocks
 public import ContextualComposition.BlockCartesian
