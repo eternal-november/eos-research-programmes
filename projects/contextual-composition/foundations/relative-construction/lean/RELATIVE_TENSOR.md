@@ -18,13 +18,13 @@ For the comma normalization lemma in the [independent interaction criterion](../
 
 For a supplied weak curried middle action, `RelativeTensor.Iterated.associator` compares the full iterated quotient categories. The two functors are built from their actions on native arrows and inner and outer balance generators. `roundtrip_left` and `roundtrip_right` identify the composites with the identity functors. The transpose construction relates the two curried orientations. Interpreting an independently given uncurried middle pseudofunctor requires a comparison with these data.
 
-`RelativeTensor.Iterated.twoStep` constructs one composite on the actual four-factor carriers. For the three-factor associator, `last_naturality` identifies the whole functors obtained by changing its last strong factor. Issue #93 tracks the full four-factor pentagon, the global unitor–associator triangle, and the induced generic mixed multiplication, pure pseudofunctor and companion-bending compatibility. The three-factor inverse laws and the two-step four-factor route establish their indicated scopes.
+`RelativeTensor.Iterated.twoStep` constructs one composite on the actual four-factor carriers. For the three-factor associator, `last_naturality` identifies the whole functors obtained by changing its last strong factor. The four-factor pentagon below identifies the two forward routes. Issue #93 also tracks the global unitor–associator triangle, generic mixed multiplication, pure pseudofunctor and companion-bending compatibility.
 
 ## Factor changes and the four-factor row comparison
 
 For arbitrary strong maps of the first weak factor, `Iterated.first_naturality` identifies the two rebracketing functors on the entire localized category. `twoStep_first_naturality` proves the corresponding equality along the existing two-step route on four factors. For any directed modification of last-factor maps, `last_modification` identifies the whiskered natural transformations with the endpoint transports given by `last_naturality`.
 
-`middleRow` identifies the row of the middle composite with the appropriate left inner action as a whole pseudofunctor, including its unit and compositor. `middleRow_change` compares the actual strong maps across that identification. The equivalence `rightRowAssociator` and the transport square `rightRow_change` apply this comparison at each source row. These are inputs to the outer whiskerings of the three-step pentagon route. Equality or a coherent isomorphism between the two full routes remains a separate obligation.
+`middleRow` identifies the row of the middle composite with the appropriate left inner action as a whole pseudofunctor, including its unit and compositor. `middleRow_change` compares the actual strong maps across that identification. The equivalence `rightRowAssociator` and the transport square `rightRow_change` apply this comparison at each source row. These comparisons enter the outer whiskerings of the three-step pentagon route.
 
 ## Whiskering rebracketing across a fourth factor
 
@@ -38,16 +38,22 @@ On the other side, `OuterRow.naturality` gives the complete functor square at ea
 
 For two functors out of `Iterated.farLeft` and a chosen isomorphism at every object, `fourGeneratorLaws_iff` characterizes naturality by its value on simultaneous native four-arrow tuples and the three specified forward junction balances. The extension to all quotient arrows uses the tensor universal property twice inside the outer quotient. It includes inverse balances. `isoOfFourGenerators` gives a natural isomorphism with exactly the supplied components. `extFourGenerators` yields functor equality when they are equality transports.
 
-`OuterRow.direct` computes the right-row identification by an identity-on-fibres strong map; `direct_eq` compares it with the original row functor. The modules `RelativeTensorPentagonCoordinates`, `RelativeTensorFourBalanceB` and `RelativeTensorPentagonOuterBalance` compute the independent routes on each relevant native or balancing generator. The two complete outer-balance tests explicitly retain the object transports and their conditions on the last whiskering. In particular, the innermost balance uses its specified port. The final pentagon still requires the concrete last whiskering and the assembled four comparisons.
+`OuterRow.direct` computes the right-row identification by an identity-on-fibres strong map; `direct_eq` compares it with the original row functor. The modules `RelativeTensorPentagonCoordinates`, `RelativeTensorFourBalanceB` and `RelativeTensorPentagonOuterBalance` compute the independent routes on each relevant native or balancing generator. The two complete outer-balance tests explicitly retain the object transports and their conditions on the last whiskering. In particular, the innermost balance uses its specified port. The proof below instantiates the last whiskering and all four comparisons.
 
 ## Weak compositor of the normalized outer row
 
 For the actual contravariant first-index action on the middle composite, `OuterRow.columnUnit` and `OuterRow.columnComp` compute the native unit and compositor in each column. `OuterRow.normalize_unit` computes the image of the source unitor through the row identification for every vertex of the outer tensor.
 
-`OuterRow.normalizedCompositor` computes the image of the source compositor through that identification for every composable pair and every vertex. Its equality records the source object, target object and morphism together. The underlying column calculation uses the actual weak compositor of the middle diagram. The final right whiskering still requires pasting these equations with the row associator and checking the laws of the resulting strong transformation.
+`OuterRow.normalizedCompositor` computes the image of the source compositor through that identification for every composable pair and every vertex. Its equality records the source object, target object and morphism together. The underlying column calculation uses the actual weak compositor of the middle diagram. Pasting these equations with the row associator supplies the weak structure laws for the final right whiskering.
 
 ## The three-step route on four factors
 
 `OuterRow.whisker` is the strong transformation between the two contravariant row diagrams. Its components are the concrete normalized row reassociations. The proof supplies both the weak unitor equation and the compositor equation for every composable pair of base arrows. Equality of the packed morphisms carries their two endpoints through the calculation.
 
 `Iterated.rightPentagonRows` upgrades this transformation to an adjoint equivalence by its pointwise row equivalences. The resulting `Iterated.threeStep` is an equivalence from the fully left-bracketed relative tensor to the fully right-bracketed relative tensor, through both intermediate bracketings on the long route. `threeStep_functor` identifies the forward functor with that composite. `route_objects` gives the objectwise comparison with the two-step route for every strong last whiskering with the prescribed row functors.
+
+## Four-factor pentagon
+
+`RelativeTensor.Iterated.pentagon X M N Y` proves `(twoStep X M N Y).functor = (threeStep X M N Y).functor`. The equality holds on the whole fourfold quotient for arbitrary weak curried middle modules at the represented outer endpoints. Both sides come from independently constructed reassociation equivalences.
+
+The simultaneous native-arrow comparison preserves all four payload arrows. Each of the three remaining generator comparisons uses the balance at its own junction. In particular, `whisker_port` supplies the object transport for the innermost balance, and `Pentagon.threeStep_middle` computes the central balance on primitive vertices. Every inner tensor object has a native vertex presentation. The four-generator criterion extends these computations to inverse balances and arbitrary quotient paths.
