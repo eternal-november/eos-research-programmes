@@ -1,0 +1,60 @@
+import ContextualComposition.NativeFubiniDependentAssoc
+
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentAug_parent_order
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentAug_child_order
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordReindex_preserves_iff
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentOrder
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentOrder_preserves
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentOrderIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentOrderIso_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.equiv_word_read
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentReadBack_eq
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentOrderedReadIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentOrderedReadIso_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordReadAugIso_preserves
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.rawSingletonTrace_read_perm
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.WordAugReadComparison
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.WordAugReadComparison.ofTrace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.accCell
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.separatePairCell
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.binaryFubini_wordComparison
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.WordAugReadComparison.ident
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.ReadComparison
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.ReadComparison.accumulate
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.ReadComparison.accumulate_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.WordAugReadComparison.ofScalarOrder
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.separateRawPairCell
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.jointRawPairCell
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.binaryFubini_scalarComparison
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.WordAugReadComparison.scalarIdent
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.tailData
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.leftData
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.rightData
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.product
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.associator
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.parentFubiniComparison
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.tailFubiniComparison
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.whiskerParentFubini
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.whiskerTailFubini
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.RightBranch
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.leftDataRead
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.leftDataFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.rightDataFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.associator_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.leftPairRead
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.rightPairRead
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentThirdData.actual_fubini_dependent_assoc
+
+
+open ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter
+
+private def xs : List Nat := [0,1]
+private def ys : Nat → List Nat := fun x => if x = 0 then [0,1] else []
+private def ws : Nat → Nat → List Nat := fun x y => if x = 0 && y = 1 then [] else [0,1]
+private def left := dependentWord (dependentWord xs ys) (fun p => ws p.1 p.2)
+private def right := dependentWord xs (fun x => dependentWord (ys x) (ws x))
+
+example : left.map tripleRetag = right := tripleRetag_word xs ys ws
+example : right = [(0,0,0),(0,0,1)] := by decide
+example : right.map (fun _ => (7 : Nat)) = [7,7] := by decide
