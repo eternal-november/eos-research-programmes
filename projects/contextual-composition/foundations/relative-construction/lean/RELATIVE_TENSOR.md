@@ -63,3 +63,11 @@ The simultaneous native-arrow comparison preserves all four payload arrows. Each
 For an ordinary middle category `B`, `Iterated.unitModule B` has fibre `Discrete (i ⟶ j)` at the pair `(i,j)`. Its columns are the Yoneda actions and its rows agree with the entire co-Yoneda actions, including the unit and compositor. `unitRowMap` identifies a row with its co-Yoneda presentation by identity functors on the label categories. `unitRowMap_tensor_change` proves that this identification commutes with a change of endpoint on the full quotient.
 
 `LeftUnit.baseChange` and `RightUnit.baseChange` compare the fibre evaluation functors along precomposition and postcomposition, respectively. Their naturality applies to all tensor arrows. At a native vertex the comparison is the relevant compositor of the original weak factor. `RightUnit.indexedBase` specializes the right-hand square to the curried identity module.
+
+## Indexed unit equivalences
+
+`RightUnit.indexedEquivalence` evaluates the right unit on the actual diagram `leftInner X (unitModule B)`. Its base-change isomorphisms use the weak compositors of X, and satisfy the indexed unit and composition laws.
+
+For the left unit, `LeftUnit.indexedEquivalence` first evaluates the co-Yoneda endpoint diagram. `unitRowEndpoint` identifies the actual curried row presentation with that diagram. Its fibre functor is induced by identity on each hom label, and its naturality components act by the identity on vertices. The resulting `Iterated.leftUnitEquivalence` has the actual left unitor as its forward strong transformation. On a row vertex, `leftUnitor_port` computes its base change by the compositor of Y. Its images of native arrows and balances are `leftUnitor_native` and `leftUnitor_balance`.
+
+The local base-change formulas allow independent base and payload universes. Bundling each indexed equivalence into a single Cat-valued diagram uses a common universe large enough for the base objects, base morphisms and relevant payloads, as specified in the declaration.
