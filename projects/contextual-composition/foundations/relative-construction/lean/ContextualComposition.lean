@@ -26,6 +26,7 @@ public import ContextualComposition.LocalizedCoconeTransport
 
 public import ContextualComposition.CoconeRecovery
 
+public import ContextualComposition.MixedOpwreath
 public import ContextualComposition.RecoveryModification
 
 public import ContextualComposition.FiniteTelescope

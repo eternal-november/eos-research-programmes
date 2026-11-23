@@ -153,6 +153,12 @@ This extension adds 36 indexed declarations: sixteen theorems and twenty constru
 
 This tranche adds 42 indexed declarations: twenty theorems and 22 constructions (including the endpoint-data and choice-comparison structures). Full package: 279 distinct audits, 143 theorems and 136 constructions. Every new declaration reports exactly `propext`, `Classical.choice`, `Quot.sound`. Prior ten implementation modules, dependency/toolchain pins and verifier remain byte-identical. Author clean own-source replay passed with pinned cached dependencies. Sequential independent statement-adequacy review and fresh own-source replay passed; see `evidence/endpoint-independent/Independent_Endpoint_Transport_Review.tex`.
 
+## Mixed opwreath convolution
+
+In the [mixed-opwreath specialization](../delivery/One_relative_construction_for_context_content_and_effects.tex) at `458ff36a`, the input is a monad T, an endofunctor G and three transformations. The component-law correspondence with [Street, Definition 5](https://arxiv.org/pdf/1610.07281#page=10) in diagram order is `Crossing.mult`, `Crossing.unit`, `Data.e_generic`, `Data.d_generic`, `Data.coassoc`, `Data.left_counit`, `Data.right_counit` in `ContextualComposition.MixedOpwreath`. The generic Kleisli arrow has the identity on T X as its underlying arrow. `factor` and `natural_of_generators` extend the two generic equations to every Kleisli arrow using naturality on base arrows. `liftedComonad` constructs the comonad on the Kleisli category of T.
+
+`homEquiv` identifies the resulting co-Kleisli hom with base arrows G A → T B. `identity` recovers the effectful counit and `convolution` identifies actual categorical composition with Street's equation (3.15). `pureFunctor`, `pure_eq` and `pure_eq_other` give the identity-on-underlying-objects pure functor and both expressions for its map. The construction is in ordinary categories, with independent object and hom universes. It assumes the seven opwreath laws and derives the category; it supplies no independent comonad on G.
+
 ## Endpoint–target interaction on the explicit source presentation
 
 `EndpointTarget.lean` derives a compatibility needed to combine the preceding endpoint and target directions. Source pin remains `458ff36a4798e432dee5947afc402f9903a47f14`: the independent pseudobalanced presentation at lines 455–499 and endpoint lift paragraph at lines 499–510. The interchange statements are derived compatibility of those constructions under arbitrary target functors, not a quotation of a separately asserted source theorem.
