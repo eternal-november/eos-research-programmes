@@ -4,6 +4,22 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import subprocess
+
+
+def frozen_input(package, revision, name, digest):
+    data = (package / name).read_bytes().replace(b"\r\n", b"\n")
+    if hashlib.sha256(data).hexdigest() != digest:
+        # A newer package verifier may accompany still-identical mathematical sources.
+        prefix = subprocess.check_output(
+            ["git", "-C", str(package), "rev-parse", "--show-prefix"], text=True
+        ).strip()
+        data = subprocess.check_output(
+            ["git", "-C", str(package), "show", f"{revision}:{prefix}{name}"]
+        )
+    if hashlib.sha256(data).hexdigest() != digest:
+        raise ValueError(f"Cannot reproduce the pinned build input: {name}")
+    return data
 
 
 def main():
@@ -52,10 +68,9 @@ def main():
 
     runner_files = {}
     for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json", "verify.py", "audit.py"):
-        data = (package / name).read_bytes().replace(b"\r\n", b"\n")
-        if hashlib.sha256(data).hexdigest() != receipt["replay_inputs_sha256"][name]:
-            raise ValueError(f"Pinned build input differs from the audited revision: {name}")
-        runner_files[name] = data
+        runner_files[name] = frozen_input(
+            package, receipt["revision"], name, receipt["replay_inputs_sha256"][name]
+        )
 
     destination.mkdir(parents=True, exist_ok=False)
     (destination / "ContextualComposition").mkdir()
