@@ -228,6 +228,7 @@ public import ContextualComposition.TelescopeAmbientTag
 public import ContextualComposition.TelescopePresentationPasting
 public import ContextualComposition.TelescopeValueLift
 public import ContextualComposition.TelescopePositiveBase
+public import ContextualComposition.TelescopeLeafCancellation
 public import ContextualComposition.PackedFree
 public import ContextualComposition.NativeBlocks
 public import ContextualComposition.BlockCartesian
