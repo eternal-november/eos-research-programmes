@@ -3367,6 +3367,10 @@ import ContextualComposition
 #print axioms ContextualComposition.GrothendieckStep.TelescopeValueLift.positive_paste_data
 #print axioms ContextualComposition.GrothendieckStep.TelescopeValueLift.positive_raw_lift
 #print axioms ContextualComposition.GrothendieckStep.TelescopeValueLift.positive_pasted_lift
+#print axioms ContextualComposition.GrothendieckStep.TelescopePositiveBase.base_component
+#print axioms ContextualComposition.GrothendieckStep.TelescopePositiveBase.raw_factor
+#print axioms ContextualComposition.GrothendieckStep.TelescopePositiveBase.native_factor
+#print axioms ContextualComposition.GrothendieckStep.TelescopePositiveBase.component_base_lift
 #print axioms ContextualComposition.GrothendieckStep.PackedFree.step
 #print axioms ContextualComposition.GrothendieckStep.PackedFree.free
 #print axioms ContextualComposition.GrothendieckStep.PackedFree.pow
