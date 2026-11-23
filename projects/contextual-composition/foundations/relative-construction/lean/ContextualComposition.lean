@@ -22,6 +22,8 @@ public import ContextualComposition.CartesianReader
 public import ContextualComposition.CartesianWriter
 public import ContextualComposition.CartesianReaderWriterLaw
 public import ContextualComposition.MixedEffects
+public import ContextualComposition.DisplaySpanRecovery
+public import ContextualComposition.CodisplayCospanRecovery
 public import ContextualComposition.TerminalComma
 public import ContextualComposition.Factorization
 public import ContextualComposition.PrimitiveBalance
