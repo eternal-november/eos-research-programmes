@@ -205,7 +205,6 @@ Apply two tests:
 
 Do not mechanically require a theorem name, a technical noun, or a particular grammatical form. Questions, evocative phrases, and accessible language can all work when they convey something specific. Nor should a heading promise more than the section proves.
 
-**The table of contents should read like a compressed version of the paper's intellectual argument, not a collection of generic invitations to keep reading.**
 
 Then read the prose aloud. Underline the sentence that says something the reader came to learn. Cut the throat-clearing before it and the paraphrase after it. Scrutinize “X, but not Y,” headings that correct an imagined opponent, and repeated assurances about what the reader needn’t know. For example, when the first substantive sentence is “Each construction chooses what counts as a computation…”, start there. The author may have needed the two reminders before that sentence; the reader doesn’t.
 
