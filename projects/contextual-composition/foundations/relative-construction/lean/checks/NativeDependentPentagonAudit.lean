@@ -1,0 +1,93 @@
+import ContextualComposition.NativeDependentTriangle
+
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.nativeSingletonMap
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.nativeReindex_singleton
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.nativeSingletonMap_ident
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.nativeSingletonMap_comp
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.nativeSingletonMap_congr
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentRow_pointwise
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentAug_pointwise
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentAug_child_retag
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentAug_parent_retag
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordPointwise
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordPointwise_id
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordPointwise_comp
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordPointwise_eq_of_mem
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordEquiv_ident_chart
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordReindex_ident_pointwise
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordAugIso_ident_pointwise
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordAugIso_pointwise_paste
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentWordAug_rightUnit_chart
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentRightUnitIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.structuralTensorIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentWhiskerIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentWhiskerIso_native
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordPointwise_pentagon
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.MulPentagon
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.standardMulPentagon
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.AugHom.pentagon_of_pointwise_native_heq
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordAct_preservation_read
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordPointwise_retag_heq
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentAssocIso_pointwise_heq
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentAssoc_preserves_pullback
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentAug_parent_read
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentAug_child_read
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentParentWhiskerIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentChildWhiskerIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentParentWhiskerIso_pointwise
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentChildWhiskerIso_pointwise
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourLeft
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourTop
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourMiddle
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourRight
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourBottom
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourEdgeLT
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourEdgeTM
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourEdgeMR
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourEdgeLB
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourEdgeBR
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourReadL
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourReadT
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourReadM
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourReadB
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourReadL_word
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourReadT_word
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourReadM_word
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.fourReadB_word
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.actual_dependent_augmented_pentagon
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.depLeftUnitCell
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.depLeftUnitCell_natural
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.depLeftUnit_collect
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentWordAug_leftUnit_chart
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentLeftUnitIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.standardDepLeftUnitCell
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.standardDepLeftUnit_agrees_at_unit
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordAug_cell_heq
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordAug_act_preserves_pullback
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.MulTriangle
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.standardMulTriangle
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.triangleAssoc
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.triangleReadParent
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.triangleReadChild
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.triangleDropParent
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.triangleDropChild
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.triangleLeft_read
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.triangleRight_read
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.actual_dependent_augmented_triangle
+
+
+open ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter
+
+-- Three branches with the same final labels below, but distinct raw
+-- occurrences; present empty inner rows contribute no raw leaf.
+private def twoChildren : Nat → List Nat := fun _ => [0, 1]
+private def sparseFour : Nat → Nat → Nat → List Nat :=
+  fun x y _ => if x = 0 && y = 0 then [] else [0]
+private def rightAddresses :=
+  dependentWord [0,1] (fun x => dependentWord (twoChildren x)
+    (fun y => dependentWord ([0] : List Nat) (sparseFour x y)))
+
+example : rightAddresses = [(0,1,0,0), (1,0,0,0), (1,1,0,0)] := by decide
+example : rightAddresses.map (fun _ => (7 : Nat)) = [7,7,7] := by decide
+example : dependentWord ([] : List Nat) (fun x => dependentWord (twoChildren x)
+    (fun y => dependentWord ([0] : List Nat) (sparseFour x y))) = [] := rfl
