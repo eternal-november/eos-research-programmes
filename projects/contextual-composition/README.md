@@ -2,6 +2,8 @@
 
 [Choose a reading route by question](NAVIGATION.md): recover a mathematical claim, check its evidence, or locate the boundary of the Lean formalization.
 
+The [programme prospectus](editorial/Computation_in_Context_Prospectus.md) and [editorial guidelines](editorial/Editorial_Guidelines.md) provide the audience-facing framing and working writing standards. They are editorial documents, not mathematical proof-status records.
+
 ### Nonblocking recurrent interaction checkpoint
 
 Earlier checkpoint paragraphs below retain their historical scopes.

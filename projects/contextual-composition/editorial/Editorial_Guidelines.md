@@ -1,0 +1,162 @@
+# Contextual Composition: Editorial Guidelines
+
+*A companion to “Computation in Context” — Editorial standard, version 1.0*
+
+## 1. Editorial objective
+
+**Make the framework intelligible before making it impressive.**
+
+The central attraction is a reusable mathematics for describing and composing computations with changing requirements, produced effects, dependencies, shared interaction, and feedback. The individual technical results establish where that architecture works, how it can be reused, and where it fails. They are evidence for the story; they do not each need to become the motivating problem of a separate article.
+
+The intended reader personas include:
+
+- an engineer who is intelligent, short on time, and perhaps has a passing familiarity with basic category theory.
+- a mathematical expert who wants to identify the mathematical connection and the actual increment over nearby or personal work quickly.
+
+Neither reader should need to know the internal development history, theorem names, contracts, or why a particular proof obligation was originally posed. Do not dump readers immediately into the weeds. A manuscript often needs to support to some degree two simultaneous reading paths, unless it is being intentionally made for one of the personas.
+
+**Reader contract:** After ten seconds in the abstract, a nonexpert should understand what subject is being discussed and why the general idea is worth attention. After two minutes, that reader should understand the core organizing distinction and one concrete kind of benefit. An expert should be able to locate the principal construction, its scope, nearest precedents, and technical contributions without following the entire narrative.
+
+## 2. The governing idea
+
+A useful orienting claim is:
+
+> **Composing work combines their dependencies, not only their inputs and outputs.**
+
+More verbosely:
+
+> We know how to describe many kinds of computation: functions, parameterized programs, probabilistic processes, stateful systems, concurrent processes, and feedback loops. But real systems combine these features. The difficulty is not just representing each feature; it is making the representations work together without losing the information or guarantees that matter.\
+> This research develops a common mathematical framework for such combinations. It makes explicit what a computation requires, what it produces, how those requirements change, and which relationships survive composition, interaction, and changes of representation.
+
+A computation can require context, produce structured effects, change what future stages need, interact with shared state, or make further work possible. These aspects should be visible in the model and governed by rules for combination.
+
+Build the public-facing explanation around that idea. Introduce context as what a computation depends on and content as what it produces beyond an ordinary result, while acknowledging that these are choices of presentation rather than an exclusive classification of all effects. Explain an interaction rule as the mechanism making independently specified ingredients compose. Then show how comparisons, concurrency, feedback, and abstraction fit into the broader programme.
+
+**Do not turn “everything combines” into a slogan.** The construction has precise hypotheses; some combinations require further data or fail. Flexibility means a meaningful range of supported models and controlled changes of model, not unconditional compatibility.
+
+## 3. Sell the work. Hit the audience over the head with intelligible motivations, not the repository's theorem inventory
+
+\
+TODO:
+
+- the issue with leading by examples is that, while the framework is very general, most examples are so complex and rarefied that they tend to feel like one is presenting a solution looking for a problem. Some examples avoid this; e.g. discussing how to prevent an AWS outage during an update/change caused by independently developed interacting components
+- When you lead with an example, qualify that the framework is yet much more general. With the AWS example, remind that the mathematics can do a lot more than facilitate reliability. When the project is first present, the framing should usually couple application-level salience with framework-level generality
+- computer systems in particular enjoy properties that make them well behaved; such assumptions often simplify the engineering, making the applications of the project harder to see in that domain. But there are a ton of applications in other engineering disciplines.
+
+
+
+Opening motivation should use a recognizable intellectual situation: components are useful because they can be assembled, yet assembly changes which assumptions and dependencies matter. It should not begin with an obscure mathematical obstacle or a highly specialized synthetic example and imply that the audience has long been waiting for its solution.
+
+The opening must establish, in this order, the familiar idea, what becomes harder when it is generalized, the organizing move of the research, and what the resulting framework enables. Only then introduce the formal machinery. State one grand promise per article, and give the article a memorable identity; subordinate results should support that promise.
+
+**Manufactured-problem test:** Remove the paper's most unusual example. If the introduction no longer gives a compelling reason to read the work, its motivation has been built backward from a proof.
+
+**Trivial-baseline test:** If an elementary existing method already answers the advertised question at the same interface, say so; explain what the framework additionally organizes, preserves, or transports. Do not claim categorical necessity merely because a category-theoretic representation is available.
+
+## 4. Preserve the distinction between framework, realization, and application
+
+The writing should separate three different evidential levels.
+
+The **categorical framework** supplies structures, hypotheses, constructions, comparison maps, and coherence results. A **realization** interprets them in a particular computational doctrine, such as finite stochastic histories or recurrent arenas, and may support significant theorems of its own. An **application** instantiates a realization with a model, protocol, or system-specific judgment.
+
+An important theorem at one level does not automatically establish a theorem at another. Native maps in a constructed category are not physical capabilities. A normalization law is not a liveness proof. A finite example is not a proof for arbitrary contexts. An operational interpretation is not evidence that all possible context/content presentations have been unified.
+
+Use explicit claim statuses: established background; proved here under named hypotheses; previously proved in a companion source; proved for a selected realization; demonstrated by finite computation; conditional extension; open.
+
+Cite primary sources at the exact point where their hypotheses matter. Written proof, mechanized proof, historical replay, source checking, and numerical diagnostics must remain different evidence types.
+
+## 5. Try to make the design space explanatory/generative/compositional, not encyclopedic/taxonomic/classificatory/observational
+
+A design space should help readers understand consequential choices: what interfaces count as pure, how context and content are represented, what resource and grade maps are available, which information is shared, which interaction or feedback operations are admitted, and what observations a comparison must preserve.
+
+For each major choice, explain **what changes**, **what composition requires**, and **what comparison or theorem is available**.
+
+Avoid a catalogue of constructions with unexplained arrows between them. Para, Kleisli, spans, cospans, logical doctrines, and tracing are connections to existing work, not evidence that one unrestricted structure implements all of them.
+
+Do not describe axes as independent if changing one changes another's admissibility. Distinguish choosing a presentation, adding an operation, forgetting information, and recognizing an existing semantics. Where a combination is not proved, label it as a possible extension, not a feature of the current calculus.
+
+## 6. Use examples to illuminate the architecture and excite the audience
+
+Examples have at least three jobs: make a general concept graspable, establish that a claimed construction has nontrivial instances, or expose the necessity of a condition.
+
+They should not make the framework look as though it was built to solve a contrived fixture.
+
+Prefer an ordinary, persistent running situation that can be revisited as the available structures become richer. The example must have an understandable purpose before its arithmetic or categorical details arrive. An edge case should enter when it tests a previously explained rule. A negative witness should identify the violated obligation and the narrower positive alternative, not merely provide spectacle.
+
+No example should be made to stand for more than it proves. Equality of expected values is weaker than equality of joint laws; a law-level coincidence is weaker than equality of native maps; independent choices are not shared choices; a finite regression does not certify an unbounded theorem. These distinctions belong where the example is interpreted.
+
+## 7. Teach concepts in layers
+
+Consider a **three-layer explanation** for every load-bearing construction.
+
+First give the plain-language role: what the construction is for and what information it retains. Then give the mathematical interface: input data, produced objects and maps, compatibility hypotheses, and direction of comparisons. Finally give the theorem and proof, with its exact quantifiers and boundary cases.
+
+Introduce specialist terminology only when it pays for itself. Define *pure interface*, *context*, *content*, *occurrence*, *native map*, *interaction law*, and *feedback* before relying on them.
+
+A plain-language analogy is useful only if the transferred structure is specified and its limits are clear. Do not replace technical precision with an analogy, but do not make notation the admission ticket to the first page.
+
+Maintain one visual grammar across manuscripts. Reuse distinct shapes or conventions for requirements, produced content, effects, shared state, and observations. Show a diagram of the conceptual architecture early, then let later diagrams refine it. Figures should communicate an invariant or a relationship, not decorate the page.
+
+## 8. Give experts an immediate technical route
+
+Within the abstract or first two pages, an expert should find a compact statement of the known mathematical starting point; the independently supplied inputs; the constructed operation or comparison; what is preserved on noninvertible maps and changing interfaces; the exact hypothesis class; and the nearest related literature.
+
+Distinguish the construction of a mixed law from standard composition *given* a law. Distinguish a native comparison from a quotient of outcomes. Distinguish genuine feedback from sequential state threading, and shared interaction from independent products.
+
+Do not claim historical novelty for a familiar mechanism with new notation. When an imported theorem almost supplies the result, identify the residual mathematical obligation instead of using vague language about unification.
+
+The expert route should be available without making the nonexpert read a taxonomy of pseudomonads, double categories, or alternative completions. A concise contribution map or clearly signposted technical paragraph is sufficient.
+
+## 9. Let manuscript boundaries follow an intellectual argument instead of a proof cluster
+
+A paper should have one coherent central contribution that can be described without internal source names. **The publication architecture should follow the conceptual story. Do not use the repository's very specialized research questions as the starting point for audience motivation**.
+
+The archive's file structure, contract stages, and theorem clusters are not publication units by default. A substantial proof can belong in an appendix or technical companion if its role is to establish an ingredient in a larger argument. Conversely, a model-specific construction may deserve its own paper when it has a distinct conceptual advance, reusable theorem, and audience.
+
+Concurrency and feedback are central areas of the programme, not decorative applications of the sequential theory. They also do not yet constitute one automatically unified doctrine.
+
+Manuscript architecture must preserve both facts: explain their relationship to the common framework and state exactly which connecting comparisons have been proved. Do not merge parallel results under an invented umbrella theorem or fragment them into narrowly titled papers merely because the results are technically independent.
+
+For a practitioner-facing treatment, explain what a reader can model, inspect, and check; identify required inputs and assumptions, and clearly separate an executable model from a compiler or real-world system.
+
+For a category-theory treatment, establish the abstraction and its relation to existing mathematics quickly.
+
+For a programme-wide synthesis, prioritize the conceptual structure and supported relationships rather than reproducing every proof.
+
+## 10. Language, pace, and claim discipline
+
+Prefer active, concrete descriptions of mechanisms: which map is constructed, what a condition guarantees, what an observer can distinguish, and how an operation transforms the input.
+
+Avoid unsupported adjectives such as *universal*, *general*, *automatic*, *canonical*, or *conservative*. Each is a theorem claim unless clearly defined and scoped.
+
+Use short paragraphs at the beginning, with only one unfamiliar idea introduced at a time. Later technical sections can be denser, provided the interfaces have already been explained.
+
+Define notation near its use; do not require several pages of symbol definitions before explaining the research. Make titles and section headings answer recognizable questions or describe substantive moves, rather than merely repeat internal theorem names.
+
+Caveats should be placed beside the claim they delimit. They need not dominate the abstract or be repeated defensively after every paragraph.
+
+A precise positive claim, followed by one informative scope boundary, is more credible than either breathless generality or an inventory of everything not proved.
+
+## 11. Editorial review gate
+
+Every manuscript should pass the following tests before polishing typesetting or debating venues:
+
+1. **Thirty-second test:** Can an informed newcomer explain the subject and principal idea after the opening passage, without technical vocabulary?
+2. **Two-minute test:** Can that reader explain why the framework is useful and identify one kind of reuse or insight it supports?
+3. **Expert connection test:** Can a specialist identify the nearest familiar constructions and the actual mathematical increment quickly?
+4. **Unmanufactured motivation test:** Does the motivation survive removal of the showcase example and of internal proof-obligation terminology?
+5. **Composition test:** Is the assembly mechanism identified? Are independently successful ingredients being combined by a proved rule, rather than by juxtaposition?
+6. **Precision test:** Are domains, codomains, assumptions, map directions, strength of comparisons, and exceptional cases clear at the load-bearing claims?
+7. **Breadth test:** Do several materially different instances support the claimed generality, and are any necessary compatibility constraints visible?
+8. **Boundary test:** Is there a concrete obstruction or countermodel showing where a tempting stronger interpretation fails, without turning it into artificial motivation?
+9. **Evidence test:** Are written, formally checked, executable, empirical, and conjectural statements labeled at their actual strength?
+10. **Memory test:** After a day, can a reader recall one coherent central idea rather than only an unusual example, theorem number, or slogan?
+
+A failed test should change the manuscript's architecture or claims, not merely its prose. A polished abstract cannot repair a paper whose results have no coherent argument or whose main theorem is weaker than the headline.
+
+##
+
+TODO:
+
+- Conceptual map before theorem map?
+- Do not over-emphasize computation, since many of the applications are not really about computation at all, and computers have nice properties that simplify engineering. The work does not really shine with computational examples. Ordinary programming benefits from assumptions that are often unavailable elsewhere: inputs can be copied, computations can be repeated, intermediate results can be stored, and failed calculations can frequently be abandoned without changing the world. Physical processes do not generally permit these conveniences. Measurements disturb systems, experiments consume specimens, actions alter future possibilities, resources cannot necessarily be duplicated, and independent processes interact through an environment that neither controls.
