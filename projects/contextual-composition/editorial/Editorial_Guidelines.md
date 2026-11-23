@@ -4,7 +4,7 @@
 
 ## 1. Editorial objective
 
-**Make the framework intelligible before making it impressive.**
+**Make the framework intelligible and impressive simultaneously.**
 
 The central attraction is a reusable mathematics for describing and composing computations with changing requirements, produced effects, dependencies, shared interaction, and feedback. The individual technical results establish where that architecture works, how it can be reused, and where it fails. They are evidence for the story; they do not each need to become the motivating problem of a separate article.
 
@@ -12,6 +12,8 @@ The intended reader personas include:
 
 - an engineer who is intelligent, short on time, and perhaps has a passing familiarity with basic category theory.
 - a mathematical expert who wants to identify the mathematical connection and the actual increment over nearby or personal work quickly.
+
+Before writing or revising the opening, model the intended reader's point of view: what they already know, what they care about, which problem or intellectual possibility they would recognize, how much attention they can spend, and what they can connect to their own work. This is a theory-of-mind obligation, not a request to flatter an imaginary audience. Do not assume the reader shares the author's research context or feels the importance of an internal proof question. Make the significance and the idea intelligible in the same passage; do not postpone the compelling part until after a dry primer.
 
 Neither reader should need to know the internal development history, theorem names, contracts, or why a particular proof obligation was originally posed. Do not dump readers immediately into the weeds. A manuscript often needs to support to some degree two simultaneous reading paths, unless it is being intentionally made for one of the personas.
 
