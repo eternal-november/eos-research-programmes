@@ -13,6 +13,9 @@ public import ContextualComposition.FiniteRelationForgetting
 public import ContextualComposition.LinearRelationControl
 public import ContextualComposition.LabelSharingObstruction
 public import ContextualComposition.FiniteWriterObstruction
+public import ContextualComposition.GeometricPullbackDirection
+public import ContextualComposition.ModTwoPullbackObstruction
+public import ContextualComposition.ShuffleInterchange
 public import ContextualComposition.FixedEffects
 public import ContextualComposition.ActionPara
 public import ContextualComposition.ReaderWriter
