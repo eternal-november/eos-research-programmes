@@ -4,6 +4,8 @@ public import ContextualComposition.FixedEffects
 public import ContextualComposition.ReaderWriter
 public import ContextualComposition.Para
 public import ContextualComposition.MixedEffects
+public import ContextualComposition.DisplaySpanRecovery
+public import ContextualComposition.CodisplayCospanRecovery
 public import ContextualComposition.TerminalComma
 public import ContextualComposition.Factorization
 public import ContextualComposition.PrimitiveBalance

@@ -153,6 +153,12 @@ This extension adds 36 indexed declarations: sixteen theorems and twenty constru
 
 This tranche adds 42 indexed declarations: twenty theorems and 22 constructions (including the endpoint-data and choice-comparison structures). Full package: 279 distinct audits, 143 theorems and 136 constructions. Every new declaration reports exactly `propext`, `Classical.choice`, `Quot.sound`. Prior ten implementation modules, dependency/toolchain pins and verifier remain byte-identical. Author clean own-source replay passed with pinned cached dependencies. Sequential independent statement-adequacy review and fresh own-source replay passed; see `evidence/endpoint-independent/Independent_Endpoint_Transport_Review.tex`.
 
+## Display spans and codisplay cospans
+
+The [internal constructors](../delivery/One_relative_construction_for_context_content_and_effects.tex) at `458ff36a` admit a class of legs containing identities and closed under composition and the relevant base changes. `DisplaySpanRecovery.nativeEquivalence` identifies the actual costructured-arrow category over the restricted slice with spans whose left leg is admitted. `squareEquiv` identifies the reindexed square and the actual commuting apex map over both endpoint maps. `nativeComp`, `paste_fixed` and `read_nativeAssociator` compute composition and its comparison on the chosen pullbacks. Only pullbacks along admitted legs are required.
+
+`CodisplayCospanRecovery.nativeEquivalence` gives the corresponding structured-arrow equivalence for the restricted coslice. Passing to the opposite base and reversing the local span hom restores the forward cospan apex map. With pushouts along the admitted legs, `compositionIso` identifies composition on the actual pushout with the coherent model, and `compositionIso_paste` proves naturality under changing endpoint and apex maps. `Expression.native_triangle` and `Expression.native_pentagon` evaluate the comparison on independently bracketed pushouts. Each one-sided construction has its own hypotheses.
+
 ## Endpoint–target interaction on the explicit source presentation
 
 `EndpointTarget.lean` derives a compatibility needed to combine the preceding endpoint and target directions. Source pin remains `458ff36a4798e432dee5947afc402f9903a47f14`: the independent pseudobalanced presentation at lines 455–499 and endpoint lift paragraph at lines 499–510. The interchange statements are derived compatibility of those constructions under arbitrary target functors, not a quotation of a separately asserted source theorem.
