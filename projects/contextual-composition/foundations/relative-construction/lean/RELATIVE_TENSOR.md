@@ -57,3 +57,9 @@ For the actual contravariant first-index action on the middle composite, `OuterR
 `RelativeTensor.Iterated.pentagon X M N Y` proves `(twoStep X M N Y).functor = (threeStep X M N Y).functor`. The equality holds on the whole fourfold quotient for arbitrary weak curried middle modules at the represented outer endpoints. Both sides come from independently constructed reassociation equivalences.
 
 The simultaneous native-arrow comparison preserves all four payload arrows. Each of the three remaining generator comparisons uses the balance at its own junction. In particular, `whisker_port` supplies the object transport for the innermost balance, and `Pentagon.threeStep_middle` computes the central balance on primitive vertices. Every inner tensor object has a native vertex presentation. The four-generator criterion extends these computations to inverse balances and arbitrary quotient paths.
+
+## Curried identity module and changes of the unit endpoint
+
+For an ordinary middle category `B`, `Iterated.unitModule B` has fibre `Discrete (i ⟶ j)` at the pair `(i,j)`. Its columns are the Yoneda actions and its rows agree with the entire co-Yoneda actions, including the unit and compositor. `unitRowMap` identifies a row with its co-Yoneda presentation by identity functors on the label categories. `unitRowMap_tensor_change` proves that this identification commutes with a change of endpoint on the full quotient.
+
+`LeftUnit.baseChange` and `RightUnit.baseChange` compare the fibre evaluation functors along precomposition and postcomposition, respectively. Their naturality applies to all tensor arrows. At a native vertex the comparison is the relevant compositor of the original weak factor. `RightUnit.indexedBase` specializes the right-hand square to the curried identity module.
