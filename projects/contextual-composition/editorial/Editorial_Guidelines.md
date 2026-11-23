@@ -137,6 +137,12 @@ Caveats should be placed beside the claim they delimit. They need not dominate t
 
 A precise positive claim, followed by one informative scope boundary, is more credible than either breathless generality or an inventory of everything not proved.
 
+### Make the prose carry the argument
+
+Put each qualification where it changes the meaning of a claim. A **stovepipe pin** names a condition, distinction, or dependency in its own compartment while leaving the reader to work out what it governs. For example, “Shared draw. Scope: fixed law. Composition: conditional.” lists facts without explaining their use. Instead: “For a shared draw with a fixed distribution, compose the stages using their specified joint law conditional on that draw, then average over its distribution. If the stages are conditionally independent given the draw, the conditional joint law is the product of their conditional laws.” This says what is shared, what must be supplied, and what the independence assumption permits. Keep the scope; integrate it into the claim. A table of hypotheses can still help with lookup, provided the argument shows which hypothesis does the work.
+
+Look for drafting notes masquerading as exposition, headings followed by interchangeable mini-essays, and contrasts that correct an inference no reader was likely to make. When flagging a passage, quote the span and name the referent, inference, or consequence it leaves the reader to supply. If a contrast rules out a plausible interpretation, retain it and explain what changes mathematically. No phrase or punctuation mark passes or fails this test by itself.
+
 ## 11. Two-pass draft scrub: structure before style
 
 **Scrub the draft in two passes. Fix what it spends time on before fixing how it sounds.**
@@ -147,13 +153,13 @@ Then read the prose aloud. Underline the sentence that says something the reader
 
 Some qualifications do belong on the page. If a theorem assumes independent draws, say so where the theorem is used. If an existing method fails for shared draws, name the failure and show what changes. A real mathematical boundary can survive being stated plainly. Keep drafting reminders in the notes where they can still guide the writer.
 
-Review a run of paragraphs, not just a list of flagged phrases. A page can still sound canned after every “not merely” has been replaced. Listen for the same setup, pivot and recap repeating; repair the whole passage by putting the claims and reasons in the order the reader needs them. Give the revised passage to someone who hasn’t seen the prompt. Ask where they had to stop, reread, or wait for the point. Use those places to check the edit.
+Review a run of paragraphs, not just a list of flagged phrases. A page can still sound canned after every “not merely” has been replaced. Listen for the same setup, pivot and recap repeating; repair the whole passage by putting the claims and reasons in the order the reader needs them. Ask what a reader would lose if a sentence were deleted or two adjacent paragraphs swapped. If no dependency changes, cut the redundant sentence or rebuild the sequence around the actual argument. Give the revised passage to someone who hasn’t seen the prompt. Ask where they had to stop, reread, or wait for the point. Use those places to check the edit.
 
 ## 12. Editorial review gate
 
 Every manuscript should pass the following tests before polishing typesetting or debating venues:
 
-1. **Ten-second test:** Can an informed newcomer explain the subject and principal idea after the opening passage, without technical vocabulary?
+1. **Ten-second test:** Can an informed newcomer identify the subject, why it matters, and the central idea after the opening passage, without technical vocabulary? In a separate read, stop at the first technical prerequisite in the abstract and again in the introduction. By each stopping point, can the intended reader say what the work is about and what it contributes, without already understanding the machinery?
 2. **Two-minute test:** Can that reader explain why the framework is useful and identify one kind of reuse or insight it supports?
 3. **Expert connection test:** Can a specialist identify the nearest familiar constructions and the actual mathematical increment quickly?
 4. **Unmanufactured motivation test:** Does the motivation survive removal of the showcase example and of internal proof-obligation terminology?
@@ -161,10 +167,15 @@ Every manuscript should pass the following tests before polishing typesetting or
 6. **Precision test:** Are domains, codomains, assumptions, map directions, strength of comparisons, and exceptional cases clear at the load-bearing claims?
 7. **Breadth test:** Do several materially different instances support the claimed generality, and are any necessary compatibility constraints visible?
 8. **Boundary test:** Is there a concrete obstruction or countermodel showing where a tempting stronger interpretation fails, without turning it into artificial motivation?
-9. **Evidence test:** Are written, formally checked, executable, empirical, and conjectural statements labeled at their actual strength?
+9. **Evidence test:** Are written, formally checked, executable, empirical, and conjectural statements labeled at their actual strength? Trace each main claim to its exact supporting statement, proof, or check. Match hypotheses and conclusion, not just topic. Give earlier work visible credit for what it supplies; a working link or unchanged citation count is insufficient.
 10. **Memory test:** After a day, can a reader recall one coherent central idea rather than only an unusual example, theorem number, or slogan?
+11. **Prose and re-entry test:** In a dense passage, can a reader explain why each paragraph follows the last? Enter separately at a theorem, example, or appendix intended to be read on its own. Can the reader recover what it uses and why it is there without reconstructing the development history? Supply a short reminder or an exact route to its premises, rather than repeating the whole setup.
 
-A failed test should change the manuscript's architecture or claims, not merely its prose. A polished abstract cannot repair a paper whose results have no coherent argument or whose main theorem is weaker than the headline.
+Give an independent reader the rendered draft before showing the author's summary or expected answers. Record their account of the subject, contribution, uses, and limits, including which passages supported that account and where they stopped or reread. For the main payoff, compare the framework with the simplest credible baseline at the same interface. Identify the additional capability, structural explanation, reuse, or guarantee, along with any added assumptions or costs. Do not manufacture an obstruction to existing methods when the contribution is a more reusable organization of their capabilities.
+
+Automated checks can flag broken links, missing citation markers, and suspicious phrasing. They do not establish that the argument reads well, the cited theorem matches a claim, or the attribution and historical comparison are complete. Those require reading the mathematics and relevant primary work.
+
+Repair at the scale of the failure. Cut an incidental drafting note locally, rebuild a section whose parts do not make an argument, and narrow a claim when its evidence is weaker than the headline. A polished abstract cannot repair a paper whose results have no coherent argument.
 
 ##
 
