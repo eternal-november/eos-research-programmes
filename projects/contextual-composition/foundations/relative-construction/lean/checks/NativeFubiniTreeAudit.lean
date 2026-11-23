@@ -1,0 +1,77 @@
+import ContextualComposition.NativeFubiniTreeAssocMove
+
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.jointInput
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.separate
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.Map
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.Map.joint
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.Map.separate
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.comparison
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.comparison_natural
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.dependentUnitFubini_hom_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.Address
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.branchRead
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.parentCoeff
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.childCoeff
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.separateCoeff
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.jointCoeff
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.parentCoeff_read
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.childCoeff_read
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.separateFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.separateFrame_coeff
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.separateTagFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.jointTagFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.coefficient
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.medial_cell_heq
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.comparison_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.WordAugReadComparison.product
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.ReadComparison.product
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.ReadComparison.branchEquiv
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.ReadComparison.coefficient
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.ReadComparison.branchTrace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.ReadComparison.binaryFubini_natural
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.comparison_fork_congr
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.word
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.word_nodup
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.wordCell
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.separate_word_eq
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.separateFrame_word
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.WordAugReadComparison.ofOrderPreserving
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.medialRegroup_after
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.independentAssocRead
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.jointAssocRead
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.separateAssoc
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.separateAssoc_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.assoc_cell_heq
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.comparison_assoc
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordIdentityRead
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.identityRead
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.identityRead_accumulate
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.NativeAugmentedIso.reverse
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.AssocMove
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.AssocMove.joint
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.AssocMove.separateIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.AssocMove.fubini
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.AssocMove.fubini_inv
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.AssocPath
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.AssocPath.separateIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.AssocPath.jointIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.DependentFubiniTree.AssocPath.fubini
+
+
+open ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter
+
+open CategoryTheory
+
+universe u v
+variable {C : Type u} [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C] {I : C}
+variable (a b c d : DependentFubiniTree I)
+
+example : DependentFubiniTree.AssocPath
+    (.fork (.fork (.fork a b) (.unit : DependentFubiniTree I)) (.fork c d))
+    (.fork (.fork a (.fork b .unit)) (.fork c d)) :=
+  .next (.left (.root a b .unit) (.fork c d)) (.ident _)
+
+example : DependentFubiniTree.AssocPath
+    (.fork a (.fork b (.fork c d))) (.fork a (.fork (.fork b c) d)) :=
+  .prev (.right a (.root b c d)) (.ident _)
