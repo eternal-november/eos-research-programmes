@@ -171,6 +171,14 @@ Put each qualification where it changes the meaning of a claim. A **stovepipe pi
 
 Look for drafting notes masquerading as exposition, headings followed by interchangeable mini-essays, and contrasts that correct an inference no reader was likely to make. When flagging a passage, quote the span and name the referent, inference, or consequence it leaves the reader to supply. If a contrast rules out a plausible interpretation, retain it and explain what changes mathematically. No phrase or punctuation mark passes or fails this test by itself.
 
+### Make the work findable without keyword stuffing
+
+**Discoverability is an editorial requirement, but naming a construction does not entitle it to editorial prominence.** A reader searching for an engineering problem and a specialist searching for a categorical construction should both have a plausible route to the work. Titles should identify the actual central subject in clear, recognizable language; include distinctive technical names when they materially identify the contribution. Do not turn the title into an inventory of every related construction.
+
+The abstract should explain the problem, contribution and scope in intelligible language while naming the principal mathematical constructions accurately and naturally. When the publication venue allows it, supply keywords and bibliographic metadata covering both the technical terms and the engineering problems addressed. Section headings should name constructions where the sections actually develop them, and the searchable body should use exact established names, definitions and appropriate citations. Terms included for indexing must correspond to real content; a speculative connection is not a proved instance.
+
+For public distribution, provide a stable, accessible landing page and searchable HTML or text-based PDF with accurate title, abstract and author metadata where applicable. Do not assume that repetition improves ranking or that a list of keywords compensates for an unclear title, inaccessible full text, or an unsubstantiated claim. Optimize for *being found by the right reader and accurately recognized*, rather than keyword count.
+
 ## 11. Two-pass draft scrub: structure before style
 
 **Scrub the draft in two passes. Fix what it spends time on before fixing how it sounds.**
@@ -224,6 +232,7 @@ Every manuscript should pass the following tests before polishing typesetting or
 13. **Application-validity test:** For each example offered as evidence of applicability, where are the concrete interpretations and hypothesis checks establishing that the claimed construction really applies? Do not count an analogy, naming similarity, or unrelated calculation as an instance.
 14. **Incremental-value test:** What does the developed machinery add to the example or the main result relative to a credible simpler method at the same scope? Identify the gain and its added assumptions or costs, without demanding an artificial impossibility proof for the baseline.
 15. **Section-identity test:** For each section, can an unbriefed reader identify its main job, the result or understanding it delivers, why it is needed here, and which later claim uses it? Do its title, opening, relative length, and conclusion support the same purpose? If it has several jobs, is their relationship explicit, or does it drift between unrelated agendas? Test against the section's actual paragraphs, not the author's outline.
+16. **Discoverability test:** Can a practitioner searching by the actual engineering problem and a specialist searching by the central construction recognize and find the work from its title, abstract, keywords, headings and searchable publication? Are the names accurate and substantively developed, with no irrelevant terms inserted merely for search traffic?
 
 ### Independent blind review, then informed audit
 
