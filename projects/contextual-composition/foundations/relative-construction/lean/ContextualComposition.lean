@@ -52,6 +52,18 @@ public import ContextualComposition.CoconeRecovery
 
 public import ContextualComposition.MixedOpwreath
 public import ContextualComposition.RecoveryTargetLaws
+public import ContextualComposition.RecoveryEndpointLaws
+public import ContextualComposition.RecoveryInterchange
+public import ContextualComposition.CommaCoconeComparison
+public import ContextualComposition.CommaCoconeInverseTransport
+public import ContextualComposition.EndpointBicategory
+public import ContextualComposition.EndpointPseudofunctors
+public import ContextualComposition.EndpointUniverse
+public import ContextualComposition.EndpointNormalization
+public import ContextualComposition.EndpointEquivalence
+public import ContextualComposition.EndpointGrothendieck
+public import ContextualComposition.IndexedEndpointAction
+public import ContextualComposition.IndexedNormalization
 public import ContextualComposition.RecoveryModification
 
 public import ContextualComposition.FiniteTelescope
