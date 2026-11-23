@@ -1800,6 +1800,8 @@ import ContextualComposition
 #print axioms ContextualComposition.GrothendieckStep.PayloadLaws.All.strong
 #print axioms ContextualComposition.GrothendieckStep.PayloadLaws.All.strongComponent
 #print axioms ContextualComposition.GrothendieckStep.PayloadLaws.All.strongCell
+#print axioms ContextualComposition.GrothendieckStep.PayloadLaws.All.fixedBasePayloadEquivalence
+#print axioms ContextualComposition.GrothendieckStep.PayloadLaws.All.fixedBasePayloadEquivalence_hom
 #print axioms ContextualComposition.GrothendieckStep.PackedFree.step
 #print axioms ContextualComposition.GrothendieckStep.PackedFree.free
 #print axioms ContextualComposition.GrothendieckStep.PackedFree.pow

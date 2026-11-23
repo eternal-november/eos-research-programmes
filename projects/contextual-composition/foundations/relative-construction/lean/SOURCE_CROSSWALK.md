@@ -2,6 +2,10 @@
 
 [Relative tensors of weak Cat actions](RELATIVE_TENSOR.md)
 
+## Telescope evaluation over ordinary payload maps
+
+At each fixed base object, `GrothendieckStep.PayloadLaws.All.fixedBasePayloadEquivalence` promotes the actual whole-span/packed-iterate strong transformation to an adjoint equivalence over the locally discrete index of ordinary presheaf maps. `fixedBasePayloadEquivalence_hom` identifies its forward map with `PayloadLaws.All.strong`. The [constructor crosswalk](CONSTRUCTOR_ACCEPTANCE.md) identifies the remaining ambient comparison.
+
 ## Source and operation
 
 The source is `projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex` at EOS commit `458ff36a4798e432dee5947afc402f9903a47f14`, §“Internal constructors and familiar specializations” (`sec:constructors`). The adjacent displayed fixed-effect formulas, Para paragraphs and reader/writer paragraphs are the exact targets. Issue #105 tracks the much larger constructor programme; #91 sets formal-verification acceptance. Neither issue is closed by this package.

@@ -115,6 +115,7 @@ public import ContextualComposition.TaggedMixed
 public import ContextualComposition.ForwardMixed
 public import ContextualComposition.MixedMates
 public import ContextualComposition.PayloadLaws
+public import ContextualComposition.TelescopePayloadEquivalence
 public import ContextualComposition.PackedFree
 public import ContextualComposition.NativeBlocks
 public import ContextualComposition.BlockCartesian
