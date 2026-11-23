@@ -141,7 +141,7 @@ A precise positive claim, followed by one informative scope boundary, is more cr
 
 Every manuscript should pass the following tests before polishing typesetting or debating venues:
 
-1. **Thirty-second test:** Can an informed newcomer explain the subject and principal idea after the opening passage, without technical vocabulary?
+1. **Ten-second test:** Can an informed newcomer explain the subject and principal idea after the opening passage, without technical vocabulary?
 2. **Two-minute test:** Can that reader explain why the framework is useful and identify one kind of reuse or insight it supports?
 3. **Expert connection test:** Can a specialist identify the nearest familiar constructions and the actual mathematical increment quickly?
 4. **Unmanufactured motivation test:** Does the motivation survive removal of the showcase example and of internal proof-obligation terminology?
