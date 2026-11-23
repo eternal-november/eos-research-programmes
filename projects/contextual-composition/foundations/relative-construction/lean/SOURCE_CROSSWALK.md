@@ -1,5 +1,19 @@
 # Scope and reconstruction route
 
+## Finite-set pushout normalization and its obstructions
+
+The source is [the mixed normal-form reduction report](../../reduction/reduction_test_report.tex) at revision `458ff36a`, §§2 and 5. The following results concern its proposed finite-set composition recipe.
+
+| Source obligation | Lean declarations and scope |
+| --- | --- |
+| Equations (3)–(6), including partial domains and unused target blocks | In `FiniteNormalization`, `Presentation.comp` constructs the normalized presentation. Its labels form the pushout over active middle labels. `output_onto` proves surjectivity and `row_comp_iff` identifies its observed row with the pullback of the least difunctional relation containing the expanded incidence. The carrier types share a universe and may be empty. |
+| Equation (7) | `FiniteNormalization.row_comp_iff_ordinary_closure` proves the formula when every active label has a selector. `ordinary_closure_le` gives the unconditional inclusion. The hypothesis is sufficient for the equality. |
+| Unused-block binary descent failure following (7) | `FiniteDescent.coarsening_cell`, `same_input`, `fine_output`, `coarse_output` and `unused_block_binary_nondescent` give the actual coarsening, common observation, separating pure continuation and impossibility of descent for that continuation. |
+| Three-stage failure in §2 | `FiniteBalance.left_bracket_domain`, `right_bracket_domain` and `associativity_domain_obstruction` compare the two bracketings of `Presentation.comp` at the same finite endpoints. |
+| Pure-middle balancing in (12) | `FiniteBalance.balanced_representatives` identifies the pushout and preimage representatives by a pure-middle shift. `pure_middle_balance_obstruction` shows their computed crossing domains differ. This rules out the tested crossing on any quotient preserving the displayed identification. |
+
+Module names above are under `ContextualComposition`. The local adjunctions, complete cell and corelation comparison, linear control and wider inventory in #106 are separate obligations.
+
 ## Source and operation
 
 The source is `projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex` at EOS commit `458ff36a4798e432dee5947afc402f9903a47f14`, §“Internal constructors and familiar specializations” (`sec:constructors`). The adjacent displayed fixed-effect formulas, Para paragraphs and reader/writer paragraphs are the exact targets. Issue #105 tracks the much larger constructor programme; #91 sets formal-verification acceptance. Neither issue is closed by this package.
@@ -728,16 +742,4 @@ In the [independent criterion](../../../interaction/independent-criterion/Genera
 
 **Literal binary augmented naturality.** [NativeBinaryTreeProduct](ContextualComposition/NativeBinaryTreeProduct.lean) identifies the actual occurrence-first chart, whole fibre cells, and augmentation with the addressed rectangular product of the two unary dependent computations. [NativeBinaryRawProduct](ContextualComposition/NativeBinaryRawProduct.lean) transports the proved independent native augmentation equation along exact ordered address readings; it preserves the same original separate arrow, including many-to-one carrier fibres and empty rows. [NativeBinaryAugmentedNaturality](ContextualComposition/NativeBinaryAugmentedNaturality.lean) lifts the previously proved native square to actual augmented arrows, preserving both horizontal native components, and derives its unary premises directly from the parent and continuation input augmentation laws. See the [scope](evidence/native-dependent-fubini/Native_Binary_Augmented_Naturality_Scope.tex).
 
-## Finite-set pushout normalization and its obstructions
-
-The source is [the mixed normal-form reduction report](../../reduction/reduction_test_report.tex) at revision `458ff36a`, §§2 and 5. The following results concern its proposed finite-set composition recipe.
-
-| Source obligation | Lean declarations and scope |
-| --- | --- |
-| Equations (3)–(6), including partial domains and unused target blocks | In `FiniteNormalization`, `Presentation.comp` constructs the normalized presentation. Its labels form the pushout over active middle labels. `output_onto` proves surjectivity and `row_comp_iff` identifies its observed row with the pullback of the least difunctional relation containing the expanded incidence. The carrier types share a universe and may be empty. |
-| Equation (7) | `FiniteNormalization.row_comp_iff_ordinary_closure` proves the formula when every active label has a selector. `ordinary_closure_le` gives the unconditional inclusion. The hypothesis is sufficient for the equality. |
-| Unused-block binary descent failure following (7) | `FiniteDescent.coarsening_cell`, `same_input`, `fine_output`, `coarse_output` and `unused_block_binary_nondescent` give the actual coarsening, common observation, separating pure continuation and impossibility of descent for that continuation. |
-| Three-stage failure in §2 | `FiniteBalance.left_bracket_domain`, `right_bracket_domain` and `associativity_domain_obstruction` compare the two bracketings of `Presentation.comp` at the same finite endpoints. |
-| Pure-middle balancing in (12) | `FiniteBalance.balanced_representatives` identifies the pushout and preimage representatives by a pure-middle shift. `pure_middle_balance_obstruction` shows their computed crossing domains differ. This rules out the tested crossing on any quotient preserving the displayed identification. |
-
-Module names above are under `ContextualComposition`. The local adjunctions, complete cell and corelation comparison, linear control and wider inventory in #106 are separate obligations.
+**Functoriality of ordered unary dependent accumulation.** The original unary operation now preserves native identity and composition and the original augmentations. [NativeDependentIdentity](ContextualComposition/NativeDependentIdentity.lean) and [NativeOrderedMapComposition](ContextualComposition/NativeOrderedMapComposition.lean) give the actual identity and composite of the original opaque input maps. [NativeSupportedGrid](ContextualComposition/NativeSupportedGrid.lean) reads the sequential output cell, [NativeDependentCompositeLinearity](ContextualComposition/NativeDependentCompositeLinearity.lean) moves the constant second continuation before the original first parent map, and [NativeDependentDirectAssembly](ContextualComposition/NativeDependentDirectAssembly.lean) normalizes the one-step cell to the same addressed parent-major coefficient. See the [scope](evidence/native-dependent-fubini/Native_Dependent_Functor_Scope.tex).

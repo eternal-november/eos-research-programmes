@@ -1,5 +1,8 @@
 module
 
+public import ContextualComposition.FiniteDescent
+public import ContextualComposition.FiniteNormalization
+public import ContextualComposition.FiniteBalance
 public import ContextualComposition.FixedEffects
 public import ContextualComposition.ReaderWriter
 public import ContextualComposition.Para
@@ -535,6 +538,9 @@ public import ContextualComposition.NativeDependentParentSquare
 public import ContextualComposition.NativeBinaryTreeProduct
 public import ContextualComposition.NativeBinaryRawProduct
 public import ContextualComposition.NativeBinaryAugmentedNaturality
-public import ContextualComposition.FiniteDescent
-public import ContextualComposition.FiniteNormalization
-public import ContextualComposition.FiniteBalance
+public import ContextualComposition.NativeDependentIdentity
+public import ContextualComposition.NativeOrderedMapComposition
+public import ContextualComposition.NativeDependentCompositionExchange
+public import ContextualComposition.NativeSupportedGrid
+public import ContextualComposition.NativeDependentCompositeLinearity
+public import ContextualComposition.NativeDependentDirectAssembly
