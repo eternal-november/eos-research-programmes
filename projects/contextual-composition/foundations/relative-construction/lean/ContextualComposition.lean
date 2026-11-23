@@ -66,6 +66,9 @@ public import ContextualComposition.OrderedShapeReassociation
 public import ContextualComposition.OrderedArityAssembly
 public import ContextualComposition.OrderedFramingComparison
 public import ContextualComposition.OrderedSubstitutionCoherence
+public import ContextualComposition.PositiveHistoryReflection
+public import ContextualComposition.PositiveHistoryComposition
+public import ContextualComposition.PositiveSamplerCoherence
 public import ContextualComposition.FixedEffects
 public import ContextualComposition.ActionPara
 public import ContextualComposition.ReaderWriter
