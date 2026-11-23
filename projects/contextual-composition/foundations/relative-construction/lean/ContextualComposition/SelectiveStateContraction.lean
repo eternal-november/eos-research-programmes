@@ -17,7 +17,7 @@ set_option backward.isDefEq.respectTransparency false
 set_option backward.isDefEq.respectTransparency.types false
 
 inductive Marked : {a b : Balance F} → (a ⟶ b) → Prop
-  | slide {i j : S} (h : i ⟶ j) (admit : P h) (x : atPair F j i) : Marked ((DirectedStateBalance.slide F h).app x)
+  | slide {i j : S} (h : i ⟶ j) (isMarked : P h) (x : atPair F j i) : Marked ((DirectedStateBalance.slide F h).app x)
 
 abbrev selected : MorphismProperty (Balance F) := @Marked _ _ F P
 abbrev Localized := (selected F P).Localization
