@@ -1,0 +1,71 @@
+import ContextualComposition.NativeFubiniRegroup
+
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonTrace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonTrace.symm_read
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonTrace.comp
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonTrace.eq
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.rawWordFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordReindex_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordAugIso_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonFrame.relabel
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonTrace.relabel
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonTrace.changeFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.native_hom_eq_of_cell_heq
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.nativeSingletonMap_cell_heq
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonTrace.retarget
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonTrace.ident
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.rawWordFrame_read_cast
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.rawFrame_read_reverse
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.independentPosition
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.independent_one_pair_cells
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.independentSingletonWordCell
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.independentSingletonEquiv
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.independentSingletonEquiv_read
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.independentSingletonEquiv_read_symm
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.independentSingletonCells
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.independentNativeSingletonMap
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonFrame.tensor
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.RawSingletonTrace.tensor
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.MedialRegroup
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.MedialDependentAssoc
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.standardMedialRegroup
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.standardMedialDependentAssoc
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.binaryProductAugIso_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentBothRetag_word
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentBothRetagIso
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentBothRetagIso_pointwise
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.wordPointwise_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.dependentBothRetagIso_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.Branch
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.accFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.jointRead
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.jointFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.binaryFubini_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.independentAssoc_preserves_pullback
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.jointRegroup
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.TripleBranch
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.groupedLeftRead
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.groupedRightRead
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.groupedLeftLabel
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.groupedRightLabel
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.groupedLeftFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.groupedRightFrame
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.jointRegroup_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.frame_tensor_read_cast
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.independentAssocIso_trace
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.separateRegroup
+#print axioms ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter.OrderedDependentAugData.actual_fubini_regrouping
+
+
+open ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter
+
+private def source : List ((Fin 2 × Fin 2) × (Fin 2 × Fin 2)) :=
+  ([0,1].product [0,1]).product ([0,1].product [0,1])
+private def target : List ((Fin 2 × Fin 2) × (Fin 2 × Fin 2)) :=
+  source.map (fun z => ((z.1.1,z.2.1),(z.1.2,z.2.2)))
+
+-- Lexicographic reindexing is a real change of enumeration; the
+-- two alphabets carry the same raw branches, not the same positions.
+example : source ≠ target := by decide
+example : source.length = target.length := by decide
