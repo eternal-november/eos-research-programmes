@@ -158,6 +158,7 @@ public import ContextualComposition.PayloadLaws
 public import ContextualComposition.TelescopePayloadEquivalence
 public import ContextualComposition.TelescopeGradeChange
 public import ContextualComposition.WeightedAmbientPayload
+public import ContextualComposition.TelescopeAmbientComponents
 public import ContextualComposition.PackedFree
 public import ContextualComposition.NativeBlocks
 public import ContextualComposition.BlockCartesian
