@@ -13,6 +13,9 @@ public import ContextualComposition.FiniteRelationForgetting
 public import ContextualComposition.LinearRelationControl
 public import ContextualComposition.LabelSharingObstruction
 public import ContextualComposition.FiniteWriterObstruction
+public import ContextualComposition.PositiveHistoryReflection
+public import ContextualComposition.PositiveHistoryComposition
+public import ContextualComposition.PositiveSamplerCoherence
 public import ContextualComposition.FixedEffects
 public import ContextualComposition.ActionPara
 public import ContextualComposition.ReaderWriter

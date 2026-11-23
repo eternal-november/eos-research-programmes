@@ -40,6 +40,12 @@ The [structural-test inventory](../../reduction/structural-test-crosswalk.md) re
 
 [Relative tensors of weak Cat actions](RELATIVE_TENSOR.md)
 
+## Support samplers for positive histories
+
+The finite probability control records the distinction between a normalized law and its native history witnesses. `PositiveHistoryReflection.same_law_iff_cospan` characterizes cospans in the positive-weight experiment category. The support adjunction retains deterministic maps of witness fibres. `PositiveHistoryComposition.law_nonfaithful` separates native cells identified by their laws. `PositiveSamplerCoherence.pentagon` and `triangle` give the sequential sampler comparisons. These declarations use the finite normalized probability model.
+
+`PositiveHistoryComposition.raw_support_obstruction` tests a forward map to support in the presence of a zero-weight witness. The connected-components quotient of arbitrary raw histories and its universal factorization require separate proofs. The probability control supplies evidence about loss under observation for [#95](https://github.com/eternal-november/eos-research-programmes/issues/95).
+
 ## Source and operation
 
 The source is `projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex` at EOS commit `458ff36a4798e432dee5947afc402f9903a47f14`, §“Internal constructors and familiar specializations” (`sec:constructors`). The adjacent displayed fixed-effect formulas, Para paragraphs and reader/writer paragraphs are the exact targets. Issue #105 tracks the much larger constructor programme; #91 sets formal-verification acceptance. Neither issue is closed by this package.
