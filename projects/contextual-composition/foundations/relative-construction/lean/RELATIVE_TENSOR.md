@@ -25,3 +25,11 @@ For a supplied weak curried middle action, `RelativeTensor.Iterated.associator` 
 For arbitrary strong maps of the first weak factor, `Iterated.first_naturality` identifies the two rebracketing functors on the entire localized category. `twoStep_first_naturality` proves the corresponding equality along the existing two-step route on four factors. For any directed modification of last-factor maps, `last_modification` identifies the whiskered natural transformations with the endpoint transports given by `last_naturality`.
 
 `middleRow` identifies the row of the middle composite with the appropriate left inner action as a whole pseudofunctor, including its unit and compositor. `middleRow_change` compares the actual strong maps across that identification. The equivalence `rightRowAssociator` and the transport square `rightRow_change` apply this comparison at each source row. These are inputs to the outer whiskerings of the three-step pentagon route. Equality or a coherent isomorphism between the two full routes remains a separate obligation.
+
+## Whiskering rebracketing across a fourth factor
+
+The `Iterated.outerAssociator` strong transformation varies the three-factor reassociation over the remaining covariant index. Its unit and composition diagrams carry the supplied weak structural cells through the actual component functors. `outerEquivalence` upgrades it to an indexed adjoint equivalence. Whiskering through the fourth factor gives `firstPentagonEquivalence : farLeft ≌ innerLeft`; `firstTwoEdges` then reaches `innerRight` using the associator of the actual middle composite.
+
+On the other side, `OuterRow.naturality` gives the complete functor square at each opposite-index arrow. `first_modification` identifies the equation for every directed first-factor modification, and the row unit and compositor formulas record the actual structural components. `middleRow_insertion`, `middleRow_native` and `middleRow_balance` determine the row identification on native morphisms and the full outer balance isomorphism with its endpoint transports.
+
+`twoStep_native` computes the existing two-step route on four simultaneous native arrows at fixed indices. The pentagon also requires a comparison on all three balance families and its extension to arbitrary quotient arrows.
