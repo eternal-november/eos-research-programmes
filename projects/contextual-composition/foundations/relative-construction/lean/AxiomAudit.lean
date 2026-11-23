@@ -2147,6 +2147,15 @@ import ContextualComposition
 #print axioms ContextualComposition.RelativeTensor.Iterated.last_native
 #print axioms ContextualComposition.RelativeTensor.Iterated.last_outer_balance
 #print axioms ContextualComposition.RelativeTensor.Iterated.last_naturality
+#print axioms ContextualComposition.RelativeTensor.Iterated.whisker_port
+#print axioms ContextualComposition.RelativeTensor.Iterated.Pentagon.mapped
+#print axioms ContextualComposition.RelativeTensor.Iterated.Pentagon.finalWhisker_middle_packed
+#print axioms ContextualComposition.RelativeTensor.Iterated.Pentagon.threeStep_middle_packed
+#print axioms ContextualComposition.RelativeTensor.Iterated.Pentagon.threeStep_middle
+#print axioms ContextualComposition.RelativeTensor.Iterated.Pentagon.finalWhisker_native_packed
+#print axioms ContextualComposition.RelativeTensor.Iterated.Pentagon.threeStep_native_packed
+#print axioms ContextualComposition.RelativeTensor.Iterated.Pentagon.threeStep_native
+#print axioms ContextualComposition.RelativeTensor.Iterated.pentagon
 #print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.direct_unit
 #print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.direct_comp_packed
 #print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.strongOfSquares
