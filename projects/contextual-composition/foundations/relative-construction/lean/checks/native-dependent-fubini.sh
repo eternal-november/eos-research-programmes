@@ -15,7 +15,7 @@ sources="OppositeTypeFamilies NativeFinitePush DependentFibre AddressedFubini Re
 for n in $sources; do
   lean -DwarningAsError=true -o "$tmp/ContextualComposition/$n.olean" "ContextualComposition/$n.lean"
 done
-for n in NativeDependentFubiniAudit NativeParityBoundary RigGridNativeAdapterAudit NativeRouteAudit NativeLinearityAudit NativeRaggedGridAudit NativeFlatCoherenceAudit NativeBinaryAugmentationAudit OrderedOccurrenceAudit NativeBinaryIsoAudit NativeBinarySquareAudit NativeAttachParentAudit NativeParentChangeAudit NativeDependentColumnAudit NativeBinaryAugmentedNaturalityAudit NativeDependentCompositionAudit NativeBinaryFunctorialityAudit NativeJointProductAudit NativeOrderedFubiniAudit; do
+for n in NativeDependentFubiniAudit NativeParityBoundary RigGridNativeAdapterAudit NativeRouteAudit NativeLinearityAudit NativeRaggedGridAudit NativeFlatCoherenceAudit NativeBinaryAugmentationAudit OrderedOccurrenceAudit NativeWordOrderAudit NativeBinaryIsoAudit NativeBinarySquareAudit NativeAttachParentAudit NativeParentChangeAudit NativeDependentColumnAudit NativeBinaryAugmentedNaturalityAudit NativeDependentCompositionAudit NativeBinaryFunctorialityAudit NativeJointProductAudit NativeOrderedFubiniAudit; do
   lean -DwarningAsError=true "checks/$n.lean" | tee -a "$tmp/audit"
 done
 if grep -E 'sorryAx|implementedBy|unsafeCast' "$tmp/audit"; then exit 1; fi
