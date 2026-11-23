@@ -3,6 +3,10 @@ module
 public import ContextualComposition.FixedEffects
 public import ContextualComposition.ReaderWriter
 public import ContextualComposition.Para
+public import ContextualComposition.PureSquareCalculus
+public import ContextualComposition.CartesianReader
+public import ContextualComposition.CartesianWriter
+public import ContextualComposition.CartesianReaderWriterLaw
 public import ContextualComposition.MixedEffects
 public import ContextualComposition.TerminalComma
 public import ContextualComposition.Factorization
