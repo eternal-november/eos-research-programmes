@@ -21,6 +21,10 @@ All declaration names below begin `ContextualComposition.`. `TheoremIndex.json` 
 * `Para.left_unitor_inverse`, `left_unitor_inverse_other`, `right_unitor_inverse`, `right_unitor_inverse_other`, `triangle`: same Para construction, explicit unit parameter maps and triangle. These are checked equations, not a claim that a bundled general-action bicategory has been constructed.
 * `Para.collapse_not_injective`: negative retention control: a genuine Boolean-to-unit forward cell is noninjective. This is not a general impossibility theorem.
 
+## Forward Para for a right monoidal action
+
+For [the internal-constructors section](../delivery/One_relative_construction_for_context_content_and_effects.tex) at `458ff36a`, `ActionPara.Arrow` is the costructured-arrow category of the extension functor at the source. The parameter map in `Square` points forward. `endpointCells` compares the actual comma morphisms after changing both endpoints to their common hom-category. `comp` uses the tensor of the two given parameters and the right-action associator. `horizontal`, `interchange`, `pentagon`, `triangle` and the endpoint naturality equations retain the actual parameter maps under pasting. The acting monoidal category and its action have independent object and morphism universes. This realizes the operations and coherence in the stated general-action Para example. The other constructors and the general relative-construction comparison are tracked separately.
+
 ## Residual coverage
 
 Operational and square recovery data are checked. The terminal-fibre comma hom and operational realization comparison is now formalized below; the global relative pseudocoend/factory comparison remains NOT formalized. No bundled pure-square double-category isomorphism or general-action Para bicategory is claimed. Para unitor naturality and the complete pure-map pseudofunctor packaging remain to be assembled.
