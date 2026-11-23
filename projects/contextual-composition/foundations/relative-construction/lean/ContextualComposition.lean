@@ -9,6 +9,10 @@ public import ContextualComposition.CartesianWriter
 public import ContextualComposition.CartesianReaderWriterLaw
 public import ContextualComposition.MixedEffects
 public import ContextualComposition.TerminalComma
+public import ContextualComposition.FactorizationDoubleEnvelope
+public import ContextualComposition.StrictCornerRecognition
+public import ContextualComposition.OrthogonalCornerCategory
+public import ContextualComposition.OrthogonalCornerRecognition
 public import ContextualComposition.Factorization
 public import ContextualComposition.PrimitiveBalance
 public import ContextualComposition.SourceCocone
