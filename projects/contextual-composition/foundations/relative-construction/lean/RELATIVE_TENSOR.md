@@ -181,3 +181,9 @@ The joint equation holds at the original universe levels. Construction of the fu
 [`Iterated.mixedUnit`](ContextualComposition/RelativeTensorMixedStrongUnit.lean) is the strong transformation from the pure hom module to the retained middle composite at shared native Cat levels. Its fixed-output columns are the existing `mixedUnitInputColumn`. The component functors and the two endpoint comparison isomorphisms are identified with `mixedUnitAt`, `mixedUnitInput`, and `mixedUnitOutput` by the projection theorems. The construction uses the proved joint square to make each output comparison into an invertible modification; the outer identity and composition equations are the existing output laws.
 
 As for the fixed-output column, the base hom level is written as `max u v` for an object level `u` so the pure hom module and the quotient are in the same Cat. The component equations and joint coherence preceding this construction do not acquire any such restriction. This gives the unit map but leaves the algebra laws for that map and the mixed multiplication to be proved.
+
+## Left multiplication by the mixed unit at identity labels
+
+[`Iterated.mixedLeftIdentityOnObjects`](ContextualComposition/RelativeTensorMixedLeftIdentity.lean) constructs an isomorphism from left multiplication by the actual mixed unit of the identity label to the original object of the quotient. At a native pair with intermediate endpoint `k`, the required input is the crossing contact with the second unit and the left-unit isomorphisms for the two native multiplications. The comparison decodes the actual exposed middle pair by the unit of the original reassociation equivalence; it does not replace that inverse with a chosen split.
+
+The result is objectwise. Naturality on native arrows and balances, compatibility with the endpoint actions, and the left unitor equation as a modification remain to be established.
