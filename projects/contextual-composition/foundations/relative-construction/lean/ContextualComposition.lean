@@ -571,3 +571,5 @@ public import ContextualComposition.NativeDependentFourLevel
 public import ContextualComposition.NativeDependentLeftUnit
 public import ContextualComposition.NativeDependentUnitWhisker
 public import ContextualComposition.NativeDependentTriangle
+public import ContextualComposition.NativeDependentUnitNaturality
+public import ContextualComposition.NativeDependentLeftUnitNaturality
