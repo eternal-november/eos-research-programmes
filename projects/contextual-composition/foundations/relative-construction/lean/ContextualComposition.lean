@@ -608,3 +608,6 @@ public import ContextualComposition.NativeFubiniSwap
 public import ContextualComposition.NativeIndependentSwapCells
 public import ContextualComposition.NativeIndependentSwapNaturality
 public import ContextualComposition.NativeIndependentSymmetry
+public import ContextualComposition.NativeIndependentRightUnit
+public import ContextualComposition.NativeFubiniRightUnit
+public import ContextualComposition.NativeFubiniLeftUnit
