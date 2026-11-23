@@ -153,6 +153,14 @@ This extension adds 36 indexed declarations: sixteen theorems and twenty constru
 
 This tranche adds 42 indexed declarations: twenty theorems and 22 constructions (including the endpoint-data and choice-comparison structures). Full package: 279 distinct audits, 143 theorems and 136 constructions. Every new declaration reports exactly `propext`, `Classical.choice`, `Quot.sound`. Prior ten implementation modules, dependency/toolchain pins and verifier remain byte-identical. Author clean own-source replay passed with pinned cached dependencies. Sequential independent statement-adequacy review and fresh own-source replay passed; see `evidence/endpoint-independent/Independent_Endpoint_Transport_Review.tex`.
 
+## Strict telescope transformations and the scope of the constructor comparison
+
+`StrictTelCellRecovery.arbitrary_iff` compares the actual whiskered equation for a transformation between strict telescope-algebra maps to its unit and binary restrictions on the recovered contextad. `algebraCell_eq` reinstates the transports between the strict functor equalities, and `cellEquiv` returns the same directed underlying transformation in both directions. These results use the split native carrier and normal cleavage of the strict telescope construction, and the equality-on-operations 1-cells of [Kamiya, Definition 2.9](https://hexagonmath.org/pdf/2610.00302v1#page=7).
+
+Definition 2.13 permits invertible operation comparisons on a strict underlying span map. `StrongTelCombs.telescope` assembles such unit and binary comparisons on each arity of the native comb. This all-arity construction alone does not establish every nested substitution law of an alternative strong algebra-map category. In `TelescopeTensoratorObstruction`, a normalized nontrivial two-element cocycle gives the identity functor of a skeletal monoidal groupoid a coherent nonidentity tensorator. `no_strict_comparison` rules out a compatible transformation to any target with identity-phase comparisons. This is the monoidal obstruction relevant to treating the two map doctrines as interchangeable at a terminal base. It does not alter the strict algebra-map result.
+
+`TerminalMonadComparison` instantiates the terminal-monad dual of the empty-reader control for the fixed mixed constructor: the target loses distinctions between original bodies, as demonstrated by an explicit source pair.
+
 ## Endpoint–target interaction on the explicit source presentation
 
 `EndpointTarget.lean` derives a compatibility needed to combine the preceding endpoint and target directions. Source pin remains `458ff36a4798e432dee5947afc402f9903a47f14`: the independent pseudobalanced presentation at lines 455–499 and endpoint lift paragraph at lines 499–510. The interchange statements are derived compatibility of those constructions under arbitrary target functors, not a quotation of a separately asserted source theorem.

@@ -462,6 +462,11 @@ public import ContextualComposition.StrictTelFold
 public import ContextualComposition.StrictTelOperations
 public import ContextualComposition.StrictSpanReflection
 public import ContextualComposition.StrictTelNested
+public import ContextualComposition.StrictTelCells
+public import ContextualComposition.StrictTelCellRecovery
+public import ContextualComposition.StrongTelCombs
+public import ContextualComposition.TelescopeTensoratorObstruction
+public import ContextualComposition.TerminalMonadComparison
 public import ContextualComposition.StrictTelRecovery
 public import ContextualComposition.StrictSpanCart
 public import ContextualComposition.StrictTelCartesian
