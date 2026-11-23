@@ -44,6 +44,14 @@ The [structural-test inventory](../../reduction/structural-test-crosswalk.md) re
 
 At each fixed base object, `GrothendieckStep.PayloadLaws.All.fixedBasePayloadEquivalence` promotes the actual whole-span/packed-iterate strong transformation to an adjoint equivalence over the locally discrete index of ordinary presheaf maps. `fixedBasePayloadEquivalence_hom` identifies its forward map with `PayloadLaws.All.strong`. The [constructor crosswalk](CONSTRUCTOR_ACCEPTANCE.md) identifies the remaining ambient comparison.
 
+## Directed state contraction and marked exchange
+
+The source is the [directed-state development](../../directed-state-and-relative-parallel/README.md) at `458ff36a`. `DirectedStateBalance.universalProperty` identifies functors out of the presented category with directed dinatural cocones, including their compatible transformations. The presentation imposes the weak pseudofunctor composition relation on actual native arrows and forward slides. `natural_in_target` proves compatibility with postcomposition. A state isomorphism induces an invertible slide. The unit-state example `unit_not_full` separates faithfulness from fullness.
+
+The diagonal insertion for a strict mixed diagram is faithful, including the strict bicategorical hom-process instance in `StrictStateProcessDiagram.faithful`. `DirectedStateIntertwiners.detector` records a state arrow and its native intertwiner. The nonfaithful whiskering example keeps distinct native cells after diagonal insertion. These results use the strict source for the detector. Its generalization to weak process actions and the coherent chronological composition remain open.
+
+`DirectedStateIterates.iso` compares the two orders of directed contraction of a strict curried two-coordinate diagram. `StagedStateLocalization.mixedExchange` extends the comparison to independently chosen marking properties and hence to all-directed, mixed and all-invertible choices. The proofs control actual quotient functors, their actions on native arrows, and the slide exchange. Identification with a separately presented simultaneous contraction, the product-state identification and coherence for arbitrary finite networks remain in [#103](https://github.com/eternal-november/eos-research-programmes/issues/103).
+
 ## Source and operation
 
 The source is `projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex` at EOS commit `458ff36a4798e432dee5947afc402f9903a47f14`, §“Internal constructors and familiar specializations” (`sec:constructors`). The adjacent displayed fixed-effect formulas, Para paragraphs and reader/writer paragraphs are the exact targets. Issue #105 tracks the much larger constructor programme; #91 sets formal-verification acceptance. Neither issue is closed by this package.
