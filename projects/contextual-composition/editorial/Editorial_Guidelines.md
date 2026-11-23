@@ -165,12 +165,6 @@ Caveats should be placed beside the claim they delimit. They need not dominate t
 
 A precise positive claim, followed by one informative scope boundary, is more credible than either breathless generality or an inventory of everything not proved.
 
-### Make the prose carry the argument
-
-Put each qualification where it changes the meaning of a claim. A **stovepipe pin** names a condition, distinction, or dependency in its own compartment while leaving the reader to work out what it governs. For example, “Shared draw. Scope: fixed law. Composition: conditional.” lists facts without explaining their use. Instead: “For a shared draw with a fixed distribution, compose the stages using their specified joint law conditional on that draw, then average over its distribution. If the stages are conditionally independent given the draw, the conditional joint law is the product of their conditional laws.” This says what is shared, what must be supplied, and what the independence assumption permits. Keep the scope; integrate it into the claim. A table of hypotheses can still help with lookup, provided the argument shows which hypothesis does the work.
-
-Look for drafting notes masquerading as exposition, headings followed by interchangeable mini-essays, and contrasts that correct an inference no reader was likely to make. When flagging a passage, quote the span and name the referent, inference, or consequence it leaves the reader to supply. If a contrast rules out a plausible interpretation, retain it and explain what changes mathematically. No phrase or punctuation mark passes or fails this test by itself.
-
 ### Make the work findable without keyword stuffing
 
 **Discoverability is an editorial requirement, but naming a construction does not entitle it to editorial prominence.** A reader searching for an engineering problem and a specialist searching for a categorical construction should both have a plausible route to the work. Titles should identify the actual central subject in clear, recognizable language; include distinctive technical names when they materially identify the contribution. Do not turn the title into an inventory of every related construction.
@@ -204,6 +198,8 @@ Apply two tests:
 **Payoff test:** After reading the section, can its central contribution be stated in language closely related to the heading? If the heading promises one subject while the section spends most of its time on another, fix the section's organization or its title.
 
 Do not mechanically require a theorem name, a technical noun, or a particular grammatical form. Questions, evocative phrases, and accessible language can all work when they convey something specific. Nor should a heading promise more than the section proves.
+
+**The table of contents should read like a compressed version of the paper's intellectual argument, not a collection of generic invitations to keep reading.**
 
 
 Then read the prose aloud. Underline the sentence that says something the reader came to learn. Cut the throat-clearing before it and the paraphrase after it. Scrutinize “X, but not Y,” headings that correct an imagined opponent, and repeated assurances about what the reader needn’t know. For example, when the first substantive sentence is “Each construction chooses what counts as a computation…”, start there. The author may have needed the two reminders before that sentence; the reader doesn’t.
