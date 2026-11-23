@@ -2147,6 +2147,12 @@ import ContextualComposition
 #print axioms ContextualComposition.RelativeTensor.Iterated.last_native
 #print axioms ContextualComposition.RelativeTensor.Iterated.last_outer_balance
 #print axioms ContextualComposition.RelativeTensor.Iterated.last_naturality
+#print axioms ContextualComposition.RelativeTensor.Iterated.crossingInterchangeIso
+#print axioms ContextualComposition.RelativeTensor.Iterated.crossingInterchangeIso_app
+#print axioms ContextualComposition.RelativeTensor.Iterated.crossingInterchange
+#print axioms ContextualComposition.RelativeTensor.Iterated.exposedCrossing_input
+#print axioms ContextualComposition.RelativeTensor.Iterated.contractChange
+#print axioms ContextualComposition.RelativeTensor.Iterated.mixedContractionInput
 #print axioms ContextualComposition.RelativeTensor.Iterated.rowMap_changeIso
 #print axioms ContextualComposition.RelativeTensor.Iterated.rowMap_changeIso_component
 #print axioms ContextualComposition.RelativeTensor.Iterated.transportRowSquare
