@@ -175,3 +175,9 @@ At common native Cat levels, `mixedUnitInputColumn` bundles this as a strong map
 [`Iterated.mixedUnitInputOutput_compatibility`](ContextualComposition/RelativeTensorMixedUnitJoint.lean) proves the joint square for the existing input and output comparisons, using the actual source and target interchangers. The source reassociation of pure labels is carried through the first supplied unit. Its output modification gives the square relating the first-factor cells. Naturality of the quotient balance moves the first-factor arrow past the inverse balance; the second-factor cell commutes with that arrow inside the insertion of the product category.
 
 The joint equation holds at the original universe levels. Construction of the full curried strong transformation and the mixed multiplication's algebra laws remain separate.
+
+## The bundled mixed unit
+
+[`Iterated.mixedUnit`](ContextualComposition/RelativeTensorMixedStrongUnit.lean) is the strong transformation from the pure hom module to the retained middle composite at shared native Cat levels. Its fixed-output columns are the existing `mixedUnitInputColumn`. The component functors and the two endpoint comparison isomorphisms are identified with `mixedUnitAt`, `mixedUnitInput`, and `mixedUnitOutput` by the projection theorems. The construction uses the proved joint square to make each output comparison into an invertible modification; the outer identity and composition equations are the existing output laws.
+
+As for the fixed-output column, the base hom level is written as `max u v` for an object level `u` so the pure hom module and the quotient are in the same Cat. The component equations and joint coherence preceding this construction do not acquire any such restriction. This gives the unit map but leaves the algebra laws for that map and the mixed multiplication to be proved.
