@@ -18,7 +18,7 @@ For the comma normalization lemma in the [independent interaction criterion](../
 
 For a supplied weak curried middle action, `RelativeTensor.Iterated.associator` compares the full iterated quotient categories. The two functors are built from their actions on native arrows and inner and outer balance generators. `roundtrip_left` and `roundtrip_right` identify the composites with the identity functors. The transpose construction relates the two curried orientations. Interpreting an independently given uncurried middle pseudofunctor requires a comparison with these data.
 
-`RelativeTensor.Iterated.twoStep` constructs one composite on the actual four-factor carriers. For the three-factor associator, `last_naturality` identifies the whole functors obtained by changing its last strong factor. The four-factor pentagon below identifies the two forward routes. Issue #93 also tracks the global unitor–associator triangle, generic mixed multiplication, pure pseudofunctor and companion-bending compatibility.
+`RelativeTensor.Iterated.twoStep` constructs one composite on the actual four-factor carriers. For the three-factor associator, `last_naturality` identifies the whole functors obtained by changing its last strong factor. The four-factor pentagon below identifies the two forward routes. The unitor–associator triangle below compares the two unit routes. Issue #93 also tracks generic mixed multiplication, pure pseudofunctor and companion-bending compatibility.
 
 ## Factor changes and the four-factor row comparison
 
@@ -71,3 +71,9 @@ For an ordinary middle category `B`, `Iterated.unitModule B` has fibre `Discrete
 For the left unit, `LeftUnit.indexedEquivalence` first evaluates the co-Yoneda endpoint diagram. `unitRowEndpoint` identifies the actual curried row presentation with that diagram. Its fibre functor is induced by identity on each hom label, and its naturality components act by the identity on vertices. The resulting `Iterated.leftUnitEquivalence` has the actual left unitor as its forward strong transformation. On a row vertex, `leftUnitor_port` computes its base change by the compositor of Y. Its images of native arrows and balances are `leftUnitor_native` and `leftUnitor_balance`.
 
 The local base-change formulas allow independent base and payload universes. Bundling each indexed equivalence into a single Cat-valued diagram uses a common universe large enough for the base objects, base morphisms and relevant payloads, as specified in the declaration.
+
+## Unitor–associator triangle
+
+`RelativeTensor.Iterated.UnitTriangle.triangle X Y` is the natural isomorphism from reassociating and applying the indexed left unitor to directly applying the indexed right unitor. Both are functors from the same threefold quotient to `Tensor X Y`. At the native vertex `[[x,p : i ⟶ j],y]`, the comparison is the original balance from `[i;x,Y(p)y]` to `[j;X(p)x,y]`, as computed by `UnitTriangle.triangle_app`.
+
+Naturality on a simultaneous native arrow is the balanced cocone’s naturality equation. On each of the two junction balances, the comparison is its composition equation, with the weak compositor of X or Y in the orientation dictated by that junction. These three calculations extend to every quotient path, including inverse balances. The bundled routes use the common Cat levels of the indexed unitors. The separate mixed multiplication, realized bicategory, pure pseudofunctor and companion-bending statements of #93 have additional hypotheses and obligations.
