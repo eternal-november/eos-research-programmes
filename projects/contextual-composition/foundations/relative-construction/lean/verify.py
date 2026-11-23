@@ -2,13 +2,12 @@
 """Replay the package and named-theorem axiom audit. No dependency installation."""
 from pathlib import Path
 import subprocess, re, json, hashlib
+from source_audit import check_sources
 p=Path(__file__).resolve().parent
 e=p/'evidence'; e.mkdir(exist_ok=True)
-for f in [*p.glob('ContextualComposition/*.lean'),p/'ContextualComposition.lean']:
-    text=f.read_text()
-    if re.search(r'\b(sorry|admit|axiom|unsafe)\b',text):
-        raise SystemExit('Forbidden proof/trust token in '+str(f))
 for name,cmd in [('build',['lake','build']),('axioms',['lake','env','lean','AxiomAudit.lean'])]:
+    if name == 'axioms':
+        check_sources(p, [*p.glob('ContextualComposition/*.lean'), p/'ContextualComposition.lean'])
     r=subprocess.run(cmd,cwd=p,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
     (e/(name+'.log')).write_text(r.stdout)
     if r.returncode: raise SystemExit(r.stdout)
