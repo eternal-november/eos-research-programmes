@@ -34,6 +34,9 @@ public import ContextualComposition.DirectedStateMarkedExchange
 public import ContextualComposition.StagedStateLocalization
 public import ContextualComposition.StagedStateDescent
 public import ContextualComposition.MixedStateFubini
+public import ContextualComposition.GeometricPullbackDirection
+public import ContextualComposition.ModTwoPullbackObstruction
+public import ContextualComposition.ShuffleInterchange
 public import ContextualComposition.FixedEffects
 public import ContextualComposition.ActionPara
 public import ContextualComposition.ReaderWriter

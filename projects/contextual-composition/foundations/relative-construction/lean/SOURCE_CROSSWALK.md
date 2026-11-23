@@ -52,6 +52,12 @@ The diagonal insertion for a strict mixed diagram is faithful, including the str
 
 `DirectedStateIterates.iso` compares the two orders of directed contraction of a strict curried two-coordinate diagram. `StagedStateLocalization.mixedExchange` extends the comparison to independently chosen marking properties and hence to all-directed, mixed and all-invertible choices. The proofs control actual quotient functors, their actions on native arrows, and the slide exchange. Identification with a separately presented simultaneous contraction, the product-state identification and coherence for arbitrary finite networks remain in [#103](https://github.com/eternal-november/eos-research-programmes/issues/103).
 
+## Direction of comparison for geometric parallel
+
+The [pullback comparison](../../geometric-parallel-crossing/Pullback_Comparison_Direction.tex) sends the bifunctor applied to two local pullbacks into the global pullback of the resulting cospan. `GeometricPullbackDirection.forward` constructs this map. `reverse_iff_section` identifies the exact section condition for the candidate reverse leg data. `exactIso` supplies an inverse when the chosen pullback is preserved. For the doubling cospan on abelian groups tensored with the integers modulo two, `ModTwoPullbackObstruction.no_reverse` excludes every reverse map preserving the displayed first leg.
+
+The [geometric parallel theorem's nonvacuity example](../../geometric-parallel-crossing/Geometric_Parallel_Crossing_with_Colax_Content.tex) uses concatenation and shuffle of finite-word languages. `ShuffleInterchange.colax` gives the comparison by concatenating shuffle witnesses. `noninvertible_interchange` uses four distinct letters to separate the two sides. The full geometric display and colax-content hypotheses, and their application to an actual balanced mixed accumulation, remain in [#103](https://github.com/eternal-november/eos-research-programmes/issues/103).
+
 ## Source and operation
 
 The source is `projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex` at EOS commit `458ff36a4798e432dee5947afc402f9903a47f14`, §“Internal constructors and familiar specializations” (`sec:constructors`). The adjacent displayed fixed-effect formulas, Para paragraphs and reader/writer paragraphs are the exact targets. Issue #105 tracks the much larger constructor programme; #91 sets formal-verification acceptance. Neither issue is closed by this package.
