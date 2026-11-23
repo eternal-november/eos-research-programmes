@@ -2147,6 +2147,17 @@ import ContextualComposition
 #print axioms ContextualComposition.RelativeTensor.Iterated.last_native
 #print axioms ContextualComposition.RelativeTensor.Iterated.last_outer_balance
 #print axioms ContextualComposition.RelativeTensor.Iterated.last_naturality
+#print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.direct_unit
+#print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.direct_comp_packed
+#print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.strongOfSquares
+#print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.whisker
+#print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.whisker_component
+#print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.outerWhisker
+#print axioms ContextualComposition.RelativeTensor.Iterated.routeWith
+#print axioms ContextualComposition.RelativeTensor.Iterated.route_objects
+#print axioms ContextualComposition.RelativeTensor.Iterated.rightPentagonRows
+#print axioms ContextualComposition.RelativeTensor.Iterated.threeStep
+#print axioms ContextualComposition.RelativeTensor.Iterated.threeStep_functor
 #print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.columnUnit
 #print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.columnComp
 #print axioms ContextualComposition.RelativeTensor.Iterated.OuterRow.normalize_unit
