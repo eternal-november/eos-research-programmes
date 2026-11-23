@@ -30,6 +30,10 @@ The [cell-preservation reduction](../../reduction/cell_preservation_reduction.md
 
 All constructions admit empty carriers. The two-point counterexample prevents the local comparison from extending to a horizontal functor preserving this composition.
 
+## Finite reduction comparison controls
+
+`FiniteNativeComma.nativeCellEquiv` compares the actual fixed-endpoint cell with the hom between the packed presentations in the comma category of the slice and coslice forgetful functors. `FiniteRelationForgetting.no_reverse_cell` exhibits the failure of native invertibility after unused blocks are coarsened. `partial_recipe_nondescent` supplies the separating pure continuation using the same partial-domain composition as equation (5).
+
 ## Source and operation
 
 The source is `projects/contextual-composition/foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex` at EOS commit `458ff36a4798e432dee5947afc402f9903a47f14`, §“Internal constructors and familiar specializations” (`sec:constructors`). The adjacent displayed fixed-effect formulas, Para paragraphs and reader/writer paragraphs are the exact targets. Issue #105 tracks the much larger constructor programme; #91 sets formal-verification acceptance. Neither issue is closed by this package.

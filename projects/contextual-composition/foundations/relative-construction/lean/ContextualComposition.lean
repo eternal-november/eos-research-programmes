@@ -8,6 +8,8 @@ public import ContextualComposition.FinitePresentationCell
 public import ContextualComposition.FiniteRelationPresentation
 public import ContextualComposition.PresentationCorelation
 public import ContextualComposition.CorelationComposition
+public import ContextualComposition.FiniteNativeComma
+public import ContextualComposition.FiniteRelationForgetting
 public import ContextualComposition.FixedEffects
 public import ContextualComposition.ReaderWriter
 public import ContextualComposition.Para
