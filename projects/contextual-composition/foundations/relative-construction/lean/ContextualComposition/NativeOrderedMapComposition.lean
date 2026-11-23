@@ -8,7 +8,7 @@ format without factoring them into arrows at individual occurrences. -/
 namespace ContextualComposition.NativeFinitePush.DependentFibre.RigGridNativeAdapter
 open CategoryTheory MonoidalCategory ContextualComposition.RigGrid
 open scoped MonoidalCategory
-universe u v w z
+universe u v w z t
 variable {C : Type u} [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
 local notation "𝒮" => binary (Additive.sum (Additive.ofBraided (C:=C)))
 local notation "Zₐ" => 𝟙_ C
@@ -136,8 +136,19 @@ theorem OrderedDependentMap.compose_preserves {I : C}
 
 end Ordered
 
+theorem wordCarrier_comp_any {X : Type w} {Y : Type z} {D : Type t}
+    {xs : List X} {ys : List Y} {zs : List D}
+    (f : X → Y) (g : Y → D) (hf : ∀ x ∈ xs, f x ∈ ys) (hg : ∀ y ∈ ys, g y ∈ zs)
+    (hy : ys.Nodup) (hz : zs.Nodup) :
+    wordCarrier g hg hz ∘ wordCarrier f hf hy =
+      wordCarrier (g ∘ f) (fun x hx => hg _ (hf x hx)) hz := by
+  symm
+  apply wordCarrier_eq_of_get
+  intro i
+  exact (wordCarrier_get g hg hz (wordCarrier f hf hy i)).trans (congrArg g (wordCarrier_get f hf hy i))
+
 section RawComposition
-variable {X Y D : Type u} [DecidableEq Y] [DecidableEq D]
+variable {X : Type w} {Y : Type z} {D : Type t} [DecidableEq Y] [DecidableEq D]
 variable {xs : List X} {ys : List Y} {zs : List D}
 variable (A : X → C) (B : Y → C) (D' : D → C) (f : X → Y) (g : Y → D)
 variable (hf : ∀ x ∈ xs, f x ∈ ys) (hg : ∀ y ∈ ys, g y ∈ zs)
@@ -152,7 +163,7 @@ theorem readCompositeWordCell_raw (hxs : xs.Nodup)
       ((fibreList (wordCarrier g hg hz) k).flatMap (fun j => wordFibre xs f ys[j]))) :
     readNativeWordCell A D' (g ∘ f) (fun x hx => hg _ (hf x hx)) hz
       ((wordNativeMap f hf hy A B p).comp (wordNativeMap g hg hz B D' q))
-      (wordCarrier_comp f g hf hg hy hz).symm k =
+      (wordCarrier_comp_any f g hf hg hy hz).symm k =
     AddressOrder.mapSum additiveStructure A r ≫
       rowsChart A (fun j => wordFibre xs f ys[j]) (fibreList (wordCarrier g hg hz) k) ≫
       act 𝒮 Zₐ p (fibreList (wordCarrier g hg hz) k) ≫ eqToHom (wordCarrier_fibre_pin g hg hz B k) ≫ q k := by
@@ -160,7 +171,7 @@ theorem readCompositeWordCell_raw (hxs : xs.Nodup)
   let ga := wordCarrier g hg hz
   let hab := fun x hx => hg _ (hf x hx)
   let ha := wordCarrier (g ∘ f) hab hz
-  let c := wordCarrier_comp f g hf hg hy hz
+  let c := wordCarrier_comp_any f g hf hg hy hz
   let a := wordFamily A xs
   let b := wordFamily B ys
   let src := fibreList (ga ∘ fa) k
