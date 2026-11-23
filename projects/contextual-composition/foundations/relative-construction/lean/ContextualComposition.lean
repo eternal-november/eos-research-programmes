@@ -473,6 +473,11 @@ public import ContextualComposition.StrictTelFunctorial
 public import ContextualComposition.StrictTelCategories
 public import ContextualComposition.StrictTelNativeFaces
 public import ContextualComposition.DiscreteTransposition
+public import ContextualComposition.CouplingPullbacks
+public import ContextualComposition.AllCouplings
+public import ContextualComposition.CouplingChains
+public import ContextualComposition.CouplingPossibilities
+public import ContextualComposition.CouplingHiding
 public import ContextualComposition.ContinuationTranspositionObstruction
 public import ContextualComposition.AugmentedMatrixFubini
 public import ContextualComposition.RigGridMonoidal
