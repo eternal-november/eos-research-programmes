@@ -45,3 +45,9 @@ For two functors out of `Iterated.farLeft` and a chosen isomorphism at every obj
 For the actual contravariant first-index action on the middle composite, `OuterRow.columnUnit` and `OuterRow.columnComp` compute the native unit and compositor in each column. `OuterRow.normalize_unit` computes the image of the source unitor through the row identification for every vertex of the outer tensor.
 
 `OuterRow.normalizedCompositor` computes the image of the source compositor through that identification for every composable pair and every vertex. Its equality records the source object, target object and morphism together. The underlying column calculation uses the actual weak compositor of the middle diagram. The final right whiskering still requires pasting these equations with the row associator and checking the laws of the resulting strong transformation.
+
+## The three-step route on four factors
+
+`OuterRow.whisker` is the strong transformation between the two contravariant row diagrams. Its components are the concrete normalized row reassociations. The proof supplies both the weak unitor equation and the compositor equation for every composable pair of base arrows. Equality of the packed morphisms carries their two endpoints through the calculation.
+
+`Iterated.rightPentagonRows` upgrades this transformation to an adjoint equivalence by its pointwise row equivalences. The resulting `Iterated.threeStep` is an equivalence from the fully left-bracketed relative tensor to the fully right-bracketed relative tensor, through both intermediate bracketings on the long route. `threeStep_functor` identifies the forward functor with that composite. `route_objects` gives the objectwise comparison with the two-step route for every strong last whiskering with the prescribed row functors.
