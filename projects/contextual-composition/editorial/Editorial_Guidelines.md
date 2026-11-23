@@ -137,7 +137,19 @@ Caveats should be placed beside the claim they delimit. They need not dominate t
 
 A precise positive claim, followed by one informative scope boundary, is more credible than either breathless generality or an inventory of everything not proved.
 
-## 11. Editorial review gate
+## 11. Two-pass draft scrub: structure before style
+
+**Scrub the draft in two passes. Fix what it spends time on before fixing how it sounds.**
+
+Read the outline as a reader. Look at the title, opening, section lengths and conclusion. What would someone who never saw the prompt think the paper is about? If a topic appears to be central, name the result, example or decision that earns it that position. A suggestion to include optics is a reason to consider optics. It doesn’t give optics a claim on the subtitle, a tutorial and the conclusion. Keep the material where it answers a question the paper has actually raised.
+
+Then read the prose aloud. Underline the sentence that says something the reader came to learn. Cut the throat-clearing before it and the paraphrase after it. Scrutinize “X, but not Y,” headings that correct an imagined opponent, and repeated assurances about what the reader needn’t know. For example, when the first substantive sentence is “Each construction chooses what counts as a computation…”, start there. The author may have needed the two reminders before that sentence; the reader doesn’t.
+
+Some qualifications do belong on the page. If a theorem assumes independent draws, say so where the theorem is used. If an existing method fails for shared draws, name the failure and show what changes. A real mathematical boundary can survive being stated plainly. Keep drafting reminders in the notes where they can still guide the writer.
+
+Review a run of paragraphs, not just a list of flagged phrases. A page can still sound canned after every “not merely” has been replaced. Listen for the same setup, pivot and recap repeating; repair the whole passage by putting the claims and reasons in the order the reader needs them. Give the revised passage to someone who hasn’t seen the prompt. Ask where they had to stop, reread, or wait for the point. Use those places to check the edit.
+
+## 12. Editorial review gate
 
 Every manuscript should pass the following tests before polishing typesetting or debating venues:
 
