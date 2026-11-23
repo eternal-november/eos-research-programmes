@@ -181,6 +181,24 @@ Read the outline as a reader. Look at the title, opening, section lengths and co
 
 Perform a **reverse outline** from the actual draft, not the intended plan: record what each paragraph does, then group those jobs by section. Look for competing centres of gravity, tutorial material that eclipses the result it prepares, examples that become the unstated subject, repetitions of the introduction, and conclusions that promise more than the section demonstrated. Compare the section's length with the importance of its payoff. A section may legitimately define, motivate, and prove in one sequence when those moves serve a coherent purpose; “one identity” does not mean “one rhetorical mode.” If the section has multiple purposes, show how they depend on one another and why they belong together.
 
+### Make section titles informative, not merely approachable
+
+A section title should tell readers something meaningful about what they are about to learn. Accessibility does not mean replacing technical substance with vague, conversational language. Headings such as “What happens between the parts,” “Putting it all together,” or “A closer look” may sound friendly, but they usually communicate no specific subject, result, or insight.
+
+**A heading must earn its place in the table of contents.** Read the headings without the body text. Can a newcomer follow the development of the argument? Can an expert quickly locate material relevant to their work? Does each heading distinguish its section from its neighbors?
+
+Compare “What happens between the parts” with “Why correct components can fail together,” “Combining requirements and effects,” or “When local guarantees survive composition.” These headings convey different subjects and promises. Which one is appropriate depends on what the section actually establishes.
+
+Apply two tests:
+
+**Substitution test:** Could this heading be moved to several unrelated sections without sounding out of place? If so, it probably lacks a meaningful identity.
+
+**Payoff test:** After reading the section, can its central contribution be stated in language closely related to the heading? If the heading promises one subject while the section spends most of its time on another, fix the section's organization or its title.
+
+Do not mechanically require a theorem name, a technical noun, or a particular grammatical form. Questions, evocative phrases, and accessible language can all work when they convey something specific. Nor should a heading promise more than the section proves.
+
+**The table of contents should read like a compressed version of the paper's intellectual argument, not a collection of generic invitations to keep reading.**
+
 Then read the prose aloud. Underline the sentence that says something the reader came to learn. Cut the throat-clearing before it and the paraphrase after it. Scrutinize “X, but not Y,” headings that correct an imagined opponent, and repeated assurances about what the reader needn’t know. For example, when the first substantive sentence is “Each construction chooses what counts as a computation…”, start there. The author may have needed the two reminders before that sentence; the reader doesn’t.
 
 Some qualifications do belong on the page. If a theorem assumes independent draws, say so where the theorem is used. If an existing method fails for shared draws, name the failure and show what changes. A real mathematical boundary can survive being stated plainly. Keep drafting reminders in the notes where they can still guide the writer.
