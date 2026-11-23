@@ -493,6 +493,7 @@ public import ContextualComposition.OccurrenceFubini
 public import ContextualComposition.OccurrenceFubiniPermutation
 public import ContextualComposition.GuardedOccurrencePrefixes
 public import ContextualComposition.RawOccurrenceLifting
+public import ContextualComposition.NativeOperationAssembly
 public import ContextualComposition.ContinuationTranspositionObstruction
 public import ContextualComposition.AugmentedMatrixFubini
 public import ContextualComposition.RigGridMonoidal
