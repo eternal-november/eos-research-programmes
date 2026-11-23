@@ -11,6 +11,8 @@ public import ContextualComposition.CorelationComposition
 public import ContextualComposition.FiniteNativeComma
 public import ContextualComposition.FiniteRelationForgetting
 public import ContextualComposition.LinearRelationControl
+public import ContextualComposition.LabelSharingObstruction
+public import ContextualComposition.FiniteWriterObstruction
 public import ContextualComposition.FixedEffects
 public import ContextualComposition.ReaderWriter
 public import ContextualComposition.Para
