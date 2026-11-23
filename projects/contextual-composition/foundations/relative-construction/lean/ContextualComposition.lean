@@ -535,3 +535,6 @@ public import ContextualComposition.NativeDependentParentSquare
 public import ContextualComposition.NativeBinaryTreeProduct
 public import ContextualComposition.NativeBinaryRawProduct
 public import ContextualComposition.NativeBinaryAugmentedNaturality
+public import ContextualComposition.FiniteDescent
+public import ContextualComposition.FiniteNormalization
+public import ContextualComposition.FiniteBalance
