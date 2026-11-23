@@ -187,3 +187,9 @@ As for the fixed-output column, the base hom level is written as `max u v` for a
 [`Iterated.mixedLeftIdentityOnObjects`](ContextualComposition/RelativeTensorMixedLeftIdentity.lean) constructs an isomorphism from left multiplication by the actual mixed unit of the identity label to the original object of the quotient. At a native pair with intermediate endpoint `k`, the required input is the crossing contact with the second unit and the left-unit isomorphisms for the two native multiplications. The comparison decodes the actual exposed middle pair by the unit of the original reassociation equivalence; it does not replace that inverse with a chosen split.
 
 The result is objectwise. Naturality on native arrows and balances, compatibility with the endpoint actions, and the left unitor equation as a modification remain to be established.
+
+## Naturality of the mixed left unit on native products
+
+[Iterated.mixedLeftIdentityOnNativeProduct](ContextualComposition/RelativeTensorMixedLeftNativeNaturality.lean) gives a natural isomorphism between native insertion followed by the mixed left-identity composite and native insertion itself. Its inputs are a natural isomorphism for the crossing at the second unit and one for left absorption by each native multiplication. The proof computes the row transport, reassociation, crossing and contractions on native arrows, using the unit of the original reassociation equivalence to return to the paired quotient.
+
+This compares the functors on each native product before quotient descent. Agreement with the chosen objectwise comparison, naturality on balance generators, and compatibility with endpoint actions remain open.
