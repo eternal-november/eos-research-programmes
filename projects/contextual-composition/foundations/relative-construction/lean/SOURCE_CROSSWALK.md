@@ -291,6 +291,20 @@ The endpoint instance uses the already proved forward choice equation, the origi
 
 The remaining inverse-route obligations include identity and composition of the transports themselves and mixed endpoint–target interchange. Distinct comma/normalization routes, global indexed cleavage and iterated tensor/multiplication/modification remain separate. Source relevance remains the pinned independent presentation and endpoint paragraph, lines 455–510; vertical transport of comparisons is a derived consequence. Independent scoped review and fresh own-source replay passed; see evidence/recovery-modification-independent/Independent_Recovery_Modification_Review.tex.
 
+## Relational composition of all couplings
+
+The [all-couplings construction](../../diagram-native-interaction/Relational_Composition_of_All_Couplings.tex) and [quadrilateral uniqueness theorem](../../diagram-native-interaction/Unique_Quadrilateral_Filling_and_Dependence.tex) at `458ff36a` use an endofunctor of sets in one fixed universe. Weak pullback preservation means surjectivity of the comparison on effects for every span, including spans with empty carriers. Each declaration below is under `ContextualComposition`.
+
+| Source judgment | Lean declaration and scope |
+| --- | --- |
+| Nonempty relational composition and associativity | `AllCouplings.Comp` requires a triple law with all three given marginals. `nonblocking` constructs an existential output in the correct coupling hom. `CouplingChains.assoc` and `left_unit` / `right_unit` prove the Rel-enriched category equations on these homs. The unit proof uses gluing along the diagonal. |
+| Finite chains | `CouplingChains.Chain.possible_iff_joint` identifies possible endpoint laws with projections of laws on the entire coordinate tuple, including the empty-edge chain at a supplied effect. The induction glues over the common endpoint-pair law. |
+| Changing state coordinates | `CouplingChains.change_lax` sends a ternary witness forward. `changeEquiv` and `change_iff` identify the two composition relations for bijective state changes. `CouplingHiding.hiding_strict` exhibits a full two-bit possibility relation admitted after erasing the middle bit and excluded by the original two diagonal couplings. |
+| Four-way uniqueness boundary | `CouplingPullbacks.exact_uniqueness_boundary` equates bijectivity of all quadrilateral comparisons, bijectivity of binary comparison over T1, unique couplings for marginals compatible over T1, and bijectivity of every pullback comparison. `map_injective` includes empty source sets. |
+| Multiple admissible joints on the same raw carrier | `CouplingPossibilities.weak` establishes weak preservation for the nonempty powerset functor. `same_marginals`, `distinct` and `quadrilateral_failure` give the full-versus-diagonal example. The carrier remains Bool × Bool in both cases. |
+
+These laws concern effects and relational composition. A native coefficient category, a selected natural joint, tree-shaped overlap data, and the probability realization each carry additional obligations.
+
 ## #105: finite dependent telescopes on discrete spans (independently reviewed)
 
 **Source and boundary.** The relative-construction manuscript at `458ff36a4798e432dee5947afc402f9903a47f14`, “Telescopes evaluate inside the same constructor,” lines 929–953, has three distinct interfaces: the telescope operation on spans, extension on indexed value families (eq:telescope), and evaluation under context accumulation. The last paragraph additionally cites Kamiya’s strict-algebra comparison. The same pin’s scoping audit, lines 169–184, and proof-status ledger row K2 reserve the non-discrete Grothendieck and strict cleavage/comprehension hypotheses. Issue #105 explicitly permits concrete finite tests before #93. PRs #150–151 addressed supplied-effect, reader/writer and Para branches, not this construction. This module imports only mathlib category basics, not the #93 localization or recovery modules.
