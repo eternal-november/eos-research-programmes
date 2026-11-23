@@ -619,3 +619,6 @@ public import ContextualComposition.NativeFubiniTreeWhisker
 public import ContextualComposition.NativeFubiniTreeWord
 public import ContextualComposition.NativeFubiniTreeAssoc
 public import ContextualComposition.NativeFubiniTreeAssocMove
+public import ContextualComposition.NativeFubiniTreeSwap
+public import ContextualComposition.NativeFubiniTreeUnit
+public import ContextualComposition.NativeFubiniTreeStructuralPath
