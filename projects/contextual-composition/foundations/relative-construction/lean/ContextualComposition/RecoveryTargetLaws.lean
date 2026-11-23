@@ -7,7 +7,7 @@ namespace ContextualComposition.Factorization.Endpoint
 open CategoryTheory CategoryTheory.Functor Source
 open GrothendieckStep GrothendieckStep.FibreValue
 
-private theorem recovery_eq_mate {A B A' B' : Type*}
+theorem recovery_eq_mate {A B A' B' : Type*}
     [Category* A] [Category* B] [Category* A'] [Category* B']
     (P : A ≌ B) (Q : A' ≌ B') {H : A ⥤ A'} {J : B ⥤ B'}
     (a : P.functor ⋙ J ≅ H ⋙ Q.functor) :

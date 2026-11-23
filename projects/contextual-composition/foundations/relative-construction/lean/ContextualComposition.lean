@@ -27,6 +27,10 @@ public import ContextualComposition.LocalizedCoconeTransport
 public import ContextualComposition.CoconeRecovery
 
 public import ContextualComposition.RecoveryTargetLaws
+public import ContextualComposition.RecoveryEndpointLaws
+public import ContextualComposition.RecoveryInterchange
+public import ContextualComposition.CommaCoconeComparison
+public import ContextualComposition.CommaCoconeInverseTransport
 public import ContextualComposition.RecoveryModification
 
 public import ContextualComposition.FiniteTelescope
