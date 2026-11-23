@@ -17,7 +17,7 @@ Before writing or revising the opening, model the intended reader's point of vie
 
 Neither reader should need to know the internal development history, theorem names, contracts, or why a particular proof obligation was originally posed. Do not dump readers immediately into the weeds. A manuscript often needs to support to some degree two simultaneous reading paths, unless it is being intentionally made for one of the personas.
 
-**Reader contract:** After ten seconds in the abstract, a nonexpert should understand what subject is being discussed and why the general idea is worth attention. After two minutes, that reader should understand the core organizing distinction and one concrete kind of benefit. An expert should be able to locate the principal construction, its scope, nearest precedents, and technical contributions without following the entire narrative.
+**Reader contract:** After ten seconds in the abstract, a nonexpert should be able to explain in everyday language why the general idea matters, without understanding its technical vocabulary. After two minutes, that reader should understand the core organizing distinction and one concrete kind of benefit. An expert should be able to locate the principal construction, its scope, nearest precedents, and technical contributions without following the entire narrative.
 
 ## 2. The governing idea
 
@@ -37,6 +37,16 @@ Build the public-facing explanation around that idea. Introduce context as what 
 **Do not turn “everything combines” into a slogan.** The construction has precise hypotheses; some combinations require further data or fail. Flexibility means a meaningful range of supported models and controlled changes of model, not unconditional compatibility.
 
 ## 3. Sell the work. Hit the audience over the head with intelligible motivations, not the repository's theorem inventory
+
+### Selling means making the stakes obvious without technical prerequisites
+
+**Selling the work is not decorating a technical claim with adjectives. It is giving someone outside the field a reason to want the idea before they know the machinery.** The reader has no obligation to be fascinated by a new categorical construction. Meet them where they are: parts that work separately can fail together; changing one part can change what another is able to do; sharing a resource, information, or an environment can change the whole system. Then explain the genuinely ambitious opportunity: one reusable mathematics for understanding such combinations across different kinds of systems, with exact rules and boundaries where established. The first sentences should make the significance intelligible *and* striking.
+
+A **bad opening** is “We construct a coherent relative interaction calculus for context and content grades.” It tells a specialist which objects appear, while giving almost nobody a reason to care. A more effective opening would be: “Two parts can work perfectly on their own and still fail when connected. One may use something the other needs, or change what the other can do next. This research develops mathematics for describing those relationships and determining, under explicit conditions, how the parts can be combined.” The latter is a model of audience-facing explanation, **not** a claim that the framework has already been validated for every kind of real system.
+
+Use stakes people already recognize—reliability, coordination, changing requirements, scarce resources, scientific experiments, interacting physical systems—without claiming a specific application theorem that has not been proved. Do not imply that software reliability is the only ambition or that the theory uniquely solves problems for which established methods already suffice. Explain the broad potential *and* the precise proved contribution without turning the abstract into a list of caveats.
+
+**Outside-reader test:** Show only the title and opening two or three sentences to someone who does not know category theory or the project. Ask: “Why might this matter?” and “What does the work offer?” A pass is an intelligible answer in their own everyday words, not a repetition of “composition,” “framework,” or the names of examples. If they cannot answer, rewrite the opening rather than add a paragraph instructing them why they should be excited. An expert-facing article may then present its technical increment immediately afterward; this first hurdle is about relevance, not understanding the proof.
 
 \
 TODO:
