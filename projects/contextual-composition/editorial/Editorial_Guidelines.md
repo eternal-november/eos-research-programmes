@@ -38,20 +38,25 @@ Build the public-facing explanation around that idea. Introduce context as what 
 
 ## 3. Sell the work. Hit the audience over the head with intelligible motivations, not the repository's theorem inventory
 
-### Sell the consequences before the concepts
+### Opening script: theoretical problem → stakes → promise
 
-**The stakes must register before the reader knows the mathematics.** “Coordination,” “reliability,” and “components interacting badly” are topics, not stakes. Name a consequential failure or opportunity, who is affected, and its scale: business losses, lives or safety at risk, essential services interrupted, production stopped, or scarce physical resources irreversibly consumed. Give a reader with no technical background a reason to care immediately. This is not a request for generic enthusiasm or for a technical question disguised as a public problem.
+**Start with the theoretical technical problem in one short, intelligible sentence.** Name the general mathematical difficulty, not an internal theorem, a definition, or a contrived puzzle. The sentence must be precise enough that a specialist knows the question's type, yet recognizable to someone without the machinery.
 
-**A stake-bearing opening, for illustration:**
+**Then show why that problem matters through one or two genuinely high-stakes examples.** Name concrete consequences, who bears them, and their credible scale. Revenue losses, essential services going down, safety failures, interrupted production, consumed specimens, and irreversible interventions are stakes. Words such as “reliability,” “coordination,” and “complexity,” on their own, are not. Prefer a documented incident over a toy example invented to fit a theorem. Quantitative figures must be correctly attributed and typed: an estimate of economic losses is not a measured hourly revenue loss.
 
-> A single infrastructure failure can cost hundreds of millions of dollars. In October 2025, a fault in AWS's automated DNS management spread into other cloud services; Parametrix estimated $500 million–$650 million in losses to U.S. businesses from that outage. The broader challenge is to understand how independently designed systems affect one another when connected. This research develops mathematical tools for describing such dependencies and constructing compatible interactions—a problem that also arises in physical infrastructure, engineering, and scientific work.
+**Then make promises the article will pay off.** State the architectural advance or mathematical result and the reason it addresses the *class of difficulty* introduced at the start. Explain the scope of its reuse and identify, early enough for the reader to orient, the construction, theorem, or worked realization that later discharges each important promise. A framework article can promise a general construction, compositional reuse, or an explanatory organization; it need not pretend to eliminate the motivating disaster. Do not append a long list of speculative applications as a substitute for a deliverable.
 
-The incident and estimate are sourced to [AWS's post-event explanation](https://aws.amazon.com/message/101925/) and [Parametrix's loss analysis](https://www.parametrixinsurance.com/reports-white-papers/aws-us-east-1-outage---what-parametrix-monitored-in-real-time). The dollar range is a **modeled estimate**, not an audited revenue loss; the sentence does not assert that the framework could have prevented this outage. A per-hour revenue-at-risk calculation is not automatically observed revenue lost. Where numbers matter, identify the measured quantity, estimator, population, time horizon, and uncertainty. Broad economic damage and insured losses are different measurements.
+**Illustrative three-beat opening:**
 
-The example earns attention through real consequences; it does not establish the theory's applicability to AWS without a separate interpretation and theorem. Preserve that distinction. Likewise, do not make cloud reliability the definition of a framework with broader mathematical reach. Explain what the work could illuminate across multiple kinds of interacting systems, then identify the **specific** composition or comparison results it has actually established. Physical processes may have stronger stakes because experiments, consumables, energy, and irreversible actions cannot be copied, replayed, or rolled back as easily as program data.
+> How can independently modeled systems be combined when each may change what the others need or can do?
+>
+> In October 2025, a fault in AWS's automated DNS management cascaded into other cloud services; Parametrix estimated $500 million–$650 million in losses to U.S. businesses from the resulting outage.
+>
+> This programme develops mathematical constructions for assembling separately specified requirements and effects, retaining their interactions, and establishing under which conditions the resulting combinations and comparisons are coherent.
 
-**Ten-second stakes test:** After only the title and first few sentences, can an uninformed reader explain in everyday words who might care, what could be lost or gained, and why the subject is consequential? “It is about a general framework for composition” fails. “A fault in one system can disrupt many others at enormous cost, and this work studies how to reason about such interactions” passes as a statement of significance. The technical contribution must still be made precise for expert readers; impressiveness and intelligibility must arrive together.
+This example demonstrates the *order and level of salience*, not a claim that the project's mathematics has been shown to prevent AWS outages. The incident and estimate are supported by [AWS's post-event explanation](https://aws.amazon.com/message/101925/) and [Parametrix's loss analysis](https://www.parametrixinsurance.com/reports-white-papers/aws-us-east-1-outage---what-parametrix-monitored-in-real-time). The dollar range is a modeled estimate, not an audited loss. A concrete application to the incident would require its own model, interpretation, and validation. Later in the manuscript, replace the broad programme promise with the paper's actual theorem or construction and show the promised payoff. The subject is much wider than cloud infrastructure; examples from physical, scientific, and other engineering systems may communicate different stakes, especially where resources or actions cannot simply be copied or undone.
 
+**Opening audit:** The first sentence must make the mathematical difficulty legible. The example must make the stakes vivid to a reader with no specialist background. The promise must name what the work contributes and be matched to the substantive body—not merely assert that “a general framework is presented.” If a blind reader can repeat the outage numbers but cannot explain what the mathematics promises, the opening has not succeeded. If a specialist can name the theorem but an outsider cannot name why the subject matters, it has not succeeded either.
 
 \
 TODO:
@@ -64,7 +69,7 @@ TODO:
 
 Opening motivation should use a recognizable intellectual situation: components are useful because they can be assembled, yet assembly changes which assumptions and dependencies matter. It should not begin with an obscure mathematical obstacle or a highly specialized synthetic example and imply that the audience has long been waiting for its solution.
 
-The opening must establish, in this order, the familiar idea, what becomes harder when it is generalized, the organizing move of the research, and what the resulting framework enables. Only then introduce the formal machinery. State one grand promise per article, and give the article a memorable identity; subordinate results should support that promise.
+Use the three-beat opening order above: one short statement of the general technical problem, one or two consequential examples, and a clear promise that the body will fulfill. Introduce the detailed formal machinery afterward. State one grand promise per article and give the article a memorable identity; subordinate results should support that promise.
 
 **Manufactured-problem test:** Remove the paper's most unusual example. If the introduction no longer gives a compelling reason to read the work, its motivation has been built backward from a proof.
 
