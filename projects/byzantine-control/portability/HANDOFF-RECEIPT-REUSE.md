@@ -1,0 +1,31 @@
+# When does a handoff preserve the receipt proof?
+
+**BC-PORT-RECEIPT-REUSE.** Synthetic bounded model: receiver and maintenance gate fixed, issuance and delivery timing allowed to change. See the [matched physical-source comparisons](REPEATED-PROOF-BURDEN.md) for the separate A80 and B evidence.
+
+The downstream proof was reusable in both formulations. The exact reuse boundary was also the same. A change could preserve completion of an already-issued receipt while removing the guarantee for a fresh receipt. The contextual formulation made clear that the timing check needs the joint history of readiness and shared capacity; a well-factored direct proof used that same history.
+
+## Fixed obligations and allowed edits
+
+This finite model isolates receipt propagation; it is not a replay of the physical A80 source. There are two separate scenarios: an already-issued receipt becomes ready for delivery, or a new request must produce and deliver a fresh receipt. In each scenario the receiver must settle its one job by the end of tick 2, without settling twice or displacing maintenance. The shared gate reserves exactly one tick, b in {1, 2}, for maintenance. Both values are admissible. A receipt ready at tick a can be held for an extra nonnegative delivery lag d. No ready receipt is represented by infinity. The receiver settles on the first available tick after readiness, including the readiness tick if free. It accepts only the one authorized receipt type for that scenario. Stale and forged inputs are outside this model.
+
+Each variant fixes readiness times for both scenarios and both maintenance timings, and fixes one delivery lag per maintenance timing, shared across scenarios. Readiness may be correlated with maintenance. The edit can remove fresh issuance, move a readiness time, or add a delivery hold. The gate and receiver remain unchanged. No controller learns the other source's private state from this proof; the analysis checks the actual joint execution.
+
+## Exact proof reuse boundary
+
+For a fixed maintenance tick b, let r = a + d, with infinity absorbing. The earliest settlement time is r unless r = b, in which case it is r + 1. With only one reserved tick, this implies settlement by tick 2 exactly when r < 2, or r = 2 and b is not 2. Apply the condition separately to both kinds of receipt, at every admissible b. The condition is necessary as well as sufficient: when it fails there is no permitted delivery tick before the deadline in that branch. At-most-once settlement and protection of maintenance follow from the unchanged receiver and gate for every variant, even ones without timely delivery.
+
+The contextual proof joins the readiness row to the unchanged gate on the actual maintenance tick, then checks the downstream receipt contract on the joined row. The direct proof factors through the same contract with a simple timed trace invariant: the receiver settles at most once and at the first ready, nonreserved tick. Neither proof needs to be rewritten. After changing the source, both need new evidence about the same readiness and capacity relation. This is a comparison of proof obligations against one factored baseline, not a measurement of human effort or a claim about every factoring.
+
+Exact for these two consumers: classify a variant by its two deadline truth values. Equal pairs allow the same two deadline conclusions; if pairs differ, one of the named obligations distinguishes them. This does not substitute for retaining receipt histories for additional consumers. See [Residual Profiles and Admission Reflection](https://github.com/eternal-november/eos-research-programmes/blob/e1348964f73704212d2d8b48d5982a5ed600a2ff/projects/contextual-composition/feedback-and-concurrency/observable-covers/Residual_Profiles_and_Admission_Reflection.tex#L84-L101) for the project’s general test for whether a new consumer descends through an existing profile.
+
+## Discriminating cases
+
+The baseline fresh receipt is ready at 2 if maintenance is at 1, and at 1 if maintenance is at 2. It always settles by 2. Swapping the readiness times leaves the same two marginal readiness times but yields one branch where readiness and maintenance both fall on tick 2. That branch settles at tick 3. The old obligation is unchanged. Removing fresh issuance altogether has the same old-pass/fresh-fail result for a different reason. A delivery hold can break both deadlines without changing when receipts were issued. A benign readiness change can alter the full timing trace without affecting either deadline.
+
+The executable comparison checked 5,625 variants, with four retained timed rows per variant. It compared a tick-by-tick direct execution, the factored gate join, and the exact deadline criterion. All agreed. Deadline classes: both pass 5, old only 70, fresh only 70, neither 5,480. These are counts in a deliberately exhaustive grid, not probabilities for field operation. The experiment establishes reuse and its limit in this model. It does not establish a saving over the direct proof: neither has to reopen the receiver, and both have to re-establish the same changed premise. To test amortization, the next comparison would have to transfer the proof across another installation with separately derived readiness and capacity constraints.
+
+An independent count checks the enumeration. At maintenance tick 1, the numbers of ready times that meet the deadline for lags 0, 1 and 2 are 2, 1 and 0; at tick 2 they are 1, 0 and 0. For a fixed pair of lags the product of these two counts is the number of passing readiness pairs for either receipt kind. The products sum to 3 across all lag pairs, so 3 × 25 = 75 variants pass each individual deadline. Their squares sum to 5, leaving 70 variants that pass only one *specified* deadline and 5,480 that pass neither.
+
+## Reproduction
+
+Run `node handoff_reuse.js` from this directory. The [dependency-free checker](handoff_reuse.js) exhausts readiness states `{none, 1, 2, 3, 4}` independently for both receipt kinds and both maintenance ticks, and lags `{0, 1, 2}` independently for the two maintenance ticks. It also checks the five discriminating cases separately. The run produces 5,625 variants and 22,500 timed rows. This is a finite executable check of the written argument above, not a proof-assistant replay.
