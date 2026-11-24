@@ -1,0 +1,167 @@
+{
+  "initial": "waiting",
+  "transitions": [
+    {
+      "state": "waiting",
+      "symbol": "early-open",
+      "next": "early-running",
+      "demand": 2
+    },
+    {
+      "state": "early-running",
+      "symbol": "early-close",
+      "next": "available",
+      "demand": 2
+    },
+    {
+      "state": "available",
+      "symbol": "retry-ticket",
+      "next": "retry-pending",
+      "demand": 0
+    },
+    {
+      "state": "available",
+      "symbol": "no-ticket",
+      "next": "available",
+      "demand": 0
+    },
+    {
+      "state": "available",
+      "symbol": "retry-tick",
+      "next": "available",
+      "demand": 0
+    },
+    {
+      "state": "retry-pending",
+      "symbol": "retry-tick",
+      "next": "available",
+      "demand": 1
+    },
+    {
+      "state": "available",
+      "symbol": "late-open",
+      "next": "late-running",
+      "demand": 1
+    },
+    {
+      "state": "late-running",
+      "symbol": "late-close",
+      "next": "waiting",
+      "demand": 1
+    }
+  ],
+  "worlds": [
+    {
+      "id": "empty-clean-received",
+      "partial": false,
+      "lost": false,
+      "symbols": [
+        "early-open",
+        "early-close",
+        "no-ticket",
+        "retry-tick",
+        "late-open",
+        "late-close"
+      ],
+      "provenance": "Enumerate independent setup choices: a D auxiliary ticket present or absent, a clean or obstructed H fixture, and a received or missing H report channel. This record uses ticket absent, clean, received. D reads its own auxiliary ticket inbox at the third half-slot; its controller clock supplies the other five symbols, including the retry tick regardless of inbox contents. The ticket is an optional auxiliary attempt outside both protected D windows, and neither its arrival nor its retry uses H evidence."
+    },
+    {
+      "id": "empty-clean-missing",
+      "partial": false,
+      "lost": true,
+      "symbols": [
+        "early-open",
+        "early-close",
+        "no-ticket",
+        "retry-tick",
+        "late-open",
+        "late-close"
+      ],
+      "provenance": "Enumerate independent setup choices: a D auxiliary ticket present or absent, a clean or obstructed H fixture, and a received or missing H report channel. This record uses ticket absent, clean, missing. D reads its own auxiliary ticket inbox at the third half-slot; its controller clock supplies the other five symbols, including the retry tick regardless of inbox contents. The ticket is an optional auxiliary attempt outside both protected D windows, and neither its arrival nor its retry uses H evidence."
+    },
+    {
+      "id": "empty-obstructed-received",
+      "partial": true,
+      "lost": false,
+      "symbols": [
+        "early-open",
+        "early-close",
+        "no-ticket",
+        "retry-tick",
+        "late-open",
+        "late-close"
+      ],
+      "provenance": "Enumerate independent setup choices: a D auxiliary ticket present or absent, a clean or obstructed H fixture, and a received or missing H report channel. This record uses ticket absent, obstructed, received. D reads its own auxiliary ticket inbox at the third half-slot; its controller clock supplies the other five symbols, including the retry tick regardless of inbox contents. The ticket is an optional auxiliary attempt outside both protected D windows, and neither its arrival nor its retry uses H evidence."
+    },
+    {
+      "id": "empty-obstructed-missing",
+      "partial": true,
+      "lost": true,
+      "symbols": [
+        "early-open",
+        "early-close",
+        "no-ticket",
+        "retry-tick",
+        "late-open",
+        "late-close"
+      ],
+      "provenance": "Enumerate independent setup choices: a D auxiliary ticket present or absent, a clean or obstructed H fixture, and a received or missing H report channel. This record uses ticket absent, obstructed, missing. D reads its own auxiliary ticket inbox at the third half-slot; its controller clock supplies the other five symbols, including the retry tick regardless of inbox contents. The ticket is an optional auxiliary attempt outside both protected D windows, and neither its arrival nor its retry uses H evidence."
+    },
+    {
+      "id": "ticket-clean-received",
+      "partial": false,
+      "lost": false,
+      "symbols": [
+        "early-open",
+        "early-close",
+        "retry-ticket",
+        "retry-tick",
+        "late-open",
+        "late-close"
+      ],
+      "provenance": "Enumerate independent setup choices: a D auxiliary ticket present or absent, a clean or obstructed H fixture, and a received or missing H report channel. This record uses ticket present, clean, received. D reads its own auxiliary ticket inbox at the third half-slot; its controller clock supplies the other five symbols, including the retry tick regardless of inbox contents. The ticket is an optional auxiliary attempt outside both protected D windows, and neither its arrival nor its retry uses H evidence."
+    },
+    {
+      "id": "ticket-clean-missing",
+      "partial": false,
+      "lost": true,
+      "symbols": [
+        "early-open",
+        "early-close",
+        "retry-ticket",
+        "retry-tick",
+        "late-open",
+        "late-close"
+      ],
+      "provenance": "Enumerate independent setup choices: a D auxiliary ticket present or absent, a clean or obstructed H fixture, and a received or missing H report channel. This record uses ticket present, clean, missing. D reads its own auxiliary ticket inbox at the third half-slot; its controller clock supplies the other five symbols, including the retry tick regardless of inbox contents. The ticket is an optional auxiliary attempt outside both protected D windows, and neither its arrival nor its retry uses H evidence."
+    },
+    {
+      "id": "ticket-obstructed-received",
+      "partial": true,
+      "lost": false,
+      "symbols": [
+        "early-open",
+        "early-close",
+        "retry-ticket",
+        "retry-tick",
+        "late-open",
+        "late-close"
+      ],
+      "provenance": "Enumerate independent setup choices: a D auxiliary ticket present or absent, a clean or obstructed H fixture, and a received or missing H report channel. This record uses ticket present, obstructed, received. D reads its own auxiliary ticket inbox at the third half-slot; its controller clock supplies the other five symbols, including the retry tick regardless of inbox contents. The ticket is an optional auxiliary attempt outside both protected D windows, and neither its arrival nor its retry uses H evidence."
+    },
+    {
+      "id": "ticket-obstructed-missing",
+      "partial": true,
+      "lost": true,
+      "symbols": [
+        "early-open",
+        "early-close",
+        "retry-ticket",
+        "retry-tick",
+        "late-open",
+        "late-close"
+      ],
+      "provenance": "Enumerate independent setup choices: a D auxiliary ticket present or absent, a clean or obstructed H fixture, and a received or missing H report channel. This record uses ticket present, obstructed, missing. D reads its own auxiliary ticket inbox at the third half-slot; its controller clock supplies the other five symbols, including the retry tick regardless of inbox contents. The ticket is an optional auxiliary attempt outside both protected D windows, and neither its arrival nor its retry uses H evidence."
+    }
+  ]
+}
