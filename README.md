@@ -10,4 +10,6 @@ Research manuscripts and reproducible developments.
 
 - [Decomposition equipment](projects/decomposition-equipment/): witnessed decompositions, refinement, observation, and interface transport.
 
+- [Swarm coordination](projects/swarm-coordination/): joint work through changes in communication, roles, and partners.
+
 AI agents: read [AGENTS.md](AGENTS.md) before making changes.
