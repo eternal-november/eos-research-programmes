@@ -1,0 +1,58 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Switching Evidence Channels During an Exclusive Bay Handoff}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Result.}
+An indoor cargo cart can switch from direct radio to any route that delivers a timely, decision-usable indication that an earlier bay commitment has settled. Return communication is not necessary here. A reverse-only channel, an identity-free beacon and isolation can all leave the same uncertainty at the decision. The exact obstruction is not absence of electromagnetic traffic. It is a remaining reachable history in which the old holder is not yet released and no observation available to the incoming cart rules that history out.
+
+\section{Plant, observations and commitment}
+A and B serve a warehouse through one capacity-one, screened bay. At $-2$, the old schedule either has no remaining bay use or vests a use in A; the old admission window then closes. If present, A enters at $-1$ and remains physically in the bay on $[-1,k)$ for integer $1\le k\le K$. Otherwise put $k=0$. At the same initial cut B is owed one new bay crossing completing by $D$; it takes $c$ ticks from the entry cut. The old occupation is non-preemptible and A cannot issue a new old-window admission after closure. The transition law additionally requires the epoch acknowledgement at A before B may enter. A's acknowledgment permanently switches its local authority to the already agreed B epoch and cannot be withdrawn during this batch. Early entry over unresolved physical work would violate exclusive use. No independent arbiter can grant a one-shot probe or report a rejected attempt in the decision aperture. Access by both carts outside the admitted model, unbounded occupation, clock drift, false settlement labels and Byzantine behavior are excluded.
+
+At tick 0 the communication context changes. Cart A observes its local transition authorization at $a$ in $[0,A_{\max}]$; B independently observes its order activation at $b$ in $[0,B_{\max}]$. Authorization is not a blanket physical release. A knows its own completed work and may publish a record only after both its authorization and drain. B sees its activation, own clock, fixed route/batch, cache and delivered evidence. It cannot see inside the screened lane or read A's occupancy or clocked notice. Both start with known envelope parameters and a common origin, with exact clocks in the model. Old cached data and a valid message for a different bay are not current authority. The controller can recognize the context from the evidence, not from the simulator's channel or fault label. A publishes only once to the available adapter(s), and never needs an acknowledgment from B to keep the grant valid. A stale or missing notification to B cannot authorize new work.
+
+\section{Classification by what can reach a deadline}
+An admissible input to the B guard names the source of authority, destination, bay, epoch and owed order. The modeled source is trusted, or the same result needs a separately proved authenticated binding. Delivery is usable only by the latest entry $D-c$. Its semantic content must imply both A's permanent exclusion and actual release, not present vacancy alone; a fresh transmission of the same fact needs no new physical state change. In the following table FF means usable in the A-to-B direction conditional on the stated sample/contact and context. Timing bounds are stipulated in simulator ticks, not modality specifications or field measurements.
+
+\begin{center}
+\begin{tabular}{p{.27\linewidth}p{.29\linewidth}p{.31\linewidth}}
+Mechanism & Direction and timing & Usable evidence or limit \\ \hline
+Duplex RF & A to B and B to A; modeled local delivery phase & FF; the reverse leg is spare in this batch \\
+Optical glyph & A to B if in view; one-tick readable display & FF only if attributable to the required order and source \\
+Coded acoustic signal & A to B here; two-tick decode & FF if the addressed code is distinguishable; unbound tone is not sufficient \\
+Dock exchange & Meeting events only; phase 0 every three ticks, then one-tick delivery & Intermittent FF; a missed contact can leave no usable token by the entry cut \\
+Persistent marked state & A writes; B samples at even cuts & Asynchronous FF; stale epoch marks explicitly rejected \\
+Local interlock read & Installed phase proof visible at start cut & A physical evidence channel if notified drain is in its guard; not a live addressed message \\
+Reverse-only RF & B can ask but nothing returns before decision & No FF for B; request delivery is not evidence of clearance \\
+Partition or no route & No A-to-B evidence crosses the cut & No FF; no assumption all other crews perceive isolation \\
+Anonymous visible or audible activity & Dynamic but context-free observation & No FF in screened plant. A truthful authored gesture with bound meaning could instead carry it \\
+\end{tabular}
+\end{center}
+
+An interlock that only senses present emptiness, an incidental movement of a cart, or a schedule fixed before the incident is not a received clearance. A static bound can license an action without shared evidence, but with different guarantees and potentially slower service. Coverage changes, sampling phase, contact occurrence, retries and ambiguity define what the mechanism delivers, not the modality label. Multiple bounded routes would let B accept the first valid record; quantifying over actual delivery choices rather than choosing a route with advance knowledge is essential. No general multimodal equivalence or authentication scheme is claimed.
+
+\section{Installed switching rule and its limit}
+Set $H=\max(A_{\max},K)$. A checks its local grant and actual completion, then publishes, without changing either a binding old promise or B's service obligation. B waits for its activation; afterwards it enters at the first cut with either a matching clearance record or $t\ge H$. Both parties may already have changed regime while the other has not. In the latter branch B uses a priori timing only. If $H$ were unbounded there would be no finite time-based fallback in the absence of timely evidence.
+
+For a periodic adapter with period $p$, phase $\phi$ and transit $\ell$, set
+\[
+q = \max(a,k),\qquad
+s(q)=q+(\phi-q)\bmod p,\qquad e=s(q)+\ell.
+\]
+With no valid delivery take $e=\infty$. For this model the installed policy completes at
+\[
+                          c+\max\{b,\min(e,H)\}.
+\]
+The lower bound holds uniformly for the stated observation model, not just against this controller. Before activation, entry is disallowed. A matched delivered record proves both facts. At any earlier unlicensed cut $t < \min(e,H)$ there is no valid record in the actual B history. Construct a second admitted history with the same activation, stale and wrong-context data and uninformative visible cues, but with an A delay or an old occupation reaching $H$. Its legitimate publication cannot have arrived by $t$ even in duplex mode; B cannot distinguish it by silence. Entry is unsafe or unauthorized in that second history. Thus even a private randomized policy with guaranteed safety cannot advance the first action. This also explains why late acknowledgments, physical clear without a proof, or knowing only a change in channel name do not suffice. The claim relies on a rate-independent absence of other usable cues, and on the extremal history being enabled. A publicly known richer roster, independent current mechanical guard or bounded station observation may shrink these belief sets.
+
+\paragraph{Matched controls.}
+The replay keeps $a=1$, $b=2$, $c=1$ and $H=5$. For deadline 4 the same optical destination completes at tick 3 if the old use is absent and at 6 if the old use holds to 5. The policy and timed destination interface are identical. For $k=2$ and deadline 5 the required same one-tick B crossing succeeds across duplex radio, optical, acoustic, dock, mark and interlock, with distinct evidence and delivery events. In the reverse, isolation and anonymous cases nothing valid reaches B; for deadline 4 the $k=0$ and $k=5$ prefixes are indistinguishable through the last service start at 3, and no uniformly safe policy can maintain that deadline in the empty run. The simulator logs the absence of an A-to-B delivery in those modes; a retained pre-transition cache is not a new delivery. Late settlement and legal lack of new work are never reported as meeting the service deadline.
+
+The independent reference enumerates legal A publication, contact and B entry times, without consuming the event scheduler's outputs. The event simulation starts with reached vesting, old physical use, actual sampled forwarding and separately staggered notices. It matches the reference over 4,536 combinations, and an independent no-evidence history calculation checks the sharp cut. This is deterministic finite evidence; the indistinguishability and completion bounds above give the parameter argument under their hypotheses.
+
+\paragraph{Comparators and boundary.}
+\href{https://arxiv.org/abs/1603.02023}{Zhang and Cai, Supervisor Localization of Timed Discrete-Event Systems under Partial Observation and Communication Delay}, localize timed partially observed supervisors and represent bounded or unbounded event delay. The direct local interlock and observation-class guard here is an ordinary timed discrete-event comparator, with a matching proof; no improvement over supervisor localization is claimed. \href{https://arxiv.org/abs/1609.07038}{Kantaros and Zavlanos, Simultaneous Intermittent Communication Control and Path Optimization}, co-design meeting schedules and robot routes under intermittent connectivity. Our dock contacts are fixed by the scenario. The same contact-scheduling machinery could supply them, but contact must still transfer a correctly named release early enough, and scheduled connectivity by itself does not prove that an old bay use is settled. Congestion, real optics, acoustic interference, feedback control, open-world identities and arbitrary multi-vehicle topology are outside this assurance. The result is a reachability and realizability calculation for this civil handoff, not a priority or field validation claim.
+\end{document}

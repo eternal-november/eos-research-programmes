@@ -56,9 +56,13 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-SPARE-SLOTS: When does a role handoff leave room for new work?** With authority held at an interlock and unit-length work using named worker-time slots, the exact admission profile records which slots can be spared together. Profiles combine across disjoint groups of old duties. Two matched histories with identical incoming authority and capacities disagree on a new admission because an earlier closure needs the relay's backup worker in only one history. A later public observation can invalidate the fixed-schedule model without invalidating a causal policy. The direct matching proof ties. [Proof](role-changes/spare-slots/Role_Changes_With_Pending_Work.tex) · [Replay notes](role-changes/spare-slots/README.md) · [Checker](role-changes/spare-slots/replay.py). From that directory: `python3 -B replay.py --verify | cmp results.json`.
 
+**SC-GUARDED-ROLE: When must a promotion wait for a duty already owed?** Switching the gate and moving an old holder-bound ticket is one guarded action. An intact ticket can transfer; when it cannot, the previous bearer discharges it and the same promotion takes effect later. Relay and unrelated closures continue. [Proof](role-changes/guarded-transition/Guarded_Role_Transition.tex) · [Replay](role-changes/guarded-transition/README.md).
+
 ## Partner substitution
 
 **SC-TIMELY-CLEARANCE: When can a replacement instrument preserve an installed service proof?** A partial sensor bank supplies the clearance certificate used by an unchanged receiver while older jobs hold physical reservations. Delivering the same certificate one tick later meets the standalone deadline but fails joint service. With any r lanes occupied, one service lane requires exactly r+1 distinguishable timely reports; two simultaneous lanes give a different exact bound. The factored direct proof reuses the same checks. [Proof](partner-substitution/timely-clearance/Certified_Lane_Substitution.tex) · [Replay notes](partner-substitution/timely-clearance/README.md) · [Checker](partner-substitution/timely-clearance/replay.py). From that directory: `python3 -B replay.py --verify | cmp results.json`.
+
+**SC-SEPARATE-PROVIDERS: Can independently implemented sensors use the same receiving rule?** Full and restricted providers cross the same clearance boundary without reading one another's state. A late provider passes the standalone contract and fails the joint deadline. [Proof](partner-substitution/separate-providers/Separate_Clearance_Providers.tex) · [Replay](partner-substitution/separate-providers/README.md).
 
 ## Forecast preparation
 
@@ -75,3 +79,19 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 ## Local perception
 
 **SC-ANONYMOUS-BEARING: How much local history certifies safe entry without messages?** Two complete anonymous bearing frames distinguish safe entry in a finite two-peer crossing even with merged silhouettes. A frame clipped by the observation envelope can hide a decisive track. An explicit tracker and full direct temporal processing tie. [Proof](local-perception/anonymous-bearing/Anonymous_Bearing_and_Crossing.tex) · [Replay](local-perception/anonymous-bearing/README.md).
+
+## Communication changes
+
+**SC-MULTIMODAL-HANDOFF: When is a report usable for entry after communication changes?** Identity, direction and delivery time determine whether a clearance can shorten a handoff. In the absence of evidence, the bound uses the verified physical drain time, and identical current channel states can still have different waits. [Proof](communication/multimodal-bay/Multimodal_Bay_Handoff.tex) · [Replay](communication/multimodal-bay/README.md).
+
+## Active evidence
+
+**SC-PROBE-COMPLEMENTARITY: When are two private probes worth buying together?** Each probe can fail to pay its own cost while both enable timely joint service. Earlier commitments restrict probe and bypass availability; a separate conservative reservation has an explicit opportunity cost. [Proof](active-evidence/probe-complementarity/Probe_Complementarity.tex) · [Replay](active-evidence/probe-complementarity/README.md).
+
+## Multiple owners
+
+**SC-LANE-WITHDRAWAL: When can a successor start after an owner withdraws?** Port-side authority and physical clearance are different: a prior start can stay live after revocation. A receipt-only rule, a timeout and an independent reserve have different service consequences. [Proof](multi-owner-coordination/lane-withdrawal/Withdrawal_With_Live_Lane_Use.tex) · [Replay](multi-owner-coordination/lane-withdrawal/README.md).
+
+## Cross-group agreements
+
+**SC-ORDERED-ACCESS: Can identical allocations allow different blocking coalitions?** Swapping the order of access rights can change a feasible coalition deviation without changing current jobs or payoff. Earliest feasible completion preserves the stated stability tests. [Proof](cross-group-agreements/ordered-access/Access_Windows_And_Blocking.tex) · [Replay](cross-group-agreements/ordered-access/README.md).
