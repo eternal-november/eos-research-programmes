@@ -2,7 +2,7 @@
 
 How can groups keep doing joint work while communication, roles, and partners change and earlier commitments still bind?
 
-The [research contract (v0.5)](Swarm_Coordination_Research_Contract_v0_5.tex) and [cascade acceptance protocol (v0.5)](Cascade_Acceptance_Protocol_v0_5.tex) are provisional.
+The [research contract (v0.5)](contracts/Swarm_Coordination_Research_Contract_v0_5.tex) and [cascade acceptance protocol (v0.5)](contracts/Cascade_Acceptance_Protocol_v0_5.tex) are provisional.
 
 Use Byzantine Control’s [fault inventory](../byzantine-control/FAULT-COVERAGE.md) to choose tests by mechanism, including stale information, pending work, and interacting timing changes. Check each mechanism against the swarm model before admitting it. The inventory is not an exhaustive list of swarm faults, and no cases have been selected or frozen here.
 
