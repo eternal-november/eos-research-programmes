@@ -21,3 +21,11 @@ These are conditional results for finite models. They neither validate a physica
 ## Connected handoff
 
 **SC-CONNECTED: How far does the same request for relief have to travel?** Two reached cuts in the finite model give crew 0 the same request and deadline. A settled load lets the first receiving crew take over in one cut; a retained load requires a third crew in the other. An unrelated live load beyond the first free receiver stays untouched. With one-tick transfers and authorization sent only along the occupied chain, the earliest relief is the sum of the hop delays plus one tick per transfer. Factored matching and timing checks give the same answer. This is a calibration, not v0.5 cascade acceptance. [Model and proof](connected-handoff/Connected_Handoff_Locality_Pilot.tex) · [Replay instructions](connected-handoff/README.md) · [Checker](connected-handoff/pilot.py). From that directory: `python3 -B pilot.py --json | cmp results.json`.
+
+## Distributed repair
+
+**SC-TWO-BAY: When does a local hardware change require another crew to change its policy?** Two crews must deliver their held loads to different bays. Reversing one guide in both fixture modes leaves the other crew's feasible policy tables unchanged. Reversing it in only one mode forces a change to that crew's table, although either policy entry can stay unchanged in some repair. The exact joint relation detects the change; checking one entry at a time does not. The factored direct comparator gives the same result. [Model and proof](distributed-repair/two-bay/Distributed_Repair_Search_Pilot.tex) · [Checker](distributed-repair/two-bay/pilot.py).
+
+**SC-FORK: When does a timely receipt make a fixed local policy possible?** In two reached cuts, one crew needs opposite actions under the same local view. A receipt before commitment separates the cuts; the same receipt after commitment does not. [Regression and proof](distributed-repair/fork-relief/Fork_Relief_Policy_Search.tex) · [Checker](distributed-repair/fork-relief/pilot.py).
+
+From either study directory, run `python3 -B pilot.py --json | cmp results.json` to replay the saved checks. These are finite model results, not v0.5 cascade acceptance.
