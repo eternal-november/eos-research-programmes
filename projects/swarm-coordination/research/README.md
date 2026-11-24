@@ -103,3 +103,7 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 ## Cross-group agreements
 
 **SC-ORDERED-ACCESS: Can identical allocations allow different blocking coalitions?** Swapping the order of access rights can change a feasible coalition deviation without changing current jobs or payoff. Earliest feasible completion preserves the stated stability tests. [Proof](cross-group-agreements/ordered-access/Access_Windows_And_Blocking.tex) · [Replay](cross-group-agreements/ordered-access/README.md).
+
+## Formation recovery
+
+**SC-CORRIDOR-CRASH: Can a single-file radio chain reconnect after a dead robot blocks the lane?** For fixed order, known positions and speed-bounded motion, an exact interval scan decides safe recovery by a deadline. Clearance holds through the motion; initial loss of radio connectivity is allowed. Integer propagation and the real affine motion lemmas check in Lean; a continuous LP corroborates the deadline calculation. [Statement and proof](formation-recovery/corridor-crash/Corridor_Formation_Recovery.tex) · [Replay and scope](formation-recovery/corridor-crash/README.md).
