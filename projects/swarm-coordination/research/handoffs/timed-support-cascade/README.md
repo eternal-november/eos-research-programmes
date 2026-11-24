@@ -10,12 +10,6 @@ The frozen receiver comparison keeps the named receipt and support reads, not ju
 - [Frozen receiver proof, domains, and comparison](swarm-c11-interface/Receiver_Interface.tex)
 - [Independent selection and proof transfer](swarm-c11-transfer/Transfer.tex) · [Selection](swarm-c11-transfer/SELECTION.txt)
 
-From this directory run:
-
-```sh
-(cd swarm-c11-primary && sha256sum -c SHA256SUMS && python3 -B replay.py | cmp results.json)
-(cd swarm-c11-interface && sha256sum -c SHA256SUMS && python3 -B interface.py | cmp checks.json)
-(cd swarm-c11-transfer && sha256sum -c SHA256SUMS && python3 -B transfer.py | cmp results.json)
-```
+From this directory, run `python3 -B verify.py`. It replays all three studies in a temporary directory, verifies the expected hashes of the generated detailed traces and witness maps, and compares the saved summaries byte for byte. The check does not modify the checkout.
 
 The results establish a cascade, a repair under the stated precommitment law, and a receiver proof transfer for this finite simulated plant. They do not establish a whole-plant equivalence or complete v0.5 cascade acceptance.
