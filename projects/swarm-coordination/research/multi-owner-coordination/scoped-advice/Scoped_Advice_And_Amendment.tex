@@ -1,0 +1,88 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Amending query authority after a private mission handoff}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Problem.}
+Use the fixed-law civil inspection source from \emph{How much exposure
+history must survive a change of risk cap?} The holder keeps a set
+\(S\subseteq V\) of sites with live exposure, where \(|V|=n\) and
+\(|S|=k\) are public. Exact admission of a proposed next site \(q\)
+under the tight cap is equivalent to \(q\in S\).
+Two compliant actors may cooperate without a common controller.
+A handoff authorizes a recipient to query only a set \(Q\).
+Equal old answers give an agreed confidentiality condition: if two
+histories agree on all queries in \(Q\), the report sent at the
+handoff shall not distinguish them. This condition concerns what is
+disclosed by this interface, with public count and parameters held fixed;
+it is not cryptographic security against other available information.
+The report and proposed expansion are truthful throughout.
+
+\paragraph{Exact retained profile.}
+The coarsest exact report answering \(Q\) is \(P=S\cap Q\):
+different such intersections differ on an authorized query,
+and this report suffices for every one. Together with the confidentiality
+condition, this determines the attained distinctions exactly.
+If \(|Q|=a\), the number of attainable profiles is
+\[
+  \sum_{i=\max(0,k-(n-a))}^{\min(k,a)} \binom ai.
+\]
+Each allowed \(i\)-subset of \(Q\) can be filled out with \(k-i\)
+sites outside \(Q\); no other profile is attainable. Encoding its rank
+attains the corresponding fixed-width bit bound.
+
+\paragraph{Changing the authority is not changing the evidence.}
+Let \(C=V\setminus Q\), \(c=|C|\), and let \(m=k-|P|\) be the
+known number of old exposures outside \(Q\). A valid amendment grants
+a batch \(R\subseteq C\) of new predicates. Suppose the recipient is
+still limited to the old report and public metadata, with no new
+plant observation or contact with a source that kept the old history.
+If \(m=0\) or \(m=c\), every new response is forced by the count.
+Otherwise every \(q\in C\) is undecidable from the old report alone:
+choose an admissible completion containing \(q\) and one not containing
+it, by swapping two outside labels. For example,
+\(\{0,2\}\) and \(\{0,3\}\) give the same report under \(Q=\{0,1\}\),
+but query \(2\) needs opposed decisions. Both actors complied with the
+old rules and all permissions were valid. The obstruction is missing
+lawfully retained information, not deceit or loss of physical control.
+
+If the source can send one new report before the decision and need
+not disclose more than the newly authorized predicates, the exact
+supplement is \(S\cap R\). For \(b=|R|\), given the old profile,
+the number of distinct supplemental states is precisely
+\[
+  \sum_{i=\max(0,m-(c-b))}^{\min(m,b)} \binom bi .
+\]
+The same argument as before proves attainment and separation.
+This gives a design alternative: retain the original history at an
+authorized supplier, then supply just the new predicates after valid
+amendment. It preserves the old interface's confidentiality but
+requires functioning timely contact. Keeping an unrestricted report
+with the recipient before amendment does not generally preserve that
+confidentiality. Delaying recognition of the authority is a different
+failure from recognizing it without the evidence to exercise it.
+
+\paragraph{Contract scope and evidence.}
+The two reports are an explicit application of the residual-profile
+test construction: the primitive query family changes with the
+authorized scope, so the refinement that adds distinctions need not
+factor through the old retained report. Direct masked-set tracking
+produces the same answer. \href{https://doi.org/10.1145/300830.300839}{ARBAC97}
+models administrative modification of ordinary access relations; its
+role update by itself supplies no missing mission history. We did not
+replay an implementation of its entire authorization model. This is an
+R5 limited-trust and R4 exact-admission boundary, not a claim about
+dishonest actors, preferences, authentication, or full integration.
+Whether a plant supplies a fresh local affidavit in time remains a
+source obligation. No gain over equally factored direct tracking is claimed.
+
+The Lean file proves the exact equivalence of profiles and authorized
+answers, the preserved-profile swap, and the obstruction for exact
+decoding after lawful expansion. Exhaustive finite comparisons checked
+157,464 already permitted queries, 103,336 singleton amendments,
+and 9,216 batches including varying available old counts. The binomial
+formula is proved above and replayed, not formalized in Lean here.
+\end{document}
