@@ -1,5 +1,7 @@
 # Swarm coordination research
 
+The [v0.5 completion review](COMPLETION.md) maps each written obligation to the corresponding proof and checks and states the limits of the results.
+
 Use Byzantine Control’s [fault inventory](../../byzantine-control/FAULT-COVERAGE.md) to choose tests by mechanism, including stale information, pending work, and interacting timing changes. Check each mechanism against the swarm model before admitting it. The inventory is not an exhaustive list of swarm faults, and neither inventory selects or freezes contract tests.
 
 Two existing negative controls help calibrate the tests: the [synthetic handoff comparison](../../byzantine-control/portability/HANDOFF-RECEIPT-REUSE.md) shows a tie with a factored direct proof; the [B receiver regression](../../byzantine-control/portability/B-RECEIPT-TICK.md) checks two timing changes that fail together at a supplied receiver state. Neither is a swarm result.
@@ -42,6 +44,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-RISK-REVISION: When does a revised risk cap bind work already admitted?** A later receipt can leave an expedited admission legal when it is made and still fail the revised cap if the exposure remains unresolved. Exempting an old commitment is a different rule. Timely relaxation recovers fast service on a reached cut; a tightening after an irrevocable reserve lock may be impossible to satisfy. [Proof](joint-risk/risk-cap-revision/Risk_Cap_Revision.tex) · [Replay](joint-risk/risk-cap-revision/README.md). This is an exact finite model, not a claim about field risk.
 
+**SC-RECURRENT-RISK: When do repeated changes in evidence preserve a joint risk certificate?** Separate crew factors combine if the retained mode and survivor mass account for the joint dependence. A correlated censor can break the rule even when reported marginals match. Timely joint evidence can change the actual reserve choice. [Proof](joint-risk/recurrent-certificates/Recurrent_Risk_Certificates.tex) · [Replay](joint-risk/recurrent-certificates/README.md).
+
 ## Recurrent coordination
 
 **SC-SETTLEMENT-FRONTIER: Which old receipts can a gate forget after rejoin?** For one fixed issuer with consecutive immutable IDs, the settled prefix and receipts above it reproduce exact admission; merging them agrees with union of learned facts. At the worst fixed counters, a reorder window of width B needs exactly B−1 more bits. Capping unresolved duties at three still allows 2n−2 distinguishable receipt states after n issues. A stalled first receipt can block issuance, and receipt merge does not reorder physical transfers. This is a finite protocol result, not a liveness theorem, full C2 acceptance, or an advantage over direct frontier tracking. [Proof](recurrent-coordination/settlement-frontiers/Settlement_Frontiers_Across_Rejoins.tex) · [Replay notes](recurrent-coordination/settlement-frontiers/README.md) · [Checker](recurrent-coordination/settlement-frontiers/pilot.py). From that directory: `python3 -B pilot.py --json | cmp results.json`.
@@ -67,6 +71,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 ## Forecast preparation
 
 **SC-FORECAST-CLEARANCE: When should a warning trigger preparation rather than avoidance?** The existing two-handoff scheduler determines whether an installation can use the spare slot without displacing old closures or relay coverage. With two matched forecast laws, optimized choices use both preparation and a separate detour below a sharp cost boundary for diversion. A late clearance loses the preparation option even on physically feasible runs; an independent gate can restore it by conditional authorization. A detour that competes with the relay is a distinct capacity failure. The factored direct proof ties. [Proof](forecast-preparation/inherited-work/Forecast_Preparation_With_Live_Duties.tex) · [Replay notes](forecast-preparation/inherited-work/README.md) · [Checker](forecast-preparation/inherited-work/replay.py). From that directory: `python3 -B replay.py --verify | cmp results.json`.
+
+**SC-FORECAST-CONTROLS: When does preparation still pay with delayed or mistaken warnings?** Matched controls vary recipient, lead, errors, costs and reversal. Releasing a preparation can restore a route option, not its sunk slot or cost. [Proof](forecast-preparation/forecast-controls/Forecast_Control_Comparisons.tex) · [Replay](forecast-preparation/forecast-controls/README.md).
 
 ## Live synthesis
 
