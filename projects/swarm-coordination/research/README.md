@@ -102,6 +102,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-LANE-WITHDRAWAL: When can a successor start after an owner withdraws?** Port-side authority and physical clearance are different: a prior start can stay live after revocation. A receipt-only rule, a timeout and an independent reserve have different service consequences. [Proof](multi-owner-coordination/lane-withdrawal/Withdrawal_With_Live_Lane_Use.tex) · [Replay](multi-owner-coordination/lane-withdrawal/README.md).
 
+**SC-SCOPED-ADVICE: Does a lawful expansion of permissions make the old report sufficient?** Exact admission under restricted disclosure retains only the currently authorized history predicates. A later grant can demand a distinction the old report deliberately omitted; the count of supplemental report states is exact. Lean checks the authorized profile and recovery obstruction. [Proof](multi-owner-coordination/scoped-advice/Scoped_Advice_And_Amendment.tex) · [Replay and scope](multi-owner-coordination/scoped-advice/README.md).
+
 ## Cross-group agreements
 
 **SC-ORDERED-ACCESS: Can identical allocations allow different blocking coalitions?** Swapping the order of access rights can change a feasible coalition deviation without changing current jobs or payoff. Earliest feasible completion preserves the stated stability tests. [Proof](cross-group-agreements/ordered-access/Access_Windows_And_Blocking.tex) · [Replay](cross-group-agreements/ordered-access/README.md).
