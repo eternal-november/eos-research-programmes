@@ -59,3 +59,7 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 ## Forecast preparation
 
 **SC-FORECAST-CLEARANCE: When should a warning trigger preparation rather than avoidance?** The existing two-handoff scheduler determines whether an installation can use the spare slot without displacing old closures or relay coverage. With two matched forecast laws, optimized choices use both preparation and a separate detour below a sharp cost boundary for diversion. A late clearance loses the preparation option even on physically feasible runs; an independent gate can restore it by conditional authorization. A detour that competes with the relay is a distinct capacity failure. The factored direct proof ties. [Proof](forecast-preparation/inherited-work/Forecast_Preparation_With_Live_Duties.tex) · [Replay notes](forecast-preparation/inherited-work/README.md) · [Checker](forecast-preparation/inherited-work/replay.py). From that directory: `python3 -B replay.py --verify | cmp results.json`.
+
+## Live synthesis
+
+**SC-LIVE-DISPATCH: Can a verified policy be installed while earlier work continues?** Keeping one staging support free lets a compiler install a policy for a late fixture configuration and gain one tick of service. A catalogue of separate fixed images and a scalar replanner both have exact limitations under the declared interfaces; a general compiler ties. Holding the support costs one optional admission. [Argument](live-synthesis/dispatch-policy/Live_Latch_Policy_Synthesis.tex) · [Replay](live-synthesis/dispatch-policy/README.md).
