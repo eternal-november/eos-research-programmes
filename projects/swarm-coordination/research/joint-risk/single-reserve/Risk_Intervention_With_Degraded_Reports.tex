@@ -1,0 +1,44 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\title{A single-use reserve under degraded evidence}
+\author{}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+\paragraph{What changes.}
+Retain the two-report model: fair, independent binary states at tick 0, independent flips of probability $1/8$, two fixed candidate report laws, and the public monitoring policy that retries the shared channel only after a first miss. For the shared channel, $+$ assigns missing probabilities $3/4$ and $1/4$ to equal and unequal states respectively, and $-$ reverses them. Plain reporting is a fair bit independent of the state. The law is fixed before the run and is not observed. This is a new dispatch model, not the previous two-failure-cell model on the same loss. Both dispatches are owed by their assigned times, ticks 3 and 4. $X=1$ means the first support's guide is in a mode that neither receiver can use. $Y$ represents the second support's guide orientation: two different, opposite-facing receivers admit exactly one orientation each, $Y=0$ for the first receiver and $Y=1$ for the second. Consequently the ordinary joint-loss sites are $(1,1)$ for the first and $(1,0)$ for the second. This route geometry is a stipulated finite-model assumption; it is not a renaming conditioned on the report.
+
+A perfect, locally compatible reserve can protect exactly one dispatch if precommitted at tick 2. It is immune to these modeled loss modes, has no effect on the other slot or the state transitions, and cannot be reallocated after commitment. Neither dispatch may be canceled to meet the risk bound. If the reserve is committed, exactly one dispatch is exposed, so the conditional probability of any physical loss equals the exposed dispatch's hazard. There is no survivor-only conditioning. Conditional bounds refer to the probability of future loss given each actual positive-probability observation history at commitment and each of the two fixed laws; ex-ante risk refers to the same physical loss integrated over histories.
+
+\section{No coarse-information policy meets the bound}
+Let $d=P_{11}-1/4$ at tick 2 conditional on the report word. The public likelihoods and the state law are invariant under simultaneous bit complementation, so each conditional local marginal is $1/2$. Complementing only $Y$ instead interchanges the two reporting laws while preserving all report-word probabilities and reversing $d$. The transition attenuates $d$ by $\lambda=(1-2/8)^2=9/16$ per tick. Thus the two unprotected hazards are
+\[
+p_3=\tfrac14+\lambda d,\qquad
+p_4=\tfrac14-\lambda^2d.
+\]
+After two misses the common report mass is $73/256$ and the two $d$ values are $\pm25/146$. If the law were known, protecting tick 3 under $+$ or tick 4 under $-$ gives respectively $7319/37376$ and $359/2336$, both below $1/5$.
+
+The same report word must induce the same reserve choice under both laws, including the same conditional probability $r$ of protecting tick 3 if private randomization independent of the state is allowed. The risk is
+\[
+r p_4+(1-r)p_3=\tfrac14+[\lambda-r(\lambda+\lambda^2)]d.
+\]
+The maximum of the two symmetric affine risks on the two-miss history is at least $1/4$; $r=16/25$ attains it. No randomization, nor access to the exact local marginals, meets the $1/5$ conditional target under both laws. The law-independent minimax rule attains $1/4$ on every word. Moreover, any word-dependent randomized policy has ex-ante per-law risks averaging $1/4$ across the laws, because the report words have identical masses and opposite interactions. This is a comparison of two whole laws, not a model that switches law after a report.
+
+\section{The value and deadline of a joint measurement}
+Suppose a stipulated comparator directly checks whether the two keyed guides are in the same relative orientation at tick 2 and returns a truthful shared bit before commitment. Its availability, communication and accuracy are extra interface requirements. Global simultaneous complementation still gives fair marginals conditional on the report and parity. The interaction is then $+1/4$ for equal guides, $-1/4$ for unequal guides, under either law. Protect tick 3 for equal and tick 4 for unequal. The resulting risks are respectively $175/1024$ and $7/64$, below $1/5$ on every positive report-plus-parity history. The ex-ante risk under either law is $287/2048$, since both parities have probability $1/2$ before the reports. Here the measurement changes actual reserve placement and hence physical risk, not merely the reported certificate. A late reading that arrives after the reserve commitment, or no reading, leaves the coarse impossibility in force.
+
+Truthfully revealing $X_2$ instead does not suffice. On two misses and $X_2=1$ both laws give this combined observation mass $73/512$. At that observation, the two-law average of the tick-3 hazards is $7/16$, and of the tick-4 hazards $25/64$. Any fixed mixed action has worst-law risk above $1/5$. One bit is enough in this model, but its information about the control-relevant interaction matters. Adding a second independently effective reserve would trivially protect both dispatches with no bit; this is a different resource budget, not an alternative policy within the original one.
+
+\paragraph{A calibrated noisy parity bit.}
+Let the timely parity bit be independently flipped with the same known probability $e\in[0,1/2]$ in both laws. Conditional on a coarse report word, let $g$ be the probability of true equal guides, and let $G$ be its updated probability after the parity reading. Now $d=(2G-1)/4$. For a reported equality, the policy that protects tick 3 meets the budget iff $G\ge661/810$. For reported inequality, protecting tick 4 requires $1-G\ge61/90$. Bayes gives equality confidence
+\[
+\frac{g(1-e)}{g(1-e)+(1-g)e}.
+\]
+The analogous formula for reported inequality replaces $g$ by $1-g$. The smallest prior confidence for either event across both laws and all words is $23/146$, attained on two misses. The equality requirement is tighter, giving the sharp bound $e\le3427/84730$. For necessity beyond this point, examine two misses and a reported equality. At fixed $g$ strictly between 0 and 1, the equality confidence decreases strictly with $e$ (its derivative is $-g(1-g)$ divided by the squared denominator). Thus the adverse law's equality confidence is below $661/810$ for every larger $e$ in the declared range. If the confidence is still at least $1/2$, its best pure action already exceeds the target, and every mixture is no better. Otherwise the two laws give opposite signs of interaction (the other law remains above $1/2$), and mixing cannot lower worst-law risk below $1/4$. This proof presumes the declared independent calibration and a bit delivered on time, not an arbitrary error process with the same mean error.
+
+\section{Comparison and replay}
+The exact factored direct comparator is a two-line minimax envelope at each actual observation; at most the two endpoints and their intersection need evaluation. Rational forward filtering and direct trajectory enumeration agree, including the one-read feasibility boundary. Keeping the paired hidden trajectories instead of product marginals preserves the needed interaction, but gives no demonstrated advantage over direct Bayes and finite minimax analysis. This is a decision-and-evidence theorem in a stipulated finite service model, not a physical recommendation, wider robustness claim, or closure of the whole C6 programme.
+
+Replay with Python 3.12 and \texttt{python3 -B pilot.py --json | cmp results.json}.
+\end{document}
