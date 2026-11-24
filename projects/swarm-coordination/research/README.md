@@ -88,6 +88,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Communication changes
 
+[Communication and observation regimes](communication/Communication_Regimes.tex) is a working reference for choosing assumptions and comparison cases, including non-radio modalities and enclosed spaces. It is not an exhaustive inventory or a contract obligation.
+
 **SC-MULTIMODAL-HANDOFF: When is a report usable for entry after communication changes?** Identity, direction and delivery time determine whether a clearance can shorten a handoff. In the absence of evidence, the bound uses the verified physical drain time, and identical current channel states can still have different waits. [Proof](communication/multimodal-bay/Multimodal_Bay_Handoff.tex) · [Replay](communication/multimodal-bay/README.md).
 
 ## Active evidence
