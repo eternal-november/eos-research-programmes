@@ -1,0 +1,44 @@
+\documentclass[11pt]{article}
+\usepackage[margin=.9in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\title{Policy Search at a Forked Handoff}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Result.} In the fork model, each reached history admits a safe, timely plan in isolation. With the receipt late, a crew must make the same commitment in two histories requiring opposite actions. Timely evidence restores a uniform policy. The small exact separator result explains what can be cached when an interface changes, but ordinary factored reasoning gets the same answer. This is not distributed synthesis on a general network.
+
+\section{The plant and its observations}
+A root carriage can relieve one of two branches. Both loads are initially placed on their original supports. At tick 1 one load physically settles on its rack, discharging its prior support obligation. A distal fixture samples which lane is still live and sends a receipt through a relay. The two roads available at the root line up with the distal lanes in either ordinary or reversed order, according to the installed crossover. The root knows its crossover bit \(x\), but does not observe the distal live lane \(y\) directly. The code implements the crossover by permuting the physically live lanes. The required root route is consequently left for \(x=y\) and right otherwise.
+
+At tick 2 the root irrevocably chooses one route or waits; a move is accepted at tick 3. Prior support remains in place until actual acceptance. Waiting or traveling to the already settled branch therefore preserves the modeled support invariant but misses the promised relief by tick 3. The plant has one carriage and admits one such move. It cannot independently reserve a second carriage, try both branches, or switch after the commit. These are premises of the example, not limitations of autonomous vehicles on real layouts.
+
+\section{Exact feasibility and the arrival boundary}
+With a late receipt, the two reached cuts \(x=0,y=0\) and \(x=0,y=1\) have identical local evidence through the decision and require left and right respectively. Even a randomized policy cannot satisfy both histories with certainty: there is no action in both winning sets. This is an information obstruction to safety plus timely service, not to safety alone. In a single history, selecting its matching route suffices.
+
+The fixture issues the receipt at tick 1. Relay hops of \(1/4\) and \(3/4\) ticks bring the receipt to the root just at tick 2, with delivery and consumption prior to the same-tick commit. Then one preinstalled observation-based policy works on all four combinations: follow the route indicated by the local crossover and received lane. A \(1/4\)-tick extra delay, or one full tick extra, makes the receipt unusable for the choice and restores the obstruction. The controller is not supplied the actual history or a fault flag. A direct local indicator or a permissible hold changing the guarantee would be a different comparison.
+
+\section{Paired worlds and actual policy entries}
+Let \(U_o\) be the action taken after local observation history \(o\). An occurrence in world \(w\) contributes the restriction \(U_{o(w)}\in A_w\), where \(A_w\) lists the actions that meet the physical and service constraints in that world. The exact feasible set is
+\[
+                 \prod_o \bigcap_{w:o(w)=o} A_w .
+\]
+The product here is over actual policy entries; it is not a product of independent world histories. Checking worlds separately quantifies over different choices and falsely passes the late-receipt case.
+
+The contextual route retains the exact joint worlds, including zero entries on the full raw carrier, reassembles the law by conditioning on the actual crossover, then intersects by the physical observation history. This is the finite trivial-coefficient case of the project's \href{https://github.com/eternal-november/eos-research-programmes/blob/e1348964f73704212d2d8b48d5982a5ed600a2ff/projects/contextual-composition/foundations/shared-world-native-assembly/Whole_Scope_Block_Decomposition.tex\#L44-L62}{whole-scope block representation}: the joint record, not independence, supplies the permissible pairing. The factorized direct proof over the same worlds derives the route guard and intersects the restrictions on each shared policy entry. Exhaustive enumeration separately checks that there is exactly a matching whole table when all its factors are nonempty. No new guessing of actions is needed if the actual policy entries and relations are unchanged.
+
+Two admitted laws illustrate a false marginal shortcut. With paired source bits \(00,11\) and a late receipt, the unique policy always goes left. With paired source bits \(01,10\) under the same observation channel, it always goes right. Both bit marginals are equal, even under equal bookkeeping weights on each admitted pair; multiplying those marginals invents histories. In contrast, moving latency from the second hop to the first without changing receipt content or consumed time changes an internal event, but leaves every exposed local policy row unchanged. Both methods can leave the downstream policy check in place in that case. Both must establish that the projected relation is actually unchanged; neither proves it merely from a matching deadline or marginal.
+
+\section{What a stopping rule can and cannot answer}
+Suppose a finite policy synthesis problem factors across an actual separator \(S\), with updated prefix constraints \(L(X,S)\) and unchanged suffix constraints \(R(Y,S)\). Variables here are policy entries indexed by admissible local histories, with one variable shared across all occurrences of each history. If a candidate can alter which histories are reached, the constraints must encode that dependence rather than unroll only the old reached set. Write \(M_L(s)=\exists x\, L(x,s)\). To keep a particular suffix policy \(y_0\), it suffices to find \(s\) with \(M_L(s)\land R(y_0,s)\), also fixing \(s\) if the installed policy fixes it. A cache of merely possible suffix policies does not establish that \(y_0\) works.
+
+For all viable suffix policies, the relevant set is \(\{y:\exists s\, [M_L(s)\land R(y,s)]\}\). If \(M_L\) is unchanged, this set is unchanged; if it differs, some possible context can distinguish the new tuple, provided it is allowed to test that tuple. A particular unchanged suffix can be insensitive even to a changed \(M_L\). Equal separators do not certify that the old full prefix policies remain valid. Their witnesses must be carried or regenerated.
+
+Single-coordinate projections of \(M_L\) do not suffice. For a schematic two-entry control, an unobserved uniform orientation \(z\) and two local entries \(p,q\) must satisfy \(p\oplus z=0\) and \(q\oplus z=b\) for a fixed branch rule \(b\). Eliminating \(z\) gives \(\{00,11\}\) for \(b=0\) and \(\{01,10\}\) for \(b=1\). Both one-entry marginals still allow both choices. A suffix requiring equality goes from two compatible tuples to none. This is a control for the proof boundary, not another physical trace of the fork.
+
+When every factor scope fits a join-tree bag and all occurrences of a policy variable form a connected subtree, project each joined subtree relation onto its full separator. Updating one factor for a fixed rooted query then sends new messages along its path to the root until the next exact message is unchanged. Loss of the join-tree property or a new shared policy key reopens the factorization. A physical tree of vehicles need not give a tree of constraints on their policies. Even on a valid decomposition the number of shared entries and demand for full policy witnesses can dominate the cost. The fork does not establish a bound on repair radius or an advantage over an exact cached direct solver. It clarifies the obligation for a later experiment: expose material coupling from separately controlled actions and compare the same policy-boundary data, not a global-observer baseline or a marginal shortcut.
+
+\paragraph{Replay.}
+Extract the archive and run \texttt{python3 -B pilot.py --json | cmp results.json}. Results are conditional on the stated finite plant, receipt timing, and model support. No field test, repo edit, contract acceptance, or held-out selection.
+\end{document}

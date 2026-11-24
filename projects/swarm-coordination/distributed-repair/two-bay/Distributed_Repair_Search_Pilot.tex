@@ -1,0 +1,56 @@
+\documentclass[11pt]{article}
+\usepackage[margin=.9in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\title{When a Two-Crew Repair Must Change the Neighbor's Policy}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Result.} Two crews must hand off their own loads at the same deadline. One edit changes the first crew's command without changing the feasible policies for the second crew. A different edit changes which \emph{pairs} of commands the second crew may install; every repair then changes its policy. The set of possible commands at either observation, taken alone, does not change. Exhaustive, factored direct and contextual relation calculations agree.
+
+\section{Finite plant and local information}
+Both loads start supported by their own crews. A fixture reaches one of two alignment modes \(m\in\{0,1\}\). Crew A sees its supported load and the decision tick, but cannot observe the fixture mode or B's choice. Crew B sees the mode at its own position, but cannot see A's intended command before both commit. A has a binary selector \(a\); B has a binary selector \(b_m\) determined by its own mode. The ordinary plant supplies two capacity-one receiving bays and no time for a second attempt. A passive guide maps A's selector to its actual bay, preserving the order of the two bays or reversing it according to a layout mask \(g_m\). B's selector routes directly. The model implements the guide by mapping actual bay identities, not by stipulating a required policy table.
+
+At the last decision, the crews commit simultaneously. Each old support retains custody until the two receiving bays accept. A conflict, missing command or wait leaves the prior supports engaged and fails the service obligation. Distinct accepted bays provide timely completion. The model therefore does not obtain the impossibility by making waiting unsafe. The finite action set, one-decision window and absence of an extra bay or late observation are premises. Reaching the modes is scripted; there is no physical validation of such an interlock, timing or observability regime. The replacement layouts are separately known at installation, not extra runtime observations available after an unannounced switch.
+
+\section{Three layouts, same local views}
+Since A has the same local history in both modes, one installed policy uses one value of \(a\). Write \(B=(b_0,b_1)\) for B's separately chosen table. For every mode, actual different-bay admission is equivalent to
+\[
+                      b_m=1\oplus a\oplus g_m .
+\]
+This follows because the actual A bay index is \(a\oplus g_m\), the B bay index is \(b_m\), and these are two capacity-one bays. Waiting cannot satisfy both service obligations.
+
+\begin{center}
+\begin{tabular}{lll}
+Layout & Mask & Feasible pairs \((a,B)\)\\\hline
+Base & \(00\) & \((0,11),(1,00)\)\\
+Uniform reversal & \(11\) & \((0,00),(1,11)\)\\
+Mode-dependent reversal & \(01\) & \((0,10),(1,01)\)
+\end{tabular}
+\end{center}
+Start with installed \((1,00)\). After the uniform reversal, \((0,00)\) keeps B's policy, including the same command at the same observation. If B is to remain installed, A must change; there is also an alternative keeping A and changing B. The feasible B projection is unchanged: \(\{00,11\}\). It is safe to reuse a cached suffix computation that depends on A only through that projection, but not the old A witness implementing a selected B table.
+
+The mode-dependent reversal gives \(\{01,10\}\). For B fixed at \(00\), mode 0 would require A's selector 1, whereas mode 1 would require selector 0. Each demand can be met separately with a different A command, but A observes the same history in both; combining those separate plans invents a controller. Every repair must change B, not necessarily the same entry, and preserving A still leaves a viable changed B. The result is about the \emph{policy}, not merely that an unchanged policy emits different actions at different observations.
+
+Changing the interface can defeat the conclusion. A third, independent receiving bay gives B a constant reserve option that is compatible with all three layouts. A reliable indication of A's actual bay available to B before its decision would allow a different preinstalled contingent rule. Neither belongs to the baseline; two-stage sensing or capacity reservations would need separate feasibility checks. If the base and mode-dependent settings can switch without a usable observation or an installation event, the disjoint projected relations also rule out a single policy covering both under this interface.
+
+\section{Exact repair search and the cache}
+For the direct check, each mode yields a relation \(F_m(a,b_m)\) from different-bay admission. Join the factors on the \emph{same} policy entry \(a\), then project onto \(B\):
+\[
+                  M_g=\{B:\exists a\,\forall m\,F_m(a,b_m)\}.
+\]
+Projecting \(a\) out independently in each mode before the join exchanges the quantifiers and loses the uniformity constraint. The corresponding contextual calculation uses the reached branch and its actual action pair, keeping common policy entries consistent across observation occurrences. Joining the actual relations is necessary; bookkeeping on independent marginals does not supply this joint constraint. An independent enumerator tests complete tables against the simulator. All three agree on the same finite policy sets.
+
+With an unchanged suffix law \(R(Y,B)\), feasibility of keeping an installed suffix \(Y_0\) is \(\exists B\,[M_g(B)\land R(Y_0,B)]\), additionally fixing those entries B that are already installed. Equality of exact \(M_g\) is sufficient to keep the suffix relation and its old feasibility answer. It does not freeze the edited prefix's witness. A changed \(M_g\) need not affect every suffix: for a particular suffix, check compatibility with its actual constraints. A cache of unary possibilities cannot even distinguish equality from opposition here. The uniform reversal affects A's witnesses but not \(M_g\); the mode-dependent reversal requires reopening the check for B's installed table. This is a separator computation in a two-decision model, not a measured time saving or a general distributed synthesis method. A properly factored direct solver implements the same stopping test.
+
+\section{A bound for the declared family}
+For \(m\ge1\) B-observation modes, arbitrary mask \(g\in\{0,1\}^m\), and one unchanged A observation class, the same admission argument gives
+\[
+                           M_g=\{g,\overline{g}\}.
+\]
+There are \(2^{m-1}\) distinct such relations, with identical unary projections at every coordinate. Different relations are disjoint. An exact, deterministic interface that answers compatibility for \emph{any} fixed B table must therefore discriminate at least \(2^{m-1}\) cases, or encode at least \(m-1\) bits in the worst case. A query fixing one table from one of the two relations witnesses the need to distinguish them. The relative mask \(g_i\oplus g_0\) achieves the bound for this family. This is an information bound at a chosen interface, not a lower bound on running time or on a verifier that only ever sees one designated suffix. For an installed all-zero table the least number of entries changed is \(\min(|g|,m-|g|)\), where \(|g|\) is its number of ones. It follows by counting disagreements with the two exact tables, not by assuming damage propagates along geographic distance.
+
+\paragraph{Disposition and replay.}
+The model distinguishes a local repair from a required remote policy change, and demonstrates a false stop rule based on one-entry marginals. Both exact methods have the same information requirements in this witness. It does not establish a proof-work advantage, settle the v0.5 obligations, or give results for arbitrary communication graphs or action-dependent observations. Extract the archive and run \texttt{python3 -B pilot.py --json | cmp results.json}. No physical experiment, repository change or held-out selection.
+\end{document}
