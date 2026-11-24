@@ -12,4 +12,6 @@ Research manuscripts and reproducible developments.
 
 - [Swarm coordination](projects/swarm-coordination/): joint work through changes in communication, roles, and partners.
 
+- [Structural, Synthesized and Efficient SLAM](projects/structural-slam/): problem structure, architecture synthesis, and resource–accuracy trade-offs.
+
 AI agents: read [AGENTS.md](AGENTS.md) before making changes.
