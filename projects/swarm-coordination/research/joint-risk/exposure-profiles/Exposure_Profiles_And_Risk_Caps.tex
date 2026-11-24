@@ -1,0 +1,83 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{How much exposure history must survive a change of risk cap?}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Source and law.}
+A civil inspection has \(n\) persistent defect modes, one for each site.
+One hidden label \(X\) is sampled once for the mission and not resampled
+at a handoff. Under law \(j\), each label has base mass \(a=(1-w)/n>0\)
+and label \(j\) has additional mass \(w\), with \(0\leq w<1\).
+The law is unknown but fixed; the guarantee must hold for all laws.
+Visiting site \(i\) incurs a data-validity exposure that makes the
+mission fail if \(X=i\). The outcome is not seen before the decision
+studied here. Returning to the same site leaves the failure event
+unchanged. The initial itinerary visits \(k\) distinct labels,
+\(1\leq k<n\), held in one still-open inspection record.
+All \(k\)-subsets are admissible itineraries, chosen without observing
+\(X\). These are finite model stipulations, not empirical probabilities.
+
+One report about the old exposure goes to a dispatcher, then a future
+query \(q\) for one additional site is revealed. The sender does not
+learn \(q\) before this report; the receiver has no other history-dependent
+information. The interface requires exact admission for every permitted
+query, not mere soundness with blanket refusal. The cap counts any mission
+failure, including old exposure and the new admission together.
+
+\paragraph{Exact rule and interface size.}
+For a past site set \(S\) the failure event after accepting \(q\) is
+\(X\in S\cup\{q\}\). For every nonempty \(U\),
+\[
+  \sup_j\Pr_j[X\in U]=a|U|+w.
+\]
+The bound holds under every \(j\) and is attained by any \(j\in U\).
+No independent worst law is selected for past and future exposure.
+At cap \(ak+w\), exactly the queries \(q\in S\) are admissible.
+Distinct \(k\)-sets have different answers at some query in their
+symmetric difference. Therefore they must have different states.
+Encoding the rank of \(S\) among \(k\)-subsets attains the lower bound:
+\(\lceil\log_2\binom nk\rceil\) fixed-width bits (97 at \(n=100,k=50\)).
+This is classical exact one-way \href{https://arxiv.org/abs/1509.06257}{indexing}
+on a fixed-weight promise, realized in a mission-wide risk interface.
+If the source itineraries are restricted to contiguous \(k\)-site blocks,
+there are \(n-k+1\) distinct states and the block start is a tight code
+(6 bits in the same example). The gain comes from the restricted
+itinerary family, not the number of open records.
+If the query reaches the sender first, the sender can instead answer
+that particular query with one bit, not counting the reverse query.
+
+\paragraph{Revision with old exposure.}
+At cap \(a(k+1)+w\) every singleton probe passes, so this verdict
+requires no history-specific message. A later authorized cap \(ak+w\)
+that covers old exposures restores the full membership requirement.
+Notice before admission, plus the retained report, suffices to enforce
+the new rule. Notice after committing a new \(q\notin S\) cannot
+undo its physical exposure. A prospective exemption can preserve an old
+permission but does not prove the tighter cap for total mission failure.
+
+In the terminology of Contextual Composition's
+\emph{Residual profiles and admission reflection} (the primitive-test
+criterion), the declared factor is the admission test on local boundary
+arguments \(S\) and \(q\). Under the old cap it has identical sections in
+\(S\); under the tight cap those sections are the membership signatures.
+With the identity on raw itineraries, this change fails test reflection.
+No common adequate profile compatible with the previously retained constant
+report recovers the new verdict. Declaring both caps before taking the
+quotient keeps \(S\), so the same retained profile evaluates either
+test. This is an instance of the criterion, not general native gluing
+or efficiency beyond the direct set-tracking implementation.
+
+\paragraph{Checks and bounds.}
+\texttt{ExposureProfiles.lean} checks the mass formula, admission,
+binomial cardinality, the state lower bound, and the cap-change test.
+The replay enumerates the actual model laws on 18,324 finite queries.
+Direct same-law tracking gives the same result. An additive per-visit
+budget can overcharge a repeated site and is not the strongest baseline.
+See \href{https://groups.csail.mit.edu/mers/papers/Ono-Williams_AAMAS10.pdf}{Ono and Williams}
+for distributed chance-constraint budgets. This is a reference result,
+not novelty or full R4. Observational updates about the hidden mode,
+reversible exposures, and several concurrently proposed admissions
+remain outside this result.
+\end{document}
