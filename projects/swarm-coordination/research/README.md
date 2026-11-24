@@ -27,3 +27,7 @@ These are conditional results for finite models. They neither validate a physica
 **SC-FORK: When does a timely receipt make a fixed local policy possible?** In two reached cuts, one crew needs opposite actions under the same local view. A receipt before commitment separates the cuts; the same receipt after commitment does not. [Regression and proof](policy-repair/fork-relief/Fork_Relief_Policy_Search.tex) · [Checker](policy-repair/fork-relief/pilot.py).
 
 From either study directory, run `python3 -B pilot.py --json | cmp results.json` to replay the saved checks. These are finite model results, not v0.5 cascade acceptance.
+
+## Joint risk
+
+**SC-JOINT-RISK: Can two missing reports change joint risk without changing either local estimate?** Two admitted laws give the same probabilities for the observed report words and the same local health marginals. After two misses, the two-dispatch failure risks differ: (57611/149504) and (34661/149504). Both laws have the same ex-ante risk, (79/256). An observation preserves a product posterior exactly when its nonzero likelihood has rank one on the active product support. This is a finite model result, not a validated risk estimate or C6 acceptance. [Proof](joint-risk/degraded-reports/Joint_Risk_Under_Degraded_Reports.tex) · [Replay notes](joint-risk/degraded-reports/README.md) · [Checker](joint-risk/degraded-reports/pilot.py). From that directory: `python3 -B pilot.py --json | cmp results.json`.
