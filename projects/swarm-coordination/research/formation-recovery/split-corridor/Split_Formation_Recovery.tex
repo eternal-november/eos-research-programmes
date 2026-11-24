@@ -1,0 +1,90 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{Reconnecting a single-file formation across an information break}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Known boundary.}
+Use the ordered corridor, fixed anchors, speed bound, and clearance
+model of \emph{Clearance and connectivity after a corridor crash}.
+The disabled body separates the surviving robots into two sides.
+Each side is assumed to know its own initial positions. Both sides
+know the fixed obstacle position, the requirements, and when their
+motion budget starts. No positions or plans are passed across the
+break. Time for acquiring the assumptions and coordinating within
+each side is not included in the motion budget.
+
+Apply the interval scan from the outer anchor toward the body on each side,
+reversing coordinates on the right. If either side has no admissible plan,
+neither does the whole formation. Otherwise let \(x^*\) be the largest
+attainable coordinate of the left inner robot and \(y^*\) the smallest on
+the right. For all attainable pairs \((x,y)\), \(y^*-x^*\le y-x\).
+The cross-body lower clearance is already enforced by each side
+(\(y^*-x^*\ge2g\)). Thus the independently reconstructed extreme plans
+reconnect by the deadline exactly when the whole configuration can.
+Line interpolation preserves clearance and side membership. The argument
+needs attained extrema and separate side clearance, not interval
+attainable sets. Shared resources or a nonmonotone cross-gap constraint
+can break the inference. Knowing the policy guarantees success is not
+the same as having operational evidence of successful execution.
+
+\paragraph{An unobserved stop changes the answer.}
+Take anchors \(0,10\), movable survivors at \(2,8\), speed one,
+clearance \(1\), and radio range \(7/2\). The disabled body stops at \(f=4\)
+or \(f=6\). The right robot knows \(f\); the left robot cannot distinguish
+the worlds from its initial view. With \(f\) known, terminal pairs
+\((3,13/2)\) and \((7/2,7)\), respectively, are feasible.
+If the left receives no distinguishing information by the commitment
+cut, its terminal position must be at most \(3\) for safety in the first
+world. In the second, the right must stay at or above \(7\), forcing a
+gap of at least \(4\). No single left prescription serves both, despite
+physical feasibility in each. A timely report of which of the two
+positions applies would suffice; this statement does not grant that
+report for free.
+
+\paragraph{Using actual contact to create the missing observation.}
+Assume instead that until a guaranteed timed receipt or its timeout,
+the only readout available to the left is the passage of time.
+The right follows a known policy: move as fast as allowed toward
+its nearest still-safe terminal point, \(13/2\) or \(7\), and offer a
+receipt at first radio contact. Receipt delivery is reliable by
+\(d\ge0\) time units after contact; either its delivery before the
+deadline cut is observed or its guaranteed deadline has passed.
+When delivery and timeout coincide, delivery is read first. No contact
+is available outside range.
+
+The exact robust recovery time is \(2+d\).
+Before observations differ, the common left motion cannot exceed \(3\).
+The right cannot be left of \(8-t\) at time \(t\); therefore contact in
+the \(f=4\) world cannot occur before \(3/2\). In the \(f=6\) world
+the right cannot go below \(7\), leaving the gap out of range while
+the left stays at most \(3\). For a worst allowed receipt delay
+\(d\), no common-history prefix can separate the worlds before
+\(3/2+d\). The left still needs at least \(1/2\) more unit of motion in
+the \(f=6\) world. For attainment, move the left robot to \(3\) by time
+one, then have it wait until \(3/2+d\). The right moves to its
+specified terminal point. When \(f=4\), the receipt has arrived and
+the pair is connected. Otherwise the absence after the certified cut
+distinguishes \(f=6\), and the left moves to \(7/2\).
+Permanent receipt erasure, added occlusion, an untrusted right policy,
+or unbounded delay removes the timeout inference. Clearance
+does not depend on a mere claim that a receipt was sent.
+
+\paragraph{Verification and limits.}
+The split replay checks 60,720 cases against whole-configuration
+exhaustive search. The active replay checks 135 half-tick deadline and
+delay pairs against exact search over the left observation histories
+for the specified right policy. Lean checks the endpoint join and the
+rational obstruction and timing inequalities. The source correspondence
+and trajectory construction are the written arguments above. The
+shared clock and timely local right estimate, trusted contact rule,
+single-file geometry, and simple dynamics are assumptions.
+
+A matched split optimizer can choose the same extreme points; a matched
+contingent planner using the same physical observation models can
+choose the same timeout policy. The timed case isolates how physical
+motion creates usable evidence, rather than claiming improvement over
+those baselines. It supplies a source-scoped R1/R6 result and an R3a
+reference. It does not settle any of those tracks in full.
+\end{document}
