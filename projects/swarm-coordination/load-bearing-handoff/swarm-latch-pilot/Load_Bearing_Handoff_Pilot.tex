@@ -1,0 +1,50 @@
+\documentclass[11pt]{article}
+\usepackage[margin=.9in]{geometry}
+\usepackage{amsmath}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\title{Load-Bearing Handoff Pilot}
+\author{}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Result.} The finite model has reachable-by-script handoffs that require different actions despite identical local histories. A force probe can repair the information loss, but the maneuver transfers load onto a support that already owes service elsewhere. The probe can therefore be inadmissible even when its eventual reading would be decisive. A hardware chooser that can already see actual load-bearing contact defeats the information obstruction; it is a different interface, not a winning policy on the original one.
+
+\section{Service, support and information}
+The setup sequence brings A with a payload to the handoff and engages its support. B commands a latch, but the latch may seat fully or only partly. A remains load-bearing until transfer. An independent contact report is available by the final decision unless lost. Before the report, the installed controller can wait, probe, or try to prepare the cradle. The original setup still occupies the cradle's preparation position, and early preparation cannot shorten the handoff in this model. This is an explicit constraint on the pilot, not a finding about all cradle mechanisms.
+
+At the decision, the controller must either release the old support or place the payload on the cradle in time for crew C's passage. It may wait instead, keeping the load supported but missing the passage. In the seated branch release is safe and clears the passage; the seated geometry blocks the cradle. In the partial branch direct release violates continuous support; the cradle can accept the load and clear the passage if its support capacity is available. A passive interlock refusing release in that branch avoids the unsafe transition but consumes the decision window. The counterdesign with a reliable direct contact-state chooser branches in the same window and succeeds. A cradle already independent and able to support both branches would also change the game; the tested preparation attempt does not rule out that design.
+
+An unaffected duty D draws on a common support unit of capacity 4. All numbers are dimensionless, and the model abstracts away continuous force and moment balance, geometry dynamics, wear and sensor calibration. The pending handoff and support position are established by a scripted prefix, not by a validated plant dynamics. At the probe, the receiving latch carries either 3 or 1 units of the 4-unit payload. A transfers \(X=\min(2,4-B)\) to the shared support while retaining the rest. Thus \(X=1\) if seated and \(X=2\) if partial. If D's simultaneous demand is \(Y\), the probe requires \(X+Y\le4\) \emph{before it produces a reading}. Later, in the partial branch, the cradle carries all 4 units until the payload is settled. D's later demand normally starts after that; moving it earlier blocks the cradle even with a good report. This later-duty stress is not a pure probe failure.
+
+\section{Matched arms and counterdesigns}
+Using the same installed incumbent rule (follow the report, otherwise release), the nominal, report-loss only and partial-latch only arms meet both support and passage promises in the baseline. The combined arm attempts unsafe release and does not clear in time. A passive interlock changes that joint outcome to safe noncompletion. Both executions retain the original service obligation. Choosing the branch after a diagnostic works in all four baseline arms with adequate support capacity and a distinguishing reading.
+
+For a causal contrast, the same partial-and-missing-report history succeeds with a safe distinguishing measurement and fails without one under the shown policy restrictions. The causal chain is loss of physical evidence, release or nonrelease of the old support, and actual aisle clearance consumed by C. In the repair, the evidentiary maneuver also changes the loads on a distinct support used by D. Refusal, loss of safety, and failure to provide passage are reported separately.
+
+\section{Exact direct reference}
+For each local observation, intersect the sets of safe, timely last actions over all reachable plant states in that observation class. A first action is a sure winner when it is safe on the entire initial class and every resulting nonempty observation class has a winning last action. These conditions are necessary since the same history cannot select different actions, and sufficient by choosing one winning action after each observed branch. This is finite backward induction, not advice to the controller to read the true fault state.
+
+Without a probe, the missing-report class contains both seated and partial cases. The seated case admits release (including the passive guarded release); the partial case admits the cradle but not release, passive refusal, or waiting as a way of meeting both promises. Their winning-action intersection is empty. Earlier preparation leaves that class unchanged. Randomization gives no sure guarantee when those sets are disjoint. A precise and timely measurement splits the class only if it leaves no reading compatible with both modes in the missing-report histories. The script reports units of half a load: the exact readings are 2 and 4; with allowed additive errors of -1, 0 or 1, reading 3 is possible in both branches. If the report is absent, that ambiguity makes neither last action a sure winner. In normalized load units, symmetric real-valued error bands stay separated only for an error radius strictly below one half. Availability of another fast or state-aware intervention would reopen the conclusion. The over-capacity probe fails before any additional evidence can be used.
+
+The conditions can be stated without specific units. Given a fixed last-action repertoire and window as above, the probe needs a separating reading, support for every joint probe demand, and enough capacity to carry out the identified continuation. Checking that only on individually sampled nominal branches is insufficient. At the stated deadlines, waiting safely is not a repair.
+
+\section{Same local loads, different simultaneous loads}
+Keep the permitted marginal demands \(X\in\{1,2\}\) and \(Y\in\{2,3\}\). Two admitted joint envelopes are:
+\[
+\begin{array}{c|c|c}
+ & (X,Y) & \max(X+Y)\\\hline
+ \text{complementary} & (1,3),(2,2)&4\\
+ \text{coincident high demands} & (1,2),(2,3)&5 .
+\end{array}
+\]
+The first envelope allows the precise probe in either mode. In the second, the partial-case probe violates the capacity limit before the reading; without it, the missing-report class still requires incompatible actions. Equal weights would even give identical marginal laws. Only the pairing changed. The alternative envelopes vary which live duty coincides with which latch branch; neither is a field claim or an independent held-out transfer.
+
+\section{What the proof can reuse}
+The project’s \href{https://github.com/eternal-november/eos-research-programmes/blob/e1348964f73704212d2d8b48d5982a5ed600a2ff/projects/contextual-composition/foundations/shared-world-native-assembly/Whole_Scope_Block_Decomposition.tex\#L47-L60}{whole-scope block theorem} explains why the two demands must be assembled using the retained joint law rather than independently sampled local rows. In the two-envelope diagnostic, a common branch index fixes the actual latch mode and D phase. Attach both demands to this index and use its equal-weight law for the diagnostic; load conservation derives \(X\) from latch mode, while the permitted assignment of D's phase derives \(Y\). Group the handoff and D as two blocks, with trivial coefficient/body data; exact regrouping retains the pairing. It does not prove that either joint envelope applies to a real plant, or that recalculating the relation is free.
+
+A factored direct proof can retain the same branch index and use the joint inequality directly. Both approaches reuse the same local force-balance rules, custody/release laws, deadlines, and unchanged D controller. Both need a renewed pairing check when the support duty changes and a renewed observation-class check when the sensor or a consumer changes. Neither gains from comparing against a direct proof that incorrectly separates the loads. No reduced proof workload, universal locality theorem or independent positive transfer is established here. The small information game and the joint-capacity test are references for a future comparison, not a claim of novelty.
+
+\paragraph{Disposition.} This advances beyond a reservation conflict: identical observations can require different physically admissible actions, and the act of obtaining evidence consumes a shared physical margin. The easiest engineering answer is still a trustworthy local chooser or earlier independent support if feasible under the same constraints. Without an independently established envelope, a second reached handoff and a genuinely transferred joint guarantee, do not count this as closing C11. No changes were made to the contract, repository, or test selection.
+
+\paragraph{Replay.} Extract the archive and run \texttt{python3 -B pilot.py --json | cmp results.json}. The archive contains the simulator, independent finite action-set reference within the script, and the exact traces. No physical test was performed.
+\end{document}

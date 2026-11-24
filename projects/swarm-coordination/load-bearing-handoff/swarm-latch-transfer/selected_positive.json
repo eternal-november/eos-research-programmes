@@ -1,0 +1,133 @@
+{
+  "initial": "ready",
+  "transitions": [
+    {
+      "state": "ready",
+      "symbol": "queue-three",
+      "next": "owe-one",
+      "demand": 3
+    },
+    {
+      "state": "ready",
+      "symbol": "queue-two",
+      "next": "owe-two",
+      "demand": 2
+    },
+    {
+      "state": "owe-one",
+      "symbol": "settle",
+      "next": "quiet",
+      "demand": 1
+    },
+    {
+      "state": "owe-two",
+      "symbol": "settle",
+      "next": "quiet",
+      "demand": 2
+    },
+    {
+      "state": "quiet",
+      "symbol": "quiet",
+      "next": "quiet",
+      "demand": 0
+    },
+    {
+      "state": "quiet",
+      "symbol": "hold-late",
+      "next": "late-armed",
+      "demand": 0
+    },
+    {
+      "state": "late-armed",
+      "symbol": "late-gate",
+      "next": "quiet",
+      "demand": 2
+    }
+  ],
+  "worlds": [
+    {
+      "id": "express-clean-received",
+      "partial": false,
+      "lost": false,
+      "symbols": [
+        "queue-three",
+        "settle",
+        "quiet",
+        "quiet",
+        "hold-late",
+        "late-gate"
+      ],
+      "provenance": "At setup, choose one of three synthetic source records: express with clean fixture, buffered with clean fixture, or buffered with obstructed fixture. The dispatch regime sets the count of ready D tickets at the first half-slot (three for express, two for buffered). Only the independent report-channel flip determines missing versus received. The fixture condition determines H's latch outcome; no H latch or report result is read by D. This record uses express, clean, received. The remaining D symbols are local timer events: settle the early quota, stay quiet twice, hold the late batch, and open its gate."
+    },
+    {
+      "id": "express-clean-missing",
+      "partial": false,
+      "lost": true,
+      "symbols": [
+        "queue-three",
+        "settle",
+        "quiet",
+        "quiet",
+        "hold-late",
+        "late-gate"
+      ],
+      "provenance": "At setup, choose one of three synthetic source records: express with clean fixture, buffered with clean fixture, or buffered with obstructed fixture. The dispatch regime sets the count of ready D tickets at the first half-slot (three for express, two for buffered). Only the independent report-channel flip determines missing versus received. The fixture condition determines H's latch outcome; no H latch or report result is read by D. This record uses express, clean, missing. The remaining D symbols are local timer events: settle the early quota, stay quiet twice, hold the late batch, and open its gate."
+    },
+    {
+      "id": "buffered-clean-received",
+      "partial": false,
+      "lost": false,
+      "symbols": [
+        "queue-two",
+        "settle",
+        "quiet",
+        "quiet",
+        "hold-late",
+        "late-gate"
+      ],
+      "provenance": "At setup, choose one of three synthetic source records: express with clean fixture, buffered with clean fixture, or buffered with obstructed fixture. The dispatch regime sets the count of ready D tickets at the first half-slot (three for express, two for buffered). Only the independent report-channel flip determines missing versus received. The fixture condition determines H's latch outcome; no H latch or report result is read by D. This record uses buffered, clean, received. The remaining D symbols are local timer events: settle the early quota, stay quiet twice, hold the late batch, and open its gate."
+    },
+    {
+      "id": "buffered-clean-missing",
+      "partial": false,
+      "lost": true,
+      "symbols": [
+        "queue-two",
+        "settle",
+        "quiet",
+        "quiet",
+        "hold-late",
+        "late-gate"
+      ],
+      "provenance": "At setup, choose one of three synthetic source records: express with clean fixture, buffered with clean fixture, or buffered with obstructed fixture. The dispatch regime sets the count of ready D tickets at the first half-slot (three for express, two for buffered). Only the independent report-channel flip determines missing versus received. The fixture condition determines H's latch outcome; no H latch or report result is read by D. This record uses buffered, clean, missing. The remaining D symbols are local timer events: settle the early quota, stay quiet twice, hold the late batch, and open its gate."
+    },
+    {
+      "id": "buffered-obstructed-received",
+      "partial": true,
+      "lost": false,
+      "symbols": [
+        "queue-two",
+        "settle",
+        "quiet",
+        "quiet",
+        "hold-late",
+        "late-gate"
+      ],
+      "provenance": "At setup, choose one of three synthetic source records: express with clean fixture, buffered with clean fixture, or buffered with obstructed fixture. The dispatch regime sets the count of ready D tickets at the first half-slot (three for express, two for buffered). Only the independent report-channel flip determines missing versus received. The fixture condition determines H's latch outcome; no H latch or report result is read by D. This record uses buffered, obstructed, received. The remaining D symbols are local timer events: settle the early quota, stay quiet twice, hold the late batch, and open its gate."
+    },
+    {
+      "id": "buffered-obstructed-missing",
+      "partial": true,
+      "lost": true,
+      "symbols": [
+        "queue-two",
+        "settle",
+        "quiet",
+        "quiet",
+        "hold-late",
+        "late-gate"
+      ],
+      "provenance": "At setup, choose one of three synthetic source records: express with clean fixture, buffered with clean fixture, or buffered with obstructed fixture. The dispatch regime sets the count of ready D tickets at the first half-slot (three for express, two for buffered). Only the independent report-channel flip determines missing versus received. The fixture condition determines H's latch outcome; no H latch or report result is read by D. This record uses buffered, obstructed, missing. The remaining D symbols are local timer events: settle the early quota, stay quiet twice, hold the late batch, and open its gate."
+    }
+  ]
+}
