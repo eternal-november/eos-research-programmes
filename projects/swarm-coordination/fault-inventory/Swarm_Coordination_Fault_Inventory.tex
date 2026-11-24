@@ -1,0 +1,131 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\newcommand{\f}[4]{\par\smallskip\noindent\textbf{#1. #2.} #3 \textit{[#4]}\par}
+\title{Swarm Coordination Fault Inventory}
+\author{Working draft 0.1}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+\section{Scope}
+A fault interrupts a promised operation or invalidates a premise needed for joint work. Record which promise fails, who can know when, and which existing actions, obligations or physical effects survive. Expected occlusion, for example, is a fault only relative to an observation guarantee the occlusion breaks. Authorized changes of goal, roles, operating restrictions or risk tolerance belong to the governing agreement; failures to learn or implement them belong here. Model and checker errors have a separate ledger below.
+
+The default subject is cooperative civilian autonomous vehicles in simulation. The entries cover different mechanisms, not mutually exclusive event classes. A shared power failure can be one cause of several lost operations; do not count the losses as independent. Keep two entries distinct if conflating them changes what is observable, what action is admissible, or what safety or service can be proved. M and C identifiers are mappings to the \href{https://github.com/eternal-november/eos-research-programmes/blob/e1348964f73704212d2d8b48d5982a5ed600a2ff/projects/byzantine-control/FAULT-COVERAGE.md}{pinned Byzantine Control inventory}, not claims that the Byzantine threat model applies. No tests are selected or frozen, and v0.5 is unchanged.
+
+\section{Core inventory}
+\subsection{Preparation and entry}
+\f{F01}{Latent impairment at entry}{Degraded actuators, calibration, navigation state or finite reserves pass admission but do not support the assigned role.}{M01,M24,M36}
+\f{F02}{Wrong shared setup}{All members agree on a map, frame, site geometry, assignment or bound that is wrong for the task.}{M01,M03,M12,M35,M39}
+\f{F03}{Mixed plan or policy revisions}{A subset works from old coordinates, policies or rollout epochs. Check uniformity and correctness separately.}{M12,M35,M37}
+\f{F04}{Wrong member or independence count}{Identity or capability is assigned to the wrong body; apparently independent members share a relay, observer or support supplier.}{M12,M19,M39}
+\f{F05}{Unaligned entry}{Vehicles begin in different positions, clocks or phases; a reset may repeat an entry action.}{M01,M09,M10,M17}
+\f{F06}{Spatial premise expires}{A landmark, route, berth, pad or protected boundary changes between preparation and use.}{M03,M18,M29,M45}
+
+\subsection{Perception and interpretation}
+\f{F07}{Observation goes missing}{Occlusion, range, field of view or weather removes an observation without removing the observed vehicle.}{M06,M28,M29}
+\f{F08}{Estimates degrade without going silent}{Bias, drift, saturation, aliasing, multipath or coarse fallback leaves plausible measurements with different errors, timing or coverage.}{M03,M06,M11,M32}
+\f{F09}{Common error resembles confirmation}{Shared references, lighting, calibration, model or environmental disturbance correlate estimates. Agreement is not independent evidence.}{M06,M12,M39,C02}
+\f{F10}{A track changes referent}{Similar bodies, track loss or stale data bind a plausible estimate to the wrong vehicle, role or resource.}{M06,M11,M12,M19}
+\f{F11}{Different observers see different events}{Asymmetric visibility or signalling divides the observation graph despite healthy equipment; absence of local evidence does not imply absence elsewhere.}{M06,M15,M16,M28}
+\f{F12}{A modality does not carry the same meaning}{A local visual, optical or acoustic fallback can indicate position or motion without conveying identity, consent, receipt or clearance.}{M06,M12,M16,M28}
+\f{F13}{Obtaining evidence changes the task}{Moving to observe changes geometry, consumes time and energy, and may leave a duty uncovered or change what others can see.}{M08,M17,M26,M27}
+\f{F14}{Source or confidence is misread}{Units, coordinate, sample time, provenance, uncertainty or distinction between report and confirmed effect is lost during fusion.}{M07,M09,M11,M12}
+\f{F15}{An uncertainty or risk premise expires}{A distribution, independence premise or error bound no longer applies; members can reach incompatible assessments of the same joint risk from locally valid histories.}{M03,M11,M12,M39,C02}
+\f{F16}{Backup depends on the failed path}{Separate devices share reference, power, compute, view, or external supplier. Count independence at the resource relied on.}{M28,M29,M31,M39}
+
+\subsection{Communication, clocks and retained state}
+\f{F17}{Delivery loses fidelity}{Messages go missing, arrive corrupted, duplicated, out of order or at the wrong recipient.}{M14,M18}
+\f{F18}{Reach changes by direction and group}{Intermittence, one-way links, split networks and uneven access to a coordinator or relay create different local histories. Restored reach can release obsolete traffic.}{M15,M16,M28,M37}
+\f{F19}{Late delivery changes the maneuver}{Record sampling, arrival, consumption, commitment and actual effect. A retry can arrive before entry, after the action becomes irreversible, or after actual clearance.}{M09,M14,M17,M18,M24,C04}
+\f{F20}{Time bases diverge}{Skew, drift, reset, discontinuity or lost reference makes freshness, ordering, reserved slots or exclusive leases disagree.}{M09,M17,M18}
+\f{F21}{Delivery is visible but execution is not}{Lost or coarse acknowledgements conceal the difference between queued, rejected, partial and completed work.}{M07,M14,M18,M24,M32}
+\f{F22}{History is not trustworthy after interruption}{Restart, queue replay or split histories restore spent receipts, revive canceled actions or lose the fact that a duty is pending.}{M10,M18,M36,M37}
+\f{F23}{Load steals time from control}{Backlog, priorities, retries, competing work, inspection or optional synthesis consumes time required for a decision or action with a physical deadline.}{M17,M26,C10}
+\f{F24}{A parseable message has different meaning}{Partners disagree on coordinates, version, priority, invalid-value, expiry or acknowledgement conventions.}{M12,M35,M37}
+
+\subsection{Policy, roles and authority}
+\f{F25}{Coordination decision fails}{A local controller, coordinator, planner or fusion service issues conflicting or infeasible commitments, drops work or becomes unavailable.}{M11,M13,M17,M27}
+\f{F26}{Split or absent authority}{Members disagree about the allocator; fallback creates overlapping grants or leaves nobody authorized to proceed.}{M15,M21,M33,M37}
+\f{F27}{Authority moves before capability}{The successor receives authority before evidence, energy, skill or physical access; the predecessor may still be the only one able to finish pending work.}{M18,M21,M24,M26,M36,M37}
+\f{F28}{Refusal and failure look alike}{Authorized withdrawal, lost response and inability to honor an accepted duty can leave the same observation but different rights and obligations.}{M21,M32,M37}
+\f{F29}{Revocation leaves a pending action}{Cancellation or permission loss does not necessarily stop queued, already executing or irreversible physical effects.}{M18,M21,M23,M38}
+\f{F30}{Handoff duplicates or loses a duty}{Both successors act, neither acts, or the new assignee cannot take custody of the resource still held under the old assignment.}{M10,M18,M21,M27,M33,M37}
+\f{F31}{A synthesized policy expires before installation}{The assumed evidence, available actions or duty state changes during synthesis; mixed rollout may also invalidate compatibility.}{M17,M18,M35,M37,M45}
+\f{F32}{Revised rules take effect inconsistently}{A valid goal, safety margin or operating restriction is learned late, misread, applied retroactively or applied under the wrong authority.}{M04,M12,M21,M22,M37,C08}
+\f{F33}{Fault at an inter-fleet boundary}{Cooperative groups disagree about protected space, clocks, grants, clearance or abort semantics. Connectivity does not establish compatible rules.}{M12,M18,M21,M27,M37}
+
+\subsection{Vehicles, plant and shared resources}
+\f{F34}{Physical effect is incomplete or unintended}{Actuation is refused, stuck, delayed, asymmetric, excessive, wrong-target or persistent. Issuance, actual effect and physical clearance have distinct times.}{M18,M23,M24,M25}
+\f{F35}{Capability shrinks before replacement}{Damage, load, energy, propulsion or traction reduces stopping, turning, payload or holding capability while earlier commitments remain.}{M03,M24,M25,M29}
+\f{F36}{Transitions violate steady-mode guarantees}{Resets, switching transients, sampling gaps, oscillation or inappropriate re-entry cause a breach between otherwise acceptable modes.}{M17,M25,C04}
+\f{F37}{Vehicles interact through the plant}{Wake, flow, moving loads, mechanical coupling or occupancy invalidate independent motion assumptions under locally nominal control.}{M03,M24,M25,M27}
+\f{F38}{Common environmental exposure}{Wind, flooding, precipitation, lighting, flow or terrain changes motion and evidence across members with differing detection histories.}{M06,M27,M29,M39}
+\f{F39}{Shared supply changes capacity}{A route, pad, charger, relay, repair team or processing budget loses capacity after claims against it were issued.}{M17,M18,M26,M27,M29}
+\f{F40}{Repair displaces other work}{Fallback draws on the air time, energy, equipment, people or redundancy that another guarantee also uses.}{M26,M27,M30,M34,M39}
+\f{F41}{Permission and occupancy diverge}{A place is marked free while still occupied or held after actual release. The two errors threaten safety and progress respectively.}{M18,M24,M26,M27,M32,M33}
+\f{F42}{Endurance debt accumulates}{Repeated retries, holds, inspections, diversions or returns draw reserves faster than they can be replenished.}{M26,M34,M39,C10}
+\f{F43}{Excluded member is still physically coupled}{Removal from scheduling or communications does not remove a body, its payload, occupancy, wake or unfinished duty.}{M23,M24,M27,M38}
+\f{F44}{Containment protects a proxy}{An onboard estimate or trigger meets its bound while actual stopping, descent, impact or bystander exposure exceeds the protected boundary.}{M03,M04,M06,M24,M30,M31}
+
+\subsection{Detection, fallback and return}
+\f{F45}{Detection is late, false or staggered}{Different local alarms send otherwise conforming controllers into incompatible fallback modes.}{M07,M15,M31,M32}
+\f{F46}{Control and assurance share an error}{A monitor, watchdog, certificate or completion check uses the same wrong estimate, model or configuration as the controller.}{M03,M05,M31,M39,M45}
+\f{F47}{A protective action causes a second loss}{Stop, divert, return or isolation removes needed evidence, frees a still-occupied resource or directs several vehicles to the same limited space.}{M24,M27,M30,M34,M38}
+\f{F48}{Repair leaves live effects}{A link returns but traffic is stale; a replacement joins but is not ready; the certificate or receipt refers to a different configuration or epoch.}{M10,M18,M36,M37,M45}
+\f{F49}{Rejoin does not reconcile histories}{Fragments disagree on discharged work, authority, reservations, spent receipts or who observed the last failure.}{M10,M15,M18,M21,M33,M37}
+\f{F50}{A second fault arrives during unsettled recovery}{The change occurs before clearance, synchronization, replenishment or acceptance of a replacement. Its effect depends on order and who knows it.}{M18,M26,M36,M37,M43}
+\f{F51}{Repeated safe responses starve service}{Waiting, retries, repeated splits or repair priorities preserve safety but never reach a throughput, deadline or legitimate end-of-service condition.}{M25,M33,M34,C10}
+\f{F52}{Recovery loses the evidence it needs}{Power down or restart discards local history identifying pending work and completed checks. Functional restoration cannot recreate observations never made.}{M10,M32,M36,M37}
+\f{F53}{Support or replacement fails}{Ground services, people, spares or external references miss a recovery commitment or reintroduce the defect.}{M26,M31,M35,M36,M37,M38,M39}
+\f{F54}{Detection starts outside the protected set}{Containment and return from an already unsafe state require a different initial set and success criterion from invariant preservation.}{M30,M32,M36,C07}
+
+\section{Architecture-dependent extensions}
+\f{E01}{Forecast or preparation mismatch}{A prediction is late, misregistered or wrongly trusted; preparation can consume nonrecoverable resources before the expected change occurs.}{M03,M06,M12,M17,M26,M29}
+\f{E02}{Learning changes a relied-on interface}{Updates change calibration, uncertainty or evidence meanings on which retained plans and certificates depend.}{M03,M11,M35,M45,C03}
+\f{E03}{Open membership changes provenance}{Admissions, cross-owner dependencies or role migration invalidate independence, domain or population accounting.}{M19,M39,M41,C01}
+\f{E04}{Evidence is selectively unreliable}{Where untrusted agents are admitted, facts, reports and acknowledgements can disagree deliberately. State what independent witness, if any, the controller has.}{M07,M08,M14,M15,M40}
+\f{E05}{Credentials, recognition and control diverge}{An identity assertion is stale or misbound, or the effective ability to act survives revocation.}{M20,M21,M38,M45,C06}
+\f{E06}{Changing membership moves fault support}{Earlier knowledge, authority and effects survive roster changes; effective scope follows consumed evidence or delegated dependencies, not just the current count.}{M28,M39,M40,M41,M42,M43}
+\f{E07}{Privacy or unpredictability fails}{Observation, inspection or information exchange changes what another party knows. Include only for claims relying on confidentiality, noninterference, privacy or unpredictable choices.}{M44,C02,C05,C06,C09}
+\f{E08}{Platform-specific supply or implementation failure}{The failure depends on a particular hardware, software or maintenance realization; a generic simulation cannot validate that realization.}{M05,M35,M39,C06,C09}
+\f{E09}{Independent owners diverge}{Owners can legally refuse, reprioritize or follow different agreements. Record shared restrictions and continuing duties separately from any fault or arbitrary deviation.}{M04,M21,M27,M32,C05,C08}
+
+\section{Separate assurance ledger}
+\f{A01}{Abstraction drops a live dependency}{Projection loses joint correlations, pending work, physical effects, timing, observations or an action channel on which a claim depends.}{M02,M03}
+\f{A02}{Oracle checks the wrong event}{A status flag stands in for actual separation, or messages for discharged work; a global audit state is silently exposed to local controllers.}{M02,M04,M05}
+\f{A03}{Simulation or proof misses the regime}{Event order or discretization hides a breach, a guard excludes the target history, or evidence and controller refer to different revisions.}{M02,M03,M05,M45,C04}
+\f{A04}{Evidence cannot discriminate causes}{The same local record can result from nonexecution, effect without confirmation, or a faulty observer. Causal attribution requires a further observation or intervention.}{M05,M07,M32}
+\f{A05}{Evidence of tolerance is overextended}{One cut, repeated seeds of one setup, an unreachable counterexample, or a centralized oracle cannot prove the installed local policy handles the claimed class.}{M02,M05,C02,C07,C10}
+
+\section{Interaction probes}
+These are audit prompts, not choices of primary or held-out cases. Keep the local information or exogenous comparison fixed as appropriate; do not force the same downstream outcomes.
+\f{P01}{Retry across phase boundaries}{Compare the same delivery success before entry, after commitment and after clearance. Check the remaining feasible maneuvers and outstanding occupancy.}{F19,F21,F41}
+\f{P02}{Fallback fails for the same reason}{Compare equal marginal availability with different common-cause exposure. Check whether the alternate evidence supports the same premise and what its production costs.}{F09,F12,F16,F38}
+\f{P03}{Handoff with unresolved occupancy}{Hold grants and observed alarms fixed while varying whether the predecessor physically cleared. Compare locally implementable actions that preserve safety and owed service.}{F27,F29,F41,F48}
+\f{P04}{Second loss before recovery settles}{Compare the same later change just before and after repair is effective; then repeat the cycle. Separate restored communication, settled commitments and replenished supply.}{F42,F48,F49,F50,F51}
+\f{P05}{Individually safe responses compete}{Combine nominal local fallbacks against a finite shared resource. Check for incompatible necessary actions and a safe response that indefinitely defeats service.}{F39,F40,F47,F51}
+\f{P06}{Monitor shares the biased estimate}{Compare a shared estimation error with a genuinely independent check. Inspect physical outcomes, not just a monitor's trigger.}{F08,F09,F44,F46}
+\f{P07}{Version change crosses a role change}{Cross partial policy rollout with reassignment and inspect old, mixed and new interpretations at actual effect time.}{F03,F24,F29,F31,F49}
+\f{P08}{Authorized change resembles a fault}{Contrast legitimate withdrawal or tighter risk limits with outage or stale rules under equal initial observations. Check what is admissible before the cause is known.}{F28,F32,F45,E09}
+\f{P09}{Active observation changes coupling}{Compare a passive information loss with a permitted move to regain evidence. Include changes in geometry, reserves and duties left uncovered.}{F11,F13,F37,F40}
+\f{P10}{Proof reuse across a cascade}{With models and guarantees fixed, trace the actual shared state that carries propagation. Identify the guarantee inherited on an unchanged but coupled part and the local obligations still owed. Compare with a well-factored direct proof without assuming the framework proves a stronger conclusion.}{F39,F40,F41,A01,A02,A03}
+
+\section{Checks against recorded incidents}
+\begin{description}
+\item[Royal Chelsea Hospital, 2025.] The \href{https://www.gov.uk/government/publications/aaib-record-only-investigations-reviewed-august-september-2025/aaib-record-only-investigations-reviewed-august-september-2025}{AAIB record-only entry} reports that 17 of 700 vehicles missed a start command, a retry delayed their starts and 16 vehicles collided. It does not establish which collided or attribute the collisions to the retry. Check receipt against physical phase (F17/F19/P01).
+\item[Durham, 2025.] The \href{https://www.gov.uk/aaib-reports/aaib-investigation-to-uvify-ifo-uas-reg-n-slash-a}{AAIB correspondence report} records erroneous climb, automatic motor cut and impact outside the sterile area. It attributes bad estimates to vibration, possibly due to wear. Check the sequence of estimation, action and physical containment (F08/F34/F44).
+\item[Horse Guards Parade, 2022.] The \href{https://www.gov.uk/aaib-reports/aaib-investigation-to-uvify-ifo-1-and-uvify-ifo-2-uas-registrations-n-slash-a}{AAIB report} treats gust-induced deviation and collision as likely; wreckage remained in the controlled area. Separation and harm containment are separate claims (F38/F44).
+\item[Bath, 2023.] The \href{https://www.gov.uk/aaib-reports/aaib-investigation-to-uas-uvify-ifo}{AAIB report} records nominal launch and display followed by deviations during return and descent, attributed by the operator to depleted controller batteries (F36/F42/F53).
+\item[Orlando, 2024.] The \href{https://data.ntsb.gov/carol-repgen/api/Aviation/ReportMain/GenerateFinalReport/199458/pdf}{NTSB final report DCA25LA065} documents incorrect shared show setup, wrong aircraft-path assignments and an update not applied to the entire fleet. Check correctness and uniformity separately (F02/F03).
+\item[London Eye, 2026.] The \href{https://assets.publishing.service.gov.uk/media/6a7c7d41aadaaddf89b6e4da/AAIB_Bulletin_8-2026.pdf}{AAIB bulletin, p.\ 46}, records reversion to lower-accuracy positioning in several vehicles. Partial obscuration of a shared reference antenna was suggested, not established (F08/F09/F16).
+\end{description}
+These centrally scripted aerial displays do not establish failure rates or evidence for decentralized authority transfer, local-perception substitution or recurrent partition. Use the cases to challenge distinctions in the draft. Independent evidence passes are still needed for surface and underwater vehicles, complex logistics, prolonged operations and human handoffs.
+
+\section{Audit and selection}
+Read the \href{https://github.com/eternal-november/eos-research-programmes/tree/130b59e57ce37c999ac8848eaee45b0a09ac66b4/projects/swarm-coordination/contracts}{v0.5 contract and cascade companion} for actual guarantees and local interfaces. Reconstruct the proposed system's cycle from preparation through rejoin before using this inventory. Compare with the pinned Byzantine Control rows and its AC1--AC6 challenges: cross-dependencies, unaligned timing, heterogeneous interventions, applicability, concurrent changes and repeated supply deficits. A matching identifier is not evidence that a model exercises the mechanism.
+
+For each actual envelope record the changed operation and baseline, actor and scope, phase, onset, duration, recurrence and common causes; the observation and its delay for each controlling actor; surviving effects and duties; the safety and service tests; and a source or construction witness. Record whether the mechanism is modeled and tested, modeled but untested, explicitly outside the envelope with reason, or not yet representable. Reopen affected decisions after changes to modalities, suppliers, handoff or physical realization. Select a small test set for materially different mechanisms; use the separate cascade acceptance protocol to govern any C11 selection.
+
+An independent reviewer should first describe an unfamiliar operational cycle without these labels, then map each failure and aftereffect both ways. Challenge proposed mergers using equal delivery histories with different maneuver options, equal grants with different occupancy, equal alarms with different pending duties, and equal marginal reliability with different joint exposure. Keep any distinction that changes an admissible response or guarantee; fold mere renamings into existing rows. This is a source-cross-checked first draft, not certification of completeness or tolerance.
+\end{document}
