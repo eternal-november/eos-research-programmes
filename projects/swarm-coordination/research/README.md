@@ -22,6 +22,8 @@ These are conditional results for finite models. They neither validate a physica
 
 **SC-TIMED-SUPPORT: When do a delayed permit and a slower load transfer jointly miss a handoff deadline?** Either change alone fits. Both together free the middle support too late when an old load is live, but not after that load has settled. A permit sent before activation repairs the case when the order was already authorized. An independently selected bridge preserves the frozen receiver proof; opening it one tick later fails the authorization test. The modular direct proof matches the positive guarantee with fewer proof obligations. [Proofs and reproducible checks](handoffs/timed-support-cascade/README.md). This is finite receiver-level evidence, not full v0.5 acceptance.
 
+**SC-RECOVERY-LANE: When does a required retry delay another handoff?** A failed inspection moves a retry onto the lane used by a live downstream transfer. The same two faults do not cascade when the retry uses a separate lane; that diagnostic adds capacity, while the installed earlier-permit repair does not. The [fault register](handoffs/timed-support-cascade/recovery-lane/FAULT_REGISTER.md), [review](handoffs/timed-support-cascade/recovery-lane/Integrated_Return_Review.tex), and [model](handoffs/timed-support-cascade/recovery-lane/Recovery_Lane_Cascade.tex) cover the two-workload return. Run `python3 -B verify_recovery.py` in the recovery-lane directory.
+
 ## Policy repair
 
 **SC-TWO-BAY: When does a local hardware change require another crew to change its policy?** Two crews must deliver their held loads to different bays. Reversing one guide in both fixture modes leaves the other crew's feasible policy tables unchanged. Reversing it in only one mode forces a change to that crew's table, although either policy entry can stay unchanged in some repair. The exact joint relation detects the change; checking one entry at a time does not. The factored direct comparator gives the same result. [Model and proof](policy-repair/two-bay/Distributed_Repair_Search_Pilot.tex) · [Checker](policy-repair/two-bay/pilot.py).
@@ -48,6 +50,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 [Lean proof and replay](recurrent-coordination/transferable-settlement-rights/lean/README.md): `SwarmSettlement.all_views_right_unique_iff` checks the evidence criterion, and `SwarmSettlement.published_issuer_width_bound_of_no_holes` checks the normalized window bound. Run `bash replay.sh /path/to/pinned/lake/project` from the Lean directory. Certificate production and liveness are outside the proof.
 
+**SC-STAGGERED-REJOIN: Can an old duty survive a split while crews disagree about membership?** A local interlock checks current pooled admissions while private work continues. Custody and physical settlement survive newer generations; stale requests cannot create duties. The stable-window bound is exact in terms of the enabling cuts of the declared model. [Proof](recurrent-coordination/staggered-rejoin/Staggered_Recognition_At_Rejoin.tex) · [Replay](recurrent-coordination/staggered-rejoin/README.md).
+
 ## Role changes
 
 **SC-SPARE-SLOTS: When does a role handoff leave room for new work?** With authority held at an interlock and unit-length work using named worker-time slots, the exact admission profile records which slots can be spared together. Profiles combine across disjoint groups of old duties. Two matched histories with identical incoming authority and capacities disagree on a new admission because an earlier closure needs the relay's backup worker in only one history. A later public observation can invalidate the fixed-schedule model without invalidating a causal policy. The direct matching proof ties. [Proof](role-changes/spare-slots/Role_Changes_With_Pending_Work.tex) · [Replay notes](role-changes/spare-slots/README.md) · [Checker](role-changes/spare-slots/replay.py). From that directory: `python3 -B replay.py --verify | cmp results.json`.
@@ -63,3 +67,11 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 ## Live synthesis
 
 **SC-LIVE-DISPATCH: Can a verified policy be installed while earlier work continues?** Keeping one staging support free lets a compiler install a policy for a late fixture configuration and gain one tick of service. A catalogue of separate fixed images and a scalar replanner both have exact limitations under the declared interfaces; a general compiler ties. Holding the support costs one optional admission. [Argument](live-synthesis/dispatch-policy/Live_Latch_Policy_Synthesis.tex) · [Replay](live-synthesis/dispatch-policy/README.md).
+
+## Goal revision
+
+**SC-VESTED-LANE: Can a new goal restore a load to an apparently empty lane?** A still-binding right to start an old job can block restoration before it creates any occupation. The exact wait uses jointly admissible start and dwell, not separate scalar maxima. [Proof](goal-revision/vested-lane-use/Goal_Revision_With_Vested_Lane_Use.tex) · [Replay](goal-revision/vested-lane-use/README.md).
+
+## Local perception
+
+**SC-ANONYMOUS-BEARING: How much local history certifies safe entry without messages?** Two complete anonymous bearing frames distinguish safe entry in a finite two-peer crossing even with merged silhouettes. A frame clipped by the observation envelope can hide a decisive track. An explicit tracker and full direct temporal processing tie. [Proof](local-perception/anonymous-bearing/Anonymous_Bearing_and_Crossing.tex) · [Replay](local-perception/anonymous-bearing/README.md).
