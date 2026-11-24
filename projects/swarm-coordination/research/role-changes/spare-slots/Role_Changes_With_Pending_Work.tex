@@ -1,0 +1,78 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{proposition}{Proposition}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\title{Spare capacity after a role change}
+\author{}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Result.} In a finite unit-slot maintenance model, the spare-slot rank of the work already owed determines exactly which new requests can be accepted. It can be assembled for disjoint groups of old duties without exposing their dispatch records. Two histories with the same new bearer, candidate capabilities and request need not have the same rank: in the example below, an old tote can require the only backup worker that can maintain relay coverage while the new gate controller services a new tote. This is an admission result under one declared observation envelope, not a general policy abstraction or completion of C3.
+
+\section{Model and authority}
+The public decision occurs at a cut. The finite set $S$ contains named spans of indivisible worker capacity, one worker for one whole tick. No two jobs consume the same slot. A job is one unit; an accepted operation that earlier used other resources may leave a unit of work still owed. There is one mandatory job for each remaining tick of promised relay service. Each job $j$ has an eligibility set $N(j)\subseteq S$, derived from its release, deadline, applicable credentials, and working capabilities. Exclusive gate authority controls \emph{admission}: the interlock validates the unique current bearer and epoch, whereas a named closure permit on an already accepted tote authorizes only that tote's discharge. An old permit cannot admit another tote. There are no unauthorized cancellations in this model.
+
+At the cut, the decision maker receives certified appointment and intake evidence. Loss and delay can leave the same health reading; $W$ is the set of physical completions compatible with that reading. The same named old jobs are owed in all $w\in W$ and the policy selects \emph{one complete schedule} for the remaining ticks from that public data, with no further information-dependent choices. Define $N(j)=\bigcap_{w\in W}N_w(j)$. An injective schedule succeeds in all completions exactly when it uses only those edges. In particular, an empty common eligibility set does not rule out a policy with later observations and recourse.
+
+The working interlock, reliable issue of offline-selected instructions to guaranteed workers, and slot discretization are assumptions. There is no claim about clock uncertainty, unmediated authority, coupled or multi-slot jobs, changing job identities across hidden worlds, or continuous dynamics between ticks. Service means coverage for every whole tick and timely discharge of all admitted totes. Admission of an extra offered tote is a separate query; rejecting it does not fulfill that query.
+
+\section{The exact admission profile}
+Let $B$ be the old jobs, including any fixed requirements such as relay, $n=|B|$, and $\nu(B,U)$ the largest matching size using just slots $U$. Write $\mathcal O_B$ for the slot subsets occupied by some partial matching of $B$. If $\nu(B,S)<n$, the profile is $\bot$: old service already fails. Otherwise let
+\[
+ \mathcal F_B=\{F\subseteq S:\exists O\in\mathcal O_B,\ |O|=n,\ F\cap O=\varnothing\},
+ \qquad \rho_B(T)=\max_{F\in\mathcal F_B}|F\cap T|.
+\]
+A member of $\mathcal F_B$ can be kept simultaneously spare; its members being separately spare is not enough.
+
+\begin{proposition}[Exact test and its kernel]
+For a feasible old load, $\rho_B(T)=|T|-n+\nu(B,S\setminus T)$, and $T\in\mathcal F_B$ iff $\rho_B(T)=|T|$. A disjoint set $Q$ of proposed new jobs is admissible iff for each $Y\subseteq Q$,
+\[
+    |Y|\le \rho_B\biggl(\bigcup_{j\in Y}N(j)\biggr).
+\]
+For fixed named slots and all future eligibility lists, with single-slot probes allowed, equality of the profiles (including $\bot$) is exactly indistinguishability by admission queries.
+\end{proposition}
+\begin{proof}
+Take a maximum matching outside $T$ and augment it to saturate $B$. Each augmenting path adds an occupied slot without dropping a previously occupied slot. The resulting full matching therefore uses at least $\nu(B,S\setminus T)$ slots outside $T$, and by maximality it uses no more. Exactly $n-\nu(B,S\setminus T)$ slots of $T$ must then be occupied. This proves the rank formula and simultaneous availability criterion.
+
+Apply Hall's criterion to the combined graph. For $Y\subseteq Q$ and $Z\subseteq B$, put $T=\bigcup_{j\in Y}N(j)$ and $N(Z)=\bigcup_{j\in Z}N(j)$. Hall requires $|Y|+|Z|\le |T|+|N(Z)\setminus T|$. The largest deficiency $|Z|-|N(Z)\setminus T|$ is $n-\nu(B,S\setminus T)$: adding that many universally eligible dummy slots makes the restricted graph satisfy Hall by extending a maximum matching, and adding fewer cannot saturate $B$. This yields the displayed criterion. Equivalently, match $Q$ into some $F\in\mathcal F_B$.
+
+A probe set with one job forced to each slot of $T$ is accepted exactly when $T\in\mathcal F_B$. These queries recover the family and hence the rank; the empty query separates $\bot$. Two different profiles thus have a distinguishing query. Restricting the allowed probes may yield a coarser kernel.
+\end{proof}
+
+\begin{proposition}[Assembly of disjoint old duties]
+For disjoint old job groups $B_1,B_2$ with the same named $S$ and unchanged eligibility for each job,
+\[
+ \mathcal O_{B_1\sqcup B_2}
+   =\{X\cup Y:X\in\mathcal O_{B_1},Y\in\mathcal O_{B_2}, X\cap Y=\varnothing\}.
+\]
+For each nonbottom component, its spare family determines its occupancy family. Together with a saturation test against $|B_1|+|B_2|$, the rule computes the exact combined profile, associatively.
+\end{proposition}
+\begin{proof}
+Restricting a partial matching to each group produces disjoint occupied sets. Conversely, take the union of matches on disjoint jobs and slots. Each bracketing of three groups therefore consists of unions of three pairwise disjoint occupied sets. To recover one component's occupancy family, take complements of its maximum-cardinality spare sets, all full matching occupancies, and close under subsets. Augmentability shows that every partial occupancy extends to a full one. The mandatory count is $|S|-\rho_B(S)$.
+
+If any input is bottom, adding obligations cannot help. A union lacking an occupancy of size $|B_1|+|B_2|$ is bottom even when neither input was. Otherwise take complements of those saturated occupancies and their subsets to obtain the spare family and hence rank. This is the disjoint-slot form of transversal matroid union with a dual rank, derived from the capacity law rather than assuming a joint admission oracle.
+\end{proof}
+
+A group can cache this admission descriptor while another group's record changes if the cached group's eligibility and slot identities survive the change. Slot loss, new credentials, duplicate ownership of a job ID, or another shared gate may invalidate the premises. Dispatch still requires a named witness with actual permissions; audit, custody, and retiring a particular job still require its identity. Different named records with the same adjacency and different retirement semantics witness the limitation. Rank is a criterion, not necessarily a small encoding. An unchanged direct baseline keeps the adjacency and obtains a witness by augmenting paths without tabulating ranks. No speed gain over it is shown.
+
+In four slots $A,B,C,D$, compare the old eligibility lists $(AB,CD)$ and $(AC,BD)$. Both leave two spare slots, and every slot is individually spare in either system. Two simultaneous probes forced to $A,B$ fail in the first system but succeed in the second. Thus a count and all unary observations together do not identify the admission profile.
+
+\section{Two transfers while work remains live}
+The workers are $A,B,C,D$. In tick 0, $A$ controls gate admission and accepts the first tote; $D$ supplies continuous relay coverage. The first tote needs its closure check in tick 2. $A$ can perform an ordinary closure for an intact intake pocket. $D$ can perform either closure, including the recovery check required by a damaged pocket. Certified intake state is available at the decision in tick 2. This changes the old operation's closure eligibility, not the worker capabilities. $B$ takes gate authority during planned maintenance in tick 1, accepts a second tote, and leaves its scheduled closure to $D$ in tick 3. $C$ and $D$ overlap their relay coverage in tick 1 without sharing gate authority.
+
+In tick 2 a missing health report can indicate a failed relay on $B$ or merely delayed telemetry. The interlock installs certified standby $C$ before considering new work. An in-flight request under $B$'s old epoch is rejected in either completion. Both earlier totes are still pending when $C$ takes over. In tick 2 the guaranteed relay choices are $C,D$; $B$ can physically relay only in the delayed-report completion. In tick 3 the relay choices are $C,D$. The new offered tote can be admitted and served in tick 2 only by $C$, consuming $C_2$; gate validation is part of the transaction and does not use a second slot.
+
+For an intact pocket, $A_2$ closes the first tote, $D_2$ supplies relay, and $C_2$ serves the new tote; $D_3$ closes the second tote and $C_3$ supplies relay. This schedule works under either health completion. For a damaged pocket, the first closure, relay, and new service in tick 2 need distinct slots in $\{C_2,D_2\}$. That Hall deficit of one makes the new service infeasible. Declining that admission still meets all existing duties. A controller told that $B$ is merely delayed could use $B_2$ in this negative arm, but that would not guarantee service across the two completions. The appointment, capabilities, offered request, and ambiguity are identical across pocket states. The old closure permit is the separating fact.
+
+Frozen schedules have a strict boundary. Suppose $D_2$ is the common relay action. A public measurement before tick 3 then distinguishes worlds where closure can use only $C_3$ or only $D_3$, respectively. A causal policy serves the common relay and assigns the closure using that measurement. The intersection graph has no closure edge and rejects. With later observations, schedules need agree only on common histories through the current decision.
+
+\section{Evidence and comparison}
+The Python replay gives an augmenting-path solver on the combined graph, a separate slot-first enumerator, and an event checker for two intake states and both health outcomes. The traces record admissions, stale rejection, coverage and discharges. The replay checks 89,088 admissions, 512 triples for assembly, the unary-summary failure, and the recourse boundary. These are exact finite checks and a written proof, not mechanized or physical validation.
+
+Gerkey and Matari\'c already treat time-extended allocation and the limits of independent job constraints in \href{https://robotics.usc.edu/publications/media/uploads/pubs/347.pdf}{their taxonomy, \S\S5.2 and 7.2}. Notomista et al. adapt allocation when features or capabilities change in the \href{https://arxiv.org/pdf/2105.05586}{resilient energy-aware model, \S IV}; that supplies a comparator for eligibility, not the old closure and interlock laws stipulated here. \href{https://static.usenix.org/events/osdi06/tech/full_papers/burrows/burrows_html/}{Burrows's Chubby paper, \S2.4} is a precedent for checking sequencers at the resource. This model assumes an interlock, not a new authority-transfer protocol. The combinatorial baseline is \href{https://nvlpubs.nist.gov/nistpubs/jres/69B/jresv69Bn3p147_A1b.pdf}{Edmonds and Fulkerson's transversals and matroid partition}.
+
+The Contextual Composition \href{https://github.com/eternal-november/eos-research-programmes/blob/115957abf158dad89c86ca354a69081a3114ba2d/projects/contextual-composition/feedback-and-concurrency/observable-covers/Residual_Profiles_and_Admission_Reflection.tex}{pinned one-hole residual proposition} applies to the primitive Boolean admission test with fixed slots, the old load as the varying witness and $Q$ as its surrounding argument. The two propositions above identify its residual classes and derive assembly from the slot and job laws. This does not instantiate the stronger common-profile theorem for new native witness maps or quotient execution and observations. The factored direct proof has the same guarantee. The result is a reusable admission representation with a precise scope, not a claim of historical novelty or advantage over matching.
+\end{document}
