@@ -1,0 +1,110 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Clearance and connectivity after a corridor crash}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Question.} After a robot loses mobility and radio in a single-file
+corridor, can the surviving radio chain reconnect by time \(T\) without
+crossing or approaching the stopped body too closely? The answer below
+is exact for one known fault position, fixed order and endpoints, and
+single-integrator survivors with a common speed bound \(v>0\).
+There is no claim about dynamics with acceleration limits, equipment in
+the field, lawfully obtaining the initial configuration, or the full R6
+obligation.
+
+\paragraph{Source model.} Work on the line segment \([0,L]\).
+The \(n\geq 2\) survivors start at ordered positions \(x_0,\dots,x_{n-1}\),
+with \(x_0=0\), \(x_{n-1}=L\). A disabled robot remains at \(f\in(0,L)\),
+has no active radio, and must be separated from every survivor by \(g>0\).
+Adjacent survivors must also be separated by at least \(g\); these lower
+bounds must hold throughout. The initial physical configuration satisfies
+these bounds. Radios on surviving units have range \(r\), with no
+directionality or occlusion; the stopped body does not block radio
+propagation. A link exists exactly when the distance is at most \(r\).
+A sorted surviving chain is connected exactly when every adjacent gap is
+at most \(r\): if an adjacent gap exceeds \(r\), all links across that cut
+also exceed \(r\). Connectivity may be lost at the fault; the requirements
+here are restoration by \(T\) and maintenance afterward by holding still,
+not continuous post-fault connectivity before restoration.
+
+\paragraph{Exact recovery test.} If \(r<g\), no connected safe terminal configuration exists.
+Otherwise let \(D_i=[\ell_i,u_i]\) be the intersection of the segment,
+\([x_i-vT,x_i+vT]\), the original side's safety half-line
+\((-\infty,f-g]\) or \([f+g,\infty)\), and the fixed-position singleton at
+an endpoint. Empty intervals are allowed as failure indicators.
+Set \(J_0=D_0\). For each later vertex let
+\[
+  J_i = D_i\cap [\inf J_{i-1}+g,\ \sup J_{i-1}+r],
+\]
+propagating emptiness, never taking endpoints of an empty interval.
+Then safe recovery by \(T\) exists if and only if \(J_{n-1}\ne\emptyset\).
+The scan costs \(O(n)\) arithmetic operations, and deciding existence
+needs only the current interval. Reconstruction retains the prefix
+intervals and costs \(O(n)\) further operations.
+
+For the induction, \(J_{i-1}\) is exactly the set of achievable endpoints
+for the preceding chain. For nonempty \(J_{i-1}=[a,b]\), a candidate \(y\)
+can extend the chain exactly when
+\([a,b]\cap[y-r,y-g]\) is nonempty. This is equivalent to
+\(a+g\leq y\leq b+r\), since \(a\leq b\) and \(g\leq r\).
+Choose \(y_{n-1}\in J_{n-1}\) and recursively choose
+\(y_{i-1}=\max(\inf J_{i-1},y_i-r)\). The same argument gives exact
+integer arithmetic when all bounds and candidate positions are integral.
+
+Every physically admissible motion satisfies the displacement and
+terminal inequalities. Conversely, for \(T>0\), take the straight
+interpolation \(x_i(t)=(1-t/T)x_i+(t/T)y_i\). 
+The displacement bound gives speed at most \(v\); every clearance,
+side and endpoint constraint is affine and holds at both ends, hence
+throughout. For \(T=0\) the test checks the initial state directly.
+The terminal upper gaps are not inferred at intermediate times from
+one connected endpoint. If the initial upper gaps also hold, they are
+preserved by the same affine argument. Thus there is neither a hidden
+violation between sample instants nor an assumption that a fault
+already violating connectivity can be undone retroactively.
+
+\paragraph{Matched cases.} With survivors at \(0,2,7,9\), stopped body
+at \(4\), \(g=1\), and \(v=1\), range \(3\) yields the tight deadline
+\(T=1\): the three gaps must all equal \(3\), requiring the terminal
+positions \(0,3,6,9\). Increasing range to \(4\) yields \(T=1/2\):
+the initially five-unit middle gap can shrink by at most \(2T\), and
+\(0,5/2,13/2,9\) attains the bound. Separately, if there are survivors on
+both sides and \(r<2g\), the stopped body makes a radio connection
+physically impossible: the cross-body gap is at least \(2g\).
+For \(L=6\), \(g=1\), \(r=3/2\), the initially connected formation
+\(0,1,2,3,9/2,6\) therefore cannot reconnect across a crash at \(3\).
+If the failed body is removed instead, the same survivors can occupy
+\(0,3/2,3,9/2,6\). This compares physical continuation classes, not
+policies with different access to information.
+
+\paragraph{Evidence and scope.} The direct comparison solves the same
+terminal constraints as a linear program and compares recovered
+deadlines and rational certificates in 480 cases. Integer exhaustive
+enumeration agrees in 8,928 cases. \texttt{CorridorFormation.lean}
+checks exact integer endpoint propagation for all chain lengths and
+the real affine interpolation and speed lemmas. Lean does not check
+the Python code, the radio correspondence, or a distributed sensing
+protocol. This is a reachability oracle for a coordination layer that
+can lawfully obtain its inputs. Standard chain constraint elimination
+can implement the same scan; no historical novelty or gain over a
+well-factored direct chain solver is claimed.
+
+Maeda, Endo and Matsuno give
+\href{https://doi.org/10.1016/j.jfranklin.2023.05.013}{decentralized
+crash recovery and avoidance of the disabled robot}; their local
+controller is not replayed here. The bounded single-file oracle is a
+complementary exact reference, not a claim that it replaces their
+controller. \href{https://arxiv.org/abs/2609.29939}{Managed robot
+departure} can prepare replacement links before removal, unlike the
+unannounced loss in this model.
+\href{https://arxiv.org/abs/2210.01354}{Barrier-function composition}
+addresses control viability under simultaneous constraints; our
+linear interpolation result relies on the stated affine convexity.
+This reference does not discharge R6 or its connection to the shared
+scientific laws. Hidden crash position, radio occlusion, acceleration,
+branching corridors and evidence to distinguish physical infeasibility
+from local uncertainty remain separate checks.
+\end{document}
