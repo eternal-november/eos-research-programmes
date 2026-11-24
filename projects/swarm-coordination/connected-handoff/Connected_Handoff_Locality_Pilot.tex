@@ -1,0 +1,40 @@
+\documentclass[11pt]{article}
+\usepackage[margin=.9in]{geometry}
+\usepackage{amsmath}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\title{When a Connected Handoff Stops Propagating}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Result.} The same incident requires one neighboring crew in one cut and two in another, even with the same number of crews and a common deadline. A separate load beyond the repair remains live and unchanged in both. The linear model has an exact action bound and an exact authorization delay. It also gives a sound place to stop reopening proofs, but a properly factored direct argument reaches the same place.
+
+\section{Two cuts, one initiating event}
+Five crews are arranged on a path, numbered \(0,\ldots,4\). Each support can hold one load. Load \(j\) starts on crew \(j\) and can move only to crew \(j+1\) for this handoff. A receiver needs a valid incident authorization and a free support at the start of a transfer. A transfer takes one tick, and the old support remains until acceptance. The model orders acceptance, notice delivery and new transfer starts at each tick. It abstracts away continuous dynamics, failed actuators and proactive redesign of authorization or load geometry.
+
+The prefix actually places four loads on their native supports. Before the incident, a fixed-rack receipt settles loads 1 and 2 in the short-cut history; it settles only load 2 in the long-cut history. Load 3 remains on its crew in both. At tick 0, root crew 0 issues the same request to be relieved by tick 4, and the same delays and policy apply. With one-tick message hops, crew 1 is free in the short cut, so the root load transfers at tick 2. In the long cut, crew 1 still supports load 1. Crew 2 takes that load at tick 3, then crew 1 takes the root load at tick 4. No authorization from this incident crosses the first free receiver to the live suffix. Restoring passage or availability is a service promise, distinct from preserving continuous load support: in adverse deadline runs the root can miss its relief deadline while still safely holding the load.
+
+\section{Exact radii and clock bound}
+Let \(k\) be the index of the first available support to the right, with loads \(0,\ldots,k-1\) still live on their native supports. A settled load must have been physically taken by its rack; a missing receipt is not evidence of freedom. Under the stated route and capacity rules, relieving crew 0 forces load 0 to crew 1. Since crew 1 cannot take a second load, any successful continuation must move load 1 to crew 2 if it is still live. Induction gives one forced move per link through \(k\); all \(k+1\) crews are involved, including crew 0. This bound holds even with advance authorization. A blocked or unavailable necessary receiver cannot be bypassed in this topology.
+
+Let \(d_i\) be the delivery delay from crew \(i-1\) to crew \(i\). The installed policy forwards an incident authorization only if the receiver currently holds its native load; it starts any authorized transfer for which the actual receiving support is free. The terminal receiver on the live prefix cannot begin sooner than \(\sum_{i=1}^k d_i\), because authority follows that path. Only after it has accepted its predecessor's load can the preceding receiver accept, and so on. Earliest relief is exactly
+\[
+                 k+\sum_{i=1}^k d_i .
+\]
+The matching argument proves the physical \emph{action} radius \(k\); the causal authorization rule accounts for the additional delay and the required communication path. The code checks the counterdesign with authorizations already in place: the lower bound then is \(k\) ticks, not \(k+\sum_i d_i\). The message bound is not an impossibility theorem for all policies. Preauthorizing or separately reserving capacity could matter in another operating agreement, and the pilot does not price those changes. The fixed-in-advance policy needs no global value of \(k\).
+
+Across 84 configurations with up to seven load positions, three delay families, deadline boundary checks and an unavailable-receiver control, the executable policy agrees with independent endpoint matching and timed placement search. The proof applies to arbitrary finite paths under the same hypotheses; the sweep is not a proof for general graphs.
+
+\section{Where the proof can stop}
+For the exhibited runs, record the complete relevant interface between checked prefix and cached suffix: initial pending transfers and grants, received event times and identities, accepted shared-load effects, and inputs the suffix controller will read. At the first free receiver the policy emits no continuing incident authorization, neither partner has left a live grant across the cut, and the prefix does not alter support across it. With the same unrelated inputs, the suffix starts in the same local state and sees the same inputs slot by slot. The conditional direct proof of suffix behavior can be reused, including the still-live load 3. The stop test is not just an end-state equality or a count of free stands: a queued authorization could change a later suffix decision without any current load crossing.
+
+More generally, an unchanged proof established for a contract of admissible joint boundary traces needs containment in that contract, not equality to the old realized trace. Checking the prefix's new boundary against the documented suffix premise suffices for this style of proof. For a simple strict example, if the suffix proof accepts either silence or a status-only rack receipt but no new transfer request, adding the allowed receipt changes its input trace without invalidating its support proof. Containment concerns traces of the installed interaction, or a sound overapproximation; it does not check a newly invented policy against a previous single trace.
+
+The project’s \href{https://github.com/eternal-november/eos-research-programmes/blob/e1348964f73704212d2d8b48d5982a5ed600a2ff/projects/contextual-composition/feedback-and-concurrency/retained-boundary-refinement/Retained_Boundary_Refinement_and_Correlation.tex\#L299-L325}{adaptive retained-boundary theorem} yields an exact comparison at this particular silent seam: use equality on complete suffix state and identical deterministic local successors, with identical external inputs, giving zero per-step discrepancy. The new obligation is to prove that the edited prefix actually supplies the inputs under which this relation holds. The factored direct proof uses the same obligation and a state induction. Both leave suffix lemmas in place; neither dispenses with validating the pending grants and receipt at the seam. No proof-work advantage is established.
+
+\paragraph{A stronger next check.}
+To localize exact search over \emph{changed} policies, the coupling to retain may include a joint relation of decisions indexed by local observations, not merely a list of possible decisions separately for each actor. As a schematic negative control, changing a separator relation from \(\{00,11\}\) to \(\{01,10\}\) preserves both coordinate projections but removes every solution when the neighbor's unchanged condition is equality. An exact join over a tree with the running-intersection property can propagate relation changes and stop at an unchanged separator message. A physical path does not prove that the unrolled policy constraints have this factorization. The four-assignment example is a proof-screening example, not a second physical run or a held-out transfer.
+
+\paragraph{Replay and scope.}
+Extract the archive and run \texttt{python3 -B pilot.py --json | cmp results.json}. This is an authorization-based relief pilot without the latch-sensing dynamics of the earlier test. No field evidence, contract acceptance, held-out selection or repository change is claimed.
+\end{document}
