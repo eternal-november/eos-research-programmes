@@ -1,0 +1,110 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\title{Can a benchmark restore a resource while its fault is still active?}
+\maketitle
+
+\paragraph{Audit.}
+For NIST ARIAC 2024.3.0, expiring one robot malfunction writes both
+robot health flags true. Expiring one sensor blackout writes all six
+sensor-type flags true. The writes do not check which other challenges
+are still active. In the tested source prefix, a ceiling-robot stop can
+restore the floor robot's healthy flag even though a separate floor-robot
+stop is still live; the corresponding camera expiry also restores a
+separately blacked-out logical camera flag. The switcher treats the
+resulting floor health flag as a request to activate its controllers.
+A replay of the pinned switcher also shows that a rejected switch is not
+retried on repeated identical healthy reports. Both observations concern
+benchmark software. Neither establishes an arm's physical state or
+describes HeRo's implementation.
+
+\paragraph{Source and cut.}
+The \href{https://pages.nist.gov/ARIAC_docs/en/2024.1.0/competition/challenges.html}{published
+rules} permit temporal robot malfunctions and sensor blackouts. They say
+what the health flags represent and describe restoration when the
+challenge resolves. The exact versions, paths and Git blob hashes are
+in \texttt{SOURCE.tsv}. The task manager starts due challenges before
+processing expiry. Each start updates the specified scope and retains an
+occurrence object. Each expiry marks the occurrence completed, writes the
+class-wide health reset, then erases an item from the same vector being
+used by its range loop. An iterator after that erase cannot be relied on.
+The harness therefore stops each selected native expiry function
+immediately before its first erase and inspects the scalars and
+occurrences at that cut. It passes those scalars to the unchanged health
+message constructors. It does not run the original completion loop past
+that cut, and makes no claim that a live Gazebo trial publishes the
+captured state.
+
+The first pair of temporal challenges disables the ceiling robot and the
+ordinary camera on \([0,2)\). The second pair, when present, disables the
+floor robot and the logical camera for five ticks, starting at tick 1
+or tick 2. There is also a control with no second pair. At tick 2, the
+first completion writes both robot and both selected camera flags true
+in all three cases. The second pair's occurrence records still show it
+started and not completed. The same-cut case tests the native start
+before expiry ordering. The fixture pairs the robot and sensor
+challenges on the same clock; a common physical cause is not asserted.
+
+\paragraph{Downstream state.}
+The pinned Python switcher is executed with controlled service and
+subscription stubs. Feeding it those constructed robot messages requests
+floor-group activation despite a live floor malfunction. With a
+source-side union of live disabling scopes, the same switcher requests
+no such activation in those histories and permits the healthy ceiling
+group to resume. The no-second-pair control still permits floor service.
+The logical camera plugin independently checks the logical camera flag
+on its data path, so the flag is consumed as an enable condition there,
+not proof that a fresh image has arrived. Its data path is source-audited
+but not executed.
+
+Even in the corrected health stream, a first floor activation request
+can return \texttt{ok=false} without changing the mock plant. The native
+switcher writes its local floor state while building the request; the
+error branch logs but does not roll that state back. Three identical
+later reports give no second request. A second stub check permits only
+one controller to change even on a positive reply, illustrating the
+limit of a group bit; it does not claim a positive real service reply
+has that effect in this version. Recovery admission with a true health
+flag and expected controllers should be followed by actual controller
+membership feedback from an authoritative service before treating the
+group as available. Current membership is not proof that a prior
+physical effect has cleared. Waiting for an execution barrier or
+retiring any live prior authority still belongs to the receiving
+resource; the modeled stubs supply neither barrier nor clearance.
+
+\paragraph{Composition law.}
+For exact active occurrence set \(A\) and a typed disabling scope
+\(S(e)\) for each occurrence, resource \(r\) is disabled just when
+\[
+  \exists e\in A:\ r\in S(e).
+\]
+An expiry of \(e\) removes only \(e\), not every cause with that fault
+type. Unions across suppliers with the same occurrence identity
+combine by disjunction on each resource; duplicate views of one
+occurrence must not become new causes. This presupposes a common cut
+and consistent definitions of shared occurrences. Independent sensor
+views can disagree or be incomplete, in which case their apparent
+union does not certify a release. At the authoritative event source
+with exact transitions, induction over cuts proves the incremental
+check equals the ordinary interval-union specification. The 57,624
+pointwise comparisons cover every pair of nonempty masks on three
+resources and every positive integer interval with start \(0\) to \(3\)
+and end at most \(5\), including coincident starts and finishes.
+Lean checks that another blocker survives erasure of one occurrence,
+that union implements disjunction, and that resources outside all live
+scopes need not stop.
+
+\paragraph{Implication for evaluation.}
+A test that scores recovery while the fault injector has ended a
+different fault cannot certify concurrent tolerance merely from the
+reported healthy flag. For the pinned benchmark, confirm the exact
+injected active set at each cut or use an independently checked
+occurrence-scoped injector, then distinguish controller state from
+physical work. This does not say which releases the evaluated HeRo
+scenarios used or whether they exercised either coincidence. A factored
+direct checker given the same occurrence ledger agrees; the check is
+a calibration for the integrated stack and admits activation
+for an unaffected group in the declared fixture. It does not
+demonstrate an advance over a correctly composed prior architecture or
+discharge I1.
+\end{document}
