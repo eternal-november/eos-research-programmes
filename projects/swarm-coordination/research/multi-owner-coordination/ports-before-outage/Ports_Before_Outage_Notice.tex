@@ -1,0 +1,35 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Choosing a physical handoff before the outage is known}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Commitment and sources.}
+One civil inspection sample must reach its designated station by a deadline. A vehicle must choose one reserved branch before it can learn whether that branch's final hoist is powered. Reversing from a branch or commissioning a second hoist after that cut cannot meet the deadline. Refusal at an unavailable hoist leaves the sample safe but does not count as service. An observer can see a truthful, lawfully shareable outage report $q$; the vehicle independently sees its actual gate configuration $r$. The observer does not learn $r$ before sending. There is at most one timely message and one mandatory result; no new work, repeated attempts, random risk allowances, or cross-sample contention. An extra always-available branch is an explicit extra installed asset. The receiver's right to use a powered hoist is part of the setup; the message is evidence, not a grant.
+
+Worlds $h$ are actual bounded histories with sender/receiver views $q(h),r(h)$. The same world fixes both observations, power and the staged work. Let $P$ be the nonempty set of available branch choices before the commitment and $A_h\subseteq P$ the choices that can complete actual authorized delivery in $h$. If the suffix has no further choices, this is computed directly from timed motion and effect; if it has choices, this statement assumes the law needed to execute a feasible suffix is available after the cut. An omniscient path is not sufficient if later choices would themselves have to be made without their necessary evidence. An early failed delivery was excluded from $A_h$ whether or not its controller got permission to start.
+
+\paragraph{Exact observation requirement.}
+For each reached view pair let
+\[
+ B_{qr}=\bigcap_{h:q(h)=q,\,r(h)=r} A_h.
+\]
+Unreached pairs have no constraint. A message alphabet of size $k$ suffices exactly when the sender views can be partitioned into $k$ or fewer classes $S$ so that
+\[
+ \bigcap_{q\in S:\ (q,r)\text{ reached}} B_{qr}\ne\varnothing
+\]
+at each receiver view for each nonempty reached cell. Necessity uses the same branch decision for the same message and receiver view. Sufficiency selects any member of the indicated intersection at each reached cell. A one-element obstruction means no number of messages can fix that view pair; the observer itself does not know enough. This is a relational one-shot zero-error coding problem. Choosing the same physical branch across compatible worlds is the output, not reconstructing an outage identifier.
+
+Equivalently forbid a monochromatic minimal set of sender views whose joint intersection is empty at some receiver view. Each such obstruction has at most $|P|$ views: for each candidate port choose one sender view at that receiver view that excludes it. Timing and provenance of the views still have to be established by the source. This need not be a pairwise conflict graph. The result reflects exact scoped local admission via the \href{https://github.com/eternal-november/eos-research-programmes/blob/e396e54d31567ae10f7f61cfa6f33f9b63f5777e/projects/contextual-composition/feedback-and-concurrency/observable-covers/Residual_Profiles_and_Admission_Reflection.tex}{Contextual Composition residual-profile criterion}: authorized observable cells and exact receiver tests are declared first, and the reduction does not grant either actor access to global history.
+
+\paragraph{Arbitrarily large pairwise error with one failed owner.}
+For $p=|P|\ge3$, fix any $p$-uniform hypergraph on $n\ge p$ sender views. For each edge $e$, install one admissible gate layout with $p$ alternative hoists backed by the $p$ different owner domains in $e$. The receiver sees $e$. Exactly one domain $q$ among all $n$ is out; the observer sees $q$. The world space allows any such outage with each layout, even when the lost domain is not installed on that layout. At layout $e$, loss $q\in e$ disables only its corresponding port; loss outside $e$ disables none. Under the common movement timetable this yields $B_{qe}=P\setminus\{\text{that port}\}$ or $P$ respectively. A group is incompatible at $e$ exactly when it contains $e$. Thus the required alphabet equals the weak chromatic number (no edge entirely one color) of the given hypergraph. The diagnostic pairwise conflict graph has no edges.
+
+Taking all $p$-subsets as layouts gives a tight message alphabet $\lceil n/(p-1)\rceil$: any $p$ views in a message class appear together at an admissible layout, while classes of size at most $p-1$ always leave a port. This grows without bound at fixed $p$ even though no pair of worlds with the same layout lacks a common port. For the single three-port layout the exact alphabet is two: one message groups outages 0 and 1 and uses port 2, the other groups outage 2 and uses port 0. Authorization at tick 0 is not delivery. A timely message at or before tick 1 informs the irreversible launch, arrival is at tick 2, and physical delivery at tick 3 needs the installed hoist to work. Any later message cannot restore the guarantee; an extra independently available port does restore it without the message but changes capacity. The layout family is authored, not an observation about field topology or a deployment protocol.
+
+\paragraph{Comparison and scope.}
+\href{https://doi.org/10.1109/18.915643}{Orlitsky and Roche, Coding for Computing} is a functional coding precedent; a single prescribed answer is a special case. Relational zero-error decisions require compatibility of the whole received cell. The direct benchmark is the raw one-way protocol with a timed continuation check for each full history. The finite probes show it agrees; there is no matched operational advance claim. \href{https://david-kempe.com/publications/time.pdf}{Temporal reachability} and \href{https://pages.cs.wisc.edu/~jyc/papers/label-cut.pdf}{label cuts} are appropriate offline baselines for actual reachable suffixes and named outage domains, respectively. Neither a different successful path for each hidden fault nor a low graph cut count supplies the timely local message. Construction of single-claim bounded actual service from complete locally justified routes is the separate \href{https://github.com/eternal-november/eos-research-programmes/blob/e396e54d31567ae10f7f61cfa6f33f9b63f5777e/projects/byzantine-control/exclusive-service/RULE.md}{exclusive-service prerequisite}.
+
+Prior swarm two-action models used pairwise conflicts and roles of the two observers. The checked distinction here is that three or more legitimate physical choices give higher-order incompatibility even under single-domain losses; the current model does not replace multi-crew coordination or compare against an inadequate pairwise diagnostic as a strongest baseline. The exact statement applies to L1/R1 and limited-trust R5 with truthful views and a lawful message. No independent transfer, result about arbitrary outage identification, or contract acceptance is claimed.
+\end{document}

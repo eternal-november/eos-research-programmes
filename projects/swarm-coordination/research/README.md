@@ -150,6 +150,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-EXPIRING-ENDORSEMENTS: What changes when releases can occur in several nonoverlapping windows?** Two ledgers can agree after every single recognized coalition and leave different capacity when appointments change. A difference invisible to the proper subqueries of a width-`t` query needs at least `2^(t-1)` integer units, exactly. [Proof, Lean and replay](multi-owner-coordination/expiring-endorsements/README.md). Scoped effect-gate result, not R5 acceptance.
 
+**SC-PORT-CHOICES: Why can every pair of outage histories have a common port while no port is safe across all of them?** One persistent outage disables one of the installed hoists. The exact timely report alphabet grows with the admissible layout family even when every pairwise compatibility check passes. [Proof and replay](multi-owner-coordination/ports-before-outage/README.md). A direct timed protocol agrees; no independent I1 or I2 claim.
+
 ## Cross-group agreements
 
 **SC-ORDERED-ACCESS: Can identical allocations allow different blocking coalitions?** Swapping the order of access rights can change a feasible coalition deviation without changing current jobs or payoff. Earliest feasible completion preserves the stated stability tests. [Proof](cross-group-agreements/ordered-access/Access_Windows_And_Blocking.tex) · [Replay](cross-group-agreements/ordered-access/README.md).
