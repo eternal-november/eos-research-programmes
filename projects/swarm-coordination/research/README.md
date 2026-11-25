@@ -1,5 +1,7 @@
 # Swarm coordination research
 
+[Current v0.3.1 evidence and open obligations](evidence-ledger/README.md).
+
 The [v0.5 completion review](COMPLETION.md) maps each written obligation to the corresponding proof and checks and states the limits of the results.
 
 Use Byzantine Control’s [fault inventory](../../byzantine-control/FAULT-COVERAGE.md) to choose tests by mechanism, including stale information, pending work, and interacting timing changes. Check each mechanism against the swarm model before admitting it. The inventory is not an exhaustive list of swarm faults, and neither inventory selects or freezes contract tests.
