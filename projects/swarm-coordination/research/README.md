@@ -184,6 +184,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-CHARGED-PROBES: What does a failed observation attempt actually cost?** An erased test can leave a live cleanup duty or consume a battery unit. Physical overlap and fixed coupled erasure support govern which evidence deadlines are attainable. A sharp finite bound explains downstream rejection by a small set of source histories. Direct matching and active references tie. [Statement](active-evidence/charged-probes/Charged_Probes_And_Actionable_Evidence.tex) · [Lean and replay](active-evidence/charged-probes/README.md).
 
+**SC-BEARING-APERTURE: Can many position samples still leave a mirrored bearing unresolved?** The exact test retains the arc of phase differences after allowing an unknown offset. Nine recorded physical motion prefixes have insufficient measured lateral extent under the declared phase model. [Proof and pinned replay](active-evidence/bearing-aperture/README.md). No real bearing deadline or non-radio substitution inferred.
+
 ## Multiple owners
 
 **SC-LANE-WITHDRAWAL: When can a successor start after an owner withdraws?** Port-side authority and physical clearance are different: a prior start can stay live after revocation. A receipt-only rule, a timeout and an independent reserve have different service consequences. [Proof](multi-owner-coordination/lane-withdrawal/Withdrawal_With_Live_Lane_Use.tex) · [Replay](multi-owner-coordination/lane-withdrawal/README.md).
