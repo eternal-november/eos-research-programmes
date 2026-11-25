@@ -1,0 +1,185 @@
+{
+  "start": "J",
+  "base": "base",
+  "start_epoch": 2,
+  "egress_due": 10,
+  "battery": 50,
+  "round_d": 1,
+  "send_cost": 1,
+  "round_limit": 1,
+  "all_in_round": true,
+  "command_nodes": [
+    "J",
+    "P",
+    "Q"
+  ],
+  "ack": true,
+  "reports": [
+    {
+      "id": "A",
+      "deadline": 6
+    },
+    {
+      "id": "B",
+      "deadline": 6
+    }
+  ],
+  "slots": [
+    {
+      "id": "r0",
+      "stock": [
+        "A"
+      ]
+    },
+    {
+      "id": "r1",
+      "stock": [
+        "A",
+        "B"
+      ]
+    },
+    {
+      "id": "r2",
+      "stock": [
+        "B"
+      ]
+    }
+  ],
+  "arcs": [
+    {
+      "id": "to-P",
+      "src": "J",
+      "dst": "P",
+      "dur": 1,
+      "cost": 1,
+      "local_visibility": false
+    },
+    {
+      "id": "from-P",
+      "src": "P",
+      "dst": "J",
+      "dur": 1,
+      "cost": 1,
+      "local_visibility": false
+    },
+    {
+      "id": "to-Q",
+      "src": "J",
+      "dst": "Q",
+      "dur": 2,
+      "cost": 1,
+      "local_visibility": false
+    },
+    {
+      "id": "from-Q",
+      "src": "Q",
+      "dst": "J",
+      "dur": 2,
+      "cost": 1,
+      "local_visibility": false
+    },
+    {
+      "id": "left",
+      "src": "J",
+      "dst": "L",
+      "dur": 1,
+      "cost": 1,
+      "local_visibility": false
+    },
+    {
+      "id": "right",
+      "src": "J",
+      "dst": "R",
+      "dur": 1,
+      "cost": 1,
+      "local_visibility": false
+    },
+    {
+      "id": "L-base",
+      "src": "L",
+      "dst": "base",
+      "dur": 1,
+      "cost": 1,
+      "local_visibility": true
+    },
+    {
+      "id": "R-base",
+      "src": "R",
+      "dst": "base",
+      "dur": 1,
+      "cost": 1,
+      "local_visibility": true
+    }
+  ],
+  "probes": [
+    {
+      "id": "P",
+      "node": "P",
+      "dur": 1,
+      "cost": 1,
+      "fields": [
+        "exit",
+        "relay"
+      ],
+      "divert": [
+        "r1"
+      ]
+    },
+    {
+      "id": "Q",
+      "node": "Q",
+      "dur": 1,
+      "cost": 1,
+      "fields": [
+        "exit",
+        "relay"
+      ]
+    }
+  ],
+  "worlds": [
+    {
+      "arcs_down": {
+        "L-base": [
+          [
+            2,
+            20
+          ]
+        ]
+      },
+      "slots_down": {
+        "r0": [
+          [
+            2,
+            20
+          ]
+        ]
+      },
+      "signals": {
+        "exit": "L",
+        "relay": "r0"
+      }
+    },
+    {
+      "arcs_down": {
+        "R-base": [
+          [
+            2,
+            20
+          ]
+        ]
+      },
+      "slots_down": {
+        "r2": [
+          [
+            2,
+            20
+          ]
+        ]
+      },
+      "signals": {
+        "exit": "R",
+        "relay": "r2"
+      }
+    }
+  ]
+}
