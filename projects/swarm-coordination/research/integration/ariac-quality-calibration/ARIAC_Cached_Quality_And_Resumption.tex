@@ -1,0 +1,85 @@
+\documentclass{article}
+\usepackage{hyperref}
+\title{ARIAC quality checks need a fresh observation after recovery}
+\date{}
+\begin{document}
+\maketitle
+This is a source-level calibration for I1, not an integrated factory
+trial or a comparison with HeRo. It uses
+\href{https://github.com/usnistgov/ARIAC/commit/ffc825757dc05cc6e4dfbd5c2483e993aab35652}{NIST ARIAC 2024.3.0}.
+The pinned version is an independent test environment candidate;
+it is not identified as the one used in the HeRo study.
+
+The simulator's quality service reads a cached tray camera message
+and scores the requested kit. In a fault-challenge quadrant, the
+first check can also rename the actual simulated part to mark it
+faulty and record that the quadrant was checked. A subsequent
+check consults the part name retained in its chosen camera image.
+The first call can therefore change the world without updating the
+image used by the second. The response carries no camera sequence
+or capture time. The camera's Gazebo transport callback and the
+ROS service are separate in the source; a new request does not
+itself require a new camera callback.
+
+\paragraph{Executed check.}
+The test compiles the original three functions
+\texttt{PerformQualityCheck}, \texttt{HandleFaultyParts} and
+\texttt{CheckQuadrantQuality} against a narrow fixture for the
+world model, typed kit, cached image and message classes.
+It uses a correct-type, correct-color part placed in the requested
+quadrant for every branch. At the first check the live model
+gets marked and the response indicates failure. Repeating the
+check with the identical cached image gives a pass even though
+the live model is still marked and has not been replaced. With
+a new capture of the unchanged part the check fails again.
+A capture after inserting a replacement passes. As a separate
+control, an otherwise correct kit on the wrong tray has both
+\texttt{all\_passed} and \texttt{incorrect\_tray} set. The client
+must consume both. The last case changes only the tray identifier.
+
+This is not a Gazebo reproduction. Camera interleaving and
+world-image correspondence are inputs to the harness, not measured
+delays or execution traces from an installed simulator. The source
+bindings use the simulator's parsing convention for the part name;
+physics, ROS queues, locking, real contacts and camera rate are
+outside the harness. The replay never enters a missing-required-part
+branch or models unsupported responses. A physical sensor blackout
+need not stop this particular internal tray camera; that relationship
+has not been tested and must not be inferred from generic sensor
+health controls.
+
+\paragraph{Consequences for a recovery boundary.}
+A new service response is not proof of a new image or removal of
+the old effect. An unchanged response can come from the stale image
+or a real replacement. A useful readiness supplier would tie the
+specific admission to a capture after the pertinent physical change
+or exposure, verify the tray and required contents, and guard
+against intervening changes before the operation consumes that
+fact. In particular, a sample after the request is not enough if it
+was taken before the removal it purports to verify. That conditional
+design is an interface requirement, not an implementation using
+the original response alone. Controller-visible authority, camera
+provenance and actual completion must be supplied explicitly rather
+than reading the simulator's ground truth.
+
+Robot health names a separate condition. In the same ARIAC release
+suction-control success changes the enable state, while actual joint
+detachment is performed by the gripper update callback. The gripper
+status contains an attachment bit and gripper type, but does not
+name the dropped object or where it ended up. These statements come
+from static source inspection only. Neither a resumed robot nor a
+detached gripper certifies successful placement.
+
+\paragraph{Published comparison scope.}
+\href{https://arxiv.org/html/2103.11470\#S11}{NeBula} documents
+separate mission watchdog, scheduled re-planning and heartbeat-regain
+behaviors. The heartbeat behavior monitors renewed receipt; it does
+not by itself supply the kit-effect history required here. The
+\href{https://is.cas.cn/ztzl/rjsxsnh/2025xsnh/205hbzs/202607/P020260715632339212745.pdf}{authors' HeRo poster}
+indicates pre-, during- and post-task monitors, synchronization and a
+PDDL-fed recovery state machine. It does not license conclusions
+about how their actual controller checks freshness, physical handoff
+or concurrent custody. No whole-system test or superiority claim
+is made. A matched direct controller with equivalent access to a
+verified image can consume the same check.
+\end{document}
