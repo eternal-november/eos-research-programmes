@@ -1,0 +1,35 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Exact braking in a wedge, with and without late lateral evidence}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Model and comparator.}
+Use the planar double integrator and acceleration box from Breeden and Panagou's
+\href{https://public.websites.umich.edu/~dpanagou/assets/documents/JBreeden_ACC23.pdf}{composition study}, Example 1. Write position \((x,y)\), velocity \((v,w)\), acceleration \((a,b)\in[-1,1]^2\), and safe position \(x+\gamma |y|\leq0\). Time is continuous. A post-fault position constraint and a retained link constraint may induce two faces, but only when their actual source geometry is this wedge. There is no lower bound on \(x\), other coupled actuator constraint, disturbance, or obligation to reach a nonzero service target. The paper already shows that the two single-facet certificates need not compose, and Example 5 already adds the redundant geometric face \(x\leq0\) to construct a sufficient domain following its reduced-input design. The result below instead characterizes the maximal domain on the original input box for \(\gamma\geq 1\), and adds an exact observation deadline for one hidden-sign family. It neither supersedes the paper's general method nor reproduces its full controller.
+\paragraph{Exact full-information domain.}
+For \(p_+=\max(p,0)\), set
+\[
+ h_0=x+\tfrac12 v_+^2,\qquad
+ h_\pm=x\pm\gamma y+\frac{(v\pm\gamma w)_+^2}{2(1+\gamma)}.
+\]
+The three inequalities \(h_0,h_+,h_-\leq0\) are necessary for safety on an unbounded time horizon: a scalar position in any of the three projections cannot brake faster than 1 or \(1+\gamma\), respectively. For \(\gamma\geq1\) they are also sufficient. The domain is an intersection of convex differentiable sublevel sets with a strict common interior point (take zero velocities and \(x<0,y=0\)). Its tangent cone is the intersection of the active derivative halfspaces, by convexity and the strict feasible direction. An active constraint with nonpositive projected velocity imposes no constraint on acceleration. With strictly positive projected velocity the center face requires \(a=-1\); either other face requires \(a=-1,b=\mp1\). If both outer faces were active with strictly positive projected velocities, then \(v>0\), \(|\gamma w|<v\), and averaging the two equalities would give
+\[
+ -x=\frac{v^2+\gamma^2w^2}{2(1+\gamma)}<\frac{v^2}{1+\gamma}\leq \tfrac12v^2 .
+\]
+That contradicts \(h_0\leq0\). The remaining active choices share a box-valued acceleration. The \href{https://people.eecs.berkeley.edu/~sastry/pubs/OldSastryALL/Aubin\%2CLygerosImpulseDifferential2002.pdf}{tangent-cone viability theorem} (the no-jump case of Theorem 1) applies to this closed domain with continuous affine dynamics and nonempty compact convex control values, with linear growth. This proves existence of an infinite viable trajectory, not robustness to sampled sensing or a Lipschitz guarantee for an arbitrary chosen feedback.
+\paragraph{Sharp boundary in the slope family.}
+For every \(0<\gamma<1\), choose \(v>0\) and \(\sqrt{\gamma}v<|\gamma w|<v\). Choose \(x,y\) so that both outer faces are active. The same average now permits \(h_0<0\), but each active face requires an opposite saturated lateral acceleration. More directly, a projected position at its scalar stopping limit requires the full opposing acceleration almost everywhere until its positive stopping time. Both intervals start immediately and overlap, so no common safe trajectory exists. For example, \(\gamma=1/2,v=1,w=3/2,x=-25/48,y=-1\): the two projected stopping bounds hold with equality and the center bound has 1/48 of slack. The three constraints fail as a sufficient test there; this does not characterize the full kernel in that slope range.
+\paragraph{Delayed lateral evidence.}
+Fix \(\gamma\geq1\), initial position \((-d,0)\), known \(v\geq0\), and hidden initial lateral velocity \(+w\) or \(-w\) for known \(w\geq0\). No observations distinguish them until time \(\tau\), when the sign is revealed and both accelerations remain available. Before then the two worlds must receive the same acceleration; this rules out passive lateral pose observations, not just explicit sign reports. Reflecting a feasible policy and averaging it with its reflection preserves admissible controls, the convex wedge at every time, and feasible branch continuations. The common lateral acceleration may therefore be taken as zero. Replacing its longitudinal acceleration with \(-1\) before \(\tau\) decreases both longitudinal position and velocity. Keeping the original post-report control shows this replacement cannot break safety. Both steps are causal.
+\par
+Set \(A=v+\gamma w\). Before the report one needs \(d\geq\max_{0\leq t\leq\tau}(At-t^2/2)\). At the report, apply the exact three-face test to \((x,y,v,w)=(-d+v\tau-\tau^2/2,\,w\tau,\,v-\tau,\,w)\) or its reflection. The plus face is more restrictive than the minus one, since both its projection and velocity are greater. For \(\tau\leq A\) it gives
+\(d\geq A\tau-\tau^2/2+(A-\tau)^2/[2(1+\gamma)]\),
+which dominates the pre-report face bound. For \(\tau>A\) the pre-report maximum is \(A^2/2\). The center face contributes \(v^2/2\) when \(\tau\leq v\); after that the pre-report bound already dominates \(v^2/2\) by evaluating it at \(t=v\). Hence the exact condition is
+\[
+ d\ \geq\ \max\left\{\frac{v^2}{2},\ \frac{A^2}{2}-\frac{\gamma}{2(1+\gamma)}(A-\tau)_+^2\right\}.
+\]
+Without any sign reading the threshold is \(A^2/2\), attained by braking the longitudinal motion until its velocity is at most \(-\gamma w\) and then maintaining that velocity with \(b=0\). At \(\gamma=2,v=w=1,d=2\), either world individually is safe from \(d=1.5\); hiding the sign until \(\tau\) requires \(\tau\leq3-\sqrt{15/2}\approx0.2614\), and without a reading it needs \(4.5\). If the sign is known from continuous lateral sensing, the delay result does not apply.
+\paragraph{Evidence.}
+The replay checks rational boundary states, exact derivative feasibility and an independently evaluated pre-report maximum plus report-state test. The analytic argument, not discretization, establishes the continuous-time claims. Three Lean lemmas check the incompatible-face calculation, the half-slope witness, and the delayed face algebra. They do not formalize the viability theorem or the dynamics. Both evaluated policies use the same available measurements and input set. No new mission service, collision physics or decentralized formation claim follows without deriving the wedge and delayed-observation law from that mission.
+\end{document}
