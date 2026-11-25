@@ -1,0 +1,94 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Source-qualified admission of an irreversible handoff}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+Consider an inspection station with an outstanding old holding duty and a
+report due at tick $D$. The station is occupied by a handoff for $h>0$ ticks
+starting at $s$. Until completion both the incumbent and candidate holder
+are needed. At completion the duty is settled at a secure station, and no
+later candidate availability is required. The original holder lasts to $O$.
+Holding the duty without transfer is a productive fallback precisely when
+$O\ge D$; it then permits the on-time report. A successful nominal transfer
+settles the outstanding duty early. A failed attempted transfer is not
+abortable or recoverable within this contract.
+
+A source law $(F,L)$ includes no-loss behavior and every loss time $t\ge F$;
+the bit observed before the start cut says whether the loss notice, emitted
+at $t-L$, has arrived. Notices emitted before the time origin are assumed
+recorded. The loss starts at tick $t$; support on $[s,s+h)$ is enough. At the
+same tick, notice arrives before dispatch, and completion can coincide with
+loss. Missing notices, uncertain sensor delay, interrupted transfers,
+unmodeled common causes, and arbitrating among several concurrent starts
+are excluded. The law family is a union of trace alternatives, not an
+independent product of separately measured floors and leads.
+
+Controlled removal can be prevented by an effector fence until tick $E$.
+If controlled removal otherwise becomes possible at $C$, its floor becomes
+$\max(C,E)$. Uncommanded failure from $P$ is not delayed by that fence.
+When both arms have the same warning law, the combined floor is
+$\min(\max(C,E),P)$. When the lead differs, retain the two source pairs. A
+snapshot of the epoch at dispatch is not a fence. This needs authority over
+the actual controlled effect, including already queued withdrawals. The
+model cannot establish that authority for hardware.
+
+\paragraph{Boundary.}
+For a finite nonempty family $\mathcal L$ at proposed start $s$, export
+\[
+ U_s=\min_{(F,L)\in\mathcal L}\max\{F,s+L+1\},
+ \qquad W_s=\bigvee_{(F,L)\in\mathcal L}(F\le s+L).
+\]
+Use the frozen decision rule: on silence initiate; on warning retain the
+old holder. Then guaranteed productive admission of that rule is equivalent
+to $s+h\le\min(O,D,U_s)$ and $\neg W_s\lor D\le O$.
+Below the first silent threshold every loss was already announced; the
+threshold itself is realized by some source arm. Its trace has the same
+read at $s$ as no loss, preventing a receiver that chooses nominal
+dispatch from abandoning only that trace. On the warning branch the old
+holder has to cover the report; no elapsed transfer time can be credited.
+The interface composes under source union by minimum and disjunction.
+Replacing a source while retaining $s,h,O,D$ only needs those tagged
+branches. A worsening can invalidate the conclusion; a bound on controlled
+withdrawal alone cannot exclude physical failure.
+
+\paragraph{Separations and limits.}
+At $s=0,h=4,O=D=5$, source pairs $(1,3)$ and $(5,0)$ admit dispatch on
+silence and successful fallback on warning. The lossy pair $(1,0)$ rejects
+that design by combining the early onset of one source with the short
+warning of the other. At $s=0,h=1,O=1,D=2$, pairs $(1,1)$ and $(4,0)$
+violate the frozen warning rule, whereas $(1,0)$ incorrectly approves
+that fixed rule. That second example is not an impossibility for all
+policies. If no productive fallback exists, the complete two-action
+controller must dispatch on every reachable observation and may ignore a
+notice when safe. This can succeed exactly when
+$s+h\le\min(O,D,\min F)$. If productive fallback exists, the controller
+can always retain the holder, but only robust dispatch on the nominal
+branch settles early. For that stronger service objective, the warning
+correlation in $U_s$ is necessary to recover the example.
+
+In another witness, the candidate is healthy at tick zero, a two-tick
+handoff is required, the holder expires at two, and the report is due at
+four. Allowing controlled withdrawal at tick one breaks the handoff under
+a snapshot-only policy. A true fence through tick two works when physical
+loss cannot occur before then; changing only the independent physical
+loss floor to one breaks the same guarantee.
+
+\paragraph{Comparison.}
+A direct finite temporal policy solver with both source pairs and the
+same timing order ties. The benefit found is a sufficient and exact
+small receiver signature for this source family, and a counterexample
+to two unsafe or incomplete sources of compiled bounds. This is a
+restricted temporal controllability calculation; see
+\href{https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.TIME.2017.8}{Cairo and Rizzi on dynamic controllability}
+and
+\href{https://arxiv.org/abs/1608.04132}{Cairo, Comin, and Rizzi on same-instant reaction}.
+The present check does not claim an encoding into their specific network
+normal forms or a win against those algorithms. Script totals:
+387,072 one-source admission cells, 172,800 two-source judgments under
+the frozen rule and 90,000 unrestricted two-action judgments. When
+fallback is productive, 3,016 cells are strict false rejections after
+independent worst-case projection. The five Lean lemmas check the
+definitional arithmetic and not correspondence to physical facilities.
+\end{document}
