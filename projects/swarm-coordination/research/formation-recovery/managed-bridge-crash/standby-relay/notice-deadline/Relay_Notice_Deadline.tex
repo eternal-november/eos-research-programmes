@@ -1,0 +1,31 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\begin{document}
+\section*{How late can the failed member's identity arrive?}
+With the original 1.65 range in the published three-dimensional initial pose, one standby cannot maintain immediate connectivity after either of two possible losses. If a short outage is permitted, the same range can serve an outstanding transfer after the loss identity arrives. In the model below there is an exact worst-case time from receipt to the completed transfer. Moving before receipt does not improve it, even when the relay is free to choose its pre-receipt velocity.
+
+\paragraph{Plant, information and old duty.}
+Use the five active initial poses of the pinned \href{https://github.com/KTH-DHSG/constrained_omrs/tree/cb87f91aaaa4e652de043704ce4dfb989e10bcde}{published point-mass formation}. Freeze those poses for this comparison; the original controller is not being replayed after failure. Remove the communication of either robot 1 or robot 3 at time zero but leave its body. As in \href{https://github.com/eternal-november/eos-research-programmes/pull/472}{PR 472}, the first history isolates robot 0, the second isolates robot 4. In either history robot 2 is in the other component. Other positions, clearance and original geometric links stay fixed.
+
+One standby with double-integrator motion and Euclidean acceleration bound $a>0$ may be placed before the choice of loss identity. Its incident communication radius is $R=1.65$, with closed range in the theorem. There is no independent speed constraint below the constructed maneuver's peak. It must keep continuous clearance $c=0.45$ from all five bodies. A truthful identity arrives over a separate authorized observation interface at time $b$. Before $b$ the standby's history is the same in both cases; its motion, position and velocity can be arbitrary subject to the same plant and clearance. In the absence of a message, it receives no range or link feedback that would distinguish the two worlds. The source physics and fault identity do not change as a result of the standby's movement.
+
+A named report, available before the cut on the component on its sending side, must cross the partition and be acknowledged. There is one authorized forwarding attempt. The relay must come to actual rest, then hold links to both components for a fixed dwell $w$ covering the transfer and durable acknowledgment. Geometry and a stationary valid reservation assure the modeled transfer; no interference, retransmission or early in-motion delivery is assumed. This makes the report completion predicate explicit; it does not establish those radio and observation guarantees on a vehicle. Multi-attempt blind search and moving contact are different interfaces.
+
+\paragraph{Exact bound from shared pre-notice motion.}
+Let $s$ be the separation of isolated anchors 0 and 4, so $s>2R$, and set $g=s-2R$. The projection of the endpoint in the first case onto the 0-to-4 axis is at most the coordinate of anchor 0 plus $R$. In the second case the projection is at least the coordinate of anchor 4 minus $R$. Hence the two required rest projections differ by at least $g$.
+
+Suppose both finish their movement within $T$ after receipt. If one finishes earlier, have it hold its rest position until $T$. Their projected motion begins at the same position and velocity at $b$. The difference $u$ of their projected accelerations satisfies $|u|\le2a$ and $\int_0^T u(t)\,dt=0$ since both end at rest. Therefore the endpoint difference cannot exceed
+\[
+ \int_0^T(T-t)u(t)\,dt
+ =\int_0^T(T/2-t)u(t)\,dt
+ \le 2a\int_0^T|T/2-t|\,dt=\tfrac12 aT^2.
+\]
+It follows that $T\ge\sqrt{2g/a}$. Arbitrary movement while the identity remains hidden is covered by this bound; the common initial velocity cancels. Coupling the two runs on the same controller random seed also yields the bound for an all-histories hard deadline. A metric averaged over missed service events is not that requirement.
+
+Start at rest at the midpoint of the two anchors. At receipt move along their line toward the applicable anchor, accelerating over the first half and braking over the second half. The radial distance traveled is $aT^2/4=g/2$. The endpoint has range to the isolated anchor and to robot 2 in the other component. The entire segment has strict clearance, including from the failed member. The replay checks the endpoint inequalities using stricter rational witnesses just inside the radio boundary, and strict clearance uniformly in a 0.142 ball about the midpoint. The latter ball contains both exact segments. Thus the modeled optimum completion time is $b+\sqrt{2g/a}+w$. This formula attains the closed-ball boundary and is an infimum under a strictly open distance cutoff.
+
+\paragraph{Concrete boundary and scope.}
+For unit acceleration the post-notice motion takes between 0.7534532 and 0.753454 time units with the published coordinates. With a dwell of 0.25 and deadline 1.25, the receipt must arrive at about 0.24655 or earlier, not at 0.25. Without the identity no common single forwarding attempt covers the two cases, regardless of deadline. With instantaneous continuity required instead, extra reach or a second relay are the alternatives checked previously. A local tracker cannot be credited with this gain unless it can lawfully supply identity and timing within the cut. Neither extra advance movement under identical evidence nor matching the range at the initial pose suffices.
+
+The rational replay also checks extremal terminal spread for 2,156 finite acceleration-lattice instances with arbitrary common initial velocity. The continuum proof above is separate. Lean checks supporting algebra only. The direct reachability bound under identical controls and observations agrees. This extends the \href{https://arxiv.org/html/2609.29939v1}{managed departure comparison} with a source-derived initial pose and a different authored post-loss service law, not a matched performance win against the native controller. Held nodes, truthful identity timing and dwell are stipulated; moving source formations and common loss of the observation channel remain open. No independent mine test or full R6 acceptance.
+\end{document}
