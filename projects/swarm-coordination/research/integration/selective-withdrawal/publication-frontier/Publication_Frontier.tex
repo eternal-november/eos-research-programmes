@@ -1,0 +1,67 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,url}
+\title{Which Old Movements Can Still Reach a Bay?}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Source boundary.}
+Withdrawing a movement in the fleet scheduler is not yet a fence at the
+vehicle's order interface. In the selected openTCS VDA 2.0 adapter at
+\texttt{742b0e6df9ccbabc660e585a85e55d585c0642fc}, the normal order mapper
+passes the movement into the released portion and maps later edges as
+unreleased. The matcher keeps a later update queued behind the response
+to an earlier one. The earlier response can cause the later update to be
+offered to the client publisher, even while vehicle state still reflects
+the earlier update. Further state reports can cause resend.
+
+\paragraph{What the replay observes.}
+Two executions give the same attempted order marker and the same
+reflected update. A local sink receives a publication call in one but not
+in the other. The selected source sets \texttt{lastOrderSent} after a send
+attempt even when conversion or validation returned via the exception
+handler before the sink call. Neither the marker nor reflected update
+identifies publication. The matcher also unblocks on either a matching
+\texttt{FINISHED} or \texttt{FAILED} cancellation when no rejection is
+reported in the fixture. This gate says nothing about which bay is
+physically empty. The local harness executes the complete matcher and
+selected original adapter send and edge constructor methods. Data
+objects, converter, validator and client sink are substitutes; this is
+not broker acceptance, physical execution, or a test of the whole mapper.
+
+\paragraph{The bound needed for admission.}
+Fix a single append-only released route and generation, and let $p$
+bound from above the longest prefix that still could be acted on. Include
+all potentially delivered sends under the decided cut, even an
+unreflected send or an unresolved crash gap. Assume the maximum is
+attainable in the scoped model. Let $k$ be the first old-route step
+whose execution could interfere with the proposed use of the bay.
+There must be an actual fence against further extensions, covering
+queued work and all retry paths. If $p<k$, no compatible prefix can
+execute the interfering step; if $p\ge k$, an attainable prefix can do so.
+This argument assumes no other approach, physical drift, peripheral
+effect or alternate route can reach the bay, and excludes a later
+source-certified cancellation or completion that could remove the duty.
+If the upper bound is conservative but not attainable, only sufficiency
+is claimed. The fact that a robot has stopped, or that the bay is empty
+at this instant, does not exclude a later authorized entry.
+
+A source adapter for the unchanged scope receiver must justify delivered
+evidence of the effective fence and its duration. A reliable
+publication-side record can distinguish known no-emission from possible
+emission under the stated model. A log written after a broker call is
+not sufficient across a crash in between, absent a stronger guarantee;
+the unresolved extension stays in the upper bound. The receipt time
+used by the guard is the receiver's receipt, not publisher time. To
+admit use, require independent sustained physical clearance and a real
+exclusive grant over the entire protected interval.
+
+\paragraph{Checks.}
+The unchanged receiver and a separate direct enumeration of feasible
+prefixes agreed on 16,128 bounded decisions. Substituting the reflected
+prefix for possible publication admitted 350 cases the matched checker
+refused. These counts describe the finite grid, not a failure rate.
+A direct ledger with the same publication cut and physical evidence ties.
+This test establishes an additional source premise for the earlier
+selective-withdrawal result, not stock selective cancellation, I1
+advance, or an independent held-out transfer.
+\end{document}
