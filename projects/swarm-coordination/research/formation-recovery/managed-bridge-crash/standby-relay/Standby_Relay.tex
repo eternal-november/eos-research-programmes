@@ -1,0 +1,32 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\begin{document}
+\section*{Where one standby relay can cover an abrupt departure}
+\paragraph{Result.}
+A neutral standby relay can be stationed before either of the published point-mass missions. With no change to the nominal trajectories, it gives the surviving geometric graph a bridge at every prescribed departure-request cut in that mission, if that robot's links are removed abruptly. The fixed standby range needed in the planar mission is between 1.09618 and 1.09623 in simulation units; in the three-dimensional mission it is between 1.3225314 and 1.3225317. Both upper witnesses keep the original 0.45 clearance before the hypothetical fault. The two missions require separate placements. This does not prove connectivity after the fault cut or for an arbitrary crash.
+
+\paragraph{Comparison and cost.}
+\href{https://arxiv.org/html/2609.29939v1}{\c{S}ekercio\u{g}lu, De Carli and Dimarogonas} use make-before-break on a managed departure: the departing robot remains while another link is established. The previous \href{https://github.com/eternal-november/eos-research-programmes/pull/439}{replay} found that an abrupt loss at the start of any of the four published transitions cuts even the full nominal distance graph. Here one extra stationary relay, initially installed at a chosen point, has an always-available two-way link to every in-range active robot and is not used for mechanical control. Robot trajectories and clearance are otherwise unchanged. This models the connectivity repair cost as one extra relay plus a common symmetric range allowance for its incident edges (a link allowance, not a claim that an upgraded relay alone changes its counterpart's radio). It does not price power, deployment, long-term relay failure, or throughput. The extra resource makes this a different design, not a matched algorithmic win. The static placement is chosen with the supplied nominal mission trajectory and the stated set of cuts in advance, not an actual future fault selection. Each loss is evaluated separately against its nominal prefix, not as several crashes in one simulation. The paper's static retained interacting edges, the full possible graph, and this pre-available relay are distinct. Maeda et al.'s \href{https://www.sciencedirect.com/science/article/pii/S0016003223003046}{decentralized crash recovery} remains a full-controller comparison to obtain; the abstract is not an executable reference. Breeden and Panagou's \href{https://arxiv.org/abs/2210.01354}{barrier composition} is not reproduced by a fixed-placement check.
+
+\paragraph{Finite minimization and checked enclosures.}
+At each cut two components survive. With one added vertex, a bridge exists exactly when its radio reaches one anchor in each. Enumerate these anchor pairs, one pair per cut. For a fixed list of anchors $a_i$, any weights $\lambda_i\ge0$ summing to one furnish the lower bound
+\[
+ \max_i\lVert x-a_i\rVert^2 \ge
+ \sum_i\lambda_i\lVert x-a_i\rVert^2
+ =\lVert x-\bar a\rVert^2+\sum_i\lambda_i\lVert a_i-\bar a\rVert^2,\qquad
+ \bar a=\sum_i\lambda_i a_i.
+\]
+A minimum enclosing ball center is a convex combination of boundary anchors (otherwise moving toward their convex hull reduces the maximum); at most dimension plus one affinely independent anchors suffice. The numerical support search suggests weights and a placement, but rational variance bounds for every assignment and exact endpoint distances verify the enclosure for the recorded coordinates. In the three-dimensional case this requires 216 anchor assignments. Its radio-only minimum is already physically admissible to the tested tolerance. Optimizing for only one of its three cuts would give lower radius requirements, about 0.90158, 1.17679 and 1.08652. A single placement requires more range than even the hardest individual cut.
+
+In the planar case the shortest-pair midpoint is within 0.000096 of an active robot center earlier in the mission. For pair $a,b$ with midpoint $m$ and an observed obstacle center $z$, every standby preserving $d$ clearance satisfies
+\[
+ \max(\lVert x-a\rVert^2,\lVert x-b\rVert^2)
+ \ge \lVert a-b\rVert^2/4+\max(0,d-\lVert m-z\rVert)^2.
+\]
+The other two pair choices already have a larger radio-only bound. Thus the radio-only value near 0.99960 is not attainable with nominal-prefix clearance. The stationary upper witness $(-0.6550702,0.445514)$ avoids those nominal paths with strict clearance. The upper three-dimensional witness is $(-0.22462603,-0.42195463,2.11860085)$. Neither witness must move during its mission.
+
+For clearance over each interval, interpolate the recorded active endpoints by the quadratic with the recorded acceleration. Its deviation from the chord is bounded by $\lVert a\rVert_1\Delta^2/8$. The checker uses exact rational closest squared distances to the chords, a rational bound on the deviation, and exact point checks at activation/deactivation samples. It checks 7,479 planar and 54,597 three-dimensional arcs, and numerically verifies that each logged simulation step is consistent with constant acceleration. The rational statement is about the recorded-coordinate interpolation, not an enclosure of error in the simulated or physical dynamics. The stated active intervals use the original point-mass model. No inactive or unmodeled terrain body, limit on admissible relay locations, or pre-deployment motion is covered.
+
+\paragraph{What would change the conclusion.}
+The source graph uses a nominal geometric cutoff, not measured packet delivery or a proof of activated neighbor authority. Positive clearance and geometric contact at the cut do not show ability to forward, restoration of full formation control, or timely settlement of old work. If later duties depend on the standby, the next proof must carry the same physical range and clearance through an actual forwarding interval, and include confirmed link availability after the loss. There is no independent mine test, full R6 closure, or I1 resource improvement claimed here.
+\end{document}
