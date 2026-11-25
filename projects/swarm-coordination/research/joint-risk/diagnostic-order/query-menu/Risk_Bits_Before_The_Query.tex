@@ -1,0 +1,124 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{The cost of sending mission risk before knowing the next query}
+\begin{document}
+\maketitle
+
+\paragraph{Result.}
+For \(d\) distinct equal-sized candidate bundles, all larger than
+the diagnostic order, there are fixed mission laws with identical
+low-order reports and all \(2^d\) possible admission menus at one
+common risk cap. Thus exactly \(d\) bits may be necessary and sufficient
+for a deterministic fixed-length handoff of exact admission answers
+before the receiver chooses its query. The result can include
+a prior exposure in every bundle. It does not bound a dialogue
+in which the next query is identified to the reporter in advance,
+or a conservative controller allowed to reject some safe requests.
+
+\paragraph{The queried decision.}
+Let \(X\in\{0,1\}^n\) be a hidden vector of potential failures
+drawn once from a fixed law. If the receiver selects \(S\), the
+mission failure event is \(\{\exists i\in S:X_i=1\}\).
+Every \(S\) in the menu contains the same earlier commitments
+\(H\), whose physical exposure and original risk are retained.
+The reporting actor knows this law in the specified finite family;
+the receiver knows the family and all named marginal reports
+of order at most \(k\), but not the law.
+Neither observes a realized failure before choosing admission.
+The sender cannot condition a message on the later selected \(S\).
+There is no cap reset, per-site adversary, or unknown law change.
+This is an information lower bound, not a technique for obtaining
+the law or a safety certification of a deployed cap.
+
+\paragraph{Independent choices at a single cap.}
+For a nonempty set \(T\), write
+\(\chi_T(x)=(-1)^{\sum_{i\in T} x_i}\).
+Use a density relative to the uniform bit vector,
+\[
+         1+\frac{1}{2d}\sum_{T\in\mathcal A}\sigma_T\chi_T(x),
+         \qquad \sigma_T\in\{-1,+1\}.
+\]
+Here \(\mathcal A\) is the collection of \(d\) candidate sets
+of size \(m>k\). Each density is at least \(1/2\),
+and integrates to one. Summing out all but any set of
+at most \(k\) bits kills every perturbation: at least one
+factor in every \(\chi_T\) is an unconditioned uniform sign.
+This proves equality of the entire named marginal assignments,
+not just of the all-failure moment in one pool.
+
+On the all-clear event for \(S\), the uniform expected
+character is zero unless \(T\subseteq S\), in which case it
+is one. Since all candidates have size \(m\), only \(T=S\)
+contributes to the no-failure probability for \(S\).
+If the exposure window is active with a known probability
+\(\rho>0\), and all indicators are zero outside that window,
+the original mission risk of \(S\) is
+\[
+  r_S=\rho(1-2^{-m})-\frac{\rho}{2d\,2^m}\sigma_S .
+\]
+The active status is not observed before the decision. At the
+single predeclared cap \(c=\rho(1-2^{-m})\), the sign independently
+determines each admission bit. No two sign vectors can be given
+one message: a query at a differing coordinate would otherwise
+give the wrong answer for one fixed law. Sending the answer bits
+once in a known order attains \(d\) bits. The same result holds
+for any antichain with suitable query-specific baseline caps;
+one common cap here uses equal sizes.
+
+\paragraph{More than two calibrated levels.}
+For any collection of distinct high-order query sets
+\(\mathcal A\), possibly nested, use density
+\(1+\sum_{T\in\mathcal A}\alpha_T\chi_T(x)\).
+Restrict each \(\alpha_T\) to \(M\) equally spaced levels
+between zero and \(1/(2d)\). Then all densities are valid,
+and the lower-order reports still agree. At a query set \(S\),
+the no-failure probability under the active law changes by
+\(2^{-|S|}\sum_{T\in\mathcal A:T\subseteq S}\alpha_T\).
+In increasing inclusion order, after scaling each output by
+\(2^{|S|}\), this is triangular with diagonal one. Thus different
+coefficient vectors have different risk query vectors.
+For each differing coordinate there is a rational cap between
+the two risks. Allowing the declared rational cap menu makes
+every pair distinguishable, without changing the law or choosing
+a cap after seeing a realized outcome. The sharp worst-case
+fixed-length message is \(\lceil d\log_2 M\rceil\) bits.
+A compact enumerated coefficient index achieves it; successive
+subtraction recovers the coefficients from the risk values.
+
+The same triangular rank shows why, if unrestricted real-valued
+laws and linear population summaries are the interface, \(d\)
+additional independent linear statistics are needed to answer
+all those risk queries exactly. Fewer has a null direction within
+this full-dimensional coefficient family; small perturbations at
+an interior point keep the laws valid. Sending the \(d\) exact
+query risks is sufficient. This is a dimension claim about linear
+statistics, not a claim that arbitrary real encoding uses \(d\)
+machine words or has finite precision.
+
+\paragraph{Stress checks and alternatives.}
+The exact replay checks all 1,024 menus for six sites with
+all labeled pair reports, one earlier committed site across
+all candidates, and ten three-site choices. It uses
+\(\rho=1/10\), cap \(7/80\), and distance to the cap
+\(1/1600\) for each candidate in the construction. It also
+checks all 243 vectors in a five-query nested example with
+three levels and 29,403 distinguishing pairs. The checker
+sums over labeled states rather than assuming the triangular
+answers.
+
+The perturbation uses the standard Boolean Fourier basis
+(\href{https://www.cs.cmu.edu/~odonnell/papers/analysis-survey.pdf}{O'Donnell}),
+and the response matrix is an ordinary subset-sum transform.
+The result isolates the cost of one exact pre-query interface
+at fixed evidence. An exact common-information planner ties
+once given the encoded vector. With no further facts, a
+planner guaranteeing safety across the entire ambiguous family
+can reject every disputed candidate, but cannot claim to know
+the individual law's safe menu. If the query can reach the
+reporter and only admission is required, returning a single
+bit for that query suffices given the same information at
+the sender. The margin in this construction shrinks as the
+menu grows, so a weaker precision requirement may allow
+compression. No measured communication, field probability,
+or full R4 acceptance follows.
+\end{document}

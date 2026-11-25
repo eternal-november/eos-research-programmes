@@ -11,3 +11,5 @@ with identical exact labeled pair laws.
 The exact checker uses only Python 3.8+. The second command uses
 NumPy and SciPy for a numerical control against full named-world LPs.
 Lean checks the cap arithmetic, not the statistical model.
+
+A [query-menu follow-up](query-menu/README.md) gives sharp one-way bit bounds when the law is known at the sender but the next risk query has not been selected.
