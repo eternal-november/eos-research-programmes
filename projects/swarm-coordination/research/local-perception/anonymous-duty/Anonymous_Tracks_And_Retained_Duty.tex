@@ -1,0 +1,214 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Anonymous tracks and the load still owed}
+\date{}
+\begin{document}
+\maketitle
+
+A depot controller must decide whether a new job can share a reserve with
+work already committed on its side of a partition. It sees anonymous cart
+positions but not necessarily which cart owes which duty. The reserve is a
+physical capacity, not a confidence threshold: the admitted load must fit
+on every history still possible at the decision. A refused optional job
+does not settle an old duty. The model treats the existing load, the
+receiver's indication of settlement, and the latest geometry as distinct
+inputs and gives no control credit for observing a cart that cannot be
+linked to its retained duty.
+
+\section{What a static assignment can establish}
+
+Suppose every perfect matching of the physically justified identity-to-track
+graph is possible at the cut, and which identities owe work is fixed and
+known. Weight an edge by the demand of its identity if the corresponding
+track lies in the constrained region, and by zero otherwise. Maximum-weight
+perfect matching gives the exact prior load. In the four-track regression,
+two identities with old duties can occupy the same inside and outside
+pair of slots; two already settled identities occupy another disjoint
+pair. Either old identity can be inside, but they cannot both be inside.
+One unit of reserve suffices. If the physical pair restriction is removed,
+two units can be necessary with the same number of inside tracks. The fact
+that either identity might be inside is insufficient to distinguish these
+cases.
+
+This reduction requires not just a sound edge graph but all its admissible
+global matchings. \href{https://cdn.aaai.org/AAAI/1994/AAAI94-055.pdf}{R\'egin's
+all-different filtering} identifies feasible assignment edges under its
+matching model; it does not supply the matching family induced by a
+different temporal source. \href{https://www.cvlibs.net/projects/autonomous_vision_survey/literature/Zhang2008CVPR.pdf}{Zhang,
+Li and Nevatia's global association} models persistent track flow and
+selected occlusions. Its most likely assignment is not a robust bound
+over all assignments; their factorization also assumes independent
+target motions. Neither reference encodes the depot's duty law.
+
+\section{The time of actual settlement changes the result}
+
+Take one inside and one outside slot and two initially loaded carts. During
+occlusion, one physical socket settles the duty of the cart resident at that
+socket. Later anonymous observation distinguishes the two slots, not the
+carts. If settlement occurs at the inside slot after the last possible
+exchange, the final inside demand is zero; using the outside socket instead
+leaves one. If another unobserved exchange is possible after settlement,
+either socket leaves possible inside demands zero and one. In every case
+either identity can be the inside track, and either identity can be the
+one still owing work. Even these two exact projections do not determine
+the capacity. In particular an otherwise empty reserve is available for a
+unit new job in the first case but not in the last.
+
+The socket report must certify actual completion at that source location;
+a command or a visible arrival does not do so. It must arrive before the
+receiver's new commitment. A unique prior physical convention can replace
+a fresh report if that convention really excludes the other histories. If
+the socket can operate at either site and no timely information distinguishes
+them, the receiver must retain both outcomes; the unsafe continuation cannot
+be repaired by naming one of the tracks in postprocessing. Disjoint cells
+with independent feasible source choices give an exact interval of possible
+total demands. Independence is a premise established by the movement and
+socket mechanisms, not by the form of the track data.
+
+\section{Coupled movement and exact capacity}
+
+Let \(G=(V,E)\) describe a linkage between actuators and track pairs. In pair
+\(e\), just one named cart has a remaining duty of size \(w_e\geq0\), with
+initial inside-duty bit \(a_e\). During an occlusion, each vertex actuator
+may run once or not; it exchanges the two carts in every incident pair.
+All combinations are possible, the exchanges commute, and no other
+duty or motion change is allowed. Track occupancy before and after each
+exchange is the same. The discrete model does not certify continuous
+clearance during movements or imply that arbitrary linkage graphs can be
+embedded in a given site. If \(x_v\) says whether actuator \(v\) ran, the
+reachable inside-duty patterns satisfy
+\[
+    y_e=a_e+x_u+x_v\pmod2\qquad(e=uv).
+\]
+A receiver with all this source information, but not the actuations, must
+reserve \(\max_x\sum_e w_e y_e\). A unit of additional work is authorized
+only when it fits above that maximum.
+
+Even on a triangle, every pair has both track assignments in the projection.
+A static matching graph therefore allows all three duties to be inside.
+With \(a=0\), the source allows at most two: the sum around the triangle
+is even. Changing one initial orientation while leaving the same final
+geometry and individual assignment sets can make all three possible.
+At capacity three the zero-offset case can protect a new unit job and the
+odd-offset case cannot. Unit weights and \(a=0\) give Simple Max Cut exactly.
+For these abstract linkage graphs, deciding whether every history fits
+is coNP-complete: the complement asks whether a cut exceeds the reserve,
+with a list of actuated vertices as its certificate. This follows from
+\href{https://doi.org/10.1016/0304-3975(76)90059-1}{Garey, Johnson
+and Stockmeyer}; it is not a new complexity result about Max Cut or about
+all passive tracking.
+
+There is a useful exact reduction for few independent cycles. A vector
+\(y\) is attainable iff \(y+a\) sums to zero around all fundamental cycles.
+Necessity comes from counting each vertex twice; sufficiency follows by
+choosing one root bit in each tree of a spanning forest, extending along
+tree edges, and then applying the fundamental cycle condition to each
+non-tree edge. Write \(C\) for the cycle parity matrix. The exact
+capacity is the total weight minus the minimum weight of the zero entries
+in a feasible \(y\). With \(d=\mathbf1+y\) this is
+\[
+ \sum_e w_e-\min_{Cd=C(\mathbf1+a)}\sum_e w_e d_e.
+\]
+The minimum is computed by processing one edge at a time and retaining, for
+each achievable syndrome, the smallest weight of an omitted load. Updating
+a table either leaves the syndrome unchanged or adds the current column
+with its weight. This costs \(O(|E|2^r)\) arithmetic operations after
+constructing the parity system, where \(r=|E|-|V|+c(G)\). On a forest
+without other observations, every assignment of sides really is possible.
+This is standard exact binary optimization arranged for the source's
+physical comparison; it is not a speed claim against integer programming.
+
+\section{Information that can change capacity}
+
+A trusted actuator reading adds \(x_v=b_v\). One reading in each component
+is uninformative about \(y\): flipping every vertex bit in that component
+preserves every edge pattern. Further readings in the same component do
+matter. For each such reading add a path parity constraint between its
+vertex and a previously fixed one. Together with cycle constraints these
+conditions are sufficient, by the same spanning-forest construction,
+now choosing the component root bit to satisfy its first reading. With
+\(|P|\) readings across \(c_P\) components, the augmented system has
+\(r+|P|-c_P\) independent equations, because the pinned paths enforce
+\(|P|-c_P\) independent relative vertex bits on the cycle-admissible space.
+For any desired relative bits, set the first pinned vertex to zero and
+choose the other pinned bits independently in each component. The
+syndrome algorithm then uses that many bits.
+In the two-edge path with unit weights and no offset, each single reading
+leaves worst demand two. Timely readings showing opposite end actuations
+leave worst demand one and allow a unit job at capacity two. The readings
+refer to what actually ran before the decision; later reports do not
+authorize the earlier job. A read of one isolated component can matter
+for named duties not expressed as relative edge orientation. Only the
+reserve query is invariant under the component flip.
+
+A separate source switch illustrates when such information transports.
+If two pairs could only exchange together before a local linkage broke,
+one named orientation read identifies both duties. If the linkage broke
+first and independent exchanges could already have happened, the same
+read cannot identify the other. Both post-change linkages are broken and
+the anonymous geometry is identical. For \(m\) pairs with explicitly
+specified affine flip support, the possible target orientations for an
+attained reading have count
+\[
+  2^{\operatorname{rank}(\pi_{\rm read},\pi_{\rm target})
+       -\operatorname{rank}(\pi_{\rm read})};
+\]
+both maps here act on the source variation space. If the source cut itself
+is unknown, the possible set is the union of the compatible fibres, not
+the affine span of their union. For fixed coordinate sensors the exact
+requirement is to separate pairs with different targets. A report
+distinguishing source cuts is a new information supplier, not a free input.
+
+\section{What the reserve certificate can forget}
+
+For a family \(Y\) of reachable subsets of equally indexed liable slots,
+let \(\downarrow Y=\{D:D\subseteq y\text{ for some }y\in Y\}\). For
+nonempty \(Y,Z\), the reserve tests for every subregion \(W\) and nonnegative
+integer limit \(b\) agree iff \(\downarrow Y=\downarrow Z\). In the forward
+direction, if \(D\in\downarrow Y\setminus\downarrow Z\), it is nonempty.
+Testing just \(D\) at limit \(|D|-1\) is safe in \(Z\) and unsafe in \(Y\).
+In the reverse direction every old load is dominated by some load in the
+other family. Nonnegative weights preserve the directional inclusion
+argument; the unit tests on all subregions already suffice for necessity.
+Discarding nonmaximal loads is appropriate if those are the only
+consumers. It is not adequate for conditional reuse: families
+\(\{\{a,b\},\varnothing\}\) and \(\{\{a,b\},\{a\}\}\) agree on every old
+reserve query, then disagree if a credible new reading says \(b\) is
+absent. Separate readout reachability with no vacuous service at missing
+cuts, and recompute the downward closure in the reached fibre.
+
+This is an explicit special-case test family in the sense of the
+Contextual Composition \emph{Residual Profiles and Admission Reflection}
+criterion. A common admission evaluator follows on the stated capacity
+queries. Neither equality of one capacity nor equality of local track
+sets proves reflection for newly introduced observations. An actual
+comparison of changed sources must preserve the admitted observable
+fibres, check both directions at attained profile classes, and demonstrate
+that the concrete source maps respect the socket and movement evidence.
+The negative fixture is precisely a failure for the enlarged primitive
+test family; it does not dispute a quotient at the old interface.
+The checked Lean statements concern this finite reserve law and not the
+privacy, optical or mechanical properties of the inputs.
+
+\section{Comparison and status}
+
+The exact event comparator retains all actuator choices and actual
+settlement locations. A separate binary integer solver consumes the same
+constraints and reproduces the parity preserver's admission decisions.
+Weighted matching ties in its justified subfamily. Its naive use on
+projected identity edges in the coupled family is an ablation, not a
+matched baseline. The impact is on selecting which observations or
+physical safeguards justify admitting service, rather than on beating
+an equally informed solver.
+\href{https://www.sciencedirect.com/science/article/pii/S0005109815003490}{Yin and
+Lafortune's dynamic coobservability work} is a relevant verification
+baseline for partial observations. The finite fixtures here count
+reachable decisions in an explicit event model rather than claim a
+comparison with a whole decentralized synthesis algorithm.
+
+This is partial R1 and an L2/L3 interface check in the stated civil model.
+It contains no independent holdout or source-validated camera or
+mechanical deployment, no end-to-end I1 or I2 acceptance, and no claim
+that the useful reduction is itself novel in graph theory.
+\end{document}
