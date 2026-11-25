@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{The time a tail clears, and the time a spacing interval ends}
+\begin{document}
+\maketitle
+
+Two complete spacing intervals can have the same start and end while only one covers an actual modeled tail departure. That distinction matters when a completed simulation is extended rather than treated as a closed problem. It also matters for a queue that could admit the next movement before the preceding movement finishes.
+
+\paragraph{What the established source exports.}
+The \href{https://osrd.fr/en/docs/reference/design-docs/conflict-detection/}{OSRD conflict-detection design} distinguishes track release behind the tail from track reservation in front of a train. At \href{https://github.com/OpenRailAssociation/osrd/tree/ccdd1b8ed80982f0e2e8a818d231f9dceffa0861}{source pin \texttt{ccdd1b8}}, \texttt{IncrementalRequirementEnvelopeAdapter.departureTimeFromRange} computes the time at which the head departs from the downstream boundary plus rolling-stock length. The method returns infinity when that point lies outside the supplied envelope or when the required stock data are missing. In the fixed-length, strictly moving, known-stock case here, arrival and departure times at a point coincide.
+
+\texttt{SpacingResourceGenerator} normally uses that event time as the spacing end, but clamps it to the current simulated time \(H\) whenever the event time is at or beyond \(H\). In that branch it uses the simulation-complete flag, rather than a witnessed departure, to say whether the interval has been finalized. \texttt{SpacingRequirement.toRJS} omits that internal flag from the exported interval. The source comments say not to use the flag for conflict detection; the interval comparator uses half-open overlap. This is an audit of a new consumer bearing a still-live duty, not an error claim about a closed timetable.
+
+For example, a length-one vehicle approaches a boundary at position 1. Two strictly moving envelopes have time horizon 2 and the same beginning of the requirement at tick zero. One head reaches position 2 exactly at the horizon, the other only position \(3/2\). The first envelope witnesses the tail at the boundary; the second does not. The clipped interval and finalization flag agree even before export. A finite raw departure at or before the horizon separates this pair. When the raw result is unavailable or the relevant geometry is not certified, the exported end cannot substitute for absence of occupation. A strict interval end before the known horizon avoids this specific clipping ambiguity, within the audited branch and model. No extrapolation to a measured deployment is made.
+
+\paragraph{Same grants, different service.}
+Retain the successful \href{https://github.com/eternal-november/eos-research-programmes/pull/455}{joined Open-RMF grant trace}: the flexible operation starts from its separate grant at 31, and the constrained operation and four followers receive grants at 32. Keep the total physical move time two ticks for every operation, with the same starting and ending positions. On a line, space the initial heads three length units apart. Each vehicle has length one and travels three units, and its old protected segment ends half a unit beyond its initial head. Thus it clears the segment when its head has advanced \(3/2\). The faster-clearance profile advances \(3/2\) in the first tick and the rest in the second; the other advances \(3/4\) in the first and \(9/4\) in the second, clearing at \(4/3\) after launch. The next actor starts only on integer cuts and only once the old footprint is certified clear. No reversal, alternate access, or concurrent crossing is allowed. The predecessor and follower paths remain nonoverlapping: the initial gap is 3, and with the predecessor starting no later, using either profile cannot reduce the gap below \(3-3/4>1\). This is a stated constructed geometry, not measured motion or a Nav2 cancellation guarantee.
+
+If a start has grant time \(g_i\), completion duration \(d_i\), and a delay \(r_i\) from start until the first qualified evidence of actual trailing clearance is usable by the next actor, the exact earliest starts are
+\[
+   s_0=g_0,\qquad s_i=\max(g_i,s_{i-1}+r_{i-1}).
+\]
+This follows by induction: the previous start cannot be earlier than its bound, and taking each bound respects all constraints in this path-only model. The full completion time at index \(i\) is \(s_i+d_i\). The successor starts at the next permitted cut. With timely evidence the two profiles give observed adjacent lags 1 and 2, so the last operation finishes at 38 or 42. One tick of extra observation lag on each link erases the advantage of the earlier physical clearance and gives 42 again. The #455 grants are established in its compiled source replay. The new clearance paths are deliberately authored, and no rail certificate has been used as evidence for a real Open-RMF location.
+
+\paragraph{Which timing facts will a later grant need?}
+For last duration \(d\), write the suffix lag \(c_k=\sum_{j=k}^{n-2}r_j\), including \(c_{n-1}=0\). Terminal completion is \(F(g)=d+\max_k(g_k+c_k)\). Fixed equal grants only consume the sum of lags. If each grant may vary without bound independently, delaying a single grant reveals its entire suffix lag, so every individual lag is identifiable. For independently allowed intervals \(L_i\le g_i\le U_i\), an exact, coarsest profile instead consists of \(M=F(L)\) and \(p_i=F(L\text{ with only }g_i=U_i)\). Indeed,
+\[
+   p_i=\max(M,d+U_i+c_i),\qquad
+   F(g)=\max\left(M,\max_i(p_i-U_i+g_i)\right).
+\]
+Necessity comes from the permitted probe points. Sufficiency holds because a term clipped up by the profile never exceeds \(M\) anywhere in the box. For example, with lags \((1,2)\) versus \((2,1)\), the profiles agree when the middle grant may be delayed by at most one and the other grants sit at zero. Extending its admissible delay to two distinguishes terminal completions at 6 versus 5, with \(d=2\). This equivalence is for terminal completion on a product of grant ranges; it does not identify intermediate effects, correlated grant laws, or new interference.
+
+\paragraph{Verification and scope.}
+The replay checks the pinned source bytes and selected anchors, then independently exercises the translated interval semantics in 8,064 cases. It checks 2,184 mixed motion and grant families against integer start enumeration and continuous footprint tests, and verifies the bounded grant profiles under all enumerated queries. Lean checks the clipping boundary and the start lower-bound step. No Kotlin build or physical sensor was run. The event recursion is standard synchronization, and a \href{https://www.rocq.inria.fr/metalau/cohen/SED/book-online.html}{direct max-plus scheduler} with the same evidence ties. The result gives a new consumer boundary and a source-grounded modeling check; it does not close R2 or I1.
+\end{document}
