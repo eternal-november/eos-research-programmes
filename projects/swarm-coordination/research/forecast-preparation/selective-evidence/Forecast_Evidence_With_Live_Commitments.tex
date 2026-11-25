@@ -1,0 +1,197 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{When a live duty makes a forecast unidentifiable}
+\date{}
+\begin{document}
+\maketitle
+
+Two routing mechanisms require opposite preparation before a fault,
+but neither can be identified from the available logs. The issue is
+not the number of runs or the accuracy of individual readings.
+An existing duty prevents observing a complete sequence in any one
+run. The model below gives an exact error--cost frontier when that
+experiment becomes feasible. In this model adaptive selection of
+local readings cannot improve on randomized advance reservation.
+
+\section{Source process, decisions and available interventions}
+Consider a sequence of \(n\ge2\) handoff stages at which two outwardly
+indistinguishable carriers can retain or exchange lanes. Stage \(i\)
+has actual exchange bit \(X_i\). A fixed but unknown routing mode
+\(s\in\{0,1\}\) enforces \(X_1\oplus\cdots\oplus X_n=s\); conditional
+on that mode each run is an independent uniform choice of an exchange
+sequence with that parity. This is a stipulated source family, not
+an estimate from field traces. The final carrier on the initially
+loaded carrier's continuation determines which of two positions needs
+a movable reserve. There is one reserve. Install it before the
+future fault, when relocation would no longer meet the deadline.
+A wrong placement invokes a safe slower fallback with additional
+service loss \(\ell>0\). Both preparations remain physically safe.
+The unknown decision-relevant quantity is the mode, equivalently
+the difference of expected losses of the two preparatory actions:
+\[
+  \mathbb E_s[\ell 1_{\{0\ne s\}}]-\mathbb E_s[\ell 1_{\{1\ne s\}}].
+\]
+It has opposite signs in the two laws.
+
+A diagnostic station can watch one exchange in its live window;
+it reads the lane transition rather than a summary of the end-to-end
+carrier identity. A reading at stage \(i\) using option \(u\) costs
+\(c_i(u)\ge0\) and returns \(Y_i=X_i\oplus Z_i\) with
+\(\mathbb P(Z_i=1)=p_i(u)\in[0,1/2]\). The acquisition noises are
+fresh and independent of each other and the source, conditional on
+past history and the chosen setting. An acquisition never alters the
+exchange process. The scanner must be available in the corresponding
+window and cannot replay a missed one. A conditioning variable such
+as a known job queue can affect offered scan settings, provided its
+law is fixed across the two modes and it supplies no extra channel
+about exchange identities.
+
+Historical runs already owe inspection service that occupies a
+scanner for at least one of those windows. Approval of new training
+runs may instead reserve the diagnostic scanner throughout the
+relevant windows by declining an optional job \emph{before} accepting
+it. Count its foregone value \(\kappa\); do not cancel live inspection
+work by assuming it has been settled. Historical status and safe
+fallback outcomes do not encode the mode; in particular there are
+no persistent observed identities at both ends, exact end-to-end
+tracking, or past randomized full preparatory trials with observed
+success. If any such measurement is feasible it is a different,
+possibly better, matched experiment. The claims below concern one
+new diagnostic run for a future preparation, preceded by any number
+of these historical runs.
+
+\section{Two indistinguishable historical laws}
+Any strict subset of the exchange coordinates is jointly uniform
+under either source law. For an adaptive transcript ending without
+reading all stages, condition on the controller's seed and fixed
+channel options along that transcript. The event of taking the
+specified actions is implied by obtaining its specified readouts.
+Its likelihood is therefore the product of fair readout probabilities
+on the scanned subset, under either law. This covers the decision
+to skip a window based on earlier readings, provided feasibility is
+decided from the declared local information and initial capacities.
+No adaptive selection of future historical runs changes this: the
+likelihood of each new incomplete transcript given the prior data
+is the same, so induct over runs. Even exact records over different
+proper subsets in different runs cannot recover a same-run parity.
+
+The sharp worst-law error with those data alone is \(1/2\).
+The average error under equal priors is \(1/2\) for any decision
+because the distributions coincide. Randomizing the two placements
+equally attains this bound in each law. This is not failure to
+estimate the separate \(X_i\) marginals: those marginals, and even
+every proper joint marginal of \(X\), are exactly known in the model.
+
+\section{One diagnostic run: the exact frontier}
+
+For a complete fixed sequence of settings \(u\), set
+\(r(u)=\prod_i(1-2p_i(u_i))\). Set \(r=0\) for an incomplete schedule.
+With all readings the two likelihoods at \(y\) are
+\[
+ P_s(y\mid u)=2^{-n}\bigl[1+(-1)^{s+\oplus_i y_i}r(u)\bigr].
+\]
+To see this, condition on the noise vector. The specified readout
+then has probability \(2^{-(n-1)}\) or zero depending on its parity
+after subtracting that vector. Independence gives
+\(\mathbb E[(-1)^{\oplus_i Z_i}]=\prod_i(1-2p_i(u_i))\).
+For adaptive setting selection the same leaf formula holds
+with the settings on that leaf: the rule selects them whenever
+those exact readouts occur. Every strict-prefix likelihood is
+still fair. In particular the two continuations after the last
+setting is chosen occur with combined probability equal to their
+unbiased mass under either source law. An incomplete leaf is
+unbiased on its entire transcript.
+
+This yields two conclusions. First, under an adaptive policy let
+\(\nu\) be the distribution of acquisition schedules in a reference
+process in which every emitted bit is independent and fair.
+Actual schedule probabilities are also \(\nu\) in each law:
+if complete, sum over the final bit, since the setting for that
+bit is chosen before it is seen; otherwise all acquired coordinates
+form a proper subset. Consequently both the expected incurred
+cost \(\mathbb E_\nu C(u)\) and the exact variation distance
+\(\mathbb E_\nu r(u)\) are schedule averages. Here \(C\) includes
+the access cost if paid, plus the actual acquisition charges.
+A complete readout recommends its own parity. Conditional on
+the strict prefix the error of this recommendation is
+\((1-r(u))/2\) in either law. An incomplete transcript induces
+a fair guess. Thus the minimum worst-law error with this
+experiment policy is exactly
+\[
+         \frac{1-\mathbb E_\nu r(u)}2.
+\]
+For the lower bound, the equal-prior best testing error on a common
+transcript space is one half of the sum of the pointwise minima
+of the two probabilities, or half of one minus their variation
+distance. The proposed rule attains that bound in both laws.
+
+Second, assume capacity interactions depend only on the actual
+windows, selected actions and their charges, not on the values
+reported by scans; fix job-queue conditions when determining that
+envelope. Each schedule in \(\nu\)'s support is then feasible if
+chosen in advance. Draw the schedule with distribution \(\nu\)
+before the run and apply the fixed-schedule decisions above:
+it has the same cost and error. Conversely, randomly reserving
+any feasible schedules gives their corresponding averages. The
+best attainable error under an expected cost cap is therefore
+the lower boundary of the convex hull of the fixed-schedule pairs
+\((C(u),(1-r(u))/2)\). For minimum expected total cost with unit
+price per resource and loss \(\ell\) for a wrong forecast,
+randomization cannot beat the best fixed schedule:
+minimize \(C(u)+\ell(1-r(u))/2\). Pay to clear the old scan
+window only if some newly available complete schedule has
+\(C(u)<\ell r(u)/2\); the uninformative zero-cost alternative has
+cost \(\ell/2\).
+
+For example, with two windows, scans that each cost \(1\) and
+err independently with probability \(0.1\) give testing error
+\(0.18\); cheap scans at \(1/3\) each err with probability \(0.25\).
+With \(\ell=10\), the best complete schedule uses two accurate
+scans and costs \(3.8+\kappa\) including service loss; the mixed
+and cheap schedules cost \(13/3+\kappa\) and \(53/12+\kappa\).
+A prepared run is worth arranging precisely when \(\kappa<1.2\)
+(indifference at equality), assuming no cheaper outside experiment.
+The access cost is sunk even when the diagnosis is wrong, and
+a wrong placement still incurs the slower fallback.
+
+\section{Failure of the reduction and comparison}
+
+The independence qualification is material. For two \(10\%\)-error
+readings, independent errors make the net parity wrong with
+probability \(18\%\). If the same calibration slip flips both,
+the marginal errors are unchanged and the parity is always right.
+With only the two 10\% marginals, the sharp net error is anywhere
+between 0 and 20\%: it equals 0.2 less twice the probability of
+a double error, which can range from 0 to 0.1. At access cost
+1.1 the two accurate scans are worth arranging under independence
+(total 4.9 versus 5 without scans), but not for those same two scans
+under the worst case allowed by their separate calibrations (5.1).
+The same separate calibration reports therefore do not justify
+the same release decision. The needed calibration concerns the
+\emph{paired} experiment; time spent reserving read windows does
+not by itself supply that calibration. A report that changes
+future acquisition feasibility or triggers an informative physical
+action also falls outside the open-loop reduction. A direct
+identity observation available at the right time bypasses the
+parity experiment entirely.
+
+The ordinary likelihood-ratio test on the full admissible
+transcript attains the same result. This is a boundary for what
+changes when live commitments constrain the experiment, not an
+improved classifier. \href{https://arxiv.org/abs/1205.0858}{Nitinawarat,
+Atia and Veeravalli} treat controlled hypothesis testing and
+derive asymptotic comparisons of sensing policies; this benchmark
+calculates exact finite-run costs for a dependent latent source and
+explicit window commitments. The contract's
+\href{https://proceedings.mlr.press/v286/marmarelis25a.html}{off-policy
+causal sensitivity baseline} studies hidden confounding and policy
+evaluation. The present counterexample has two stated laws and a
+known observation mechanism; it neither reproduces that estimator
+nor establishes a broadly valid method for identifying forecasts
+from observational field data. Exact enumerations in the companion
+code compare adaptive transcript calculations with complete source
+histories. This is partial R3b evidence, not a novelty or acceptance
+claim for the whole obligation.
+\end{document}
+
