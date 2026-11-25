@@ -186,6 +186,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-BEARING-APERTURE: Can many position samples still leave a mirrored bearing unresolved?** The exact test retains the arc of phase differences after allowing an unknown offset. Nine recorded physical motion prefixes have insufficient measured lateral extent under the declared phase model. [Proof and pinned replay](active-evidence/bearing-aperture/README.md). No real bearing deadline or non-radio substitution inferred.
 
+**SC-OPTICAL-PHASE: When does a returning optical stream identify its own word boundary?** Parity-valid alternative parses can persist under repetition; even selecting one word per rotation class does not settle arbitrary transitions. An exact 84-symbol alphabet fits the unchanged UART format and eliminates false windows in the ideal error-free stream. [Proof and replay](active-evidence/optical-phase/README.md). Restricted R1 framing result, not a timed physical receipt.
+
 ## Multiple owners
 
 **SC-LANE-WITHDRAWAL: When can a successor start after an owner withdraws?** Port-side authority and physical clearance are different: a prior start can stay live after revocation. A receipt-only rule, a timeout and an independent reserve have different service consequences. [Proof](multi-owner-coordination/lane-withdrawal/Withdrawal_With_Live_Lane_Use.tex) · [Replay](multi-owner-coordination/lane-withdrawal/README.md).
