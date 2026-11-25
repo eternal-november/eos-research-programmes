@@ -1,0 +1,160 @@
+import java.util.*;
+import java.util.function.Consumer;
+import java.time.Instant;
+import static java.util.Objects.requireNonNull;
+
+class PublicationHarness {
+  static State state(long up,ActionState... acts){
+    return new State("same generation",up,OperatingMode.AUTOMATIC,List.of(acts));
+  }
+  static void need(boolean b,String label){if(!b)throw new AssertionError(label);}
+  static Route.Step step(int i){
+    return new Route.Step(i,new Place("e"+i),new Place("p"+i),new Place("p"+(i+1)));
+  }
+  public static void main(String[] args){
+    Vehicle v=new Vehicle();
+    Order first=new Order(0,Edges.toBaseEdge(step(0),v,List.of()),Edges.toHorizonEdge(step(1),List.of()));
+    Order second=new Order(1,Edges.toBaseEdge(step(1),v,List.of()));
+    need(first.edges.get(0).released()&&!first.edges.get(1).released()&&second.edges.get(0).released(),"exact edge constructors");
+    for(int outcome=0;outcome<3;outcome++){
+      Sink s=new Sink();
+      List<OrderAssociation> reflected=new ArrayList<>();
+      MessageResponseMatcher m=new MessageResponseMatcher("test",s::sendOrder,s.actions::add,reflected::add,0);
+      m.onStateMessage(state(-1));
+      m.enqueueCommand(first,new MovementCommand());
+      m.enqueueCommand(second,new MovementCommand());
+      need(s.publications.equals(List.of(first))&&s.last==first,"first only transmitted");
+      s.convert=outcome!=1;
+      s.valid=outcome!=2;
+      m.onStateMessage(state(0));
+      need(reflected.size()==1&&reflected.get(0).order()==first,"second unreflected");
+      need(s.last==second,"same attempted-order marker");
+      need(s.publications.size()==(outcome==0?2:1),"sink sees accepted publication call only");
+      s.convert=s.valid=true;
+      m.onStateMessage(state(0));
+      need(s.publications.size()==(outcome==0?3:2)&&s.publications.getLast()==second,"old state retries");
+    }
+    for(ActionStatus status:ActionStatus.values()){
+      Sink s=new Sink();
+      MessageResponseMatcher m=new MessageResponseMatcher("test",s::sendOrder,s.actions::add,a->{},0);
+      m.onStateMessage(state(0));
+      m.enqueueAction(new InstantActions(List.of(new Action("cancelOrder","named"))));
+      m.enqueueCommand(second,new MovementCommand());
+      need(s.publications.isEmpty(),"waits for action");
+      m.onStateMessage(state(0,new ActionState("different",status)));
+      need(s.publications.isEmpty(),"unrelated action cannot clear waiter");
+      m.onStateMessage(state(0,new ActionState("named",status)));
+      need(s.publications.size()==((status==ActionStatus.FINISHED||status==ActionStatus.FAILED)?1:0),"cancel terminal predicate");
+    }
+    System.out.println("exact Java: 3 publication outcomes, 4 cancel statuses, base and horizon edge flags");
+    System.out.println("older reflected update permits a fresh send; a later identical reflection can retry it");
+    System.out.println("same attempted order with and without a publish call; FAILED and FINISHED both unblock matcher");
+    System.out.println("local sink only; no broker delivery, schema implementation, or physical effect verified");
+  }
+}
+
+@interface Nonnull {}
+class Logger {
+  void debug(String t,Object... a){}
+  void warn(String t,Object... a){}
+  void error(String t,Object... a){}
+}
+class LoggerFactory { static Logger getLogger(Class<?> ignored){return new Logger();} }
+enum ActionStatus { WAITING, RUNNING, FINISHED, FAILED }
+enum OperatingMode { AUTOMATIC, SEMIAUTOMATIC, MANUAL }
+enum QualityOfService { LATENCY_FIXTURE }
+record Action(String actionType,String actionId){
+  String getActionType(){return actionType;}
+  String getActionId(){return actionId;}
+}
+record ActionState(String actionId,ActionStatus status){
+  String getActionId(){return actionId;}
+  ActionStatus getActionStatus(){return status;}
+}
+class CancelOrder { static final String ACTION_TYPE="cancelOrder"; }
+record State(String id,long update,OperatingMode mode,List<ActionState> actions){
+  String getOrderId(){return id;}
+  Long getOrderUpdateId(){return update;}
+  OperatingMode getOperatingMode(){return mode;}
+  List<ActionState> getActionStates(){return actions;}
+}
+class StateMappings {static boolean vehicleRejectsOrder(State ignored){return false;}}
+class Header {
+  void setHeaderId(long i){}
+  void setTimestamp(Instant i){}
+  void setVersion(String s){}
+  void setManufacturer(String s){}
+  void setSerialNumber(String s){}
+}
+class Order extends Header {
+  final long update;
+  final List<Edge> edges;
+  Order(long update,Edge... edges){this.update=update;this.edges=List.of(edges);}
+  String getOrderId(){return "same generation";}
+  Long getOrderUpdateId(){return update;}
+}
+record InstantActions(List<Action> actions){List<Action> getActions(){return actions;}}
+class MovementCommand {}
+record OrderAssociation(Order order,MovementCommand command){Order getOrder(){return order;}}
+record Place(String name){String getName(){return name;}}
+class Vehicle {}
+class Route {
+  record Step(int routeIndex,Place path,Place source,Place destination){
+    int getRouteIndex(){return routeIndex;}
+    Place getPath(){return path;}
+    Place getSourcePoint(){return source;}
+    Place getDestinationPoint(){return destination;}
+  }
+}
+record Edge(String id,long index,boolean released,String from,String to,List<Action> actions){
+  void setMaxSpeed(double v){}
+  void setOrientation(double a){}
+  void setRotationAllowed(boolean b){}
+}
+class Edges {
+  static double maxSpeed(Route.Step s){return 1;}
+  static double edgeOrientation(Route.Step s){return 0;}
+  static boolean rotationAllowed(Route.Step s){return true;}
+  /* EDGE */
+}
+class Sink {
+  final Map<String,Long> headerIdCounter=new HashMap<>();
+  final List<Order> publications=new ArrayList<>();
+  final List<InstantActions> actions=new ArrayList<>();
+  static final int VERSION_MAJOR=2, VERSION_MINOR=0, VERSION_PATCH=0;
+  boolean valid=true,convert=true;
+  Header conversionInput;
+  Order last;
+  class Settings {
+    String orderTopicName(){return "memory";}
+    QualityOfService orderTopicQos(){return QualityOfService.LATENCY_FIXTURE;}
+    String vehicleManufacturer(){return "synthetic";}
+    String vehicleSerialNumber(){return "not a robot";}
+  }
+  final Settings mqttSetting=new Settings();
+  class Binder {
+    String toJson(Header h){
+      conversionInput=h;
+      if(!convert)throw new IllegalArgumentException("stub conversion refusal");
+      return "stub serialized";
+    }
+  }
+  final Binder jsonBinder=new Binder();
+  class Validator {
+    void validate(String s,Class<?> c){if(!valid)throw new IllegalArgumentException("stub schema refusal");}
+  }
+  final Validator messageValidator=new Validator();
+  class Manager {
+    void publish(String t,QualityOfService q,String s,boolean retain){
+      publications.add((Order)conversionInput);
+    }
+  }
+  final Manager clientManager=new Manager();
+  static final Logger LOG=new Logger();
+  Sink getProcessModel(){return this;}
+  void setLastOrderSent(Order o){last=o;}
+  String getName(){return "simulation";}
+  /* SEND */
+}
+/* MATCHER */
+
