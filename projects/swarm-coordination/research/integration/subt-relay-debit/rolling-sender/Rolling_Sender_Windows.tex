@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,url}
+\title{Rolling Send Windows Can Require a Decision Beyond the Next Window}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Result.}
+Two transmitters have five bytes of allowance in any inclusive
+one-second window. Three required three-byte sends at times $0$,
+$0.75$, and $1.5$ can respectively use $P$, either sender, and $Q$.
+Each window by itself has enough assigned capacity. Yet the first
+window needs the middle packet sent by $Q$, and the second needs
+that same packet sent by $P$. No schedule meets all three deadlines.
+Moving the middle send to $1.25$ restores service, if that cut is
+authorized and the paths and copies are still usable. Moving it to
+exactly $1.0$ does not.
+
+\paragraph{Connection to the source.}
+The paired and recurring SubT replays use selected radio, broker and
+application delivery methods from \texttt{osrf/subt} pin
+\texttt{083c6a8acb0c25aa1a35e34517e628cd3b52ae77}. The transmitter
+owns its window across destinations. Its earlier debit disappears only
+when its age is strictly more than one second. A packet accepted by
+the sender can still consume this allowance if the path or receiver
+does not deliver it. The following proof assumes working selected
+paths, real copies, no additional attempts, no live initial charges,
+and separately adequate receiver headroom. It does not infer these
+premises from a sender marker or a restored network heartbeat.
+
+\paragraph{Exact local state for the fixed path.}
+For a capacity $C$ and an inclusive window of width $W$, restrict each
+required unsplit packet to $(C/2,C]$. At prescribed times $t_i$,
+join events with $t_j-t_i\le W$ for $i<j$. They cannot share a
+sender. With two senders, any edge over an intervening event
+creates a triangle and makes the instance infeasible. Otherwise
+each connected component is a path in time order, with breaks
+at adjacent gaps greater than $W$. On a path, choosing the first
+sender fixes every subsequent assignment by alternation. Refer
+each event's eligible set back to the first event by this parity
+and intersect. Nonempty intersection is exactly feasibility.
+The proof can be shared across an overlap only when both pieces
+permit the same choice at the shared event. A summary containing
+only the separate feasibility answers loses that dependence.
+
+There is also an information boundary, even when every possible
+full path has a coloring. Make a component of arbitrarily many
+events by spacing them $0.75$ seconds apart. All but the last event
+can use either sender. In two histories with the same evidence at
+first dispatch, force the last event to different senders. The
+required first senders are then different. No deterministic policy
+that can see only a fixed number of upcoming eligibility lists
+can guarantee all events at these frozen times. This construction
+does not defeat a planner with the future list or permission to change
+the timing. For the two possible tails, one truthful bit delivered
+before the first send suffices; receiving that bit after the first
+send cannot change the already spent allowance.
+
+\paragraph{Matched comparison and scope.}
+The strongest matched direct comparator is eligible-machine interval
+scheduling, or direct enumeration of all eligible assignments
+in the bounded case. See Hermelin, Itzhaki, Molter and Shabtay,
+\url{https://doi.org/10.1016/j.jcss.2024.103533}; this subcase is
+an elementary two-color conflict graph. A native offline fixture first sends each distinct payload to both potential
+carriers and observes the app copies. It gives each required transmission a
+dedicated receiving endpoint, removing receiver competition without claiming
+that real networks have it absent. It then carries the actual sender ledgers
+across all prescribed cuts. The selected source agrees with direct conflict
+enumeration on 9,362 fixed-time assignments, as well as the named failure and
+repair cuts. Eligibility, timing authority and path quality are fixture
+premises; this is not native scheduling or a field test.
+The compressed checker agrees
+with the latter on 814,359 fixed-time and eligibility configurations,
+including simultaneous events, disconnected paths, and triangles.
+Lean checks the time and two-color lemmas, not this implementation
+or physical premises. The difference is between independent local
+witnesses and one jointly realizable assignment. It is not an
+advantage over the same-information direct scheduler or independent
+mission acceptance.
+\end{document}
