@@ -212,6 +212,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-COMPETING-MERGE-CLAIMS: Can another actor invalidate an unchanged approved handoff?** A new claim at a shared exit has a different effect under the native warehouse and rail arbiters. A stopped winner can keep the block after its own service. [Source-level proof and replay](integration/competing-merge-claims/README.md). Matched arbiter ties.
 
+**SC-RAIL-RIVAL-COVERAGE: Does the current rival report identify what matters after a withdrawal?** Executed selected methods can reveal a missing rival on another link or promote a buried blocker on the same link. The bounded model gives exact conditions for removing enough blockers. [Source and replay](integration/rail-rival-coverage/README.md). Not a network-level fixture.
+
 **SC-CACHED-QUALITY: Can a new kit-quality response reflect an unchanged image?** In a source-level replay of ARIAC 2024.3.0, the first check changes the simulated part’s fault status. With the same cached observation, a subsequent call can pass before any replacement. A fresh image of the unchanged part still fails. [Source, mocks and replay](integration/ariac-quality-calibration/README.md). This tests three original functions, not a live Gazebo trial or HeRo.
 
 **SC-CLOCK-MATCH: Can anonymous transfer records discharge an old duty?** With one shared calibrated offset, individually possible pairings need not coexist in a physical assignment. Exact matching and checked duals certify a release with complete records; the same timestamps leave one unit of residual exposure when one transfer record may be missing. [Proof and replay](integration/clock-transfer-matching/README.md). Calibration, not a measured transfer.
