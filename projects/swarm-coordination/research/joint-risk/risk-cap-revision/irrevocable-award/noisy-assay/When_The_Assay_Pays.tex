@@ -1,0 +1,36 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{When is the optional diagnosis worth giving up work?}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Model.}
+Use the two fixed trajectory laws and physical acts of \href{https://github.com/eternal-november/eos-research-programmes/pull/422}{the irrevocable-award study}, with timely choice of the new cap, so no old award is exempt. An early risky award misses with probability $1/4$, but leaves a reserve for the second award. The protected old route holds that reserve; choosing it without an assay performs extra inspection worth $c\geq0$ units of completed work. The assay replaces that inspection and reports whether an unprotected new award would miss. The report has a calibrated independent symmetric flip probability $\epsilon\in[0,1/2]$ conditional on the latent trajectory. All acts honor exclusion. The single cap $b$ bounds the ex-ante probability of any awarded deadline miss, and the objective is guaranteed expected completed work. The controller knows its act, the coarse signal and any lawfully acquired noisy result. It does not know the actual miss bit. This is a model comparison, not a measured sensor-error rate.
+
+\paragraph{An exact finite frontier.}
+The two laws are interchanged by swapping the values of the coarse signal, with unchanged latent old and new outcomes. Averaging a policy with its signal-swapped version is implementable by a coin drawn before the signal; it cannot worsen the worst risk or the worst expected work. Equivalently, on each first-act branch the symmetrized policy has the same award probability for both coarse-signal values at the same assay result. This symmetry uses the same fixed law through each episode. It does not allow an adversary to reselect a law after either readout. The safe early continuation shields the second award; a dominated unprotected early choice adds no benefit. In the holding mode, choose to stop or award, and in the assay mode choose a subset of the two observable results on which to award. The exact attainable upper frontier is the convex hull of the following nondominated candidates, with the extra weaker points removed as appropriate:
+\[
+\begin{array}{r|ll}
+\text{rule}&\text{risk}&\text{work}\\\hline
+\text{hold, decline new} &0&1+c\\
+\text{early, protect new}&1/4&7/4\\
+\text{hold, award new}&1/2&3/2+c\\
+\text{assay, decline new}&0&1\\
+\text{assay, award on reported safe}&\epsilon/2&3/2-\epsilon/2\\
+\text{assay, award on reported unsafe}&(1-\epsilon)/2&1+\epsilon/2\\
+\text{assay, award on either}&1/2&3/2
+\end{array}
+\]
+Here the coordinates are the same under both source laws. The upper envelope at cap $b$ takes the greatest work at risk at most $b$. Both the resource charge and the possibility of a false safe result enter those coordinates.
+
+\paragraph{Sharp value of the observation.}
+Only awarding on a reported safe result can improve the no-assay frontier. The other assay points are dominated by a no-assay act. For $c\geq1/2$, even perfect diagnosis cannot improve the option that earns $1+c$ with zero risk. For $0\leq c<1/2$, the no-assay line up to $b=1/4$ is $1+c+(3-4c)b$. The assay adds a point above it exactly when
+\[
+ \epsilon<\frac{1/2-c}{2(1-c)}.
+\]
+This determines whether the assay helps at any cap, not whether it helps at every cap. For $c=1/4$ the sharp cutoff is $1/6$. At cap $1/8$ work is $13/8$ with a perfect assay, $63/40$ at error $1/12$, and $3/2$ at error $1/6$, exactly the optimum without an assay. The threshold comes from the matched opportunity cost and the same original risk law, not classifier accuracy considered alone. At larger error a policy may simply omit the assay.
+
+\paragraph{Checks and limits.}
+All 588 parameter queries match a direct robust pure-policy enumeration that sees the same noisy result, carries the same immutable source law, and charges completed work and risks on the same history. The Lean file checks the general threshold inequality and its quarter-unit instance. The convex-hull proof uses a symmetry not guaranteed for site-specific correlated reporting errors or other costs; deleting that assumption requires re-solving the retained-history model. The perfect-report and no-assay controls are not estimates of which instruments are available in an actual warehouse. This is a scoped value-of-information extension, not a claim of priority or closure of R3 or R4.
+\end{document}
