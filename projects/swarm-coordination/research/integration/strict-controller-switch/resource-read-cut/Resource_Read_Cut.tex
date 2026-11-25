@@ -1,0 +1,73 @@
+\documentclass{article}
+\usepackage{hyperref}
+\title{A normal status need not mean the hardware was sampled}
+\begin{document}
+\maketitle
+
+The pinned \href{https://github.com/ros-controls/ros2_control/blob/0c94b008a82731967ba89e2e7379ec6d2f07580b/hardware_interface/src/resource_manager.cpp}{ros2\_control resource manager}
+can return the same result and empty failure list after executing
+both devices' reads or after executing neither. A state change for one
+device acquires manager-wide locks. During its blocked lifecycle
+operation, another device's read error need not be observed even if
+its own device mutex is free and it shares no hardware group with
+the device being reconfigured.
+
+\paragraph{Mechanism.}
+The lifted input to a recovery decision is not just the enum and
+failure list. The pertinent fact is whether each required device
+was sampled in this cycle and, where relevant, whether the selected
+output and limit path ran. The native read and write initialize the
+reported status to \texttt{OK} and clear the failed-device names
+before trying the manager resource mutex. On failure to acquire the
+mutex, each returns those initialized fields without invoking any
+device. Joint-limit enforcement independently tries a different
+mutex, but the resource manager's state-change operation holds both
+of them around the lifecycle transition. At an individual device
+mutex, the read loop skips just that device and can continue to
+another. A true report needs the execution side of the relevant
+path, not only the absence of a reported error.
+
+\paragraph{Replays.}
+The upstream source pin and blob are in \texttt{SOURCE.tsv}. The
+harness executes the four original functions and native group-state
+rule with two separate stub devices. Their callbacks have explicit
+read, write and limiter counters. A condition variable pauses the
+stub device A lifecycle transition after the original
+\texttt{set\_component\_state} acquired the two locks. Device B
+would return an error if read. Three cycles return \texttt{OK} with
+empty lists for both read and write, execute neither device's
+callbacks, and do not enforce any modeled limits. The first read
+after releasing the old transition reports B's error and removes
+its interfaces from availability in that replay. A matched
+healthy cycle has the same read/write status pair but genuinely
+calls both devices. The limit result is distinct in this fixture;
+the downstream monitor considered here sees the read or write
+result, not a full trace of all three operations.
+
+In the scope control, holding only A's device mutex leaves B's
+callbacks available; B's read error is reported while A is
+skipped. This makes the shared manager mutex, rather than
+a shared device or a shared hardware group, the relevant
+dependency for the earlier trace. The code-selected device
+operations and their order were checked. The lifecycle duration,
+read result, limiter effects, and device internals are fixture
+inputs. No hardware, simulation at real time scale, or installed
+driver was exercised.
+
+\paragraph{Consequence for the switch comparison.}
+The local read error in the
+\href{../local-fallback/Local_Fallback_Before_Switch_Return.tex}{fallback
+study} cannot be credited during the masked cycle merely because the
+failing device has a nominally independent scope. A consumer that uses
+these read/write fields alone cannot distinguish the pair above;
+a trusted completion record for the relevant device and cycle
+separates them. This improves the correctness of the evidence,
+not the timeliness of the underlying observation. Any bounded
+reaction claim also requires a bound on the lock and subsequent
+sampling delays, or a different authority and observation path
+that stays available when this transition stalls. The replay makes
+no claim about whether a real device holds, drops, or limits
+the last command through the skipped cycles. This is a stock
+baseline limitation for I1, not an architecture-level pass
+or an assessment of a deployed fleet.
+\end{document}
