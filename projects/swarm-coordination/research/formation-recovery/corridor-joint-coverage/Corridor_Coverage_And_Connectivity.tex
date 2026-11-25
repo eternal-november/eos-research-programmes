@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{Joint coverage and radio recovery in an ordered corridor}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Physical and service contract.}
+There are $n$ ordered robots on a line with known initial positions
+$p_i$, maximum speeds $v_i$ and no acceleration constraint. Each
+robot must stay within an assigned closed interval, already reduced
+for fixed obstacle clearance. Consecutive bodies must keep separation
+at least $g_i>0$ throughout. They start in that safe set.
+At deadline $T$ their positions must provide connected radio and cover
+the closed service interval $[L,U]$, despite any set of at most $k$
+further deletions. A deletion removes radio and sensing, not initial
+clearance or the physical occupied position. The calculation is about
+a stationary test at $T$, not continued tolerance under new motions.
+All robots have the same symmetric radio range $R$ and the same
+interval sensing radius $b$. Require $n\ge k+2$. No wireless
+propagation, detection error or ground-truth position inference is
+claimed.
+
+\paragraph{Exact placement.}
+Intersect each assigned interval with $[p_i-v_iT,p_i+v_iT]$.
+For a point in the resulting box, the inequalities
+$x_{i+1}-x_i\ge g_i$ are necessary and sufficient for safe continuous
+motion to it by $T$. For sufficiency interpolate linearly between
+the initial and terminal configurations; both the box of hard
+position limits and the separation constraints are convex. If $T=0$,
+the reachable box already fixes the initial configuration.
+No discrete time approximation is used.
+
+Write $q=k+1$. Robust radio connectivity holds exactly when
+$x_{i+q}-x_i\le R$ for all $1\le i\le n-q$. Necessity deletes the
+$k$ intervening robots: no other pair crosses that gap with a shorter
+distance. Sufficiency holds because two consecutive survivors span
+at most $q$ original steps and can be included in a $q$-step window.
+Robust pointwise sensing holds exactly when every point in $[L,U]$
+is seen by at least $q$ robots before deletion. The blocks of
+$q$ geometrically consecutive robot positions suffice for that test.
+Their common coverage intervals are
+$J_i=[x_{i+q-1}-b,x_i+b]$; an inverted interval contributes nothing.
+Both endpoints are nondecreasing in $i$. The union covers $[L,U]$
+exactly when there exist $i\le j$ with $L\in J_i$, $U\in J_j$ and
+$x_{t+q}-x_t\le 2b$ for $i\le t<j$. A gap between successive
+non-overlapping intervals cannot be repaired by skipping an interval
+with both endpoints between them. If one interval covers both ends,
+take $i=j$. This includes singleton service zones.
+
+For each of the $O(n^2)$ choices of $i,j$, all of the conditions are
+ordinary difference constraints, with $O(n)$ terms. Shortest paths
+give potentials satisfying every condition, or a negative cycle
+proves infeasibility in that case. The union test is exact over the
+reals. Integral inputs yield an integral feasible witness, if
+one exists, so exhaustive integer placement is a valid independent
+check for those fixtures. The solver permits the same loss set in
+both requirements. Since both must hold for every set, neither may
+borrow coverage or radio from a different placement.
+
+\paragraph{An incompatible pair of duties.}
+Three robots must tolerate one loss. One robot is already assigned to
+position 0, the others may reach coordinates in $[1,9]$, with unit
+clearance. Let $R=4$, $b=2$ and $[L,U]=[7,8]$. The radio-only task
+can use $(0,1,2)$; coverage alone can use $(0,6,7)$.
+Together they demand $x_3\le4$ and $x_3\ge6$.
+Conversely a successful terminal solution does not imply that sensing
+can be maintained during interpolation: two robots at $(0,10)$
+and later $(-10,0)$ each cover the origin with $b=1$, but the straight
+midpoint $(-5,5)$ does not. This is why the coverage obligation in
+the model is explicitly deadline recovery.
+
+\paragraph{An information cutoff, not a physical impossibility.}
+For $q\ge2$, take $2q-1$ robots initially centered at equally spaced
+points with gap $g$, all with the same speed $v>0$. Assume the corridor
+permits the translations below, $R\ge qg$, and $(q-1)g\le2b$.
+The protected point is either $-(b+d)$ or $+(b+d)$ for $d>0$;
+all receive a reliable common indication at time $\tau$. Before it,
+their histories are identical and there is no informative action.
+One branch requires the median robot at or left of $-d$ at $T$,
+the other at or right of $d$, since each requires a strict majority
+within sensing distance. From any common median at $\tau$ at
+least one branch requires travel of at least $d$. Thus
+$v(T-\tau)\ge d$ is necessary. It is sufficient to wait at the
+initial formation and translate by $-d$ or $+d$ after the indication.
+The appropriate $q$ sensors then cover the protected point; radio
+resilience and clearances hold during the entire translation.
+Both worlds can be independently feasible even when their common
+information arrives after this tight cutoff. The proof does not extend
+to private, delayed or disagreeing indications without a new model.
+
+\paragraph{Comparison.}
+This adds sensing coverage to the existing ordered
+\href{https://github.com/eternal-november/eos-research-programmes/pull/375}{radio-resilience test}.
+The separated survivor-set oracle checks continuous interval coverage,
+not only sampled points. The constructive rule matches it and applies
+without enumerating deletion sets. It uses standard difference
+constraints, not a gain over a similarly factored direct planner.
+The physical semantics are far narrower than heterogeneous
+\href{https://arxiv.org/abs/2210.01354}{barrier-function synthesis}
+or geometric
+\href{https://www.cs.memphis.edu/~santosh/Papers/BarrierCoverageMobiCom05.pdf}{barrier coverage}.
+This is a rigorous restricted R6 comparison, not a field result
+or the independent enclosed-space mission.
+\end{document}
