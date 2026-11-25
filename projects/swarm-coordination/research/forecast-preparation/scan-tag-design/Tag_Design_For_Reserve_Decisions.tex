@@ -1,0 +1,115 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{Choosing tags across several possible source modes}
+\date{}
+\begin{document}
+\maketitle
+Suppose two scan stations can label each run by its physical epoch.
+Both stations use the same fixed conversion from epoch to a shorter
+tag before the observations are assembled. The tag is reliable, but
+it may intentionally group epochs. A false join can swap records
+within the reported tag, using a global allowance of $K$ displaced
+identities. It cannot change, discard or duplicate readings.
+We ask for the fewest tag values that let the controller choose the
+right reserve location for every candidate mode and every allowed
+join. There are only two possible actions. Modes recommending the
+same action need not be distinguished.
+
+\paragraph{Exact test for a proposed tag map.}
+Use the finite-roster assumptions from
+\href{https://github.com/eternal-november/eos-research-programmes/pull/405}{PR~405}:
+both scan margins are fixed across modes within each epoch, with
+known candidate $00$ counts $x^m_i$. A fixed tag partition $P$ induces
+tagged counts $y_G^m=\sum_{i\in G}x_i^m$. Every tag becomes a block in
+the join, even if its member epochs are not contiguous. For each
+pair of opposite-action modes $m,m'$, check
+\[
+   \sum_{G\in P}|y_G^m-y_G^{m'}|>2\lfloor K/2\rfloor.
+\]
+This is necessary and sufficient: the observed tables must be
+consistent only with modes prescribing one action. A common table
+forces worst-case error at least one half, attainable by guessing.
+The separate stronger requirement of preserving all known-mode
+distances has a simpler conflict graph: two epochs may share a
+tag only if they never have opposite strict signs in any pairwise
+count difference. This follows from equality in the absolute-value
+triangle inequality. The decision problem does not impose that
+extra restriction. For example, a pair with differences $(3,-1,2)$
+has atomic distance 6 and pooled distance 4; with $K=2$ pooling
+still suffices.
+
+\paragraph{Hardness for the decision problem itself.}
+Given a nonempty simple graph on $n$ epochs, enumerate edges
+$e=(u_e,v_e)$ by positive integers. Let $A=\lfloor K/2\rfloor+1$
+and $s_e=(2A+1)e$. Create two modes for edge $e$. The first takes
+action zero and has every count equal to $s_e$. The second takes
+action one and adds $A$ to coordinate $u_e$ and subtracts $A$
+from coordinate $v_e$. This is a valid finite-roster construction:
+make each epoch have $2M$ records for any $M>\max_e s_e+A$.
+A count $x$ then gives the clean table $(x,M-x,M-x,x)$, with
+balanced margins and all cells positive. Rosters never need any
+invalid counts or inconsistent underlying pairs.
+
+Across distinct edges, the absolute pooled difference is
+$n|s_e-s_f|>2\lfloor K/2\rfloor$. Aggregation by any partition
+still separates those modes, since its distance is no less than
+the absolute pooled difference. For the opposite-action pair
+from the same edge, the tagged distance is zero if the endpoints
+share a tag and $2A>2\lfloor K/2\rfloor$ otherwise. Hence the
+minimum number of tags is exactly the input's chromatic number.
+This proves NP-hardness for decision sufficiency even at fixed
+$K=2$, not just distance preservation. A proposed tag map can be
+verified by the polynomial count test above, yielding NP-completeness
+for the bounded-tag decision problem.
+\href{https://www.cs.umd.edu/~gasarch/BLOGPAPERS/Karp.pdf}{Karp}'s
+graph-coloring hardness supplies the reduction premise. The reduction
+assumes arbitrary reusable epoch labels, not a clock that can only
+mark consecutive intervals. Many modes are necessary for this proof;
+it does not show hardness with two candidate modes.
+
+\paragraph{Consecutive clock buckets are different.}
+Restrict the labels to consecutive intervals of epochs in the
+graph-constructed family. A boundary after some index between the
+endpoints of each edge is necessary and sufficient. Choose the
+rightmost permissible boundary of the earliest-ending interval,
+discard intervals it hits, and repeat. If an optimal solution uses
+another boundary in the earliest-ending interval, replacing that
+boundary by this rightmost one stays in all still-required intervals
+it previously hit. This proves minimum bucket count. Three disjoint
+edges between successive epoch pairs need four consecutive buckets
+but only two reusable labels. This greedy rule is proved only for
+the graph-constructed pair form, not arbitrary mode tables.
+
+\paragraph{Two modes with any counts.}
+For two opposite-action modes, two reusable tags always preserve
+the full atomic distance: group the nonnegative count differences
+under one tag and the negative differences under the other. Thus
+one tag is optimal if the pooled distance clears the threshold; two
+are optimal if pooling fails but the full distance clears it; no
+tag map suffices if even the full distance fails.
+
+For consecutive buckets, let $s_i$ be the prefix sum of the signed
+differences and $F(k,i)$ the greatest distance obtainable by dividing
+the first $i$ epochs into $k$ nonempty consecutive buckets. With
+$F(0,0)=0$ and other impossible initial entries omitted,
+\[
+ F(k,i)=\max_{j<i}\{ F(k-1,j)+|s_i-s_j|\}.
+\]
+For each fixed $k$, a left-to-right sweep maintains the two prefix
+maxima of $F(k-1,j)+s_j$ and $F(k-1,j)-s_j$. Subtract or add
+$s_i$ respectively and take the larger. Thus the best distance
+for every bucket count, and the minimum feasible count, take
+$O(n^2)$ arithmetic operations. The first $k$ values take $O(kn)$.
+A maximizing predecessor at each entry recovers a tag map. Exhaustive
+cut enumeration checks the entire frontier on 1,024 signed inputs.
+
+\paragraph{Scope.}
+The result makes the tag allocation cost explicit when both stations
+must implement it before the scan, without an oracle that observes the
+mode. It does not price authentic tagging, certify clock alignment,
+or establish that these many modes occur in a particular plant.
+Ordinary graph coloring is the appropriate factored comparator on
+the constructed family. The replay checks the characterizations
+against exhaustive choices; it does not compare solver runtimes.
+No historical priority, field calibration or full R3b closure is claimed.
+\end{document}
