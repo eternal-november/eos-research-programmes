@@ -1,0 +1,32 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{A missed battery report can be harmless or decisive}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Trial.}
+Replay the \href{https://github.com/eternal-november/eos-research-programmes/pull/412}{pinned MRWS off-shelf intervention}: four robots, one order of nine ordered classes, one shelf per class, three units of carrying capacity, and collision-guarded unit motion on the original grid. The first battery failure occurs at tick 19. When present, the second kills the same named robot at tick 20 or 23; position at that tick is a consequence of each controller's earlier actions. A stopped robot occupies its final cell and cannot transfer its load. Count only native ordered station settlement. Service cuts are 60, 100 and 200. The goal and resource law stay fixed.
+
+The actuator sees the actual stop. The scheduler's commissioning call sees only the critical statuses whose reports have arrived. Reports mature at the end of their prescribed tick after physical callbacks. Both policy arms receive the same report schedule, with no late proof of an erased report. Gridded motion still checks actual cell occupancy. The simulator shim temporarily replaces only the critical-status values consumed by the scheduler and restores them before any plant effect; normal physical waiting and native station effects are unchanged. This is a narrow design episode, not a detection-rate estimate. It excludes concurrent threads, external services, and other orders, and does not model a sixth hidden way for the scheduler to diagnose a stop.
+
+\paragraph{Where the outcome changes.}
+A zero-delay intervention reproduces the original no-fault and six faulted seed-zero traces exactly after removing the additional instrumentation. The horizon contains 111 deterministic configurations including non-delivery. Without a second fault the retained route finishes at tick 70 with immediate notice and at 61 with two ticks of notice delay. The corresponding discarded route takes 93 and 97 ticks. With the second fault at tick 23 and its notice timely, the result reverses for one change:
+\[
+\begin{array}{c|rr|rr}
+ & \multicolumn{2}{c|}{\text{discard and restart}} &
+ \multicolumn{2}{c}{\text{keep live loads}}\\
+\text{first notice delay}&\text{finish}&\text{new picks}&\text{finish}&\text{new picks}\\\hline
+0&\text{none}&6&81&6\\
+2&101&10&\text{none}&6
+\end{array}
+\]
+With immediate first notice, the discard route puts the soon-to-stop robot on the unique shelf for item 3; the other carrier has already discarded its corresponding copy. The retaining route's second stop is off that shelf. With the first notice delayed two ticks, the discard route's second stop is off the necessary shelves, while the retaining route's stop permanently occupies the sole item-4 shelf. The required item is not at the station or on any surviving robot in that blocked run. Mere release of an administrative grant cannot restore the source. Delay changes which physical bottleneck the second fault realizes; it is not just a time translation of a fixed repair.
+
+At first delay 2, discard transfers all remaining order duties to the spare at the first amendment. The robot that stops second is no longer a commissioned supplier. With late or erased second notice the physical event remains and still fixes its occupied cell. All five second-notice variants have byte-equal physical event lists and settle at 101; this fails the 100-tick target. With immediate first notice the retained plan instead leaves a live delivery duty with that robot. For a second stop at the off-shelf cell, receipt of its critical report funds a new planning call and moves that duty to the spare. With no second report its old branch stays assigned, only items 9--7 settle, and the run exhausts 200 ticks. This control distinguishes who has a remaining duty from which physical barrier the fault creates. No inferred shelf obstruction is needed for the missed-report failure there.
+
+\paragraph{A positive, bounded claim and its limit.}
+Keeping the verified loads meets the full order at 100 ticks for the frozen family with first notice delayed at most one modeled tick and either no second fault or a second fault at tick 23 with its report delayed $0,1,2,4$ ticks. The nine ordered station effects and single actual completion were checked. A second fault at tick 20 fails in all tested arms; no firmware, sensor or physical generalization follows. Delay cannot be ranked by performance for a fixed immediate-response policy. An optimizer with earlier information can emulate later information by choosing to defer the planning call in this shim; these data do not establish that reducing delay is inherently harmful or that retaining the loads is globally optimal.
+
+The actual reassignment is a positive permission effect of a recognized fault at the current assignment cut. The physical stop is a negative capability effect independent of whether a notice arrives. A static graph that only removes edges on faults cannot model both when its ports distinguish the authorized spare action: the spare never obtains an order slot without a commissioning call, but does perform new pickups after that call. Within one mode that prohibits reassignment, ordinary labelled reachability remains a valid comparator. A planner allowed the same observations, physical guard and reassignment could reproduce these outcomes. No independent transfer or I1 or I2 acceptance is claimed.
+\end{document}
