@@ -1,0 +1,132 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{When a stopped factory station retains a job}
+\date{}
+\begin{document}
+\maketitle
+
+The official RoboCup Logistics League archive named \texttt{rcll100.gz}
+contains 100 reports and 900 orders, but no realized fault history:
+there is one initial idle entry per machine, no recorded positive-duration
+downtime and no completed deliveries. It supplies nominal benchmark
+inputs, not independent evidence of fault recovery. A separate simulation
+based on the league rules tests an actual recovery distinction. A paused
+station can resume its old work; after confirmed improper use the
+referee removes affected material. A controller that sees only that
+a station is unavailable cannot tell which product should enter
+the last early slot at an alternate station.
+
+\section{What the published archive supports}
+The \href{https://github.com/robocup-logistics/rcll-refbox/tree/master/benchmarks}{official
+RefBox repository} publishes the archive. This audit pins its Git blob
+\texttt{b54f8c7ba3f6ee4765d49f99013466275009d414}
+and its compressed SHA-256 in the replay. The eligibility test was set
+before looking at any report records. An actual event-level compound
+case must establish a physically live material link, fault cause,
+credible event ordering, the actor's information before the action,
+and relevant workload and deadlines. Nominal geography or order
+parameters alone do not meet that test.
+
+A bounded, read-only parser walked the original
+\href{https://pkg.go.dev/github.com/mongodb/mongo-tools/common/archive}{MongoDB
+archive format}; it did not execute or restore the dump. It recovered
+one collection, \texttt{rcll.game\_report}, with 100 reports. All 1,400
+machine-history entries occur at game time zero and are idle.
+Each report has exactly one entry per named machine. None of the
+1,400 \texttt{down-period} pairs describes a nonnegative start and
+later end, none of the broken reasons is populated, and no recorded
+order unit was delivered. The 99 end-time metadata fields do not
+supply the missing executions. Several key names look like trace
+fields, but checking their values leaves zero eligible cases. This
+is a finding about one pinned archive, not a claim that the league
+does not keep detailed game reports or that no other public export
+would work. It does not spend the enclosed-space mission holdout or
+certify transfer of a frozen field controller.
+
+\section{Different physical consequences of unavailability}
+The \href{https://github.com/robocup-logistics/rcll-rulebook/blob/master/rulebook.tex}{official
+rulebook}, pinned in the README, states that scheduled cap or ring
+station downtime can last 30--60 seconds and that a product already
+processing resumes after that delay. Confirmed improper use can
+lead to the broken state and removal of material from processing,
+input and output; the station remains unavailable for 30 seconds.
+The same material-removal inference does not automatically follow
+from a generic hardware anomaly or any reset. The rulebook
+distinguishes technical recovery and misuse, and its machine lights
+distinguish scheduled down from broken. Broken state alone does
+not certify that improper use, rather than a manual reset, was the
+cause. A signal used below therefore either comes from direct
+validation of the retained item or has an independent cause
+certificate within the declared two-case envelope. The replay
+does not assert working telemetry from the published reports.
+
+In the separate development fixture, station X contains the unfinished
+item \(P\) at the first fault. The requirement is for durably
+collected \(P\) and \(Q\) by a fixed horizon, not a referee score.
+Under scheduled pause, X retains \(P\) and resumes.
+Under referee removal it loses that item, the order for \(P\)
+still stands, and X can instead start a prepared \(Q\) on reopening.
+Station Y can start one prequalified order now, but a second
+interruption arrives before the plant can carry another order.
+All launch and collection authority in this model is declared.
+A spare base for the possible rebuild is staged before the test;
+the model does not give the controller a free clone of the resident.
+The first choice uses the same capacities, time and materials in either
+world. Processing and handling durations are synthetic, not archive
+measurements.
+
+Both items arrive if Y starts \(Q\) in the pause case or \(P\) in
+the removal case. The other first order yields attempts at
+the same letter while the other required item misses the deadline.
+A policy that sees only unavailability cannot guarantee both.
+A timely, source-validated retention bit enables both.
+There is no fall-back that bypasses the missing information within
+the specified one-launch action class. A direct planner with the
+same bit and capacities also succeeds.
+
+\section{Completion versus secure collection}
+The action consumes work time \(p\) and a declared handling interval
+\(\ell\). The machine's output can be ready before the item is collected
+outside the interruption's physical scope. If launch is \(s\), the
+uninterrupted secure time would be \(c=s+p+\ell\). Let the second
+fault occur at \(f\), the deadline be \(T\), and \(\delta=0\) when
+a simultaneous pickup precedes the fault and 1 when the fault is
+first. The pre-fault arm succeeds exactly when
+\[
+       c\leq\min(f-\delta,T).
+\]
+If the second event is a pause of duration \(D\), unfinished
+processing or handling resumes with a delay \(D\), under the
+specified same-station handling law. The full success test is the
+union of the pre-fault arm and \(c\leq T-D\). For destructive removal,
+only the pre-fault arm remains; already completed but uncollected
+material can be removed. The law for scheduled delay during
+handling is a fixture assumption, not an additional official rule.
+
+In the replay, a product is ready at tick 28, but a fault-first event
+at tick 30 destroys the uncollected product. Collection-first at
+the same timestamp preserves it. Another test delays observation
+one tick and uses a scheduled second pause; the selected transfer
+then collects at tick 60 and fails a deadline of 59. Four Lean
+statements check the arithmetic, equal-time distinction and
+opposite-first-choice obstruction. The event model separately
+tracks a running job, output-ready material, paused occupancy,
+physical removal and secure collection. All 82,944 cases agree
+with an independent interval calculation.
+
+\section{Evidence boundary}
+\href{https://doi.org/10.1016/S0377-2217(00)00322-2}{Lee and Lin}
+already distinguish resuming and nonresuming jobs in machine
+scheduling. The additional interface here is actual retained
+material and the witness that crosses the boundary. It is not
+a new general scheduling method. The event model and the archive
+audit answer different questions. The latter does not confirm
+the former. A future independent case needs matched material identity,
+occupancy and collection events, order and fault evidence,
+timestamps, what each agent saw before committing, and an unchanged
+comparison under the same physical resources. An independently
+chosen layout or order list is not yet that case. This is I1
+development evidence, not a decision on inventory-wide applicability
+or a claim that a stronger established planner loses.
+\end{document}
