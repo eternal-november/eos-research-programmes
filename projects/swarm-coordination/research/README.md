@@ -28,6 +28,8 @@ These are conditional results for finite models. They neither validate a physica
 
 ## Policy repair
 
+**SC-ACTUAL-RELEASE: When should two pending repairs wait to share a fixture?** When a mount and its transfer both hold the same fixture, the next repair waits for actual clearance. With one late authority, the exact boundary for waiting for the readout depends on its arrival plus the mounting time. A matched tick-level scheduler agrees. [Proof and replay](policy-repair/shared-fixture-release/README.md). Restricted R2, not independent transfer.
+
 **SC-TWO-BAY: When does a local hardware change require another crew to change its policy?** Two crews must deliver their held loads to different bays. Reversing one guide in both fixture modes leaves the other crew's feasible policy tables unchanged. Reversing it in only one mode forces a change to that crew's table, although either policy entry can stay unchanged in some repair. The exact joint relation detects the change; checking one entry at a time does not. The factored direct comparator gives the same result. [Model and proof](policy-repair/two-bay/Distributed_Repair_Search_Pilot.tex) · [Checker](policy-repair/two-bay/pilot.py).
 
 [Lean proof and replay](policy-repair/two-bay/lean/README.md): `SwarmTwoBay.compatible_eq_iff`, `SwarmTwoBay.tailLayout_bijective`, and `SwarmTwoBay.normalized_tail_exact_codec` check the compatibility relation, its normal form, and the exact fixed-width membership codec. Run `./replay.sh /path/to/pinned/lake/project` from the proof directory.
