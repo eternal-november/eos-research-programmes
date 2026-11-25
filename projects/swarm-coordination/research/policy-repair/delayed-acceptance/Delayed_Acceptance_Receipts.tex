@@ -1,0 +1,115 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Delayed acceptance receipts for a physical start window}
+\author{}\date{}
+\begin{document}\maketitle
+A downstream worker must start one non-interruptible follow-on transfer.
+Source state $w$ admits precisely starts in $[l_w,u_w]\cap\mathbb N$.
+At time $q_w$ the worker receives a single permanent observation $y_w$.
+It observes receipt before deciding at that tick, and observes its own
+clock throughout. There are no other observations or physical alternatives.
+Actuation before seeing a receipt is permitted only if preauthorized.
+This is a timed abstraction for one stage, not a model of arbitrary
+distributed custody or a guarantee of later support.
+
+\paragraph{Receiver.}
+A deterministic causal controller has a first start along the no-receipt
+history, $s$ (possibly $\infty$), and one start after each distinct
+arrival pair $(q,y)$ with $q\le s$. After this observation all histories
+in that group remain indistinguishable, so their choices cannot diverge.
+If $q>s$, the world reaches the default start and never uses its later
+message. Thus there is an exact constructive test:
+\begin{enumerate}
+\item For every world with $q_w>s$, require $l_w\le s\le u_w$.
+\item For each arrived group with $q\le s$, require
+$\max(q,\max_w l_w)\le\min_w u_w$ on that group, and start there.
+\end{enumerate}
+Groups with disjoint valid intervals or with a too-late arrival must be
+preempted by a default strictly before their arrival. For each world, the
+forbidden default intervals are $[0,\min(l_w,q_w)-1]$ and
+$[u_w+1,q_w-1]$, omitting empty intervals. Earliest permitted finite
+default is found by sorting and scanning these intervals. It is sufficient
+to test the earliest one, since further delays admit additional receipt
+groups without repairing an already-infeasible group. Waiting for all
+receipts corresponds to $s\ge\max q_w$ and can always be tested as a
+candidate default. The sort-and-scan uses $O(n\log n)$ operations on $n$
+explicit source rows; source enumeration and interpretation are not free.
+
+A hybrid can succeed when both open-loop and always-wait policies fail.
+Let physical acceptance be either at zero with immediate receipt and
+window $[1,2]$, or at three with receipt at eight and window $[4,5]$.
+On the early receipt, start at one. On continued silence at four, start
+at four. The source support is physically available through those
+transfers, despite lack of telemetry in the late case. Without authority
+to act on that inference, the hybrid is inadmissible and only a
+wait-for-receipt controller can be considered.
+
+\paragraph{Pinning the receipt.}
+In the reference actuator the upstream event $C$ is physical gate
+acceptance. Support is active on $[C,C+Q)$ and the transfer starting at
+$s$ uses ticks $[s,s+h)$, following an uninterrupted preparatory
+interval of length $a$. Both intervals must have support, giving
+$[C+a,C+Q-h]$ exactly. The preparation is a stipulated passive source
+settling interval, not uncharged worker effort. No packet changes actual
+gate state. The two histories $C=0,2$ both receive at two: with $a=1,Q=4,
+h=2$ this makes their windows disjoint. Stamping the source acceptance
+permits starts at two and three. Equal arrival without the stamp makes
+the constructed duty impossible. A command timestamp, loosely
+synchronized clock, or unauthenticated cross-owner assertion has no right
+to the acceptance semantics: such uncertainty must enlarge the world
+groups.
+
+For the rectangular special case, $C\in[u,v]$ and delay $d\in[0,D]$
+vary independently, with window $[C+a,C+b]$. Writing $H=v-u$ and
+$w=b-a$, full stamps work exactly when $H\le w$ or $D\le b$.
+Arrival-only works exactly when $\min(H,D)\le w$. To refute the latter
+outside its boundary, choose $C=u,C'=u+w+1$ with the same arrival.
+For stamped impossibility, if $D>b$ and $H>w$, both $u$ and $v$ can
+stay quiet beyond $u+b$ and their windows are disjoint. The positive
+recipes are a common fixed start when $H\le w$, or starting no sooner
+than the latest consistent acceptance plus $a$ and no sooner than
+receipt when waiting is feasible. The replay checks this inherited
+rectangular regression separately from the generalized receiver.
+
+\paragraph{Minimum static labels.}
+Suppose the sender chooses a deterministic label from its source state
+before seeing network delay; the observation becomes $(q,\mathrm{label})$.
+Choose the earliest default allowed by the silence clauses, independent of
+labels. At arrivals processed by that cut, discard impossible cases where
+even a singleton has $q>u_w$. Draw an edge between any two source states
+with traces at a common processed arrival for which the clipped intervals
+$[\max(q,l_w),u_w]$ are disjoint. A same-state conflict is an obstruction
+even with distinct labels for all states. Otherwise intervals have a
+common point iff they intersect pairwise, so a valid stationary label
+assignment is exactly a proper coloring. No later default can remove an
+edge. This yields the minimum alphabet of the whole receiver design, not
+a count of source timestamps that must be recovered. Output is a lawful
+start rather than a reconstruction of $C$. Neither correlated faults
+from actions nor further observations are captured by this single-event
+graph.
+
+For $C=0,\ldots,4$, $(a,b,D)=(2,3,3)$, no silent start before six can
+work because $C=4$ can give no receipt until seven. Each edge of the
+cycle $0,2,4,1,3,0$ has some common arrival by tick four and disjoint
+windows, so two labels are impossible even with a hybrid. The assignment
+$(0,0,1,1,2)$ is valid. Any individually fixed arrival cohort contains
+at most four consecutive acceptance ticks and can be split into two
+width-one groups. Designing labels separately for each arrival would
+therefore return the wrong alphabet for a sender ignorant of latency.
+
+\paragraph{Comparison and scope.}
+\href{https://mers-papers.csail.mit.edu/Other/2018%20CSAIL%20TR%20Bhargava%20Delay%20Controllability/TR%20delay-controllability.pdf}{Bhargava et al., Delay Controllability}
+use a delay function per event that controls when its value is revealed.
+Here latent variable per-execution delay and partial tags can leave
+acceptance unresolved even after the observation; a fixed supplied delay
+is not an exact description of this decoder. The coloring structure is
+a restricted instance of \href{https://doi.org/10.1109/TIT.1976.1055607}{Witsenhausen's zero-error side-information framework},
+with compatibility determined by action intervals. The matched adaptive
+history search and exact static label enumeration tie. Counts include
+6,048 rectangular, 20,000 nonrectangular, 2,700 plant-window, 20,691
+tag/group and 3,000 minimum-alphabet tests. These are distinct test
+families, not independent physical experiments. No general delay-network
+complexity or asymptotic coding claim follows. The practical decision is
+which semantic field, with which source and timing provenance, an
+adapter must preserve before reusing a receiver.
+\end{document}
