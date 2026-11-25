@@ -1,0 +1,24 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{A fresh motor-current message can contain an old reading}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+
+A force controller can keep publishing current values after its analog read fails. In the checked source, one failed channel prevents the entire four-channel update. The unchanged published numbers and the resulting drive commands are indistinguishable from a run with a successful, stable reading, unless the receiver sees the separate failure diagnostic. Command timeout protects a different input.
+
+\paragraph{Source and exact observation.}
+The replay executes selected callbacks from \href{https://github.com/StanfordMSL/ouijabot/blob/7248d95212123c32c94ef1faaedd2e4907a4d8e1/ouijabot/script/force_control.py}{StanfordMSL's Ouijabot force controller}. The authored adapter supplies the clock, initialized control state, current values, one analog channel throwing an exception and a GPIO/PWM sink. The native update is inside a try block and the publisher is outside it; the exception logs a warning but preserves and publishes the old vector. The message is an array without an acquisition time. Each of the four possible failed channels gives the same trace of published current and drive magnitude as a stable, successful sample in the given fixture, while the failure log differs. All three control iterations continue to issue nonzero commands under fresh wrench requests. A later expired command makes all four PWM duties zero; the last throttle vector in memory is not reset. An issued PWM duty is not evidence that the vehicle stopped, that it released a payload, or that equipment continued to supply the expected force.
+
+The harness uses plain Python floats for the pre-read throttle scalars to isolate the intended sensor exception from a separate host compatibility effect. Under the pinned container's NumPy 2.3.5, the unadapted controller changes those scalars to NumPy scalars after the first output; the source's Boolean tuple indexing then raises a TypeError in the next two reads. Its broad handler emits the same warning and retains the old vector. That additional control was executed separately. It is not a claim about the version deployed in the experiments or about physical behavior of a robot. No ROS process or electronic hardware was connected.
+
+\paragraph{What a current-based receiver could establish.}
+This is a potential input to contact-mediated coordination, not a contact sensor by assertion. Suppose the last genuinely acquired estimate of motor currents is $\bar I$, each coordinate has certified initial error $e_i$ and a variation bound $L_i$, the acquisition age at the decision is $a$, and the current-to-wrench map $A$ is stable on the interval. For signed required force in direction $w$, let $g=w^TA$. If all combinations of the resulting coordinate intervals are admitted, the exact lower bound is
+\[
+ g\bar I - \sum_i |g_i|(e_i+L_i a),
+\]
+and the upper bound adds the same term. The endpoints are obtained by independently choosing each current endpoint against or with the sign of $g_i$. A receiver that must certify $gI\geq h$ can do so exactly when the lower bound reaches $h$. If the directional rate is zero, the threshold is independent of age; otherwise there is a finite age cutoff whenever the initial lower bound clears the threshold. A source that timestamped publication instead of successful acquisition could admit the same number after that cutoff. A tag for successful acquisition is sufficient for using this bound, but not a substitute for the bound itself. The code estimates current sign from throttle, so a valid sign and wrench interpretation need separate calibration laws. Unknown payload contact, coupled electrical/physical constraints, a changed transfer matrix or an unbounded rate are outside this result.
+
+Exact rational extrema agree with 3,200 exhaustive corner controls. Direct interval reasoning with the same acquisition evidence ties. There is no force estimate from the real machine, coordinate-specific recovery from a source that discards the whole read, independent trial, or improvement over a calibrated direct policy. The study concerns local actuator evidence that might feed a non-radio coordination law. The \href{https://msl.stanford.edu/papers/wang_kinematic_2016.pdf}{published force-feedback coordination result} concerns an object-mediated controller under its physical assumptions, which this fixture neither implements nor refutes. It does not discharge R1.
+\end{document}
