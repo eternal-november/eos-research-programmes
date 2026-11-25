@@ -1,0 +1,38 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{When partial audit histories cannot price a shared preparation}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Decision, histories and limits.}
+A downstream crew must decide in advance whether to buy preparation for a service that needs \(m\geq2\) actual gates ready on the same history. Borrow the readiness event from
+\href{https://github.com/eternal-november/eos-research-programmes/pull/446}{the conditional-entry study}, and the observation restriction from
+\href{https://github.com/eternal-november/eos-research-programmes/pull/398}{the occupied diagnostic window}. Each gate bit means actual qualified readiness by its required cut, including usable evidence. In the ordinary historical audit an earlier obligation prevents reading at least one gate in each episode. The missed gate may depend on earlier reads, but all remaining observations are common side information or functions of the observed bits. The preparation decision cannot condition on the future episode. Interlock verification is mandatory before any action takes effect in every case. This is the value of collecting historical evidence for prospective useful service, not a safety-risk allowance and not a field distribution. If the preparation itself changes the distribution of readiness, the estimated event must instead refer to that intervention; the conclusions below require the stated fixed law.
+\paragraph{Sharp identification.}
+Write \(x\in\{0,1\}^m\), \(s(x)=(-1)^{m-\sum_i x_i}\), and let \(p^0\) be any probability table agreeing with all the proper coordinate marginals. Exactly the tables
+\[
+ p^\lambda(x)=p^0(x)+\lambda s(x),\qquad
+ -\min_{s=+1}p^0(x)\leq\lambda\leq\min_{s=-1}p^0(x),
+\]
+have those marginals. To see necessity, take a difference table. Every sum over a missing bit is zero; therefore flipping any bit negates that table. All table values are forced by its value at the all-ready vector. Sufficiency is cancellation on each flipped pair and the stated nonnegativity conditions. The all-ready event probability \(q\) varies by exactly \(\lambda\), since its sign is positive. This is the parity component of the standard Boolean expansion
+\href{https://arxiv.org/abs/2105.10386}{(O'Donnell)}. The interval can collapse when some known cells force the hidden component.
+\par
+Even adaptively chosen partial audits do not distinguish the endpoints if no leaf ever sees all gates. Fix policy randomness and sensor noise independent of unobserved state conditional on observed bits. Every deterministic record then specifies a cylinder on the set of bits it saw; those cylinders have the same probabilities. Iterate over independent episodes under the same fixed law: the posterior choice of the next partial experiment is itself based on records whose laws agree. In contrast, the paid operation must actually collect all-ready evidence about the \emph{same} episode and qualify it at the declared cut. A log containing all gate names but measured on different episodes is not such an operation.
+\paragraph{Value of one paid joint observation.}
+Normalize the benefit of preparation relative to refusal under a fixed law to \(\beta(q-q_*)\) with \(\beta>0\); the interest is \(q_L<q_*<q_H\), where \([q_L,q_H]\) is the identified interval. These are regret costs against the action that would be best if that law were known. Use \(L=\beta(q_*-q_L)>0\), \(H=\beta(q_H-q_*)>0\). With no new evidence the minimax rule prepares with probability \(p_*=H/(L+H)\), giving \(R_0=LH/(L+H)\). Consider a single historical episode on which the crew, by setting aside resources before its result, can obtain a noisy all-ready bit. The cost \(\kappa\geq0\) is paid whether the sample is positive or not; no additional read is available. The false positive rate \(\alpha\) and false negative rate \(\eta\) are declared and unaffected by the choice of law, so \(z(q)=\alpha+(1-\alpha-\eta)q\) is the positive read probability. Allow \(0\leq1-\alpha-\eta\leq1\). The record episode and the prospective episode are independent given the fixed law.
+\par
+For the two endpoint laws, the exact attainable lower regret boundary is the lower convex hull of
+\[
+ (0,H),\qquad(L,0),\qquad
+ (\kappa+Lz(q_L),\ \kappa+H(1-z(q_H))).
+\]
+The first two points are refusal and preparation without buying the read; the third buys the read and prepares exactly on a positive report. Buying it and ignoring it is dominated by not buying it. The reverse mapping is dominated by a constant random decision: its prepare probability decreases with \(q\), so choose its probability at \(q_*\) and omit the cost, which is no worse for any \(q\) in the interval. Mixtures include the decision to reserve a sample at random, not merely randomization after a reading. The regret pairs meet the diagonal at the minimax value or one point already attains it. The strict improvement threshold is
+\[
+ \kappa< \bigl(z(q_H)-z(q_L)\bigr)\frac{LH}{L+H}.
+\]
+For necessity, if the third point lies on or above the no-read segment's supporting line \(u/L+v/H=1\), every policy has maximum regret at least \(R_0\).
+\par
+This threshold is unchanged when the adversary may choose \emph{any} compatible law, even though the endpoint hull no longer gives the exact optimum value in general. For sufficiency let \(r=\tfrac12\min(p_*,1-p_*)>0\) be the probability of buying and using the read. Let \(\bar z=(Lz(q_L)+Hz(q_H))/(L+H)\); use probability \(a=p_*-r\bar z\) to prepare without a read and \(1-a-r\) to refuse without a read. These are nonnegative. Across the interval the total prepare probability is \(p(q)=a+rz(q)\). The regret is \(r\kappa+\beta(q_*-q)p(q)\) below \(q_*\), and \(r\kappa+\beta(q-q_*)(1-p(q))\) above it. Below the threshold point its derivative is nonpositive: \(p(q)\geq p_*/2\) and \((q_*-q)p'(q)\leq r\leq p_*/2\). Above the point its derivative is nonnegative by the corresponding bound \(1-p(q)\geq(1-p_*)/2\). The two endpoint regrets are equal to \(R_0+r[\kappa-R_0(z(q_H)-z(q_L))]\), strictly smaller when the cost inequality holds. Thus the threshold is exact for the full interval too. A more aggressive rule can have interior worst cases; for a fixed candidate those are checked by the stationary points of the two quadratic losses.
+\paragraph{A discriminating case and checks.}
+Three uniform proper marginals permit joint probabilities from 0 to \(1/4\), with opposite parity laws attaining the endpoints. Let \(\beta=8,q_*=1/8\). Regret without the joint read is \(1/2\). An exact read helps if and only if its reservation costs less than \(1/8\) under these units. At cost \(1/16\) the exact endpoint minimax value is \(13/28\); this number alone is not asserted for the full interval. The direct pure-policy enumeration and exact mixture search agree on the endpoint result, and the direct full-interval check verifies the conservative improvement construction. Both operate with the same experiment and allowed information. No source calibration, independent replay, violation of an old duty, or entire R3b acceptance is claimed.
+\end{document}
