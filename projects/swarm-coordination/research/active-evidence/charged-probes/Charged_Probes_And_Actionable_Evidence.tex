@@ -1,0 +1,151 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Fallible probes: physical cleanup, timely evidence and small rejection certificates}
+\author{}\date{}
+\begin{document}\maketitle
+Two civil inspection crew roles have separate observations. The
+scout knows the relevant local condition $x$ and the receiving
+crew knows its own route condition $y$. The tight repair uses
+route $x\oplus y$. A usable observation conveys the actual
+upstream condition, before the receiver commits. If two
+histories with the same local $y$ produce no usable read and
+different $x$, that crew has no one compatible repair.
+A more accurate read that is private or late leaves the same
+obstruction. Physical mechanisms below supply or remove this
+evidence; it is not an oracle at the receiver.
+
+\paragraph{Charge physical attempts and old work.}
+At most $k$ acquisition attempts can be erased on an admitted trace.
+An ordinary shared-port attempt takes one tick. A shared-port
+failure creates a $d$-tick physical cleanup, and the old duty
+needs a physically staffed standby throughout. Without the standby,
+an attempt that might fail is inadmissible. An isolated-port attempt
+takes $s\ge1$ ticks and spends $c>0$ battery units at launch, even
+when it returns no observation. Its failure does not occupy the
+shared cleanup resource. Both modes are assumed to report a
+true value on successful acquisition, under the declared source
+law, not measured to do so universally.
+
+For a serial facility, all drive and cleanup phases are sequential.
+Given an already staffed standby, if $j$ of the $k$ failed attempts
+are isolated, the last guaranteed-success attempt can be shared for
+one tick. The worst completion is
+$1+j s+(k-j)(1+d)$, with $0\le j\le\min(k,\lfloor B/c\rfloor)$.
+The minimum uses as many isolated trials as allowed iff $s<1+d$.
+Without a standby, all $k$ potentially failing trials must be isolated.
+This is necessity as well as sufficiency: before a first real read
+the policy has one no-cue history, and the admitted law can extend it
+for $k$ failures. A policy may stop earlier on success, but cannot
+count an unobserved proposal or a failed battery expenditure as a read.
+
+If a separately staffed isolated port can operate while physical
+cleanup continues, the old duty's deadline and the new observation's
+deadline are different. Track current time, remaining cleanup,
+battery and erasures. Starting a shared attempt waits for the actual
+end of cleanup, while an isolated one can start immediately. No
+attempt overlaps the previous acquisition; it can overlap other work.
+Early success does not settle the old cleanup. With $d=3,s=2,k=2$
+and enough battery for one isolated trial, the worst schedule is:
+failed shared $[0,1)$; old cleanup $[1,4)$; isolated $[1,3)$;
+then shared $[4,5)$. Thus the exact evidence deadline falls
+from seven to five while old cleanup must still end by four.
+If the isolated test succeeds at three, old cleanup is still live.
+The serialized and concurrent source roles differ in physical staffing,
+not a matched algorithm advantage.
+
+A closed common-horizon test also follows for a homogeneous source.
+For $r$ failed shared attempts, each cleanup block can contain
+$a=\lfloor d/s\rfloor$ isolated trials without extension.
+Its next trial costs $s-b$ extra time, $b=d\bmod s$, and subsequent
+trials cost $s$. If $J$ isolated trials are assigned after any of
+the $r$ failed shared attempts, the minimum extra time is
+$(s-b)\min(q,r)+s\max(q-r,0)$ for $q=\max(J-ra,0)$; with no shared
+attempts this gives $sJ$. Minimize over the split of the $k$ failures
+and final probe type. The base cost is $r(1+d)$ and a final shared
+attempt costs one additional tick. For a final isolated probe,
+count it in $J$ and place it in the last cleanup block if any.
+Before the first shared failure, isolated work can instead be
+moved into some cleanup block without raising this common horizon.
+Filling the cheapest per-block increments proves optimality.
+This formula is for a common deadline; the separate old and new
+deadlines use the event solver rather than collapsing to their max.
+
+\paragraph{One fixed failure law, not independent maxima.}
+If a latent type specifies two budgets, one per physical port,
+decrement only the failed port's budget in each surviving type and
+remove types that could not erase it. For this failure-only source
+support, discard dominated budget vectors: a dominated type can
+generate no additional failure trace. Either decrement preserves
+the pointwise order, so the maximal frontier remains exact at
+each no-cue step. This does not permit forgetting other physical
+or decision facts that differ between two types.
+
+For coupled budgets $(1,0)$ or $(0,1)$, without an extra standby,
+a two-tick isolated try can fail, but genuine isolated failure then
+implies the shared try cannot fail. One isolated charge yields an
+exact worst deadline of three. Replacing that source support with
+the independent maximum $(1,1)$ breaks this guarantee at the same
+battery budget. Absence of remote delivery is not automatically the
+primitive failed-acquisition event used in that proof. One trace
+can have no local record and safe shared retry; another may retain
+a true private record but have a lost transmission, while shared
+retry can still fail and would disrupt the old duty. With those
+source histories and one ambiguous no-cue observation, neither
+follow-up is universally correct. A separately charged local record
+check followed by an authorized physical retransmission can restore
+service if the cutoff leaves room and the replay resource is actually
+free. A record seen by a sender alone does not furnish a receiver's
+route before delivery.
+
+\paragraph{A cutoff witness for live assignment.}
+For one receiving observation class, put an edge from each of $n$
+duties to each of $m$ single-use slots only if the assignment is
+lawful and physically executable in all its source histories.
+For $1\le n\le m$ a missing complete matching has a rejecting
+subfamily of size at most
+\[
+             \max_{1\le t\le n} t(m-t+1).
+\]
+A Hall cut with $t$ duties leaves at least $m-t+1$ slots outside
+its common neighborhood. Take that many and one excluding
+history for each of their pairs with those duties. Those
+histories still reject the assignment. For sharpness, choose
+$t$ duties and $t-1$ common slots. Add one history deleting
+exactly each specific pair of a chosen duty and any other
+slot and no other edges. All histories are necessary: removing
+one returns an edge, connects one selected duty, and leaves
+enough slots for all other duties. This is a certificate for a
+fixed observation class and an authorized simultaneous
+assignment, not a live sensor that can discover its own
+source histories. The proof is closely related to the established
+\href{https://doi.org/10.1002/jgt.20180}{characterization of matching blockers};
+the distinction here is grouping edge exclusions by physical
+source history. No historical novelty of the combinatorial
+bound is asserted.
+
+The physical two-duty control derives a coarse read from
+continuity across each pair of physical contacts. The
+first partial reading survives timeout at the same
+declared receiving cut. A timeout on the shared feed also
+holds slot S for cleanup, exhausting remaining common slots.
+An otherwise matched independently powered trial preserves S
+and makes that partial read sufficient. Private or late exact
+fault information does not help. The instantiated contacts,
+power and timing are modeled source primitives, not measured
+hardware.
+
+\paragraph{Comparison and evidence.}
+Primary baselines: \href{https://arxiv.org/abs/1209.1695}{common-information dynamic programming},
+\href{https://arxiv.org/abs/1410.0083}{reactive active sensing},
+\href{https://drops.dagstuhl.de/storage/00lipics/lipics-vol391-concur2026/html/LIPIcs.CONCUR.2026.37/LIPIcs.CONCUR.2026.37.html}{active diagnosis with costs and rewards},
+and \href{https://doi.org/10.1112/jlms/s1-10.37.26}{Hall's matching theorem}.
+Charging sensing or using dynamic beliefs is established.
+Same-source direct policy enumeration and matching tie in every
+tested scope. Replays include 8,640 serial, 12,000 overlap,
+4,480 common-horizon, 3,500 coupled-law, 120 receipt and
+9,000 matched Hall controls with 165 sharp constructions.
+Four terms check in Lean. This is a constructive and obstructive
+R3a reference with a declared model; it does not identify the true
+latent source law from data (R3b), independently validate a mission,
+or establish advancement against the strongest fully matched planner.
+\end{document}
