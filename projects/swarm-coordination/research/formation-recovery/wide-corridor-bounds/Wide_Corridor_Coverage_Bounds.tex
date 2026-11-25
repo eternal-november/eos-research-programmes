@@ -1,0 +1,93 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{Certified time bounds for wider protected corridor intervals}
+\date{}
+\begin{document}
+\maketitle
+Keep the ordered speed-only corridor and throughout coverage from
+\href{https://github.com/eternal-november/eos-research-programmes/pull/409}{PR~409}.
+For an ascending leg $A\le B$, let $S$ be the set of placements
+satisfying the fixed coordinate bounds, clearance, robust radio
+connectivity and pointwise robust sensing of the closed interval.
+In particular, $S$ contains both endpoints. It is a finite union of
+closed difference-constraint cells indexed by sensing end witnesses,
+and is closed under coordinatewise max. The known min/max
+decomposition handles noncomparable endpoints separately.
+No new physical disturbance is allowed during a planned motion.
+
+\paragraph{Greatest next sample.}
+Given an upper vector $u$, compute the greatest point of
+$S\cap[A,u]$, or report it empty. In each cell initialize the
+upper vector with $u$ and a zero reference coordinate. Each inequality
+$x_j-x_i\le c$ lowers the current upper bound of $x_j$ to at most
+the current upper bound of $x_i$ plus $c$. The lower bounds $A$
+are also inequalities using the reference coordinate. Every feasible
+point stays below the current bounds. A negative cycle or a decrease
+below zero at the reference proves that the cell is empty.
+Otherwise ordinary shortest-path propagation gives a fixed point
+that satisfies all constraints and dominates every feasible point
+in the cell. Take the coordinatewise maximum of the cell optima.
+It is still feasible by closure, so it is the greatest point
+of the union under the same cap. Each of the quadratically many candidate cells has a linear-size
+description, so a projection takes polynomial work.
+
+For a mesh $h>0$, from $x_0=A$ set
+\[
+ x_{t+1}=\max\bigl(S\cap[A,\min(B,x_t+h v)]\bigr).
+\]
+The old sample is admissible, so this step is defined and never moves
+any coordinate backward. The greatest sample dominates the sample
+at the same time of every physically feasible ascending trajectory:
+induct on the sample number, using the speed cap and the fact that
+the actual trajectory's samples lie in $S$. If the rollout first
+reaches $B$ at step $m>0$, every real motion takes more than
+$(m-1)h$. If it has not arrived by step $N$, no real motion meets
+deadline $Nh$. If the iteration reaches a fixed point other than $B$,
+it rules out every finite arrival time, not only that mesh horizon.
+
+\paragraph{A positive certificate requires more than safe samples.}
+Consecutive samples have speed-feasible affine chords, but their
+sensing can go unsafe between samples. A chord is covered exactly
+when every survivor set still covers the protected interval at all
+endpoint-order events and one point in every open event stratum.
+The sensing interval endpoints are affine during a chord, so their
+relative order and their order against $L,U$ do not change within
+a stratum. Clearance and radio bounds interpolate directly. Where
+all chords pass, $mh$ is a certified upper bound; the gap to the
+lower bound is at most $h$. Else the result is lower-bound-only.
+On the disconnected clearance-5 example from PR~409, the rollout
+with step 6 appears to arrive across a gap; the chord check rejects
+that motion. At step $1/4$, even sample arrival fails. This avoids
+replacing an invariant by a sample test.
+
+As meshes tend to zero, lower bounds from the unrestricted
+sample rollout converge to the true optimum, with infinity allowed.
+If a sequence of meshes could reach strictly earlier by a fixed
+margin, the padded affine sample interpolants would be uniformly
+bounded and uniformly Lipschitz on that shorter horizon. Their
+distance to $S$ is bounded by a constant times the mesh. A uniformly
+convergent subsequence would give a real path in closed $S$ within
+that horizon, a contradiction. This argument does not give a
+convergence rate, and it does not say the chords eventually pass.
+There is no finite complete minimum-time algorithm asserted for
+the general width here.
+
+\paragraph{A broad zone invalidates the old crossing order.}
+For ordinary single coverage of $[5,9]$ with radius 5, gap 1 and
+radio range 10, move from $(-2,-1,7)$ to $(5,6,7)$; the third
+robot stays at 7 and covers the whole zone. Unit speeds on the
+first two make 7 optimal by translation. The narrow-interval rule
+would require robot 2 to cross 4 before robot 1 crosses 0.
+That spurious precedence forces at least 10 and attains 10.
+In another tested fixture with four robots, double coverage of
+$[0,9]$ and gap 3, the same erroneous precedence rules out a
+feasible 3.5-unit trajectory. The exact full cell-route comparator
+checks both. The width assumption matters even when endpoints,
+radio and clearances all agree.
+
+The matched reference enumerates routes in the same convex cells,
+using the general \href{https://arxiv.org/abs/2205.04422}{graphs of
+convex sets} representation; its numerical LP output is a replay
+comparison, not the proof. No runtime superiority, field validation
+or R6/I2 closure is claimed.
+\end{document}
