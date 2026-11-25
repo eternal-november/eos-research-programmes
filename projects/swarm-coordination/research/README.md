@@ -144,6 +144,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-CURRENT-ACQUISITION: Does a fresh current publication require a fresh analog read?** The selected Ouijabot callbacks retain and republish all channels when a read throws, and keep driving under fresh commands. A separate signed-force bound requires actual acquisition time and calibration. [Source and replay](communication/current-acquisition/README.md). No physical validation.
 
+**SC-ACTIVE-SUPPORT: Can a reversible load test distinguish which replacement is ready?** Unknown offset makes a single reading insufficient. For a calibrated symmetric response, the drift, slew, error, and restoration deadline give a sharp threshold even for adaptive tests. A direct difference test attains it. [Proof and replay](communication/active-support-probe/README.md). Model result; no independent holdout.
+
 ## Active evidence
 
 **SC-PROBE-COMPLEMENTARITY: When are two private probes worth buying together?** Each probe can fail to pay its own cost while both enable timely joint service. Earlier commitments restrict probe and bypass availability; a separate conservative reservation has an explicit opportunity cost. [Proof](active-evidence/probe-complementarity/Probe_Complementarity.tex) · [Replay](active-evidence/probe-complementarity/README.md).

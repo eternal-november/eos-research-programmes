@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb}
+\title{When a load test can identify which support is ready}
+\begin{document}
+\maketitle
+\paragraph{Decision.}
+A maintenance crew can keep an old support engaged during a small reversible test, but must select the only eligible replacement before the old support's guaranteed interval ends. No direct messages are available. The robot deciding which replacement to use reads one local mechanical signal on the common load. The two installed configurations have the same passive reading but different responses to a deliberate perturbation. A wrong replacement cannot sustain the duty; holding or stopping protects the load in the model but forfeits on-time service. The result below concerns authorization of the next step. Even the correct authorization does not certify that transfer actually occurred.
+
+\paragraph{Instrument contract.}
+At times \(t_i\), a candidate configuration produces calibrated locally measurable response \(m_i\) when driven by the prescribed probe. The reading is \(m_i+b_i+w_i\), with an unknown initial offset, \(|b_i-b_j|\le L|t_i-t_j|\), and \(|w_i|\le e\). The admissible errors are all schedules satisfying those bounds; a recurring read need not sample new independent noise. Alternative configurations may have different admissible offsets and errors. The load may be probed only while the incumbent remains guaranteed and while the magnitude and slew remain within a verified safe envelope. This is an input-output model, not a claimed force calibration or a robot field trial. A practical version would bound coupled dynamics and persistence of the installed configuration, and would allocate time for applying and observing the actual transfer after the test.
+
+\paragraph{Exact test for a fixed schedule.}
+For two candidate responses \(m,n\), write \(d_i=n_i-m_i\). They admit a common reading history exactly when, for every pair \(i,j\),
+\[
+      |d_i-d_j|\le 2L|t_i-t_j|+4e .
+\]
+Necessity follows from subtracting the two possible bias histories and from each error difference being at most \(2e\). For sufficiency let
+\(z_i=\max_j(d_j-2e-2L|t_i-t_j|)\).
+The upper envelope is \(2L\)-Lipschitz, and the pairwise inequalities imply \(d_i-2e\le z_i\le d_i+2e\). Give the two worlds biases \(z_i/2\) and \(-z_i/2\); the midpoint of the resulting ideal readings lies in both error intervals. A strict inequality in the opposite direction is thus a two-reading impossibility certificate for a common history, and one reading cannot distinguish the configurations under arbitrary offset. A bounded, time-varying common load disturbance is covered only insofar as its variation fits the same budget. A free offset at \emph{each} read would make this argument worthless.
+
+\paragraph{An optimal reversible test.}
+Suppose removal of the same known term from the reading leaves responses \(m_\sigma(t)=\sigma k u(t)\), where the fixed sign \(\sigma\) encodes which replacement is eligible and \(k>0\). Mirror contact geometry could yield a sign in a calibrated differential signal; nothing here deduces that geometry from a current sensor. Allow piecewise linear \(u\) with \(u(0)=u(D)=0\), \(|u|\le A\), and speed at most \(V>0\), where the deadline \(D\) budgets the probe and restoration only. Define
+\[
+       H=\max(0,k-L/V)\min(2A,VD/2).
+\]
+A guaranteed correct replacement choice exists if and only if \(H>2e\). For any two reads spaced by \(\Delta t\) with probe values differing by \(s\), distinguishability is equivalent to \(ks-L\Delta t>2e\). The required time between reads is at least \(s/V\). A path departing from and returning to zero has variation at least \(2s\), and amplitude forces \(s\le 2A\). If \(k>L/V\), take the two values \(-s/2,+s/2\) with \(s=\min(2A,VD/2)\), at maximal slew between them, and restore to zero. The signs of the calibrated difference intervals separate exactly at the displayed threshold. If drift dominates slew, zero is the upper bound. Equality does not suffice. Slower sampling and read latency may invalidate attainment; the result assumes the selected measurements can be made at those times.
+
+This lower bound also rules out any deterministic causal policy that chooses later probe values or read times using earlier samples (with finitely many reads on each execution). Run it against an all-zero residual trace. If \(H\le 2e\), its test along that trace has a common history in both worlds by the exact criterion. For the symmetric calibrated responses the constructive common trace is precisely zero. Both worlds therefore realize the same branch. The lower bound also applies to randomization if the guarantee is required for each realization of the controller's coins. It makes no claim about optimal probability under a stochastic noise law or an adversary blind to private coins.
+
+\paragraph{Transfer and fair comparison.}
+The proof concerns a signed response margin, not mere sensor freshness or a claim that a replacement acknowledged a command. A new layout can preserve the test if it preserves the sign-to-replacement mapping, certified sensing and actuation bounds, incumbent support through restoration and subsequent actual handoff, and enough remaining time. Swapping the two labels without updating the decoder is unsafe even if the magnitude margin is unchanged. A transient change of support during the test invalidates the fixed-mode interpretation unless otherwise modeled. A direct controller subtracting the same pair of calibrated readings achieves the same sharp guarantee. The gain is over passive-only observation in this model, not over a fair active estimator.
+
+Carey and Werfel's transport controller uses local physical effects through a shared load and explicitly raises encoding task changes through vibration, but its published task domains are preset (\texttt{https://people.seas.harvard.edu/\string~jkwerfel/icra21carey.pdf}, conclusion). OuijaBots similarly uses physical effects for cooperative motion; neither paper is evidence that this particular replacement test is calibrated or deployable. The public Human-Human Interaction Behaviour Dataset is from two human operators manipulating a virtual object with haptic devices. Its behavior labels do not certify incumbent load support, replacement eligibility, or the required drift envelope. No independent R1 holdout has been spent.
+
+\paragraph{Replay.}
+\texttt{python check.py} compares the history criterion against finite exhaustive search, constructs rational common histories, and independently searches discrete reversible probe paths. The continuous optimum follows from the variation argument above, not from interpolating the grid. In the normalized case \(A=V=k=1,D=4,L=0.2\), the largest tolerable error has supremum \(0.8\); at \(e=0.8\) both modes can produce the identical two-reading trace \((0,0)\).
+\end{document}
