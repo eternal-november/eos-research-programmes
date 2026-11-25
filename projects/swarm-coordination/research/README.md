@@ -154,6 +154,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Integration development
 
+**SC-TWO-CREW-SELECTOR: Which crew needs the late recovery report?** Two locally lawful commands conflict at a one-effect port. One truthful bit enables both required effects when routed to the crew whose local distinction it splits; the same bit sent to the other crew need not help. Exact graph and mixed-policy checks also separate common from independent randomization. [Proof and replays](integration/two-crew-selector/README.md). Development evidence, not an independent transfer.
+
 **SC-TYPED-LIVE-RECOVERY: Can charged preparation preserve useful service during a second fault?** An exclusive report holder and an additive cooling load require different source evidence and actual effects. An unchanged admission rule checks the result across both, while two staged candidates allow a late lawful selector to commit one surviving effect. Same-information direct enumeration ties. [Statement and replay](integration/typed-live-recovery/README.md) · [Pinned inventory crosswalk](../fault-inventory/evaluation/README.md).
 
 **SC-EXCLUSIVE-RETRY: What can a physical release certify about a retry?** A scoped latch separates canceled commands, actual clearance and completion of the one-shot effect. Exact retry scheduling depends on physical hold length; retirement timing can also reveal the next viable route, with a sharp error threshold. [Statement](integration/exclusive-retry/Exclusive_Retry_After_Physical_Retirement.tex) · [Lean and replay](integration/exclusive-retry/README.md).
