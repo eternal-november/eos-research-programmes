@@ -1,0 +1,103 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,url}
+\title{How Much Mule Preparation Can Wait During a Partition?}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Result.}
+A rover retains an inspection report when its path to the base station
+fails. Its first recovery assigns delivery to a relay; this recovery is
+not settled until a named durable receipt gets back. A second fault
+during that wait can remove the relay's route and transfer the duty to
+a data mule. There is an exact minimum amount of mule staging to do
+while no resolving observation has arrived. In the development
+example, waiting for notice misses the delivery deadline under either
+admitted second fault. Eager staging works but spends two preparatory
+ticks if the first relay succeeds at tick 2. The minimum policy
+spends one tick on that branch and still meets both second-fault deadlines.
+
+\paragraph{Source and model.}
+NeBula describes autonomous operation beyond its mesh, communication
+with a returning data mule or backtracking to the mesh, and identification
+of a restored heartbeat apart from motion and mission planning
+(\url{https://arxiv.org/html/2103.11470}, sections 3, 10.1, and 11.2).
+The model uses those operating options; it is not a run of NeBula,
+CHORD, OPTIC, or a measured network. It adds a durable receipt
+for a named report and keeps the producer's copy until that receipt.
+The original relay can lose the ability to finish yet retain a live
+motion authority at a shared copy station. Neither a lost heartbeat
+nor a reported failure supplies evidence that the relay cannot enter.
+The plant therefore supplies separate, durable station clearance,
+old-entry exclusion, and exclusive access for the mule. The
+observation that changes the supplier is different from each of these
+three proofs. The no-entry premise in the openTCS publication replay
+is one example of a boundary the model must respect, not an assumption
+that those systems are deployed together.
+
+Staging consumes one reserve work slot per tick along a private
+approach. Partial staging persists. No staging action observes
+the hidden failure before the resolving notice or alters when a
+notice arrives. There is no monetary or physical field estimate;
+the counted charge is staging work before the first resolving event,
+not idle battery consumption. The receiving station is not entered
+before the new grant. Independent inspection ticks are on a disjoint
+footprint, without waiting on a global planner. Beyond the stated
+fault family, late or absent evidence leaves the original report
+kept and no new shared-station operation admitted. The prototype
+has no queueing or deadline overlap with a second report, no common
+loss of the retained copy, and no accidental reentry after the gate.
+Those would change the declared envelope.
+
+\paragraph{Exact preparation bound.}
+Fix total staging work $w$ and a deadline $D$. In a failure branch
+$h$, local notice arrives at $t_h$, separate gate/clearance/grant
+facts arrive at $g_h,q_h,a_h$, and $d_h>0$ bounds the protected
+copy-and-return operation, including delivery and egress.
+These bounds apply to a single common history. The conservative
+station claim lasts for that whole operation; the model does not
+release it midway. If $x$ staging ticks had already been used
+when notice arrived, the earliest certified finish is
+\[
+ \max(t_h+w-x,\ g_h,\ q_h,\ a_h)+d_h.
+\]
+No amount of preparation can compensate if a required fact arrives
+after $D-d_h$. For other branches set
+$r_h=\max(0,t_h+w+d_h-D)$, the minimum staging needed by $t_h$.
+A feasible silent policy is nondecreasing, advances by at most one
+per tick and never exceeds $w$. Thus if $r_h>\min(w,t_h)$
+in any admitted case, the service floor is impossible within the model.
+
+Otherwise the unique pointwise minimum cumulative staging on the
+no-notice path is
+\[
+ P(u)=\max\bigl(0,\ \max_h[r_h-\max(t_h-u,0)]\bigr).
+\]
+For a future cut $t_h$, a policy can add at most $t_h-u$ ticks
+after $u$; for a past cut its prior staging is nonrefundable. These
+give the pointwise lower bound. Each term is nondecreasing and
+grows by at most one tick per tick, as does their maximum.
+The maximum starts at zero, stays at most $w$, and provides the
+required staging at each notice. Perform a staging tick exactly
+when the maximum increases and stop speculative staging when a
+resolving observation arrives. In a failure branch, resume just
+the remaining work, and use the frozen receiver with the old entry,
+clearance and grant guarantees. This proves both safety and
+the service floor under the stated physical premises and every
+branch in the declared family.
+
+\paragraph{Matched checks.}
+The calibration has $w=4$, $D=8$, notice times $2,4$, and protected
+duration 3. The two last required fact times are 4 and 5. Minimum
+staging by ticks 2 and 4 is one and three; finish is 8 in both
+failure branches. Moving the second branch's final required fact from tick 5 to
+tick 6 breaks the deadline even with full staging. A
+direct finite policy search with the same actions and observations
+matches pointwise, including infeasibility, in 1,500 enumerated
+two-outcome cases. The proof's value here is characterizing what
+can wait, not outperforming such a policy. Eager staging and delayed
+replanning are ablations, not substitutes for the strongest comparator.
+Lean checks the integer staging requirement and the lemmas for the
+pointwise bound; the Python decision code and its source adapter are
+not verified in Lean. This is one development operating family,
+not an independently selected mission or an obligation acceptance.
+\end{document}
