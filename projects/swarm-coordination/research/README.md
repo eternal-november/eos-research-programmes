@@ -100,6 +100,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Local perception
 
+**SC-ANONYMOUS-DUTY: What does a visible track say about unfinished work?** The same anonymous tracks and the same possible unsettled identities can require different reserves depending on when the socket settled its resident’s duty. Linked movements can invalidate a one-cut matching model; an exact parity summary and a same-information integer solver agree. Lean checks what a reserve certificate can forget and the study exhibits why a later credible reading can invalidate that quotient. [Proof and replays](local-perception/anonymous-duty/README.md). Partial R1, not an independent modality test.
+
 **SC-ANONYMOUS-BEARING: How much local history certifies safe entry without messages?** Two complete anonymous bearing frames distinguish safe entry in a finite two-peer crossing even with merged silhouettes. A frame clipped by the observation envelope can hide a decisive track. An explicit tracker and full direct temporal processing tie. [Proof](local-perception/anonymous-bearing/Anonymous_Bearing_and_Crossing.tex) · [Replay](local-perception/anonymous-bearing/README.md).
 
 ## Communication changes
