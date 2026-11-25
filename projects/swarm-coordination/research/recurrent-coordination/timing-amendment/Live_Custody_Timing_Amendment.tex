@@ -1,0 +1,118 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{What a live timing amendment must inherit from earlier handoffs}
+\date{}
+\begin{document}
+\maketitle
+
+A shared port has two possible pasts. Both allow exactly the same
+continuations under the original timing law, and both say that either
+scope can transfer now. After the same authorized timing amendment, the
+pasts require opposite first transfers to meet a service deadline. Even
+an exact old continuation language can be an inadequate interface for a
+later amendment. The physical age of an earlier receipt, not an online
+search heuristic, makes the difference.
+
+\section{Scope and timing model}
+Use the clocked custody port of \#390, where a port service is an
+irreversible transfer and the unique mint of an authenticated receipt.
+Signers alternate per scope, one effect uses one slot, and old receipts
+may remain acceptable through their declared lifetime unless the port
+waits for expiry. Future mechanical minimum intervals can change by an
+authorized amendment. This amendment cannot make an already minted old
+receipt younger or expire it sooner. The paper does not add another
+observation supplier or prove that the clock is distributed. The shared
+port may keep a faithful local ledger of actual transfers. A policy
+operating only on an advertised old certificate does not have that ledger
+for free.
+
+\section{A complete fixed-law deadline interface}
+At cut zero consider one scope with a fixed future order of signed tags
+and a repeat of length \(K\). Let \(b\) be the time of the last actual
+physical transfer before the cut, \(E_j\) the first safe time for the
+\(j\)-th upcoming reuse constrained by an old mint, for \(0\leq j<K\),
+and \(d_j>0\) the prescribed mechanical gap before future effect \(j\).
+An unoccupied old tag imposes no bound. After these \(K\) uses, the
+ordinary future reuse checks refer only to future transfers. Only slots
+\(0,\ldots,h-1\) are available. Define
+\[
+ e_{-1}=b,\qquad e_j=\max(0,E_j,e_{j-1}+d_j),\qquad p_j=\min(h,e_j).
+\]
+A proposed trace is lawful iff its first \(K\) existing times satisfy
+\(t_j\geq p_j\), its successive gaps meet the \(d_j\), and it obeys the
+future reuse rule when that rule applies. Indeed all actual traces
+dominate the earliest prefix by induction. Conversely the profile
+bounds recover the old expiry at each relevant slot and the first
+mechanical gap from the actual previous transfer. Clipping does not
+change any test for times below \(h\). Four Lean theorems check the
+arithmetic behind this equivalence; the future reuse law is unchanged
+in both arms.
+
+For these trace-membership queries, the profile is exact and necessary.
+If two profiles differ, take their first differing index, choose the
+history with the earlier value and propose its earliest prefix through
+that index. It is a feasible witness before \(h\) and cannot occur in
+the later history. This conclusion supposes that exact trace membership
+is consumed, or contexts can actually test those schedules. A restricted
+client concerned only with one aggregate target can have a coarser
+interface. Tuples of profiles suffice for a fixed declared menu of
+timing laws, and their necessity uses separate tests for each law in
+that menu. Extending the menu changes which histories can be identified.
+An enlarged horizon can also expose different old expiration times
+collapsed by the earlier cap. This is not a strategy-synthesis theorem
+for a law that can change unpredictably during a scheduled prefix.
+
+\section{A live counterexample and its repair}
+Before cut zero, use mechanical gaps \((1,5)\) for A and \((5,2)\) for B,
+indexed by next signer, with reuse waits \(W_A=6\) and \(W_B=7\).
+Consider actual histories in slots \(-9,\ldots,-1\):
+\[
+ \texttt{A.....B.A},\qquad \texttt{A.....AB.}.
+\]
+Both end at next signer 0 for A and 1 for B. All future schedules
+up to six slots have identical legality under the old law: each
+scope has local profile \((0,5)\), and they have identical port
+conflict and future reuse rules. The uncapped event checker
+independently enumerates the same 53 legal shared schedules for both.
+The old law does not meet the harder service request below; preserving
+that old legal language is the specific interface being tested.
+
+A new authorized law reduces the second impending mechanical gap
+on both scopes from five to four. The first gaps do not change.
+Two actual transfers on each scope are now required in slots 0--5.
+The first transfers must occupy slots 0 and 1: anything later puts its
+second at slot six or later. Both scopes are currently ready in either
+history. In the first past, A's next use by signer 1 cannot occur
+before slot five because its old receipt was minted at \(-1\); B's
+signer 0 can repeat at slot four. In the second past, B's signer 0
+cannot occur before five because its old mint was at \(-2\);
+A's signer 1 can repeat at four. The ports therefore have unique
+useful schedules \texttt{BA..BA} and \texttt{AB..AB}, respectively.
+Starting the wrong scope or idling loses at least one required
+transfer. No controller that observes only the equal old profile,
+the equal current readiness and the common amendment can guarantee
+the new target, even with randomization under a sure-service law.
+
+For this pair, one bit from a faithful actual-mint record restores the
+guarantee: did A's old signer-1 mint still prevent reuse at slot four?
+The amended prefix certificate then directs the correct first effect.
+It matters that this source is already at the actual port and that
+the evidence is available before deciding. The bit is not obtained
+from the readiness output. A direct dispatcher with access to the same
+ledger gets the same plans. A detector with no received source record
+does not acquire it merely because the mechanics changed.
+
+\section{Status and comparison}
+\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC9468080/}{LiveLTL}
+distinguishes retained execution obligations from the new specification
+after an update. The concrete question here is whether an implementation
+that has already quotiented old physical evidence can reconstruct the
+different admission language of an authorized update. The example and
+profile give an exact finite answer for this trusted-clock model;
+they do not displace a matched update synthesizer with all actual
+receipt times. For Contextual Composition, the issue is the primitive
+test family of the profile: preservation at the old test family does
+not give reflection when the receiver adds new mechanical contexts.
+This is partial R2, not independent transfer or contract acceptance.
+\end{document}
