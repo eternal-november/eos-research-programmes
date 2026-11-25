@@ -246,6 +246,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-RMF-RELEASE-ORDER: Can the order of two released destinations block an entire queue?** Both isolated releases grant one move, but one order of their pair frees a chain of waiting places. The exact ratio of grants is 1/(n+2) for a chain of n followers. [Source, proof, and replay](integration/rmf-release-order/README.md). Grants are not evidence of physical clearance.
 
+**SC-RMF-JOINED-RELEASE: Can a past idle sample change service at the reservation layer?** Actual zone sweep tickets drive the allocator on one clock. A sampled visit reverses two releases and unlocks a queue, but each follower still waits for physical clearance. [Joint replay and deadline bound](integration/rmf-joined-release/README.md). This uses a guarded fixture, not a ROS deployment.
+
 **SC-RETAINING-CLEARANCE: What must the old observer retain before a late resource grant?** Two occupied docks among six and four later authorizations permit an exact three-bit code. A hidden reentry defeats every old record, and a timely reentry report restores service only with four retained bits in this family. [Proof, Lean, and selected native replay](integration/retaining-clearance/README.md). The direct cover ties; not independent transfer.
 
 **SC-SUBT-RELAY-DEBIT: Why can a restored relay still miss the report deadline?** In selected native virtual-testbed code, a failed probe spends sender bytes through the one-second cut; a prior actual copy can use another sender, but not evade the common receive limit. Breadcrumb delivery can leave the tested ROS neighbor map unchanged. [Source and replay](integration/subt-relay-debit/README.md). Not NeBula runtime or full Gazebo.
