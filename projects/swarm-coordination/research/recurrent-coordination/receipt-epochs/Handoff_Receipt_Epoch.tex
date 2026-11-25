@@ -1,0 +1,130 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Receipt freshness for repeated custody handoffs}
+\date{}
+\begin{document}
+\maketitle
+The model is a path of civilian service stations with a custody scope on each
+edge. A work offer can wait at every edge at once, including both edges at an
+interior station. Each station has one port for irreversible handoffs. Custody
+ownership alternates on each edge after an actual handoff. A physically
+enforced local gate admits at most one outstanding offer on that edge and
+does not reopen until both endpoints separately see the handoff. Neither
+the unfinished work at another edge nor a global round counter is available
+to the receiving station. The functional guarantee is no duplicate or
+premature handoff and eventual fulfillment of each admitted offer under the
+fairness conditions below.
+
+\paragraph{Interface.}
+The current custodian witnesses a private physical clearance before issuing a
+receipt. Clearing this hold does not yet transfer custody. The receipt names
+its scope and carries an authenticated source identity and a finite tag. The
+scope is the incident ingress, not a globally numbered identity stored in
+each local control. The new custodian may queue one job upon receiving a
+matching receipt in the waiting phase; later copies cannot create a second
+job. When the port serves the job, the physical action transfers custody.
+A gate reopening is one completed advance of this scope. A controlled relay
+allows duplicate delivery only through age \(L\), measured in these advances,
+not in elapsed time. The receipt contains no absolute generation; the
+generation in the replay annotates provenance for verification only. This
+model assumes the gate, the clearance witness and the relay age bound are
+sound. It does not make them sound after controller or hardware corruption.
+
+\paragraph{Exact tag alphabet.}
+Number completed advances \(g=0,1,\ldots\) for the proof. Ignoring the
+choice of initial endpoint, the authorized signer is \(g\bmod 2\).
+Set \(M=\lfloor L/2\rfloor+1\) and give generation \(g\) tag
+\(\lfloor g/2\rfloor\bmod M\); the gate increments its tag after every
+second handoff. Equal signer and tag mean equal residue modulo \(2M\).
+No strictly earlier receipt at age at most \(L\) has both the current
+signer and tag, since \(2M>L\). In particular \(L=0,1\) needs just one
+tag value, using signer alone. Directly reducing \(g\) modulo \(M\) can
+fail: \(L=2\) gives \(M=2\), and generations zero and two coincide.
+For necessity, the \(M\) even generations \(0,2,\ldots,2(M-1)\) form a clique
+of same-signer alternatives: the earlier can survive to the later. If two
+share a tag, replace a fresh receipt at the later decision by the retained
+copy while withholding the new clearance. Receiver history up to the
+decision, current phase, and input are identical. An exact receipt-only
+decoder must accept one and reject the other. This lower bound allows the
+receiver to have learned its complete prior local history; it excludes
+extra evidence about the current clearance, and it assumes the earlier
+receipt can survive without changing that prior local history.
+
+More generally, for a fixed known signer sequence the minimum alphabet is
+the maximum number of occurrences of one signer in any window of \(L+1\)
+epochs. Such a window gives the clique lower bound. Greedily taking a tag
+not used by that signer in the preceding \(L\) epochs gives the upper
+bound. That colorability statement does not give a bounded controller for
+predicting or learning an arbitrary signer sequence.
+
+\paragraph{Uniform composition.}
+Maintain one phase per edge (empty, waiting, queued, or observing), its
+physical custodian, tag, two observation bits, and a controlled relay with
+at most \(L+1\) live age slots. Each edge in the queued phase occurs once,
+in the station FIFO of its receiving endpoint. An interior station has at
+most two such jobs, and queues can name them by incident port. A handoff
+consumes its job and only that job; an observation can affect only its edge.
+These statements hold at initialization and are preserved by offers,
+clearance, packet arrival, service and the two endpoint reads. Freshness
+ensures that an admitted job was authorized by the current custodian after
+clearance. Clearing and transferring are different transitions: withholding
+one cannot be hidden by advancing the other. No second job on that edge can
+enter during the observing phase. This gives a uniform controller and bound
+on local verification state for every finite path, independent of path
+length and number of rounds. Directed queues, gates and relay age slots
+are part of the construction, not free information. Dropping absolute
+generations preserves every projected transition and all service and safety
+events; dropping actual phase or either required endpoint read does not
+give the stated interface.
+
+The environment must eventually supply clearance for each admitted offer,
+deliver its genuine receipt while that offer waits, service persistently
+nonempty station queues, and supply both reads after a transfer. These
+are separate premises. A waiting job has at most one FIFO predecessor;
+at most two service opportunities at that station suffice from nomination
+to transfer. In particular, back-to-back work on a neighboring edge
+cannot continuously overtake it. This argument works for indefinitely
+many admitted offers. It establishes no time bound without bounds on the
+four environment events. Offers made to a closed gate must be retained
+externally or retried; neither progress nor a finite internal queue is
+claimed for unbounded unadmitted demand.
+
+\paragraph{A counterexample and its limit.}
+Remove the age guarantee but allow one distinguishable-to-the-environment
+copy to be retained alongside ordinary fresh traffic. With any finite
+tag alphabet, two epochs of the same signer have the same tag along some
+execution; a retained copy can reappear before the second clearance. For
+this receipt-only admission interface, safety and delivery of positively
+admissible offers cannot both be exact. A buffer with room for just one
+persistently retained copy in addition to fresh traffic suffices for this
+witness. This is not impossibility with bounded-capacity channels in general:
+a different handshake can use capacity, retransmissions or explicit
+purge evidence to change the admission interface. It is not a claim about
+arbitrary interactive protocols or about credential forgery.
+
+\paragraph{Comparisons and checks.}
+\href{https://datatracker.ietf.org/doc/html/rfc9293\#section-3.4.2}{RFC 9293
+\(\S 3.4.2\)} addresses sequence reuse and old duplicates in TCP.
+\href{https://arxiv.org/abs/1011.3632}{Dolev et al.} give a stabilizing
+data-link construction for a different bounded-capacity channel model.
+Here the reuse clock is the completed physical transfer with both local
+reads, and the authenticated signer is part of the decoder. The study
+does not establish priority for modular tags or superiority over those
+protocols. The direct finite product checks the same local rules, without
+an operational speed or service advantage. Three Lean theorems check
+tag admissibility, separation, and the exact alphabet lower bound; they
+do not formalize physical effects or fairness. The independent immutable
+state traversal explores the small products, and the seeded event replay
+checks overlapping actual operations on longer paths. Neither finite
+check by itself proves the arbitrary-path invariant.
+
+This is a restricted recurrent baseline and obstruction for the moonshot,
+not its acceptance. It does not synthesize arbitrary compatible local
+controllers or handle dependencies crossing the shared station beyond
+FIFO contention; it uses a trusted local two-ended gate, authenticated
+receipt sources and controlled age. An exact next comparison would make
+one edge's current clearance depend on another edge's still unsettled duty,
+and determine which prior proof can be reused without adding another
+trusted observation.
+\end{document}
