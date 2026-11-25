@@ -1,0 +1,136 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{What misaligned factory logs can certify before dispatch}
+\date{}
+\begin{document}
+\maketitle
+
+A log can support two different conclusions: some authorised copy
+physically escaped the interruption, and a particular actor could
+identify an authorised copy before committing. Neither conclusion
+implies the other just from timestamps. A small trace family gives a
+sharp separation. Shared clock calibration certifies that some copy
+survives on every history, but neither copy alone is guaranteed.
+The first cutoff that guarantees a timely identifying receipt is
+exactly two ticks. Treating the clocks as independent loses even
+the physical-survival conclusion, without changing the individual
+route readings.
+
+\section{Measured source and limits}
+The \href{https://zenodo.org/records/4034867}{public CONTEXT v2 release}
+contains measured OPC-UA change histories and independent sensing
+streams from a relay-production line. The ZIP directory shows four
+runs: ground truth, shuttle dropout, missing parts, and pressure
+loss, with six CSV files per run. \href{https://www.sciencedirect.com/science/article/pii/S1877050921003148/pdf}{Kaupp
+et al.}, sections 3--4, describe separate acquisition clocks,
+missing or out-of-order events, and a proposed approximate alignment
+using first activity and shuttle travel. The approximately 30-second
+travel time is not a certified upper or lower bound for an event
+pair. The physical station sensor is not by itself a unique material
+identifier, and an OPC-UA archival timestamp does not establish
+when the deciding actor received the data. A workpiece code used
+to choose an inspection routine only identifies the workpiece for
+this analysis if a specific downstream linkage can be established.
+No numerical CSV record or intervention in this release has been
+selected or scored here. The release motivates the measurement
+problem; it does not validate the synthetic timing example below.
+
+For an event-level evaluation, record the origin clock or time
+mark for each event, uncertainties with their source justification,
+and the difference between an attempted effect, actual custody,
+sensor read, log admission and receipt by an authorised actor.
+Use bounded clock drift over an admitted episode if finite, and
+separate captures that can be absent from captures that are
+guaranteed but late. Where a proposed cross-clock match can be
+wrong, admit the alternate matches as separate possible models
+or withhold the corresponding conclusion. If two groups of clock
+variables have no relative bounds, an arbitrary common shift within
+either group preserves its local readings. In that model no
+cross-group precedence follows from the logs alone. A point
+alignment always imposes additional assumptions.
+
+\section{Checkable chronology}
+Use time variables \(t_v\), including local clock offsets or a
+reference epoch when required. The source supplies bounds
+\(t_v-t_u\leq b\) or \(t_v-t_u<b\); a fixed logged offset with
+bounded delay can be encoded by two such bounds. Bounds within
+and between clocks are kept jointly. The source premises must
+have at least one model, so inconsistency is not accepted as
+evidence of safe action.
+
+For each acceptable route \(r\), let \(Q_r\) be conjunctions of
+the applicable timing constraints; for example actual collection
+before physical destruction, and an identifying report to the
+deciding actor by its commitment. To establish
+\(\forall t\in{\cal T},\,\exists r:Q_r(t)\), choose one failed
+constraint per route and test all such tuples of complements on
+the \emph{same} source model \({\cal T}\). This is exact because a
+history fails all routes iff it clears one such tuple of tests.
+The joint failure may be impossible even though each failure is
+separately reachable. Each tuple is a simple difference-bound
+feasibility problem. An explicit schedule is a counterexample;
+negative cycles in all augmented systems certify success. In the
+integer-clock model the complement of
+\(t_v-t_u\leq b\) is \(t_u-t_v\leq-b-1\).
+The independent checker also verifies a base-model witness.
+
+For rational or continuous clock times, one must not replace
+strict order by a unit-tick gap. The complement reverses the edge
+and swaps strictness. If bounds have common denominator \(D\)
+and there are \(n\) vertices, a strict bound can be decreased
+by exactly \(1/(D(n+1))\) in the feasibility check. Indeed a
+nonnegative simple cycle with positive original total has at
+least \(1/D\) of slack and loses at most \(n/(D(n+1))\); a zero
+cycle with any strict edge is infeasible regardless. This
+reduction and an ordinary potentials solver yield an exact
+rational witness without an arbitrarily chosen tolerance. The
+statement is about satisfiability of these supplied difference
+bounds, not about all clock drift, or about how to infer good
+bounds from a site. Checking every failure tuple can be
+exponential in the number of multi-constraint routes.
+
+\section{Cut and fixed-route separation}
+In an illustrative two-copy civil recovery model there are two
+authorised preparations of the same obligation. The physical
+clock offset \(x\in[-1,1]\) is shared by two station events.
+On A the attempted pickup is at \(x\), while the fault is at
+zero. On B pickup is attempted at zero, while the fault is at
+\(x+1\). Capture strictly before the local fault is required;
+tie means destruction first. Thus A succeeds when \(x<0\)
+and B when \(x>-1\). At least one capture always succeeds,
+but neither fixed route is safe on every history. Replacing
+the common \(x\) by detached offsets \(x_A,x_B\) with the same
+marginal interval admits simultaneous failure, e.g. \(0,-1\).
+This is an ablation of physically justified clock dependence, not
+an equally informed rival planner.
+
+A positive report is generated only for an actual secure capture;
+the source time bounds for an attempted pickup do not themselves
+guarantee a positive message. When present, the authorised actor
+gets the message after one to two ticks from the relevant pickup.
+At cutoff one the history \(x=0\) and the B delay two has no timely
+positive evidence; at cutoff two the actor always learns the
+identity of at least one captured copy. Waiting until then is
+only an admissible repair when the plant still allows that cut.
+If only one input can reach the actor, even cutoff two cannot
+guarantee such evidence. The controller use of a timely positive
+report is explicit: choose an authorised route actually verified
+at the cut. It neither chooses the logically existing route
+without that evidence nor sends a copy prematurely. If a
+locally trusted fail-safe selector can observe both effects, it
+is a different, charged observation interface.
+
+\section{Status}
+\href{https://www.sciencedirect.com/science/article/pii/0004370291900066}{Dechter,
+Meiri and Pearl} provide the standard temporal-network machinery.
+A matched feasibility comparator ties. The result is a calibration
+and audit method, not a new temporal solver or a general dynamic
+controllability guarantee. Four Lean statements confirm the
+fixture's exact rational cutoff and loss under detaching the
+source offsets. The Python replays compare integer and rational
+systems with exhaustive enumeration and verify explicit
+failure schedules or negative cycles in the fixed cases.
+This is development work for I1, not an independent compound
+scenario or coverage disposition.
+\end{document}
