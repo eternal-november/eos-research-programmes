@@ -64,6 +64,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-CONDITIONAL-EFFECTS: Does the same report certify the same residual risk?** An instrument can change which pending exposures actually occur without changing report frequencies. Exact admission uses the joint report-and-effect mass under each fixed source law. A calibration bound and a missing-coupling refusal distinguish safe, unsafe and unresolved cases. [Statement](joint-risk/conditional-effects/Conditional_Risk_After_An_Actual_Effect.tex) · [Lean and replay](joint-risk/conditional-effects/README.md).
 
+**SC-POOLED-FAULT-RISK: When do joint diagnostics still conceal a context-dependent recovery decision?** The same pooled fault-and-erasure pairs can put all deadline risk in opposite notice regimes. The sharp 10% cap allows retention in 20% of runs with separate measurements, 40% with pooled pairs, and 70% with linked evidence in the two-law example. [Proof and replay](joint-risk/pooled-fault-risk/README.md). Pinned physical outcomes, authored probability laws.
+
 ## Recurrent coordination
 
 **SC-RECEIPT-AMENDMENT: What must a timing change inherit from earlier handoffs?** Two pasts admit the same old timed trace language and show both scopes ready. Earlier receipt mints survive a mechanical timing amendment, forcing opposite first transfers to meet one shared deadline. Lean checks the exact fixed-law prefix profile; reuse after an amendment requires the relevant source evidence. [Proof and replays](recurrent-coordination/timing-amendment/README.md). Partial R2, not an independent transfer.
