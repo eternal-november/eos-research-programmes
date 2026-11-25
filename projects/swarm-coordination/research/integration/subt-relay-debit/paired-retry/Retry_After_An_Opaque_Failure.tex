@@ -1,0 +1,18 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{Two send tests that agree separately and not in sequence}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Existing source and observed result.}
+Reuse the pinned native SubT radio and broker fixture from
+\href{https://github.com/eternal-november/eos-research-programmes/pull/437}{PR 437}
+and the named application receipt used by
+\href{https://github.com/eternal-november/eos-research-programmes/pull/438}{PR 438}. This selected-source test runs C++ functions in the same local seam, not a deployed network. The sender is allowed a named report at the early or late slot. The observer retains sender and receiver total active debits at time 1 and then only receipt of the named report, not the full histories of unrelated traffic, logs, or budget counters. The original code checks the TX window before charging it, then can fail at the receiver. TX is not refunded by later failure.
+\paragraph{The shortest continuation.}
+Set the common one-second budget to 5 bytes. History A has a four-byte erased send by P at 0.25 and a four-byte successfully received packet from Other at 0. History B swaps those two timestamps. At the cut both have debit totals \((4,4)\), a working route, and no receipt for the requested three-byte report. The old debit at age exactly one second is still active. Send the report at 1.25 only: A is rejected by TX with no new debit; B passes TX, incurs 3 bytes, and is rejected by RX. Neither receives the report. Send at 1.50 only instead: both old debits have expired and both histories deliver. If both sends are attempted, A delivers at 1.50, while B's new three-byte debit remains live and \(3+3>5\). There are only two one-send words in the declared alphabet, and both agree, so the distinguishing word is shortest. The recovered pathway and the equality of initial totals were not enough to make an equal no-receipt result a substitutable transition.
+\paragraph{Exact boundary and what it can justify.}
+Let \(C\) be the common budget and \(y\) the payload. In this two-slot fixture, assume \(y\leq C\), old TX and RX debit sizes \(a,b\) satisfy \(a+y>C\) and \(b+y>C\), respectively, and no other transmissions or new faults intervene. The two-send distinction occurs exactly when \(2y>C\): the old debits have expired by the retry, and only history B has one new \(y\)-byte TX debit. One authentic, timely bit saying whether the first attempt incurred this debit is sufficient for the next retry decision in the two-history model. That bit is checked at the evaluator in this replay; no application API is claimed to export it. The same-information direct rolling-window check agrees. This is not impossibility of delivering by the late slot if the controller is free to skip the early attempt. It is a boundary on preserving a retry guarantee once an attempt is already issued and has failed. No independent I2 mission or field behavior is established.
+\paragraph{Replay.}
+The original RF, broker and application functions are extracted with the existing source hashes and the original development shim is also blob-checked. The paired evaluator verifies all four words for both histories across 1,210 parameter choices, 9,680 native worlds total. Of the parameter choices, 1,055 exhibit the exact two-send split. Those are constructed coverage counts, not failure rates.
+\end{document}
