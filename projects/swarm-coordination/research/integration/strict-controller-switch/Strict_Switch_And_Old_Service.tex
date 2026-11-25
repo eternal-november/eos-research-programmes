@@ -1,0 +1,20 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{A failed strict switch does not tell which controller can still serve}
+\begin{document}
+\maketitle
+
+A controller switch can finish with an error after the old controller has already stopped running. Cleanup of the replacement is a separate action. The same reported error and controller state can occur whether cleanup changed the hardware mode or did nothing. Neither outcome restores the earlier service by itself.
+
+\paragraph{Source and envelope.}
+At \href{https://github.com/ros-controls/ros2_control/tree/0c94b008a82731967ba89e2e7379ec6d2f07580b}{ros2\_control pin \texttt{0c94b00}}, the \texttt{SwitchController} service describes \texttt{STRICT} in terms of reporting failure. That is not a promise of transactional restoration. In the selected switching path, the manager first calls \texttt{perform\_command\_mode\_switch}. If that call refuses, it does not proceed to controller deactivation on this path. If it succeeds, the manager deactivates requested incumbents and then attempts the new activations. On a late activation failure under \texttt{STRICT}, the selected method deactivates the requested replacements and requests that their command modes be stopped. It does not reinsert the deactivated incumbents into the activation list. A failure of that hardware cleanup is logged; the final service response is evaluated separately from lifecycle states and their requested transitions.
+
+The harness compiles the exact selected mode-switching, activation, deactivation, chained-mode and final-result-evaluation bodies against controlled lifecycle and mode-switch stubs. It models two requested new controllers, an incumbent, and a controller outside the request. The hardware stub takes no effect on failed mode operations; this supplies compatible hardware states for the diagnostic, not a universal law of hardware plugins. The ROS service, thread interactions, and devices are not executed.
+
+\paragraph{Paired histories and a local service condition.}
+In both histories the hardware accepts the initial switch and the old controller deactivates. The first new controller activates, the second refuses. Strict cleanup deactivates the first new controller in both histories. The hardware accepts cleanup in one history and refuses it in the other. The selected result evaluation reports failure in both; the response message under the harness formatter, lifecycle flags, and claimed-interface metadata agree. The modeled command-mode states differ. The separate early-failure control instead leaves the incumbent controller active. The unrelated controller remains active and keeps its modeled mode in all 32 combinations.
+
+A controller supervising a live replacement cannot therefore use \emph{switch failed} as permission to continue the old plan, nor can it use the inactive states alone as proof that cleanup physically took effect. It needs a scope-matching effect observation, or a separate operation whose successful physical postcondition establishes the required mode before issuing a new command. For continuous mandatory service, an exclusive interface that must stop the incumbent before testing the replacement cannot promise uninterrupted old service under this late-failure behavior. A pre-existing independent service path or a proved no-failure commit in the declared operating envelope can change that conclusion. Such a path needs its own actual effect and resource accounting. An unrelated controller remaining active is not evidence that it can supply the failed controller's duty.
+
+This is a limit on proof reuse for this interface. The selected implementation agrees with a direct four-stage description: switch modes, retire the incumbent, attempt replacements, and clean up replacements. Neither changes the interface or establishes a positive service advantage over a matched controller. No live safety or contract acceptance is claimed.
+\end{document}
