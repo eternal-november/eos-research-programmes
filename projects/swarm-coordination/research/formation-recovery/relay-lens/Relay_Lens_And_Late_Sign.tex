@@ -1,0 +1,204 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Crossing a blocked relay region without breaking either link}
+\date{}
+\begin{document}
+\maketitle
+
+A relay has to move around a stopped robot while remaining within reach
+of two fixed anchors. Feasible starting and ending positions do not
+guarantee a feasible path. Even when a path exists in either of two
+possible obstacle locations, the location has to be learned by a
+deadline. This model gives an exact geometric threshold and an exact
+latest-report criterion for a single speed-limited relay. It also
+separates these results from a restricted acceleration comparison.
+
+\section{Plant and obligations}
+The idealised planar relay is a point, with obstacle clearance radius
+\(\rho>0\) already inflated for the physical footprints. The anchors
+are at \((\pm a,0)\), and both links require distance at most \(R>a>0\)
+at all times. Assume this disk model; it does not cover shadowing by a
+failed robot, packet scheduling, moving anchors, other obstacles or
+steering and acceleration constraints unless separately specified.
+Radio equality and boundary clearance count as lawful. The goal is to
+move from \((0,-b)\) to \((0,b)\) while keeping both links and staying
+outside the open obstacle disk, with speed at most \(v>0\).
+A trajectory is absolutely continuous; stopping is allowed in this
+kinematic model. Assume \(\rho\leq b\leq\sqrt{R^2-a^2}\), so both
+endpoints can remain lawful. Abandoning one link temporarily is a
+different service contract, not a recovery witness here.
+
+\section{Centered obstruction and exact distance}
+
+For a disk centered at zero, the relay lens has horizontal section
+\([-(R-a),R-a]\) at \(y=0\). The intermediate value theorem forces any
+crossing to visit that section. If \(\rho>R-a\), its entirety is
+excluded. If \(\rho\leq R-a\), the whole obstacle circle lies in the
+lens, and a shortest exterior path consisting of two tangent segments
+and their joining circular arc stays in the lens by convexity.
+Hence the exact connectivity-and-clearance threshold is
+\(\rho\leq R-a\), and the exact minimum crossing length is
+\[
+       L_{\rm center}
+       =2\sqrt{b^2-\rho^2}+2\rho\arcsin(\rho/b).
+\]
+The deadline threshold is \(L_{\rm center}/v\). At equality of
+clearance and lens half width, the path uses a point with no slack
+in a consumed physical bound. The equality case is not a robust
+field guarantee.
+
+Here is a length argument also used below. Measure polar radius and
+angle from the obstacle center. Let \(m\) be the minimum radius on an
+admissible trajectory and \(d_s,d_g\) its endpoint radii. If the minimum
+angular separation of the endpoints is \(\Delta\), the total angular
+variation is at least \(\Delta\). Pointwise Cauchy--Schwarz bounds the
+speed from below by
+\[
+       \sqrt{1-(m/r)^2}\,|\dot r|+m|\dot\theta|.
+\]
+Integrating from each endpoint radius down to \(m\) bounds the total
+length from below by
+\[
+ F(m)=\sum_{d\in\{d_s,d_g\}}
+       \left(\sqrt{d^2-m^2}-m\arccos(m/d)\right)+m\Delta ,
+\]
+with the two summands counted separately if the endpoint radii agree.
+The polar lift is absolutely continuous after arc-length
+parametrization because the radius stays positive. For the centered
+case \(\Delta=\pi\) and \(F\) increases with \(m\); tangent segments
+and the shorter connecting arc attain \(F(\rho)\).
+More generally, for endpoints \((0,-h)\), \((0,b)\) and center
+\((c,0)\), take \(0<c<\rho\) and \(h,b\geq\sqrt{\rho^2-c^2}\).
+Then \(d_s=\sqrt{c^2+h^2}\), \(d_g=\sqrt{c^2+b^2}\), and
+\(\Delta=\arctan(h/c)+\arctan(b/c)\).
+Here \(F'(m)=\Delta-\arccos(m/d_s)-\arccos(m/d_g)>0\)
+for \(m\geq\rho\), using \(m>c\).
+For a known center with (0<c<
+ho) and (cleq a),
+a crossing exists exactly when (
+ho-cleq R-a), given
+legal endpoints. Necessity uses the horizontal section as
+before: the nearest allowed side of the obstacle starts
+at (x=c-
+ho), to the left of its center. For sufficiency,
+the minimizing arc lies in (xleq0), not just in the far
+semicircle. Indeed for an endpoint at height magnitude (h)
+the angular deviation of its tangency from the negative
+horizontal ray is
+[
+     eta(h)=arctan(h/c)-arccosigl(
+ho/sqrt{c^2+h^2}igr).
+]
+It is nonnegative and decreases for (h>sqrt{
+ho^2-c^2})
+by differentiation. At equality its value is
+(arccos(c/
+ho)), which places the furthest relevant
+arc point at (x=0). On the arc the distance to the right
+anchor dominates the left one, and is largest at the
+left tip, at distance (a-c+
+ho). Thus the arc fits at the
+necessary radius and the tangent segments fit by convexity.
+Define (L(h)=F(
+ho)) for these endpoints; this is the exact
+known-center suffix distance, not a sampled-path approximation.
+The entire far semicircle need not fit.
+
+\section{An exact deadline to learn the side}
+
+Now the physical obstacle center is either \((c,0)\) or \((-c,0)\).
+Exactly one exists. Keep the known-world conditions above and assume
+\(\rho+c>R-a\). The relay receives a trustworthy sign at a fixed
+time \(\tau\); before that, all its admissible observations are the
+same in the two worlds. No probing action that reveals the sign
+before \(\tau\) is part of this model. Let
+\[
+ h_*=\sqrt{\rho^2-c^2},\quad
+ h(t)=\max(h_*,\,b-vt),\qquad
+ A(t)=t+L(h(t))/v .
+\]
+The minimum worst-world arrival time among all causal trajectories
+under this law is exactly \(A(\tau)\). Thus a guaranteed deadline
+\(T\) is attainable precisely when \(A(\tau)\le T\).
+
+For the construction, move vertically to \((0,-h_*)\) as far as
+time allows, wait if necessary, and after the report take the
+appropriate tangent-and-arc path from \((0,-h(\tau))\).
+The common vertical segment is outside both possible open disks
+and in the lens. The known-world path is admissible by the
+far-arc bound and symmetry.
+
+For the lower bound, every pre-report trajectory must avoid
+both possible disks. It cannot yet cross \(y=0\), since no point
+of that line in the lens is allowed in both worlds. If its
+position at report time has \(x\geq0\), consider the actual
+right-hand disk at \(c\). A crossing of \(y=0\) in this world
+must have \(x<0\). Therefore the post-report path reaches
+\(x=0\) at some time \(t'\geq\tau\) while still below the axis.
+If it starts this part already on \(x=0\), take \(t'=\tau\).
+That crossing height has depth at least \(h_*\) by clearance
+and at least \(b-vt'\) by the total speed bound. Its remaining
+distance is at least \(L(h(t'))\). To see that \(L(h)\) is
+increasing, differentiate its closed form: the derivative
+contributed by the lower endpoint is
+\((h\sqrt{c^2+h^2-\rho^2}+\rho c)/(c^2+h^2)>0\).
+Also \(A(t)\) is nondecreasing by the triangle inequality along
+the safe central line: between two staging depths the known-world
+distance can improve by at most the vertical distance moved.
+Consequently arrival in this world is at least \(A(t')\geq
+A(\tau)\). The reflected argument covers \(x<0\). Waiting
+off center does not improve the worst case. If no sign arrives,
+the common section obstruction persists independently of deadline.
+This is an information obstruction, not physical impossibility
+in either known world.
+
+For example, with \(a=3,R=5,c=0.5,\rho=1.75,b=3.5,v=1\),
+each known world takes about 7.4598 time units from the start.
+For a deadline of 9 the sign must arrive by about 3.0283
+time units. These are evaluations of exact expressions, not
+measured flight or radio times.
+
+\section{A separate bounded-curvature comparison}
+Under a centered disk, consider only constant-speed tangent--arc
+paths with turning radius \(r\in[\rho,\min(b,R-a)]\), speed
+limit \(v\) and acceleration magnitude at most \(A_{\max}>0\)
+almost everywhere. End velocities are allowed to be the
+corresponding tangents; this experiment does not require rest
+or bound jerk. Along a circular arc, speed may be at most
+\(\min(v,\sqrt{A_{\max}r})\). The best time in this family is
+the centered length at radius \(r\) divided by that speed.
+In the acceleration-limited part, the derivative changes sign
+exactly when \(u\tan u=1\), where \(r=b\sin u\).
+In the speed-limited part the length increases with \(r\).
+Thus the optimum radius is the clipping of
+\(\min(b\sin u_*,v^2/A_{\max})\) to the allowed interval,
+where \(u_*\) is the unique root in \((0,\pi/2)\).
+A wider turn can be faster under this control law.
+It is not an optimum over variable-speed acceleration-controlled
+trajectories or a model of the hidden-case stop and branch dynamics.
+
+\section{Checks and comparison}
+\href{https://doi.org/10.1016/j.jfranklin.2023.05.013}{Maeda,
+Endo and Matsuno} study decentralised connectivity and recovery
+after an individual failure. This is a separate exact reachability
+benchmark, not an implementation or performance test of their
+controller. \href{https://arxiv.org/abs/2609.29939}{Sekercioglu,
+De Carli and Dimarogonas} allow a formation manager to establish
+prospective edges and temporarily relax their distance bounds.
+Such a relaxation is not an admissible action under the two
+fixed links here. \href{https://arxiv.org/abs/2210.01354}{Breeden
+and Panagou} address feasibility of jointly applied barrier
+conditions; a feasible command or invariant component alone
+does not prove this target is reachable in time.
+\href{https://epubs.siam.org/doi/10.1137/21M1428248}{Hershberger,
+Suri and Yildiz} give the general curved-obstacle shortest-path
+context. At this exact plant and information, independently
+integrating the radial bound and a true-arc visibility-graph
+reference agree in the tested known worlds. The graph
+approximation checks examples, not the continuous obstruction.
+Lean checks the algebraic crossing and containment kernels,
+not polar path regularity, source validity or the full control
+theorem. This is a scoped R6 synthesis, not I2, field assurance
+or a claim of improvement over a matched exact planner.
+\end{document}
