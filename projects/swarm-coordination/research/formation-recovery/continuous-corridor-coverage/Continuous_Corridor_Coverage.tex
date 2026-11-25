@@ -1,0 +1,120 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Keeping corridor coverage while the formation moves}
+\date{}
+\begin{document}
+\maketitle
+The ordered, speed-limited model from
+\href{https://github.com/eternal-november/eos-research-programmes/pull/408}{PR~408}
+is held fixed, except that the sensing and radio requirements now
+hold throughout the motion from placement $A$ to placement $B$.
+Each body stays in its obstacle-safe interval with the prescribed
+adjacent clearances $g_i>0$. All sensors have radius $b$;
+the same $q$-step radio bound used there enforces connectivity
+after $q-1$ subsequent capability losses. The sensing requirement
+is $q$-fold pointwise coverage on $[L,U]$. This is continuous
+kinematic planning with known endpoints and per-coordinate speed
+bounds, not distributed synthesis or motion after a new stopping
+event. Both endpoints are assumed feasible.
+
+\paragraph{A protected point.}
+Let $C_i$ be the convex configurations with robots $i$ through
+$i+q-1$ all inside the sensing band for that point, including the
+physical and radio constraints. At any configuration the indices
+of covering cells form an interval. Choose any start and finish
+witness indices. If they differ, the first times a path reaches
+the closed union beyond each successive index cut provide
+mandatory adjacent intersections in order. At a first crossing,
+closedness gives a witness from each side of the cut: the earlier
+side by a convergent sequence of preceding times, or the previous
+handoff directly for a coincident crossing. The interval property
+then supplies the two adjacent indices. Between these points an
+ordinary chord stays in one convex cell and respects the original
+per-robot speed bound over the elapsed time. Hence choosing the
+transition placements and durations in this fixed cell sequence is
+an exact linear program, with no search over routes. Adjacent
+transitions may be simultaneous when the same placement suffices.
+
+\paragraph{A protected interval.}
+Its feasible set is closed under coordinatewise min and max.
+For a point $y$, failure of $q$-fold coverage means that at some
+cut $i$, $x_i<y-b$ and $x_{i+q}>y+b$, interpreting indices before
+and after the list as negative and positive infinity. If the min
+of two feasible placements failed in this way, choose the source
+of the lower coordinate at $i$; both sources have their coordinate
+$i+q$ too high. That placement already fails. For the max, choose
+the source of the higher coordinate at $i+q$; both low coordinates
+are too low. This holds for all $y$. Difference constraints and
+fixed coordinate intervals are also closed under the two operations.
+
+Let $M=\min(A,B)$. For any path between $A,B$, taking its pointwise
+min with $A$ or $B$ gives paths $A$ to $M$ and $M$ to $B$ at no
+greater duration, preserving the coordinate speed bounds.
+Conversely, pad those two paths to equal time and take their
+pointwise max to get a feasible $A$ to $B$ path. For comparable
+endpoints $M\le A$, a path clipped between the endpoints can be
+made nondecreasing by running coordinate maxima. Every finite
+time prefix attains each maximum, which is the join of finitely
+many feasible placements. Running maxima respect each speed
+bound. Apply this also to $M\le B$ and reverse the first leg.
+The exact unrestricted optimum is the maximum of the two
+ascending optima, allowing infinity.
+
+\paragraph{A narrow interval has a prescribed event order.}
+Suppose $0<U-L<\min_i g_i$. For an ascending leg, use thresholds
+$\theta=L-b$ and $\phi=U-b$. The leftmost possible witness for
+each end is its first robot not below the corresponding threshold.
+These witnesses suffice when the zone is covered: from the
+leftmost witness at $L$ to the leftmost at $U$ the ordered common
+coverage intervals must overlap all the way. Otherwise any gap
+would also be a gap for all later witnesses before $U$.
+Each robot crosses the two thresholds at most once for this purpose
+(use first arrival at a threshold), and a higher-index robot
+passes $\phi$ before a lower-index robot reaches $\theta$.
+This follows directly from the clearance exceeding the width.
+Retain only the crossings between the known endpoints, with a
+crossing at the ending cut allowed.
+
+This determines the entire sequence of witness pairs. On each
+stage impose the two end tests and all adjacent overlaps from
+PR~408, and impose both threshold groups with weak inequalities
+at transitions. Pin the relevant coordinate to the threshold at
+each switch, and impose nonnegative coordinate increments on
+each segment. This is one linear program per ascending leg,
+with at most $2n$ transitions. Necessity follows by taking those
+points from a path and using closedness at each cut. Sufficiency
+uses a chord in each convex stage; stationary intervals at a
+threshold and coincident endpoint changes are harmless. The
+ordering is not asserted for a width at least the minimum clearance.
+The min/max reduction still holds for wide intervals, but no
+polynomial solver for their ascending legs is supplied here.
+
+\paragraph{A tight continuously covered motion.}
+For three robots, $q=2$, $b=4$, $[L,U]=[-1,1]$, clearance 4,
+radio range 13 and unit speed, the endpoints are
+$A=(-12,-3,1)$, $B=(-1,3,12)$. A radio- and separation-feasible
+straight move of duration 11 loses coverage. To change which pair
+covers the zone, their common windows must touch or overlap:
+$x_3-x_1\le8$. Clearance forces equality, so the switch is at
+$(s-4,s,s+4)$. Robot 1 needs at least $s+8$ time to get there and
+robot 3 needs at least $8-s$ to finish. The lower bound of 16 is
+attained via $(-5,-1,3)$ and $(-3,1,5)$ in durations 7, 2, 7.
+On the middle chord the two windows meet at the middle robot.
+With clearance 5 and range 14, endpoints
+$(-12,-3,2)$ and $(-2,3,12)$ remain feasible, but a switch
+cannot occur, so there is no continuously covered path.
+
+\paragraph{Matched comparator.}
+\href{https://arxiv.org/abs/2205.04422}{Graphs of convex sets}
+is the general planning comparison. The direct oracle enumerates
+simple cell routes and solves the same speed-constrained chord
+problem on each. Revisiting a cell cannot improve an optimum:
+replace the intervening path by one chord in that cell.
+The restricted construction supplies the route without discrete
+search. Numerical comparisons against that exact formulation
+test the implementation; they do not replace the geometric proof
+or constitute a general planner runtime comparison.
+Unlike sensor deployment that only checks the final placement,
+this requirement forbids shedding a live sensing duty while
+moving. No R6 closure or independently selected I2 claim follows.
+\end{document}

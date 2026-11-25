@@ -154,6 +154,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Formation recovery
 
+**SC-CONTINUOUS-COURSE: What if sensing must stay online while the formation moves?** A protected point or an interval narrower than the robot clearance has an exact convex-program solution without discrete route search. One valid motion takes 16 time units rather than the endpoint estimate of 11; in a related case both endpoint placements are safe but no continuously covered path connects them. [Proof, Lean atoms and replay](formation-recovery/continuous-corridor-coverage/README.md). Restricted R6; no independent field or mission test.
+
 **SC-JOINT-CORRIDOR-COVERAGE: Can the same formation recover sensing and radio service?** Ordered robots with speed limits can meet both terminal requirements after the same later losses exactly when one of a finite set of difference-constraint systems is feasible. A matched case can meet either requirement separately, not both. When the protected point is hidden, an exact reveal-time cutoff separates physical feasibility from the ability to choose the right motion. [Proof and replay](formation-recovery/corridor-joint-coverage/README.md). Restricted R6, not a field test.
 
 **SC-RELAY-LENS: When does an obstacle turn two radio links into a barrier?** A stopped robot can make a relay crossing impossible even with both endpoints feasible. With two mirrored obstacle locations each known world remains feasible, but only a timely sign lets a causal controller guarantee the deadline. The optimum uses a common vertical prefix and a known-world detour. [Exact geometry, proof and replay](formation-recovery/relay-lens/README.md). Scoped R6 result, not a field assurance or independent mission case.
