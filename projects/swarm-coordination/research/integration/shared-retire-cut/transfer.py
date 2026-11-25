@@ -187,11 +187,12 @@ def time_diagnostic(plant):
     finally:
         m.close()
 
-a=evaluate(Warehouse)
-b=evaluate(Network)
-assert a==b
-timing={m.__name__:time_diagnostic(m) for m in (Warehouse,Network)}
-assert timing["Warehouse"]["rescue"]==0 and timing["Network"]["rescue"]==1
-print(json.dumps({"same_typed_results_on_original_backends":True,
-                  "frozen_runs_per_backend":40,"per_mode":a,
-                  "later_single_site_diagnostic":timing},sort_keys=True,indent=2))
+if __name__=='__main__':
+    a=evaluate(Warehouse)
+    b=evaluate(Network)
+    assert a==b
+    timing={m.__name__:time_diagnostic(m) for m in (Warehouse,Network)}
+    assert timing["Warehouse"]["rescue"]==0 and timing["Network"]["rescue"]==1
+    print(json.dumps({"same_typed_results_on_original_backends":True,
+                      "frozen_runs_per_backend":40,"per_mode":a,
+                      "later_single_site_diagnostic":timing},sort_keys=True,indent=2))
