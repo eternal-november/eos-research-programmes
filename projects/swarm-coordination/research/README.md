@@ -154,6 +154,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Integration development
 
+**SC-CLOCK-RECEIPT: When do timed logs justify using a recovered copy?** A joint clock bound can certify that some copy survives without identifying it to the acting crew. The checked fixture gives the exact receipt cutoff and shows why equal per-route time bounds are insufficient when the common offset is discarded. [Proof, provenance gate and replay](integration/clock-receipt-audit/README.md). Calibration, not a measured mission transfer.
+
 **SC-FACTORY-DOWNTIME: Does a stopped station still hold the job?** The published RoboCup Logistics benchmark archive contains nominal setups, not actual fault-recovery traces. A separate rule-based model shows why a paused job and referee-removed material can require opposite early dispatches, and why internal machine completion does not certify secure collection. [Archive audit, proof and replay](integration/factory-downtime/README.md). No independent mission transfer.
 
 **SC-TWO-CREW-SELECTOR: Which crew needs the late recovery report?** Two locally lawful commands conflict at a one-effect port. One truthful bit enables both required effects when routed to the crew whose local distinction it splits; the same bit sent to the other crew need not help. Exact graph and mixed-policy checks also separate common from independent randomization. [Proof and replays](integration/two-crew-selector/README.md). Development evidence, not an independent transfer.
