@@ -1,0 +1,33 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{When a held acceleration loses a continuous braking guarantee}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Interface.}
+Use the box-acceleration wedge from \href{https://public.websites.umich.edu/~dpanagou/assets/documents/JBreeden_ACC23.pdf}{Breeden and Panagou, Example 1} and the three-inequality continuous-time kernel in
+\href{https://github.com/eternal-november/eos-research-programmes/pull/442}{the wedge study}. Positions satisfy \(x\pm\gamma y\leq0\) at all times. Accelerations satisfy \((a,b)\in[-1,1]^2\). Starting state is \((x,y,v,w)=(-(1+\gamma)V^2/2,0,V,V)\), where \(V>0,\gamma\geq1\). Commands now hold for an entire specified interval, not merely until the controller decides to switch. Assume exact state and clock and no further disturbance. Such a command interface can occur even with full knowledge of the fault. It changes realizability without removing any acceleration from the nominal box.
+\paragraph{Exact limit for the first hold.}
+The initial plus projection is at its stopping limit. To be safe at time \(V\), any continuation needs the full opposing acceleration \(a+\gamma b=-(1+\gamma)\) almost everywhere up to that time. Thus the first held action must have \(a=b=-1\) for any positive hold time. In units \(V=1\), for a hold ending at \(t\) the plus and center stopping inequalities continue to hold. The minus projection has position and velocity
+\[
+ q_-(t)=-\gamma+\frac{\gamma-1}{2}(t-1)^2,
+ \qquad
+ p_-(t)=(\gamma-1)(t-1).
+\]
+For \(t\leq1\) this projection does not require braking and the position is safe. For \(t\geq1\) its stopping inequality is
+\[
+ -\gamma+\frac{\gamma(\gamma-1)}{1+\gamma}(t-1)^2\leq 0.
+\]
+The center inequality holds because \(x(t)=-(1+\gamma)/2+t-t^2/2\), with maximum \(-\gamma/2\); its braking debit makes exactly the same bound for \(t\leq1\). Plus has the full single-facet trajectory, so its stopping inequality is attained through time 1 and holds thereafter. The exact maximum first hold, with arbitrary continuous-time updates afterward, is therefore
+\[
+ H_*(\gamma,V)=V\left(1+\sqrt{\frac{1+\gamma}{\gamma-1}}\right)
+ \quad(\gamma>1),
+\]
+and is infinite at \(\gamma=1\). Below the limit the prescribed first hold stays in the continuous-time kernel. Above it the only possible initial command has either left the safe wedge already or leaves no viable continuous-time continuation. In the normalized \(\gamma=2\) model, hold lengths in \((1+\sqrt3,3]\) are particularly informative: the held motion itself is safe, but there is no safe continuation from its end.
+\paragraph{Periodic implementation and positive motion at \(\gamma=2\).}
+In normalized units the exact first-hold cutoff is also the exact cutoff for a controller that updates at a fixed period \(h\). Necessity follows already from the first command. For sufficiency, hold \((-1,-1)\) until the first sample \(T=\lceil1/h\rceil h\) at or after time 1. If \(h<3/2\), choose \((-1,(T-1)/h)\) for the next interval; this leaves zero lateral velocity. The plus velocity is nonpositive at both endpoints and affine between them. The minus position at the switch is \(-2+(T-1)^2/2\leq-3/2\), and its increase during the interval is at most \(h(T-1)\leq1\): when \(h\leq1\), use \(T-1<h\); when \(1<h<3/2\), use \(T=h\). If \(h\geq3/2\), then \(T=h\); choose \((-1,+1)\) for the next interval. The minus projection now achieves its maximal braking, so it is safe from the first-hold ending state. The plus trajectory over that interval is convex; its value at the end is \(-3/2+6h-4h^2\leq-3/2\), and its value at the start is safe. The resulting \(v=1-2h,w=1\) has both projected velocities nonpositive.
+\par
+In either case \(a=-1,b=0\) keeps the projected velocities nonpositive. If the second case needs to finish at rest rather than carry a lateral velocity, use a full period of \(b=-1/h\) while keeping \(a=-1\) to remove \(w=1\); the projected velocities remain nonpositive. In particular the controller can safely cross any retreat line \(x\leq-3/2-D\), \(D>0\), by the exact earliest time \(1+\sqrt{1+2D}\) because its longitudinal command remains \(-1\) and no command can produce a smaller \(x\) sooner. After crossing and setting lateral velocity to zero, positive longitudinal acceleration can bring it to rest without moving toward the unsafe end; use a fractional last command to stop at a sample. The retreat event uses physical position, not time of the next notification. This is only an unbounded-wedge retreat target; the construction consumes extra space while stopping and does not recover a radio service or satisfy an opposite wall.
+\paragraph{Checks and exclusions.}
+The executable check uses exact rational maxima on every whole quadratic segment, including interior extrema, and independently applies the continuous-time kernel at the end of the first hold. It checks 18,000 first holds and 900 periods in the normalized periodic problem. That supports the analytic proof, not an inference by time discretization. Same box and same information for both controllers. The ideal continuous-time interface can still act when the held one cannot. The argument does not establish the exact periodic limit for arbitrary $\gamma$, initial state, switching delay, acceleration jerk bound, or interacting robots.
+\end{document}
