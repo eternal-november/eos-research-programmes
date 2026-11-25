@@ -1,0 +1,97 @@
+\documentclass[11pt]{article}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\title{Checking warehouse movement before crediting recovery}
+\date{}
+\begin{document}
+\maketitle
+
+Distinct occupied cells at a tick boundary do not establish
+one-cell-at-a-time motion. On the
+\href{https://github.com/eternal-november/eos-research-programmes/pull/402}
+{existing development cases}, the native simulator applied
+moves that violate that constraint. The advantage of ordinary
+replanning over waiting survives in aggregate when both arms
+are given the same stricter movement rule. Most runs still do
+not meet the full service deadline.
+
+\section{What was held fixed}
+The public MRWS source is pinned at
+\href{https://github.com/automaticdai/MRWS_MultiRobot_Warehouse_Scheduling/tree/941338e9ea4c4eaebb87f8374f80fd576497ad01}
+{\texttt{941338e9}}. The replay imports the previous frozen
+harness: same sixteen development seeds, source layout, order
+offers, per-actor and per-tick fault opportunities, and
+terminal, waiting and replanning policies. The proposed change
+is confined to a reviewed motion check in the local simulator.
+The verifier observes individual move calls and does not add
+new information to the robot or to the native planner. The
+replay matches offered order identities, content, priority and release times
+on all continuing arms, as well as fault opportunity tables,
+not actual fault claims that can change with policy.
+
+The native occupied-cell and wall checks do not test adjacency.
+In the source a refuge move can finish with a path still cached
+from the previous cell; a subsequent action can consume that
+path without checking its origin again. This explains a source
+mechanism, not the cause of every non-unit move recorded below.
+The audit counts applied position updates relative to the
+immediately preceding position of that robot, not its last
+tick-boundary location. It separately counts repeated applied
+moves by the same robot in one clock tick.
+
+In addition to the untouched native motion rule, both controller
+arms run under two stricter laws. The unit-step law admits only
+Manhattan distance exactly one per accepted position update.
+The unit-per-tick law additionally admits at most one accepted
+move per robot per tick, even if a different actor's deadlock
+routine would have made the move. These are explicit alternate
+plant assumptions, not corrected descriptions of what the
+upstream simulator already guarantees. A motion refusal leaves
+position and carried inventory unchanged; it clears a stale
+cached path and ends the current action. Earlier moves remain
+in effect. The native pinned plant remains available unchanged.
+
+\section{Movement and service results}
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Accepted movement rule & Native stop policy & Wait & Replan\\
+\midrule
+Unchanged native & 2 & 34 & 49\\
+Unit step per move & 4 & 35 & 49\\
+One unit step per robot per tick & 3 & 34 & 48\\
+\bottomrule
+\end{tabular}
+
+Counts are completed orders across sixteen paired development runs
+per cell, not percentages or a guarantee.
+\end{center}
+
+The unchanged native motion arm accepted 69 non-unit updates
+with waiting, and 71 with replanning; 16 and 15 runs,
+respectively, contained at least one. The stricter arms accepted
+none. The unit-step-only rule still applied 38 extra same-robot
+moves within a tick with waiting and 41 with replanning. The
+stronger rule applied none. The last row had 14 timed-out
+waiting runs and 10 timed-out replanning runs. In particular,
+preserving distinct occupied cells is not sufficient to transport
+a service number to a plant that limits individual motion.
+The original aggregate direction survives both checks on these
+seeds, without establishing dominance or field fidelity.
+
+The replay also tracks calls to the native ordinary motion routine
+that end without an applied move after querying a cell made
+unavailable by the cached fault neighborhood alone, not by a
+wall or current occupancy. There were 1,856 such calls in the
+native-motion replanning arm. This count is not a causal allocation
+of timeouts: it is a trace indicator, and an obstacle snapshot
+can differ from the state after other moves in a tick. It shows
+why an occupied-destination rejection is not the only condition
+under which the native planner can stop making progress.
+
+This adds a motion-fidelity qualification and a direct baseline
+sensitivity analysis. No independent source selection, I1 acceptance,
+or proof of superiority over a matched planner is claimed.
+\end{document}
+
