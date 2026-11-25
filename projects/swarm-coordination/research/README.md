@@ -174,6 +174,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 ## Integration development
 
+**SC-MRWS-RETAINED-LOADS: Must healthy carriers redo their pickups after another carrier fails?** The pinned native restart discards their outstanding loads. Keeping authorized consecutive class batches lowers new pickups from five to two in the callback fixture, or to at most four if another carrier is lost before receipt. The same native station completes the same order. [Model and replay](integration/mrws-retained-loads/README.md). Movement deadlines and a live proof of old-grant retirement remain open.
+
 **SC-CACHED-QUALITY: Can a new kit-quality response reflect an unchanged image?** In a source-level replay of ARIAC 2024.3.0, the first check changes the simulated part’s fault status. With the same cached observation, a subsequent call can pass before any replacement. A fresh image of the unchanged part still fails. [Source, mocks and replay](integration/ariac-quality-calibration/README.md). This tests three original functions, not a live Gazebo trial or HeRo.
 
 **SC-CLOCK-MATCH: Can anonymous transfer records discharge an old duty?** With one shared calibrated offset, individually possible pairings need not coexist in a physical assignment. Exact matching and checked duals certify a release with complete records; the same timestamps leave one unit of residual exposure when one transfer record may be missing. [Proof and replay](integration/clock-transfer-matching/README.md). Calibration, not a measured transfer.
