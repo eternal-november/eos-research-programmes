@@ -168,6 +168,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 ## Integration development
 
+**SC-CACHED-QUALITY: Can a new kit-quality response reflect an unchanged image?** In a source-level replay of ARIAC 2024.3.0, the first check changes the simulated part’s fault status. With the same cached observation, a subsequent call can pass before any replacement. A fresh image of the unchanged part still fails. [Source, mocks and replay](integration/ariac-quality-calibration/README.md). This tests three original functions, not a live Gazebo trial or HeRo.
+
 **SC-CLOCK-MATCH: Can anonymous transfer records discharge an old duty?** With one shared calibrated offset, individually possible pairings need not coexist in a physical assignment. Exact matching and checked duals certify a release with complete records; the same timestamps leave one unit of residual exposure when one transfer record may be missing. [Proof and replay](integration/clock-transfer-matching/README.md). Calibration, not a measured transfer.
 
 **SC-CLOCK-RECEIPT: When do timed logs justify using a recovered copy?** A joint clock bound can certify that some copy survives without identifying it to the acting crew. The checked fixture gives the exact receipt cutoff and shows why equal per-route time bounds are insufficient when the common offset is discarded. [Proof, provenance gate and replay](integration/clock-receipt-audit/README.md). Calibration, not a measured mission transfer.
