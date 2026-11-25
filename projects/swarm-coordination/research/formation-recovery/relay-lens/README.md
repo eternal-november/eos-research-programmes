@@ -11,4 +11,4 @@ python3 -B limits.py | cmp limits.txt -
 lean RadioLens.lean
 ```
 
-The numeric references use SciPy 1.17.0. Lean 4.35.0 with Mathlib checks seven algebraic statements. The exact deadline theorem is for the speed-limited civil model with a single trustworthy sign disclosure at a specified time, not for a measured radio network. The constant-speed acceleration comparison is separate.
+The numeric references use SciPy 1.17.0. Lean 4.35.0 with Mathlib checks eight algebraic statements. The exact deadline theorem is for the speed-limited civil model with a single trustworthy sign disclosure at a specified time, not for a measured radio network. The constant-speed acceleration comparison is separate.
