@@ -68,6 +68,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-IRREVOCABLE-AWARD-RISK: Can an authorized tighter cap still admit new work after an old award?** A two-decision fixed-law model distinguishes a binding late change from a prospective exemption, retains the original union risk, and compares both with the exact same-observation planner. [Proof and replay](joint-risk/risk-cap-revision/irrevocable-award/README.md). Scoped R4b, not a measured risk.
 
+**SC-HANDOFF-ERASURE-RISK: What if lost handoff records cluster where a new dispatch adds risk?** Fixed custody and equal record-erasure rates can imply different admissible routes. The sharp model keeps the old exposure and maximizes good completions, not the number of admissions. [Proof and replay](joint-risk/risk-cap-revision/handoff-erasure/README.md). Authored source laws, not a field risk bound.
+
 **SC-NOISY-AWARD-ASSAY: When does a diagnosis justify giving up the optional inspection?** Under the fixed mirrored laws, the exact information-value threshold depends on the actual foregone work. At a quarter-unit cost, symmetric error must be below 1/6. [Proof and same-information replay](joint-risk/risk-cap-revision/irrevocable-award/noisy-assay/README.md). Not a measured instrument limit.
 
 **SC-RECURRENT-RISK: When do repeated changes in evidence preserve a joint risk certificate?** Separate crew factors combine if the retained mode and survivor mass account for the joint dependence. A correlated censor can break the rule even when reported marginals match. Timely joint evidence can change the actual reserve choice. [Proof](joint-risk/recurrent-certificates/Recurrent_Risk_Certificates.tex) · [Replay](joint-risk/recurrent-certificates/README.md).

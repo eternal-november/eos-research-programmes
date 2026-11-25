@@ -1,0 +1,38 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\begin{document}
+\section*{When a lost handoff record spends the old risk allowance}
+
+An outgoing inspection crew leaves a sample with an unresolved integrity outcome. The incoming crew can route a second sample before the first outcome is known. Transferring custody does not remove the first sample from the audit. In this finite model, two record channels erase the same fraction of notes but imply different admissible dispatches. With only the erasure rate certified, the best policy need not always align the second sample's failure with the old failure, even on branches where the handoff note arrives.
+
+\paragraph{Interface and law.}
+The old sample is already committed. There are disjoint latent events $O,F$, each with probability $r$; $O$ is the old integrity loss. A high-level physical model gives two lawful routes with an identical stand-alone loss probability $r$: one fails on $O$, the other on $F$. Which is which is indexed by the parity $U\oplus V$ of two independent fair fixture bits. The outgoing crew knows $U$ and deposits one truthful bit before its authority ends. The incoming crew sees $V$ only later and either reads $U$ before dispatch or gets an erasure $E$. No crew can infer the other bit by waiting or acting again before the deadline. The note is not a report of either actual loss. $U,V$ are jointly independent of $(O,F,E)$. The source may correlate $E$ with the latent failure class, but fixes one joint law before the episode and cannot select a new law after the dispatch. These are stipulated source conditions, not calibrated site or sensor data.
+
+At handoff a cap $c$ binds the event that either old or accepted new sample fails. It is an ex-ante cap for the entire episode, not a separate conditional cap on each received note. The old loss $O$ counts even on a decline. Both route options remain within a separate fixed operating envelope; no physical clearance or safety constraint is waived by the risk accounting. The objective is the worst-law expected number of \emph{completed good new samples}; the expected old contribution $1-r$ is constant. No service credit for a decline or a failed dispatch. This is a one-slot service model with no extra benefit assigned to throughput beyond the slot.
+
+\paragraph{Exact two-parameter reduction.}
+Always admitting a readable case by the route tied to $O$ weakly improves on declining that case: it cannot increase the union risk and adds a nonnegative completion chance. Thus an optimum can admit every readable case. Write $q$ for the fraction admitted on erasure, and $m$ for the fraction assigned the route tied to $F$ on receipt. The private fair bits and local randomization may implement these rates. On erasure the latent parity is fair conditional on what the new actor can observe, so half of its admitted choices use each route. On receipt it can select either route. Rates need not be estimated from plant outcomes.
+ 
+Put $e=\Pr(E), o=\Pr(O\cap E), f=\Pr(F\cap E)$. Their exact coupling region is
+\[
+0\le o,f\le r,\qquad 0\le e-o-f\le 1-2r.
+\]
+Both objectives evaluate on the same episode:
+\[
+\begin{aligned}
+R(q,m;o,f)&=r+\tfrac q2 f+m(r-f),\\
+W(q,m;o,f)&=1-e-r+qe+(1-m-q/2)o+(m-q/2)f.
+\end{aligned}
+\]
+In $R$ the increment comes only from $F$. In $W$ an admitted dispatch that fails on $O$ still produces no good sample, even if it adds zero joint risk. The optimal robust policy maximizes the minimum $W$ over that region while enforcing $R\le c$ at every vertex. The vertex calculation is the ordinary matched robust optimization, comparable to the earlier \href{https://github.com/eternal-november/eos-research-programmes/pull/421}{PR 421} fixed-law support calculation and the \href{https://arxiv.org/abs/1709.00641}{Fr\'echet-class dependence framework}. Its role here is to test whether lost information is material, not to improve an optimizer.
+
+\paragraph{Sharp case with $e=r\le1/3$.}
+Take $r>0$. The coupling region is the triangle with vertices $(0,0),(r,0),(0,r)$. If $c<r$, no policy is feasible. For $\delta=c-r$ between zero and $r/2$, the cap forces $q\le 2\delta/r$ at $(0,r)$ and $m\le\delta/r$ at $(0,0)$. At $(0,r)$ completion is $1-2r+rq/2+rm$; hence no policy guarantees more than $1-2r+2\delta$. Choosing both rates at their respective bounds attains that value at the first and third vertices; the second has no smaller completion because $1-m-q/2=1-2\delta/r\ge0$. For larger $\delta$, keep the policy at $\delta=r/2$: it guarantees $1-r$, with no better possible because independent erasure is admitted and both routes then have marginal loss $r$ given the observable cut. Thus the sharp value is $\min(1-r,1-2r+2\delta)$.
+
+For $r=e=1/4,c=5/16$, the guarantee is $5/8$ good new samples per episode, with $q=1/2,m=1/4$. Always choosing the route tied to $O$ on readout gives only $9/16$ in this ambiguity set. At the optimum a readable case is routed to $F$ one quarter of the time: under the worst lost-note case, $F$ is concentrated in erasures, and some remaining cap headroom can improve receipt-branch completion. The opposite corner limits that maneuver. This outcome is about sample integrity and a specified joint service cap, not permission to trade off non-waivable safety.
+
+Certifying independent erasure instead permits full admission with $m=0$, producing $3/4$ good new samples in expectation and risk $9/32$. A source law with the same marginal erasure, $f=1/4,o=0$, makes that exact policy violate the cap, reaching $3/8$. An adequate average delivery rate therefore does not establish adequacy for this handoff. The needed extra evidence is a bound on the overlap between erasure and the failure class that adds loss; neither a received custody notice nor an erasure percentage supplies it. Retain the original exposure across the responsibility change, rather than treating the new controller as starting a new audit.
+
+\paragraph{Checks and limits.}
+The replay evaluates actual loss and completion in the probability space separately from the derived rates. It matches 6,624 deterministic policy/coupling corners and the closed form at 51 cap settings and solves the authored benchmark exactly. Lean checks three supporting rational inequalities. \href{https://github.com/eternal-november/eos-research-programmes/pull/422}{PR 422} handles old binding versus prospective exemption and a single controller with perfect recall. The present test instead splits observations across roles, preserves the old binding audit, and varies the joint record-failure law. No actual sample route, validated channel law, independent source transfer, or architecture advantage follows from this model.
+\end{document}
