@@ -94,6 +94,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-FORECAST-CONTROLS: When does preparation still pay with delayed or mistaken warnings?** Matched controls vary recipient, lead, errors, costs and reversal. Releasing a preparation can restore a route option, not its sunk slot or cost. [Proof](forecast-preparation/forecast-controls/Forecast_Control_Comparisons.tex) · [Replay](forecast-preparation/forecast-controls/README.md).
 
+**SC-FORECAST-EVIDENCE: Which forecast can an existing job prevent crews from testing?** Missing a live scan window makes opposite reserve-placement laws indistinguishable across any number of historical runs. Declining an optional job up front admits a new experiment with an exact error–cost frontier. The direct likelihood test ties. Separate scan error rates alone do not determine whether to pay for the new experiment. [Proof and replay](forecast-preparation/selective-evidence/README.md).
+
 ## Live synthesis
 
 **SC-LIVE-DISPATCH: Can a verified policy be installed while earlier work continues?** Keeping one staging support free lets a compiler install a policy for a late fixture configuration and gain one tick of service. A catalogue of separate fixed images and a scalar replanner both have exact limitations under the declared interfaces; a general compiler ties. Holding the support costs one optional admission. [Argument](live-synthesis/dispatch-policy/Live_Latch_Policy_Synthesis.tex) · [Replay](live-synthesis/dispatch-policy/README.md).
