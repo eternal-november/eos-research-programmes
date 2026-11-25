@@ -142,6 +142,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-TWO-REPORT-OPTICS: How does an earlier delivery restrict the evidence a courier can acquire?** Known worlds finish by six ticks; one-way optical evidence supports an exact seven-tick local policy, while absent or possibly erased evidence requires eight. A mechanical latch can replace the pulse without rewriting the receiver only if its effect is earned before the read. [Statement and proof](communication/optical-rendezvous/Two_Report_Optical_Rendezvous.tex) · [Replay and scope](communication/optical-rendezvous/README.md).
 
+**SC-CURRENT-ACQUISITION: Does a fresh current publication require a fresh analog read?** The selected Ouijabot callbacks retain and republish all channels when a read throws, and keep driving under fresh commands. A separate signed-force bound requires actual acquisition time and calibration. [Source and replay](communication/current-acquisition/README.md). No physical validation.
+
 ## Active evidence
 
 **SC-PROBE-COMPLEMENTARITY: When are two private probes worth buying together?** Each probe can fail to pay its own cost while both enable timely joint service. Earlier commitments restrict probe and bypass availability; a separate conservative reservation has an explicit opportunity cost. [Proof](active-evidence/probe-complementarity/Probe_Complementarity.tex) · [Replay](active-evidence/probe-complementarity/README.md).
