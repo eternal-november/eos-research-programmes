@@ -1,0 +1,43 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Certifying a recovery plan from overlapping pools}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Scope.}
+This extends the \href{https://github.com/eternal-november/eos-research-programmes/pull/420}{pooled native-outcome example}. In the retained-act branch, each observed context $i$ contributes unknown joint failure mass $y_i$ in a known closed interval $[l_i,u_i]$. Its recovery rate is $0\leq\lambda_i\leq1$. The named bad event and the physical outcome table are fixed. Different published aggregates impose $Hy=z$, where rows of $H$ can overlap. All aggregates must refer to the same candidate whole-law distribution: measurements under interventions that change the law cannot be joined without a transport argument. Assume nonempty joint support, checked by a feasible witness. There is no worst-law resampling between contexts. This is an ex-ante bound, not a conditional-on-every-context bound.
+
+The goal is to maximize $p^\top\lambda$, the selection rate of the retained act under the known context distribution $p$, subject to $\lambda^\top y\leq\alpha$ for every admitted $y$. The approach also works for fixed declared linear utilities in place of $p$, but not for adding exposure twice or for new time-coupled decisions. Physical feasibility, legality of the local coin and its nonanticipation remain source premises.
+
+\paragraph{Compact exact policy constraint.}
+Set $c=u-l$ and $d=z-Hl$. For any proposed $\lambda$, let $x=y-l$. The uncertainty is exactly $0\leq x\leq c$ and $Hx=d$. Linear programming duality, or bounding each interval after charging $\eta$ for the equalities, gives the exact upper risk
+\[
+ \lambda^\top l+
+ \min_{\eta\in\mathbb R^{\operatorname{rows}(H)}}\!
+ \left[d^\top\eta+\sum_i c_i(\lambda_i-(H^\top\eta)_i)_+\right].
+\]
+The upper bound follows pointwise from $\lambda_i\leq(H^\top\eta)_i+s_i$, $s_i\geq0$, and $0\leq x_i\leq c_i$. Equality of the optimized value follows from strong duality for a feasible bounded box intersected with equalities. This is equivalent to the single linear programme
+\[
+ \begin{array}{ll}
+ \text{maximize}&p^\top\lambda\\
+ \text{subject to}&0\leq\lambda\leq1,\quad s\geq0,\quad
+                  \lambda\leq H^\top\eta+s,\\
+ &l^\top\lambda+d^\top\eta+c^\top s\leq\alpha,\qquad
+                  \eta\text{ free}.
+ \end{array}
+\]
+It has $2m+r$ variables for $m$ contexts and $r$ pools; it does not enumerate feasible latent-laws vertices. No novelty is claimed for this linear programming reduction. It is a reduction for the stated risk model, not a new probabilistic calibration or high-dimensional timing guarantee.
+
+\paragraph{Validation and optimization certificate.}
+A proposed $(\lambda,s,\eta)$ is checked as rational arithmetic. A certified nonnegative $\beta,q$ with $q_i\leq\beta c_i$ and $Hq=\beta d$ yields the upper bound
+\[
+ \beta\alpha+\sum_i (p_i-q_i-\beta l_i)_+
+\]
+on any feasible utility: multiply the linear rate constraints by $q_i$ and the cap by $\beta$, cancel $\eta$, and maximize the remaining coefficient over each $0\leq\lambda_i\leq1$. The runner accepts an optimum only when this bound equals the exact rational primal utility. Floating point output supplies a candidate, not the evidence. If rational reconstruction fails a constraint or equality, the runner does not certify. The pointwise coverage inequality checks in Lean. In 108 independently enumerated generated small families, the direct vertex planner agrees; 1,252 explicit vertices are checked against the proposed plan's risk. Four instances from 32 to 256 contexts certify by exact primal and dual equalities without explicit vertex generation. This is feasibility evidence, not a performance benchmark against an optimized generic LP library.
+
+\paragraph{Which aggregates can be forgotten?}
+After fixing pinned coordinates, suppose the feasible box section has a point strictly between every remaining pair of bounds. The risk is identified exactly when the remaining $\lambda$ belongs to the row span of the remaining $H$. A row combination fixes its value; if the coefficient has a nonzero component along a kernel direction, small opposite perturbations at the strict feasible point leave the logs unchanged and change risk. When the point does not exist, the general condition is annihilation of all differences of feasible points, after identifying any boundary pins. An unmeasured singleton is not automatically fatal: with pools $y_1+y_2$ and $y_2+y_3$, the nonconstant policy $(1/2,1,1/2)$ has exactly identified risk, while $(1,0,0)$ need not. This restates the relevant \href{https://github.com/eternal-november/eos-research-programmes/blob/772abb907bd2a41300f2042b427e14738442e693/projects/contextual-composition/feedback-and-concurrency/observable-covers/Residual_Profiles_and_Admission_Reflection.tex}{residual profile test} for the attained source slice and its selected risk consumer.
+
+Use \href{https://ftp.cs.ucla.edu/pub/stat_ser/r199-jasa.pdf}{Balke and Pearl} as a classical sharp-bounds precedent; general coupled risk and controlled sensing require additional causal and plant models. Scope is a scalable decision calculation within R4a under the fixed model, with no field rate, validated deployment, or acceptance of the full track.
+\end{document}
