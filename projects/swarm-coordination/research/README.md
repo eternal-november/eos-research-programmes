@@ -66,6 +66,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-POOLED-FAULT-RISK: When do joint diagnostics still conceal a context-dependent recovery decision?** The same pooled fault-and-erasure pairs can put all deadline risk in opposite notice regimes. The sharp 10% cap allows retention in 20% of runs with separate measurements, 40% with pooled pairs, and 70% with linked evidence in the two-law example. [Proof and replay](joint-risk/pooled-fault-risk/README.md). Pinned physical outcomes, authored probability laws.
 
+**SC-OVERLAPPING-RISK-POOLS: Can several pooled diagnostics support an exact risk-capped plan?** A compact robust programme uses the same fixed law across overlapping summaries. Direct vertex enumeration agrees on small cases; stored exact rational certificates verify up to 256 contexts. [Proof and standalone checker](joint-risk/pooled-fault-risk/overlapping-pools/README.md). Scoped calculation, not a risk calibration.
+
 ## Recurrent coordination
 
 **SC-RECEIPT-AMENDMENT: What must a timing change inherit from earlier handoffs?** Two pasts admit the same old timed trace language and show both scopes ready. Earlier receipt mints survive a mechanical timing amendment, forcing opposite first transfers to meet one shared deadline. Lean checks the exact fixed-law prefix profile; reuse after an amendment requires the relevant source evidence. [Proof and replays](recurrent-coordination/timing-amendment/README.md). Partial R2, not an independent transfer.
