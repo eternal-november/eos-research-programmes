@@ -1,0 +1,93 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,url}
+\title{Withdrawing a Reserved but Unsent Movement}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Result.}
+A fleet controller can have two distinct duties when it withdraws an order:
+keep a reservation for movement already issued, and prevent subsequent
+movement that has a reservation but is still waiting for a peripheral
+operation. In the model, retiring only the second movement lets another
+carrier finish in tick 5 rather than miss deadline 9. The first movement
+keeps its reservation and runs out. The result depends on a new control
+that takes effect before the pending callback, and on evidence that the
+issued movement and the peripheral cannot affect the bay while the second
+carrier uses it. It is not a claim that stock openTCS exposes that control.
+
+\paragraph{What the source establishes.}
+At openTCS commit
+\texttt{742b0e6df9ccbabc660e585a85e55d585c0642fc},
+\texttt{DefaultVehicleController.abortTransportOrder(false)}
+clears future movement and unconfirmed allocation requests but preserves a
+movement already in \texttt{SENDING\_PENDING} in
+\texttt{CommandProcessingTracker.driveOrderAborted}. A successful
+required peripheral interaction can invoke the retained callback that sends
+it if sending is still permitted. Immediate withdrawal requests that the
+adapter clear its queue and frees allocated resources ahead. Clearing the
+peripheral interaction maps in \texttt{PeripheralInteractor.clear} does
+not itself cancel or settle a physical job. The source already releases
+past allocations based on completed commands, with a length-respecting
+configuration. The comparison gives native release credit for clearing
+the already issued prefix; it does not assume a system-wide halt.
+The historical operator guide explicitly differentiates regular drain
+from immediate withdrawal:
+\url{https://www.opentcs.org/docs/5/user/opentcs-users-guide.html}.
+The NativeHarness executes 16 combinations of the selected exact Java
+bodies with stub scheduler, adapter and service. The harness does not start
+the full openTCS kernel, execute hardware, or certify an installation.
+
+\paragraph{A model of both options.}
+Let $a$ be the observed settled time of the already-issued prefix, $p$
+the time the required peripheral would successfully authorize the later
+send, and $f$ the time a proposed per-movement fence takes effect. The old
+reservation for the bay can be discharged at the fence only if that fence
+serializes ahead of the send. Otherwise the old movement was issued and
+the bay stays booked through $p+h$, its modeled completion. Continuing the
+issued prefix is required. If it also affects the bay, it must clear the
+bay first. In this serial model the effective reservation release and
+physical clearance are separately necessary. A peripheral may be late to
+clear the bay even if the movement is fenced.
+
+For a candidate cutoff at $x$, write
+\[
+ r(x)=\begin{cases}
+      x &\text{if the cutoff precedes the send},\\
+      p+h &\text{otherwise}.
+      \end{cases}
+\]
+With peripheral clearance $q$, prefix clearance in this bay $b$ (zero
+when disjoint), charged observation and grant delay $v$, and protected
+duration $d$, the earliest finish is $\max(r(x),q,b)+v+d$.
+All three required truths must persist over the protected
+interval. The modeled grant supplies that interval only from the
+calculated authorization time. Without the necessary evidence at the cut
+the unchanged receiver refuses. The source does not provide these
+guarantees automatically. Reordered callbacks on the same tick must be
+resolved by serialization; a tie in timestamp alone is not a fence.
+
+\paragraph{Matched alternatives.}
+Regular drain uses $p+h$. The modeled native-choice alternative is
+allowed to stop draining early once it has verified the issued prefix
+is settled, while it still has a pending movement to cancel. It gets the
+same peripheral clearance and an equivalent independent admission guard.
+It is an idealized wrapper for the selected withdrawal choices, not a
+claim that openTCS implements that whole policy. The scoped option uses
+$x=f$; the native alternative is given $x=a$. A scheduler can retain both
+options instead of always waiting for the scope-specific fence.
+An equal-information direct tick simulator implements all three
+policies without the receiver and matches exactly. Any allocator with
+the same effective fence and evidence can realize this gain; the case
+does not separate the receiver from such an allocator.
+
+The calibrated run has $(a,p,f,q,h,v,d)=(6,4,1,2,5,1,2)$.
+When the old prefix also touches the bay, the scoped finish moves from
+5 to 9. When the fence and send race at tick 4, the modeled finish is 7
+if the fence wins and misses the deadline if the send wins. Delaying
+peripheral clearance to tick 7 also loses the benefit. There are 296,352
+matched direct comparisons across 98,784 modeled inputs and three
+policies. Counts describe only the enumerated parameter grid, not a
+statistical expectation. This is a changed-source development probe,
+not independent acceptance of L2, R2, I1 or I2.
+\end{document}

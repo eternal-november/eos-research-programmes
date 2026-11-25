@@ -1,0 +1,109 @@
+import java.util.*;
+import static java.util.Objects.requireNonNull;
+
+class NativeHarness {
+  @interface Nonnull {}
+  enum PendingCommandState {UNDEFINED, ALLOCATION_PENDING, SENDING_PENDING, WONT_SEND}
+  record TCSResource<T>(String name) {}
+  record MovementCommand(String name) {}
+  record CommandResourcePair(MovementCommand command, Set<TCSResource<?>> resources) {
+    Set<TCSResource<?>> getResources(){return resources;}
+    MovementCommand getMovementCommand(){return command;}
+  }
+  static final MovementCommand NEXT=new MovementCommand("next");
+  static final Set<TCSResource<?>> PREFIX=Set.of(new TCSResource<>("prefix"));
+  static final Set<TCSResource<?>> TAIL=Set.of(new TCSResource<>("tail"));
+  static final Set<TCSResource<?>> FUTURE=Set.of(new TCSResource<>("future"));
+  static final class Vehicle {
+    String getName(){return "old";}
+    enum ProcState {AWAITING_ORDER}
+  }
+  static final class Log { void debug(String s,Object... a){} }
+  static final Log LOG=new Log();
+  static void checkArgument(boolean b,String s,Object... a) {if(!b)throw new IllegalArgumentException(s);}
+  static void need(boolean b,String s) {if(!b)throw new AssertionError(s);}
+  static final class Tracker {
+    Deque<CommandResourcePair> sentCommands=new ArrayDeque<>(),futureCommands=new ArrayDeque<>();
+    CommandResourcePair pendingCommand;
+    PendingCommandState pendingCommandState=PendingCommandState.UNDEFINED;
+    Deque<Set<TCSResource<?>>> getAllocatedResources(){return getAllocatedResourcesAhead();}
+    /* TRACKER */
+  }
+  static final class Peripheral {
+    final Map<MovementCommand,String> preMovementInteractions=new HashMap<>();
+    final Map<MovementCommand,String> postMovementInteractions=new HashMap<>();
+    /* PERIPHERAL */
+  }
+  static final class Controller {
+    final List<String> events=new ArrayList<>();
+    final Vehicle vehicle=new Vehicle();
+    final Peripheral peripheralInteractor=new Peripheral();
+    final Tracker commandProcessingTracker=new Tracker();
+    Object currentDriveOrder=new Object();
+    boolean sendingCommandsAllowed=true;
+    class Adapter {
+      void clearCommandQueue(){events.add("request clear adapter queue");}
+    }
+    final Adapter commAdapter=new Adapter();
+    class VehicleService {
+      void updateVehicleClaimedResources(Vehicle v,List<?> r){events.add("claimed "+r.size());}
+      void updateVehicleAllocatedResources(Vehicle v,List<?> r){events.add("allocated "+r.size());}
+      void updateVehicleProcState(Vehicle v,Vehicle.ProcState st){events.add("awaiting order");}
+    }
+    final VehicleService vehicleService=new VehicleService();
+    class Scheduler {
+      final Set<Set<TCSResource<?>>> freed=new HashSet<>();
+      void free(Controller c,Set<TCSResource<?>> rs){
+        freed.add(rs); events.add("free "+rs.iterator().next().name());
+      }
+      void claim(Controller c,List<?> rs){events.add("empty claim");}
+      void clearPendingAllocations(Controller c){events.add("clear pending allocations");}
+    }
+    final Scheduler scheduler=new Scheduler();
+    static List<?> toListOfResourceSets(Deque<?> r){return List.copyOf(r);}
+    boolean canSendNextCommand(){return false;} // no future allocation available in these fixtures
+    void allocateForNextCommand(){throw new AssertionError("unexpected allocation");}
+    void sendCommand(MovementCommand c){events.add("handoff to adapter "+c.name());}
+    /* CONTROLLER */
+  }
+  public static void main(String[] args){
+    int cases=0;
+    for(boolean immediate:new boolean[]{false,true})
+      for(boolean issued:new boolean[]{false,true})
+        for(boolean waiting:new boolean[]{false,true})
+          for(boolean allowed:new boolean[]{false,true}) {
+            Controller c=new Controller();
+            Tracker t=c.commandProcessingTracker;
+            c.sendingCommandsAllowed=allowed;
+            if(issued)t.sentCommands.add(new CommandResourcePair(new MovementCommand("prefix"),PREFIX));
+            if(waiting){
+              t.pendingCommand=new CommandResourcePair(NEXT,TAIL);
+              t.pendingCommandState=PendingCommandState.SENDING_PENDING;
+              c.peripheralInteractor.preMovementInteractions.put(NEXT,"registered separately");
+            }
+            t.futureCommands.add(new CommandResourcePair(new MovementCommand("not allocated"),FUTURE));
+            c.abortTransportOrder(immediate);
+            need(t.futureCommands.isEmpty(),"future queue");
+            need(c.events.contains("clear pending allocations"),"pending allocation requests");
+            need(c.events.contains("empty claim"),"claims");
+            need(c.events.contains("request clear adapter queue")==immediate,"adapter call");
+            need(c.scheduler.freed.contains(PREFIX)==(immediate&&issued),"issued allocation");
+            need(c.scheduler.freed.contains(TAIL)==(immediate&&waiting),"not-issued allocation");
+            need(!c.scheduler.freed.contains(FUTURE),"never allocated");
+            need(t.sentCommands.isEmpty()==(immediate||!issued),"sent tracker");
+            need(c.peripheralInteractor.preMovementInteractions.containsKey(NEXT)==(!immediate&&waiting),"prejob map");
+            need(c.events.contains("awaiting order")==(!immediate&&!issued&&!waiting),"source awaiting check");
+            if(!immediate&&waiting){
+              // The retained successful pre-movement callback invokes this selected method.
+              c.sendCommandOrStopSending(NEXT);
+              need(c.events.contains("handoff to adapter next")==allowed,"send conditional");
+              if(!allowed)need(t.pendingCommandState==PendingCommandState.WONT_SEND,"retained unsent command");
+            }
+            cases++;
+          }
+    System.out.println("selected exact Java branches: "+cases);
+    System.out.println("regular keeps accepted reservation and pre-movement callback");
+    System.out.println("immediate requests queue clear and frees ahead; peripheral clear only removes local maps");
+    System.out.println("adapter motion, scheduler internals and physical peripheral effects are not executed");
+  }
+}
