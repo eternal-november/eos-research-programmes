@@ -154,6 +154,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Integration development
 
+**SC-FACTORY-DOWNTIME: Does a stopped station still hold the job?** The published RoboCup Logistics benchmark archive contains nominal setups, not actual fault-recovery traces. A separate rule-based model shows why a paused job and referee-removed material can require opposite early dispatches, and why internal machine completion does not certify secure collection. [Archive audit, proof and replay](integration/factory-downtime/README.md). No independent mission transfer.
+
 **SC-TWO-CREW-SELECTOR: Which crew needs the late recovery report?** Two locally lawful commands conflict at a one-effect port. One truthful bit enables both required effects when routed to the crew whose local distinction it splits; the same bit sent to the other crew need not help. Exact graph and mixed-policy checks also separate common from independent randomization. [Proof and replays](integration/two-crew-selector/README.md). Development evidence, not an independent transfer.
 
 **SC-TYPED-LIVE-RECOVERY: Can charged preparation preserve useful service during a second fault?** An exclusive report holder and an additive cooling load require different source evidence and actual effects. An unchanged admission rule checks the result across both, while two staged candidates allow a late lawful selector to commit one surviving effect. Same-information direct enumeration ties. [Statement and replay](integration/typed-live-recovery/README.md) · [Pinned inventory crosswalk](../fault-inventory/evaluation/README.md).
