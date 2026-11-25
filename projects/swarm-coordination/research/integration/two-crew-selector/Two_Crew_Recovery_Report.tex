@@ -1,0 +1,176 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Which crew needs the recovery report?}
+\date{}
+\begin{document}
+\maketitle
+
+Two crews must each complete one transfer by the next physical cut.
+Either local recovery command can be individually authorized and
+successful in isolation. But a staging port can complete only one
+transfer at that cut, and an interlock lets at most one claim succeed.
+One truthful bit can restore service, but only if it reaches the crew
+whose unresolved distinction changes the joint choice. Even when every
+physical history has an offline assignment, no pair of local handlers
+need realize all those assignments.
+
+\section{Source, safety and service}
+These are civil, one-shot recovery models, with two crews \(L,R\) and
+two independent exclusive ports labelled 0 and 1. An older fallback
+at each crew remains physically active through the attempted transfer.
+Before the final dispatch each crew knows its own observed label,
+including which ports are both lawful and physically reachable. A
+source history gives a pair of labels. It contains a late loss or
+displacement after preparation; controllers may not read the history
+ID or the other crew's label and cannot communicate before committing
+unless an explicit report is added. The admissible source support
+is fixed before evaluating policies. Exactly one actual final effect
+at each crew by the cut is the positive service requirement. The
+interlock can safely decline one joint request, but a decline cannot
+be counted toward service. There is no retry that finishes in the
+last slot.
+
+In the archive fixture, the old durable record remains official
+until its one valid new write is physically recorded. In the
+cooling proxy, the old fallback maintains two units at each load.
+Each successful new transfer combines one local base unit and one
+unit from its selected branch; a failed transfer leaves the old
+supply in place within the declared window. The two proxies have
+different effect checks, but share a purposely identical final
+port-conflict law. They are not an independent transfer test. The
+mechanisms and time scale are laboratory abstractions, not advice
+for running real machinery.
+
+\section{Exact two-port selector}
+Represent each possible local observation by a vertex on its crew's
+side of a bipartite graph; each admitted joint history adds an edge.
+An endpoint is pinned if it has just one locally legal port. On each
+edge the two selected ports must differ. Complementing R's port
+number gives an equivalent condition: the normalized choice bit must
+be constant along every edge. A pinned vertex now prescribes its
+component's bit. Thus a lawful sure-service policy exists iff no
+component contains oppositely pinned vertices (assuming no active
+vertex has an empty action set). Construct one by assigning each
+component its pinned value or either value if unpinned, then undoing
+the R complement. An opposite-pin path is a certificate of
+impossibility. The graph procedure is linear in the given observation
+support; it does not by itself construct that support from arbitrary
+mechanics or forecast a later unmodeled fault.
+
+There are families with arbitrarily long necessary witnesses even
+though each edge is feasible alone. Put opposite pins at the ends of
+a path of length \(d\geq2\) and leave all internal vertices unpinned.
+Deleting any one edge separates the pins, so no proper subset of
+the \(d\) histories witnesses impossibility. The number of possible
+labels grows in this family. This is a scoped source-history
+certificate lower bound, not a lower bound on the memory of an
+arbitrary recurring corridor controller.
+
+\section{A report that reaches just one crew}
+The path support can be modeled by a displaced cam on one of \(d\)
+detents \(e=0,\ldots,d-1\). Two staggered scales give the two crews
+\(\lfloor(e+1)/2\rfloor\) and \(\lfloor e/2\rfloor\); route access at
+the two end labels gives the stated endpoint pins. All internal
+labels leave both ports available. The model accepts these sensor
+and access laws as physical premises. A separate threshold pickup
+can report whether \(e\geq j\), \(0<j<d\), and may be wired to one
+crew only. It produces one bit before dispatch, not a computed joint
+action or an inferred exact detent. Routing a bit to a crew splits
+only that crew's observation vertices according to the reported value.
+In this path, the two sides of the threshold transition share just
+internal vertex \(j\). The report restores sure service iff it
+reaches the crew owning that vertex (or both crews) before dispatch.
+If only the other crew gets it, no vertex relevant to the obstruction
+splits. A late report cannot enter the choice. Both negative controls
+retain the same underlying physical fault and resources.
+
+This is a constructive test of the information interface. At a fixed
+threshold the slot and scope effects are identical across report
+arms. An unconsumed copy of truthful evidence is not extra authority
+or usable service. An exact selector that receives the correct bit
+ties the graph rule. The gain over a late or wrongly routed report
+is a real modeled interface change, not a win over that matched
+selector.
+
+\section{Sharp robust service probabilities}
+Now allow random choices but retain the physical interlock. The
+source adversary selects the edge before random draws and may choose
+the worst one for the known policy. It cannot observe the realized
+seed and then choose a failing history. Safety is unconditional
+inside the modeled fallback window. The probabilities below are
+for completing \emph{both} effects, not for a collision occurring.
+
+If the graph has mixed pins, let \(d\) be the length of its shortest
+opposite-pin path. With a common random seed the optimal worst-history
+service probability is \(1-1/d\). On a shortest path every deterministic
+policy breaks at least one equality; averaging over that path gives
+a history with failure probability at least \(1/d\).
+For attainability take graph distances from all zero pins. Choose a
+uniform threshold among \(0,\ldots,d-1\); set a vertex's normalized
+bit to zero iff its distance is at most that threshold. One pins
+are all at distance at least \(d\); disconnected vertices can be
+regarded as at infinite distance. An edge connects adjacent or equal
+distance layers, so it is broken by at most one threshold. If no
+component has mixed pins, the original deterministic policy gives
+probability one. A path of length one has a physically impossible
+edge and probability zero regardless of information or randomness.
+
+With independent private randomization, the value for finite
+\(d\geq2\) is exactly \(1/2\). Along an opposite-pin path, the
+probabilities of outputting normalized one go from zero to one;
+some successive pair \(p,q\) has \(p\leq1/2\leq q\).
+The vertices are owned by different crews, so their disagreement
+probability is \(p(1-q)+(1-p)q\geq1/2\). Independent fair choices at
+unpinned vertices attain the bound: both pinned endpoints of an edge
+agree unless \(d=1\), and any edge incident to a fair unpinned vertex
+succeeds with probability one half. This comparison excludes another
+source of shared random state. Draws at the same crew's different
+unrealized observations may be arbitrarily dependent; the argument
+uses only independence between actual crew choices at each edge.
+
+\paragraph{How much common randomness?}
+For a single \(d\)-edge path, an optimal distribution over deterministic
+table pairs needs at least \(d\) distinct shared outcomes. At the optimum
+each edge must fail with probability \(1/d\), and a realized pair must
+break exactly one edge on that path. With additional independent
+private coins conditional on the shared outcome, exactly
+\(\lceil d/2\rceil\) shared outcomes suffice and are necessary.
+A fixed shared outcome can randomize the broken edge between two
+successive positions by letting the owner of their common vertex flip
+a private coin. It cannot give positive mass to breaks separated by
+at least two edges. In such a case two successive interior vertices
+of opposite owners change value across the two candidate breaks.
+Conditional independence would permit their two tables to be combined
+in the order that puts one before zero along the path. The endpoints
+still require zero then one, so that realization breaks more than one
+edge; it cannot occur at the optimum. Thus a shared outcome covers
+at most two adjacent breaks. Group consecutive pairs (and one
+singleton if needed), choosing a group with probability its size divided
+by \(d\) and a fair private coin for its pair. The sharp common-support
+upper bound here is only for a single simple path. Arbitrary graph
+distance layers can include vertices controlled by both parties.
+No assertion is made about repeated independent failures on a reused
+seed, or entropy under a prescribed fair-bit generator.
+
+\section{Comparison and limits}
+\href{https://cs.uwaterloo.ca/~watrous/Papers/NonlocalGames.pdf}{Cleve,
+H{\o}yer, Toner and Watrous} provide the usual two-party XOR game
+framework. This model is a worst-fixed-history classical specialization
+with action pins and a safety-preserving physical interlock; it makes
+no claim about quantum advantage or priority of XOR formulations.
+\href{https://www.sciencedirect.com/science/article/pii/S0005109815003490}{Yin
+and Lafortune} are pertinent when delayed fault observations refine
+a control interface. The simple exact graph solver here relies on two
+ports and the observation support being supplied. A finite policy
+enumerator and small same-information mixed-policy LP agree with
+the stated bounds. Lean checks the Boolean normalization and two
+arithmetic steps, not the provenance of the source table.
+
+The test exercises a local-handler composition failure together with
+a lawful positive effect in two source proxies. It leaves independent
+mission transfer, arbitrary source-derived graph generation, a matched
+advantage over a full recovery stack and inventory-wide acceptance
+open. An ISS or other hardware trace with only nominal telemetry
+would not by itself establish the admitted joint hidden histories.
+\end{document}
