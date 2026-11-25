@@ -1,0 +1,143 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{When an extra radio margin can replace an obstacle report}
+\date{}
+\begin{document}
+\maketitle
+
+A moving relay must stay linked to both fixed anchors while crossing
+a blocked region. The preceding relay-lens study found the deadline
+for learning which side is blocked when no route can cross blind.
+Here, increasing the range of just one link makes a blind crossing
+possible. It does not make that crossing as fast as knowing the
+obstacle location. The two options give the exact arrival frontier
+for the same service obligations.
+
+\section{Model and result}
+Use the speed-only model of the
+\href{https://github.com/eternal-november/eos-research-programmes/pull/396}{preceding study}.
+The anchors \(P_\pm=(\pm a,0)\) have possibly unequal reach
+\(R_\pm\), so admissible positions lie in the intersection of their
+closed disks. The relay moves from \((0,-b)\) to \((0,b)\) at speed
+at most \(v>0\). Exactly one open forbidden disk of radius \(\rho\)
+is centered at \(C_+=(c,0)\) or \(C_-=(-c,0)\). Assume
+\(0<c<\rho\le b\), \(c\le a\), and
+\[
+  R_\pm\ \ge\ \max\{\sqrt{a^2+b^2},\,a-c+\rho\}.
+\]
+Thus the endpoints and the shorter route in each known world fit.
+The obstacle sides have identical observation histories until a
+truthful report at the given time \(\tau\); a move does not itself
+reveal the side. A policy may finish before \(\tau\). There is no
+acceleration or packet-service model; link reach is a geometric
+constraint. Touching a boundary is allowed.
+
+Put \(h_*=\sqrt{\rho^2-c^2}\) and write \(L(h)\) for the shortest
+known-world route from \((0,-h)\) to \((0,b)\). For \(h\ge h_*\),
+define \(d_s=\sqrt{h^2+c^2}\) and \(d_g=\sqrt{b^2+c^2}\); then
+\[
+ L(h)=\sum_{(d,z)\in\{(d_s,h),(d_g,b)\}_{\rm multiset}}
+ \left[\sqrt{d^2-\rho^2}+
+       \rho\bigl(\arctan(z/c)-\arccos(\rho/d)\bigr)\right].
+\]
+Define the two candidate arrivals
+\[
+ A(\tau)=\tau+\frac{L(\max(h_*,b-v\tau))}{v},\qquad
+ B=\frac{L(b)+4\rho\arctan(c/b)}{v}.
+\]
+A common trajectory without a report exists if and only if
+\[
+                  \max(R_+,R_-)\ \ge\ a+c+\rho.
+\]
+In that case its earliest arrival is \(B\). With a report, the
+exact minimum worst-world arrival is \(A(\tau)\) below that
+range threshold and \(\min\{A(\tau),B\}\) at or above it.
+In particular the second expression optimizes over \emph{all}
+causal policies, not just two proposed controllers.
+
+\section{Blind crossing}
+At \(y=0\) the two excluded intervals overlap because \(c<\rho\).
+A common crossing on the right requires \(x\ge c+\rho\), hence
+\(R_-\ge a+c+\rho\); the left case requires the same of \(R_+\).
+For sufficiency suppose the right crossing is available. Use
+the two endpoint tangents and the right arc of the disk centered
+at \(C_+\). The arc lies in \(x\ge c\): its two tangency angles
+from the positive horizontal ray are \(\pm\beta\), where
+\[
+ \beta=\pi-\arctan(b/c)-\arccos(\rho/\sqrt{b^2+c^2})
+ \quad\text{and}\quad 0<\beta\le\frac{\pi}{2}.
+\]
+The upper bound follows from \(\rho\le b\).
+On this arc the distance to \(P_-\) is at most \(a+c+\rho\);
+the distance to \(P_+\) is at most \(a-c+\rho\). Convexity
+then puts both straight segments inside the link region.
+All three pieces lie in \(x\ge0\), where \(C_-\) is no closer
+than \(C_+\). Thus they avoid both disks.
+
+Any path in the right-disk world that crosses to the right
+has total angular variation about \(C_+\) at least
+\(2(\pi-\arctan(b/c))\): split at the right crossing, and
+bound the variation of each piece by the smaller angular
+separation of its endpoints. This argument also covers
+paths that wind or cross repeatedly. With endpoint radius
+\(d=\sqrt{b^2+c^2}\), minimum encountered radius \(m\ge\rho\),
+and this angular lower bound \(\Delta\), the radial inequality
+in the preceding study bounds the length by
+\[
+  2\bigl(\sqrt{d^2-m^2}-m\arccos(m/d)\bigr)+m\Delta.
+\]
+Its derivative is \(\Delta-2\arccos(m/d)>0\). Take
+\(m=\rho\); the tangent--arc construction attains the bound.
+Reflection gives the same bound for a left crossing in
+the left-disk world. The difference from the immediate
+known-world distance is \(4\rho\arctan(c/b)\).
+
+\section{Why a hybrid policy cannot beat both candidates}
+The central policy advances vertically to depth
+\(\max(h_*,b-v\tau)\) and then takes the short route indicated
+by the report. It gives \(A(\tau)\) whether or not blind
+crossing is feasible. The blind construction, when available,
+gives \(B\).
+
+For the lower bound, if the common prefix has already crossed
+\(y=0\) at report time, choose the world with the disk on the
+side of that crossing. The long-side length bound applies to
+the whole trajectory in that world, giving at least \(B\).
+Otherwise the position at report time lies strictly below
+the axis. If its horizontal coordinate is nonnegative,
+choose the right-disk world. If its subsequent path ever
+visits the right part of \(y=0\), the same long-side bound
+applies. If it first crosses the axis on the left, it must
+have reached \(x=0\) below the axis after the report.
+If the report position already has \(x=0\), use that position.
+At the time \(t'\ge\tau\) of such a centerline visit, the
+depth is at least both \(h_*\) by clearance and \(b-vt'\)
+by the speed limit. The remaining route then takes at
+least \(L(\max(h_*,b-vt'))/v\). Here \(L(h)\) is increasing,
+and \(A(t)\) is nondecreasing by the triangle inequality
+along the common vertical approach. The arrival is thus
+at least \(A(\tau)\). The other sign is symmetric. If the
+lens offers no blind crossing, only this final case can
+occur since neither long-side tip fits. All bounds are
+pathwise; a randomized policy cannot improve a requirement
+that holds for every outcome of its random seed.
+
+\section{Deadline and example}
+For a deadline strictly earlier than \(B\) the report is
+indispensable even if both links have arbitrarily large
+range. For a deadline at least \(B\) the report can be
+omitted once the reach threshold is met. Below the reach
+threshold a deadline is attainable exactly when the report
+arrives early enough that \(A(\tau)\) meets it.
+
+For \(a=3,b=3.5,c=0.5,\rho=1.75,v=1\), radii \(R_+=R_-=5\)
+admit each known-world short route but no blind crossing.
+Increasing either radius alone to \(5.25\) allows a blind
+arrival at \(8.453063\), compared with \(7.459783\) if the
+report arrives at time zero. For a deadline of \(8.25\)
+even this wider lens still needs notice by time \(2.278280\)
+(see replay for numerical values). These are model values,
+not radio, energy, field, or hardware measurements.
+\end{document}
+
