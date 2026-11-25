@@ -110,6 +110,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-INSPECTION-EVENT-ADAPTER: Which parts of the report and egress model survive variable action time?** The source adapter reads directed movement, physical intervals, costs, reports and shared slots from a fixture. It distinguishes actual payload arrival from receipt evidence. A restricted second crew can change an in-flight relay's physical support without sharing its private observations. [Statement](active-evidence/inspection-event-adapter/Mission_Event_Adapter.tex) · [Adapter, Lean and replay](active-evidence/inspection-event-adapter/README.md).
 
+**SC-TIMED-TRANSIT-IMPORT: How do local closures constrain a whole corridor traversal?** A timed launch guard checks each physical segment when the crew reaches it, with exact bounds for declared integer duration uncertainty. Paired histories preserve duration/closure dependence; allowing interior actions breaks this contraction. The authored mission now runs over a pinned generated cave topology. [Statement](active-evidence/timed-transit-import/Timed_Transit_On_Imported_Graphs.tex) · [Lean, source data and replay](active-evidence/timed-transit-import/README.md).
+
 ## Multiple owners
 
 **SC-LANE-WITHDRAWAL: When can a successor start after an owner withdraws?** Port-side authority and physical clearance are different: a prior start can stay live after revocation. A receipt-only rule, a timeout and an independent reserve have different service consequences. [Proof](multi-owner-coordination/lane-withdrawal/Withdrawal_With_Live_Lane_Use.tex) · [Replay](multi-owner-coordination/lane-withdrawal/README.md).
