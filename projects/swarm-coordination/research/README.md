@@ -62,6 +62,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Recurrent coordination
 
+**SC-RECEIPT-AMENDMENT: What must a timing change inherit from earlier handoffs?** Two pasts admit the same old timed trace language and show both scopes ready. Earlier receipt mints survive a mechanical timing amendment, forcing opposite first transfers to meet one shared deadline. Lean checks the exact fixed-law prefix profile; reuse after an amendment requires the relevant source evidence. [Proof and replays](recurrent-coordination/timing-amendment/README.md). Partial R2, not an independent transfer.
+
 **SC-PORT-EXPIRY: When can two custody scopes reach both standalone rates at one port?** At a trusted clocked port, the exact test uses collision-free phase calendars as well as signed receipt expiry. Two source configurations give the same isolated rates, but only one admits those rates jointly. The other has an exact rate region checked by an integer potential. [Proof and replays](recurrent-coordination/port-expiry/README.md). Restricted recurrence model, not decentralized synthesis.
 
 **SC-RECEIPT-EPOCH: When can a recurring handoff reuse a receipt tag?** With an independently observed physical transfer, a locally enforced gate, and alternating authorized signers, an age limit of `L` completed handoffs requires exactly `floor(L/2)+1` tags. Neighboring handoffs can overlap and share a station port without growing the local queue or tracking a global round. A retained genuine copy defeats finite-tag-only admission without the age guarantee. [Proof and checks](recurrent-coordination/receipt-epochs/README.md). This is a restricted moonshot baseline.
