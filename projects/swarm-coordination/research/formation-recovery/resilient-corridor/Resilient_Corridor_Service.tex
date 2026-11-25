@@ -1,0 +1,128 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{From resilient corridor formation to timely report delivery}
+\author{}\date{}
+\begin{document}\maketitle
+Consider ordered moving radios on a line between two fixed, loss-exempt
+anchors. A stopped body remains a fixed physical obstacle (not a radio).
+The two sides know its position, and each side knows its own positions
+and speed limits. All paths must maintain minimum clearance $g>0$.
+A schedule of duration $T$ constrains each endpoint to its reachable
+interval. The distance-only symmetric graph uses range $R$, and the
+terminal guarantee allows up to $k$ additional interior radios to go
+silent without moving their bodies. Physical clearance is continuous;
+communication here is required after motion freezes, not throughout
+approach. A single retained report must go from one anchor to the other.
+
+\paragraph{Terminal connectivity.}
+In the unfailed sequence $x$, test $x_j-x_i\le R$ whenever
+$1\le j-i\le k+1$. If a test fails, deleting the intervening radios
+disconnects the two sides of that span; they are then consecutive,
+and no path can cross the gap. Conversely, consecutive survivors have
+at most $k$ deleted radios between them and their span was tested.
+On each side the physical bounds, speed intervals, and robust span
+constraints are difference bounds. Each local feasible set is closed
+under coordinatewise minimum and maximum. For an upper inequality
+$x_j\le x_i+c$, both endpoint choices are preserved by each lattice
+operation. Since each side is closed and bounded, combining extremizers
+yields its componentwise greatest and least feasible vectors. Choose the
+greatest vector on the left and least on the right. Those choices improve
+every cross-body reach bound, and the known body gives cross clearance.
+The affine path from the current state to the chosen endpoints preserves
+the convex clearance conditions and rate bounds. Feasible terminal
+connectivity is therefore exact when the two locally chosen vectors
+meet the cross tests. A negative result is a statement about this
+synchronized, known-obstacle model, not a recovery rule after another
+physical obstruction appears. The comparison is a direct full-system
+difference-constraint solver under the same information.
+
+This computation does not itself verify the terminal radio edges. In
+a one-bit query-only model there is a sharp example for individual cross
+tests. Use nominal unit spacing, range $q+3\epsilon/2$, $q=k+1$, and
+perturb one nonanchor cross span of index length $q$ by moving its left
+endpoint left by $\epsilon$ and its right right by $\epsilon$. For small
+$\epsilon$ this respects the same known obstacle clearance. The target
+span now fails while all others of length at most $q$ pass. The all-pass
+history is indistinguishable without that particular query. The lower
+bound does not apply to exact position data or analog measurements.
+
+\paragraph{A service deadline is stronger than connectivity.}
+With static frozen failures and unit-hop travel, the farthest surviving
+forward neighbor minimizes hops. For any competing path, the greedy
+position at each hop is at least as far along, by monotonicity of the
+rightmost reachable coordinate. To maximize greedy hop count under
+deletions, store the current index $i$, the former tested frontier $e$
+so $(i,e]$ is already silent, and the remaining deletion budget. Make
+$j>e$ the next greedy neighbor by silencing the suffix above it in the
+new reachable prefix. The adversary may defer all other deletions until
+they are first needed, eliminating hidden state beyond the frontier.
+Killing all reachable fresh neighbors disconnects; the end anchor cannot
+be killed. This gives the recurrence in the replay and matches explicit
+deletion plus breadth-first search. Static unbounded-hop connectivity
+alone cannot certify a report deadline.
+
+For a two-hop deadline, if the anchors are not direct neighbors, the
+intermediate radio must lie in
+$[x_{\mathrm{right}}-R,x_{\mathrm{left}}+R]$. It follows exactly that at
+least $k+1$ interior radios must occupy this interval. They form a
+consecutive block, so enumerate candidate block starts and impose
+simple position bounds on those radios; use the split solver subject
+to those additional bounds. Block choice is a shared decision in this
+construction, not a claim that both sides can choose any adequate block
+in a blackout. This gives a continuous-deadline test, because the motion
+and spacing constraints remain convex in each retained block. Same-cut
+verified anchor ranges on ordered identified radios suffice to count
+the intersection of the left prefix and right suffix. Reports from
+different cuts alone do not: a single relay can move from 4 to 7 between
+observations for anchors 0 and 11 and range 6. It was heard by the left
+anchor and later by the right, but is not a two-hop relay at the right
+anchor's cut. A common phase or a true dwell guarantee is needed.
+
+\paragraph{Strict geometric example.}
+Let the starting vector be $(0,2,4,6,7,8,10,11)$, the body at 3, speed
+limits $(0,0,1,0,1,1,1,0)$, $g=1$, $R=6$, and $k=1$. Robust connectivity
+already holds at time zero. At $T=1$, cut-directed extrema give
+$(0,2,4,6,7,8,9,11)$, still requiring three hops in the worst failure.
+The two-hop interval is $[5,6]$. To place two radios there one must
+move the initially-4 radio to 5, which takes at least one unit; the
+next radio is fixed at 6 and the remaining right radios cannot move
+past it or into its clearance margin. The placement
+$(0,2,5,6,7,8,9,11)$ realizes the exact deadline and retains robust
+two-hop service. Stronger service changes the movement and evidence
+interfaces even with identical range, safety and speed constraints.
+
+\paragraph{Actual custody and failure timing.}
+The static route calculation is not a delivery theorem if loss can
+occur after the first hop. In a separate two-epoch model, the sender can
+actually store at most $a$ durable copies in distinct intermediates of the
+two-hop interval, and up to $k$ can go silent after storage and before
+forwarding. There are at most $c$ collision-free forwarding slots in
+the second epoch, one assigned relay per slot. Anchors survive and there
+is a single report. With no timely identification of failed relays, the
+preassigned eligible relays that actually hold a copy must number at
+least $k+1$. If $n$ radios are in the interval, this is possible exactly
+when $\min(n,a,c)>k$. With timely truthful identification before the
+slot assignment, this instead requires $\min(n,a)>k$ and $c\ge1$.
+Necessity follows by deleting all eligible candidates when there are
+no more than $k$; sufficiency delivers on a slot from a surviving actual
+copy. This counts real custody and scheduling capacity. Neither a
+certificate for the initial graph nor receipt of an instruction creates
+a copy, time slot, or liveness under a later loss. These are supplied
+source primitives, not guarantees about a specific wireless medium.
+
+\paragraph{Comparison.}
+\href{https://publications.ri.cmu.edu/minimum-k-connectivity-maintenance-for-robust-multi-robot-systems}{Luo and Sycara}
+study continuous robust connectivity maintenance.
+\href{https://arxiv.org/abs/2404.03834}{Ishat-E-Rabban et al.}
+study general movement-minimizing connectivity restoration with a QCP
+and an approximation-oriented search. This reference specializes to
+an ordered corridor with a fixed obstacle and distinguishes exact
+terminal recovery from a report service deadline. The full difference
+solver, explicit deletion/BFS and actual slot checks are matched
+comparators; no speed or priority claim against those research methods
+follows. Finite replay covers 106,620 deletion cases, 10,000 rational
+placement comparisons, 715 necessary cross-probe witnesses, 21,570
+hop checks, 2,000 service placement checks, 21,555 anchor-evidence checks,
+and 1,250 custody/slot checks. Five Lean lemmas check supporting
+arithmetic, lattice, and cardinality statements.
+\end{document}
