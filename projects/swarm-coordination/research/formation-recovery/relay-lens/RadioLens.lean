@@ -74,6 +74,22 @@ theorem central_stage_height {y c rho cap : ℝ}
 theorem later_cut_not_faster {r t m n v : ℝ} (h : m ≤ n+v*(t-r)) :
     v*r + m ≤ v*t + n := by linarith
 
+theorem far_half_arc_inside {a R rho c u y : ℝ}
+    (hR : 0 ≤ R) (hr : 0 ≤ rho) (ha : 0 ≤ a) (hc : c ≤ a)
+    (hx : c+u ≤ 0) (hcirc : u^2+y^2 = rho^2)
+    (hFar : a-c+rho ≤ R) :
+    (c+u+a)^2+y^2 ≤ R^2 ∧ (c+u-a)^2+y^2 ≤ R^2 := by
+  have uu : -rho ≤ u := by
+    by_contra h
+    have h' : u < -rho := lt_of_not_ge h
+    nlinarith [sq_nonneg y, mul_pos (by linarith : 0 < -u-rho)
+      (by linarith : 0 < -u+rho)]
+  have h1 := mul_nonpos_of_nonpos_of_nonneg (by linarith : c-a ≤ 0) (by linarith : 0 ≤ u+rho)
+  have h2 := mul_nonneg (sub_nonneg.mpr hFar) (by linarith : 0 ≤ R + (a-c+rho))
+  have far : (c+u-a)^2+y^2 ≤ R^2 := by nlinarith
+  exact ⟨by nlinarith [mul_nonpos_of_nonneg_of_nonpos ha hx],far⟩
+
+#print axioms far_half_arc_inside
 #print axioms right_half_blocked
 #print axioms central_stage_height
 #print axioms later_cut_not_faster
