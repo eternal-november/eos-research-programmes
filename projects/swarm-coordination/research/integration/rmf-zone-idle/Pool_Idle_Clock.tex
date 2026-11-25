@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\title{Which spare does the idle-zone timeout release?}
+\begin{document}
+\maketitle
+
+A waiting robot outside a zone cannot infer when a spare waypoint reservation will be returned from the zone's current booking list, even if it has the complete list. In selected Open-RMF code, a visit can start and finish without changing the reservation timer. If a timer callback sees the visit in progress, however, it resets the timer. This changes the release time of the same spare, even after the booking and reservation records agree again. The return of a spare to the reservation node must also be distinguished from an arrived robot handing its booking back while it is still parked.
+
+\paragraph{Source and scope.}
+All source references are to \href{https://github.com/open-rmf/rmf_ros2/tree/16a3457196c6edf2f08a1ba4f497bf891404cbb7}{Open-RMF, commit \texttt{16a3457}}. In \texttt{zone\_manager/Node.cpp}, a 200 ms wall timer drives pending requests and then sweeps the zone pools. A sweep treats a zone as busy if it sees an unarrived booking or a pending entry request. An arrived booking on its own does not prevent the sweep. The first idle check sets a timestamp; the next sufficiently late idle check invokes the pool release. The default timeout is 30 s. Only the sweep writes the idle timestamp in this source. These are statements about the recorded state at callbacks, not about continuous physical idleness.
+
+\texttt{ZoneReservationClient::release\_zone} skips both transferred and frozen holdings, even when the zone counts as idle. A matching handback with the booking still in the log freezes the slot; a matching exit removes that booking and can reclaim the slot into the pool. In particular, reclamation does not itself publish a release to the ordinary reservation node. The separate \texttt{ZonePostExit} source emits EXIT and is not executed here. Successful departure is an input to the replay; the test does not certify it from a message or model ROS delivery, queue promotion, time synchronization, or motion.
+
+\paragraph{Matched histories.}
+Start with a frozen, arrived occupant and one spare held by the zone. A sweep at time 0 starts the clock. A visitor receives the spare and later exits, returning the spare to the pool. At time 29 the histories agree on the current bookings, ticket holdings, assignable spares, and cumulative release publications. If a sweep at time 12 saw the visitor en route in one history but no busy sweep occurred in the other, the native code releases the spare at 59 and 30, respectively, under the selected later callbacks. Neither releases the frozen slot. When the incumbent subsequently exits, only the following eligible idle sweep returns that other ticket. A fixed 200 ms callback variant gives release at 30.0 s versus 30.4 s under synthetic grant/exit ordering around one callback; those timings are for reservation messages, not a fitted model of a robot's visit. Both variants check the actual published ticket and waypoint where relevant.
+
+\paragraph{Exact reusable timing check.}
+Fix a sole spare known to be held by this zone, an idle state at the first proposed future callback, and a nondecreasing clock. Given timeout \(T>0\), decision time \(t\), an existing stamp \(s\le t\), and callback offset \(u\ge 0\), that callback releases the spare iff
+\[
+ u\ge d,\qquad d=\max(0,T-(t-s)).
+\]
+An absent stamp is a distinct case: the first idle callback starts the clock and does not release. A busy sample clears either case; an eligible idle sweep re-stamps when some holding remains and otherwise moves to the empty case. Matching current holdings and the residual timer therefore suffices for this release check through matching callbacks and booking or holding updates. This is an induction over those transitions, keeping the actual ticket identities, holding states and sampled busy predicates; it is not a projection to a single number for the full reservation protocol.
+
+On the integer time grid, if first callback offsets \(0,\dots,T\) are all queryable, there are exactly \(T+2\) timing classes with those same current holdings and bookings. For two distinct finite residuals the first callback at the smaller one separates them. At any finite residual, a first callback at that offset separates it from an absent stamp. Thus a uniform fixed-width exact summary for this query family needs and suffices with \(\lceil\log_2(T+2)\rceil\) bits for timing alone. This is a bound for the specified query family, not for a receiver on an arbitrary fixed phase or a continuous clock.
+
+\paragraph{What this comparison establishes.}
+Checking the exact sampled timestamp directly gives the same answer. Requiring continuous idleness instead would deliberately change the release rule. It might keep a reserve for the next zone request, but it can also make an ordinary reservation waiter wait longer. Neither policy implies a service gain without a model of both demand streams and the allocation after a release. The replay is a source-calibrated test of when a proof may reuse an old timer state across grant and exit; it does not establish independent mission transfer or fulfil an architecture obligation.
+\end{document}

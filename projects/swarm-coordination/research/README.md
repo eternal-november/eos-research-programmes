@@ -238,6 +238,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-RMF-DEPRECATION: Does finishing a traffic wait prove that the old checkpoint was reached?** In selected Open-RMF code, prior progress can remain in a long-lived watch while a new watch sees only deprecation. Either ends the wait, but neither alone establishes physical clearance. [Source-calibrated replay](integration/rmf-wait-deprecation/README.md). Not a full ROS run.
 
+**SC-RMF-ZONE-SWEEP: Does a free spare tell when the ordinary reservation node can use it?** Two matched zone states yield different release times because one earlier visit was sampled by the idle timer. The same sweep still protects a frozen occupied slot. [Source, proof, and replay](integration/rmf-zone-idle/README.md).
+
 **SC-RETAINING-CLEARANCE: What must the old observer retain before a late resource grant?** Two occupied docks among six and four later authorizations permit an exact three-bit code. A hidden reentry defeats every old record, and a timely reentry report restores service only with four retained bits in this family. [Proof, Lean, and selected native replay](integration/retaining-clearance/README.md). The direct cover ties; not independent transfer.
 
 **SC-SUBT-RELAY-DEBIT: Why can a restored relay still miss the report deadline?** In selected native virtual-testbed code, a failed probe spends sender bytes through the one-second cut; a prior actual copy can use another sender, but not evade the common receive limit. Breadcrumb delivery can leave the tested ROS neighbor map unchanged. [Source and replay](integration/subt-relay-debit/README.md). Not NeBula runtime or full Gazebo.
