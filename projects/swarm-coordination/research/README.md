@@ -82,6 +82,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-OVERLAPPING-RISK-POOLS: Can several pooled diagnostics support an exact risk-capped plan?** A compact robust programme uses the same fixed law across overlapping summaries. Direct vertex enumeration agrees on small cases; stored exact rational certificates verify up to 256 contexts. [Proof and standalone checker](joint-risk/pooled-fault-risk/overlapping-pools/README.md). Scoped calculation, not a risk calibration.
 
+**SC-DIAGNOSTIC-ORDER: Can every pair report agree while the mission-wide risk differs?** Classical moment constraints give an exact worst-case ambiguity at each diagnostic order. Count factoring is exact for symmetric reports but can lose labeled evidence. The scoped cap example keeps the same prior exposure and fixed mission law. [Proof and replay](joint-risk/diagnostic-order/README.md).
+
 ## Recurrent coordination
 
 **SC-RECEIPT-AMENDMENT: What must a timing change inherit from earlier handoffs?** Two pasts admit the same old timed trace language and show both scopes ready. Earlier receipt mints survive a mechanical timing amendment, forcing opposite first transfers to meet one shared deadline. Lean checks the exact fixed-law prefix profile; reuse after an amendment requires the relevant source evidence. [Proof and replays](recurrent-coordination/timing-amendment/README.md). Partial R2, not an independent transfer.

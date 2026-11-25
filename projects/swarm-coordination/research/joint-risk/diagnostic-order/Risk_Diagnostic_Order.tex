@@ -1,0 +1,165 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{How much union risk can low-order joint diagnostics hide?}
+\begin{document}
+\maketitle
+
+\paragraph{Result.}
+Even the exact population law of each pair of exposures need not
+determine the mission-wide probability of any failure. Among
+\(n\ge 3\) possible exposures, the largest gap between fixed laws
+with the same labeled pair reports is
+\[
+  \Delta_{n,2}=
+  \frac{\lfloor (n-1)^2/4\rfloor}{n+\lfloor (n-1)^2/4\rfloor}.
+\]
+This is an exact worst case over compatible report values, not the
+interval for every report. The rule below computes the worst case
+for any diagnostic order \(k\); several edge cases have exact formulas.
+A low-order report that includes a justified support restriction can
+be much more informative.
+
+\paragraph{Model.}
+Before admission, a single unknown fixed law governs a binary
+vector \(X\) of potential failure indicators. Provided a site is
+activated, its exposure yields the corresponding indicator;
+other exposures do not change it in this model. There is no
+resampling after a repair or deadline amendment. The observer
+has no realized outcome when choosing admission. For each named
+subset of at most \(k\) coordinates, the devices report its
+exact marginal law. These are population constraints with no
+sampling error, not a pile of unrelated empirical summaries.
+The outcome is any failure among the activated sites during the
+one mission horizon. The first calculation considers all \(n\)
+sites active. The uncertainty set is all joint laws agreeing with
+the reports and the declared support. For the worst-case gap
+the support may include all binary vectors; a known restriction
+on attainable counts is considered separately.
+
+\paragraph{Reduction and sharp finite formula.}
+When maximizing the gap over two laws with the same reports, apply
+the same permutation averaging to both. This preserves the all-site
+event and equality of the reports, though it may change their common
+named values. Thus exchangeable laws suffice to attain the global
+worst case. With \(Y=\sum_i X_i\), such a law is exactly a law
+of \(Y\), by uniform selection within each count. For a subset of
+size \(j\), its probability that all entries are one is
+\(\mathbb{E}\binom Yj/\binom nj\). All lower-order assignments
+are determined by these moments, using inclusion--exclusion.
+For a \emph{given} symmetric report the permutation average
+preserves the report itself, so the same factored model gives
+exact endpoints. It need not do that for a nonsymmetric report.
+
+Write a signed difference \(\delta\) of the two count laws.
+Its moments of degrees \(0,\ldots,k\) vanish, and each sign
+has mass at most one. Conversely any such difference can be
+realized by adding the same leftover probability to both signs.
+Orientation can be chosen so \(\delta_0\ge 0\), and the goal
+is its maximum. If the optimum is positive, the sign masses
+may be taken to be one. Pick an optimum with minimal support.
+If it uses more than \(k+2\) counts, there is a nonzero
+perturbation on that support preserving the \(k+1\) moment
+equations and the mass on the positive sign. For small movement
+in either direction no signs change. At an optimum the
+perturbation cannot change \(\delta_0\), so move to the first
+coordinate reaching zero. This contradicts minimal support.
+On at most \(k+1\) counts the Vandermonde matrix has trivial
+kernel. A nonzero optimum therefore uses exactly \(k+2\),
+including count zero.
+
+For \(S=\{0=x_0<x_1<\cdots<x_{k+1}\}\), put
+\(\lambda_i=\prod_{j\ne i}(x_i-x_j)^{-1}\). The leading
+coefficient of the Lagrange interpolant of a polynomial of degree
+at most \(k\) shows that this vector annihilates all tested
+moments. It spans the nullspace on \(S\). The sharp gap is
+\[
+ \Delta_{n,k}=\max_{S\subseteq\{0,\ldots,n\},~x_0=0,~|S|=k+2}
+ \frac{2|\lambda_0|}{\sum_i|\lambda_i|}.
+\]
+The attaining probability laws are the two normalized sign
+parts, with count zero in the low-union-risk law. If a declared
+count support contains zero, the same formula restricts
+\(S\) to that support. With at most \(k+1\) possible counts it
+is zero by Vandermonde; if zero is impossible, the all-active
+union risk is already one. In particular a genuine bound of
+\(k\) simultaneous potential failures determines the risk
+from order \(k\), and cannot be replaced by small marginals.
+
+\paragraph{Closed cases.}
+With one reported order, the optimum uses \(0,1,n\), giving
+\(1-1/n\) by the same weight ratio with two nonzero counts.
+For pair reports the four points \(0<a<b<c\) with zero
+adjoined give
+\[
+ \frac{1}{1+ac/((b-a)(c-b))}.
+\]
+For fixed \(b\), choose \(a=1\) and \(c=n\) to maximize
+\((b-a)(c-b)/(ac)\); choose \(b\) nearest the midpoint.
+This yields the stated formula. With every proper order,
+only the full set of counts is possible and binomial
+alternating weights give \(\Delta_{n,n-1}=2^{1-n}\).
+
+With order \(n-2\), omit one count \(j\in\{1,\ldots,n\}\).
+The score is \(2j/\sum_t\binom nt|t-j|\). To maximize it,
+use the denominator's piecewise linear interpolation in \(j\).
+The derivative of the ratio has the sign of
+\(\sum_{t>j}t\binom nt-\sum_{t<j}t\binom nt\) away from
+integer cuts. Since \(t\binom nt=n\binom{n-1}{t-1}\),
+the sign changes at the center of that shifted binomial
+mass. A maximizer is \(j=\lceil n/2\rceil\); for even \(n\)
+there is a flat interval through the next integer. Pairing
+\(t\) and \(n-t\) in the denominator and telescoping
+\((n-2t)\binom nt=n[\binom{n-1}t-\binom{n-1}{t-1}]\)
+gives \(j\binom n{\lfloor n/2\rfloor}\).
+Thus \(\Delta_{n,n-2}=2/\binom n{\lfloor n/2\rfloor}\).
+
+\paragraph{Admission with an old commitment.}
+For \(n=31,k=2\), the attaining count laws put masses
+\((225/256,31/256)\) at \((0,16)\), or masses
+\((31/32,1/32)\) at \((1,31)\). Let the known probability of
+the exposure window being active be \(1/10\); outside it none
+can fail. Within it the fixed law is unknown and the window
+status is not observed before admission. The first two
+exposures are already irrevocable and give the same risk
+\(r_0=3/320\) under either law. Activating the other 29 as a
+single optional bundle would make the all-active risk
+\(31/2560\) or \(1/10\). This latter endpoint is feasible
+and is the largest possible under the known exposure window
+and common report, whether the uncertainty set has only
+these two alternatives or all matching laws on that window.
+
+Keep the original ex-ante mission cap \(1/20\). A coin
+independent of the unknown realized vector admits the optional
+bundle with probability \(q\). Under each fixed law the actual
+risk is \(r_0+q(r_{\mathrm{all}}-r_0)\), not a reset cap and
+not two independent law choices. The exact robust admission
+maximum is \(13/29\); a controller informed of the low-risk
+law could admit every bundle. The high-risk law still needs
+the same cap. This is no guarantee conditional on knowing
+the window is active. The matched planner with all named
+pair reports and the same powers must use the same bound.
+
+\paragraph{Comparators and checks.}
+The binomial-moment formulation uses
+\href{https://doi.org/10.1287/opre.38.2.227}{Pr\'ekopa's
+sharp union bounds} as the statistical baseline. The
+report-uniform polynomial certificates are also related to
+\href{https://arxiv.org/abs/0803.4516}{dual polynomials for OR}.
+The fixed stock of a single original risk cap is in the spirit of
+\href{https://groups.csail.mit.edu/mers/papers/Ono-Williams_AAMAS10.pdf}{Ono and Williams};
+the low-order experiment here isolates the effect of a single
+coupled law, rather than running their trajectory optimizer or the
+\href{https://arxiv.org/abs/1811.00215}{coupled robust MDP}.
+
+The replay enumerates all diagnostic orders for \(n\le13\),
+and checks 333 additional closed-form cases. Each lower witness
+is checked exactly and each upper bound is an independent
+rational polynomial uniform certificate on the count grid.
+A second solver retains all labeled states, with 28 numerical
+matches to the exact factored intervals on symmetric reports.
+A third coordinate known identically zero gives a control: the
+named joint report pins risk at \(3/4\), while aggregating its
+moments alone allows up to \(5/6\). Lean checks the exact
+admission arithmetic. This is an order-of-diagnostic result,
+not a bit bound, evidence of field dependence, or R4 acceptance.
+\end{document}
