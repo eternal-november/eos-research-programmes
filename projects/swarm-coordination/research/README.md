@@ -148,6 +148,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-RETIREMENT-SQUARES: What has to survive an amendment around acceptance?** Changing the default does not discharge a physical hold. Even equal capacities after every individually tested retirement can disagree when authority scopes overlap. The full-scope test gives an exact profile, with a separate strategic obstruction to transporting fees. [Statement](multi-owner-coordination/retirement-squares/What_A_Retirement_Square_Must_Preserve.tex) · [Lean and replay](multi-owner-coordination/retirement-squares/README.md).
 
+**SC-EXPIRING-ENDORSEMENTS: What changes when releases can occur in several nonoverlapping windows?** Two ledgers can agree after every single recognized coalition and leave different capacity when appointments change. A difference invisible to the proper subqueries of a width-`t` query needs at least `2^(t-1)` integer units, exactly. [Proof, Lean and replay](multi-owner-coordination/expiring-endorsements/README.md). Scoped effect-gate result, not R5 acceptance.
+
 ## Cross-group agreements
 
 **SC-ORDERED-ACCESS: Can identical allocations allow different blocking coalitions?** Swapping the order of access rights can change a feasible coalition deviation without changing current jobs or payoff. Earliest feasible completion preserves the stated stability tests. [Proof](cross-group-agreements/ordered-access/Access_Windows_And_Blocking.tex) · [Replay](cross-group-agreements/ordered-access/README.md).
