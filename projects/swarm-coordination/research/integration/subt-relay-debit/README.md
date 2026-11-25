@@ -1,0 +1,5 @@
+# Delivery after relay recovery
+
+[Result and limits](Delivery_After_Relay.tex) · [pre-execution scope](FREEZE.txt). Selected exact C++ from osrf/subt separates physical relay appearance, remaining send and receive capacity, payload receipt and neighbor status. The controlled successful or erased path is a fixture, not full Gazebo or real RF.
+
+Run **sh replay.sh | cmp replay.txt -** using C++17 and Python 3. The Space archive contains all six pinned sources and the Apache license. To obtain inputs independently, fetch the named paths at the exact commit in SOURCE.tsv, placing each at its short src name. The extractor validates every Git blob ID before extracting. No independent mission acceptance.

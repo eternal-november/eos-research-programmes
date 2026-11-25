@@ -220,6 +220,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-RETAINING-CLEARANCE: What must the old observer retain before a late resource grant?** Two occupied docks among six and four later authorizations permit an exact three-bit code. A hidden reentry defeats every old record, and a timely reentry report restores service only with four retained bits in this family. [Proof, Lean, and selected native replay](integration/retaining-clearance/README.md). The direct cover ties; not independent transfer.
 
+**SC-SUBT-RELAY-DEBIT: Why can a restored relay still miss the report deadline?** In selected native virtual-testbed code, a failed probe spends sender bytes through the one-second cut; a prior actual copy can use another sender, but not evade the common receive limit. Breadcrumb delivery can leave the tested ROS neighbor map unchanged. [Source and replay](integration/subt-relay-debit/README.md). Not NeBula runtime or full Gazebo.
+
 **SC-COMPETING-MERGE-CLAIMS: Can another actor invalidate an unchanged approved handoff?** A new claim at a shared exit has a different effect under the native warehouse and rail arbiters. A stopped winner can keep the block after its own service. [Source-level proof and replay](integration/competing-merge-claims/README.md). Matched arbiter ties.
 
 **SC-RAIL-RIVAL-COVERAGE: Does the current rival report identify what matters after a withdrawal?** Executed selected methods can reveal a missing rival on another link or promote a buried blocker on the same link. The bounded model gives exact conditions for removing enough blockers. [Source and replay](integration/rail-rival-coverage/README.md). Not a network-level fixture.
