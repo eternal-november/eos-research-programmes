@@ -1,0 +1,161 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Receipt expiry and throughput at a shared custody port}
+\date{}
+\begin{document}
+\maketitle
+
+Two civil custody scopes share a port that can perform one irreversible
+handoff per tick. A controller can know the maximum rate of each scope in
+isolation and still not know whether the two rates can coexist. In a
+matched example they can coexist when one scope may use either of two
+admissible phases. Restricting that scope's mechanics, without changing
+either isolated rate, makes coexistence impossible. The missing input is
+the spacing of the handoffs within one cycle, not the average rate.
+
+\section{Physical interface}
+This is a slotted model with a trusted station clock, a saturated offered
+workload and a serial custody transfer port. One port use completes a
+physical transfer and is the unique mint event for its receipt. Custody
+and the authorized signer then change. Old copies are authentic, are
+scoped to their own transfer stream, can arrive through \(H\) ticks
+after mint inclusive, and cannot be minted again or age-reset. The
+earliest safe reuse of the same signer and tag is \(W=H+1\) ticks
+after a mint. Assume admissible saturated carrier work is available
+whenever the stated mechanical minimum is reached; arbitrary delay of
+clearance, transfer or observation is not covered. Receipt freshness
+depends only on scope, signer and tag, and a surviving stale copy is
+allowed without affecting the prior local history.
+
+This specializes the recurrence in \#388, in which expiry is measured
+by local advances, physical transfer and separate observations are
+different events, and a shared port may be only a receiving port. Here
+clock, unique mint and one occupied slot per handoff in both streams
+are explicit extra plant assumptions. There is no promise of a
+deadline for each offered job.
+
+\section{Isolated openings and sharp tag reuse}
+A scope has two alternating authenticated signers. Consecutive transfers
+require at least \(d_0,d_1>0\) slots, indexed by the \emph{next} signer.
+Write \(D=d_0+d_1\). For \(M\) tag values per signer, set \(K=2M\).
+The necessary and sufficient reuse constraint for any schedule
+\(t_0<t_1<\cdots\) is
+\[
+       t_g-t_{g-K}\geq W \qquad (g\geq K).
+\]
+For necessity, if this interval is shorter than \(W\), the \(M+1\)
+same-signer mints in it form a clique of possible authentic stale
+conflicts; a pair must reuse a tag. For sufficiency, assign epoch \(g\)
+tag \(\lfloor g/2\rfloor\bmod M\); only the last mint of each pair
+matters because mint and expiry order coincide. The lower bound is
+for the stated receipt-only decoder, not for protocols that can obtain
+other authoritative evidence of the current clearance.
+
+On one stream, the componentwise earliest safe sequence starts at
+zero and chooses the maximum of the minimum physical next time and
+\(t_{g-K}+W\) when defined. Let \(P=\max(MD,W)\). Writing \(g=qK+r\)
+with \(0\leq r<K\), the result is
+\[
+       t_g=qP+\lfloor r/2\rfloor D+(r\bmod 2)d_1.
+\]
+Inside a block the physical successor time equals this expression;
+at the wrap the recurrence picks the larger of the physical block
+minimum and the expiry wait. This also shows that the isolated rate
+is \(K/P\). The smallest unpaced alphabet is \(\lfloor H/D\rfloor+1\).
+A larger elapsed age can lower the rate even if the same clockless
+advance-count certificate appeared adequate.
+
+\section{Exact coexistence of isolated saturation rates}
+For each scope form all \(K\)-point calendars in one cycle of length
+\(P\), with first signer 0 at position zero, strictly increasing
+positions, and every cyclic gap at least the mechanical minimum for
+its successor signer. For two calendars \(S_A,S_B\), a pair of shifted
+periodic streams is collision-free iff the prohibited offsets
+\[
+         \{s_A-s_B\bmod \gcd(P_A,P_B):s_A\in S_A,\ s_B\in S_B\}
+\]
+do not fill all residue classes modulo that greatest common divisor.
+This is the elementary intersection test for two arithmetic
+progressions. Existence of such calendars is necessary and sufficient
+for simultaneously attaining the two isolated rates, \emph{even if the
+shared-port controller may choose arbitrary nonperiodic schedules}.
+
+For necessity, the port model is a finite automaton: retain next
+phase and the ages, capped above their largest consumer's threshold,
+of the last \(K\) port uses of each scope. Invalid actual
+effects are excluded on every transition. Each cycle has both rates
+at most their isolated maxima. Finite paths decompose as cycles and a
+bounded remainder. If no cycle attained both individual maxima, the
+sum of normalized rates would be uniformly less than two on the finite
+set of simple cycles, so no nonperiodic history could attain both.
+In a cycle attaining both, consider a scope's successive \(K\)-event
+lags. Each lag is at least \(P\) by the mechanical and reuse
+constraints. Their average equals \(P\) at the isolated rate, hence
+all are exactly \(P\). This gives the asserted calendar, including
+when only the mechanical bound is active. Sufficiency follows by
+running the schedules with an admissible offset at the same port,
+starting each scope's first cycle only when its signer 0 is due.
+Initial unused receipt slots cannot introduce predecessor obstacles.
+
+With one tag, each scope has two residues separated by
+\(d_1\leq\delta\leq P-d_0\). If the common divisor is two, both scopes
+must choose even \(\delta\), otherwise one uses both residues.
+Take \(B=(d_0,d_1,W,M)=(1,1,6,1)\) and compare
+\(A=(1,1,4,1)\) with \(A'=(1,3,4,1)\). Both pairs have isolated rates
+\(1/2\) and \(1/3\). For the first, use even gaps of two and opposite
+phases; both scopes can transfer at their isolated rates.
+For the second, the changed local preparation law forces an odd gap
+of three and prevents that. Reopening earlier by disregarding the
+mechanical gap or stale-copy support is not a repair.
+
+For the second pair the complete limiting rate region for
+nonnegative rates \(x,y\) is
+\[
+     x\leq \tfrac12,\qquad y\leq\tfrac13,\qquad 3x+2y\leq2 .
+\]
+The certificate gives an integer potential on all 238 reachable
+states. On each of the 498 transitions its increment dominates
+\(3\,1_A+2\,1_B-2\). Summing bounds every finite prefix up to a
+constant, therefore gives the third inequality on limiting rates.
+The first two are the isolated bounds. Two periodically repeated
+schedules achieve \((1/2,1/4)\) and \((4/9,1/3)\), and the other
+vertices are obtained by running either scope alone or idling.
+Convex combinations are approached by concatenating increasingly
+long periods with bounded idle guards; each scope can finish a block
+on its original signer, and after a guard the old receipt ages no
+longer constrain the next block. A sequence of blocks growing slowly
+enough relative to elapsed time gives the claimed limiting rates,
+not merely a subsequence of endpoint averages. The bound has an
+independent integer checker that also replays the schedules using
+uncapped physical times. No solver tolerance is used.
+
+\section{When the mint is late}
+The assessment changes if a receipt can instead be minted after the
+prior nominal opening. The relevant date for first reuse is the
+latest physically possible mint in the received prior-history fibre
+plus \(W\), not the old opening plus \(W\). For example, with \(H=8\),
+one tag and earlier completion in three ticks, evidence that certified
+mint no later than tick two permits reuse at tick eleven; a bound
+of seven from an unresolved earlier phase only supports reuse at
+tick sixteen. A genuinely late prior mint at seven makes sixteen
+necessary if that copy can survive independently. These are event
+bounds, not a statement that an actor receives that evidence in time.
+The exact calendar result above assumes mint at the shared port use;
+it does not feed a late or schedule-dependent mint back into its theorem.
+
+\section{Comparators and status}
+\href{https://www.rfc-editor.org/rfc/rfc9293.html#section-3.4.2}{RFC 9293
+\(\S3.4.2\)} supplies a practical comparison for enforcing a
+maximum duplicate lifetime before sequence reuse. The strictly
+periodic collision part is standard scheduling; compare
+\href{https://drops.dagstuhl.de/storage/16dagstuhl-seminar-proceedings/dsp-vol10071/DagSemProc.10071.13/DagSemProc.10071.13.pdf}{Eisenbrand
+et al.}. The source argument explains when that comparator is exact
+for a controller that initially permits arbitrary port histories.
+Finite model checks compare the calendar criterion with direct
+weighted-cycle search on the same information and plant and tie.
+The point is the sufficiency or insufficiency of a source interface
+that exports only throughput, not a new scheduling algorithm.
+This is a restricted recurrence result, not unbounded decentralized
+controller synthesis nor acceptance of any integration obligation.
+\end{document}
