@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage{amsmath,url}
+\title{A relay can restore the path before it restores on-time delivery}
+\begin{document}
+\maketitle
+\paragraph{Interfaces that come apart.}
+In NeBula, the deployment mechanism observes whether a radio was physically released or jammed. The later ACHORD description separately identifies application acknowledgements, queue state, per-topic bandwidth management, and network performance estimates. These are different evidence channels. Physical release does not establish a usable route, and an available route does not establish that a report was delivered or that another report can still meet its deadline. We use the public Open Robotics SubT Virtual Testbed as a \emph{different} executable source for an exact case. It is not NeBula firmware or the ACHORD implementation. For primary design context see Morrell et al., \textit{An Addendum to NeBula}, Sections 7 and 9.7, DOI 10.1109/TFR.2024.3430891, and Saboia et al., \textit{ACHORD}, Section IV, \url{https://arxiv.org/abs/2206.02245}. The NASA software catalog links to the NeBula-Autonomy public organization; the full deployment and Data Reporter code was not located in that release index and was not executed.
+
+\paragraph{Pinned branch experiment.}
+We compile the exact selected bodies for discovering a newly static breadcrumb, dispatching broker messages, attempting a radio send, and handling a ROS client receipt. The path is an explicitly controlled successful or erased channel returned by a path-loss fixture. The pose stream, transport joining the broker to the ROS callback, request registration and clock are shims. The detected static object is present before dispatch, and flags route use only via the controlled channel stub; no visibility graph, simulator physics, ROS bus, or deployed link is tested. We freeze the random-draw seam at a possible nonzero value and take QPSK limits with zero variance so the good and erased endpoints behave deterministically. No actual RF distribution or packet error estimate is used.
+
+\paragraph{A failed probe can delay the report.}
+The native attempt debits transmitter bytes after the transmission-capacity check but \emph{before} evaluating channel delivery or receiver capacity. A packet erased by the channel consumes transmit capacity; a failed preflight due to that transmitter's capacity does not add another debit. A radio success can still be refused by receiver capacity after consuming transmitter capacity. The cutoff removes timestamps strictly earlier than \(t-1\), so a debit of age exactly one second remains included.
+
+Take six bytes per window, one report of three bytes, and a recovered path at the one-second deadline. If no probe was charged at time zero, the sender delivers. If four bytes were attempted through an erased path at time zero, the recipient saw no delivery in either history but the retry is refused at the deadline. It succeeds at the next tested cut, 1.25. Another sender can deliver at time one if it actually holds the report and has capacity. The positive run first creates that copy through an earlier native packet and application receipt, rather than assuming custody from route discoverability. Receiver saturation still defeats that alternative even when the new sender is free. Conversely, equal visible totals of charged bytes at a cut do not identify future headroom: when four bytes were charged at time 0 rather than at 0.25, the same send at 1.25 succeeds in the first case and is refused in the second.
+
+\paragraph{A receipt can coexist with stale neighbor data.}
+The broker replaces the received-strength field by the lowest double on a breadcrumb route. The tested ROS callback does not refresh the neighbor-strength map on that sentinel, but it still invokes the matching payload callback. All 10,276 delivered final packets in the controlled parameter sweep left the ROS neighbor map unchanged. The ignored update can represent no entry or a prior stale value. This is not a statement about the other client mode or all application semantics. A local service callback is evidence of application delivery in the controlled endpoint where a neighbor label is not; a remote observer needs a separately delivered and correctly scoped receipt for that fact.
+
+\paragraph{Exact rule and scope.}
+With fixed cut \(t\), no unaccounted competing activity, a working channel and receiving application, the single packet of size \(b\) passes the native capacity stage precisely when the two event ledgers leave enough headroom:
+\[
+ S_p(t)+b\le C_p,\qquad R_d(t)+b\le C_p,
+ \quad S_p(t)=\sum_{i:\,t-1\le t_i\le t} b_i^{\rm charged\,TX},\quad
+ R_d(t)=\sum_{j:\,t-1\le t_j\le t} b_j^{\rm admitted\,RX}.
+\]
+Here \(C_p\) is the applicable source radio configuration in bytes per native epoch, used by both checks in this source, not an assumed separately configured receive rate. A relay repair does not reset either ledger. If calendar time or future co-consumers vary, both event lists and their authority horizons must be included; a positive condition at a probe alone does not reserve slots for later. A factored rolling-ledger comparator agreed with the selected exact native branches in 24,192 fixtures and 72,576 attempts. The operating comparison is a tie. A lower layer cannot export a general deadline certificate from a physical repair or a path estimate. This finite study pins the interface for a subsequent independently selected civil mission; it is not such a mission, a validated deployment, an improvement over ACHORD, or I1/I2 closure.
+\end{document}
