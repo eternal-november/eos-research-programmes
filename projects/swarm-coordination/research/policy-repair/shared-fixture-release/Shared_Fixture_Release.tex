@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{When two repairs need the same fixture}
+\date{}
+\begin{document}
+\maketitle
+Assume two new duties must each be mounted on the same central
+fixture, then moved to their own private fixture. The latter transfer
+holds both fixtures until physical completion. This extends the
+two-tree vacancy model by allowing simultaneous pending repair
+requests and a late change in the authority to vacate. Neither a
+completed mount nor permission to transfer clears the central
+fixture. The next repair can begin only after actual transfer.
+In the model a real local arbiter serializes access to the center.
+The leaf capacity and safety interlock are assumed, not derived.
+Uncontrolled losses, preemption and cross-leaf demands are excluded.
+
+\paragraph{Known permissions.}
+Duty $i$ can begin mounting at $r_i$, takes $h_i>0$ ticks to mount,
+may depart no sooner than its effective authorization time $a_i$,
+and takes $c_i>0$ further ticks to physically release the center.
+Each leaf is dedicated and available. With the center free at $t$,
+earliest release is
+\[
+ F_i(t)=\max\{\max(t,r_i)+h_i,a_i\}+c_i
+       =\max\{t,q_i\}+p_i,quad
+ q_i=\max\{r_i,a_i-h_i\},\quad p_i=h_i+c_i .
+\]
+The difference in $q_i$ is truncated at zero on a natural clock.
+For a fixed sequence these monotone release functions compose;
+an existing in-flight mount contributes its actual residual
+release time to the tail, not a fresh job. An independently
+fixed partial order or separate job deadlines are not modeled.
+To minimize final release time, sort by nondecreasing $q_i$.
+For $q_i\le q_j$, starting $i$ before $j$ gives
+$F_j(F_i(t))\le F_i(F_j(t))$. This follows by expanding both
+maxima and then gives the sorting result by adjacent swaps.
+It is the ordinary single-machine makespan problem with release
+dates, with an effective release date derived from the mechanism.
+A fixed deadline suffices for both duties only if their ordering
+achieves the joint bound, not if each independently meets it.
+
+\paragraph{A permission change not known at mount time.}
+For two duties with no mounting release delay, both take $h$ to
+mount and $c$ to move. One gets transfer permission at the
+readout cut $\tau$; the other gets it at $\max(\tau,L)$.
+Before $\tau$ the arbiter cannot distinguish which duty gets
+which permission, cannot move either, and may still mount one.
+The reliable readout and both times are public at the cut. The
+arbiter may wait for it. Last move completion is the service
+criterion, so a mount that sits in the center cannot pass.
+A later update does not move or unmount an already placed duty.
+
+If one duty is mounted before the cut, starting it at zero
+weakly dominates any later precommitment. In the worst world
+it needs the late permission; the other must wait for its full
+physical departure. The worst completion time is
+\[
+ C=\max(h,\tau,L)+h+2c.
+\]
+If the arbiter has not mounted before the cut, start the early
+duty then, using the order rule above:
+\[
+ W=\max(\tau+2h+c,L)+c.
+\]
+No third case can improve on these two. The worst case of
+randomized policies is not smaller for a hard deadline, because
+every supported action would have to meet that deadline in both
+possible worlds. The exact bound is $\min(C,W)$, with waiting
+strictly better precisely when $\tau+h<L$. At $\tau=0$ there is
+no before-readout action; $W\le C$ and the minimum still applies.
+
+For comparison, knowing which permission will arrive first
+allows mounting that duty at zero, without taking its actual
+permission early. Its optimum is
+$\max(\max(h,\tau)+c+h,L)+c$. With $h=3,c=1,L=5,\tau=1$,
+each world is feasible by tick 8 with that information.
+An arbiter that must choose the first mount without it needs 10;
+waiting lets both duties finish by tick 9. Thus two replacement
+proofs that each pick a feasible early mount do not combine into
+a lawful common control. Moving the readout here also changes the earliest usable
+permission. The example does not isolate a pure information delay.
+
+The direct tick-level search with the same information agrees
+with the exact formulas. Lean checks the order exchange and
+the strict waiting threshold. This is a conditional mechanism
+for R2/L2 and a control for larger overlap tests; it is not a
+claim of independent transfer, proof-work savings over a matched
+scheduler, or contract closure.
+\end{document}
