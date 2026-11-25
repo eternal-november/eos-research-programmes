@@ -15,3 +15,5 @@ The script checks all input blobs. It requires Python 3 with NumPy and
 a C++17 compiler. The Space archive includes exact inputs and licenses.
 These are selected native functions, not full Gym or Gazebo. Lean
 checks the two-site choice law. The matched direct policy ties.
+
+The [scope follow-up](scope/README.md) preserves useful old work rather than retiring it when its affected site is known through commitment.
