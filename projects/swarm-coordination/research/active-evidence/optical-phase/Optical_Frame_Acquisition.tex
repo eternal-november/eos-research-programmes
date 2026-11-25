@@ -1,0 +1,106 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\title{Resuming a continuous optical receipt stream}
+\maketitle
+
+\paragraph{Result.}
+An 11-bit optical UART stream can carry an 84-symbol self-synchronizing
+alphabet without a new delimiter or a longer word. This is the largest such
+alphabet within the published start, parity and stop format. The result assumes
+one trusted emitter, a contiguous stream of valid words, and correct bits at a
+known bit cadence, but no known word phase after obscuration. It says when the
+receiver can recognize a complete word. It does not certify the emitter, the
+freshness of the receipt, or a physical handoff.
+
+\paragraph{Source and baseline.}
+Wang, Ng, Henderson and Mahony
+(\href{https://arxiv.org/abs/2208.01710}{IROS 2022}, sections 3.1,
+3.2.4--5 and 4.1) transmit a zero start bit, seven payload bits,
+one even parity bit and two one stop bits. They look for a falling edge near
+the expected next word boundary. Incorrectly positioned edges and parity tests
+are discussed probabilistically; the reported outdoor test transmits a sonnet
+twice, separated by a long high interval. The
+\href{https://github.com/ziweiWWANG/Event-Beacon-Communication/blob/00be0f34eea83d2a3508706a4d0a922c4047062e/decoder.m}{released decoder}
+starts from a long-high candidate. The midstream phase model below may have
+no such interval after the view reopens. The result is not a rerun of their
+physical experiments or a failure of their start-of-message benchmark.
+
+\paragraph{Obstruction.}
+Write \(F(x)\) for the 11-bit word encoding payload \(x\). In a continued
+repetition of \(F(83)=01010011011\), the falling edge at offset eight can
+be treated as the start of \(F(106)=01101010011\) on every repetition. Even a
+strict receiver that checks the start and stop bits as well as parity accepts that second
+parse. If the receiver sees only the indefinitely repeated bits and has no
+word-phase side information, the two parses are observationally identical.
+The same fixed offset is a falling edge each cycle, so waiting for more
+such cycles does not make a falling-edge search slip. The replay finds 96
+directed aliases across 84 of the 128 payloads. These are algebraic counts,
+not frequencies in the authors' data.
+
+A choice that fixes repetitions alone need not fix changes of value. The
+splice of \(F(32)\) and \(F(39)\) at offset seven gives \(F(114)\); those three
+words are from different rotation classes. Choosing the smallest payload in
+every class likewise leaves 416 spurious ordered splices. Choosing the
+largest leaves 376. An alphabet with no internal \(110\) marker is a
+simple sufficient restriction: the marker can then occur only across a
+real boundary (two stop ones and the next start zero). That choice yields
+44 symbols in this format.
+
+\paragraph{Maximum alphabet.}
+For an admissible alphabet \(C\) and \(a,b\) in \(C\), let
+\(W_s(a,b)=a[s:11]\,b[0:s]\) with zero-based offsets. The exact condition
+is \(W_s(a,b)\notin C\) for \(1\leq s\leq 10\). Necessity uses the specified
+receiver, which accepts a window whenever it is a codeword. Sufficiency
+holds for arbitrary sequences because any wrong-phase 11-bit window
+intersects exactly two successive words. This is the classical
+\href{https://doi.org/10.4153/CJM-1958-023-9}{comma-free code} criterion
+applied to the smaller set permitted by this UART format.
+
+In particular two rotations cannot both occur in \(C\) (use \(a=b\)).
+All 11-bit UART words are nonconstant and therefore primitive since 11
+is prime. There are 84 rotation classes meeting the format, as counted by
+choosing the least of the eleven rotations of each of the 128 explicit
+words. The accompanying list picks one per class and forbids every
+wrong-phase splice, verified by the accompanying complete enumeration.
+The bound thus does not depend on trusting the optimization used to find
+the list. It applies within the unchanged UART format and to this
+unconstrained sequence of payloads and the specified receiver. With a
+framed preamble, previously known phase, or a grammar restricting
+successive values, this upper bound is not claimed.
+
+\paragraph{Usable evidence cut.}
+A sliding-window receiver can recognize the first wholly visible word
+in at most 21 observed bits, from any integer bit cut, provided the
+stream continues. A cut at offset zero requires 11 bits; a cut at
+\(s>0\) requires \(22-s\). This is tight for that receiver and that
+output; no claim is made that another receiver cannot infer a restricted
+message earlier. The bound counts sampled bits only. It excludes fault
+detection, readiness of the emitter, delivery of events to the decoder,
+subsequent processing, and any need to repeat a particular receipt.
+A freshly visible stream can still contain an obsolete receipt. A
+consumer must separately bind the decoded symbol to the current issuer,
+duty, generation and effect. The phase decoder supplies none of these
+claims solely by accepting a word.
+
+Every aligned single-bit substitution fails exact alphabet membership,
+because all words have even weight. That protection does not compose
+with an unknown phase: the offset-eight window from words 0 and 1 is
+\(01100000001\); one bit flip makes it \(01100000011=F(96)\), a
+selected word. Bit recovery, occlusion length, association of events
+with one emitter, and corruption or insertion/deletion remain outside the
+guarantee. A preamble or a code with a tested distance from all
+wrong-phase splices is a viable alternative if some errors must be
+tolerated. Neither this calculation nor a nominal baud rate establishes
+the timely end-to-end observation required by the relay test.
+
+\paragraph{Verification and project use.}
+A textual receiver was checked against a packed-integer window scan
+from all 77,616 cuts in all pairs of selected words. The replay checks
+all 70,560 wrong-phase splices, all 924 aligned single flips, the
+class count and the cited counterexamples. Lean checks the three
+explicit arithmetic witnesses and the observation count, not the full
+codebook search. This provides an R1 read-cut condition for one optical
+framing design, not the independently selected non-radio replacement of
+an authoritative receipt.
+\end{document}
