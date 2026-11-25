@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{Retaining healthy carrier loads during MRWS recovery}
+\date{}
+\begin{document}
+\maketitle
+In the
+\href{https://github.com/automaticdai/MRWS_MultiRobot_Warehouse_Scheduling/tree/941338e9ea4c4eaebb87f8374f80fd576497ad01}{pinned MRWS simulator},
+a battery fault on an assigned carrier restarts the order from the
+inventory already received by the station. For a multi-carrier order
+the native rule sends the surviving carriers home to clear their
+unreceived loads. This preserves the required dependency order by doing
+some usable pickup work again. The test asks when that work can be
+retained without treating a manifest or a release request as a
+completed transfer.
+
+\paragraph{Fixture and exact class-count bound.}
+The old station has physically accepted a prefix of an ordered
+class list, with distinct classes in the worked example. Each
+still-usable carrier holds an intact, disjoint consecutive block
+of the remaining ordered list, with no overlap with the station
+prefix. Its only permitted delivery is that block to the original
+station. A new grant is issued only for the exact order after old
+delivery powers are disabled; faulted carriers cannot deliver
+again during this fixture. The dispatcher receives an authentic
+and timely observation of carrier availability and held classes.
+Missing classes can be newly picked before their turn. Pick
+availability, motion, timing, and interlock implementation are
+not supplied by the class-count model.
+
+For $m$ missing classes at this cut and known usable block sizes
+$w_1,\ldots,w_n$, the exact worst number of new picks if at most
+$k$ further carriers are lost before any retained delivery is
+$m$ plus the sum of the largest $\min(k,n)$ sizes. The lower bound
+chooses that loss set: work on those carriers can no longer
+supply its required classes. The upper bound uses permission to
+re-pick and then delivers newly picked classes and surviving
+blocks in order. This is a bound on class work conditional on
+sufficient picking, routing and station capacity. It is not a
+deadline bound or a statement about probabilities. Loss noticed
+after a launch that cannot be withdrawn is a different problem.
+Overlapping grants, repeated classes without assigned counts,
+and noncontiguous partial blocks are not covered.
+
+\paragraph{Executed source calibration.}
+The fixture runs the original multi-robot reassignment and
+residual-order callbacks, as well as native home, inventory,
+station and completion methods with narrow driver stubs. No
+network is used. The first critical battery fault leaves a
+two-class block unavailable. An earlier class is already held by
+the station; two other carriers have two and one outstanding
+classes. The native discard path sends both to their homes and
+reacquires five classes. The alternative delivers the actual
+retained blocks, with only two new pickups. Injecting a second
+critical battery loss before either surviving block reaches the
+station requires three or four new pickups, depending on the
+carrier lost; the discard path still needs five. In every arm,
+the station receives the same necessary classes in the same
+required order, clears its inventory, and produces exactly one
+native order-completion event. The fixture's delivery times and
+dispatches are inputs to this callback check, not measurements
+from a whole scheduler or movement simulation.
+
+The controller is granted local access to the authoritative
+carrier inventory for this replay. The native visualizer feed
+is not such a grant: its ordered stream can be absent, and
+the emitted classes are not unique physical identities. A useful
+operational adapter would need a correctly scoped count of
+received stock, still-live carrier loads and revoked old powers,
+plus a bounded channel and a source for actual station
+settlement. It must not get those from a proof-side private
+plant snapshot by default.
+
+\paragraph{What the comparison establishes.}
+The original source establishes a real reclaimable cost of
+discarding healthy work in this fixture. A direct planner that
+already freezes disjoint loads and schedules the same residual
+class list ties this strategy. The result is a bounded
+calibration for I1, not a comparison against the strongest
+published recovery assembly, an independent transfer, or a
+compound-fault service guarantee under a movement deadline.
+\end{document}
