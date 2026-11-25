@@ -1,0 +1,5 @@
+# Which histories can generate a blocked shelf?
+
+[Statement, proof and scope](Generating_Blockage.tex) · [initial freeze](FREEZE.txt) · [scoped repair freeze](REPAIR_FREEZE.txt). The replay extends the pinned MRWS site with matched stop opportunities and notices. The failure to get an empty carrier on three formerly successful runs is recorded separately from physical shelf blockage.
+
+Use Python 3 with the original runtime dependencies and the 20 upstream paths at commit **941338e9ea4c4eaebb87f8374f80fd576497ad01** of [MRWS](https://github.com/automaticdai/MRWS_MultiRobot_Warehouse_Scheduling). See [the baseline source pin](../mrws-blocked-source/README.md). Reconstruct the listed files under **simu/** and verify them with **(cd simu; sha256sum -c ../baseline/source.sha256)**. The package in Space includes our wrappers, checked results, and the hashes, not the upstream checkout. Run **PYTHONHASHSEED=0 PYTHONPATH=simu python3 -B pilot.py**; compare stdout to replay.txt and the emitted profiles.json to raw.sha256. The native results are authored development cases, not an independent mission or a validated probability model.
