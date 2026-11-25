@@ -1,0 +1,102 @@
+\documentclass[11pt]{article}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\title{Continuing after a motion guard rejects a move}
+\date{}
+\begin{document}
+\maketitle
+
+A motion guard can prevent a collision without telling the scheduler
+how to finish outstanding work. In the previous MRWS audit, the guard
+stopped the simulation on a request to enter an occupied cell. We
+compared that behavior with two ways of continuing at the same guard.
+Retrying the old path removed the terminal abort but still stalled
+most runs. Invalidating that path allowed more orders to finish,
+without improving every run or guaranteeing recovery.
+
+\section{Matched development campaign}
+Use the same public MRWS source, layout, non-genetic native
+\texttt{simple-interrupt} scheduler and operating scope as the
+\href{https://github.com/eternal-november/eos-research-programmes/pull/401}
+{source audit}: the \(7\times11\) four-robot layout, capacity three,
+and horizons of 240 ticks. The development protocol reused the
+16 development seeds; it did not select an unseen case.
+Actuator and sensor faults were enabled at \(1/64\) and \(1/128\)
+per applicable draw; battery faults were off. Offered orders have
+a separate deterministic generator. A fixed table supplies four
+opportunity draws per tick and actor; the native fault routine
+still decides whether a draw can realize a new fault. Actual
+faults can differ when histories change. Merely reusing a global
+seed would not match the exogenous inputs because branches use
+random numbers differently. The replay checks the same opportunity
+table in each group, the same four offered orders with their
+contents, priority and release times in the two continuing arms,
+and the corresponding prefix in the terminal arm.
+
+At the native move operation, keep the occupied-cell check and
+its ordering before the position update. Compare three dispositions
+when it fails:
+\begin{description}
+\item[Native stop.] Run the original guard, which ends the run before
+  applying the rejected move.
+\item[Wait.] End only the current action and keep the cached path
+  ready for an ordinary later retry.
+\item[Replan.] End the current action and discard the blocked actor's
+  cached path. On its next applicable turn normal native planning
+  can try a new path.
+\end{description}
+Do not change location, carried inventory, order authority or
+service credit on refusal. The harness checks the first two
+unchanged local state fields around each refusal and calls the
+original operation for allowed moves. A refusal inside a nested
+native move still applies to that actual moving robot's cached
+path. Earlier lawful effects in the tick are not undone.
+Both continuing arms act on the same local physical rejection and
+use the ordinary native planner on its existing information.
+No globally hidden fault variable or future motion is passed to
+either as a new input. These are comparisons inside the simulator's
+own routing information, not claims about data available to a
+decentralized robot in a real warehouse.
+
+\section{Results}
+\begin{center}
+\begin{tabular}{lrrrl}
+\toprule
+Policy & Orders completed & Runs completed & Rejections & Other endings\\
+\midrule
+Native stop & 2 & 0 & 16 & 16 guard stops\\
+Wait & 34 & 1 & 1610 & 15 at time limit\\
+Replan & 49 & 5 & 62 & 11 at time limit\\
+\bottomrule
+\end{tabular}
+\end{center}
+The two continuing arms had no native occupied-cell aborts,
+and all attained tick-boundary configurations checked had
+distinct positions. Replanning finished more orders than
+waiting on nine paired runs, the same on five, and fewer
+on two. This is a finite comparison for the pinned plant and
+control logic, not a distributional claim or proof of dominance.
+Orders count actual native station completion, not acknowledged
+intent. Rejections are events, not distinct safety incidents.
+Waiting can retry the same blocked move on many ticks.
+A stopped run is not coded as a useful safe completion and no
+timed-out run was dropped from the comparison.
+
+\section{What the comparison settles}
+Refusal should leave the plant and its existing work intact
+rather than make the rejected effect appear applied. That
+change is necessary to compare progress past the original
+guard. Dropping the cached path then materially helped in this
+development campaign, but even ordinary replanning did not
+recover all orders and sometimes did worse than waiting.
+Neither public knowledge that a move was rejected nor retention
+of carried load establishes a route or a deadline guarantee.
+A later transfer must expose the exact earlier duty that remains
+live and the independently observed event that settles it.
+
+This is the direct guarded-replanning baseline for this source,
+not an improvement over it, an independent transfer, or an
+architecture acceptance claim. The model tests counted inventory,
+not unique-item custody or field safety.
+\end{document}
+
