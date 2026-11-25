@@ -108,6 +108,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-COUPLED-RELAY-PROBE: Can an exit measurement consume capacity needed by an undelivered report?** With both reports already stored, a shorter route probe can identify the exit but disable the one relay still needed for delivery. A separately powered probe restores actual service. Learning that the far path is blocked can choose a different probe; the same-information direct route and matching planner ties. [Statement and proof](active-evidence/coupled-relay-probe/Coupled_Probe_And_Relay_Service.tex) · [Lean and replay](active-evidence/coupled-relay-probe/README.md).
 
+**SC-INSPECTION-EVENT-ADAPTER: Which parts of the report and egress model survive variable action time?** The source adapter reads directed movement, physical intervals, costs, reports and shared slots from a fixture. It distinguishes actual payload arrival from receipt evidence. A restricted second crew can change an in-flight relay's physical support without sharing its private observations. [Statement](active-evidence/inspection-event-adapter/Mission_Event_Adapter.tex) · [Adapter, Lean and replay](active-evidence/inspection-event-adapter/README.md).
+
 ## Multiple owners
 
 **SC-LANE-WITHDRAWAL: When can a successor start after an owner withdraws?** Port-side authority and physical clearance are different: a prior start can stay live after revocation. A receipt-only rule, a timeout and an independent reserve have different service consequences. [Proof](multi-owner-coordination/lane-withdrawal/Withdrawal_With_Live_Lane_Use.tex) · [Replay](multi-owner-coordination/lane-withdrawal/README.md).
