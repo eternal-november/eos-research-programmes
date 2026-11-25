@@ -1,0 +1,25 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{When does cancelling a navigation goal release a physical obligation?}
+\begin{document}
+\maketitle
+
+A navigation action can publish its terminal result before the controller publishes zero velocity. A separate behavior-tree path can return to idle without a terminal result at all. Neither event establishes that the old robot has stopped, and stopping does not establish that it has left a place the next robot needs. Three independently checked cuts prevent those propositions from being substituted for one another.
+
+\paragraph{Selected source.}
+At \href{https://github.com/ros-navigation/navigation2/tree/346bd05f40b62ae60b96ba86e02eb491c8dba444}{Navigation2 commit \texttt{346bd05}}, \texttt{BtActionNode::halt} attempts to resolve a pending goal handle using the remaining goal-response timeout. If it cannot obtain the handle within that budget, it discards the local future. With a known running goal in ACCEPTED or EXECUTING status it requests the result and cancellation, waits separately for each, logs failures, calls the local cancellation hook, and resets its behavior-tree status. The hook and reset do not require either wait to succeed. An already CANCELING goal does not enter that branch. The upstream tests include the case in which a goal response arrives after the remaining budget, and the replay uses controlled delivery times to test that boundary. This does not imply any particular remote status for a timed-out client.
+
+In the controller's selected success branch, \texttt{terminate\_all()} precedes \texttt{onGoalExit(true)}. The former terminates goal handles and sends the terminal result via the action seam. The latter publishes a zero velocity command, then resets the controllers. When the controller plugin does not yet report cancellation finished, this selected branch does not emit these events. Compiling the method bodies with recording seams reproduces the exact successful invocation order: result, zero publication, reset. This proves call order, not transport delivery order, measured braking delay, or motion execution. In particular it does not say that a new goal submitted to the same serial server can execute before the old worker finishes its exit.
+
+\paragraph{A handoff with separately witnessed effects.}
+Consider an external coordinator that may release a stop-dependent obligation of that old goal and launch one new operation. The external operation is independent of the old worker's execution thread. Scope it to a named actuator and goal epoch and assume no residual old command can be applied after the certified stop. Require both the logical terminal result and physical cessation; occupancy or egress changes would require their own evidence. Let \(r\) be the coordinator's receipt time, \(z\) the actuator's acceptance time of the zero command, \(b>0\) the time from that acceptance until actual cessation in the declared model, and \(s\ge0\) the lag before the true stop is observed. A one-tick new operation can finish by \(D\) with these inputs exactly when
+\[
+  \max(r,z+b+s)+1\le D.
+\]
+Both observations are necessary under this admission rule, and immediate launch after the second attains the bound. The old effect is still live if a receiver launches on the result alone at \(r<z+b\). A separate acknowledgement that the zero was accepted at \(z\) is still not cessation. If only a prior uniform bound \(z+b\le B\) is available and the full admitted envelope permits time \(B\) for the same logical receipt, the exact robust cutoff without a stop report is \(\max(r,B)+1\le D\). Neither method licenses delaying unrelated work not using this scope.
+
+For example, the same result at tick 1 can coexist with physical stop at tick 2 or 10. With a one-tick stop-report lag and deadline 5, the first history admits the new operation and the second cannot. A fresh reading may still be stale for reuse if earlier actuation authority has not been fenced: zero measured now cannot rule out a delayed old nonzero command applied later. That example violates the no-reapplication hypothesis, rather than disproving the cutoff. In the absence of a sound bound or a scope-correct stop report plus the needed fence, the external coordinator cannot infer the claimed release.
+
+\paragraph{Checks and boundary.}
+The package replays 18,468 behavior-tree timeout combinations plus the explicit CANCELING and controller sequence controls. A separate finite physical model checks 34,020 tuples of transport, braking, observation, and deadline parameters. It includes cases where local stop evidence admits timely work that a valid worst-case wait excludes. A direct search with the same evidence and constraints agrees; the difference is the evidence, not the scheduler. The model sweep is not an empirical frequency or a performance claim about Navigation2. It makes no guarantee for a live robot or for cross-layer recovery without new validation. No complete architecture or obligation is accepted by this source audit.
+\end{document}
