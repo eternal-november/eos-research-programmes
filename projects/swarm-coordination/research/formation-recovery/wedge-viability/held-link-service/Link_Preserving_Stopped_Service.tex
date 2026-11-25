@@ -1,0 +1,39 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Stop in range of the right terminal before an old link is lost}
+\begin{document}
+\maketitle
+
+A mobile relay can brake, preserve an existing link, and be ready to send at either named terminal. It cannot use one held braking command for both assignments. A target update after the braking command has started is too late even when the correct target is physically reachable with timely information. A tighter range on the existing link can instead make one assignment physically impossible. More information cannot repair that case.
+
+\paragraph{Plant and authority.}
+Start with the symmetric tight state of \href{https://github.com/eternal-november/eos-research-programmes/pull/443}{the held wedge study}, derived from \href{https://arxiv.org/abs/2210.01354}{Breeden and Panagou's barrier-function example}. The state is
+\[
+ (x,y,v_x,v_y)=(-(1+\gamma)/2,0,1,1),
+ \qquad \gamma\ge1,
+\]
+with double-integrator dynamics, independent acceleration bounds \([-1,1]\), and the two throughout constraints \(x\pm\gamma y\le0\). Commands are chosen at time zero and \(h\ge1\). The first is held; the second is held until time \(2h\) or until a local actuator event verifies that both speeds are zero and cancels it. That event does not permit changing either command otherwise. Once stopped, the relay holds its actual state. Cancelling a software action or issuing a zero-velocity command is not assumed to implement this event.
+
+The old link must remain within a Euclidean range disk throughout. At actual rest, the relay must make contact with the currently authorized terminal, transmit during a prescribed stationary dwell \(\delta\ge0\), and meet completion deadline \(D\). The terminal is selected at a legitimate authority change; a physically reachable but unauthorized terminal does not count. The deadline model assumes a successful exchange once in range with the correct terminal and matching authority, not a wireless propagation guarantee. There are no disturbances, latch latency or link losses in this branch other than the changed terminal assignment. Take the service line as \(x\le x_0-R\), \(R>0\), and require rest there before or at the second ordinary cut. These are separate service and throughout constraints, neither temporarily relaxed.
+
+\paragraph{Exact interval.}
+The tight plus face forces both first accelerations to \(-1\): at time one any weaker combined acceleration would cross that face. Let \(s=h-1\). Both speeds at the second command cut are \(-s\). If they hit zero together during a constant second command with elapsed time \(t>0\), the second accelerations must both be \(c=s/t\). Thus the whole motion is on \((x_0+y,y)\). The first arc peaks at \(y=1/2\); after that it moves monotonically to the final
+\[
+ y_*=(1-U)/2,\qquad U=s^2(1+1/c).
+\]
+For \(s=0\) the specified command interface cannot satisfy positive retreat and ending at rest. For \(s>0\) set \(T=\min(h,D-\delta-h)\). If \(T\le0\) there is no positive service. Otherwise the acceleration box, actual stop by both relevant cuts, and service distance require
+\[
+  2s^2\le U\le s^2+sT,\qquad U\ge1+2R.
+\]
+An actual stop at the first zero is earlier than the second sample when \(c>s/h\); merely holding the brake after zero changes the stop conclusion.
+
+Intersect the old range disk with the motion line, giving interval \([\ell,u]\). Let \([a,b]\) be the corresponding intersection for the authorized terminal. An empty intersection is infeasible. For a disk of squared radius \(\rho^2\) centered at \((p,q)\), its projection onto this line has center \((p-x_0+q)/2\) and half-width \(\sqrt{(\rho^2-(p-x_0-q)^2/2)/2}\) when the radicand is nonnegative. Because service requires a negative terminal \(y_*\), the extrema of the path are exactly \(y_*\) and \(1/2\). Old connectivity therefore needs \(u\ge1/2\) and \(U\le1-2\ell\); new contact needs \(1-2b\le U\le1-2a\). The minus wedge face requires \((\gamma-1)U\le2\gamma\). The plus face already meets its maximum. The intersection of these intervals decides joint feasibility, and any member of it gives a lawful held brake, including an actual stopping time and stationary dwell. The replay exercises rational disks centered on the line and checks the geometry directly using squared distances.
+
+\paragraph{Failure and information controls.}
+For \(\gamma=h=2\), \(R=1/2\), \(D=5\), and \(\delta=1\), take the continuing link interval \([-1,1/2]\). The two permitted terminal outcomes have intervals \([-7/10,-1/2]\) and \([-1,-4/5]\). The feasible \(U\) intervals are \([2,12/5]\) and \([13/5,3]\), respectively. Choosing \(c=1\) for the first and \(c=1/2\) for the second supplies concrete feasible actions. The second ordinary hold without the early stop event fixes \(c=1/2\) and can serve only the far terminal. If the terminal identity is known before the second command, the controller with the stop event can safely serve either case. If it is still unknown at that cut, the feasible intervals are disjoint and no common command works. Knowing the identity after the command cannot add an authorized update. Random choice cannot give the all-histories service guarantee.
+
+With all evidence timely, reducing \(D\) to \(9/2\) makes the far terminal impossible because it requires \(U\ge13/5\) but the actual stop and dwell allow at most \(5/2\). Alternatively tighten the lower endpoint of the old link to \(-7/10\) with the original deadline. Keeping that link and serving the near terminal still works; reaching the far terminal without the tightened old-link requirement still works; keeping the old link and serving the far terminal together does not.
+
+\paragraph{Comparison and scope.}
+An independent direct check evaluates both physical segments at their endpoints and interior extrema, enumerating all critical cells of the one-dimensional brake decision. It agrees in 12,000 parameter cases. Lean checks equal simultaneous stopping accelerations and the two strict numerical exclusions. The comparison with the fixed interface is about availability of an actual actuation transition; the same-information direct solver ties. Recent \href{https://en.endo-lab.jp/publication/detail/12147}{distributed crash-recovery MPC} is a separate actual leader-follower mechanism with nearby information. This result neither reproduces that controller nor derives its clearance or sensing assumptions from our disks. It gives one analytic formation and service boundary, not independent platform evidence or full R6 acceptance.
+\end{document}
