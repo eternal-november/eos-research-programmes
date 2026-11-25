@@ -36,7 +36,7 @@ These are conditional results for finite models. They neither validate a physica
 
 From either study directory, run `python3 -B pilot.py --json | cmp results.json` to replay the saved checks. These are finite model results, not v0.5 cascade acceptance.
 
-**SC-MODE-WINDOW-CERTIFICATE: When can a few histories refute every timed recovery option?** If each of the fixed recovery modes has one admissible start interval per history, two endpoint witnesses per mode suffice and are sometimes necessary. The same witness persists across replacement when its decisive endpoints tighten and its histories remain admitted. [Proof](policy-repair/mode-window-certificates/Mode_Window_Certificates.tex) · [Lean, exact checks and index replay](policy-repair/mode-window-certificates/README.md).
+**SC-MODE-WINDOW-CERTIFICATE: When can a few histories refute every timed recovery option?** If each of the fixed recovery modes has one admissible start interval per history, two endpoint witnesses per mode suffice and are sometimes necessary. The same witness persists across replacement when its decisive endpoints tighten and its histories remain admitted. For several event times governed by difference bounds, each rejected mode has a short negative-cycle witness and an arc-by-arc proof reuse rule. [Proof](policy-repair/mode-window-certificates/Mode_Window_Certificates.tex) · [Lean, exact checks and index replay](policy-repair/mode-window-certificates/README.md).
 
 ## Joint risk
 
