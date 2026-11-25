@@ -1,0 +1,117 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{An optical rendezvous with two outstanding reports}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Plant and local histories.}
+Use a five-node indoor inspection model: base \(0\), hub \(1\),
+two corridor nodes \(2,3\), and refuge \(4\). The links are
+\(01,12,13,24,34\). Exactly one last link, \(24\) or \(34\), is
+blocked. The four unblocked possible edges are available for one-tick
+moves, but opposite traversals of one edge on the same tick cannot
+both take effect. Both crews can occupy a node. An earlier
+communication failure has left no radio channel. The two crews
+begin with distinct existing duties, not merely locations to visit.
+Crew A at \(4\) holds a report, may travel at most two edges, and
+must end back at \(4\). Crew B at \(1\) must deliver its own report
+to base by tick one, later take and deliver A's report, and end
+at base by the final deadline. An actual report handoff takes a
+full tick stationary at a common node, with compatible give and take
+actions. Co-location does not by itself deliver a report.
+
+An actor observes its own node, its local incident links, its own
+custody and received values, and a co-located peer. In particular
+A knows the blocked link at its refuge; B does not know it at the hub.
+A and B may choose an optical mode at nodes \(4\) and \(1\),
+respectively. One simultaneous tick of beacon and listening
+produces a source-coded branch observation at B. The actuator and
+receiver actions use their tick without travelling. This is a stipulated
+one-way optical pathway, not inferred from the movement links.
+The possible-erasure version includes both worlds where this observation
+can fail on every attempt. No surprise resource or other channel is
+made available. The plant is a finite development surrogate; the
+optical geometry, clocks, custody sensing, and actual contact duration
+would require separate source validation.
+
+\paragraph{Exact deadline.}
+B must move from hub to base during the first tick, so the earliest
+return to the hub is tick two. With the branch already known, it can
+reach the open corridor node at tick three, transfer through tick four,
+and return to base by tick six. A can reach that node and return to
+refuge with its two travel units. No shorter delivery is possible:
+B must pass through the hub, reach a meeting node, pay the dwell,
+and return to base. A cannot travel as far as the hub and still return
+within budget.
+
+With no source-coded signal, departure through either candidate branch
+at tick two is chosen from B's identical views. The adverse branch
+takes B to the wrong corridor node at tick three. B cannot meet A there.
+Its shortest continuation goes back through hub at tick four, to the
+other node at tick five, then transfers and returns to base by tick
+eight. Waiting at the hub instead cannot expose the blockage, and
+A cannot reach that hub and return. Taking the first branch and
+revising on the observed closed link attains the same bound.
+
+With reliable optics, B can listen at the hub during the tick beginning
+at two. The new observation is available at tick three. This enables
+choice of the correct branch and completion at tick seven. To finish
+by six B would have to leave the hub at tick two already knowing which
+branch is open. It cannot have listened during the first tick because
+its old report is due at one, and cannot listen at base. Thus seven is
+tight. The construction can encode the bit by a pre-agreed pulse or
+certified silence; silence loses that meaning when an emitted pulse
+can be erased. If erasure is allowed in both worlds, the all-erased
+histories give the eight-tick lower bound. Ignoring the optical
+mechanism attains eight in all histories.
+
+\paragraph{Comparison.}
+The direct exact search assigns one action per actor per local-history
+class before applying it to the source worlds. Partition refinement
+only adds the observations actually received and never forgets a prior
+distinction. A separate rollout executes the extracted tables using
+only each actor's local observation history and prior moves.
+The written deadline proof and the exact search agree across 30
+deadline checks, and successful optical and erased-channel policies
+replay. The matched planner is an exact solution of this finite model;
+there is no claim that the optical policy beats it.
+The result is a test of a limited source substitution, with an actual
+old duty that prevents using the direct channel one tick earlier.
+It is not a held-out test, broad transfer, new historical result, or
+acceptance of R1, R3a, or I2.
+
+\paragraph{Frozen receiving controller under a physical supplier change.}
+The pulse requires a sending action at the reading cut itself.
+A second source instead permits A to set a mechanical flag at the
+refuge. A's earlier work prohibits issuing this command before tick
+\(u\). Issuance occupies one tick, and the flag is physically
+available only \(\ell\geq 1\) ticks after issuance. The flag remains
+latched until B reads it at the hub. In the model a latch damaged
+before the reading produces no bit, even if its command was executed.
+The source implementations differ in when the decisive action must
+be taken and in which physical event constitutes the usable output.
+
+We froze B's original local-history policy (11 entries) from the
+reliable optical case, before running the mechanical source.
+On the branch originally represented by silence, A leaves the flag
+unset. On the other branch the unchanged policy observes the necessary
+bit at the listening cut, tick two, if and only if the flag remains
+healthy and \(u+\ell\leq 2\). The earliest permitted issue realizes
+that condition, and every schedule starting later is also too late
+if that earliest one fails. A's retained report still has to be
+physically transferred after the cue; producing it is not delivering
+the report. Source replay checks the actual later transfer and
+both safe terminal positions, not just report equality. In the
+example, issuing at tick zero can accommodate a two-tick lag.
+The same flag after one more tick of prior work misses the cut.
+
+The 84 scope-preservation comparisons use the byte-identical
+receiver table, whose digest is pinned in the checker. Successful
+adaptation requires no receiver rewrite. The timing inequality is
+also the equally factored direct comparison; no advantage in proof
+work is measured or claimed. This was an authored source selection
+after freezing a finite policy, not an independently selected
+held-out replacement. The latch issuing discipline, physical
+contact, and accepted readout meanings are model premises.
+\end{document}
