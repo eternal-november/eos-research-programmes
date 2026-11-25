@@ -144,6 +144,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Formation recovery
 
+**SC-RELAY-LENS: When does an obstacle turn two radio links into a barrier?** A stopped robot can make a relay crossing impossible even with both endpoints feasible. With two mirrored obstacle locations each known world remains feasible, but only a timely sign lets a causal controller guarantee the deadline. The optimum uses a common vertical prefix and a known-world detour. [Exact geometry, proof and replay](formation-recovery/relay-lens/README.md). Scoped R6 result, not a field assurance or independent mission case.
+
 **SC-CORRIDOR-CRASH: Can a single-file radio chain reconnect after a dead robot blocks the lane?** For fixed order, known positions and speed-bounded motion, an exact interval scan decides safe recovery by a deadline. Clearance holds through the motion; initial loss of radio connectivity is allowed. Integer propagation and the real affine motion lemmas check in Lean; a continuous LP corroborates the deadline calculation. [Statement and proof](formation-recovery/corridor-crash/Corridor_Formation_Recovery.tex) · [Replay and scope](formation-recovery/corridor-crash/README.md).
 
 **SC-CORRIDOR-CONTACT: Can the two sides reconnect without positions crossing the radio break?** With a known single-file obstacle and local side plans, independently choosing the closest safe endpoints is exact. With a hidden stopped position, a pair of otherwise feasible worlds defeats every shared left action; reliable contact or timeout restores feasibility at a tight deadline. [Statement and proof](formation-recovery/split-corridor/Split_Formation_Recovery.tex) · [Replay and scope](formation-recovery/split-corridor/README.md).
