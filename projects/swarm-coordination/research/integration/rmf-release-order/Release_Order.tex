@@ -1,0 +1,22 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\title{The order of two releases can decide an entire reservation queue}
+\begin{document}
+\maketitle
+
+Two destination reservations come free. With identical queues and the same two releases, Open-RMF's reservation node can authorize one new move or an arbitrarily long chain of moves, depending on which release it processes first. The difference comes from waiting locations: a request left in the queue continues to hold its waiting location, which is the next robot's destination.
+
+\paragraph{Which orders and effects are checked.}
+The replay compiles the request, claim and release code and its queue and allocation classes at \href{https://github.com/open-rmf/rmf_ros2/blob/16a3457196c6edf2f08a1ba4f497bf891404cbb7/rmf_reservation_node/src/main.cpp}{Open-RMF commit \texttt{16a3457}}. Messages, the recording publisher, and callback ordering are controlled. The companion \texttt{rmf-zone-idle} study verifies that a sweep publishes separate release requests. This replay tests two lawful delivered orders from already held and cleared destinations; it does not claim that one particular live ROS topic, container or platform produces both orders. The two source portions use the same upstream pin, but they are not run together over ROS.
+
+\paragraph{Construction.}
+Initially \(A\) and \(B\) are held by different retiring requests. An earlier flexible request \(F\) can proceed to either \(A\) or \(B\). A later request \(C\) needs \(A\) and waits at \(P_0\). The \(i\)-th follower, for \(1\le i\le n\), needs \(P_{i-1}\) and waits at \(P_i\). The flexible request has a separate waiting location that nobody requests. Both destination release orders are authorized independently of the incoming requests. There are no further retirement events in the interval being compared.
+
+On each release, the source selects the first ticket on the freed location's queue, removes it from all destination queues, releases its current waiting reservation, assigns an available destination, and continues at the just-released waiting location. With \(A\) first, \(F\) gets \(A\) while \(B\) is still occupied. Releasing \(B\) afterward cannot promote \(C\), which wants only \(A\). Nothing releases \(P_0\), so the followers remain waiting. With \(B\) first, \(F\) gets \(B\). Releasing \(A\) promotes \(C\) and releases \(P_0\); induction on the wait locations then promotes every follower. The exact totals are \(1\) and \(n+2\). If \(C\) was placed ahead of \(F\) in the queue for \(A\), both orders yield \(n+2\). Preference between \(A\) and \(B\) cannot matter here: only one is free when \(F\) is selected. The replay checks all these cases for \(0\le n\le128\).
+
+A single release, from the original state, promotes exactly one request in either case when \(F\) is first. Counting those isolated results does not recover the two-release result. The ordinary maximal-matching intuition does not bound the loss: it counts only assignments to \(A\) and \(B\), whereas promotions here create additional options. The ratio of published destination grants under an unfavorable order to the best order is exactly \(1/(n+2)\), with no positive uniform lower bound for this family. An ordinary allocator that accounts for both ready releases can choose \(F\mapsto B\), \(C\mapsto A\), then the chain. That matches the better order; this is not a new matching algorithm.
+
+\paragraph{Physical interpretation.}
+An authorization to proceed does not prove that the preceding robot has left the wait location. With an independent guard that permits each move only after the destination is physically clear, and unit travel times in a separate idealized schedule, \(F\) and \(C\) can finish at time 1 after the two retirements and follower \(i\) at time \(i+1\). This upper bound assumes no other contention, compatible paths, and observed departures. Safety without those conditions, actuator timing, ROS queue delivery, and field service are outside the result. Waiting locations still physically occupied are live obligations of the guard even if the reservation node has transferred their tickets.
+\end{document}
