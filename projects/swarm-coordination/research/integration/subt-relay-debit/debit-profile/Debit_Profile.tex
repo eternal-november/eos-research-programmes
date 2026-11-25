@@ -1,0 +1,31 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{What a rolling allowance must remember after a handoff}
+A replacement can inherit the same total debit and still lose the next send. The budget at a device is not renewed by changing its controller or payload owner. For a fixed continuation there is an exact smaller question: how much old debit can still be live at each possible send time? That summary does not suffice when a later observation selects which device will send.
+
+\paragraph{Fixed-schedule theorem.}
+Fix a single device, integer capacity $B$, integer ticks and window $[t-W,t]$, with $W\geq 1$. Prior admitted traces are feasible and form a nonempty set $H$. The replacement cut is tick zero, before any new debit. The only old debits that can still matter occurred at $-W,\dots,-1$. All future debits are specified by a schedule $a$ that does not depend on the old trace. No unaccounted work charges the device after the cut. Other gates, such as delivery, reception and permission to attempt, are separate. Put
+\[
+p_H(t)=\max_{h\in H}\sum_{s=t-W}^{-1}h_s \quad (0\le t<W),
+\qquad p_H(t)=0 \quad(t\ge W).
+\]
+The maximum exists since integer feasible sums lie between $0$ and $B$. Exactly the continuations satisfying
+\[
+p_H(t)+\sum_{s=\max(0,t-W)}^t a_s\le B\quad\text{for every }t\ge0
+\]
+fit in every prior trace. At each tick the new charge is fixed and can be added after taking the maximum of old charges. The quantifiers over ticks and histories commute. The worst histories at different ticks need not be the same: one violation suffices to defeat a universally safe schedule. This reasoning does not replace a controller reading the actual device when its policy can branch on that reading.
+
+For future use admitting an arbitrary one-shot request of $1,\dots,B$ bytes at any tick, the profile is exact up to equality. If profiles differ at $t$, use $B-\min(p_H(t),p_K(t))$ at $t$ and zero elsewhere. The lower profile permits it throughout, while the higher rejects it then. At later ticks the smaller old load cannot grow and the single charge expires. Thus equality is necessary and sufficient for preserving all blind admissions, and $p_K\le p_H$ pointwise is necessary and sufficient for preserving every previously safe blind schedule after the replacement. A single fixed schedule may survive an increase. Restricting future probes can permit a smaller summary.
+
+\paragraph{Minimum number of summaries.}
+Profiles are nonincreasing integer vectors of length $W$, taking values in $[0,B]$. Each vector is realized by a singleton trace: take successive differences, extending the vector by zero. Thus there are exactly $\binom{B+W}{W}$ observational classes of admitted histories (including possible sets of traces), and any fixed-width lossless representation for this query interface needs $\lceil\log_2\binom{B+W}{W}\rceil$ bits. Ranking the vectors attains the bound; that is a memory bound, not a running-time claim. It does not require keeping failed payloads, but their successful charging makes their ages material. A history with a real receive-side or physical effect needs separate representation.
+
+\paragraph{A change the summary cannot carry.}
+Two transmitters have capacity five; at tick one a three-byte reply may use either. Old three-byte charges at tick minus one are still live for $W=2$. In one source law exactly one device is debited; in another both or neither are debited. Give each branch equal probability or interpret both branches as possible. Both devices separately have the same complete marginal profile, and no blind sender works in either law. A fresh observation of whether A was charged enables a policy sending on the other device if so and on A otherwise for the first law. No selection can serve the both-charged branch of the second. The observation is stipulated for this probe, not a property proved for the broker. The receiver needs the joint relation or a proved conditional promise. A proof for blind schedules is not invalidated by this example; the permitted consumer changed.
+
+\paragraph{Replay and controls.}
+The isolated C++ replay uses the pinned SubT broker and radio bodies in \texttt{SOURCE.tsv}, through the exact previously verified fixture, with distinct valid receiver endpoints for the two suffix probes. Paths for old attempts fail; the broker records their transmitter debit, not a delivery. After recovery the path is held available to isolate transmitter accounting. It matches 362,691 two-request suffixes, including exactly one second and the next quarter tick. No hardware timing or mission transfer is inferred. Python recomputes actual dated windows and matches 273,430 robust queries over pairs of histories; it checks 899 class-separating probes. Lean verifies the pointwise maximum and separating inequality, not the C++ correspondence or stars-and-bars count.
+
+The fixed problem is a window traffic regulator with a nonempty initial state. Compare \href{https://arxiv.org/abs/1801.08477}{Le Boudec's minimal traffic regulators}; a matched shaper given the same history gets the same verdict. The result specifies what a receiver can safely inherit, not a better scheduling algorithm or new I1 operating envelope. A warehouse-style capacity held for a known fixed residence time has the same arithmetic; variable residence or possible future re-entry requires proof of a different occupancy profile. No independent selection or evidence of that transfer is claimed.
+\end{document}
