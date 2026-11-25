@@ -1,0 +1,102 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{Exact phase recovery under substitutions for an optical codebook}
+\begin{document}
+\maketitle
+
+\paragraph{Result.}
+For the 84-word, 11-bit alphabet in the
+\href{../Optical_Frame_Acquisition.tex}{parent study}, the exact
+worst-case number of consecutive samples needed to identify word
+phase with at most \(e\) substitutions is \(17+11e\), for every
+integer \(e\geq 0\). This uses the entire observation, not just
+the newest candidate frame. It assumes a single contiguous stream
+of arbitrary words from this exact codebook, accurate bit cadence,
+unknown initial word phase, and no bit insertions, deletions or
+mid-observation timing changes. It retains the sender format and
+word count. It does not give the receiver an epoch, a fresh receipt,
+or a bound in physical time.
+
+\paragraph{Why the bound is exact.}
+Make each proper prefix of an admissible codeword a state,
+including the empty prefix. An admissible bit extends it; the
+last bit of a frame returns to the empty prefix. The depth is the
+number of bits already consumed in a frame. Every initial state
+is possible, and each retained state can continue. In the product
+of two copies, start from all pairs of different depths, keeping
+just one orientation at time zero. Each step costs one if the two
+bits differ, zero otherwise. Let \(D_n\) be the vector of minimum
+costs to reach each state pair after \(n\) bits, with infinity for
+an unreachable pair. The least finite entry \(d_n\) is the minimum
+Hamming distance between any two length-\(n\) clean trajectories
+of different initial phases. The constant difference of depths
+modulo 11 keeps those phases distinct.
+
+Two such trajectories can explain the same observation with at
+most \(e\) substitutions each exactly when their distance is at
+most \(2e\). Necessity is the triangle inequality. Sufficiency
+follows by splitting their differing positions between the two
+explanations, choosing at each differing position one of the two
+bits. Therefore phase is determined at \(n\) precisely when
+\(d_n>2e\). The minimum cannot decrease with length because
+each longer pair has an admissible prefix pair with the same
+phase difference.
+
+The finite replay checks \(D_{27}=D_{16}+2\) coordinate by
+coordinate, including equality of the reachable support under
+the convention \(\infty+2=\infty\). It checks 349 trie states,
+48,896 initially possible pairs and 48,896 finite coordinates
+in the two equal-support vectors. The next-step map takes
+minima of incoming costs plus the cost of that edge. It
+commutes with adding the same constant to all finite entries
+and keeping infinity. Applying that map repeatedly proves
+\(D_{n+11}=D_n+2\) for every \(n\geq16\). The checked minima
+are \(d_{16}=0\) and \(d_{17}=1\), so
+\[
+  d_{16+11e}=2e,\qquad d_{17+11e}=2e+1.
+\]
+This proves both necessity and sufficiency for every budget,
+without extrapolating a list of finite-budget outputs. A separate
+fixed-phase checker splits the received run at the proposed
+boundaries and takes minimum distances to matching partial or full
+codewords. It verifies a 27-bit one-substitution witness with
+exactly phases 2 and 5, counted as bits already consumed.
+That checker is also a constructive decoder at the threshold.
+
+\paragraph{Identity of a full word.}
+At one substitution, 28 samples identify phase. To identify the
+actual content of some wholly observed frame takes 32 samples in
+the worst case. At 32, even the latest next boundary leaves two
+complete frames. At least one is clean, and the other cannot
+masquerade as a different codeword after one substitution because
+distinct codewords have even weight and thus distance at least
+two. At 31, a cut after only the first bit of a frame gives a
+10-bit suffix, one complete frame, and a 10-bit prefix. Two
+admissible words at distance two have a one-flip midpoint;
+placing it in that complete frame makes the only full word
+ambiguous even when the phase is supplied. The replay checks
+the concrete binary witness.
+
+At two or more substitutions, there is no finite uniform bound
+for identifying the content of any particular complete position
+in an arbitrary stream. Let the observation be a repetition
+of one of the distance-two words. For every chosen complete
+position, a clean trajectory with the alternative word just
+at that position fits the same observation. It uses only two
+substitutions. Although a sufficiently long observation
+contains some clean frames, the receiver need not be able to
+identify one as correct. Repeated emission of the same needed
+receipt by contract, or a code with greater separation, is a
+different problem and can change this result.
+
+\paragraph{Use in the project.}
+This is exact for the declared bit model and unchanged alphabet.
+It strengthens the reference from a sliding-word check to
+a whole-observation distance decoder; that direct decoder
+agrees with the phase criterion. It supplies a bound on
+samples, not on camera delivery, physical clearance,
+message authentication, or freshness. A physical transfer
+must independently test whether the source really meets the
+error and timing model and whether a decoded payload can
+justify the receiver's action.
+\end{document}
