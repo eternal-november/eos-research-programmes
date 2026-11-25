@@ -222,6 +222,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-SUBT-RELAY-DEBIT: Why can a restored relay still miss the report deadline?** In selected native virtual-testbed code, a failed probe spends sender bytes through the one-second cut; a prior actual copy can use another sender, but not evade the common receive limit. Breadcrumb delivery can leave the tested ROS neighbor map unchanged. [Source and replay](integration/subt-relay-debit/README.md). Not NeBula runtime or full Gazebo.
 
+**SC-SHARED-TWO-CUT: Can one recovery decision handle both a blocked berth and a spent send window?** One policy is synthesized then executed in the selected native warehouse and relay plants. An early miss leaves a real burden; on-time service depends on a prepared alternate. An indistinguishable extra case with no alternate makes both first choices fail. [Proof, Lean, and replay](integration/shared-two-cut-recovery/README.md). The exact direct policy enumerator ties; authored development cases.
+
 **SC-COMPETING-MERGE-CLAIMS: Can another actor invalidate an unchanged approved handoff?** A new claim at a shared exit has a different effect under the native warehouse and rail arbiters. A stopped winner can keep the block after its own service. [Source-level proof and replay](integration/competing-merge-claims/README.md). Matched arbiter ties.
 
 **SC-RAIL-RIVAL-COVERAGE: Does the current rival report identify what matters after a withdrawal?** Executed selected methods can reveal a missing rival on another link or promote a buried blocker on the same link. The bounded model gives exact conditions for removing enough blockers. [Source and replay](integration/rail-rival-coverage/README.md). Not a network-level fixture.
