@@ -1,0 +1,83 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\title{What the native MRWS fault runs can establish}
+\date{}
+\begin{document}
+\maketitle
+
+The MultiRobot Warehouse Scheduling simulator can witness a simulated
+robot leaving a cell and a station receiving inventory. It cannot
+establish custody of a unique physical item. Its fault campaign also
+includes runs in which a robot tries to move into an occupied cell
+and the simulator stops before applying the move. Omitting those
+runs would turn a failed safety-and-service comparison into a biased
+recovery test.
+
+\paragraph{Source and run boundary.}
+We ran \href{https://github.com/automaticdai/MRWS_MultiRobot_Warehouse_Scheduling/tree/941338e9ea4c4eaebb87f8374f80fd576497ad01}
+{the pinned MRWS source} on its \(7\times11\) layout, with the native
+\texttt{simple-interrupt} scheduler, four robots from the layout,
+capacity three, ten inventory classes, native order generation and
+the fault-aware flag on. The development-only protocol chose seeds
+0--15, a horizon of 240 ticks, and actuator/sensor fault probabilities
+\(1/64\) and \(1/128\) per applicable draw. Battery faults were off.
+These are test inputs, not estimates of field failure frequencies.
+The Python hash seed was fixed. Genetic mode was not run: a local
+import substitute raises if that optional scheduler is invoked.
+No simulator source file was edited. An in-process recorder replaced
+the dashboard sender without network I/O. The move wrapper records a
+native guard's inputs and then calls it unchanged. A second complete
+run reproduced the captured JSONL byte for byte.
+
+\paragraph{Results and what the logs mean.}
+All 16 nominal instances completed, with 64 order completion
+events. With the two enabled fault modes, one of 16 instances
+completed, one reached the tick limit, and 14 stopped at the
+native occupied-cell guard. All 14 rejected moves were attempted
+by robots marked sensor-faulted. The guard precedes the location
+update: the collision-labelled exception is a rejected simulated
+move, not a recorded state with two robots in one cell. Attained
+end-of-tick configurations had distinct positions. Across the
+fault runs, 63 native fault events occurred with nonempty carrier
+counts; the harness counts 92 later-fault/loaded-predecessor pairs
+before the earlier carrier count emptied. Those are pairs, not
+92 separate missions or 92 verified overlapping recovery duties.
+Loaded status is reconstructed from native gain, lost and clear
+events, not from task reassignment.
+
+The native source adds a shelf's existing item class on each
+pickup; it does not deplete individual stock. A station receives
+the robot's inventory and the scheduler matches counts of names,
+the assigned station and the assigned robot. Each recorded
+order completion had a station gain in the same simulated tick.
+Acknowledging a reassignment is not an order completion;
+an actual source receipt is available for the counted service.
+Conversely, no observation here says which unique item was delivered,
+nor does the dashboard's complete view represent a robot's
+knowledge during a communication break.
+
+The runs were paired by seed only, not by a pre-generated common
+trajectory of every exogenous decision. Conditional fault draws
+and control actions can change later random consumption. Thus
+the counts are campaign outcomes, not a matched causal estimate
+of a controller improvement or fault effect size. The meaningful
+same-run result is the native precondition rejection and the
+distinction between fault, reschedule, move, carried inventory
+and receipt. No new controller was tested.
+
+\paragraph{Decision for a transfer.}
+Use this source if the held-out obligation concerns occupied space,
+class-count service, or an actual order receipt, not exclusive
+custody of a unique item. Retain stops and timeouts as maximal
+outcomes, and freeze allowed observations before selecting an
+unseen compound case. Counting terminal guard rejection as safe,
+productive recovery would be invalid. A recovery comparison needs
+a real source for timely obstruction evidence and a lawful action
+that handles rejection without discarding live work. Either pin a
+shared exogenous workload and fault trace before running alternative
+policies or limit the claims to observations on individual native
+runs. These development cases do not consume a holdout or establish
+I1 or I2 acceptance.
+\end{document}
+
