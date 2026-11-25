@@ -106,6 +106,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 **SC-PROBE-COMPLEMENTARITY: When are two private probes worth buying together?** Each probe can fail to pay its own cost while both enable timely joint service. Earlier commitments restrict probe and bypass availability; a separate conservative reservation has an explicit opportunity cost. [Proof](active-evidence/probe-complementarity/Probe_Complementarity.tex) · [Replay](active-evidence/probe-complementarity/README.md).
 
+**SC-COUPLED-RELAY-PROBE: Can an exit measurement consume capacity needed by an undelivered report?** With both reports already stored, a shorter route probe can identify the exit but disable the one relay still needed for delivery. A separately powered probe restores actual service. Learning that the far path is blocked can choose a different probe; the same-information direct route and matching planner ties. [Statement and proof](active-evidence/coupled-relay-probe/Coupled_Probe_And_Relay_Service.tex) · [Lean and replay](active-evidence/coupled-relay-probe/README.md).
+
 ## Multiple owners
 
 **SC-LANE-WITHDRAWAL: When can a successor start after an owner withdraws?** Port-side authority and physical clearance are different: a prior start can stay live after revocation. A receipt-only rule, a timeout and an independent reserve have different service consequences. [Proof](multi-owner-coordination/lane-withdrawal/Withdrawal_With_Live_Lane_Use.tex) · [Replay](multi-owner-coordination/lane-withdrawal/README.md).
