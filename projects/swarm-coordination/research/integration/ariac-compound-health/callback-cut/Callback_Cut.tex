@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage{hyperref}
+\title{A health callback received during a switch is not yet consumed}
+\begin{document}
+\maketitle
+The pinned ARIAC switcher can receive a second fault report while
+waiting on an earlier activation request, retain the report's values,
+and lose the bit that tells its main loop to act. This happens even
+if the fault injector correctly publishes occurrence-scoped health
+and the old switch completes exactly as requested. Repairing the
+fault injector alone cannot repair the consumer.
+
+\paragraph{Executed cut.}
+The native code starts both groups at tick 1. The service stub supplies
+a floor-only disable callback at tick 2 during the wait, and returns the
+old switch's success at tick 4. The callback sets the pending bit; the
+old switch handler clears it at the end of its iteration. After the
+wait, a nominal spin that does not deliver a second health message
+leaves the floor enabled in the mock plant. If an identical health
+message arrives at tick 9, the unmodified switcher finally requests
+the floor disable then. In the control where that report is first
+delivered after completion, the disable is requested at receipt.
+In another control the report clears inside the old wait, before the
+next decision, so a new disable is no longer warranted by current health.
+
+The selected call orders are exercised against the exact Python
+switcher blob with subscription and service stubs. They do not
+establish that a live executor chose these orders or that these
+ticks are physical times. In the checked ROS Humble implementation,
+\texttt{spin\_until\_future\_complete} executes ready callbacks while
+waiting. Its source permits the illustrated cut, but does not imply
+all reports arrive before the future. ARIAC's nominal 10 Hz simulation
+publication setting cannot by itself guarantee another delivered
+callback by a service deadline.
+
+\paragraph{Scope of the adjustment.}
+With one thread, consume the pending bit just before taking the local
+snapshot that will drive the request, and do not block on a new spin
+when a newer report is already pending. That partitions received
+callbacks into those covered by the old snapshot and those still
+pending; late completion of the old request cannot acknowledge the
+new ones. If there were multiple possible concurrent writers this
+would require atomic snapshot-and-consume or a checked sequence
+comparison. In the matched diagnostic, the adjusted switcher
+requests the floor disable at tick 4 in both persistent cases and
+sends no stale disable when the input cleared during the wait. The
+localized adjustment agrees with a direct latest-report reference
+in 341 replayed callback words of length at most four as well as
+the four named examples. Under successful exact group switches and
+this snapshots-only control law, the same argument applies to
+any finite during-wait sequence: the last snapshot at the cut
+fully specifies the requested next group state. The replay does
+not make the trigger path faster than the old wait.
+
+A failed old service still leaves the unmodified group state
+optimistically set in the adjusted variant. A repeated healthy report
+then still does not retry that request. Independent evidence of
+the actual controller state remains necessary in that case.
+And when protection must take effect before the old wait finishes,
+the reported latest value is not a substitute for an effect-side
+hold. Those failures call for an authority or execution change,
+not a mailbox adjustment. This is an I1 source calibration,
+not a comparison win against a correctly versioned executive or
+evidence of completed physical recovery.
+\end{document}

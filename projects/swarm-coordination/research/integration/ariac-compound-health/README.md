@@ -17,3 +17,6 @@ blob hashes before running their code.
 Requires Python 3 and a C++17 compiler. The three Lean lemmas check the
 active-occurrence rule, not the source behavior. The independent direct
 interval-union specification agrees with the occurrence implementation.
+
+A [follow-up](callback-cut/README.md) checks what happens when a new health
+report arrives while the switcher is still waiting on an older request.
