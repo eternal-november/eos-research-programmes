@@ -154,6 +154,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Formation recovery
 
+**SC-JOINT-CORRIDOR-COVERAGE: Can the same formation recover sensing and radio service?** Ordered robots with speed limits can meet both terminal requirements after the same later losses exactly when one of a finite set of difference-constraint systems is feasible. A matched case can meet either requirement separately, not both. When the protected point is hidden, an exact reveal-time cutoff separates physical feasibility from the ability to choose the right motion. [Proof and replay](formation-recovery/corridor-joint-coverage/README.md). Restricted R6, not a field test.
+
 **SC-RELAY-LENS: When does an obstacle turn two radio links into a barrier?** A stopped robot can make a relay crossing impossible even with both endpoints feasible. With two mirrored obstacle locations each known world remains feasible, but only a timely sign lets a causal controller guarantee the deadline. The optimum uses a common vertical prefix and a known-world detour. [Exact geometry, proof and replay](formation-recovery/relay-lens/README.md). Scoped R6 result, not a field assurance or independent mission case.
 
 With both short routes feasible, more range on just one anchor can replace the obstacle-side report, but only for deadlines that allow the longer detour. The [asymmetric-range test](formation-recovery/asymmetric-relay-margin/README.md) gives the exact trade-off over all causal trajectories in the same speed-only model.
