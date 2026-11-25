@@ -1,0 +1,74 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,url}
+\title{Retasking a Sender Can Spend Another Duty's Allowance}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Result.}
+A reserve robot can obtain the right report and deliver it sooner while
+losing its own separate required transmission. Sending to different receivers
+does not prevent this: the same sender's allowance is used twice. In the
+40-frame calibration the early reassignment delivers all 40 reports and
+none of the separate replies. Waiting for the primary sender delivers both
+sets. A second route condition flips the decision: the primary cannot
+deliver before deadline, but the reserve's later reply is far enough
+away that early reassignment now delivers both.
+
+\paragraph{Source and operating envelope.}
+This offline replay reuses the selected osrf/subt radio, broker and delivery
+bodies at \texttt{083c6a8acb0c25aa1a35e34517e628cd3b52ae77}, as pinned
+in \texttt{SOURCE.tsv}. Deterministic path and endpoint fixtures replace
+the world, not the byte-accounting branches. A transmitter has a rolling
+one-second guard. An accepted transmission debits it before propagation and
+before a possible receiving-side refusal. A debit stays live at age exactly
+one. The monotonically stamped quarter-second fixture carries native
+state across repeated rounds. Its 3.75-second spacing lets each charge
+from a preceding frame expire before the next use of that ledger. An
+unrelated still-live charge on the opposite direction does not block
+the next copy. A frame boundary does not reset any allowance.
+
+In a frame, primary $P$ sends the report copy to reserve $Q$ at $-1.5$
+and $Q$'s local application sees the data before the decision. Separately,
+an old failed transmission at $-0.25$ has charged $P$. The controller can
+use $Q$ immediately to send the report to Base or wait for $P$ to send at
+$1.0$. No earlier Base transmission is authorized in this fixture.
+The $Q$ reply to $P$ is mandatory at an independently specified slot,
+and cannot be moved or serviced by another actor. Application callbacks
+count deliveries at the named destination, not sender status. Frame
+identity is local in this exact fixture; equal-size packets do not
+establish identity after arbitrary rerouting or replay.
+
+\paragraph{Exact boundary.}
+Let $a$ be report size, $b$ reply size, and $C$ the byte capacity:
+each packet alone fits. If the reply arrives $\delta$ seconds after
+the early reserve send, the reply remains feasible exactly when
+$\delta>1$ or $a+b\le C$, in the absence of other charged traffic.
+For the late-primary choice, $P$'s old debit is strictly older than one
+when it sends; the report then needs a good primary path at $1.0$.
+$Q$ retains its allowance for the reply. There is no Base-side
+interference in these fixtures because the reply is to $P$. In other
+topologies both send and receive credit must be checked.
+
+A concrete pair has $C=5$, $a=3$, $b=4$, old debit $4$. In one history
+the reply is due at $0.5$ and the late primary path works. The
+early choice irreversibly spends the reply's capacity. In the other
+the reply is due at $1.25$ and the late primary path fails, so only
+early reassignment meets both obligations. Assume that before deciding
+the reserve has the same copy and local past in both histories and has
+not learned which future branch holds. Its admissible initial choice
+then cannot guarantee both obligations. Trying both senders does not
+repair the first history once the early transmission has spent the
+allowance. A truthful, timely distinction would suffice in this
+restricted two-action envelope; no claim is made that such a signal
+is available from stock radio state, a deadline report, or a mesh heartbeat.
+
+\paragraph{Comparison.}
+An explicit uncapped event list with the same inclusive window,
+both endpoints' accounting, and the same paths matches the selected
+native bodies. The suite checks 110,784 grid frames plus the named
+40-frame calibration for each policy and history. No field rate or
+advantage over an equally informed scheduler is implied. The positive
+lesson is to charge the reassignment to the sender's other pending
+duties before changing the role. This is not independently selected
+I1 or I2 evidence.
+\end{document}
