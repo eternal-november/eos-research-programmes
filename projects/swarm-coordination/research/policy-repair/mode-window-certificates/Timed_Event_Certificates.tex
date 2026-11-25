@@ -1,0 +1,91 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{Small rejection certificates for several timed duties}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Interface.}
+Extend the fixed-mode interval decision to a vector of \(d\) event
+times, with common anchor \(t_0=0\). The receiver chooses the mode
+and a vector before it can distinguish the admitted histories.
+For each fixed mode \(m\) and history \(h\), assume the complete
+admissible schedule is given by a finite conjunction of integer
+difference bounds \(t_j-t_i\leq b\), together with the common
+ambient bounds. The choice of mode must be the same for all
+histories at that cut. The event correspondence across sources
+must be part of the interface: timestamps referring to issue,
+actuation, and delivery cannot be interchanged. This treats fixed
+internal execution order and a finite decision cut; arbitrary
+disjunctions or observation-dependent future execution are outside
+its completeness claim.
+
+\paragraph{Exact decision and witness size.}
+Combine the bounds in each mode, retaining the smallest bound
+for each oriented pair and one actual source history attaining it.
+This preserves the feasible schedules. Regard each bound as a
+weighted arc \(i\to j\). Feasibility is equivalent to absence of a
+negative directed cycle. Necessity is telescoping along the cycle.
+For sufficiency, a zero-weight super-source reaches every event.
+If every cycle has nonnegative weight, shortest path weights are
+attained on simple paths and satisfy every arc inequality.
+They are integers for integer bounds, and subtracting the anchor
+value makes \(t_0=0\) without changing differences.
+This is a standard simple temporal network calculation.
+
+In every rejected mode a negative simple cycle uses at most \(d+1\)
+arcs. Consequently across \(r\) modes, at most \(r(d+1)\)
+histories suffice to refute a shared schedule. A history can be
+reused by several arcs; common bounds consume no history witnesses.
+The count is sharp. For each mode assign \(d+1\) distinct histories
+one arc each from the cycle
+\[
+  0\to1\to\cdots\to d\to0
+\]
+with all bounds zero except the last bound \(-1\).
+All other modes receive only ambient bounds from these histories,
+and all event times are in \([0,1]\).
+Removing the closing arc permits every event at zero; removing the
+arc \(i\to i+1\) permits event times zero through \(i\), then one.
+Omitting any one history restores feasibility in its mode. For
+one event variable, the two-arc case is precisely the interval
+bound, though applications may admit stronger common bounds.
+
+\paragraph{Physical read cut and revalidation.}
+The two-report mechanical-flag example gives an explicit source
+projection. Let \(i,\ell,h,b\) denote actual issue, listen, handoff,
+and final delivery times. Prior work requires \(i\geq u\);
+the first report forces \(\ell\geq2\); actual flag readiness requires
+\(\ell-i\geq L\); listening and movement require \(h-\ell\geq2\);
+the custody transfer and return require \(b-h\geq3\).
+With final deadline seven and frozen read at two, \(u=0,L=2\)
+admits \((0,2,4,7)\). With \(u=1,L=2\), the issue and latency
+constraints imply \(\ell\geq3\), directly refuting the frozen read.
+Even allowing re-timing without changing the old deadline gives a
+different negative cycle. Deadline eight with a newly timed receiver
+admits \((1,3,5,8)\). The timings reflect the stated mode of the
+physical reference; they are not a new whole-history planner.
+
+After a source replacement, a retained negative cycle remains a
+valid witness if every arc has a certified bound on the same pair
+of events that is no weaker, and those facts are admitted at the
+decision cut. All other histories may change. If a witnessing arc
+is forgotten, reversed in meaning, or weakened, the old proof
+no longer gives that verdict. If a previously impossible mode set
+is enlarged, a witness for each old mode does not refute the new one.
+This is a proof reuse condition, not a claim that discovering or
+validating source edits is free.
+
+\paragraph{Verification and comparison.}
+Lean checks telescoping, the negative-cycle obstruction and the
+arc-by-arc replacement rule in \texttt{TimedEventCertificates.lean}.
+Bellman--Ford feasibility and the sharp history count are proved
+above, not verified as executable Lean code. The replay compares
+with exhaustive integer timeline choices on 2,400 model instances,
+tests the tight family, and reproduces both physical read-cut cases.
+Direct simple temporal network solving matches the guarantee.
+Per-edge indexing may reduce repeated reads only when the source
+provides a complete witnessed update stream. We do not claim a
+new graph theorem, speedup over a factored matched implementation,
+or acceptance of R2 or the integrated stack.
+\end{document}

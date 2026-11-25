@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{How many histories can rule out a timed recovery?}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Problem.}
+A receiving controller must choose a single recovery mode \(m\in M\)
+and a start tick \(t\) from its current view. A nonempty finite class
+\(H\) of actual source histories is compatible with that view.
+For each mode and history, assume the complete admissible starts
+are the integer interval \([L_m(h),U_m(h)]\), possibly empty.
+For example, a mode can require physically available support
+from its documented readiness until a verified occupancy cutoff,
+with a fixed transfer dwell. Earliest readiness gives a lower
+endpoint; the cutoff minus dwell is an upper endpoint.
+Other physical or lawful requirements must already be reflected
+in the endpoints. The class requires a complete single interval
+for each fixed mode, not a convex hull of a disconnected feasible
+set. Choosing a mode and time is a one-cut decision; this is not
+completeness of a later history-dependent policy.
+
+\paragraph{Exact decision and a small rejecting witness.}
+In mode \(m\), the common feasible interval is
+\([\max_hL_m(h),\min_hU_m(h)]\).
+Thus the earliest start in a nonempty intersection is a witness.
+If there is no admissible choice, retain a history attaining the
+maximum lower endpoint and a history attaining the minimum upper
+endpoint in each mode (the same history can supply both).
+The at most \(2|M|\) histories together already refute every mode.
+The witness has only two named endpoint obligations per mode;
+it need not retain all their other fields.
+This is the interval Helly argument applied separately to each
+allowed alternative, not a new theorem about arbitrary control sets.
+
+The bound is tight even if every proper subfamily is compatible.
+For each mode \(m\), create two histories whose windows in that mode
+are \([0,0]\) and \([1,1]\) respectively, and give both of them
+window \([0,1]\) in every other mode.
+All \(2|M|\) histories exclude every choice. Omitting a history
+permits the opposite tick in its affected mode.
+In particular if there are at least two modes, every pair can have
+a feasible recovery even while the full class has none.
+This can arise from choosing between alternative pads: during an
+unchanged one-tick transfer, one history closes the relevant pad
+after tick zero while another does not make it ready until tick one.
+No assumption of independent failure of the pad constraints is needed.
+
+\paragraph{What survives a source replacement.}
+For a fixed mode set, a rejecting witness survives if its designated
+histories are still admitted and the witnessed lower endpoints
+do not move earlier and the witnessed upper endpoints do not move
+later. Other rows can change, and more histories can be admitted
+without restoring the rejected mode. The same check is insufficient
+if a witness has been removed from the information class or a new
+mode is authorized. Losing the old witness does not prove existence
+of a recovery, and is not a reason to accept without revalidation.
+Validity of these endpoint facts still requires a source mechanism;
+a self-declared update flag is not evidence that there are no
+other edits or that an old history remains relevant.
+
+\paragraph{Index and comparison.}
+With an independently established complete stream of known endpoint
+updates, keep two addressed heaps per mode, one for each extremum.
+Replacing one window takes \(O(\log|H|)\) comparisons per heap;
+scanning at most \(|M|\) roots decides admission or emits the witness.
+The heaps hold \(O(|M||H|)\) current entries and do not accumulate
+stale generations. This calculation excludes acquiring, authenticating
+or identifying the source update; an unreported sparse edit is a
+different discovery problem. An equally factored direct index ties
+the bound. Full enumeration serves as an exact diagnostic, not as
+the strongest performance comparator.
+The checker compares certificates with enumeration on 6,400
+instances, includes the tight family for 1 through 16 modes,
+and checks 16,384 indexed replacements.
+Lean checks exact extrema, the rejecting witness, sharpness,
+and the replacement facts. It does not verify the Python heaps,
+supply physical endpoint laws, or discharge R1/R2/I1.
+\end{document}

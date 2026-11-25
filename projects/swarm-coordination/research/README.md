@@ -36,6 +36,8 @@ These are conditional results for finite models. They neither validate a physica
 
 From either study directory, run `python3 -B pilot.py --json | cmp results.json` to replay the saved checks. These are finite model results, not v0.5 cascade acceptance.
 
+**SC-MODE-WINDOW-CERTIFICATE: When can a few histories refute every timed recovery option?** If each of the fixed recovery modes has one admissible start interval per history, two endpoint witnesses per mode suffice and are sometimes necessary. The same witness persists across replacement when its decisive endpoints tighten and its histories remain admitted. For several event times governed by difference bounds, each rejected mode has a short negative-cycle witness and an arc-by-arc proof reuse rule. [Proof](policy-repair/mode-window-certificates/Mode_Window_Certificates.tex) · [Lean, exact checks and index replay](policy-repair/mode-window-certificates/README.md).
+
 ## Joint risk
 
 **SC-JOINT-RISK: Can two missing reports change joint risk without changing either local estimate?** Two admitted laws give the same probabilities for the observed report words and the same local health marginals. After two misses, the two-dispatch failure risks differ: (57611/149504) and (34661/149504). Both laws have the same ex-ante risk, (79/256). An observation preserves a product posterior exactly when its nonzero likelihood has rank one on the active product support. This is a finite model result, not a validated risk estimate or C6 acceptance. [Proof](joint-risk/degraded-reports/Joint_Risk_Under_Degraded_Reports.tex) · [Replay notes](joint-risk/degraded-reports/README.md) · [Checker](joint-risk/degraded-reports/pilot.py). From that directory: `python3 -B pilot.py --json | cmp results.json`.
