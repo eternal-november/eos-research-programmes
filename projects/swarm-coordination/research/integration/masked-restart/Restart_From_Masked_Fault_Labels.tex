@@ -1,0 +1,158 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{An idle fault label does not certify restart}
+\date{}
+\begin{document}
+\maketitle
+
+A monitor can report no active fault because a second fault has
+put the first component out of use. This is not evidence that
+the first fault cleared. A restart also needs to respect work
+left on the shared resource. One way to shorten the restart is
+to validate the repaired component off the shared resource while
+the old work settles. That extra fixture helps only when its
+delay is smaller than the time it can save.
+
+\section{What the published benchmark can establish}
+The \href{https://drops.dagstuhl.de/entities/document/10.4230/OASIcs.DX.2026.7}
+{HSU TwinFlow paper} evaluates anomaly detection and diagnosis using
+a digital twin. It describes system reconfiguration as future work
+and warns that the recorded full set of measurements need not be
+available to a real controller. We checked the repository's actual
+\href{https://github.com/imb-hsu/twinflow/blob/d8c623bbf3866b6edef4ef3f3b160229fd5c46f4/scripts/prepare_data.py}
+{fault-label preparation}, Git blob
+\texttt{6dde97dff447ee6f6d8fdb0e4c22423014a091b8}. The routine zeros
+fault labels while the affected component is inactive, fills missing
+fault fields with zero, and normalizes the nominal damping value.
+These operations serve the benchmark's label semantics. Zero is not
+a certificate that a previously faulty device has been repaired.
+
+In an authored replay, feed the exact routine a mobile unit which
+becomes idle for two readings and then becomes active. A retained
+fault, an actual reset and missing raw values give the same
+three-record prefix through the idle period: \((1,0,0)\).
+When it is active again the retained fault gives \(1\) and the
+other two examples give \(0\). This is a result about the source
+transformation, not a claim about any particular released run.
+It does not say that the complete measurements of a released
+run would be insufficient under every sensor assignment.
+The fixture shows exactly why neither a prepared zero nor a
+reset timestamp may stand in for a fresh proof of health.
+Do not feed hidden injection labels or future samples to the
+runtime controller to make that test pass.
+
+As a separate source check, the current
+\href{https://j-ehrhardt.github.io/hai-cpps-benchmark/}
+{HAI-CPPS documentation} explicitly separates online fields
+from offline oracle states, useful practice for qualification.
+The v2.2 campaign documented on its development branch enables
+only one fault proxy per faulty recording. This is not an
+independent compound recovery evaluation. The development
+campaign description must not be attributed to an older
+downloaded release. No test recordings or data-dependent
+holdout selection were used here.
+
+\section{A restart with an outstanding effect}
+Consider an authored civil fixture in which a restarted motorised
+cart must still finish a delivery. A drive issue was reported
+before a subsequent obstruction disabled its active route.
+An older accepted move physically occupies the shared test
+lane. A reset is attempted while the cart is inactive. At the
+decision boundary the same monitor prefix can arise with or
+without a remaining drive issue. The two histories can both
+also have the same reset acknowledgement. Restoring motion on
+the lane is lawful only after actual old lane clearance and
+a successful test of the drive. This is not a requirement to
+put an unsafe probe on an occupied lane.
+
+Use the same receipt types in a separate authored pump example:
+the workload is to restore flow, the legacy effect is unsafe
+pressure occupying the service envelope, and a no-load spin test
+can instead be performed on a recirculation fixture before old
+pressure relief is recognized. The examples stipulate the
+relevant event semantics; neither asserts that such a fixture
+is available on a particular plant. The pump test must in fact
+validate the drive for the admitted service load; a no-load
+test that is blind to permitted load-sensitive faults is not a
+valid adapter. The two examples share the timed evidence rule,
+but are not independently selected or externally validated
+missions.
+
+Keep four cuts distinct. \(t\) is when the component enters
+the repair envelope in which a new test can succeed; an actual
+test still must be witnessed. \(w\) is when the separate
+inhibit from the second fault has cleared for the tester.
+The local test instrument can start at \(x=\max(t,w)\) given
+the corresponding enabling observations. \(y=s+c\) is when
+actual settlement of old work at time \(s\) is established at
+the relevant interlock, after a delay \(c\). Set \(c=0\) if
+that interlock can witness clearance immediately. Let \(u>0\)
+be the time of a successful shared-resource validation, \(h>0\)
+the service duration, and \(d\ge0\) the extra elapsed time to
+perform the same validation on a genuinely separate fixture
+and return its receipt. Both modes use the same actual source
+law, deadlines, observation scope and test validity. In the
+second mode the added equipment, setup, test and receipt return
+must be charged. Assume the two validations establish the same
+predicate over the stated deployment envelope and that neither
+is invalidated by another fault before issue. No precomputed
+certificate decodes readiness from the suppressed fault label.
+
+With no isolated fixture, validation starts only after both
+\(x\) and \(y\), and the earliest finish is
+\[
+ S=\max(x,y)+u+h .
+\]
+An isolated validation starts at \(x\); it does not occupy the
+old lane or vent and changes neither the ongoing duty nor its
+release time. The new job starts only once both test and actual
+settlement receipts are effective, so its earliest finish is
+\[
+ I=\max(x+u+d,y)+h .
+\]
+Each lower bound follows from the indicated causal predecessors.
+Beginning each admissible step at its first available cut
+attains the bound. These are exact within the stated test
+and resource interface, not impossibility bounds for all
+controllers with physical sensors or alternative repair
+mechanisms. For a robust deadline apply the formula on each
+actual admitted timing tuple rather than combine independent
+worst cases if the times are constrained together.
+
+The isolated fixture saves time exactly if \(d<y-x\).
+When it saves time the savings are \(\min(u,y-x-d)\).
+To see this, if \(y\le x\) no waiting can be overlapped.
+Otherwise \(S=y+u+h\); subtract the larger of the
+isolated test-ready time and release. In the replay's
+example \(x=3,y=7,u=2,d=1,h=1\); only the isolated
+fixture meets deadline 8, while shared validation needs
+10. If the old work clears soon, extra test setup can
+make isolation strictly worse. The direct same-resource
+event scheduler attains exactly the same bounds. The
+physical independence of the test is the intervention,
+not superiority of the evidence rule over a direct scheduler.
+
+\section{Acceptance boundary}
+For a label-only rule the persistent and cleared source
+prefixes are observationally identical. A true recovery can
+admit service once valid evidence exists; a policy that treats
+both identical idle observations as cleared can admit an
+unsafe restart. Waiting for an effect-side validation is a
+different observation contract and may be unable to meet
+the original deadline on the same resources. Treat a
+projection as sufficient only when the relevant histories
+are separated at the actual decision cut, not merely after
+reactivation or in simulator ground truth. An offline source
+trace locates a fault, but is neither an authorization to
+issue a replacement nor proof that the older job physically
+settled. A live repair must satisfy both in the same run.
+
+The replay exercises the exact upstream transformation on
+synthetic inputs and compares the two scheduling formulas
+against a discrete-event implementation on authored inputs.
+It qualifies a source and gives a mechanism benchmark.
+It does not test a holdout, close the integrated architecture
+obligation, or change the enclosed-mission work.
+\end{document}
+
