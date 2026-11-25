@@ -154,6 +154,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Integration development
 
+**SC-CLOCK-MATCH: Can anonymous transfer records discharge an old duty?** With one shared calibrated offset, individually possible pairings need not coexist in a physical assignment. Exact matching and checked duals certify a release with complete records; the same timestamps leave one unit of residual exposure when one transfer record may be missing. [Proof and replay](integration/clock-transfer-matching/README.md). Calibration, not a measured transfer.
+
 **SC-CLOCK-RECEIPT: When do timed logs justify using a recovered copy?** A joint clock bound can certify that some copy survives without identifying it to the acting crew. The checked fixture gives the exact receipt cutoff and shows why equal per-route time bounds are insufficient when the common offset is discarded. [Proof, provenance gate and replay](integration/clock-receipt-audit/README.md). Calibration, not a measured mission transfer.
 
 **SC-FACTORY-DOWNTIME: Does a stopped station still hold the job?** The published RoboCup Logistics benchmark archive contains nominal setups, not actual fault-recovery traces. A separate rule-based model shows why a paused job and referee-removed material can require opposite early dispatches, and why internal machine completion does not certify secure collection. [Archive audit, proof and replay](integration/factory-downtime/README.md). No independent mission transfer.

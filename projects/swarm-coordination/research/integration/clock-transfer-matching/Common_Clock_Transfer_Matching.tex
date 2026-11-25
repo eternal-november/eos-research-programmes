@@ -1,0 +1,140 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Inferring a handoff from timestamps and incomplete records}
+\date{}
+\begin{document}
+\maketitle
+
+With two source records and two destination records, every pairing
+can look possible when checked separately. A shared clock offset
+can nevertheless force the true pairing. In the model below that
+is enough to retire an old duty, but only if both transfers are
+known to be represented. Allowing even one missing transfer
+can make it unsafe to release the same reserve.
+
+\section{Source law}
+Two read streams use their own clock origins. Event \(i\) is
+logged at source time \(s_i\) and event \(j\) at destination
+reference time \(r_j\). All source records in the episode
+use one unknown common displacement \(x\), with independently
+validated limits. A physically admissible candidate transfer
+\(ij\) has elapsed time in \([\ell_{ij},u_{ij}]\). Transfer
+eligibility must come from the actual transport process or be
+declared as an abstraction. For this result there is no
+additional shared travel-capacity constraint or phase-dependent
+service law beyond uniqueness and the stated pair intervals.
+The exact pair condition is
+\[
+        x \in [\,r_j-s_i-u_{ij},\ r_j-s_i-\ell_{ij}\,].
+\]
+Intersect every such interval with the admitted calibration.
+Using a different offset for each pair is not the same source.
+
+A complete explanation uses one-to-one assignments of source
+records to destination records. For an incomplete observation
+interface, admit a matching with cardinality \(k\) in a proven
+window \([h,K]\). For instance, a separate trustworthy
+event counter may establish that at least \(h\) destination
+records came from the listed distinct sources. This is not
+the number of lines in the log. It does not follow from
+absence of an error or enough unrelated pulses. Duplicated
+or reordered messages, missing event types, and physical
+non-occurrence must be resolved or admitted separately.
+If no evidence establishes a positive lower count, it is
+not safe to promote the records to a perfect matching.
+
+Suppose the reserve exposure in a matching \(M\) is \(w_{ij}\)
+for a matched pair \(ij\), \(a_i\) for an unmatched source,
+and \(b_j\) for an unmatched destination. The score is
+\[
+ \sum_i a_i+\sum_j b_j+
+     \sum_{ij\in M}(w_{ij}-a_i-b_j).
+\]
+These scores refer to the declared old obligations, not to
+timestamps alone. For example an unresolved source may still
+owe a physical duty even if the only connection to its destination
+is missing. A confirmed output at the wrong destination need
+not settle this particular duty either. If source risks vary
+with offset or some incident history other than assignment,
+they must be included in the model; the simple constant-weight
+formula does not establish them.
+
+\section{Exact extrema and proof witnesses}
+For a fixed common offset the problem is weighted bipartite
+matching with a cardinality window. For exactly \(k\) matches
+between \(n\) source and \(m\) destination records, add \(m-k\)
+dummy sources attached to all real destinations and \(n-k\)
+dummy destinations attached to all real sources. There are no
+dummy--dummy edges. Any perfect assignment of the enlarged
+graph must match \(m-k\) real destinations to dummy sources,
+so exactly \(k\) real pairs remain. Conversely every size-\(k\)
+matching extends to a perfect assignment by connecting the
+unmatched records to their corresponding dummy vertices.
+Use the adjusted weight \(w_{ij}-a_i-b_j\) on a real edge
+and zero on a dummy edge. Trying the declared sizes and the
+two cost signs gives the exact minimum and maximum of the
+exposure. No assertion is made that every intermediate score
+is attained.
+
+For one common scalar offset, the eligible graph is constant
+on every open cell of the pair-interval endpoints. At an
+endpoint the graph can differ from both adjacent open cells.
+Enumerate the endpoints and one rational interior point per cell.
+If the calibration extends outside the pair endpoints, no
+real edge exists there and only an allowed empty matching matters.
+For a cell and cardinality that has no assignment, a Hall
+deficiency is a certificate. For one with an assignment, the
+checker uses feasible integer row and column duals with
+equality at an actual matching; summing dual inequalities
+proves optimality without trusting the floating cost solver.
+It checks both cost signs and the full set of offset cells
+and sizes for the fixed fixture. This certifies the output for
+the supplied interval and exposure model, not how to derive
+that model from measurements. Several coupled clock dimensions,
+unbounded drift or interaction between simultaneous transfers
+can require a different feasibility solver.
+
+\section{A release decision that changes under missing records}
+Take \(s=(0,2)\), \(r=(0,2)\), \(x\in[-3,3]\) and allowable
+elapsed time \([0,1]\) on every pair. The two straight pairs
+both agree on \(x\in[-1,0]\). The cross pairs individually
+allow \(x\in[1,2]\) and \(x\in[-3,-2]\), respectively.
+They cannot both hold in one history. With two actual
+matched pairs the straight assignment is necessary. If
+source zero carries one named old duty discharged only by
+arrival at destination zero, the exact worst residual
+exposure is zero. A graph made just from marginally possible
+edges would also admit the cross assignment and could keep
+the reserve locked unnecessarily.
+
+When just one transfer is guaranteed, the straight
+assignment remains possible but a source or destination can
+be unmatched, and a cross pair can occur alone. The same
+reserve now has worst exposure one. Authorizing its reuse
+from the perfect-assignment result would be unsafe.
+The distinction applies even with exactly the same two
+sets of timestamps and the same clock calibration.
+When a deciding actor has yet to receive evidence of the
+count, documented archival receipt does not let that actor
+use the tighter source. An online controller needs the
+right to read those events by its actual commitment,
+and a genuine certification of transfer, not the freedom
+to select the most favorable compatible history.
+
+\section{Evidence status}
+\href{https://ftp.eecs.umich.edu/~pettie/matching/Kuhn-hungarian-assignment.pdf}{Kuhn's
+assignment duality} is standard. The clock-cell method and
+dummy reduction are applications of existing machinery;
+same-input enumeration ties. Five Lean statements check the
+time algebra, marginal-versus-joint fixture, and dummy
+cardinality step. The broader sweep and weights are checked
+by separate finite enumeration and checked certificates.
+The externally published \href{https://zenodo.org/records/4034867}{CONTEXT
+release} motivates the question, since its streams use
+approximately aligned clocks and can have missing or
+out-of-order observations. No numerical data from that
+release are used and no physical timing or completeness
+bound is inferred from it. This is an I1 calibration
+case, not an independent transfer or data-derived estimate.
+\end{document}
