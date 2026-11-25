@@ -1,0 +1,5 @@
+# Open-RMF zone pool release
+
+[Claim and proof](Pool_Idle_Clock.tex). Two histories can have the same bookings and available spare, yet the next sweep releases the spare in only one. An earlier visitor reset the timer only if the sweep saw it en route. A frozen slot stays protected in both histories until the matching exit returns it to the pool.
+
+`python3 replay.py | cmp replay.txt -` uses Python 3 and a C++17 compiler. The exact selected sources are checked by Git blob ID and their method bodies are compiled against controlled callback state, time, and a recording publisher. Fetch `Node.cpp` and `ZoneReservationClient.cpp` from [this pinned directory](https://github.com/open-rmf/rmf_ros2/tree/16a3457196c6edf2f08a1ba4f497bf891404cbb7/rmf_fleet_adapter/src/zone_manager) and place them alongside the replay. The archive also contains those sources and `ZonePostExit.cpp` for inspection. The harness does not run ROS, the reservation queue, live sensors, or vehicle control. The direct timer formula agrees.
