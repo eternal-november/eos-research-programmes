@@ -1,0 +1,103 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Compiling staggered physical occupancy into timed transit actions}
+\author{}\date{}
+\begin{document}\maketitle
+A tile path becomes a single action only when its interior has no permitted
+decision, useful new observation, waiting, reversal, task effect or
+resource change other than passage. Keep all probes, service and
+observation sites and any directed-law boundary as landmarks. On an
+undirected source grid, branch points also remain. The selected action
+commits to crossing the ordered physical segments, while its proof keeps
+each actual segment's travel time and occupancy. Directed availability,
+robot clearance and traversability must come separately from the source
+law. Soundness in this restricted action grammar is not a claim about
+arbitrary trajectories or policies.
+
+\paragraph{A local launch guard.}
+For segment $j$ let $o_j$ be the sum of earlier travel durations and $d_j$
+its own positive integer duration. If launched at $s$, it physically
+occupies $[s+o_j,s+o_j+d_j)$. A segment outage $[l,u)$ forbids exactly the
+integer launches
+\[
+                 [l-o_j-d_j+1,\ u-o_j).
+\]
+The guard is the union of such intervals across the actual directed
+path. This theorem is about all source states with this path and these
+time semantics, not just a particular trace replay. While the actor is
+in transit there is no role for inspecting hidden state or using this
+global guard as a live sensor. First-segment local visibility is a
+separate observation. A path can traverse an internal segment after a
+prior interruption has cleared; conversely, an initially open segment
+may become unavailable by the time it is reached. Checking all edges
+together through the whole macro would reject legitimate routes.
+
+If each duration varies over an admitted integer interval in a
+rectangular box and no interior decision is possible, the offsets per
+segment cover all integers between their attainable bounds
+$o_j^{-},o_j^{+}$. The worst occupancy ends by offset
+$o_j^{+}+d_j^{+}$, while a potential overlap can begin at offset
+$o_j^{-}$. The exact robust launch ban for one segment outage is
+$[l-o_j^{+}-d_j^{+}+1,\ u-o_j^{-})$.
+This computes feasibility of one fixed launch across the given
+executions. Downstream control with distinct actual arrival times must
+retain those times or apply a separately proved timing abstraction.
+Do not cross unrelated durations and outages: a two-world witness has
+offset one with an outage at three, and offset three with an outage at
+one. Launch zero is valid in both matched worlds, but fails under the
+invented crossed law. Evaluating only the later arrival can also miss
+an earlier real collision with an outage.
+
+At the graph level, retain all named control cuts and degree-not-two
+vertices. Split a pure cycle or a loop returning to its start at
+deterministically chosen checkpoints rather than erasing it. For the
+stated grammar each committed finite path has the same arrival time and
+observation as its corresponding physical trace, or it is refused
+exactly when that trace would lose support. The time-expanded comparison
+permits waiting at the actual retained nodes. It cannot recover plans
+that rely on newly allowed interior waits. For example a first segment
+closes at time one; the second is unexpectedly down only during tick one.
+A committed two-tick launch cannot complete, but entering the middle
+before closure and waiting there would permit a route by three if the
+policy and source allowed it. That condition changes the interface, not
+just a deadline number.
+
+\paragraph{Source-grounded development replay.}
+The safe numeric parse and normalized grid use
+\href{https://github.com/LTU-RAI/SubTGraph/tree/21a1bcabf37c8f2f6f236ba40b916094d9903b5b/benchmark}{SubTGraph natural/01 at the pinned benchmark commit},
+topology blob \texttt{c8bf8d53999ad726fca127fa4a48a96ae19fe318}.
+The source shape, geometry candidate and occupied grid cells are
+reproducible, and this source example is excluded from independent
+selection. Unit tile durations, directional closures, relay stores and
+probe power are authored model inputs, not measured features of that
+geometry. The 244-cell layout compiles to 59 action cuts and 158
+directed transit actions. The full-graph route sample arrives at 57
+abstract units when initially clear and at 62 when its departure
+edges are shut for five units. No radio link was inferred.
+
+A tiny topological cycle subcase is selected before evaluating its
+outcomes, solely for a direct compound replay. Both prepared reports
+are actually delivered by tick three; the robust egress deadline is
+eight (individual egress times six and eight). The source failures and
+probe coupling in this case are the author's scenario, not a held-out
+mine mechanism. The unchanged \href{https://github.com/eternal-november/eos-research-programmes/pull/377}{event adapter} now receives the typed action graph and a
+separate source guard. The alternative evaluator expands the same
+physical path at each launch, checks every tile epoch, and solves the
+same local observation histories. It agrees across 48 mission settings,
+including internal outage times shifted around the relevant transit.
+Independent source-conditioned truth and local awareness remain distinct.
+
+\paragraph{Verification and next boundary.}
+There are 155,520 fixed-duration and 55,296 rectangular
+duration-uncertainty comparisons to pointwise physical occupancy,
+plus 82 whole-graph timed cases and the mission comparison. The
+restriction on no interior decision, not an empirical performance
+assumption, supports the contraction. Nominal fixture size shrinks;
+no runtime or historical novelty claim against a matched representation
+or time-expanded route solver follows. Before independent selection,
+freeze the admitted travel and radio law, allowed observation sites,
+task/custody inventory, event uncertainty, deadlines, validation outputs
+and exact comparator. Do not substitute radius or published medians
+for qualified pointwise packet receipt. Separate held-out source choice
+and any on-site evidence remain outstanding.
+\end{document}
