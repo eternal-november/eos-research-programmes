@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{How much identity does a two-scan forecast need?}
+\date{}
+\begin{document}
+\maketitle
+A historical scan archive can retain each reading exactly once, yet
+lose the association needed to decide where to stage a reserve.
+This note extends the two-scan identification model in
+\href{https://github.com/eternal-november/eos-research-programmes/pull/398}{PR~398}.
+The proposed intervention is a coarse physical tag at the two scan cuts,
+not a unique identity for each run. The guarantee is exact for the two
+calibrated rosters below, not a statistical estimate of their prevalence.
+
+\paragraph{Information and mechanism.}
+The two possible persistent source modes call for opposite placements.
+Each has a fixed clean roster of paired binary scans. The controller
+knows the two candidate clean tables, not the true mode or pairs. Each
+mode agrees on the two binary margins within every tagged block. For a
+fixed equipment setting, the controller receives only a table per
+reported block, or the single pooled table if tags are absent. True
+identifiers and exact timestamps are not available to the policy.
+A join may permute right readings within a block. A single total bound
+$K$ limits displaced right identities across the whole roster; the
+positions can depend on the source. Readings are neither changed, dropped
+nor duplicated. In the untagged control all within-roster pairings are
+allowed. In the tagged arm the authentic epoch marker attached by both
+read stations agrees for every genuine pair, so no admissible join
+crosses it. The tag must arrive before historical data are used to stage
+a reserve. Were a tag unreliable, a different ambiguity set would apply.
+
+\paragraph{Exact reachability.}
+In one block let $a,b,c,d$ be the true counts at $00,01,10,11$. With
+fixed margins a candidate linked table is determined by its $00$ cell
+$x$. The least number of displaced identities is $2|x-a|$ when
+$a-\min(a,d)\le x\le a+\min(b,c)$, and the table is impossible outside
+this interval. To increase $a$, swap right identities between cells
+$01$ and $10$, one disjoint swap per unit. To decrease $a$, use $00$
+and $11$. Conversely an increase or decrease by one requires one
+changed right value in each of the two left strata; a displacement
+of an identity cannot change more than one value. Thus for blocks
+the exact joint uncertainty set consists of the common fixed-margin
+box intersected with the integer ball
+\[
+      \sum_j |x_j-a_j|\le \lfloor K/2\rfloor .
+\]
+A single pooled error interval or one full allowance per block is not
+that set. Swaps at two unrelated places still spend the same global
+budget. The result does not cover overlapping clock windows that
+allow only some specific pairs within or across blocks.
+
+\paragraph{The forecast boundary.}
+For two clean center vectors $a^{(0)},a^{(1)}$, their possible
+observations are disjoint if and only if
+\[
+  D=\sum_j |a_j^{(0)}-a_j^{(1)}|>2\lfloor K/2\rfloor .
+\]
+Necessity for common observations follows from the triangle inequality.
+Sufficiency follows by walking along an integer coordinate path between
+the two centers. Each point stays in the fixed-margin box; a midpoint
+attains the two radius bounds when $D\le 2\lfloor K/2\rfloor$.
+Nearest center recovers the right placement whenever the sets are
+disjoint. If they meet, some common observation forces one of the two
+modes to have error at least $1/2$ for a randomized placement, and
+fair guessing attains that bound. This is worst-case error over
+the two fixed rosters and all allowed joins, not a posterior risk.
+
+\paragraph{A tag can help without fixing a single ambiguous pair.}
+There are two batches of 80 runs each, with balanced scans in both.
+Mode 0 has $00$ counts $(40,16)$; mode 1 has $(0,24)$. Each correctly
+linked pooled roster gives 30 percent scan-parity error relative to
+its true mode. The pooled center distance is 32, since the two batch
+differences partially cancel. A one-to-one join moving 32 records
+can make both pooled tables $(40,40,40,40)$; no edited reading is
+needed. With the tags, the center distance is 48. The same budget 32
+cannot erase the forecast even though both blocks still admit arbitrary
+confusion internally. This remains true through $K=47$. At $K=48$,
+disjoint swaps in each world realize the common vector $(20,20)$.
+
+A concrete comparison charges one optional maintenance window to
+operate the epoch marker across both stations. In cost units where
+missing the right reserve placement costs 10, the best pooled
+guarantee at $K=32$ costs 5 in worst-case expected placement loss
+without that work. If collecting the reliable tags costs 1.2 and
+does not alter the future fault law or available placements, the
+tagged guarantee costs 1.2. If it costs more than 5, the experiment
+is not worth that loss reduction. At $K=48$ these two tags cannot
+justify a positive acquisition cost on the worst-case criterion.
+The tags and costs here are stipulated model controls, not deployed
+hardware or measured values. A secure clock or authenticated
+occurrence ID would need its own physical validation before use.
+
+\paragraph{Comparison and scope.}
+Ordinary one-to-one record linkage and sensitivity analysis already
+model such errors; see
+\href{https://doi.org/10.1093/ije/dyx177}{Harron et al.} and
+\href{https://www.sciencedirect.com/science/article/pii/S0378375821001063}{Scholtus et al.}.
+The finite same-information permutation and feasibility check agrees
+with the formula. A tag may change the data available, and that is the
+comparison here, not a gain over a planner given the same data.
+The untagged observation includes neither a join-confidence score nor
+identity metadata; adding truthful ancillary information can break the
+lower bound. A clean tag supplies a smaller candidate set, not a claim
+of unique reconstruction or general R3b closure.
+\end{document}
