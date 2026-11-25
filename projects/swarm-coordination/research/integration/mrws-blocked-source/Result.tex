@@ -1,0 +1,26 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{A failed carrier can also remove the source of its load}
+Pinned MRWS warehouse simulator, original seven-by-eleven layout, one authored nine-class order, four robots, three items per load. Only battery-critical stops occur; the stopped vehicle stays in its cell and its load cannot be extracted. A shelf supplies its class only to a vehicle occupying its exact cell. Sources are unique and do not fail separately. A successful run must complete the original order via the native station with the exact class prefix at every admission and no repeated or illegal movement. The accounting counts class pickups, not unique physical packages or power. This is a development experiment with no unrelated orders, not an independently selected mission.
+
+If a required class is not at the station or on a surviving carrier and its only shelf cell is permanently occupied by a stopped robot, no legal continuation can deliver that class. Indeed, a healthy-carrier transfer moves an existing copy, whereas the only operation that creates a new available copy requires entering the occupied cell. Home clearing and routing cannot change this invariant. A certified recovery refusal can therefore be correct even when the inventory arithmetic alone says to re-pick the class. The obstruction does not hold if equipment can clear the stopped robot, extract the load, or reach a second source.
+
+The first frozen intervention stopped the first loaded robot at tick 13 at the item-9 shelf. All battery-fault arms exhausted the horizon with no delivery. A distinct, documented causal control delayed the trigger until the first loaded robot had left all shelf cells; it stopped at tick 19. Otherwise the declared fault rule was unchanged. The second actor was chosen from the initial loaded coworkers and stopped at the same tick in both arms, not at the same position. Its position was allowed to depend on each arm's routing. The no-fault service time is 41 ticks. Results per run are:
+\[
+\begin{array}{c|rr|rr}
+ &\multicolumn{2}{c|}{\text{native discard rule}}
+ &\multicolumn{2}{c}{\text{retained contiguous loads}}\\
+\text{off-shelf intervention}&\text{finish tick}&\text{new picks}
+ &\text{finish tick}&\text{new picks}\\\hline
+\text{first fault only}&93&9&70&4\\
+\text{second fault at }+1&\text{none}&4&\text{none}&4\\
+\text{second fault at }+4&\text{none}&6&81&6
+\end{array}
+\]
+The early second failure blocks item 5 in both arms. At the later cut the discard rule sent the second actor home through the item-3 shelf. The actor stopped there at tick 23, after the other surviving carrier had reached home and discarded its own item-3 copy. The retaining rule instead sent the second actor home one tick later, which left it one cell short of that shelf at the fault cut; the other surviving carrier also kept its copy. These are two changes in the same history. The comparison does not claim that retaining loads alone is necessary, that a direct scheduler could not do as well, or that the specific time is optimal. The retaining arm incurred 85 total movement steps in the compound completion; the discard arm spent 81 steps without completing. With just the first fault, movement was 98 versus 93.
+
+The test executes the native tick loop, grid/path calculation, placement rules, shelf/home effects, and station completion. It uses authored order/fault hooks, common guarded one-cell motion without native deadlock nudges, matched pre-effect admission guards, and explicit retirement of pending commands when an affected grant changes. A grant is tied to the dispatch generation, current order, actor and station; the station verifies the actual class prefix before native mutation. The phase and relevant inventory are visible to the controller in this simulator. This isn't a distributed grant protocol, a proof of guard safety under asynchronous access, or an exhaustive test of concurrent orders. Sixteen nominal seed replicates per arm produce identical outcomes under these choices and must not be read as sixteen independent fault scenarios.
+
+This result advances testing of an actual-resource interface for I1. It resolves neither I1 nor I2: the stronger direct supplier-aware planner may keep loads or avoid parking over an essential shelf, and no independent trial evaluates either. A next controlled comparison should independently vary alternate source availability, extraction permission and route context while holding the order law and service budget fixed.
+\end{document}
