@@ -206,6 +206,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-RWARE-PORT-RELEASE: Can the next order use the port before the old shelf is returned?** Native effects separate port occupancy from the later return. An empty snapshot can conceal an authorized re-entry. Current-grant feedback reaches the exact native timing; no independent transfer. [Proof and replay](integration/rware-port-release/README.md).
 
+**SC-RWARE-SIMULTANEOUS-PORT: Can the new carrier deliver without an empty port at either cut?** The native step admits a simultaneous rotation with an old return still owed. A missing remote move or a standing shelf disables the rotation but not an independent move. [Proof and replay](integration/rware-simultaneous-port/README.md). Restricted step model, not independent validation.
+
 **SC-CACHED-QUALITY: Can a new kit-quality response reflect an unchanged image?** In a source-level replay of ARIAC 2024.3.0, the first check changes the simulated part’s fault status. With the same cached observation, a subsequent call can pass before any replacement. A fresh image of the unchanged part still fails. [Source, mocks and replay](integration/ariac-quality-calibration/README.md). This tests three original functions, not a live Gazebo trial or HeRo.
 
 **SC-CLOCK-MATCH: Can anonymous transfer records discharge an old duty?** With one shared calibrated offset, individually possible pairings need not coexist in a physical assignment. Exact matching and checked duals certify a release with complete records; the same timestamps leave one unit of residual exposure when one transfer record may be missing. [Proof and replay](integration/clock-transfer-matching/README.md). Calibration, not a measured transfer.
