@@ -1,0 +1,100 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{Containing a second fault while a controller switch is outstanding}
+\begin{document}
+\maketitle
+
+\paragraph{Result.}
+Adding another client to the same controller-manager switch service
+does not give it an independent emergency path. In the pinned manager
+the first service callback holds the service-wide mutex while it waits.
+The native update loop already provides another path: after an
+eligible controller reports an update error, its configured fallback
+can be selected before the old service call returns. An independent
+hardware read error can also trigger deactivation when the pending
+switch skips the failed controller's own update. Neither path,
+just by returning an active or inactive software state, certifies
+the physical mode. This pins a stronger baseline for I1 rather than
+claiming a new fallback mechanism.
+
+\paragraph{Source and experimental boundary.}
+The pinned \href{https://github.com/ros-controls/ros2_control/blob/0c94b008a82731967ba89e2e7379ec6d2f07580b/controller_manager/src/controller_manager.cpp}{ros2\_control
+manager} uses a shared \texttt{services\_lock\_} in the switch callback,
+held for all of \texttt{switch\_controller\_cb}. In non-ASAP switching
+that operation waits for the update loop's ready flag before invoking
+the switch. The update loop's error handling precedes publishing that
+ready flag. Our C++ harness executes the exact service wrapper,
+non-ASAP skip predicate, update-error collection and fallback tail,
+the resource-overlap and interface-list helpers, the hardware-mode
+change helper and the hardware-read branch. A condition variable
+holds the old call at the modeled wait, with the native service mutex
+still held. The second caller is started while the old
+one is outstanding. The inner switch and the hardware and controller
+lifecycle effects are stubs. The harness neither exercises the
+entire ROS executor nor times any physical actuator.
+
+\paragraph{Same cut, five variations.}
+Initially A and B are driving, while C holds a separate interface.
+A has an older non-ASAP switch outstanding. By the first update
+cut only A's service call has entered its switch body, though the
+second client asks to disable B. B's native update error collection
+enables the following cases:
+\begin{enumerate}
+\item With separate scopes, the loop deactivates B's driving controller
+and activates its configured hold controller. C remains active.
+The recorded mode request was accepted by the stub.
+\item If the hold controller declares C's interface as well, the
+fallback path also deactivates C. The new dependency is the
+fallback's interface, even though C had no error and was not
+in either requested service operation.
+\item If the hardware stub refuses the mode change, the native helper
+logs the refusal and returns no success predicate to the fallback
+tail. That path still calls lifecycle deactivation and activation.
+The same selected lifecycle bits can therefore accompany accepted
+or refused mode transitions. This does not assert how any particular
+driver or actual activation subsequently responds.
+\item If A's pending switch includes B in the old deactivation
+scope, the native non-ASAP guard skips B's update. That cut does
+not observe the injected B update error or invoke its fallback.
+This is a statement about the skipped cut, not a claim that
+B cannot be deactivated by the older switch later.
+\item With that same skip, a separate read-side error reporting B's
+hardware component leads to B's deactivation before readiness.
+That path follows the cached controller-to-hardware mapping, does
+not install B's hold controller, and leaves C's controller active
+in this fixture. The correct mapping and hardware report are
+supplied inputs, not guaranteed by the trace.
+\end{enumerate}
+The captured state is before the modeled old switch is released.
+The standard administrative operations can act after release;
+the study does not address whether an old prepared request could
+subsequently interfere with a local mode change. In particular,
+deactivation at the cut is not a proof that old granted authority
+is permanently retired. An update or hardware-read result can
+also be late or unavailable; neither fast path is credited in
+that branch.
+
+\paragraph{Scope law and comparator.}
+For the update path, under the supplied interface resolution,
+the selected deactivation set consists of the failed controller
+chains together with currently active controllers whose declared
+command interfaces intersect any configured fallback interface.
+The helper computes this closure before activating the fallbacks.
+A healthy active controller outside the union is therefore not
+deactivated by that selection. The included Lean facts check
+that set criterion, not manager synchronization or device
+semantics. Sustained service for C additionally requires a
+successful effect path and no latent physical dependency on
+the affected interfaces. A list of unaffected controller names
+does not establish those facts.
+
+The remote-only timing control is deliberately weaker than a
+stock deployment with local fault eligibility, scoped fallback
+and independent read evidence. Use the latter as the comparison
+where those mechanisms are available. A future end-to-end transfer
+would need an independently visible effect certificate and a check
+that the old request cannot invalidate it. The selected replay
+shows a real alternative to waiting on the shared service, but
+does not establish an I1 architecture advance over the existing
+local mechanisms or a new physical operating envelope.
+\end{document}
