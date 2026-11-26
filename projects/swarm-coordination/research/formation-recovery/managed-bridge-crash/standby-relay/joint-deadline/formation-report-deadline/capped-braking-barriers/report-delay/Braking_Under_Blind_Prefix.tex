@@ -1,0 +1,59 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{The clearance cost of a delayed braking report}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Model and information.}
+In a single-file formation the nominal speed is $c$, the symmetric acceleration limit is $a>0$, and all speeds are in $[0,W]$ with $w>0$, $c\ge w$ and $W\ge c+w$. Subtract the cumulative minimum clearances from positions. Initially the rear, all middle robots, and the front then have shifted positions $0,S_A,S_A+S_B$, respectively (all middle robots share the single shifted position $S_A$ and are physically separated by their minimum clearances). In world A the rear starts at $c+w$ and everyone else at $c$; in world B the front starts at $c-w$ and everyone else at $c$. The two histories give the middle robots identical information before a truthful report at time $\tau$. In particular there is no observation of endpoint motion or signaling through neighbors that distinguishes worlds before then. More robots at speed $c$ can separate the middle decision maker from both endpoints at any fixed initial observation radius, but the time restriction on observations is a separate assumption. Cooperative endpoints can use their own initial speed. The objective is to maintain the adjacent gap bands and come to rest. Initial upper gap bounds are assumed satisfied. The constructed paths never enlarge any gap.
+
+\begin{theorem}
+If $S_A=S_B=S$, feasibility for both worlds with report time $\tau$ holds exactly when
+\[
+ S\ge \frac{w^2}{4a}+\frac{w\theta}{2}-\frac{a\theta^2}{4},
+ \qquad \theta=\min(\tau,w/a).
+\]
+When feasible the minimum worst-case time to rest is $(c+w)/a$. Delaying the report beyond $w/a$ imposes no further clearance cost.
+\end{theorem}
+
+\begin{proof}
+Consider a focal middle robot. Up to a time $t\le\tau$ its speed and displacement in the two worlds are the same. Write its displacement relative to uniform speed $c$ as $z$ and its speed deviation as $k$. Against the most helpful allowable motion of the affected endpoint, the consumed left and right spans at time $t$ are at least $L-z$ and $L+z$, where $L=wt-at^2/2$. Remaining closing speeds are at least $r-k$ and $r+k$, where $r=w-at$. Future closing can be removed at rate at most $2a$, which consumes at least the square of the positive part of the closing speed divided by $4a$. The actual endpoint may do worse; giving it the best speed and displacement only weakens the lower bound. Consequently
+\[
+ S_A\ge L-z+\frac{(r-k)_+^2}{4a},\qquad
+ S_B\ge L+z+\frac{(r+k)_+^2}{4a}.
+\]
+Take $t=\theta$ and average. The displacement terms cancel and the convex function $x\mapsto(x_+)^2$ gives the lower bound $L+r^2/(4a)=w^2/(4a)+w\theta/2-a\theta^2/4$. This avoids assuming that the middle robot has not already neutralized the closing speed in one of the worlds.
+
+For sufficiency all nominal-speed robots coast until $\theta$. The fast rear in world A brakes and the slow front in world B accelerates. If the report has arrived and the speeds have not already matched, the nominal robots in A accelerate together and those in B brake together, until the closing difference falls to zero. Only the affected end gap shrinks; it loses precisely $L+r^2/(4a)$. Then all brake together to rest. In A the rear can brake at its maximum rate for the whole maneuver and stops at $(c+w)/a$. In B the equally fast nominal robots coast for $\theta$ and then brake until rest at $c/a+\theta\le(c+w)/a$. The world-A rear speed gives the lower bound on the worst-case stop time.
+\end{proof}
+
+\begin{theorem}
+For arbitrary $S_A,S_B$ and any report delay, let $t=\min(\tau,w/a)$, $L=wt-at^2/2$ and $r=w-at$. Feasibility is equivalent to some $k$ with $|k|\le\min(at,r)$ having
+\[
+ \max\!\left(-\frac{at^2}{4}+\frac{t k}{2}+\frac{k^2}{4a},
+             L+\frac{(r-k)^2}{4a}-S_A\right)
+ \le
+ \min\!\left(\frac{at^2}{4}+\frac{t k}{2}-\frac{k^2}{4a},
+             S_B-L-\frac{(r+k)^2}{4a}\right).
+\]
+This is a one-variable convex feasibility test: the two lower functions are convex and the two upper functions concave.
+\end{theorem}
+
+\begin{proof}
+First give the affected endpoint its helpful extreme until time $t$ and then use maximal relative correction after $t$. This cannot increase the maximum loss in either world: up to $t$ both loss and closing rate are at most those with the original endpoint action, and the original continuation cannot beat the stopping-distance bound at $t$.
+
+Given a shared middle input, write $k(s)=\int_0^s u(q)\,dq$. The two closing speeds up to $t$ are $w-as-k(s)$ and $w-as+k(s)$ and are nonincreasing. If neither hits zero before $t$, both are nonnegative at $t$. If the first hits zero earlier, use $u=-a$ from that first hit through $t$. The first closing speed stays zero, so its maximum loss does not change. The second closing speed is no larger than with the old input at any later time, so its maximum loss, including the residual braking bound, cannot increase. Under this modified input the second closing speed is $2(w-as)\ge0$ after the hit. The other case is symmetric. This establishes that one may restrict to $|k(t)|\le r$ without losing any feasible budgets, even when some original prefixes overshoot. The modification is determined by the chosen shared input and model, not by seeing the hidden world.
+
+The first terms in the inequality enclose exactly the possible $z=\int_0^t(t-s)u(s)\,ds$ at a prescribed $k=\int_0^t u(s)\,ds$. The upper value puts $u=a$ first and $u=-a$ second; the lower reverses their order. To see the maximum, subtract the candidate from any admissible input of the same integral and subtract the weight at the switch from the decreasing weight $t-s$. The resulting pointwise product is nonpositive on both sides of the switch. The minimum follows with signs reversed, and convex interpolation gives the full interval. This proves necessity of the stated test.
+
+For sufficiency choose a shared prefix delivering such $(k,z)$ for the entire middle block and the unaffected endpoint, which knows its own speed is nominal. The affected endpoint uses its helpful extreme. Both closing speeds are nonincreasing and end nonnegative, so the largest prefix loss is attained at $t$. If $t<\tau$, then $t=w/a$ and both speeds have already equalized without the report. Otherwise use the corrective extremes from $t$ until the affected difference falls to zero. Then all brake together. The only shrinking gap in either world has exactly the loss tested above. Speed caps hold because the nominal speed deviation lies between $-(w-as)$ and $w-as$ at every prefix time $s$, and the speeds after that stay between their values at $t$ until equalization. In A the rear brakes at its maximum rate until rest; B stops at $c/a+t+k/a\le(c+w)/a$.
+\end{proof}
+
+\paragraph{One-sided reserve.}
+If $S_A=w^2/(4a)$, safety forces the middle prefix to accelerate at $a$ almost everywhere until $\min(\tau,w/(2a))$. The opposite gap then needs $S_B\ge w^2/(4a)+w\min(\tau,w/(2a))$: up to the forced switch it loses $w$ per unit time, and the remaining loss is at least $w^2/(4a)$. This is attained by switching to the other side's optimal action at that time; if the first pair has already equalized, both of its robots can brake together. At $a=w=1,\tau=1/4$, equal gaps need precisely $23/64$ each. Giving the first gap $1/4$ and the second $15/32$ keeps the same total reserve but fails: the second gap now needs $1/2$. With no report, the test reduces to $S_A,S_B\ge w^2/(4a)$ and $S_A+S_B\ge w^2/a$.
+
+\paragraph{Evidence and limits.}
+The replay integrates segmented controls using exact rationals, includes the maximum loss between sample points, and checks the moment interval and a continuum lower bound against finite prefix enumeration. Lean checks the scalar arithmetic, not the dynamics or observation model. \href{https://people.eecs.berkeley.edu/~tomlin/papers/AGJT14.pdf}{Alam, Gattami, Johansson and Tomlin} study safe following distances with information propagation delay in a platoon; the same-information comparator here is direct worst-case two-world reachability. A full-state calculation that chooses a different prefix per world instead gives $w^2/(4a)$ in each and is not comparable. No real sensor, data reassociation, world-dependent signaling, upper-gap opening, or fault after the report is covered.
+\end{document}
