@@ -1,0 +1,65 @@
+\documentclass[11pt]{article}
+\title{A guard on new lift payload writes does not retire older ones}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Modeled gate.}
+The earlier source replay distinguishes advertised session from the
+physical input to the simulator's per-payload velocity update.
+Use that exact code in a serial test fixture, and put an authored
+guard immediately before a proposed nonzero payload-write batch.
+For this test the building operator can inspect the selected payloads,
+enforce a permit check, and prevent the whole new batch. Each fleet's
+scoped permit is bound to a modeled body, one trip instance, and a
+closed range of effect cuts. The operator checks the permitted effect
+of this instance, not a grant to any operation with the same subject.
+The fixture has a known unique trip and immutable association to
+the current input command for each run. A deployed binding between
+trip identity and native command instance is not supplied.
+Only the modeled velocity-command write is covered. Actual platform
+motion could affect a physically present body even when it has
+no velocity-command component.
+
+At the guard and write cut, both reads of the selected shape and
+positions use the same serial component state. Each recipient selected
+by the native loop must have an active matching permit covering that
+cut. Under this serialization, inclusion is both necessary and sufficient
+for every new write in the batch to be authorized. The model refuses
+the entire batch instead of suppressing writes to particular bodies
+while claiming a shared ride still moves only allowed occupants.
+If poses, shape, component identities, command binding or valid
+permissions can change between the guard and use, this reasoning
+does not apply without a binding or synchronization mechanism.
+
+\paragraph{Replayed separation.}
+An issue-time lookup allows the proposed trip while only the new
+owner's modeled payload is present. A late unpermitted entry
+blocks the batch when the effect-side check sees it. With trip-specific
+consent an old payload stays onsite and the actual selected loop
+writes to both payloads, without claiming the previous duty has
+settled. A valid permit for a different trip does not count. The
+effect-side guard also distinguishes the inclusive validity limits
+of the correct trip's permit.
+
+Next, revoke authorization after a successful write in the fixture.
+The guard prevents another nonzero write. It does not clear the
+earlier velocity values stored on either payload. Even passing
+zero cabin velocity to the selected native branch skips its
+per-payload write. The later values are unchanged in this serial
+component fixture. This demonstrates why denying a new invocation
+or observing a zero input to this branch does not prove an older
+command retired. No conclusion follows about how long a full
+Gazebo downstream system would retain or consume such values.
+A revoke-and-settle interface needs independent knowledge of
+actuator quiescence or a guaranteed actuator-side fence
+covering already-issued writes and physical motion.
+
+\paragraph{Limit.}
+This is a guard on an executed source-level write selector, not
+a lift safety controller, physical actuator test, authorization
+system for fleet owners, or measurement of egress. An equally
+informed direct effect check has the same result. No physical
+clearance, service bound, independent held-out transfer, or
+contract acceptance is claimed.
+\end{document}
