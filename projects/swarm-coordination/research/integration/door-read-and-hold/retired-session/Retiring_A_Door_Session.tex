@@ -1,0 +1,67 @@
+\documentclass[11pt]{article}
+\title{What an empty door hold log forgets about a delayed request}
+\begin{document}
+\maketitle
+
+Open-RMF's selected door supervisor remembers the latest OPEN
+timestamp while a requester has an active session. It drops that
+record on a qualifying CLOSE. A delayed OPEN can then recreate
+the retired session. A later holder may be unable to close even
+though all current tasks have finished with the door.
+
+\paragraph{Executed behavior.}
+Compile the pinned OPEN, CLOSE, message publication and heartbeat
+methods with inert clocks and publishers. OPEN inserts the requester
+or increases the active timestamp. CLOSE for an active requester
+compares its timestamp to the active one; it removes the requester
+unless the close is strictly older. After removal a CLOSE command is
+published only if no other hold remains. The heartbeat includes only
+the active requesters and their request times.
+
+In one matched pair the same requester opens at time 10 and then
+closes at 12 or 15 respectively. Both heartbeat states have an
+empty active list. An OPEN received afterward with timestamp 13
+is accepted in both. Under an order law where CLOSE retires its
+own and earlier attempts, it is a valid newer open in the first
+history but a delayed old attempt in the second.
+The tests inject these delivery orders at the method seam; they
+do not assert that a healthy single writer and transport reorder
+messages.
+
+A separate positive case retains an unrelated valid session, so
+closing the first requester emits no CLOSE. Then a delayed
+duplicate OPEN for the retired requester recreates its hold.
+The unrelated requester later closes, but the stale hold now
+prevents the expected CLOSE command. The replay checks the
+supervisor publication, not physical actuation. Another control
+keeps a genuinely newer active hold when a stale CLOSE arrives.
+
+\paragraph{Exact repair for a specified order law.}
+Fix an authenticated requester, door and epoch with one trusted
+ordered version domain. Keep the greatest terminal version after
+the active entry is removed. Ignore an OPEN whose version is at
+or below that terminal version; record every authorized CLOSE
+in the watermark even if it does not remove a newer live hold.
+An equal-version close wins by the declared law. The guard in the
+replay applies this repair before invoking the native methods.
+It rejects the delayed attempts, admits the newer attempt and
+lets the unrelated holder's close publish when no real hold
+remains.
+
+For each requester this retains the exact needed threshold for
+future admissible OPEN tests. If two terminal histories differ
+at versions \(c_1<c_2\), an incoming OPEN at \(c_2\) separates their
+answers. An empty active map cannot serve that consumer, and with
+multiple independent requesters the same ambiguity occurs for
+each. A safely drained delivery frontier can authorize dropping
+a watermark; an absent active entry alone cannot. Clock reset,
+reuse of identities and untrusted version fields require a separate
+epoch or authority fence. This is a source-backed comparison
+with an ordinary version-watermark guard, not an advancement
+claim over a direct versioned session protocol.
+
+Even the repaired ledger does not establish that a robot
+physically cleared the doorway or that the door did close.
+Those claims still require a valid measurement and a transition
+history. No deployment is modified or tested.
+\end{document}
