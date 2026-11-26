@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{Empirical joint-failure counts with uncertain episode links}
+\begin{document}
+\maketitle
+
+An empirical failure cap can be decidable without deciding which
+records belong to each episode. The check requires the possible joins
+on one common clock history. A graph made by pooling pairwise matches
+from conflicting clock histories can give the wrong answer.
+
+\paragraph{Input and scope.}
+Two complete streams each contain \(n>0\) records, one per true episode,
+and local binary failure flags \(a_i,b_j\). There are no duplicates,
+dropped episodes, or hidden selection in this sample. The first source
+provides calibrated acquisition times \(s_i\). The second stores local
+acquisition stamps \(t_j\). The model says a join \(\pi\) is admissible
+exactly when
+\[
+ \exists\,\theta\in[\ell,h]\quad \forall i:\quad
+          |t_{\pi(i)}-s_i-\theta|\le\epsilon .
+\]
+There is one common offset \(\theta\) and an independently admissible
+bounded residual for each record; no additional chronological or queue
+constraints apply. Record identifiers and recorder arrival order are
+not episode identities. These are acquisition premises, not guarantees
+provided by a recorder or a timestamp format. If the source establishes
+a shared drift, batching constraint or order, it must enter the
+admissible joins; the model used here does not assume it away for data
+that have those constraints.
+
+\paragraph{Exact answer for a cap.}
+For a fixed \(\theta\), the admissible pairs form a bipartite graph
+\(G_\theta\). Under the stated residual law, its perfect matchings
+are exactly the possible joins: a matching and its offset give
+the required residual separately for each record. Give edge
+\((i,j)\) the cost \(a_i\lor b_j\). Assignment with minimum or maximum
+total cost yields the corresponding empirical union count. For the
+whole clock interval, cut at every in-range endpoint
+\(t_j-s_i\pm\epsilon\). Check every singleton cut and one representative
+per open cell, since edge membership is constant within each cell;
+in particular, exactly touching intervals can give a feasible
+singleton. Take the least and greatest values across the feasible
+cells, keeping an actual matching and offset for each bound.
+If there are none, the records contradict the acquisition model.
+Otherwise a cap on the count is guaranteed iff the upper bound
+meets it, and impossible iff the lower bound exceeds it. Multiply
+an empirical fraction cap by \(n\) before this test. An empirical
+count does not by itself estimate a population probability.
+
+The check is polynomial: there are \(O(n^2)\) cells and assignment
+is \(O(n^3)\) per cell in the provided implementation. The replay
+audits primal and dual costs. Ordinary weighted assignment is
+the direct comparison, not an architecture beaten by this result.
+The method avoids choosing a single approximate timestamp join
+when more than one is consistent with acquisition.
+
+\paragraph{When can the matching be forgotten?}
+Fix a feasible cell and a reference matching \(m\). Contract its
+matched pairs to vertices. A feasible \((i,m(j))\) gives directed
+arc \(i\to j\), of cost
+\[
+                    c_{ij}=(a_i\lor b_{m(j)})-(a_i\lor b_{m(i)}).
+\]
+An alternative matching decomposes into vertex-disjoint alternating
+cycles relative to \(m\), and any single directed cycle forms another
+matching by replacing its own reference edges. All joins therefore
+have the same union count iff every directed cycle has zero total
+cost. Equivalently, every strongly connected component admits a
+potential \(p\) with \(c_{ij}=p_j-p_i\) on its internal arcs. For
+necessity, assign potentials as path sums from a root. Two paths
+to a vertex give the same sum by closing them with a return path;
+closed walks decompose into cycles. Sufficiency is telescoping.
+Arcs between components cannot occur in a replacement cycle.
+Within a cell this check is linear in graph size once a reference
+matching is supplied, using component labels and propagated
+potentials. Across cells the common counts must also agree.
+No comparable statement holds for arbitrary future consumers:
+on an arbitrary justified graph, the only possible counts can
+be 2 and 4, with 3 ruled out. Bounds are exact for monotone cap
+decisions, not a promise that every intermediate value occurs.
+
+\paragraph{Replayed cases.}
+The pinned recorder callback from the parent experiment carries
+authored acquisition stamps and flags as opaque fixture payload.
+It also records synthetic transport send/receive times, which
+are not used as acquisition evidence. With stamps \(0,2\) in both
+streams, residual bound \(1/2\), and offset in \([-2,2]\), the two
+cross edges are each possible, but at incompatible offsets.
+Their fictitious joint assignment raises the apparent count from
+1 to 2. Another case permits multiple joins but always counts
+2; changing only the left flags makes 1 and 2 both possible.
+A third case has a graph-union matching although there is no
+common feasible offset. An endpoint-only control requires exactly
+\(\theta=1/2\).
+
+The replay checks 15,924 feasible labeled graph/outcome cases,
+including 4,240 with nonunique matching and unique count, and 800
+seeded acquisition-model comparisons against direct enumeration
+that intersects offset intervals for entire matchings. The
+acquisition cases are synthetic; the callback and its publication
+fields do not measure clock quality. No physical experiments,
+representativeness, or full R4 acceptance follow.
+\end{document}
