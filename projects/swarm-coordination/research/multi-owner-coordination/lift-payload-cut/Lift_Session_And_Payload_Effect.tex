@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{Changing a lift session does not retire an old payload effect}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Source cut.}
+This fixture executes the pinned Open-RMF supervisor request and
+state methods, together with the corresponding simulation plugin's
+request body, state construction, geometric payload filter and
+per-payload velocity write. Minimal stand-ins supply ROS publications,
+poses, component storage, and a selected actual nonzero cabin-velocity
+input. The fixture explicitly chooses when the floor-and-door command
+finishes. It does not run the Gazebo scheduler, decide when a real
+cabin can move, or run the mission planner. The fleet end-session
+phase is inspected, not executed: its completion predicate compares
+the reported session with its requester. In normal mission context
+other phases may ensure egress before this phase is called.
+
+\paragraph{Native protocol reconciliation.}
+With a prior command active, an end-session request is different
+from the simulator's current command and the driver declines it.
+The supervisor has already removed its corresponding active pointer
+when publishing the end, so it accepts the other fleet's next
+request; the busy simulator declines that request too. Once
+the floor-and-door command has completed, a report of the previous
+session prompts the supervisor, which now has the successor active,
+to reissue the successor request. The simulator accepts that
+request at the idle command cut. This is ordinary modeled event
+order, not a transport, security or protocol attack. A second trace
+where the first end command was accepted also yields the successor
+session when it is next admitted. With and without an accepted END,
+the selected callbacks reconcile state toward the same successor.
+The simulated busy-command gate is a real distinction and is not
+removed from the comparator.
+
+\paragraph{Physical effect scope.}
+The plugin takes payloads from model positions in the translated
+initial cabin bounding box, not from the fleet session identifier.
+For models with a linear-velocity command component, the positive
+cabin-velocity branch writes its vertical command to every selected
+payload. In the matched executions the same lift reports and command
+cuts coexist with the old model either inside or outside. Only the
+inside model receives the successor move's velocity write. This is
+also possible after a genuinely accepted END; no session
+acknowledgement is a body-exit test. Even a clear payload lookup
+at successor acceptance fails to settle the future effect if a model
+enters between that check and the later payload lookup. The replay
+adds exactly that difference in positions while keeping the admitted
+command and reports unchanged. The unrelated model outside the
+cabin receives no command in any case.
+
+\paragraph{Result and limits.}
+Let $C$ be a modeled command and $A(C)$ the set of models whose
+receipt of its vertical effect is authorized. At a nonzero velocity
+update, let $M$ be the models selected by the actual payload filter
+and with the necessary velocity component. The per-effect inclusion
+law is $M\subseteq A(C)$, not merely acceptance of $C$ or the end of
+the old session. The native effect loop makes this condition exact
+for that modeled write: each selected model is written, and the
+loop does not write to others. This does not prove future motion
+or that a velocity command is physically obeyed.
+The matched witness proves the lift session and state projection
+cannot decide this condition, even with the busy gate and nominal
+accepted-END trace. A geometric witness at issue also cannot decide
+it without containment through the actual use cut. An effect-side
+authorization source, physical exclusion covering the interval,
+or an explicated recheck can close the modeled gap; no such
+mechanism is attributed to the stock simulator here.
+
+The box uses model reference positions, not a complete cabin
+occupancy or clearance sensor and not a tail/body certificate.
+There is no claim of field behavior, lift safety, authorized
+human transport, operating service bound, full R5 or architecture
+acceptance. This is a bounded source-backed transfer of the
+issued-to-effect distinction from roadway and door fixtures to
+a platform that can carry a previous participant.
+\end{document}
