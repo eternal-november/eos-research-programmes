@@ -14,3 +14,5 @@ listed short names. Run:
 Requires Python 3 and a C++17 compiler. The replay uses stubs for ROS
 and a writer spy; it does not make claims about actual transport order,
 storage plugins or population risk.
+
+The [shared-clock follow-up](recorder-clock/README.md) gives an exact empirical cap test with bounded acquisition errors. It can settle the count without identifying every link, but cannot combine links requiring different offsets.
