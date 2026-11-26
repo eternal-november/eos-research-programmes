@@ -1,0 +1,85 @@
+\documentclass{article}
+\usepackage{amsmath}
+\title{Carry the final freeze across the link that actually survived}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Reference envelope.}
+This joins the earlier independent export cut to one native radio and
+warehouse trace rather than executing two previously successful arms
+and combining their outputs. The authorized old native station
+worker exits before publication or just after it. A separate export
+process freezes the old write authority and exits before or after
+its final checkpoint-bound state is durable elsewhere. In all cases
+the old authority's file is inaccessible to the receiver after
+the export. The independent retained envelope supplies the only
+actual packet payload at the named endpoint. The destination has
+the earlier exact checkpoint and can apply only receipt-driven
+actions. A separate warehouse carrier and radio flow continue
+during recovery. Source revisions, reused reference code and the
+native selected transport adapter are pinned in \verb|SOURCE.tsv|.
+
+\paragraph{Order, observable state, and cost.}
+At outer tick three an actual 130-byte packet uses RX capacity at
+the receiver. At tick five the later relay may spend part of its
+TX budget on an erased packet, even though no receiver sees it.
+The moving transport windows use native SubT membership, including
+the equality boundary, with capacity 320 payload bytes and four
+outer ticks per second. At six an available early link can carry
+a 114-byte seal. A receiver checks its actual checkpoint against
+the seal, including the operation key, current right and station
+history, not just pose. If it matches, the new authority can
+consume the handoff at six. If it does not, the receiver has not
+yet acquired a right to apply. It sends a real two-byte request on
+a separate return link at seven. A successful callback requests
+only the remaining checkpoint-bound fields at eight. Old and new
+pieces are revalidated jointly before changing authority or trying
+the native operation. On a lost early link, a fresh late copy of
+the whole capsule is still permitted if it fits. The earlier RX
+debit has expired by eight, but the relay's tick-five debt still
+counts. A failed late path separately erases its packet.
+
+The cut schedule, caps, packet authenticity, return path and
+independent storage are explicit fixture premises. The model does
+not infer that a real radio link or a detached physical plant
+has those properties. The retained early checkpoint is common; no
+codebook or preprovisioning saving is assumed. Byte accounting is
+for native application payload charges, not actual link headers or
+the upstream stage that first persists the independent envelope.
+
+\paragraph{Exact tested boundary.}
+In the live-capacity-loss case, a monolithic early send of either
+revision (240 or 286 bytes) would overflow the receiver's remaining
+190 bytes. A 286-byte late retry would exceed Q's remaining
+180 bytes after the 140-byte erased probe. For the pre-publication
+old outcome, the 114-byte seal represents a complete existing
+checkpoint, and the new worker takes the actual next step at six.
+For the already-durable outcome, the receiver sees a genuine seal
+but its checkpoint does not contain that result. A 173-byte
+supplement completes it at eight; the station returns the previous
+result without advancing twice. The TX frontier for this
+supplement is exactly 147 prior bytes on Q: $147+173=320$; one
+more prevents service. The 114-byte seal and 173-byte supplement
+can both remain in the receiver's budget at eight. Neither
+the genuine old-side freeze nor the charged request can stand in
+for a successfully delivered suffix. If no independent envelope
+committed, no transport variant invents one.
+
+\paragraph{Comparison.}
+The controls use the same source histories, permitted routes,
+minimum known old checkpoint and separate live workload. In the 64-case sweep per arm, the
+split and direct checkers complete by tick eight in 13 cases;
+the monolithic diagnostic completes in four. Two separate
+side actions succeed in every case. Application payload debit
+totals per arm are 21,162 and 25,928 bytes respectively across
+the finite sweep, not a sampled workload estimate.
+The direct implementation compares the same typed cut and
+suffix explicitly and tests the same local budgets; it agrees
+trace for trace. Whole-or-repeat is a diagnostic competitor,
+not an optimal incremental protocol. Splitting by what a
+receiver can already validate is a source-grounded positive
+case against that diagnostic. It supplies no improvement over
+the matched split comparator, and the independently selected
+mission remains unused.
+\end{document}
