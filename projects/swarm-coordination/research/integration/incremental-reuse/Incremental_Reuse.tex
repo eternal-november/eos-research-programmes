@@ -1,0 +1,113 @@
+\documentclass{article}
+\usepackage{amsmath,url}
+\title{Incremental proof reuse across edits to a finite recovery model}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{Scope.}
+This is an executable first checker for explicit, finite, rooted transition
+products with a fixed audited policy and declared observation history
+classes. Three judgments remain separate: reachable safety violation,
+reachable deadline violation, and whether the prescribed action is a
+function of the declared local history class at an actor's decision cut.
+The last is implementability of the specified audited choices at that cut,
+not a search for alternative distributed policies. Timing, deadlock,
+and duty semantics belong to the complete product generator. The tool
+does not synthesize compilation certificates from robot telemetry.
+
+\paragraph{A closure certificate for phase-ordered or cyclic models.}
+Let $A,B$ be versioned transition graphs on common state names, with
+possibly different roots, and let $R_A$ be the exact certified old reachable
+set with rooted witnesses. Supply a complete edit. Let $D$ be the forward
+closure in $A\cup B$ of all changed roots and all heads of inserted or
+deleted edges. Outside $D$, every root and incoming transition is unedited;
+any path ending outside $D$ must stay outside $D$. Hence the old reach
+and witness data there remain valid. For the dirty region take seeds
+from new roots inside, plus new edges entering it from the still-reachable
+outside. Search using only $B$ inside the region. First-entry decomposition
+yields exactly
+\[
+ R_B=(R_A\setminus D)\ \cup\
+ \operatorname{Reach}_{B|D}
+ \bigl((I_B\cap D)\cup\{v\in D:\exists u\in R_A\setminus D,\ u\to_B v\}\bigr).
+\]
+Every seed has a valid path from a new root, and every actual path entering
+the region never leaves. Lean checks the outside transport and the exact
+inside first-entry equivalence. Edit completeness, old certificate,
+and continued state meaning are premises. At a mark-only edit reachability
+is unchanged but a newly marked reachable state may violate a claim.
+Bad-state and local-view indexes change only for newly or formerly reachable
+states and independently edited facts.
+
+\paragraph{Classical matched comparison.}
+The other incremental implementation keeps one concrete rooted witness
+forest. A removed root or edge invalidates descendants of broken
+witnesses, not every descendant of an endpoint. Root support within a
+cycle is not justified by a cycle of predecessor counts. Retain witnesses
+outside invalidated subtrees. Repair using incoming support from there,
+new roots, and new edges out of retained states, then explore forward.
+Every new path starts at a seeded root or first leaves the kept set via a
+new edge or a previously reached now-invalidated destination.
+The worklist receives the same edits and monitor data as the cone checker.
+Existing incremental graph and verification methods are relevant, e.g.
+\url{https://research.cs.wisc.edu/wpis/papers/tcs96a.pdf} and
+\url{https://verify.inf.usi.ch/sites/default/files/fedyukovich_tacas13.pdf}.
+No novelty or universal complexity advantage is assigned to this design.
+
+\paragraph{Counterhistories and unresolved installations.}
+A locally safe new step can make an old unsafe ingress reachable.
+That counterhistory uses consecutive edges of one admitted version.
+A clean but slow continuation can violate the deadline only;
+two reachable prescriptions on the same local information class can
+violate cut realizability despite physical safety. Independent behavior
+may grow while a property remains true. A detached formerly reachable
+loop cannot support its own reachable status.
+
+For mutually exclusive globally fixed binding choices, evaluate each
+complete installation. Carry means all such models satisfy the claim;
+refuted means all violate, possibly with differing witnesses per
+model; mixed remains undecided with respect to the evidence.
+No model-dependent witness is asserted as the one actually observed.
+An available one-shot observation separates verdicts exactly when each
+of its response classes has one verdict. The test compares stipulated
+query partitions and reports the lowest supplied cost among separating
+queries. Acknowledgement of request acceptance does not separate alias
+from disjoint resource; actual pool identity would.
+If two individually tolerated edits are enabled together,
+their combined version can produce an unsafe path. If they instead
+describe mutually exclusive installed graphs, unioning per-edge
+possibilities manufactures that same path. This is a finite support
+comparison, not inference from unqualified sensors.
+
+\paragraph{Measured checking work.}
+The checker agrees with independent full fixed-point exploration, cold
+indexed checking, and the rooted-witness worklist on authored cases and
+$7{,}680$ deterministic benchmark edits including repeated patches and
+cycles. Returned paths are checked against the resulting graph; a
+nonrealizability witness includes two paths to one declared information
+class with distinct prescriptions. The slotted cancellation fixture
+compiles budget and motion under four whole-installation laws with
+separate deadline marks. Its explicit diff producer scans all state
+rows; that work is not saved by downstream reuse.
+
+For a short disjoint addition to a $2{,}002$-state live graph, the cone
+scans seven outgoing and two reverse rows and updates one fact, versus
+$2{,}003$ outgoing and $2{,}003$ fact reads from cold. The witness worklist
+scans two outgoing rows, zero reverse rows and one fact, with explicit
+work to index its forest. Adding an edge to a live $2{,}000$-state branch
+makes the cone inspect $6{,}001$ outgoing and $2{,}000$ reverse rows;
+the witness method inspects the edited row and repairs no witness.
+Unplugging that branch is cheaper cold when only the resulting verdict
+is needed; an incremental fact index may still need to remove all dead
+members. These are semantic row reads, not runtime or memory measures;
+full-map copies and building indexes are separate costs.
+The cone is an exact certificate cut, not an observed advantage over
+strong ordinary incrementality. A categorical architecture must earn
+its cost of constructing and composing certificates against that baseline.
+
+\paragraph{Residuals.}
+Frozen before authoring the test cases, but not independently selected.
+No blind transfer, full integration, or field validation is asserted.
+If state meaning, observation equality, decision authority, or permitted
+policy changes, supply a validated new compilation and explicit comparison.
+\end{document}
