@@ -9,3 +9,5 @@ main 804f0cc9b1f38044e63be901a49bd945636334a3:
 
 Python 3 and C++17. The pinned dependency is hash-checked. TerminalCut.lean
 uses Lean 4.35.0. Same-information direct ties; no holdout or field test.
+
+[Split-source terminal case](split-terminal/README.md) distinguishes actual remote request, revoke response and alternate effect. Losing or delaying the response can strand a previously safe old action; timely receipt can itself charge shared capacity. The limited exact direct reference ties.
