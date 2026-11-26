@@ -1,0 +1,121 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\begin{document}
+\title{One admission interpreter for physical clearance and report custody}
+\author{}
+\date{26 November 2026}
+\maketitle
+
+\paragraph{Scope and result.}
+Two pinned simulation producers feed a single typed interpreter for an
+outstanding inspection workflow. A warehouse robot and its load must
+actually clear a bay, a report must arrive exactly once by its deadline,
+and a separate radio delivery must still complete. The same local
+decision cannot assume away a busy bay, already spent transmit capacity,
+a previously delivered report, or authority that ends before use.
+The one-cut interpreter and a factored direct check agree in 21,600
+row--option comparisons; no planner-performance advantage is claimed.
+This is an I1 development fixture, not architecture coverage, I2 or an
+independent held-out case. It couples two checked code paths by a
+declared one-way model, not a physical integration of the simulators.
+
+\paragraph{Interfaces and declared kernel.}
+The two source adapters provide ordered physical effects and
+actor-indexed evidence, not feasibility verdicts. The spatial producer's
+warehouse command trace witnesses actual relocation at tick 6, 18 or
+19. The radio producer executes version-pinned broker and RF model
+code. Times are aligned by fixture declaration: one second of broker
+simulation is 24 warehouse test ticks. The physical availability of the
+local report port requires a cleared bay. An alternative receiver can
+be used without that bay, subject to the authority and path in the
+fixture. The cross-plant clock, berth-to-radio implication, delivery
+of truthful local evidence, and static path and permission facts
+are authored, not learned. In one separately added control a permission
+withdraws at tick 14. There is no inference that healthy or quiet
+hardware without a report has a clear bay or a durable permission.
+
+The decision at tick 9 is irrevocable for this catalogue. Its choices
+are a tick-15 send via the berth, a disjoint remote send at tick 15, a
+remote sender using the original receiver at tick 15, a delayed local
+send at tick 30, or no new send. Allowing a later choice at another cut
+is a different control class. The simulator receipts at the cut are
+explicit test inputs; their propagation latency and failure model are
+not implemented by the plants. Warehouse paths are not optimized
+or re-synthesized by this catalogue, and none of those paths responds
+to the simulated radio decision.
+
+\paragraph{Interpreter.}
+A trace atom has a time and tie order, required positive facts, required
+absences, fact effects, resource checks/debits, and identifier(s) it
+actually settles. A resource check reads the recorded usage at
+$t-W\leq u\leq t$, in the atom's order, adds the requested usage, and
+compares with the limit for that attempt. A failed physical outcome may
+retain a transmit debit without a receive debit. No alternative is
+credited unless the trace records the corresponding effect. Sequential
+interpretation follows the explicit time/order relation; it does not
+silently identify a terminal callback, a resource release and a physical
+clearance. Input adapters must keep logical fact meanings compatible
+and assign a unique sequential order to effects; this kernel is not a
+general conflict-resolution law for simultaneous assignments.
+
+Let $H$ be the finite set of authored possible histories. A partial
+observable option is approved for view $o$ exactly when
+\[
+  \forall h\in H:\quad \operatorname{view}_{9,a}(h)=o
+    \Longrightarrow \operatorname{check}(h,\operatorname{option},D).
+\]
+The scope is the implemented finite, single-cut action catalogue.
+Soundness follows by substituting the actual row in the view class.
+If a tested choice is rejected, some row in the class violates a
+resource/authority/physical guard or a due effect. This does not show
+that no other information-acquisition strategy could succeed. The core
+only proves what its declared world set covers. It does not certify
+that world set against the plant.
+
+\paragraph{What joins, and why it matters.}
+The join uses a declared common binding, separate from anything
+available to the controller. It rejects an unmatched declared binding
+rather than dropping a possible history. Within a binding the product
+must either be justified or treated as a conservative overapproximation;
+the algorithm does not establish completeness of the inputs.
+Across bindings it is not a Cartesian product unless
+independence is justified. The two extremal mistakes appeared in
+controls. First, taking a clear bay from one trace and an available
+path from another can incorrectly admit a report whose local option is
+unsafe in both traces. Second, in a deliberately authored common-port
+case a shared condition puts a two-unit setup debit on just one side.
+The two valid rows leave enough for a two-unit report under a
+five-unit cap; the Cartesian product invents a four-unit prior debit
+and refuses the report. An exclusive coupling must be established, not
+selected because it yields an attractive result. The original native
+simulators establish neither the shared control-port meter nor the
+exclusive coupling of this separate control. This also shows why an
+unknown coupling must not be treated as a known compatible binding.
+
+\paragraph{Matched comparison and evidence accounting.}
+Each deadline has 2,160 complete rows and 133 distinct local views.
+The direct check keeps the same site and receipt distinctions, computes
+transmit and receive inequalities separately and checks deadlines and
+a prior successful delivery directly. It matches all approved option
+sets. The short deadline admits a guaranteed option in 84 classes; the
+longer deadline does so in 99. These are counts of tested cases, not
+probabilities or relative operational improvement. Ninety-eight radio
+controls include independent transmit/receive aliasing, an erased
+optional send, pre-existing successful delivery and unavailability;
+ten warehouse controls replay the pinned source. Five subsequent
+commands are selected by the common controller and checked against
+native radio outcomes: early local, early remote, retain after prior
+delivery, refuse, and defer. The guard for a remote send to the
+original receiver distinguishes a failed optional from a successful
+one even though both debited the same sender.
+
+The saved replay reports exact query, visited-atom, meter-check and
+prior-debit-read counts for the exhaustive comparison. It does not show
+that enumerating all rows or distributing receipts is cheap. All tested resource charges and motion events are
+shared by the exact comparison. The next material test adds a source
+that can change its effects \emph{in reaction to} an authorized probe
+or repair, with independently justified bindings and measurement and
+intervention costs. A real accepted case would also need the relevant
+published planning comparator and the frozen, independently chosen
+mission under the contract.
+\end{document}

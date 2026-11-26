@@ -254,6 +254,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 ## Integration development
 
+**SC-SHARED-ADMISSION: Can one checker consume physical clearance and rolling radio budget?** Two pinned producers feed a shared event interpreter for bay relocation, exact report delivery and continued unrelated work. A factored direct check ties. The join controls distinguish an unjustified splice from a declared common cause that legitimately rules out a conflict. [Proof, scope and replay](integration/shared-admission-core/README.md). Authored bridge, not I1/I2 acceptance.
+
 **SC-GUARDED-FAULT-FAMILY: Which safety evidence survives an update?** A qualified observation can narrow admitted installations without rebuilding the reachability table. Editing guards can preserve the table but invalidate a concrete witness, or expose an unchanged old violation. [Frozen kernel, proof and replay](integration/guarded-fault-family/README.md). Synthetic development control in the featured-transition-system regime, not independent validation or an operational gain.
 
 **SC-NATIVE-SCOPE-TRANSPORT: Can the same receiver proof survive when the full action table changes?** In two native development fixtures the same frozen settlement policy succeeds on warehouse and late radio cuts. Early radio loses the pending branch, and a separate warehouse action has individual but not joint success witnesses. [Proof, scope and native replay](integration/native-scope-transport/README.md). The matched direct policy ties; no independent transfer.
