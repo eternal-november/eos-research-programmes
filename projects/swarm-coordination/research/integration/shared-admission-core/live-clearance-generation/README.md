@@ -34,3 +34,6 @@ the crash-recovered station result to a guarded source through live radio.
 
 The [pre-settlement failover replay](pre-settlement-failover/) changes the
 supplier before an unresolved effect across a primary path loss.
+
+The [I1 comparison docket](comparison-docket/) records the evidence,
+strong comparator scope, and next held-in discriminator before a freeze.
