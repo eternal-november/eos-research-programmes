@@ -19,3 +19,5 @@ Development freeze and authored controls only; no independently selected
 test has been opened.
 
 [Native source check: transient and persistent eligibility](native-eligibility/README.md). Real simulated dispatch resolves eligibility at two cuts; a typed budget hold can preserve it if the route and gate authority survive, but does not prove scheduling fairness or a deadline.
+
+[Strong fairness: suffix adapter and contextual bit bound](strong-fairness/README.md). Exact reuse needs filters before taking union masks. On one two-port family, the same weak summary hides a middle-binomial number of bits needed to answer all neighbor contexts.
