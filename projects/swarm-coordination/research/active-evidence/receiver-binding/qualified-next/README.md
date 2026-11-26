@@ -12,3 +12,5 @@ library and C++17:
 ProbeFilter.lean uses Lean 4.35 and Mathlib. The frozen filter was
 fixed before the authored cases. No live network, field experiment,
 or independently selected case is claimed.
+
+[Common local realization](common-policy/README.md): complete native histories can be individually realizable while a shared observation key conflicts across admitted installations.
