@@ -1,0 +1,84 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{Shared yaw uncertainty removes the three-hold compatibility bound}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Scope.}
+This extends the adjacent timed occupancy model, not the VDA replay.
+At a single cut, the coordinates of each already-issued hold are mapped
+by the same uncertain transform $u\mapsto R_\theta u+z$. Translation
+lies in a compact rational polygon (possibly a point); allowable yaw
+directions are defined by closed rational inequalities in
+$(\cos\theta,\sin\theta)$. Within a branch, these supports and the
+integer temporal network are independently instantiable. The same
+closed site and positive half-open time conventions apply. These are
+physical-model inputs, not measurements or guarantees of position.
+
+\paragraph{The exact algorithm.}
+For each fixed yaw, at a maximizing history replace its translation
+by a vertex preserving the contributing holds, as in the translation
+result. A job's half-plane $a z_x+b z_y\leq c-a(R_\theta u)_x-b(R_\theta u)_y$
+has a fixed normal. Hence for any two independent boundary normals, the
+intersection $z(\theta)$ has coordinates affine in $\cos\theta,\sin\theta$.
+Each membership test for this candidate, including translation support,
+has the same affine form after substitution. So does each yaw-support
+constraint. For each candidate pair, evaluate one direction in every
+open interval between sign changes and separately evaluate every zero.
+The resulting masks suffice for the weighted temporal calculation; each
+mask has a simultaneous yaw/translation witness. Assuming $H$ half-planes
+and $A$ yaw-support constraints, this requires at most order
+$H^2(H+A)$ mask samples, prior to eliminating duplicate masks.
+This counts sign cells and their boundaries, not bit operations or a
+bound on direct solver speed.
+
+The rational substitution
+\[
+ (\cos\theta,\sin\theta)=((1-r^2)/(1+r^2),\;2r/(1+r^2))
+\]
+changes every test into the sign of a rational polynomial of degree at
+most two. Check $(-1,0)$ separately using the homogeneous quadratic's
+leading coefficient. The replay compares exact algebraic roots by
+disjoint refinable rational enclosures, and signs at roots by rational
+arithmetic modulo the quadratic and an exact square-root comparison.
+Distinct irreducible quadratic roots are canonicalized by primitive
+polynomial and root order, so refining enclosures terminates.
+This also tests isolated admissible directions. For example, with no
+translation and reference $(1,0)$, the line segment $x=1/2$,
+$0\le y\le1$ requires $r=1/\sqrt{3}$; sampling only rational $r$ misses it.
+An independent subset oracle eliminates translations by Fourier--Motzkin
+before checking the resulting univariate signs. It uses the same exact
+quadratic arithmetic, not the candidate-pair construction.
+
+\paragraph{No bounded conflict rank.}
+With translation fixed and yaw restricted to any fixed closed arc of
+positive length less than $\pi$, suppose $n\ge2$ yaw centers are evenly
+spaced including the endpoints, with spacing $d$. Choose an angle
+$w$ strictly between $d/2$ and $d$. Use one common bounded site
+$[-1,1]^2\cap\{x\leq\cos w\}$, and for each center $\phi_i$ use a
+unit target of direction $-\phi_i$. That hold's site condition excludes
+the open arc within distance $w$ of $\phi_i$. These excluded arcs
+cover the allowed arc, so all holds cannot occupy the site together.
+At direction $\phi_i$, every other hold does qualify. Every proper
+subset is therefore feasible. The coverage has a uniform positive
+margin on the compact allowed arc, and all proper-subset witnesses are
+strict for the decisive $x$ cut. Thus sufficiently small perturbations
+of centers to rational unit vectors and of the threshold to rational
+values preserve the construction. The box bounds hold identically on
+the unit circle. This produces arbitrarily large minimal geometric
+conflicts in the same restricted-angle regime, with one shared convex
+site, not a disjunction of unrelated sites. The independent replay
+checks exact rational instances with $4,8,16$ holds on the fixed arc
+$0\le\theta\le 2\arctan(1/4)$.
+
+At fixed yaw with shared translation, triple compatibility was exact
+for the planar convex setting. No fixed subset order can replace the
+common-yaw calculation here. Retaining a coupled pose parameter and
+evaluating its induced masks is sufficient in the stated closed model;
+treating it as independent heading error for each hold can reintroduce
+impossible loads. A direct planner given these same parameters can use
+the same procedure. No field validation, closed-loop trajectory,
+angle/translation correlation beyond a declared branch, or new contract
+acceptance is claimed.
+\end{document}

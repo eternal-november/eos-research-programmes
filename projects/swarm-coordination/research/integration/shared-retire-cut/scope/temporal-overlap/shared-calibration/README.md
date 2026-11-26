@@ -18,3 +18,5 @@ timing constraints within each declared branch are new pins. The companion
 [VDA callback replay](../../../../released-base-cut/calibration-capture/) checks
 why captured local targets matter, not whether the new physical assumptions
 hold. No field or architecture acceptance is claimed.
+
+[Shared yaw extension](shared-yaw/): exact occupancy with common rotational uncertainty and arbitrarily large minimal geometric conflicts.
