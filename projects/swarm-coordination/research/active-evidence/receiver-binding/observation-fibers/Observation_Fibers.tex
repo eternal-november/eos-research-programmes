@@ -1,0 +1,81 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{A report can restrict a run without restricting its installed law}
+\date{}
+\begin{document}\maketitle
+
+\paragraph{Scope.}
+The question is whether a qualified local status supports fixed old and
+optional sends before a receive-budget reset, not whether a planner can
+observe hidden installations. Two things can fail: physical reception of
+the diagnostic packet, tested with the pinned replay, and delivery of a
+status about that reception, modeled separately. A reliable explicit
+negative and no delivered status by the decision cut are different
+observations. An unqualified timeout does not certify non-reception.
+
+\paragraph{Exact comparison.}
+Let $H$ be the complete admitted executions of one fixed test, $p:H\to W$
+the installed-law identifier, $o:H\to O$ the status at the read cut, and
+$b:H\to\{0,1\}$ the subsequent paid-effect bit for a named send. For an
+admitted law set $A$ and read $r$, use
+$H_r=p^{-1}(A)\cap o^{-1}(r)$. Reporting only a set of still-possible laws
+requires conservatively re-expanding to $p^{-1}(p(H_r))$. The first
+operation is a restriction along the observation map. The second is closure
+under having the same law; it can undo that restriction even when the law
+is known exactly. The exact empty/safe/refuted/mixed screen identifies the
+support $b(H_r)$. Re-expansion never drops an outcome and preserves
+nonemptiness, but may turn either singleton into a mixed result.
+
+This forgetful check is exact for all $A,r$ if and only if each nonempty
+within-law observation fiber realizes every outcome realized anywhere in
+its law. Sufficiency is union over the retained laws. Necessity follows
+by selecting a singleton law with a nonempty narrower outcome support.
+Lean checks the equivalence, inclusion and nonemptiness. An exact index
+can instead keep the \emph{within-law, within-observation} outcome supports
+and union over admitted laws, leaving exact witness identities to a replay
+store. This index is scoped to a fixed continuation and specified outcomes;
+it promises neither exact joint supports from marginal ones nor reuse for
+queries not represented in the index. A richer static parameterization
+could make every execution its own law but then retains the very distinction
+under test.
+
+\paragraph{Native witness with one law.}
+The pinned driver sends a one-byte probe from a distinct sender, then a
+two-byte old duty and three-byte optional one, before a single five-byte
+receive-budget reset. In the installed case with distinct destination
+binding, the preliminary two bytes go to another receiver. Receiving the
+probe uses one of the due receiver's five bytes. Both histories pay the
+old duty, but the optional send pays only when the probe did not reach the
+receiver. The chosen source path can erase the physical probe while its
+status is still reported. A separate modeled status erasure can hide either
+reception outcome. The exact status screen for optional service is:
+\[
+\begin{array}{c|ccc}
+\text{seen at cut} & \text{qualified no} & \text{qualified yes}
+                    & \text{status missing}\\\hline
+\text{exact history fiber} & \text{safe} & \text{all-bad} & \text{mixed}\\
+\text{installed law only} & \text{mixed} & \text{mixed} & \text{mixed}
+\end{array}
+\]
+The observer's receipt itself consumes no extra native bytes in this
+test; that interface is a stipulation, not a demonstrated route or
+synchronization mechanism. When the destination binding is not already
+known to be distinct, even the qualified negative can be mixed, because
+a shared receiver has the old two-byte debit. These are source-level
+callbacks, not claims about RF range or qualified hardware observation.
+
+\paragraph{Replay and residual.}
+The same source driver used in
+\href{https://github.com/eternal-november/eos-research-programmes/pull/574}{the
+qualified-probe update} runs 156,576 parameter rows. An independent
+integer-budget evaluation agrees with all three raw effect bits. The checker
+and exact direct conditional comparison agree on 939,456 indexed admission
+queries (including impossible reports and empty law sets); law-only
+re-expansion changes 55,400, all informative singletons weakened to mixed.
+The grid is a deterministic stress set, not a frequency sample. The
+exact direct comparator uses the same observation and accounts for the same
+physical costs; this is a distinction an assurance layer needs to preserve,
+not a planner performance win. The necessary scope of an installed
+observation adapter, compensation for effectful sensing, and independent
+selection remain open.
+\end{document}
