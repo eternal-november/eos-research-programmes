@@ -41,3 +41,6 @@ strong comparator scope, and next held-in discriminator before a freeze.
 The [shared-stage cache replay](shared-stage-cache/) derives stale-report
 combinations from native pending debits and tests qualified reads through
 a protected consuming cut.
+
+The [old-work deadline replay](old-work-deadline/) tests qualified cache
+reads when the old carrier's motion and its transfer cannot be postponed.
