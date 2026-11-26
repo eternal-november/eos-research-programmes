@@ -12,3 +12,5 @@ Save the pinned [validator](https://github.com/ros-industrial/vda5050_core/blob/
 The harness requires a C++20 compiler. The adapter and its native test are pinned and inspected, not run in the harness. No MQTT, live fleet, driver, timing claim, or physical clearance certificate is involved.
 
 The [first-edge follow-up](first-edge-report/README.md) executes the selected state and navigation methods and finds a released first edge that the callback receives but the report omits.
+
+[Calibration follow-up](calibration-capture/): a current pose and corrected transform do not identify the target already handed to navigation.
