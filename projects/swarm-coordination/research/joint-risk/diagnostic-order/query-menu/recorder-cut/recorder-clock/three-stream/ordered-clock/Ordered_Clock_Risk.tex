@@ -1,0 +1,117 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{Ordered acquisition restores a tractable worst-case failure count}
+\begin{document}
+\maketitle
+
+The three-stream hardness result uses arbitrary permitted-link graphs.
+With bounded timestamp error and one offset, time order does more than
+make those graphs sparse. It compiles the permitted failure placements
+into ordered intervals. The worst empirical count is then an ordinary
+matching problem even if there are many streams, without ignoring the
+constraints on successful records.
+
+\paragraph{Source law.}
+An anchor has one record per episode, ordered by acquisition stamp
+\(s_1\le\cdots\le s_n\). Every other stream is complete, with one
+record per episode, stamped \(t\) in its local clock. For a fixed
+offset \(d\) and nonnegative residual bound \(\epsilon\), a record
+may be joined to exactly the positions with \(|t-s_i-d|\le\epsilon\).
+The same matching must cover all records within its stream; after
+conditioning on the offset, any collection of stream matchings
+is jointly realizable. Residuals may vary independently within
+their bounds. This law excludes dropped records, additional
+ordering or drift constraints, and dependence beyond the shared
+offset. A message stamp format or recorder alone does not imply it.
+
+\paragraph{Compile the forced and available prefix counts.}
+Each record has an interval of positions \([l,u]\); an empty
+interval means inconsistency. Sorted record stamps give both
+endpoints in nondecreasing order. If two same-flag records are
+assigned in reverse order, swapping their positions keeps each
+in its interval. Thus a set of failure positions is feasible iff
+its sorted elements match the sorted failure intervals and its
+complement matches the sorted success intervals. The matches
+can be built independently because the two position sets are
+disjoint. Ties in stamps have the same interval.
+
+For each prefix of length \(r\), let \(F^-(r)\) count failures
+whose right endpoint is at most \(r\), and \(F^+(r)\) count failures
+whose left endpoint is at most \(r\). Define \(S^-,S^+\) in the same
+way for successes. A prefix with \(f(r)\) failure positions must satisfy
+\[
+ L(r)=\max(F^-(r),r-S^+(r))\le f(r)\le
+ U(r)=\min(F^+(r),r-S^-(r)).
+\]
+Conversely these inequalities for all prefixes force each ordered
+failure and success into its assigned interval: at one below the
+left endpoint too many occurrences of the flag would violate the
+upper count, and at the right endpoint too few would violate the
+lower count. This proves that the prefix bounds fully describe
+the originally permitted flag placements, including the effect
+of the complementary successful records.
+
+For the \(k\)th failure position \(p_k\), compile the constraints into
+\[
+  1+\max\{r:U(r)<k\}\ \le\ p_k\ \le\
+      \min\{r:L(r)\ge k\}.
+\]
+The two sequences of endpoints are nondecreasing in \(k\), so an
+matching that covers these virtual failure records can be
+sorted without losing its occupied positions. If any prefix bound
+is inconsistent or the virtual failure records cannot all be
+matched, the source law is inconsistent. The encoding preserves
+the feasible sets of failure positions, not the identities of the
+actual sensor records; a witness can be expanded by the separate
+sorted assignments above.
+
+\paragraph{Optimize on that exact condensed input.}
+For the maximum, build one bipartite graph of all virtual failure
+records and the anchor positions not already failed. Its maximum
+matching plus the anchor failure count equals the worst possible
+union count. Any realization yields a representative failure for
+each newly failed position, giving one direction. In the other,
+extend the chosen edges within each stream to a full match of its
+virtual records. Augmenting paths preserve every previously
+occupied position, though the matched record may change.
+The sorted expansion recovers real successes as well as failures.
+This works with arbitrarily many streams at a fixed offset.
+
+Both extremes can also be computed by a prefix dynamic program
+for a fixed number \(K\) of other streams. The state is the
+vector of \(K\) failure counts so far. At each position choose
+one flag per stream, advance those counts, reject states outside
+their prefix bounds, and add one to the score iff some flag
+(including the anchor's) is failure. There are at most
+\((n+1)^K\) states per position and \(2^K\) candidate flag vectors.
+The replay uses this as a direct exact comparison to the single
+matching for the maximum.
+
+If one unknown scalar offset is shared by the non-anchor streams,
+partition its allowed interval at all pair eligibility endpoints,
+checking boundary singletons separately. The same graphs hold
+throughout each open cell. Optimize per cell, then take the
+extrema over feasible cells. There are \(O(Kn^2)\) cells, so the
+maximum remains polynomial in both \(K\) and \(n\). Distinct
+unknown offsets per stream need a joint cell treatment; this
+argument supplies no polynomial bound in \(K\) for that model.
+Nor does it give such a bound for the minimum with variable \(K\).
+
+\paragraph{Executed separation.}
+Anchor stamps \(0,1,3\), zero offset, and error bound one:
+the first stream's successful stamps \(0,1/2\) must fill the
+first two positions. Its failed stamp \(2\) can therefore
+only occupy the last position. A second stream's failed stamp
+\(3\) also occupies that position. The exact worst count is one.
+If the successful records are simply discarded, the first
+failure is also considered possible at anchor stamp one, and
+the apparent worst count becomes two. Compiling their constraints
+instead of dropping them gives the exact saving in the representation.
+
+The replay checks 440 fixed-offset and 90 shared-offset inputs,
+including inconsistent inputs, against sorting-free permutation
+enumeration and whole-assignment clock interval intersections.
+Only synthetic acquisition laws are exercised. No claim is made
+about clock calibration, IID sampling, actual room data, or
+full R4 acceptance.
+\end{document}
