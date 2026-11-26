@@ -48,3 +48,12 @@ the declared world remits from the native local slots. This is a first
 scoped lead for F02 and F33, not a deployed fault or clearance claim.
 The register now has 99 scoped leads and 11 without. Both inventory pins
 and the crosswalk remain unchanged; all 110 architecture dispositions are open.
+
+## Entry, handoff and shared-environment evidence through #556
+
+The scoped studies separate latent recipient capability from lift-session
+entry; a retained operator interruption from task-level pause; an unaligned
+successor entry from a qualified exclusive effect handoff; and common wind
+exposure from independent demands. They add leads for F01, F05, F26, F38
+and S20. The register has 104 scoped leads and 6 without. These are
+not architecture dispositions. Both inventory pins and crosswalk remain unchanged.
