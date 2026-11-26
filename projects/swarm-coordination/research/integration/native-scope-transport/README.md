@@ -17,3 +17,5 @@ referenced `compound-settlement` directory and its `SOURCE.tsv` to stage
 the upstream files. Lean kernels `Reindex.lean` and `Scope.lean` checked
 in AXLE with Lean 4.35.0 and the Mathlib header. The archived code is a
 source-level developmental simulation, not an independent transfer.
+
+[Residual-profile application](residual-profiles/README.md) uses the pinned Contextual Composition theorem on these native witnesses. It verifies reflection and attained-class coverage across both status branches and the declared command catalogues. Early timing and an expanded catalogue give distinct obstructions. No independent transfer or gain over the exact direct table.
