@@ -12,3 +12,5 @@ fresh anonymous frames need not tell the original names apart.
 Python standard library. Geometry checks use bounded polygon comparisons and
 explicit floating-point tolerance. This is a held-in model, not a detector
 benchmark, RF result, or independent non-radio substitution test.
+
+[Qualified negative exposures](negative-exposures/README.md) use calibrated visible coverage and actual exposure gaps to preserve names across a longer episode, including a masked-frame counterexample to treating zero decoded pixels as proof of absence.
