@@ -1,0 +1,50 @@
+\documentclass[11pt]{article}
+\title{Reservation rectification can precede progress reconciliation}
+\begin{document}
+\maketitle
+
+Open-RMF's blockade logic rectifies participant and moderator
+state after communication discrepancies. That repair distinguishes
+recovering the route identity, recovering progression within that
+route, and re-establishing an assignment that validates progression.
+
+\paragraph{Source witness.}
+In the pinned participant, rectifying a mismatched reservation
+sends the current reservation and, if present, its latest readiness.
+It explicitly omits the reached checkpoint in this branch. The
+source comment explains the normal premise: a participant should
+not go past the first waypoint until the moderator recognizes the
+new path and grants departure. This does not imply the same premise
+when the participant's current path was recognized earlier but
+the observer no longer remembers it.
+
+The replay holds current path and readiness fixed. One participant
+records checkpoint zero; another records checkpoint two from prior
+progress. Both see the moderator's differing reservation. They
+emit identical reservation and ready operations. When a later
+moderator status recognizes the correct reservation but reports
+checkpoint zero, only the progressed participant emits
+\texttt{REACHED 2}. The initial synchronization output is insufficient
+for a consumer that needs to distinguish those two histories.
+
+In the pinned moderator's reached handler, a checkpoint beyond
+the currently assigned interval sets a critical error and cannot
+advance the range. With range end one, \texttt{REACHED 2} is rejected;
+the first attempt throws and the repeat still does not advance.
+With range end two, the same report records checkpoint two and
+notifies the ready queue. The fixture supplies these alternate ranges
+rather than claiming that a particular fleet would produce either
+one. The verified result is a prerequisite on progress reconciliation,
+not a failure of eventual recovery or a physical measurement.
+
+\paragraph{Use in the architecture.}
+A recovery may need to preserve the previous interval and source
+of progress evidence while authority is repaired. Merely retransmitting
+a reached value does not make it applicable after the moderator
+has changed assignments. Conversely, missing a reached update in
+the mismatch branch does not prove the robot is still at the start.
+A stronger integrated comparison must establish the assignment and
+physical footprint in one execution, and demonstrate useful work at a
+matched deadline. This selected-code replay establishes neither
+a collision nor full I1 acceptance.
+\end{document}
