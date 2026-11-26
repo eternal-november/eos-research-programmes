@@ -10,3 +10,6 @@ example where good geometry does not guarantee enough time for a handshake.
 
 The [warm-start recovery study](warm-start-recovery/) uses the actual
 velocities at the four request cuts under declared acceleration limits.
+
+The [local-sensing deadline study](local-sensing-deadline/) keeps the
+warm planar fault cut and tests an authored hidden remote offset.
