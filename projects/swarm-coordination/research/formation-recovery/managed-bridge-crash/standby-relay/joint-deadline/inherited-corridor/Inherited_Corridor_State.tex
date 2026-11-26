@@ -1,0 +1,83 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}
+\title{Exact corridor service from an inherited motion state}
+\begin{document}
+\maketitle
+
+If a new duty inherits the motion of work already underway, it cannot
+choose a freely placed standby. On a straight corridor the exact
+replacement test uses both the minimum braking excursion and the set
+of possible terminal stops.
+
+\paragraph{Model.}
+The relay stays in a closed interval \(C=[l,h]\). Its exact state
+\((x,v)\) is measured at the observation cut, when a terminal region
+is revealed. Its velocity is absolutely continuous, with
+\(|\dot v|\le a\), \(|v|\le V\), positive \(a,V\), and deadline
+\(T\ge0\) for a stop. The walls and bounds are fixed. A clearance
+requirement may be encoded by shrinking \(C\) in advance. No other
+agent moves in the interval, and arrival does not certify delivery.
+
+\begin{theorem}
+Write \(b=x+v|v|/(2a)\). There is no feasible path if \(x\notin C\),
+\(|v|>\min(V,aT)\), or \(b\notin C\). Otherwise the exact terminal set is
+\[
+ C\cap\left[x+\int_0^T L(t)\,dt,\quad x+\int_0^T U(t)\,dt\right],
+ \qquad
+ \begin{aligned}
+ L(t)&=\max(-V,v-at,-a(T-t)),\\
+ U(t)&=\min(V,v+at,a(T-t)).
+ \end{aligned}
+\]
+\end{theorem}
+\begin{proof}
+Speed and the Lipschitz bounds from both velocity endpoints force every
+feasible velocity between \(L\) and \(U\). For \(v\ge0\), integrating
+\(v-at\) from zero to \(v/a\) forces position at least \(b\) by that
+time. For \(v<0\) reflect the coordinate and interchange the walls.
+This proves necessity of the braking wall test.
+
+For sufficiency assume \(v\ge0\) by reflection. The envelopes are
+\(a\)-Lipschitz, within the speed bound, and have the required initial
+and terminal velocities. Pure braking \(B(t)=\max(0,v-at)\) stops at
+\(b\) and holds there. Since \(U\) and \(B\) are nonnegative throughout,
+their velocity interpolations attain each position between \(b\) and
+the clipped upper endpoint without leaving the segment between \(x\)
+and the target. Since \(L=B\) up to \(v/a\) and \(L\le0=B\) thereafter,
+their velocity interpolations first reach \(b\), then move monotonically
+left. This attains every point between the clipped lower endpoint and
+\(b\) while staying between the walls. Interpolation preserves the
+kinematic bounds and endpoint velocities. This includes \(T=0\) and
+degenerate endpoint ranges by using pure braking where appropriate.
+\end{proof}
+
+For arbitrary terminal-region queries at fixed \(T,C,a,V\), carry the
+interval and test intersection. Distinct intervals differ on a singleton
+query. This does not justify dropping velocity when the next query may
+change the law or horizon, or when it needs constraint satisfaction
+beyond the endpoint. With \(x=3/2\), \(a=V=1\), \(T=2\), and \(C=[0,3]\),
+\(v=1\) gives \([7/4,3]\), while \(v=-1\) gives \([0,5/4]\).
+At \(x=11/4,v=1\), the braking excursion instead makes the entire
+interval infeasible, even for targets that lie inside the walls.
+
+\paragraph{A stop at the observation cut can lose the mission.}
+Start at rest at \(0\) inside the same corridor. At time \(2\) the
+relay learns whether it must serve \(2\) or \(3\); it must be at
+rest at the right point by time \(4\). With rest also required at the
+observation cut, each interval grants at most one unit of displacement.
+The point-\(3\) world is lost. Instead, accelerate one unit of time
+and coast one unit to the common state \((3/2,1)\). Brake and hold if
+the report names \(2\); coast one more unit then brake if it names
+\(3\). Both controls obey the same bounds and walls. No distinguishing
+observation is available before time \(2\).
+
+\paragraph{What was checked.}
+The witness rules out a comparator that forces rest at the observation
+cut, not a state-space planner that retains velocity. An independent
+lattice optimizer checks the extrema without walls in 1,530 parameter
+cases: all envelope switches in those cases lie on its time and
+velocity lattice. Wall safety follows from the continuous proof,
+not the computation. This authored example is not a field test or
+acceptance of R6.
+\end{document}

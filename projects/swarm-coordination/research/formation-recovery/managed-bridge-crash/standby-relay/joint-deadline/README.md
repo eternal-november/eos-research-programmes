@@ -14,3 +14,5 @@ With the pinned source saved as scenario.py:
     diff -u results.json actual.json
 
 The script checks the blob hash before parsing source literals. Certificates and the pass/fail decisions are exact rational calculations. The reported decimals are for reading. This extends the [two-world calculation](../notice-deadline/README.md). It does not cover collision constraints or moving recipients, measure packet reliability, or establish full R6.
+
+The [inherited-state result](inherited-corridor/README.md) gives the exact endpoint check in a fixed scalar corridor and shows when requiring rest at the notice would wrongly reject a feasible mission.
