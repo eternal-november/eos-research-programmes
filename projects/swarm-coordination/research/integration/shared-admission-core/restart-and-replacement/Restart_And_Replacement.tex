@@ -1,0 +1,103 @@
+\documentclass{article}
+\usepackage{hyperref,amsmath}
+\title{Preserving a carried effect across restart and supplier loss}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Scope.}
+This is a positive held-in I1 development envelope, not an evaluation freeze.
+It fixes a civil report/station acceptance task, one independent productive
+task, one restarted owner, one optional loss of the replacement path after
+preparation, and a strict same-obligation deadline. In the replay, each
+network request uses the pinned SubT packet implementation. The station
+effect, its atomicity and the routes and timings are declared application
+conditions. The monitor counts committed station effects and their times,
+not merely packet arrivals or acknowledgement. No physical cargo atomicity,
+mission generalization, inventory disposition or independent case is claimed.
+
+\paragraph{Matched restart pair.}
+The intent contains immutable obligation ID 7. An old supplier either already
+has caused the station effect, or its old attempt is terminal without effect.
+The old acknowledgement is lost in both. The restarted owner has no reliable
+read of the station in either, and no old attempt can act later in this pair.
+A fresh owner subprocess receives only the serialized view, plus the installed
+policy, while the station and native network persist. The declared branch in
+which Q loses its path after preparation then requires use of the backup.
+Executing once at a different supplier can still execute the station
+effect a second time overall. In the paid history, a blind later acceptance
+duplicates. In the terminal unpaid history, withholding misses service.
+Any same-view policy that cannot consult or share effect-scoped state and
+must settle on a binary execute/withhold decision fails on at least one;
+randomizing cannot guarantee both. If a policy chooses to execute with
+probability $p$, the two failure probabilities are $p$ and $1-p$.
+
+A truthful application read delivered by cut 2 permits the correct choice
+in the terminal pair. This consumes one charged notification byte and
+does not imply that the first attempt cannot still act.
+In a distinct history the old attempt is still entitled to take effect,
+at tick 6; a truthful negative at cut 2 followed by an unconditional backup
+causes two effects. Qualified terminal fencing or exclusion must constrain
+all competing future effects until the new one commits. A late reading at
+tick 5 does not revise the original cut.
+
+\paragraph{Effect-local alternative.}
+Keep the consume-once state at the actual station transition, with the same
+identity across supplier and attempt generations. Its effect and durable
+record are one atomic transition in this model. Each attempted delivery
+either establishes the effect and record, or encounters a committed record
+and leaves the effect alone. The induction takes logical OR of the initial
+effect state and each delivered attempt; only a false-to-true transition
+changes the effect count. The live premise is that an authorized eligible
+attempt reaches the gate before the deadline. For this declared envelope:
+old completion may occur at 1; healthy Q completes at 4; if Q fails at 4
+after preparation at 3, the pre-staged backup completes at 6. A still-entitled
+old successful attempt at tick 6 is covered by the same atomic boundary.
+By contrast, preparing the backup only after seeing Q's loss allows
+completion at 8, missing the tick-7 requirement. An independent task commits
+at tick 3 in all executions, during acknowledgement loss.
+There is an explicit cost: pre-staging the backup spends an extra setup
+byte on the no-failure branch, with no extra preparation byte relative to
+reactive setup on the failure branch. The gate is not a way to erase
+actual packet debits. A separate typed read and the gate can each be
+cheaper in different branches, and the read is insufficient for a still-live
+old attempt.
+
+\paragraph{Supplier switching without a new signal.}
+The reactive backup can derive its choice from a native one-byte Q-to-backup
+notice at tick 5, rather than reading the simulator's hidden fault flag.
+Erasing that notice isolates the no-information case. When all authorized
+attempts use the effect-local gate, a pre-staged timer may instead send
+the backup at 6 whether or not Q succeeds. The timer needs no notice,
+extends the positive service floor to the joint loss of Q and its cue,
+and substitutes an actual backup request for the cue on a healthy branch.
+In the tested byte model the two gated policies tie on total transmitted bytes
+when Q works; on the failed-but-signaled branch the timer saves the cue byte.
+The ledgers and receiver use are not interchangeable, and the trade would
+change if a backup attempt cost more than the cue or the two used constrained
+different stations. The timer also sends a redundant request on a healthy
+branch. It has no exactly-once guarantee with independent supplier caches.
+
+\paragraph{Existing mechanism and replay.}
+\href{https://web.stanford.edu/~ouster/cgi-bin/papers/rifl.pdf}{Lee et al.,
+RIFL (SOSP 2015), Sections 3 and 4} require the durable completion record
+and mutation to be atomic, and require retries to rendezvous with it even
+after migration. The common station transition models that strong interface
+and ties a same-information factored direct implementation. The supplier-local
+case is a boundary ablation rather than a RIFL baseline. The closest-route
+or return-to-contact choice by itself does not provide the missing effect
+and identity semantics; no comparison with a full navigation stack is made.
+A physical task where no reachable controller can implement the atomic
+transition needs separate field evidence, an alternative terminal witness,
+or a weaker service contract.
+
+The replay compares 540 joint native cases against a direct calculation
+including debit and effect counts, and passes their actual terminal events
+to the common exactly-once admission interpreter. Ten selected cases use
+a freshly launched recipient subprocess while the same native plant runs.
+Lean checks the indistinguishable choice, the limited sufficiency of a
+negative read, and the gate state/cutoff kernels. The replay intentionally
+varies late, pending, missing or absent gate conditions outside the positive
+envelope. It does not cover arbitrary other deadlines or second-gate failure.
+\end{document}
