@@ -1,0 +1,75 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{One frame correction, many pairs of acquisition and use timestamps}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Transfer from the selected source studies.}
+The preceding projection study established that a shared gauge
+correction between the scan and target timestamps need not cancel.
+The selected monitor source also distinguishes the repeated use of
+one measurement from its acquisition. This study gives an exact replay
+of the resulting observation interface under a declared scalar
+correction model. Timestamp provenance, the bound on one pending
+correction, and the declared exact unperturbed projections are
+inputs. This is not an identification of a real correction history.
+
+\paragraph{Joint model and algorithm.}
+There is one correction at an unknown instant $\tau$ in a closed
+interval $C$, with post-correction signed residual $z$ in a closed
+interval $J$. The correction is already effective at equality.
+For use $i$ its acquisition is $a_i$, its evaluation cut is $u_i$,
+with $a_i\le u_i$, and its unperturbed projected returns are $x_{ij}$.
+Use $i$ adds the shift $z$ to its point list if
+$a_i<\tau\le u_i$, and adds zero otherwise. This is the one-step
+translation case of the two-time reference transformation,
+with the sign of the correction absorbed in $z$.
+Successive uses may cite the same acquisition. Their deterministic
+projected lists can differ. They advance the native evaluation
+counter and a separate distinct-acquisition corroboration check.
+The latter does not certify capture order or safety by itself.
+The modeled identity and known event clocks must actually be
+provided to apply either guarantee.
+
+Split the correction-time interval at each acquisition and use stamp
+and the jump interval at the polygon incidence boundaries for the
+current point list. Retain singleton boundaries as well as open
+cells. The use vote is constant on each rectangular product cell:
+the time coordinate specifies whether the pair crosses, and the
+shift coordinate specifies the membership count if it does. Starting
+from the known pair of state machines, a new row splits the partition,
+inherits the previous product state on each subcell, and applies
+the same current hit or miss to both machines. Every concrete
+$(\tau,z)$ follows exactly its own product cell. Induction then
+proves exactness over traces without predicting later uses.
+With $T$ unique time boundaries and $K$ unique shift boundaries
+there are at most $(2T-1)(2K-1)$ cells. This is a state-space count,
+not timing or storage guarantees on a deployed controller.
+The direct comparison reconstructs the complete partition for each
+prefix and evaluates concrete histories from scratch. Its results
+match 1{,}162 prefixes and 40{,}572 cell representatives.
+
+\paragraph{Sharp distinction at touching windows.}
+Use the overlap-sensitive half-open stamp intervals $(0,2]$ and
+$(2,4]$, threshold one, and a polygon accepting $0\le x<1$ at
+$y=1/2$. A common correction-shift in $[7/8,1]$ moves a return at
+$-3/4$ into the polygon. Each use could hit, but no single correction
+can place both uses inside. With an initially inactive latch,
+a two-consecutive-hit trigger is therefore impossible, even though an
+independent per-window model accepts it. Changing only the second
+acquisition to time 1 makes a shared trigger possible precisely
+because $(1,2]$ is nonempty. Conversely, two in-polygon returns
+at $1/4$ move outside if their uses cross that same correction.
+Two separate misses, and hence release from an active two-miss
+latch with two corroborating acquisitions, remain impossible for the
+touching windows but become possible when they overlap. An exact
+timestamp equality is consequential. These are exact synthetic
+event-order contrasts, not assurance about a real stop or release.
+
+Unbounded drift, multiple coupled corrections, uncertain stamp order,
+occlusion and nonshared errors need different models. In particular,
+clipping a current interval after forgetting the old association
+between a correction and its effects does not recreate that history.
+A factored baseline retaining the declared joint history can obtain
+the same result. No new family or architecture acceptance is claimed.
+\end{document}
