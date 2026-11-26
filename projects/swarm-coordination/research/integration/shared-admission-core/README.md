@@ -64,3 +64,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Fixed-cut proof revalidation
 
 [Named history fibers](named-fiber-revalidation/README.md): complete qualified replacements reuse all untouched fiber profiles. Equal current decisions and counts do not support the same named retraction. Atomic edits and the exact profile-state bound are checked; the factored direct cache ties the affected plant work.
+
+## Finding which history fibers changed
+
+[Scoped source edits](scoped-source-edits/README.md): declared joint links and their incidence provide complete local recompilation for this model. An edit can add a previously absent bad history or change a latent dependency without changing the current proof. Full join and fresh admission agree; a same-input direct index can do the same local work.
