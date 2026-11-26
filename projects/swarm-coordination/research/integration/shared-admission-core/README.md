@@ -52,3 +52,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Joint cave-planning reduction check
 
 [Pinned COPS and coupled cave fork](cops-coupled-fork/README.md): the same report loses its direct and old rendezvous options when passage and contact both fail. A native flow planner solves the known subproblems; preposition and a local cue make a common implementable policy. Same-information direct ties; this is held-in I2 development.
+
+## Hosted cave cue and prior physical duty
+
+[Hosted and dedicated cave probes](hosted-cave-probe/README.md): individually feasible route choices may spend a still-live old clearance tick while obtaining the cue. The initial check rejects that hosted prefix even if an erased cue would later prevent any new report. Same-information exact direct ties.
