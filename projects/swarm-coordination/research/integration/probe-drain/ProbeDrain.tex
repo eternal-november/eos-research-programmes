@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage{amsmath,amsthm}
+\newtheorem{theorem}{Theorem}
+\begin{document}
+\title{When recovery traffic sustains a settling fault}
+\maketitle
+
+\paragraph{Interface.}
+A shared fixture starts degraded. In a slot containing an intrusive diagnostic,
+its quiet-age is reset to zero. In a slot without one, the age grows by one.
+The first attainment of the threshold $q\ge1$ restores joint service. The
+mechanical analogy is a shared test contact that must be released while it
+settles. This is an authored mechanism, not evidence of a particular robot or
+firmware fault. It models an observation action that changes the plant and
+not merely a read of its state. In this model settled service latches; the rolling
+observation law continues. If future tests could reopen settled service, the
+theorem would only bound each reacquisition, not continuous uptime.
+
+Let $H\ge 1$. There are $n$ intrusive diagnostic streams, each requiring a completed check
+in every rolling $H$ slots. At most $c$ checks can use the intrusive fixture per
+slot. Checks are instantaneous at the modeled slot cut; they reset before the
+quiet update. An upgraded stream can instead use a distinct, nonintrusive
+evidence path, with independent adequate capacity and the same freshness.
+The theorem does not infer such a path from a status field. The initial
+history is selectable by a periodic warm-up; an arbitrary preexisting set of
+ages is a different problem. All integer-slot results use clean, reliable
+operations and concurrent reservation of one shared cadence.
+
+\begin{theorem}
+For $0\le q\le H$, a quiet block of length $q$ is compatible with the
+rolling checking law iff $n\le c(H-q)$. Hence the minimum number of streams
+that must switch to the stated nonintrusive path is
+$\max(0,n-c(H-q))$. For $q>H$, every stream must switch.
+\end{theorem}
+\begin{proof}
+Extend the quiet block (or its first $H$ slots) to an $H$-slot window.
+Every intrusive stream must execute at least once inside that window.
+At most $H-q$ slots are usable if $q\le H$, so capacity gives the bound,
+independently of the policy's memory or feedback. For $q>H$ the quiet
+block contains an entire window. Conversely, in each $H$-slot frame place
+the intrusive checks in the first available slots, up to $c$ per slot, each
+stream at the same phase in each frame. Every $H$ consecutive slots contain
+one occurrence of each phase. The remaining consecutive slots are quiet.
+With zero intrusive streams, all slots are quiet. Substituting the retained
+stream count yields the exact upgrade requirement.
+\end{proof}
+
+\paragraph{Feedback witness.}
+Let $H=4$, $n=2$, $c=2$ and $q=3$. Two independent watchdogs probe on
+timeout (every fourth slot while degraded) and occupy opposite phases.
+Either watchdog in isolation allows a three-slot quiet interval. In the joint
+execution there is a probe every second slot, so the fixture never leaves the state
+that triggers probing. No continuing original disturbance is needed.
+A shared cadence batches both probes in one slot out of four, keeps each check
+fresh, and settles. A direct phase-aware scheduler with the same batching
+capability predicts the same result. When $c=1$, shared cadence alone cannot
+work; one stream must switch or the freshness or settling obligation must change.
+When one purported read-only check actually resets the fixture, count that
+stream as intrusive again; a last-check timestamp does not establish its effect.
+
+\paragraph{Recovery from already running watchdogs.}
+The periodic theorem does not grant a change to the pending deadlines. Fix
+a snapshot with ages $a_j<H$ and next deadlines $d_j=H-a_j$ in slots numbered
+from one. Restrict to a recovery cut $T=s+q\le H$, with the last $q$ slots
+quiet. The evidence law is monitored through the cut; afterward a stipulated
+adequate read-only mode serves every stream on time. Define $D_T=\{j:d_j\le T\}$.
+Exactly the streams in $D_T$ need a check before the cut. There is a lawful
+prefix iff
+\[
+       \big|\{j\in D_T:\min(s,d_j)\le t\}\big|\le c t
+       \quad\text{for every }0\le t\le s.
+\]
+Any feasible schedule must meet these prefix counts. In nondecreasing order
+of effective deadline, the $k$th required check can be put in slot
+$\lceil k/c\rceil$; the inequalities give that slot by its deadline.
+For $c=0$ the test permits only an empty due set. No second check of a
+stream can be due by $T\le H$ after its first service in slot one or later.
+For $H=4$, $c=2$, $q=3$, deadlines $(1,4)$ allow service in slot one
+and settling at four; deadlines $(1,2,3)$ allow neither settling at three
+nor at four despite aggregate service feasibility without quiet. Even two
+streams with deadlines $(1,2)$ cannot settle at three, while deadlines
+$(4,4)$ permit it. The carried deadline vector therefore matters even
+when the periodic design has sufficient capacity. The test compares
+against direct phase-aware search at identical information and costs.
+
+\paragraph{Reuse and limits.}
+The pigeonhole witness depends on which checks reset the same fixture, the
+common rolling window, and their service capacity. Replacing a monitor while
+preserving these interfaces preserves the bound; changing the checks'
+availability phases or preexisting ages can invalidate the constructive cadence.
+The capacity is a bound on distinct serviced streams, not on the maximum
+observed concurrency in old logs. This is a finite scoped feedback model,
+not a checked architecture disposition or field result.
+\end{document}
