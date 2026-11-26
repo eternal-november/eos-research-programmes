@@ -1,0 +1,103 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{Upper certificates and feasible counterexamples for private-clock audits}
+\begin{document}
+\maketitle
+
+An exact worst-case empirical cap is hard with independently unknown
+clock offsets. A conservative refusal need not follow from that
+hardness. The same audit can produce a verified upper bound and a
+lower bound backed by one feasible set of joins. If those bounds
+straddle the cap, it must say so.
+
+\paragraph{Model.}
+Remove episodes already known to fail at the anchor and add their
+count back at the end. Let \(P\) be the remaining anchor positions.
+Within a group of sources, the ordered acquisition law has a single
+shared offset in a specified interval. Across groups, offset and
+residual choices are independent in the sense of feasible histories:
+an admissible choice in each group forms an admissible joint history.
+Each group has at least one admissible complete join. Let
+\(\mathcal S_i\) be the possible subsets of \(P\) that fail in group
+\(i\) under one such join. The objective is the largest size of
+\(\bigcup_i S_i\) over \(S_i\in\mathcal S_i\). These are possible
+empirical episode flags, not independent probabilities of failures.
+
+\paragraph{A checked upper certificate.}
+Use rational weights \(0\le\beta_p\le1\) and define
+\[
+ W_i(\beta)=\max_{S\in\mathcal S_i}\sum_{p\in S}\beta_p,\qquad
+ U(\beta)=\sum_{p\in P}(1-\beta_p)+\sum_i W_i(\beta).
+\]
+Each covered position is charged at least one unit by its constant
+\(1-\beta_p\) plus its weight in one or more groups. Uncovered positions
+also have a nonnegative charge. Summing proves the upper bound without
+having to identify any episode pairs.
+
+The ordered-clock construction gives an exact weighted oracle.
+At each common-offset cell of a group, form its virtual failure
+slots, including the constraints from successes. Check each stream
+for feasible full linkage. Across all streams in that group, match
+weighted anchor positions to the slots. A feasible covered position
+can be represented by one matched slot. Conversely, extend a partial
+slot match in each stream, retaining its occupied positions, then
+decode that stream's sorted real records. Because weights are
+nonnegative, any added failures do not hurt the bound.
+The replay sorts positions by weight and augments their matching.
+On each prefix in descending weight order, the matching cardinality
+is optimal: adding a new vertex can only increase the maximum by one,
+and any new augmenting path can be taken from that added vertex.
+Previously accepted positions stay matched. Summing the prefix
+cardinalities against successive weight differences yields the exact
+weighted objective. Maximizing over the cells gives \(W_i\).
+
+\paragraph{Matching lower witnesses and the remaining gap.}
+The strongest bound of this form is the dual of the fractional coverage
+linear program: put a probability vector \(x_{i,S}\) on the sets in each
+group and maximize \(\sum_p z_p\) subject to
+\(0\le z_p\le1\) and
+\(z_p\le \sum_i\sum_{S\ni p}x_{i,S}\).
+The dual has \(\beta_p\) for the second constraint and a surcharge for
+each position whose weight is below one. Weights above one can be
+clipped without worsening the objective. For the theoretical
+polynomial separation algorithm, use the group oracle to find violated
+inequalities of the form \(w_i\ge \sum_{p\in S}\beta_p\). The replay
+optimizes an explicit finite LP in small cases and verifies the
+reconstructed rational primal and dual certificates. It does not
+benchmark a general implicit solver.
+
+A feasible LP distribution also supplies a feasible joint witness.
+Draw the set in each group independently for the purpose of finding
+a witness, not to model the actual clocks or failure rates. For a
+position whose marginal coverage summed across groups is \(q_p\),
+the probability it is covered is at least \(1-e^{-q_p}\), hence at
+least \((1-e^{-1})\min(1,q_p)\). The expected count is at least
+\(1-e^{-1}\) times the LP objective. Once each group's distribution
+has finite support, fixing choices in succession by conditional
+expectation yields a deterministic compatible count at least as large
+as that expectation. Explicit feasible choices, not the expectation
+alone, give the lower certificate.
+
+For an integer cap \(K\), an upper bound with \(\lfloor U\rfloor\le K\)
+certifies the cap; a feasible witness above \(K\) disproves it.
+Anything between is inconclusive. If cross-group coupling exists,
+a conservative superset can still yield a valid upper bound, but
+a rounded choice need not be realizable and cannot be used as
+a lower witness without a separate common-history check.
+
+\paragraph{Executed comparisons.}
+With one private clock facing offset demands of opposite polarity,
+the unlinked cap calculation allows two newly failed positions.
+A certificate with both weights one gives the sharp upper bound one.
+A compatible witness attains one. With the four clauses using both
+polarities of two variables, the LP says four while the largest
+realizable count is three. The rounded witness reaches three but
+the fractional upper cannot certify that cap. These are reductions
+through the same stated timestamp law, not a case of a numerical
+solver returning an incorrect result.
+
+The replay independently checks 420 weighted group inputs against
+whole-offset permutation enumeration and verifies rational
+certificates and rounded choices on three named controls. It does
+not establish a calibrated source law or full R4 acceptance.
+\end{document}
