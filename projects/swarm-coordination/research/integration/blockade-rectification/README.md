@@ -8,3 +8,5 @@ Save the pinned [Participant.cpp](https://github.com/open-rmf/rmf_traffic/blob/4
 
     python3 replay.py Participant.cpp Moderator.cpp > actual.txt
     diff -u results.txt actual.txt
+
+The [full native in-process replay](moderator-replacement/README.md) runs the geometry and assignment logic, producing the constrained and unconstrained ranges instead of supplying them.

@@ -1,0 +1,76 @@
+\documentclass[11pt]{article}
+\title{A fresh blockade moderator does not inherit an occupied crossing}
+\begin{document}
+\maketitle
+
+A replacement moderator that knows no old reservations can grant a
+crossing that the old moderator would hold. Re-registering the missing
+route is not sufficient to reconstruct the old active range. Even
+reconstruction of the full native prefix does not make a new assignment
+evidence that another robot has physically cleared the crossing.
+
+\paragraph{Native test.}
+Compile the pinned blockade moderator, participant, rectifier,
+conflict, constraint, and geometry implementations without replacing
+their logic or data structures. A synchronous writer delivers calls
+to either the original moderator or a fresh moderator, as selected
+by the fixture. There is no ROS, MQTT, fleet driver, or real robot.
+Geometric routes and where the robots are taken to be at each
+checkpoint are explicit test inputs.
+
+The original moderator grants the eastbound participant its approach
+to the crossing at \((0,0)\) and records it reached there. Its model
+position is now stopped at the crossing. A second route approaches
+the crossing from the south. The original moderator holds it at its
+starting checkpoint while granting advance to an unrelated route at
+\(x=12\). In the matched reset, neither the parked robot nor its old
+clearance changes. If the south route registers and requests advance
+before the parked participant rectifies, the fresh moderator grants
+it. The test does not execute that movement.
+
+Next the original participant responds to the fresh moderator's
+missing record. The first rectification writes only the reservation,
+which opens an assignment of \([0,0]\) and does not withdraw the
+south route's grant. The next rectification retransmits readiness
+and progress. The old progress at checkpoint one exceeds the fresh
+assignment; the moderator reports a critical error and retains
+checkpoint zero. Here the ranges are produced by the native geometry
+and assignment logic, not supplied as fixture values.
+
+\paragraph{Retaining an old grant, not only position.}
+In another matched pair the old vehicle is modeled at \((-2,0)\)
+in both runs. One run has an old assignment ending there; the other
+already has an assignment that lets it move to \((2,0)\). The old
+moderator grants the southern approach only in the first run.
+An empty moderator makes the same grant in both runs. Thus remembering
+the vehicle's position would distinguish neither the applicable old
+authority nor the portion of track it may still occupy. Any method
+that has only that position and the empty state must either withhold
+the grant in the first case or risk issuing overlapping authority
+in the second. This is a claim about the matched fixture: the earlier
+permission remains exercisable, the driver has not accepted a fence,
+and no new authority can be obtained from the retired moderator.
+
+\paragraph{Strong stock comparator and remaining check.}
+Rebuilding the old moderator through its native accepted calls,
+before serving the new request, matches the original assignments.
+It does not hold the unrelated route. Then the old participant
+signals readiness to depart. The native assignment admits the new
+southern approach before the old participant reports arriving at its
+next checkpoint. The contract-style guard in the fixture lets the
+new vehicle proceed only after a separate modeled clearance witness.
+That witness is the old participant at \((4,0)\), with a closed
+remaining envelope that cannot return it to the crossing. The
+fixture binds this witness to the reached event by definition;
+there is no claim that arbitrary native reached events prove tail
+clearance, localization quality, or compliance with a fence.
+
+The strongest relevant stock reconstruction already preserves
+disjoint work in this example. This is a source-backed distinction
+between assignment recovery and the task's physical admission law,
+not a performance win over an equally informed direct guard. A
+deployment-level upgrade would have to justify the durable effects
+through an actual reset, enforce the gate on the vehicle, and check
+its service bounds under a second fault. The replay does not prove
+a deployed failure or discharge I1.
+\end{document}
