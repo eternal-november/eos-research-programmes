@@ -1,0 +1,42 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{What a safe-stop proof must retain for a different partner}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+A state has passed the exact braking test for a graph of directed scalar position bounds. The common acceleration span is $h=a+b$ and speeds are in $[0,W]$. A future amendment can join this side at port $p$ to an independently valid side at port $q$ by one directed bound. The physical state and old constraints are fixed during each query; the port version identifies exactly that snapshot. The consumer asks whether the joined state admits a safe stop, not whether a specific old trajectory remains valid. Two old left states are equivalent if their yes/no answers agree for every allowed right state and every proposed nonnegative slack. The consumer does not inspect the old left internals.
+
+\begin{theorem}
+Let $D_{ip}$ be the old shortest-path slack to $p$, and define
+\[
+  G_p(v)=\max_{i\leadsto p}
+  \left[\frac{(v-v_i)_+^2}{2h}-D_{ip}\right],
+  \qquad 0\le v\le W .
+\]
+Equality of $G_p$ is exactly left-side equivalence for these future joins. It is enough to keep the speed at $p$ and a clipped piecewise affine envelope of only the slower predecessors. There is no uniform bound on the number of necessary predecessor pieces: for each $n$ there are $2^n$ valid star prefixes, with the same port speed and topology, separated by singleton future partners. Any deterministic exact summary must distinguish all of them.
+\end{theorem}
+
+\begin{proof}
+The one-edge admission formula gives the new threshold $\max_{q\leadsto j}[G_p(v_j)-D_{qj}]$. Thus agreement on the function suffices. Conversely take the right side to consist of a single robot with speed $v$. The threshold then is precisely $G_p(v)$, which is nonnegative because $p$ is a candidate. If the functions differ at $v$, a slack equal to the smaller threshold separates the two answers. This construction preserves the old validity of both sides and uses the same receiver interface.
+
+Write $V=v_p$. If $v\le V$, old feasibility bounds each predecessor term by zero, and the port itself gives zero. If $v\ge V$, every predecessor with $v_i\ge V$ is dominated by the port because $D_{ip}\ge0$. For slower predecessors set $s_i=(V-v_i)/h$ and $c_i=D_{ip}-(V-v_i)^2/(2h)\ge0$. Their maximum, including the port, is
+\[
+ G_p(V+y)=\frac{y^2}{2h}+\max\{0,\max_i(s_i y-c_i)\},
+ \qquad 0\le y\le W-V .
+\]
+Upper-envelope sorting followed by clipping therefore constructs the exact representation. After retaining one representative for duplicate lines, an old predecessor whose line never determines a segment need not be retained in this admission interface. It may still be needed as provenance for a different audit.
+
+For the lower bound use $a=b=1$, $W=2$, and $V=1$. Choose $\Delta=1/[2(n+1)]$, $s_i=i\Delta$ for $1\le i\le n$, and $\eta=\Delta^2/4$. The old graph is a star of directed edges $i\to p$, with leaf speeds $1-2s_i$ and slacks $D_{ip}=s_i^2+s_i^2/2+\eta b_i$, where $b_i\in\{0,1\}$. Every leaf meets its old bound exactly or with reserve, because its stopping debt to $p$ is $s_i^2$. These are the only nontrivial old paths. At receiver speed $1+s_i$, the leaf $i$ has envelope height $s_i^2/2-\eta b_i>0$. Every other leaf $j$ has height
+\[
+ s_i^2/2-(s_j-s_i)^2/2-\eta b_j
+ \ \le\ s_i^2/2-\Delta^2/2 .
+\]
+Since $\eta<\Delta^2/2$, leaf $i$ wins regardless of all bits. Changing its bit changes the threshold at that same receiver by exactly $\eta$. The $n$ legal singleton tests recover the entire bit vector, so any exact stored summary has at least $2^n$ distinct values, or $n$ bits with fixed-width encoding. The envelope has a distinct strictly winning piece for each leaf. This is not a bit-complexity bound for arbitrary real inputs or a claim of constant storage per piece.
+\end{proof}
+
+\paragraph{Reuse conditions.}
+The right adapter may change its topology and local speeds, and needs to supply its own \emph{current} outgoing slack profile. The left summary transports unchanged only if it still answers the same $G_p$ for its side; equality of the port's speed and the immediate position bound is not enough. If potential receiver speeds are restricted, equality only on that known set suffices and the lower bound must be re-evaluated. The interface drops dependency and path identities for the yes/no consumer; it does not supply a rejecting path, a way to derive the right distances under incomplete observation, or permission to accept the new edge. For a same-information comparator, retaining all predecessor slacks and evaluating the original pair formula gives identical answers. The theorem and replay identify the exact quotient and the loss from a fixed-width or endpoint-only cache, not an independent mission result.
+\end{document}

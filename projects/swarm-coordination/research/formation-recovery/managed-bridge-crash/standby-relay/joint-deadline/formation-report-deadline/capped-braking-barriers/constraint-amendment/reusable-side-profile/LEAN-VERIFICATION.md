@@ -1,0 +1,1 @@
+Lean 4.35.0 with Mathlib checked PortArithmetic.lean without errors or warnings. Both audits report only propext, Classical.choice and Quot.sound. The checks concern the shifted expression and strict winner in the separation family; the endpoint equivalence proof is in the note.

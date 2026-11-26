@@ -7,3 +7,5 @@ Adding a new formation bound can invalidate a safe-stop proof beyond the two rob
 Run python3 replay.py and compare its output with results.json. The test assumes one common state snapshot; it does not implement a distributed commit mechanism.
 
 [Selecting a maximum admissible subset](selection/) is harder than checking a fixed batch; even individually valid bounds can have minimal conflicts of unbounded size.
+
+[Reusable one-port profile](reusable-side-profile/) gives the exact information retained on one side for every new partner and shows why constant-size exact summaries can fail.
