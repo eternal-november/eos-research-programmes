@@ -17,3 +17,5 @@ RecurringMasks.lean: three Lean-checked lemmas about joining reusable tours.
 The exact graph and extension arguments are given in the TeX note.
 Development freeze and authored controls only; no independently selected
 test has been opened.
+
+[Native source check: transient and persistent eligibility](native-eligibility/README.md). Real simulated dispatch resolves eligibility at two cuts; a typed budget hold can preserve it if the route and gate authority survive, but does not prove scheduling fairness or a deadline.
