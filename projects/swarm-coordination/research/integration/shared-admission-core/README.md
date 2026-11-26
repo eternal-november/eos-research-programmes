@@ -44,3 +44,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Clock and resource binding follow-up
 
 [Clock-bound bay occupancy](clock-bound-occupancy/README.md): a sampled gap is reusable for a fixed start query when clock and physical scope can be joined within a world. Equal normalized profiles need not survive named removal in the same way. The direct tick checker agrees.
+
+## Return-to-contact comparison
+
+[Terminal receipt and staging commitment](return-commitment/README.md): a timely terminal receipt avoids staging on the already-served branch while preserving report, inspection and egress deadlines. The gain is against the specified aggregate movement interface, not an equally informed direct planner or an end-to-end ACHORD implementation.

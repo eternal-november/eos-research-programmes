@@ -1,0 +1,134 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\begin{document}
+\title{Return-to-contact triggers and an ACK-retained old duty}
+\author{}
+\date{26 November 2026}
+\maketitle
+
+\paragraph{Audit and result.}
+A queue still containing a report can represent two distinct
+operational states: base already applied it, but the return
+acknowledgment was lost; or the earlier receive reached a
+terminally unserved application state and must be recovered.
+In the modeled mission those states can have the same queue
+size, ACK history, map, and offered link rates. A timely, scoped
+terminal receipt lets the mission avoid one irrevocable staging
+commitment in the served case and still guarantee the old report,
+new inspection, and egress in the unserved case. The strongest
+aggregate-selected menu feasible in both states always stages.
+The exact direct decision rule with the same typed receipt ties
+the shared checker. The gain is conditional and pointwise against
+the specified aggregate movement interfaces, not against all
+implementations of ACHORD or an adapted scheduler.
+
+\paragraph{Instance and source cut.}
+At tick 0 the original packet reaches the base endpoint in both
+states. The report owner either pays the obligation at tick 1
+or closes that attempt without payment. No attempt remains in
+flight on that application path. No acknowledgment clears the sender
+queue before the first choice, so packet delivery and outstanding
+service are not interchangeable. The base handler has idempotent
+completion for the same report identity: an unnecessary transport
+copy costs bytes but does not pay the same obligation twice.
+Application lifetime, idempotence and ownership are implemented in
+the test harness around native packet callbacks; they are not
+properties inferred from the SubT broker.
+
+The current lead's cut is tick 3. A one-byte message from the
+licensed terminal source at tick 2 may report the current result, be
+erased, or refer to older authority. A delayed message at tick 4
+cannot certify the earlier cut. Receiver-visible channel output,
+not the raw source branch, selects the plan at the cut. Both
+compared mechanisms see the same signal and pay the same baseline
+read attempt; the literal movement trigger does not use terminal
+semantics. An old report arriving after the modeled closed
+attempt, different report IDs, misleading valid payloads, and
+source authority changes require a distinct experiment.
+
+\paragraph{Physical and radio envelope.}
+A declared known directed civil inspection graph starts at a
+junction J. No primary link at J can pay the old application
+duty. Direct continuation goes J--I--E for inspection and egress
+at ticks 4 and 7, giving an old retry at 7. Return via the strong
+comms checkpoint C gives an old retry at 5, but inspection at
+8 and egress at 11. The hard deadlines are report 6, inspection
+6, and egress 10. A third route J--M--I--E engages one
+non-reusable physical staging slot, then makes inspection at 6
+and egress at 9. There is no path that can start this commitment
+one tick later and still meet both deadlines on the unserved
+branch. The auxiliary relay's modeled egress is at tick 8;
+an independent actual callback at 8 is also required and survives
+all the tested plans. This pilot does not infer field egress
+paths or learn an unknown map.
+
+The staged mule uses one route, not two simultaneous reserves.
+A local read at the mule at tick 4 selects contact A or B, can
+fail to arrive, and costs one transmitted byte when staging
+was engaged. Even with that read, both contacts can be lost
+outside the positive envelope. If A becomes unavailable before
+settlement, only a received local switch report enables use of
+B. Two-hop report transport at 5 and 6, the independently routed
+work, the terminal receipt, and the read all exercise the pinned
+SubT broker/RF code. The graph, fault law of the link, and
+clock/space association are supplied to the harness, not found
+by the broker. A staged option can suppress duplicate transport
+using the terminal state available at its receiving handler;
+this same generous late suppression is granted to the comparator.
+It does not refund the slot or the local read.
+
+\paragraph{Compared mechanisms.}
+In \href{https://lillyclark.github.io/files/ACHORD_RA_L_IROS_.pdf}{Saboia et al.,
+ACHORD}, sections III-B and IV, topic buffers are ACK-retained,
+with reliability and traffic classes and visible buffer/rate/estimated
+drain metrics. The published return-to-comms behavior enters above
+300 KB by default, heads to a strong nearby checkpoint, resumes
+below 200 KB, and can move toward the base after sustained lack
+of drain. The paper also uses deployment coordination and discusses
+a successful robot relay. The executable comparison here is the
+specified motion trigger on an authored graph with one reachable
+strong return checkpoint; it does not reimplement the entire
+network or exploration pipeline, and no timeout occurs before the
+irrevocable choice. The actual paired source-stage results should
+not be attributed to a tunable high-water mark. Threshold and
+hysteresis variations cannot distinguish inputs with identical
+backlog and prior mode. Returning or continuing fails a hard
+deadline on the unserved branch.
+
+To give the aggregate architecture a stronger return, let it
+choose any route, stage or not, and suppress redundant later sends.
+Every robust first choice in that menu still stages, because
+otherwise the unserved case cannot meet both deadlines. A
+new controller evaluates whole history records and chooses the
+least costly admitted option using the current scoped receipt.
+This preserves the same mission safety and all prescribed service.
+It uses zero instead of one staging commitment on the served
+branch, no additional payload traffic, and reaches inspection
+and exit two ticks earlier; the unserved branch is a tie.
+Worst-case required stages remains one. No expected gain is
+claimed without a distribution. If the scoped receipt is absent,
+old or late, the unchanged checker also must stage to serve both;
+loss of the switch read or both backup links can instead make
+the unserved class unachievable in the catalogue. A direct
+factored policy given the same roles, signal and choices gives
+the exact same result.
+
+\paragraph{Checks and reserve.}
+The development replay checks 160 native cases, 320 full
+checker/direct comparisons, 39,852 valid threshold settings
+with two prior modes over six illustrative backlogs, and four
+actual inline native selections after observing the earlier
+signal. The finite threshold sweep is a test; the impossibility
+for a fixed aggregate trigger follows separately because it
+must make the same choice on the paired inputs. Lean checks the
+minimum-stage argument in the declared positive menu. No
+evidentiary claim is made about a full ACHORD or HeRo battery,
+an independent mission, or the architecture acceptance
+disposition. A stronger study would include learned reachability
+and an independently frozen comparator capable of joint return
+and rendezvous as in
+\href{https://ntrs.nasa.gov/citations/20220001447}{Klaesson et al.};
+here the joint timed source and receiver constraints are a
+design-case illustration rather than a substitute for it.
+\end{document}
