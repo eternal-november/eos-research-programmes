@@ -10,3 +10,5 @@ With Python 3, SymPy and SciPy:
     diff -u results.json actual.json
 
 [Lean](GapReceiptCut.lean) checks the algebraic peak and exact cutoff implication over the reals. The dynamics and construction are established by the proof and exact trajectory replay, not by the Lean file.
+
+The [active-detection follow-up](active-gap-detection/README.md) provides the bit via a modeled range sample and proves the resulting exact travel cost under forward-only motion.
