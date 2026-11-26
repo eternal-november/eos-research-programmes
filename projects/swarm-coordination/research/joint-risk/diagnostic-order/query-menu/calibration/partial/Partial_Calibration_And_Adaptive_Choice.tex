@@ -1,0 +1,146 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Learning a mission risk menu from partial observations}
+\begin{document}
+\maketitle
+
+\paragraph{Result.}
+In the fixed-cap admission family, reading at most one candidate
+bundle per calibration episode costs order
+\(d^3\log(d)/\rho\) episodes to recover all \(d\) admission bits
+with fixed whole-menu error at most \(1/4\). The lower bound holds
+even for adaptive choice of measurement and with the active-window
+flag supplied. This is a factor \(d\) above
+\href{../Calibrating_An_Admission_Menu.tex}{joint full-vector calibration}
+in the same family. Reading strictly fewer coordinates than a
+bundle cannot identify the menu at all. The statements count
+episodes, not per-coordinate sensing cost, and do not establish
+whether real vehicles or experiments supply these measurements.
+
+\paragraph{Same law and risk cap.}
+Let the \(d\ge2\) distinct candidate sets \(S_j\) have size
+\(m\ge2\) and contain every old commitment. Conditional on the
+window being active, the density relative to uniform on the
+potential-failure vector is
+\(1+\epsilon\sum_j\sigma_j\chi_{S_j}\), with
+\(\epsilon=1/(2d)\), signs \(\sigma_j\in\{-1,1\}\), and the same
+single unknown sign vector throughout. An inactive episode makes
+all coordinates zero, with known or unknown prevalence parameter
+\(0<\rho\le1\) for active episodes. At the predeclared original
+cap \(\rho(1-2^{-m})\), the admission answers are the signs.
+If \(\rho\) is unknown only the recoverability of these signs is
+asserted, not knowledge of that numerical cap or its enforcement.
+All calibrated vectors are independent draws from this fixed law.
+An experimenter chooses \(B\), \(|B|\le m\), before the current
+draw, possibly using all previous data and independent randomness.
+The laboratory thought experiment supplies \((X_i:i\in B)\);
+activation-induced changes of outcomes are out of scope.
+
+\paragraph{Projection splits the calibration.}
+Marginalizing onto \(B\) kills every unobserved character.
+At size at most \(m\), the only informative measurement is
+\(B=S_j\), and it depends on the single sign \(\sigma_j\).
+Even a visible window flag has a law independent of all signs.
+If no such bundle is measurable, induction on the adaptive
+transcript shows that every law produces the same transcript
+distribution. Under the uniform prior the success probability
+of any exact menu decoder is then at most \(2^{-d}\).
+This holds even if enough separate episodes cover every
+coordinate. The dependence needed by a query is within one draw.
+
+\paragraph{Why adaptivity does not remove the factor.}
+For the lower bound give away the window flag. A queried active
+marginal distinguishing plus from minus has per-observation
+KL divergence in either direction
+\[
+ D_{\mathrm{act}}=\epsilon \log\frac{1+\epsilon}{1-\epsilon}.
+\]
+The factor follows by summing over the two parity classes.
+With the flag and inactive component, divergence per purchased
+episode is \(D_\rho=\rho D_{\mathrm{act}}\). Non-bundle readings
+have zero divergence. Take independent uniform prior signs.
+Even under adaptive selection the posterior factorizes after
+each transcript: conditioned on the independent random seed,
+selection supplies the same factor for that transcript under
+every law, and each outcome factor depends on one sign at most.
+
+Let \(L_j\) be the posterior log odds for sign plus, \(u_j=|L_j|\),
+and \(e_j=1/(1+e^{u_j})\) the conditional sign error. The best
+posterior whole-menu success is \(P_*=\prod_j(1-e_j)\).
+A procedure with worst error \(\delta\le 1/4\) must have
+\(\mathbb E(1-P_*)\le\delta\). With probability at least
+\(1-2\delta\), \(P_*\ge1/2\); on that event
+\(\sum_j e_j\le\log 2\). Since
+\(e_j\ge e^{-u_j}/2\), Jensen gives
+\(\sum_j u_j\ge d\log(d/(2\log 2))\).
+
+The true signed odds have expected sum at most \(N D_\rho\)
+after \(N\) episodes. This follows by conditioning each next
+log-likelihood increment on the true signs and the selected
+measurement; the expected increment is one directional KL or
+zero. Given the transcript the expected contribution of the true
+sign at \(j\) is \(u_j\tanh(u_j/2)\), which differs from \(u_j\)
+by at most \(2/e\). Consequently a fixed budget must satisfy
+\[
+ N\ge \frac{d}{D_\rho}
+ \left[(1-2\delta)\log\frac{d}{2\log2}-\frac{2}{e}\right]
+\]
+when the bracket is positive. At fixed error and large \(d\),
+\(D_\rho\) has order \(\rho/d^2\), so adaptive calibration still
+needs order \(d^3\log(d)/\rho\).
+For small \(d\) the explicit bound can be vacuous; the two-law
+one-flip test yields a positive order-\(1/\rho\) bound there.
+This is a hard episode budget; an expected duration is distinct.
+
+\paragraph{Sufficiency without flags or exact prevalence.}
+On a query for \(S_j\), pick any \(i\in S_j\) and let
+\(W=(\chi_{S_j}(X)-\chi_{\{i\}}(X))/2\).
+The singleton and bundle parities are distinct. Under the active
+marginal the singleton is uniform and independent of the tilted
+bundle parity. Inactive observations contribute zero. Thus
+\[
+ P(W=+1)=\rho(1+\epsilon\sigma_j)/4,\quad
+ P(W=-1)=\rho(1-\epsilon\sigma_j)/4,\quad P(W=0)=1-\rho/2 .
+\]
+The sign of the sum estimates the admission bit without a flag
+or knowledge of \(\rho\). At either sign, the wrong-sign
+probability after \(N_j\) repetitions is at most
+\[
+ (1-\rho/2+(\rho/2)\sqrt{1-\epsilon^2})^{N_j}
+ \le \exp[-N_j\rho/(16d^2)] .
+\]
+This follows by Chernoff bounding the signed sum at half the
+log likelihood ratio of one nonzero outcome. Equal allocation
+with \(N_j\ge(16d^2/\rho_{\min})\log(d/\delta)\) suffices
+if a positive lower bound \(\rho_{\min}\) is supplied for
+budgeting. With full observations all contrasts can be computed on
+every episode, reaching the full-vector rate without knowing exact
+prevalence either. Alternatively count nonzero outcomes rather than
+raw episodes. Stopping each arm after
+\(8d^2\log(d/\delta)\) nonzeros suffices by the same bound
+conditioned on nonzero, with expected but not hard total
+episode cost \(2/\rho\) times the total number of nonzeros
+requested. Round to integers in both rules. There is no
+uniform fixed budget as \(\rho\) tends to zero, and at \(m=1\)
+the unflagged singleton subtraction does not apply.
+
+\paragraph{Comparator and verification.}
+This is a special thresholding-bandit interface; the
+\href{https://proceedings.mlr.press/v48/locatelli16.pdf}{thresholding
+bandit work of Locatelli, Gutzeit and Carpentier}
+already treats loss defined by any wrong threshold answer.
+The added issue here is that one experiment can reveal several
+joint exposures or merely one eligible marginal, and that a
+centered contrast works despite unobserved dormant episodes.
+No new generic bandit rate is claimed.
+The replay checks all 420 projected single-flip comparisons,
+30,720 exact ternary distributions, and full-posterior
+factorization at every leaf of a history-dependent three-arm
+policy. An exact flagged Bayes oracle also compares the optimal
+adaptive and fixed allocations at equal horizon in that small
+fixture; adaptivity improves its success probability, so the
+lower bound is not a statement of identical finite-horizon
+performance. Neither the lower bound nor the sufficient
+sampler assumes observations of the full vector when the
+budget restricts the experiment.
+\end{document}
