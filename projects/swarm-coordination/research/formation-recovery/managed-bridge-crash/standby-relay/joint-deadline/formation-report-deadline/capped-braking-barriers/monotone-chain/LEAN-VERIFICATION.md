@@ -1,0 +1,1 @@
+Lean 4.35.0 with Mathlib checked `TiedTangent.lean` without errors or warnings. Both theorem audits report only `propext`, `Classical.choice`, and `Quot.sound`. These checks cover the span arithmetic, not differential-inclusion viability.
