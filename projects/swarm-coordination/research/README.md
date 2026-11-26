@@ -252,6 +252,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 ## Integration development
 
+**SC-PROBE-DRAIN: Can individually lawful diagnostics keep a shared fixture degraded?** Opposite watchdog phases repeatedly reset the settling contact. The shared cadence preserves observation freshness when capacity permits it; carried deadlines give a stricter transient test. [Proof, Lean and matched finite replay](integration/probe-drain/README.md). Authored I07 mechanism, not architecture acceptance.
+
 **SC-RELEASED-BASE-CUT: Does a later route update exclude an unacknowledged release?** A pinned VDA 5050 validator accepts a replacement anchored at the old decision point only while that point is still the released frontier. The same later version cannot undo an accepted extension. [Scope and source replay](integration/released-base-cut/README.md). Acceptance only, not physical clearance.
 
 **SC-BLOCKADE-RECTIFICATION: Does recovering the reservation recover progress?** The pinned participant omits reached progress when rectifying a mismatched route. After the route matches, the moderator still needs a covering assignment to recognize the reached checkpoint. [Selected-logic replay](integration/blockade-rectification/README.md). Supplied assignment ranges, no physical or fleet failure claim.
