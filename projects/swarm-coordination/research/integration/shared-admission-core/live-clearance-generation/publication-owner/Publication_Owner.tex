@@ -1,0 +1,107 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\title{From a new route to a new publication owner}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{What changes.}
+The earlier joined radio reference retries one immutable intent at
+the same station even when a different supplier can deliver the
+request. Here the effect owner changes. Distinct SQLite files hold
+the old and new authoritative implementations of a pinned RWARE
+station; a stock backup call transfers the actual complete durable
+snapshot. Workers execute native steps in separate processes. The
+copy and the fence receipt use a trusted local transfer in this
+fixture, not a new radio or remote crash-recovery protocol.
+The managed effect is committed simulator state and keyed credit,
+not actuator motion. A side carrier advances independently during
+the migration study. Exact sources are recorded in \verb|SOURCE.tsv|.
+
+\paragraph{Owned transaction and freeze.}
+Each worker acquires the old or new database write transaction;
+it verifies its local publication epoch and exact executable
+permit, then checks the keyed prior result. If the request is
+pending, the native transition is privately evaluated and its
+normalized action, state history and keyed result are durably
+published by one transaction. The old owner's fence takes that
+same write lock, disables publication for the old epoch, and
+commits a receipt identifying the exact post-fence working
+snapshot. The installer accepts only a snapshot with the frozen
+old epoch and all bytes of the matched logical state; the replay
+uses a canonical digest to check that identity. No legitimate
+late worker is allowed to bypass the transaction-local gate.
+A matching permit grants the new owner the right to attempt the
+old request, not information about whether it already happened.
+
+\paragraph{Why the conjunction suffices.}
+If an old publisher commits first, its effect and completion key
+are both in the snapshot selected by the later fence. The new
+owner returns the stored result without another native advance.
+If the fence commits first, no later old transaction can
+publish for the old epoch. The coherent snapshot either already
+contains the result or the new authorized owner can add that
+single transition. Receiving without a matching permit does not
+execute anything. Two actual ordering tests put the old worker
+inside the write transaction before a second connection can
+take that lock, or fence first and run the old worker afterward.
+The observed old/new replies were respectively applied/cached
+and refused/applied. In the before/after-commit process-exit
+sweep the application receiver sees the same silence in all
+four authorized cases; it also sees silence when an absent
+permit causes a rejection whose reply is not delivered. The
+typed snapshot distinguishes these cases without giving the
+controller the original crash phase.
+
+This is an at-most-once and conditional service argument under
+serialization, a successful current copy and consistent local
+handoff. It does not guarantee availability under indefinite
+loss of the old owner or migration channel. A consistent
+snapshot can be obtained before freeze, but it does not prove
+what happened between acquisition and freeze or what the old
+owner can still do. Missing handoff evidence leaves refusal as
+the only universally safe decision in this fixture. Without a
+known cutoff, checkpoints compatible with only silence cannot
+distinguish "retry required" from "a live old owner can still
+publish." That is an information obstruction, not a claim
+about a consensus algorithm.
+
+\paragraph{Material countermodels.}
+A coherent but stale snapshot can precede a completed old
+effect: accepting that image after a valid donor fence repeats
+the effect. A current complete log alone also fails. With the
+exact same native state and complete unkeyed step log, an old
+command can have been published for the current identifier or
+for a distinct sibling identifier with the same payload.
+The former new result is cached at native tick eight. The
+latter must execute the legally distinct request at tick nine.
+Dropping result metadata without any alternate recovery source
+adds a second publication; merely retaining the pose or log
+cannot reconstruct what identity it proves. Finally, accepting a
+perfectly copied pending snapshot while the old writer remains
+enabled lets new and old publish independently. The checked
+installer rejects the stale image, the missing-result image,
+and a copy without evidence of the current fence. These are
+test controls, not weaknesses attributed to a production system.
+
+\paragraph{Exact comparisons and limits.}
+Both typed arms serve all four authorized crash cuts and correctly
+refuse the no-permit case. Across the five cases the diagnostic
+stale-cut, missing-completion and unfenced transfers add one, one
+and three duplicate publications respectively. Unavailable never
+serves the affected intent, and every arm preserves the unrelated
+side step. Each actual snapshot is 32,768 logical database bytes under
+the fixture's SQLite layout (reported as page count times page
+size, not network bytes or compressed storage). The equivalent
+direct check with the same trusted freeze, permit, and copied log
+plus completion record ties trace for trace. It models the effect
+of retry rendezvous and migrating request metadata with its
+object in \href{https://web.stanford.edu/~ouster/cgi-bin/papers/rifl.pdf}{RIFL
+Sections 3 and 4.4}; it is not a reproduction of RAMCloud.
+\href{https://www.sqlite.org/backup.html}{SQLite's backup mechanism}
+supplies a consistent copy, not a stop to publication or
+remote authority transfer. None of this shows superiority to an
+equally provisioned established assembly, correctness against
+unauthorized writers, or acceptance on a second mission.
+\end{document}

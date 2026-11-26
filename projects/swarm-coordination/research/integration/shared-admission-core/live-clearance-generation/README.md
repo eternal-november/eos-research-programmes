@@ -50,3 +50,6 @@ physical return, shared debit, and supplier change on one evolving history.
 
 The [short-result comparison](short-result/) measures what prebinding buys,
 what it costs to install, and when a delayed receipt invalidates reuse.
+
+The [publication-owner migration](publication-owner/) moves the actual
+station journal and ownership barrier to a separate SQLite store.
