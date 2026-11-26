@@ -32,3 +32,7 @@ exactly-once effects. `replay.py` translates plants, compares to direct
 rules, and executes five selected decisions against the radio plant in
 addition to the standalone native controls. Neither the bridge nor the
 shared variable used in the correlation control was inferred from traces.
+
+## Action-dependent follow-up
+
+[Two-cut reactive diagnostic](reactive-observation/README.md): two probes can produce the same timely evidence yet differ in whether the old clearance still meets its deadline. The same checker also distinguishes state-dependent silence from an unqualified loss model. The direct adaptive comparison ties.
