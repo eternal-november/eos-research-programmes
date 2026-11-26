@@ -16,3 +16,6 @@ or field result.
 
 The [consuming-cut follow-up](consuming-cut/) tests a real return or
 broker debit interposed between preflight and send.
+
+The [source-step lease follow-up](source-step-lease/) checks when a remote
+consuming cut does not need a fresh warehouse read.
