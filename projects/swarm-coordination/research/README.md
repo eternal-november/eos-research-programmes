@@ -266,6 +266,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-PROJECTED-DISPATCH: When can an ordered queue progress despite a missing pose?** The pinned global broker blocks until every pose read succeeds. One source-scoped projection runs earlier and unrelated work without overwriting pending receiver priorities. [Proof, Lean and replay](integration/projected-dispatch/README.md). Advantage over the stock gate in the fixture; matched dependency scheduler ties.
 
+**SC-ACTIVE-RECEIVER-BINDING: Can a probe identify the retained receiver without consuming the old service?** Uses native charged receipt to distinguish two bindings. The separating cost remains under adaptive probing, but a distinct authorized lower-ceiling sender can leave both old service branches paid. [Proof and replay](active-evidence/receiver-binding/README.md). Complete local receipt is a physical fixture premise; a loss control invalidates the inference.
+
 **SC-INCREMENTAL-REUSE: Which checks survive an edited recovery world?** An exact rooted reach cut reuses proof outside the changed cone and keeps safety, deadline, local action consistency and shared-versus-independent resource bindings separate. [Proof, Lean and replay](integration/incremental-reuse/README.md). Strong ordinary witness repair can reuse more; no independent selection claimed.
 
 **SC-RELEASED-BASE-CUT: Does a later route update exclude an unacknowledged release?** A pinned VDA 5050 validator accepts a replacement anchored at the old decision point only while that point is still the released frontier. The same later version cannot undo an accepted extension. [Scope and source replay](integration/released-base-cut/README.md). Acceptance only, not physical clearance.
