@@ -1,0 +1,112 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Guarded fault families: which proof objects survive an update?}
+\date{}
+\begin{document}\maketitle
+
+\paragraph{Scope and verdict.}
+This is a synthetic finite-DAG control for incremental safety screening, not an
+independently chosen mission, source qualification, controller synthesis,
+deadline check, or acceptance of a contract clause. A whole modeled
+installation is fixed throughout an execution; an installation may nevertheless
+allow many executions. A qualified observation may narrow the set of
+installations. A change to the plant or admitted action repertoire changes the
+execution model. An action-dependent probe that both consumes resources and
+returns a reading belongs on a modeled transition before its result is used
+to narrow anything. Unknown guard effects cannot be taken as false.
+
+\paragraph{Interface and cut.}
+Fix a finite DAG with indexed edges, roots and bad nodes, and a set
+$\Omega$ of possible installations. An edge $e:u\to v$ has guard
+$G_e\subseteq\Omega$. For one installation $w$, use only edges with
+$w\in G_e$. Evaluate supports in topological order:
+\[
+ R_v=\{w:v\ \text{is a root}\}\ \cup
+        \bigcup_{e:u\to v}(R_u\cap G_e),\qquad B=\bigcup_{v\text{ bad}}R_v.
+\]
+A root admits a path of length zero. An application must retain the entire
+world identity or a justified quotient, and any history (including outstanding
+physical effects) needed by the reachable state and the bad predicate. This
+kernel sees none of those mechanisms except through the supplied graph and
+guards. In particular, it does not establish that an old state abstraction
+is still sufficient after an edit.
+
+At an unchanged plant version, a set $A$ of legitimately admitted
+installations permits four results: inconsistent when $A=\varnothing$;
+safe when $A\ne\varnothing$ and $A\cap B=\varnothing$; all-bad when
+$A\ne\varnothing$ and $A\subseteq B$; mixed otherwise. All-bad means
+each installation has \emph{some} violating execution, not that all its
+executions violate safety. The controller cannot choose a branch using the
+installation assignment unless that information is available at the decision
+cut. No safety result is a clearance authorization by itself.
+
+\paragraph{Proof and two kinds of reuse.}
+Pointwise membership in $R_v$ is exactly reachability: split a path at its
+last edge, then use induction in topological order. Intersecting every guard
+and all root support with $A$ yields $R_v\cap A$ at every vertex by the same
+induction, hence the cached unfiltered $B$ can serve new restrictions without
+new DAG traversal. Query guard parsing, the final intersections and
+certificate checks still cost work. For an actual edit, keep fixed node and
+edge identities and first write all changed guards. Recompute the targets
+of edited edges and only propagate onward from changed supports, using
+topological queue order. At a skipped row its incoming guards and their
+source supports still give the same inputs; at a visited row every predecessor
+has its final support. Induction yields the rebuilt table exactly. This
+proof is for full recomputation of a queued row and fixed roots, bad labels
+and topology, not a root-change or graph-diff implementation.
+
+A badness partition is weaker evidence than a path. In the replay two
+parallel guards $w,\neg w$ are exchanged and the bad-support table stays
+unchanged. The cached path for either selected world becomes invalid. A new
+witness can be reconstructed by walking backward, using the current guards
+and supports under the \emph{same} assignment. Conversely, adding a
+prefix can make an unchanged old violation reachable. A safety reuse result
+therefore cannot be decided by inspecting only edited bad edges.
+The Lean file checks the one-step recurrence, restriction of nonempty
+safety, monotonicity under edge inclusion, and both sides of a two-edge
+counterexample to the unguarded edge union. It does not verify the Python
+implementation.
+
+\paragraph{Calibration, with contrasting costs.}
+The guards of the $k$-stage diamond are $w_i,\neg w_i$ at stage $i$.
+In each fixed installation exactly one path exists and reaches the bad cut.
+The map from installations to these paths is bijective, so any cover by
+unconditional concrete edge lists has exactly $2^k$ members. The guarded graph
+with one selected edge per stage has $2k$ edges and $2k$ nonterminal guard
+nodes before edits; the bad support is constant. This is a separation from
+that \emph{restricted witness representation}, not a lower bound against an
+arbitrary certificate or symbolic family checker. Delete one guard in the
+first stage and all $k$ nonroot supports are updated. Change a terminal guard
+on one branch of the 1,027-node sparse control and only one row is recomputed;
+rebuilding with the \emph{same} symbolic backend computes 1,027. The latter
+counts rows, not wall time or an advantage over an already incremental direct
+implementation. The final existential verdict is unchanged in that control.
+
+Compactness is not assured even with a short formula. For equality of two
+$k$-bit records, the grouped variable order must distinguish all $2^k$
+first-record residuals, each a different singleton second record. The
+interleaved order needs only the two possible pending bit values and shared
+continuations. The replay records live decision-diagram nodes and all
+allocated nonterminal arena nodes, not just final diagram size:
+for $k=12$ the counts are 36/282 interleaved and 12,285/24,593 grouped.
+Guard parsing and temporary results are present in those arena counts;
+Python objects, cache dictionary operations, operating-system memory and
+path enumeration are not. Arena nodes and operation-cache entries are not
+reclaimed in this implementation, so bounded memory under arbitrary
+long update streams does not follow.
+
+\paragraph{Reference and residual.}
+A Python-integer mask family rebuild and independent single-installation
+forward traversal match the guarded kernel across 2,700 update/restriction
+versions and 56,412 fixed-world assignments; extracted edge lists are replayed
+under each checked violating assignment. The frozen kernel predates these
+authored cases. This is the standard fixed-product reading of
+\href{https://pure.unamur.be/ws/portalfiles/portal/11772655/1_s2.0_S0167642313002517_main.pdf}{Classen et al.'s
+featured transition systems}, adapted as a diagnostic cache for the project;
+symbolic family verification and variable-order sensitivity both predate it.
+The research comparison still owed is against an equally incremental family
+checker on source-derived changes. That requires an adapter certifying
+whether a new reading really only restricts admissible installations, or
+whether it changes guards/state/effect history. Neither the independent
+selection nor a new source of valid guard evidence is supplied here.
+\end{document}

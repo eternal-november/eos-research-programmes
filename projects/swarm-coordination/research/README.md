@@ -252,6 +252,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 ## Integration development
 
+**SC-GUARDED-FAULT-FAMILY: Which safety evidence survives an update?** A qualified observation can narrow admitted installations without rebuilding the reachability table. Editing guards can preserve the table but invalidate a concrete witness, or expose an unchanged old violation. [Frozen kernel, proof and replay](integration/guarded-fault-family/README.md). Synthetic development control in the featured-transition-system regime, not independent validation or an operational gain.
+
 **SC-PROBE-DRAIN: Can individually lawful diagnostics keep a shared fixture degraded?** Opposite watchdog phases repeatedly reset the settling contact. The shared cadence preserves observation freshness when capacity permits it; carried deadlines give a stricter transient test. [Proof, Lean and matched finite replay](integration/probe-drain/README.md). Authored I07 mechanism, not architecture acceptance.
 
 **SC-CLOSURE-RELEASE: When can an external site crew take over a closed corridor?** The selected Open-RMF callback reports a closure separately from planner installation or reverse/return requests. The modeled handoff needs effect-side clearance over all directions sharing that footprint; unrelated movement can continue. [Selected source, proof and replay](integration/closure-and-release/README.md). No field clearance or architecture acceptance.
