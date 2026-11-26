@@ -1,0 +1,118 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{A diagnostic intervention can identify the wrong forecast}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Audit.}
+This is an exact finite R3b probe, not a physical study, an independent
+test or completion of R3a. A site's reserve must be staged before the
+next mission; the choice cannot wait to observe that mission's failure.
+The reserve offers either of two lawful lanes, with safe slow fallback
+if staged for the wrong lane. A calibration law is drawn from the pinned
+two-law family and stays fixed across episodes. Episodes are independent
+conditional on the law and the selected load setting.
+An earlier optional load admission changes both access to a later observation
+and potentially the plant law itself. No assumption that these two effects
+are separate in real systems is made. Calibration costs are measured in
+the same normalized service-loss units as slower fallback. The actuated
+geometry and noise probabilities are stipulated.
+
+\paragraph{Constructive observational pair.}
+Let $X$ be a fair bit for the initial lane, let $Z$ be the actual
+exchange parity and $Y=X\oplus Z$ the final lane, with $Z$ independent
+of $X$. In an episode with optional work admitted, the ordinary
+diagnostic can observe one of $X,Y$, not both: its setup for either
+slot and the ongoing work preclude acquisition at the other slot.
+For every $p=\Pr(Z=1)$, either marginal is fair. The slot choice can
+depend on all earlier episodes and its own coins. Conditioning on all
+of that history, the next single reading is still fair, proving equality
+of the entire experiment transcript by induction.
+Declining the optional load before the first slot enables joint reads
+but changes the law to $q=\Pr(Z=1\mid\text{unloaded})$. In two source
+models $q=1/2$ while $p=1/2-a$ or $p=1/2+a$ ($0<a\le1/2$).
+The unloaded joint pair has the same full distribution in both models;
+choosing it adaptively cannot distinguish them either. For a single
+structural construction, take a fresh uniform $U$ and threshold it by
+$q$ when unloaded or by the corresponding $p$ when loaded.
+The intervention pair is entirely observed but is not the target mission.
+The two laws require opposite preparations: placing reserve on lane 1
+wins when $p>1/2$, and lane 0 wins when $p<1/2$. A wrong forecast
+costs $|2p-1|$ additional expected fallback loss relative to known-law
+preparation. Without a new loaded experiment or an assumption linking
+regimes, indefinitely more of either historical experiment cannot fix it.
+
+\paragraph{Sharp transport decision, not just a missing parameter.}
+When the unloaded law $q$ is known and there is independent warrant
+for $|p-q|\le\delta$, the exact identified interval in this family is
+$[l,u]=[\max(0,q-\delta),\min(1,q+\delta)]$. Every point is realized
+by the explicit pair construction. This is sensitivity to a shift in
+the source law, not a statistical confidence interval or a way to learn
+$\delta$ from the same uninformative data. A sign is pinned when the
+interval lies to one side of $1/2$, even if $p$ remains unknown.
+Set $A=(1-2l)_+$ and $B=(2u-1)_+$. If both are positive, staging
+on lane 1 with probability $B/(A+B)$ equalizes the worst endpoint
+regrets and gives $AB/(A+B)$. The same formula gives zero when only
+one is positive; both zero means any choice. The lower bound holds
+because any distribution has worst regret at least
+$\max(Ax,B(1-x))$ in the crossing case, while this choice attains it.
+For a wholly one-sided interval simply pick its known optimal lane.
+
+\paragraph{A loaded experiment with protected time.}
+Reserve a distinct diagnostic slot at cost $c>0$ for one more
+calibration episode without dropping the original load; it displaces
+a different optional job, rather than silently waiving a hard duty.
+The slot permits paired transition reads in the loaded regime.
+One successful pair produces $Z$ with an independently calibrated
+bit flip of probability $\epsilon\le1/2$; a whole pair can fail with
+probability $d$, independently of parity. For symmetric alternatives
+$p=1/2\pm a$, the observed non-erased bit probabilities under the two
+laws are $1/2\pm a(1-2\epsilon)$. The best worst-law classification
+error is $1/2-a(1-2\epsilon)(1-d)$; the mirrored likelihood test
+achieves it, and the average under equal priors lower-bounds every
+maximum. As the future loaded episode is distinct, one such protected
+read is worthwhile over none exactly when
+$c<2a^2(1-2\epsilon)(1-d)$. The formula does not transport to
+state-dependent missingness. In the selected-channel negative control,
+a fair reported bit is entirely uninformative conditional on delivery
+yet the calibrated presence bit alone distinguishes the two laws.
+In a nonsymmetric control the equal-prior likelihood error is strictly
+less than the optimal worst-law error.
+
+\paragraph{Adaptive calibration before staging.}
+With at most $H$ further protected trials and common per-trial cost,
+the symmetric two-law problem has an exact posterior recursion.
+At time-to-go $n$ and posterior $z$ on the positive law, stop at loss
+$2a\min(z,1-z)$, or pay $c$ and take the expectation of the previous
+value at the updated posterior. A rejected sample may be an explicit
+erasure and leaves the posterior unchanged in the symmetric case.
+With initial posterior $1/2$, symmetric optimal play has equal risks
+under either law, so the recursion is minimax. Compare with every
+fixed sample count $0,\dots,H$ and its optimal likelihood decoder.
+For $H=5$, $a=1/4$, $\epsilon=0$, $d=1/3$ and $c=1/64$,
+adaptive stopping yields $8675/62208$ while the best fixed count
+costs $209/1296$. A separate unnormalized binary likelihood tree
+agrees exactly; there is no advantage over equally informed
+controlled sensing. Both include the price of taking more samples.
+There is no claim of improving a more general stopping rule.
+
+\paragraph{Relation to prior work and replay.}
+The project's earlier parity example lets the costly unloaded scan
+observe the target exchange law. This one falsifies that transport step
+even though the unloaded experiment has complete support.
+\href{https://proceedings.mlr.press/v286/marmarelis25a.html}{Marmarelis
+et al.} also bound off-policy outcomes using a sensitivity model, but
+their trajectory confounding bound is not the asserted absolute
+between-regime shift bound here.
+\href{https://arxiv.org/abs/1205.0858}{Nitinawarat, Atia and Veeravalli}
+already study controlled and sequential sensing. The point here is the
+requirement to perform calibration in the right intervention regime, not
+a new generic stopping method.
+The exact replay compares 289 shift cases, 1377 symmetric one-shot
+cases and 405 finite stopping comparisons. It additionally constructs
+a witness for strict stopping value and four explicit asymmetry
+controls. The loaded diagnostic, all transport parameters, and
+persistent access costs remain hypotheses for a source-valid study.
+\end{document}
