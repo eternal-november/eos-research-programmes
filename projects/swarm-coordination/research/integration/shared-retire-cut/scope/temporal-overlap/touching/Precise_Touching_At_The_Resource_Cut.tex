@@ -1,0 +1,37 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{When simultaneous release and entry count as overlap}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+The preceding exact occupancy test used integer time and the convention $[e_i,x_i)$. This note uses real event times, mixed open or closed start and end points, and simple temporal constraints that can include strict inequalities. Each job has one interval and a nonnegative fixed load. The old law entails $e_i\le x_i$; when both endpoints of an interval are open, assume the law entails $e_i<x_i$. The latter does not require a positive minimum duration. The distinction matters when two uses can touch exactly at a handoff. The model chooses when capacity counts as occupied; a clock boundary does not certify physical clearance.
+
+\paragraph{Strict difference bounds.}
+Use $(c,s)$ for a bound $z_v-z_u\le c$ if $s=0$, or $z_v-z_u<c$ if $s=1$. Order by smaller $c$, with strict smaller at equality. Compose by adding numbers and taking the disjunction of strict flags. A bad cycle has negative numerical sum or zero numerical sum and a strict flag. In a finite graph its absence guarantees real feasibility: decrease all strict-edge weights by a common sufficiently small $\epsilon>0$ so that no positive simple cycle becomes negative, while zero cycles have no strict edge. Then ordinary shortest-path potentials satisfy the original bounds. With rational data a common denominator gives an explicit perturbation: clear denominators, multiply weights by $N+1$ for $N$ vertices, and subtract one on strict edges. A positive simple cycle originally has integral weight at least one and loses at most $N$. The resulting potential, scaled back, is an exact rational schedule. This is a feasibility reduction, not discretization of the required physical time grid.
+
+\begin{theorem}
+At a real cut $t$, attach to each desired active job the two incident bounds
+\[
+ (0\to e_i,\ (t,\operatorname{openStart}_i)),\qquad
+ (x_i\to0,\ (-t,\operatorname{openEnd}_i)).
+\]
+Discard jobs that fail the single-job test. Write $d$ for old strict shortest bounds. For eligible jobs put $i\prec j$ exactly when $d(e_j,x_i)$ forces $x_i<e_j$, or when it forces $x_i\le e_j$ and touching is excluded by the end of $i$ or the start of $j$ being open. A set of jobs can all be active if and only if it is an antichain for this strict partial order. The maximum weight load is therefore computed by the weighted interval flow of the preceding result.
+\end{theorem}
+
+\begin{proof}
+Every bad simple cycle in the augmented graph uses one or two new edges, since all are incident to the same reference. Cycles with one or with two from the same job have been tested by eligibility. For an outgoing edge for $j$ and incoming edge for $i$, the remaining old path is from $e_j$ to $x_i$. The numerical threshold terms cancel; a bad cycle is exactly a forced strict-before, or forced weak-before with either endpoint open. This proves the set-feasibility characterization even before checking transitivity.
+
+For transitivity, compose $x_i\le e_j$, $e_j\le x_j$ and $x_j\le e_k$. If either comparison was strict from the old graph, the outer comparison is strict. Otherwise both relied on at least one open endpoint. If the end of $i$ or start of $k$ is open, the weak outer bound is enough. If both are closed, both ends of $j$ must be open, and its strictly positive duration gives a strict outer bound. Eligibility makes the comparison irreflexive, so this establishes the partial order. An attaining schedule is obtained by reattaching the two bounds for the selected antichain and solving the strict STN.
+\end{proof}
+
+\paragraph{Updates and the exact boundary.}
+The same reuse rule applies after changing absolute time bounds. A putative new comparison must travel through the reference. Joined with the displayed two active bounds, it is a concatenation of the two unary cycles. Both are allowed for eligible jobs; their combination cannot be a bad cycle. The old relative comparisons still apply. Update eligibility, including the same-job duration test appropriate to the convention, rather than trusting a stale interval certificate.
+
+At an exact equality $x_i=e_j=t$, two closed endpoints can share the instant; if either touching endpoint is open they cannot. For a counterexample to omitting the positive-duration assumption on a doubly open interval, let A occupy $[-1,u]$, B occupy $(u,v)$ and C occupy $[v,1]$, with $-1/2\le u\le0\le v\le1/2$. At $t=0$ each interval is individually eligible, A and B are incompatible, and so are B and C. A and C coincide when $u=v=0$ and B is empty. The proposed directed relation has A before B and B before C, but not A before C. Full strict-STN testing still gives pairwise compatibility as an exact test for a set; this example only invalidates the partial-order reduction on that enlarged family.
+
+\paragraph{Checks and scope.}
+The replay uses real half-tick inputs and compares strict closure, the weighted antichain flow, and complete subset tests with a common-denominator non-strict solver. It constructs exact time values for every recorded optimum, and crosses all four endpoint conventions. The closest generic comparator is a direct resource envelope on event predicates with an explicit simultaneous-event convention, or full strict difference feasibility. The contributed structure is the exact reuse boundary for interval holds; it does not estimate a clock error, choose a real device's event convention, or validate a physical transfer.
+\end{document}
