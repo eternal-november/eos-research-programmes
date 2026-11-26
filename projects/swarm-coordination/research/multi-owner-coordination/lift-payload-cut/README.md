@@ -22,3 +22,5 @@ The replay compiles selected unchanged bodies. Floor/door completion,
 poses, and input cabin velocity are explicit in-process model inputs.
 Only the command and payload write is observed; no ROS, Gazebo,
 hardware, or physical clearance claim.
+
+[Scoped effect windows](scoped-effect-window/): a separate jointly indexed authority model and exact issue-time calculation.
