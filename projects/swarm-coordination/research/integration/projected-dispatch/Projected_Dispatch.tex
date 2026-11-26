@@ -1,0 +1,80 @@
+\documentclass{article}
+\usepackage{amsmath,url}
+\title{A maximal ordered dispatch under an unavailable local read}
+\author{}\date{}
+\begin{document}\maketitle
+\paragraph{Decision and limits.}
+At the cut, assume an actual ordered queue and a consistent snapshot of
+required reads. Each job has a declared set of material effects.
+An earlier unfinished job must not be overtaken on a shared effect.
+The decision is which jobs may be issued now without fabricating a read or
+reversing the declared precedence. Issuance is not delivery. This is one
+development slice, not a claim of eventual liveness through a permanent
+failure or a substitute for an independently selected mission.
+
+\paragraph{Greatest lawful subqueue.}
+Use $i\to j$ when $i$ is earlier and their effect scopes intersect.
+More generally one can include a declared dependency when ordering a read
+or duty, even when write addresses differ. Let $B$ be jobs with an unavailable
+required input. Then $j$ can be issued exactly when no path from $B$ ends
+at $j$ (include paths of length zero). If a path starts at a blocked
+job, issuing its endpoint forces issuance of all predecessors along the
+path, a contradiction. Conversely a vertex not reachable from $B$ has no
+reachable predecessor, and is ready; the entire complement is therefore
+lawful. The complement is greatest by inclusion, not merely maximal.
+For the ordered effect-intersection case, one left-to-right scan maintains
+the union of effects touched by held jobs: hold an item when its read fails
+or its scope hits that union, then add its whole scope. Induction in queue
+order implements the same reachability theorem. A dependency can be
+indirect: skipping a held job does not erase a later contender that shares
+an effect with one of its descendants. The finite model assumes a complete
+authorized effect accounting and no writer outside the snapshot.
+
+\paragraph{Native selected-body experiment.}
+The pinned SubT broker first asks for poses of every team member. One
+failed read returns before the first pending packet is consumed, even when
+the unreadable member is not a party to any packet. In the fixture the
+adapter reads the actual pending queue, sender identities, endpoint fanout
+and the same stable pose provider. It invokes the original selected
+dispatcher with only the lawful set and corresponding team references.
+It shares the actual simulator radio state and application objects, not
+reset sender or receiver balances. The harness fixes the relevant stamps
+and RF callback; it assumes no cross-component interference, generator
+state or callbacks changing hidden shared effects. No conclusions about live
+Gazebo middleware readiness or stock APIs for source projection follow.
+
+In the ordinary and fanout blocked cases the measured early output consists
+of the earlier ready $a$ and unrelated $e$. The middle two pending orders
+remain held by the original unavailable item. After read recovery within
+the relevant rate window, the application outcomes agree with a stock
+global wait except for their earlier timing. Only the first of the two
+consecutive writes to the common receiver wins. If the adapter erases the
+receiver dimension of $c$, it issues the later $d$ early. The same receiver
+balance then prevents the promised $c$ when the read recovers. This is an
+isochronous two-cut observation, not a claim that accelerating earlier
+traffic is harmless against every future interleaving.
+
+The exact cutoff of the received-byte check is part of the source law.
+In the pinned routine the receiver's retained usage is compared against
+the \emph{current transmitter's} configured limit. With four committed
+bytes on a common receiver, two further bytes are refused from a sender
+limited to five and accepted from one limited to six, for three different
+receiver configuration controls. This is a dependency on both the sender
+choice and shared receiver ledger. It does not imply unbounded received
+traffic or any vulnerability in a deployed network.
+
+\paragraph{Comparison.}
+The selector ties direct enumeration on the same graph and information.
+Action-dependency-graph execution and independence methods supply the
+pertinent established abstractions
+(\url{https://arxiv.org/abs/2312.04190};
+\url{https://ai.dmi.unibas.ch/research/reading_group/peled-cav1993.pdf}).
+The comparison isolates a source-specific advantage over the stock
+global gate (two actual completions before its recovery) and an exact
+read/dependency contract for reaching that advantage, not a stronger
+algorithm than a matched dependency scheduler. At changing delay,
+noncommuting stateful RF callbacks, or hidden recipient aliasing, the
+declared graph can be wrong. Effects already handed downstream need a
+terminal receipt or a justified delivery horizon, not just absence from
+the broker queue. The next retirement experiment targets that boundary.
+\end{document}
