@@ -11,3 +11,5 @@ directories at main 804f0cc9b1f38044e63be901a49bd945636334a3:
 
 Both borrowed code files are hash-checked. Requires Python 3 and C++17.
 QualifiedProbe.lean was checked under AXLE Lean 4.35.0.
+
+[Productive-first comparison](productive-first/README.md) checks when a useful early effect can replace diagnosis and when physical failure spends its fallback. A distinct erased-reply control uses a true authorized terminal condition. Early payload release is a separate envelope.
