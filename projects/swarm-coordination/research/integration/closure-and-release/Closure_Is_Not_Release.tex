@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{Closure receipt, planner cut, and corridor release}
+\maketitle
+
+\paragraph{Application.}
+A site coordinator temporarily gives a shared corridor to a maintenance crew.
+The maintenance crew requires physical exclusivity throughout its work; the
+fleet should keep unrelated work running. This is a stipulated operating
+agreement, not a claim about legal rules. A reported lane closure does not
+alone settle that agreement, even when acknowledged internally.
+
+\paragraph{Selected source.}
+At Open-RMF commit
+\texttt{16a3457196c6edf2f08a1ba4f497bf891404cbb7}, the full-control adapter
+samples its plan and cached position to request replanning when the closure
+affects the current or a later approach. When its projection places the
+robot between the endpoints of a newly closed current lane, it requests a
+position update using the reverse lane if there is one; otherwise it requests an
+update using the return waypoint. These requests do not observe reversed
+motion. The public \texttt{ClosedLanes} callback reflects its own set after
+enqueueing the fleet change. The selected fleet worker installs the planner
+configuration when it runs. Eight compiled source fixtures report the same lane
+closed and the same replan count while disagreeing about the reverse/return
+updates. In the explicit queued ordering used in the fixture, the publisher
+runs while the old planner still has that lane open; a later drain installs the
+new planner. The fixture controls executor ordering and does not estimate how
+long these stages take in a deployed installation.
+
+\paragraph{An independently stated effect rule.}
+Use physical footprints rather than directed lane IDs. For a footprint $P$,
+an authorized empty observation at a known cut $a$ and a guarantee that no old
+or newly issued movement can enter $P$ from just after $a$ until the end of
+maintenance justify releasing $P$. The guarantee must cover every movement
+whose swept area enters $P$, including reversing or a path already sent.
+Inductively, each step without entry preserves emptiness once no old effect
+remains there. A fence known active before a fresh empty reading suffices given
+the stated effect guarantee; clearing after the reading is also enough when
+independent history rules out every intervening entry. If any entering
+movement may occur after the reading and persist through the handoff, the
+admissible histories include the still-empty one and an occupied one with the
+same reading and administrative reports. A rule admitting either under those
+same observations cannot certify exclusivity. This necessity uses the ability
+of a possible entrant to persist; a stronger justified evacuation bound or a
+new observation can remove the negative witness. Maintenance entry is assumed
+authorized separately from this clearance test.
+
+\paragraph{Scoped continuation.}
+The warehouse fixture connects two opposing directed movements to one
+corridor footprint and a third movement to another footprint. Closing the
+forward lane alone cannot justify releasing the corridor. Fencing all
+movements affecting that corridor and witnessing its emptiness can admit the
+outside crew without fencing the other footprint. The finite comparator
+enumerates possible permitted entries, assumes no movement obligately
+departs, and ties the footprint test. An added movement that uses the same
+footprint invalidates the old check unless it is excluded over the same
+interval; an added isolated movement does not. Lean checks the Boolean
+persistence and late-entry obstruction. Real track-to-footprint and
+fence-to-physical-effect guarantees remain requirements, not outcomes of
+the Open-RMF callback.
+\end{document}
