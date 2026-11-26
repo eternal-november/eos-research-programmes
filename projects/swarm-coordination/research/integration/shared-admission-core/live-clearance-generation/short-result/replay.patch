@@ -1,0 +1,183 @@
+--- parent.py
++++ replay.py
+@@ -3,6 +3,7 @@
+ from itertools import product
+ from pathlib import Path
+ import json
++import sqlite3
+ import subprocess
+ import sys
+ import tempfile
+@@ -38,7 +39,8 @@
+         if not check(r,"extra",6,{"old":7,"extra":6}):return False
+     return True
+ 
+-def execute(db,phase,common,p_loss,q_setup,q_route,arm):
++def execute(db,phase,common,p_loss,arm):
++    q_setup=q_route=True
+     assert ask("reset")=="ok"
+     source=journal.iso.make(n,True)
+     c,s=source.agents
+@@ -86,6 +88,41 @@
+         n.step(source,[A.FORWARD.value,A.NOOP.value,A.NOOP.value])
+         assert (c.x,c.y)==(2,0)
+ 
++    context=db+".ctx"
++    setup_bytes=0
++    compact=arm!="full"
++    rebound=arm in ("rebound","alias-control")
++    def install(stamp,job):
++        x="m7:s" if job==key else "m6:s"
++        assert send(stamp,"Base","cfg",x)==x
++        with sqlite3.connect(context) as rx:
++            rx.execute("create table if not exists code (slot text primary key, target text)")
++            rx.execute("insert or replace into code values ('s',?)",(job,))
++        assert send(stamp+1,"Far","cfgack","ok")=="ok"
++
++    if compact:
++        if rebound:
++            install(-20,"pref:6")
++            # The canonical predecessor exists in the same station journal.
++            # A previously minted notice remains in an application queue.
++            queued="s"
++            setup_bytes+=6
++        install(-10,key)
++        setup_bytes+=6
++        assert sum(x[-1] for x in trans)==setup_bytes
++    def decode(msg):
++        if msg!="s":return msg
++        with sqlite3.connect(context) as rx:
++            row=rx.execute("select target from code where slot='s'").fetchone()
++        if row!=(key,):return "-"
++        if arm=="alias-control":return "a7!"
++        # Atlas of live mint possibilities, retained across reassignment.
++        # No load/export of the plant state or inspection of packet origin.
++        origins={key,"pref:6"} if rebound else {key}
++        if arm=="direct":
++            return "a7!" if origins=={key} else "-"
++        return "a7!" if all(owner==key for owner in origins) else "-"
++
+     assert not invoke(send(2,"P","owed","r7?"),phase)
+     before=read_settlement() # evidence supplier and evaluator, not coordinator
+     assert before==(phase=="after-commit")
+@@ -102,10 +139,20 @@
+     n.step(source,[A.NOOP.value,A.FORWARD.value,A.NOOP.value])
+     assert (s.x,s.y)==(3,3)
+     # Genuine old late a6 exists, but is not a completion for r7.
+-    proof=send(6,"Base","proof","a7!" if read_settlement() else "a6")
++    if arm=="lost":
++        with sqlite3.connect(context) as rx:
++            rx.execute("delete from code")
++    if read_settlement():
++        body="s" if compact else "a7!"
++    else:
++        body=queued if rebound else "a6"
++    wire_proof=send(6,"Base","proof",body)
++    proof=decode(wire_proof)
+     early_view=(q_ready,proof)
+-    if common:
+-        assert proof=="-" and trans[-1][-1]==0
++    if common and len(body)>1:
++        assert wire_proof=="-" and trans[-1][-1]==0
++    if body=="s":
++        assert wire_proof=="s" and trans[-1][-1]==1
+     qualified=proof=="a7!"
+     stay_valid=(c.x,c.y)!=(2,0)
+     if qualified:
+@@ -116,22 +163,11 @@
+     now_q=int(ask("sample",6).split()[1])
+     exact=gate(proof,now_q)
+     assert exact==(qualified and now_q+3<=5)
+-    optional=exact if arm=="core" else (qualified and now_q+3<=5)
+-    if arm=="untyped":
+-        optional=proof!="-"
+-    chosen=None
++    optional=qualified and now_q+3<=5 if arm=="direct" else exact
+     if optional:
+-        if arm=="latched":
+-            # A cached pre-release read is not valid after the known return.
+-            assert stay_valid
+-            chosen="bay"
+-            n.step(source,[A.NOOP.value,A.NOOP.value,A.FORWARD.value])
+-            assert (visitor.x,visitor.y)==(2,1)
+-        else:
+-            chosen="bypass"
++        assert (c.x,c.y)==(2,0)
+         optional=send(6,bypass,"extra","x7!")=="x7!"
+-    unlawful=bool(optional and (not qualified or
+-                  (chosen=="bay" and (c.x,c.y)==(2,0))))
++    unlawful=(qualified and not before)
+ 
+     q_used=False
+     if not qualified:
+@@ -158,41 +194,45 @@
+     assert d.execute("select count(*) from log where result='[1,0]'").fetchone()[0]==1
+     assert journal.state(journal.reconstruct(d))["tick"]==8
+     d.close()
+-    return dict(view=early_view, old_by7=by7,entry_before_deadline=entry,
++    return dict(view=early_view,early_wire=wire_proof,
++                provisioning=setup_bytes, old_by7=by7,entry_before_deadline=entry,
+                 q=q_used,optional_paid=optional,unlawful=unlawful,
+                 transmissions=trans,actual_side=2,
+                 tx_requested_bytes=sum(len(s[3]) for s in trans)+2,
+                 native_tx_bytes=sum(s[-1] for s in trans)+2)
+ 
+ stats={}
+-witness={}
+-phases=("before-native","after-native","after-stage","after-commit")
+-for case in product(phases,(0,1),(0,1),(0,1),(0,1)):
+-    phase,common,p_loss,setup,path=case
++selected={}
++phases=("after-stage","after-commit")
++arms=("full","bound","direct","lost","rebound","alias-control")
++for case in product(phases,(0,1),(0,1)):
++    phase,common,p_loss=case
+     outputs={}
+-    for arm in ("core","direct","untyped","latched"):
++    for arm in arms:
+         with tempfile.TemporaryDirectory() as temp:
+             x=outputs[arm]=execute(str(Path(temp)/"a.db"),*case,arm)
+         ct=stats.setdefault(arm,Counter())
+-        in_scope=bool(setup and path)
+-        ct.update(total=1,positive_envelope=int(in_scope),
+-                  positive_old_paid=int(in_scope and x["entry_before_deadline"] in (6,8)),
+-                  old_paid=int(x["old_by7"]), entered_by8=int(x["entry_before_deadline"] is not None),
++        assert x["actual_side"]==2
++        ct.update(total=1,timely=int(x["old_by7"] and x["entry_before_deadline"] in (6,8)),
+                   unsafe=int(x["unlawful"]),optional=int(x["optional_paid"]),
+-                  q=int(x["q"]),requested=x["tx_requested_bytes"],charged=x["native_tx_bytes"])
+-        if arm in ("core","direct"):
+-            assert not x["unlawful"]
+-            assert bool(x["entry_before_deadline"])==bool(x["old_by7"])
+-            if in_scope:assert x["old_by7"]
+-            assert x["optional_paid"]==(phase=="after-commit" and not common)
+-    assert outputs["core"]==outputs["direct"]
+-    if case in (("after-stage",0,1,1,1),("after-commit",1,0,1,1),
+-                ("after-stage",1,0,1,1),("after-commit",0,1,1,1)):
+-        witness["/".join(map(str,case))]=outputs
+-m=witness["after-stage/1/0/1/1"]["core"]
+-k=witness["after-commit/1/0/1/1"]["core"]
+-assert m["view"]==k["view"]==(True,"-") and m["q"]==k["q"]==True
+-assert m["entry_before_deadline"]==k["entry_before_deadline"]==8
++                  total_native_tx=x["native_tx_bytes"],setup_native_tx=x["provisioning"],
++                  operational_native_tx=x["native_tx_bytes"]-x["provisioning"])
++        if arm!="alias-control":
++            assert not x["unlawful"] and x["old_by7"]
++        if arm in ("lost","rebound"):
++            assert x["entry_before_deadline"]==8 and not x["optional_paid"]
++    assert outputs["bound"]==outputs["direct"]
++    if common and not p_loss:selected[phase]=outputs
++paid=selected["after-commit"]
++owed=selected["after-stage"]
++assert paid["full"]["native_tx_bytes"]==23
++assert paid["bound"]["native_tx_bytes"]==24
++assert paid["bound"]["native_tx_bytes"]-paid["bound"]["provisioning"]==18
++assert paid["bound"]["optional_paid"] and paid["bound"]["entry_before_deadline"]==6
++assert owed["bound"]["native_tx_bytes"]-owed["bound"]["provisioning"]==23
++assert owed["rebound"]["view"]==paid["rebound"]["view"]==(True,"-")
++assert owed["rebound"]["early_wire"]==paid["rebound"]["early_wire"]=="s"
++assert owed["alias-control"]["unlawful"] and not owed["alias-control"]["old_by7"]
+ p.stdin.close()
+ assert p.wait()==0
+-print(json.dumps({"verdicts":stats,"witness":witness},sort_keys=True))
++print(json.dumps({"verdicts":stats,"common_witness":selected},sort_keys=True))

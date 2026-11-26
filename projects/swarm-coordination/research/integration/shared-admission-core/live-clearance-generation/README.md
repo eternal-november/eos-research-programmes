@@ -47,3 +47,6 @@ reads when the old carrier's motion and its transfer cannot be postponed.
 
 The [joint-closure replay](joint-closure/) composes keyed station restart,
 physical return, shared debit, and supplier change on one evolving history.
+
+The [short-result comparison](short-result/) measures what prebinding buys,
+what it costs to install, and when a delayed receipt invalidates reuse.
