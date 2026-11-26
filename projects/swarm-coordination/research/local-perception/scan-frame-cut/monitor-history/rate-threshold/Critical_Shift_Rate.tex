@@ -1,0 +1,97 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{Critical rate for possible monitor outcomes under a common scalar shift}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Model and question.}
+At strictly increasing cuts $t_i$ an automaton can switch states
+according to an unknown projected shift $z_i$. For each transition
+there is a finite union of bounded, nonempty scalar intervals on
+which it is enabled; open and closed ends are distinguished.
+Between cuts the law is
+\[
+ |z_{i+1}-z_i|\le B_{i+1}-B_i+\rho(t_{i+1}-t_i)
+\]
+for a known nondecreasing cumulative allowance $B_i$ and $\rho\ge0$.
+This is a finite-cut uncertainty envelope, not a physical rate
+identified from telemetry. Keep the correct automaton state when
+changing the law. Ask for the least possible rate of reaching a
+target state at the last cut, or its infimum if not attained.
+When several evaluations actually share one constant shift, first
+compile their joint input/output transitions using that common
+value; closing interval ends separately before this compilation
+could introduce nonexistent intermediate histories.
+
+\paragraph{Fixed path criterion.}
+Fix an accepting path and a connected enabling interval
+$I_i$ with endpoints $\ell_i,u_i$ at each cut. For closed intervals,
+a suitable sequence exists if and only if
+$\ell_i-u_j\le D(i,j)$ for all pairs, where
+\[
+ D(i,j)=|B_i-B_j|+\rho |t_i-t_j|.
+\]
+The necessity follows by summing adjacent bounds. For sufficiency
+take $z_i=\max_j\{\ell_j-D(j,i)\}$. It includes its own lower bound,
+lies below the upper bound by the pair test, and satisfies adjacent
+limits by the triangle inequality. The Lean file checks the finite
+closed-interval equivalence, allowing a directed triangle bound;
+this replay uses the symmetric instance. This is a scalar
+Lipschitz selection argument, not a general selection theorem.
+For context, see \href{https://arxiv.org/abs/1801.00325}{Fefferman
+and Shvartsman, Sharp finiteness principles for Lipschitz selections}
+for a much broader compact-convex setting. The new use here is
+to invert a finite prefix-dependent transition law.
+
+The original intervals satisfy the path criterion with one additional
+rule: a cross-pair inequality must be strict if the selected lower
+or upper endpoint is open. An equality would require both of those
+specific endpoints. Conversely, shrink each open endpoint into its
+interval by a common sufficiently small amount. Nonempty interval
+lengths are preserved, and every cross-pair involving a shrunken
+endpoint has positive slack. The closed criterion gives a witness
+for the original intervals. A singleton is already closed when nonempty.
+
+\paragraph{Finite inversion and exact endpoint test.}
+For the closed relaxation of each path, the critical rate is the
+maximum of zero and its signed endpoint ratios
+\[
+  \frac{\ell_i-u_j-|B_i-B_j|}{|t_i-t_j|},\qquad i\ne j .
+\]
+A finite set of possible paths and interval choices gives the
+infimum over the closed relaxations. At every strictly larger rate
+the optimal relaxed path's cross-pair bounds have positive slack,
+so its original intervals also admit a run.
+Compute all candidate ratios over labeled endpoints at different cuts
+(together with zero), and find the first accepted relaxed candidate
+by monotone search. Test the original intervals at this candidate
+exactly to determine whether the critical rate is attained. If no
+candidate accepts the relaxation, there is no accepting path at any
+finite rate. The fixed-rate algorithm propagates unions of intervals
+per state, expands them by the next allowance and intersects them
+with the enabled bands, preserving endpoint flags. Each operation is
+exact over declared parameter histories. The independent direct
+implementation enumerates interval choices and evaluates both
+the signed inequalities and their strictness. All 1{,}500 comparisons
+agree.
+
+\paragraph{Three-cut obstruction.}
+Use the rectangular convention and latch law from the preceding
+source replay: $x\in[0,1)$ at $y=1/2$, at least one return to hit,
+initially active, and three misses needed for release. For
+$z\in[0,5/2]$ and observed $x$ lists $\{-1,-2\}$, $\{-1\}$,
+and $\{0,-1\}$ at times 0, 1 and 2, the miss sets are respectively
+$[0,1)$, $[0,1)\cup[2,5/2]$, and $[2,5/2]$.
+Every pair of misses fits rate $3/4$, but the three misses require
+one adjacent jump from strictly below 1 to at least 2. Rate 1
+is not enough; every strictly greater rate is. Equal endpoints in
+the relaxed test would manufacture a release. In a suite switching
+allowance at only one inter-cut edge, the same state relation must
+be propagated; changing a rate is not a new episode.
+
+The release modeled here is an output of the configured counter,
+not confirmation of physical separation, independent measurements,
+or authority to move. The replay does not measure or enforce a
+deployed frame-change rate. No new contract disposition is claimed.
+\end{document}
