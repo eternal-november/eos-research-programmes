@@ -1,0 +1,89 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{How many calibration episodes does the exact risk menu need?}
+\begin{document}
+\maketitle
+
+The one-way menu result assumed that the reporting actor already knew
+the law. In the same family, estimating all \(d\) admission bits
+requires and suffices, up to absolute constants at fixed familywise
+error at most \(1/4\), with order \(d^2\log(d)/\rho\) independent
+full-vector calibration episodes, for \(d\ge2\) and known active
+window probability \(0<\rho\le1\). This holds even if the lower-bound
+observer sees which windows were active and the upper-bound observer
+does not. These are sample bounds for the declared law family,
+not communication bits or deployed diagnostic latency.
+
+\paragraph{Sampling interface.}
+Reuse the fixed-cap family from the
+\href{../Risk_Bits_Before_The_Query.tex}{admission menu study}.
+In the active window, the density of the full potential-failure
+vector relative to uniform is
+\(f_\sigma=1+(2d)^{-1}\sum_j\sigma_j\chi_{S_j}\).
+All \(S_j\) are distinct, nonempty, equal-sized high-order
+sets, and each includes any earlier commitments in the query.
+In an inactive window the vector is identically zero. The target
+is the original mission's ex-ante admission menu, equivalently
+the sign vector. Calibration supplies \(N\) identically
+distributed independent full vectors before operation; a single
+unknown sign vector applies to every episode and to the later
+mission. Neither a corpus of low-order projections nor a
+repeated read of one latent episode meets this interface.
+
+\paragraph{Necessary number.}
+Use the all-positive law as a reference and \(d\) alternatives
+that flip just one sign. In the active component, any such
+alternative differs from the reference density by
+\(\pm 1/d\) in each cell, and the reference is at least \(1/2\).
+The divergence from the reference is therefore at most
+\[
+ \mathrm{KL}(P_j\Vert P_0)
+ \le \chi^2(P_j\Vert P_0)\le 2/d^2 .
+\]
+The first inequality follows from \(\log t\le t-1\).
+With the window flag observed, the per-episode KL is at most
+\(2\rho/d^2\), by conditioning on that flag. Not observing the
+flag cannot enlarge distinguishing power. For independent episodes
+the KL to the reference is additive. The uniform prior on these
+\(d+1\) hypotheses therefore has mutual information at most
+\(2N\rho/d^2\): average KL to any reference upper bounds mutual
+information. Exact sign recovery also identifies the star law.
+By \href{https://www.stat.yale.edu/~yw562/teaching/598/lec13.pdf}{Fano's inequality},
+to have worst-case whole-menu error at most \(\delta\) requires
+\[
+ N\ \ge\ \frac{d^2}{2\rho}
+           \big[(1-\delta)\log(d+1)-\log 2\big],
+\]
+when the right-hand side is positive.
+
+\paragraph{Sufficiency without window flags.}
+For every queried \(S_j\), compute the sample mean of
+\(\chi_{S_j}(X)\) and compare it with \(1-\rho\).
+Orthogonality gives the true mean
+\(1-\rho+\rho\sigma_j/(2d)\); inactive all-zero vectors
+contribute one. Its variance is bounded by \(3\rho\), because
+\(1-\mathbb E[\chi]^2\le2(1-\mathbb E[\chi])
+ \le2\rho(1+1/(2d))\); the centered variable is bounded by two.
+Use
+\href{https://tropp.caltech.edu/notes/Tro21-Probability-High-LN-corr.pdf}{Bernstein's inequality}
+at deviation \(t=\rho/(2d)\). With a union bound over the
+menu the error is at most
+\(2d\exp[-3N\rho/(80d^2)]\).
+Thus \(N\ge(80/3)(d^2/\rho)\log(2d/\delta)\) suffices;
+the constants are not claimed sharp.
+
+\paragraph{Checks and limitations.}
+The exact replay verifies all character means and variance
+bounds for the six-site, ten-query family at three window rates,
+and the chi-square estimate for all ten single-flip alternatives.
+It reports conservative illustrative bounds, not measured
+detection rates. The upper bound needs all potential outcomes
+jointly measured per calibration episode and the window rate
+known, but not an episode-specific flag. Measuring only a
+chosen bundle, changing the exposure law with activation, or
+correlated calibration episodes can invalidate sufficiency.
+The lower bound already grants the stronger fully observed
+interface. It does not apply if the law is supplied by a trusted
+known specification, or if disputed requests may all be refused.
+No conclusion here establishes field feasibility or R4 acceptance.
+\end{document}
