@@ -1,0 +1,95 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{A shared projection error does not create independent monitor hits}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Source boundary.}
+At Navigation2 commit \texttt{346bd05f40b62ae60b96ba86e02eb491c8dba444},
+the selected polygon counts returns inside its boundary, compares
+the count with \texttt{min\_points}, and updates consecutive trigger
+and release counters. The replay compiles these selected unchanged
+methods and the original point-in-polygon helper against a serial
+fixture. It uses one fixed rectangle and a single logical list of
+projected points, not the ROS node, arbitration, motion, or timing.
+For the unit rectangle in the fixture the source accepts
+$0\leq x<1$ and $0<y\leq1$; boundary treatment matters.
+
+\paragraph{Law and scope.}
+Suppose the uncertainty in all the listed projected returns in an
+observation epoch is the same additive $x$ shift $z$ in a warranted
+closed interval. The set of ordinates and the rectangle are fixed
+within each evaluation; point lists can vary by evaluation. This is
+a scalar model for one shared uncertainty in the input projection,
+motivated by the two-time source in the preceding study, not a claim
+that its native TF implementation emits epochs or guarantees this law.
+Between epochs one may supply a new bound $[a,b]$ on the absolute
+shift and an interval $[d_-,d_+]$ on its increment. Every combination
+compatible with these constraints is admitted. Latch state and
+counters persist across the boundary. The conditional exact result
+does not handle ambiguous event ordering, rotations or correlated
+changes that are not described by these declared transitions.
+
+\paragraph{Exact history interface.}
+Represent the relation between $z$ and the possible latch/counter
+states as a piecewise-constant map, with separate cells for boundary
+points and the open intervals between them. Initially put the
+admitted initial states at all allowed shifts. Each return $(x,y)$
+with admitted $y$ contributes on $[-x,1-x)$, clipped to the support.
+Split at all the new endpoints, and apply the deterministic
+hysteresis update to every prior state at that cell's hit count.
+Old boundaries are discarded only if the point and both adjacent
+open cells have identical state sets. Counters can be saturated at
+their respective thresholds without changing a future observable
+latch transition: stepping above a threshold is indistinguishable
+until the opposite hit resets it. This excludes machine integer
+overflow; the native comparison uses bounded traces.
+
+At a rebase, a prior singleton $u$ can contribute its states on the
+closed interval $[u+d_-,u+d_+]$, and an open cell $(u,v)$ can contribute
+on $(u+d_-,v+d_+)$. These are exact sumsets with the increment interval.
+Intersect their union of state contributions with $[a,b]$, retaining
+each contributing state on every target cell. A justified new
+independent interval admits the Cartesian product of the former
+state set and new shift interval. It does not restart the counters.
+The forward relation is exact by induction: splitting preserves every
+prior history, deterministic update advances its state, and each
+target-state contribution at an epoch boundary has a legal predecessor
+shift. A missing contribution never provides affirmative evidence;
+an empty relation is inconsistent with the assumed envelopes.
+
+The incremental computation requires no later scans. A complete
+direct account using the same joint error law can recover the
+same decisions. The independent replay compares full shift/state
+relations against offline enumeration within an epoch and intersects
+preimages for bounded two-cut rebases. It separately exercises the
+native hit/counter logic on 2{,}290 sampled frames. The symbolic
+algorithm uses exact rational boundary locations, while the C++
+test uses exactly representable dyadic coordinates.
+
+\paragraph{Sharp two-cut witnesses.}
+Start inactive with one point sufficient to hit and two consecutive
+hits required to trigger. Under shifts in $[-1,1]$, the respective
+returns $x=-3/4$ and $x=7/4$ can each hit, but their hit sets do not
+intersect. The latch never turns on under one common shift. At a
+bounded rebase they can both hit exactly when the symmetric permitted
+increment is strictly larger than $3/2$: the first requires
+$z_0\ge3/4$, the second $z_1<-3/4$.
+Conversely, start active with two consecutive misses required to
+release. For returns $x=1/4$ and $x=3/4$ and shifts in
+$[-1/2,1/2]$, each can miss, but release is impossible under one
+common shift. The misses require $z_0<-1/4$ and $z_1\ge1/4$,
+so release only becomes possible at increments strictly above $1/2$.
+Both counterexamples keep $y$ strictly inside. The replay checks
+the strict boundary. A per-frame maximum is a valid upper envelope
+for its hit count but does not tell the monitor whether those hits
+can occur on one history; the opposite error arises for misses.
+
+The result is about preserving the configured monitor predicate, not
+certifying that this predicate ensures obstacle detection or clearance.
+New range or motion-reference evidence costs work and its validity at
+the actuation cut still needs a qualified source and explicit authority.
+No plant, hardware, new architecture disposition, or mission acceptance
+is claimed.
+\end{document}
