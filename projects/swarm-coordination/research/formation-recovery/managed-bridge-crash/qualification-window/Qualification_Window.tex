@@ -1,0 +1,111 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\title{The overlap interval must support a qualified handoff}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Pin and comparison.}
+R6 asks for non-waivable formation invariants jointly with bounded
+restored service, not merely a path or a graph at sampling instants.
+First run the published
+\href{https://arxiv.org/html/2609.29939v1\#S3.SS2.SSS3}
+{managed make-before-break controller} on its unchanged two
+point-mass examples and inspect all four departure cuts. The original
+controller concerns an intentional departure. Neither it nor
+\href{https://arxiv.org/pdf/2609.19912}{Geurts et al.'s connected
+one-hop contract MPC, Definition 1 and Theorem 1}, promises to
+initialize on the disconnected abrupt-loss request poses of the
+prior pinned study. That theorem needs initial compatible trajectories
+and preserves a connected contract graph at its ordered discrete
+replanning instants. It supplies a maintenance reference when those
+premises hold; it does not certify a continuous evidence exchange.
+\href{https://www.sciencedirect.com/science/article/pii/S0016003223003046}
+{Maeda, Endo and Matsuno} address recovery around a stopped robot.
+The \href{https://en.endo-lab.jp/research/detail/499}{authors' description}
+confirms local neighbor motion, pre-failure direction, and wait/avoid
+behavior. Their exact control equations and faithful crash replay
+are not supplied by this experiment.
+\href{https://arxiv.org/abs/2210.01354}{Breeden and Panagou's
+input-constrained barrier composition} is a distinct viability
+comparison: an admissible instantaneous acceleration alone cannot
+prove the required residence and subsequent service.
+
+\paragraph{Measured in the published simulator, not over RF.}
+For each departure use the exact set of edges about to be removed
+and the exact set just added by bridge activation. The source
+sets a nominal one-unit switch dwell. Between recorded activation
+and recorded departure both edge families remain established for
+one time unit in each of the four runs. For the native
+constant-acceleration segment with relative acceleration $a$ and
+duration $\Delta$, relative position differs from its chord by
+at most $\|a\|\Delta^2/8$. Thus the minimum chord distance minus
+that margin bounds separation, and the maximum endpoint norm
+plus the margin bounds edge distance. In 5,600 pair-segments
+the least separation lower bound is about $0.76610$ at source
+clearance $0.45$. Upper bounds for the named links are below the
+respective nominal ranges $1.6$ and $1.65$ in all four intervals.
+These are floating-point checks with strict slack (not interval
+certification of decimal input). Geometric coexistence and
+established-set membership are checked separately.
+
+An authored two-message service contract opens a request only
+while both link families are authorized, and requires a matching
+callback before their joint availability ends. This spends a
+known residence duration $h$ (the example selects values, not
+measured packet latency). If the final callback and departure
+have the same time, ack-first permits the effect and release-first
+does not. A lost reply or wrong identity cannot close the
+handoff even with identical geometry. At an abrupt initial loss,
+the old link premise is already false, which is not a violation
+caused by any controller. The test does not identify this service
+contract with an implementation in the published KTH source.
+
+\paragraph{An exact bounded-acceleration obstruction.}
+Consider a relay on $(x,0)$, $0\leq x\leq1/4$, with
+monotone speed $0\leq v\leq1$, acceleration bound $|\dot v|\leq1$,
+actual initial speed $u$ at $x=0$, range $5/4$, and clearance $1/3$.
+Fixed old and new endpoints are $(-7/8,3/4)$ and $(1,3/4)$.
+A third vertex $(1/16,3/2)$ connects those endpoints; the failed
+body $(1/16,-1/2)$ is physically present but not a graph vertex.
+The old and new ranges overlap exactly on $[0,1/8]$.
+All admitted trajectories on the track are collision-free,
+and the surviving geometric graph stays connected. The task,
+however, needs both links continuously for $h=1/4$ from entry,
+a matching timely acknowledgement, and advance to $1/4$ by time
+$1/2$. The range definition is closed and the equality witness
+consumes the acknowledgement while still at the old geometric
+endpoint under an ack-first convention.
+
+For acceleration bound $A>0$, every trajectory has
+$v(t)\geq\max(0,u-At)$. Braking at $-A$ immediately, then holding
+at rest if needed, attains that lower envelope and the least
+advance $D(u,h)=u z-Az^2/2$ for $z=\min(h,u/A)$. It follows that
+geometric residence is possible exactly when $D(u,h)$ does not
+exceed the overlap width (provided the track has no further
+constraints). This is both a full-information obstruction and a
+constructive existence argument; observing more cannot rescue
+an already impossible entry. At $A=1$, $h=1/4$ and width $1/8$,
+the critical entry speed is $5/8$. At unit speed even immediate
+maximal braking advances $7/32$ by the required callback. At
+$5/8$ the policy decelerates for $1/4$, hits the old endpoint
+at $3/8$ speed, then accelerates for another $1/4$ and reaches
+the target. A $1/2$ entry speed and constant motion give a second
+attainment. The minimum one-dimensional advance for braking
+before entry from speed $1$ to $5/8$ is $39/128$; first acquiring
+a useful report exactly at the entry line cannot supply that
+distance.
+
+No spatial grid or coarse sample is used for this claim. The
+independent direct comparator integrates a general piecewise
+affine minimum-speed envelope and agrees on all 2,288 rational
+checks. Lean checks the exact entry threshold and braking
+arithmetic, not the full ODE or original simulator. Only the
+stated speed profiles and geometry are guaranteed; the
+residence threshold does not by itself guarantee the separate
+advance deadline for every lower initial speed. The scheduled
+protocol and scalar model are author-selected, not an independent
+mission. The local crash comparator and general bounded control
+from the four published disconnected poses remain open.
+\end{document}
