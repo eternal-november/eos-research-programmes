@@ -10,3 +10,5 @@ python3 -B replay.py | cmp results.json
 ```
 
 The bounded model uses the prior two-dispatch source and a stated synthetic hazard for one added dispatch. No compilation or physical validation is claimed.
+
+[Receipt cohorts and masked joint risk](receipt-cohort/README.md): even exact old mission risk for every policy and the unconditional new-loss marginal can omit the joint receipt cohort needed to enforce a separate prospective cap.
