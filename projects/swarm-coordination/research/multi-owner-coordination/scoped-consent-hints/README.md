@@ -13,3 +13,5 @@ Python 3.10+, standard library:
 Scoped_Hints.lean separately checks Hall's slot reduction and the
 injectivity argument. Civil discrete fixture, no claim of deployment,
 full R5 acceptance, or measured fault frequencies.
+
+[Timed dual permissions](../timed-dual-permissions/README.md): a different information boundary arises when one sender report must support a start under two recognized authorities and recipient-specific local views.
