@@ -15,3 +15,6 @@ Materialize `SOURCE.tsv` and use Python 3.10+, NumPy, and C++17:
 The two laws, route choice, exact archive interface and normalized
 forecast payoff are authored. This is not a calibrated warehouse law
 or an independently selected mission.
+
+The [native step observation follow-up](step-result-evidence/) distinguishes
+what a named earlier observation can identify without reserving this slot.
