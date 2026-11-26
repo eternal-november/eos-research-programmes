@@ -1,0 +1,46 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{Exact braking feasibility for a monotone-speed chain}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+Consider single-file robots numbered from rear to front. Neighboring gaps must stay in given bands $[D_i^-,D_i^+]$, with $D_i^->0$. The robots share acceleration limit $a>0$ and speed limit $W>0$: $\dot x_i=v_i$, $\dot v_i=u_i$, $|u_i|\le a$ almost everywhere, and $0\le v_i\le W$. Positions and velocities are known initially. Controls may be measurable and velocities absolutely continuous. There is no further fault, wall, or command sampling bound during braking. The upper gap is geometric, not a promise of packet delivery.
+
+\begin{theorem}
+Suppose the initial velocities satisfy $v_1^0\ge\cdots\ge v_n^0$ and the initial upper bounds hold. Write $z_i=x_i-\sum_{k<i}D_k^-$. A trajectory preserving all gap bounds and reaching rest exists exactly when
+\[
+ z_j^0-z_i^0\ \ge\ \frac{(v_i^0-v_j^0)^2}{4a}
+ \qquad(1\le i<j\le n).
+\]
+When feasible, the minimum time to equalize the velocities is $(v_1^0-v_n^0)/(2a)$, and the minimum time to stop is $v_1^0/a$. One trajectory attains both.
+\end{theorem}
+
+\begin{proof}
+Every admissible trajectory keeps $z_j-z_i\ge0$. If its initial closing speed is $w=v_i^0-v_j^0>0$, it loses at least $\int_0^{w/(2a)}(w-2at)\,dt=w^2/(4a)$ of this span. This bound applies even to trajectories that allow velocity order to change.
+
+For sufficiency preserve the initial velocity order. Every adjacent gap then decreases weakly, so its upper bound cannot be violated. Let $K$ be the state set defined by the velocity order, the speed caps, and the span inequalities. At equality for a span with $w=v_i-v_j>0$, the derivative of the slack is
+\[
+ -w-\frac{w}{2a}(u_i-u_j).
+\]
+The derivative is nonnegative precisely when $u_i=-a$ and $u_j=a$. For $w=0$ the derivative is zero.
+
+These sign requirements respect velocity ties. Suppose a tied block has a forced $-a$ at $i$ and a forced $+a$ at $j\ge i$. The responsible spans are $(i,k)$ and $(\ell,j)$ with $\ell<i\le j<k$. Write $p=v_\ell-v_j>0$ and $q=v_i-v_k>0$. Their tightness and $z_i\le z_j$ imply
+\[
+ z_k-z_\ell = (z_j-z_\ell)+(z_k-z_i)-(z_j-z_i)
+ \ \le\ \frac{p^2+q^2}{4a}\ <\ \frac{(p+q)^2}{4a},
+\]
+contradicting the outer span inequality. This includes $i=j$. Thus in each tied block one may assign $+a$ up to the last forced positive, $-a$ from the first forced negative, and zero between. The accelerations are nonincreasing within each tied block, as required at ties. At $0$ no forced negative is possible, and at $W$ no forced positive is possible. If $v_1>v_n$, additionally make the entire fastest block brake at $-a$ and the entire slowest block accelerate at $a$. No forced signs are contradicted and the speed caps are still respected.
+
+Let $T=(v_1^0-v_n^0)/(2a)>0$. To impose the exterior accelerations throughout the first phase, use the closed convex set given by $K$, an extra clock $0\le s\le T$, and the affine equations $v_1=v_1^0-as$ and $v_n=v_n^0+as$. Use auxiliary-time dynamics $\dot s=T-s$, $\dot z_i=(T-s)v_i$, $\dot v_i=(T-s)u_i$, with $u_1=-a$, $u_n=a$ and the other $u_i$ independently in $[-a,a]$. On the set the velocity map is continuous in state with nonempty compact convex values and linear growth; the factor can be clipped to $[0,T]$ on the ambient space. At $s<T$ the preceding construction satisfies all active derivative inequalities and the affine equations. At $s=T$ the vector is zero.
+
+For completeness these directions are in the contingent cone, not only formal derivatives. In the affine space given by the two exterior equations there is a strictly feasible point: take $s$ strictly between $0$ and $T$, all intermediate speeds strictly ordered between the exterior ones, and the spans sufficiently large. Each inequality is a differentiable convex function bounded above by zero. Adding a small multiple of the direction toward this point makes each active directional inequality strict, by convexity, and leaves the affine equations satisfied. Such perturbed directions enter the set, and their limit is contingent. The \href{https://bayen.berkeley.edu/sites/default/files/siam08.pdf}{viability theorem for Marchaud inclusions} now yields a viable path. The artificial clock tends to $T$ and strictly increases before it; using $s$ as physical time gives the original dynamics. The original speed and acceleration bounds give a limit at $s=T$ with all speeds equal to $(v_1^0+v_n^0)/2$. If $T=0$, the speeds were already equal and this phase can be skipped.
+
+Brake all robots thereafter at $-a$ until they stop; no gap changes in that phase. The resulting total time is $v_1^0/a$. No trajectory can equalize faster than $T$ because the original exterior speed difference changes at rate at most $2a$. Nor can it stop sooner than $v_1^0/a$ because of the fastest robot's acceleration bound.
+\end{proof}
+
+\paragraph{Checks and scope.}
+With $a=1$, velocities $(3,2,2,1)$ and shifted coordinates $(0,1/4,3/4,1)$, the tied middle robots initially require opposite accelerations. The replay integrates an exact piecewise affine velocity path that equalizes in one time unit and stops in three. All lower gaps remain safe between the knots because the velocity order is maintained and the final gaps are nonnegative. Adjacent tests alone already fail for $(3,2,1,0)$ with three shifted gaps $1/2$: each adjacent span passes but the whole span has $3/2<9/4$. The replay tests the boundary acceleration construction on 1,800 rational states, including an independent enumeration of discrete acceleration choices for 900 small states. Lean checks the tight-span arithmetic and propagation of tightness across ties, not the continuous existence theorem. This is a deterministic full-state test; it does not supply a local implementation or show that an existing feedback law, such as a \href{https://liwanggt.github.io/files/B5_Composable_Barrier.pdf}{composable barrier controller}, achieves these time bounds. Heterogeneous speed caps and a mixed initial velocity order are outside the theorem.
+\end{document}

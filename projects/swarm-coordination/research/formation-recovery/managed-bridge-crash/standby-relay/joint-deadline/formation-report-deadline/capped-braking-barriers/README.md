@@ -8,3 +8,5 @@ The [proof](Exact_Braking_Barriers.tex) gives two independent failure modes for 
     diff -u results.json actual.json
 
 This is a continuous forward-only safety law, not a guarantee of stopping at a mission target, communications or real robot behavior.
+
+[Monotone-speed chains](monotone-chain/) extend the span test to arbitrary length when limits are common, and give the exact safe stop time.
