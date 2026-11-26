@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{When passive geometric tracks cannot recover a named duty}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Audit.}
+A held-in R1/R6 discriminator in a deliberately small continuous plant.
+There are two indistinguishable discs with first-order speed limit $V$
+and minimum common center separation $d>0$. The plane otherwise has
+no obstacles; a geometric link bound at least $r$ is allowed. At both
+visible cuts the midpoint is the same and the two anonymous exact
+detections have separation $r\ge d$. Between those cuts the optical
+output is blank, not a stream that reports smooth track velocities or
+per-object appearances. The yaw, acceleration, imaging, and clearance
+uncertainty are outside this model. There is no RF or previously
+exchangeable identity information during the blind interval.
+An initial named anchor is supplied before the first gap. The named
+act is release of an existing duty by its uniquely authorized owner,
+not an anonymous request accepting either disc.
+
+\paragraph{Sharp joint motion bound.}
+Fix the coordinate orientation at each visible cut. The two associations
+map the relative vector (length $r$) through unsigned central angles
+$\alpha$ and $\pi-\alpha$, respectively. Write $\theta\in[0,\pi]$
+for either and $\beta=\arccos(d/r)$. The exact minimum time is
+$L(\theta)/(2V)$ where
+\[
+ L(\theta)=
+ \begin{cases}
+ 2r\sin(\theta/2),&\theta\le 2\beta,\\[2pt]
+ 2\sqrt{r^2-d^2}+d(\theta-2\beta),&\theta>2\beta .
+ \end{cases}
+\]
+The relative vector moves at speed at most $2V$ and cannot enter the
+open disc of radius $d$. Its shortest exterior path is the chord when
+safe, otherwise two tangents and the intervening shorter arc. To see
+the latter, any minimizing path is straight off the disc and cannot
+have an interior corner off the disc. Once it first meets the boundary,
+shortening any intervening excursion by radial projection gives a
+boundary arc. In the nonchord case the entry and exit segments are
+tangents: moving the contact point toward the free chord shortens the
+segment plus arc until the tangent limit. This also follows by
+differentiating each contact length plus remaining arc, whose
+derivative vanishes at tangency. The other side has no shorter arc
+because $\theta\le\pi$. At $r=d$, use the boundary arc alone.
+The bounds are attained for the original pair by using half the
+relative path at each side of the fixed midpoint, with opposite signs.
+The relative path never exceeds radius $r$, so requiring geometric
+link reach at least $r$ does not change the result.
+
+This formula tests coexistence of both tracks, not merely that the
+two independent speed cones admit the association. With $r=1$,
+$d=1/2$, $V=1$, and the same two anonymous positions on reappearance,
+independent matching allows swapped labels at time 1. The physical swap
+first becomes possible at about 1.127824792. At 1.08 it is impossible
+while the unchanged association is possible. At 1.20 both actual
+physical continuations produce the same input data. Choosing the
+nearest or lowest-cost assignment is a point estimator, not proof
+that only that assignment is possible.
+
+\paragraph{What an anonymous history can and cannot authorize.}
+With these memoryless first-order movements and no hidden couplings
+between successive gaps, each blind interval contributes a set of
+allowed permutations. Updates compose their support by exclusive-or,
+not by choosing the most likely track afresh. Once both parities are
+supported, a later nonempty anonymous transition, even if its
+geometric correspondence is unique, cannot recover the original
+absolute name. A credible named observation at one distinguishable
+endpoint removes the ambiguity if it arrives at the deciding actor
+before use. It is one bit for this two-alternative question, not a
+mandate to reveal all track metadata. It cannot retroactively justify
+an already executed release. Authenticated owner authorization,
+physical settlement and role freshness remain separate; observing a
+label does not in itself authorize that duty. A physical interlock at
+the actual duty boundary or a proven no-exchange constraint is a
+different way to avoid depending on recovered vision identity.
+If velocity or a continuing commitment couples gaps, the hypothesis
+allowing every concatenation has to be retested.
+
+\paragraph{Comparators and evidence.}
+\href{https://arxiv.org/abs/1607.04005}{Kirkpatrick and Liu} characterize
+minimum total trace length for two labelled discs. The symmetric
+midpoint reduction here makes the same relative length a makespan bound
+as well. The geometry is not asserted to be new; it is used to compute
+the observation support that actually matters for a named act.
+\href{https://www.sciencedirect.com/science/article/pii/S0005109815003490}{Yin and Lafortune}
+give the more general dynamic-observation supervisory-control setting;
+the present binary support calculation ties a complete direct history
+enumerator and is not a new general observer algorithm.
+The geometric replay independently brackets path lengths using
+inscribed and circumscribed polygon visibility graphs, under explicit
+floating-point tolerances, on 105 cases. It compares 2187 anonymous
+transport histories to exhaustive parity enumeration. Lean checks the
+three logical kernels about information loss and same-view decisions.
+This is modeled non-RF evidence, not native vision testing or the
+independently selected non-radio case required by R1.
+\end{document}

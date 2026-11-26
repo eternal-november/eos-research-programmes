@@ -29,3 +29,5 @@ The inputs are rendered optical frames, native packet replays,
 and reconstructed physical effect traces in authored support laws.
 They are not field image rates, a whole
 stack result, or a held-out transfer.
+
+[Passive anonymous view](../anonymous-occlusion/README.md) treats a separate limit: exact relative positions may support both labelled motions even without a decoding problem. Collision geometry improves the physical ambiguity test, but does not recreate an authenticated name once both motions are admitted.
