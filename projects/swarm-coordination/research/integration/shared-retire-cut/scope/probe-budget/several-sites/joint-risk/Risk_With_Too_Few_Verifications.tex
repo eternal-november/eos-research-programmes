@@ -1,0 +1,40 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm}
+\newtheorem{theorem}{Theorem}
+\title{Risk when simultaneous rescue choices cannot all be checked}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+Each of $m$ different required resources offers a left and a right site. One site per resource is usable, with the full joint state represented by $z\in\{0,1\}^m$. The states persist for the decision. A unit-cost inspection gives a truthful Boolean answer for a single named site. To complete the rescue, the controller must get a positive reply from one site per resource; a logical deduction is not a substitute. It has no other informative observations and there are no inspection side effects. All previously reported positives remain valid. The decision must fit $B=2m-d$ reads for an integer $1\le d\le m$. Unsuccessful rescue is counted as a mission failure here, not as a physical collision claim. An uncertain source law is fixed for the episode independently of the controller coins.
+
+\begin{theorem}
+Under independent uniform resource bits, the best failure probability with budget $2m-d$ is
+\[
+ 2^{-m}\sum_{j=0}^{d-1}\binom{m}{j}.
+\]
+This is also the exact worst-case bound with only uniform single-resource marginals known, if a shared private random plan is permitted.
+\end{theorem}
+
+\begin{proof}
+Only the first inspection on each resource gives information. Positive first inspections satisfy their resource immediately; negative ones need another positive on the other site. Repeated inspections give nothing and a second-site check after a first negative adds no information. An adaptive ordering of the first inspections, with its choice of initial site on each resource, is a full binary decision tree on the first outcomes. A policy that stops short can be arbitrarily extended to such a tree for purposes of counting outcomes. Every complete binary outcome string determines exactly one full availability assignment, because the group and side tested next are determined by the previous answers and groups are distinct. With fewer than $d$ first positives, completing would take more than $2m-d$ operations even without redundancies. Thus every deterministic plan fails on at least $\sum_{j<d}\binom{m}{j}$ assignments. The independent uniform law gives the same bound for any private mixture. Conversely choose the first side of every resource independently by fair coins in a preinstalled shared plan. In any fixed assignment the number of first positives is binomial. Use the remaining budget for the required second inspections whenever there are at least $d$ first positives. That achieves the stated risk against any fixed law, with no independence assumption on the resource bits themselves.
+\end{proof}
+
+\begin{theorem}
+For $d=1$ and a known joint law, the optimal failure probability is $\min_z\Pr(z)$. If a previous irrevocable event $E$ is not observable by this policy and also counts as mission failure, the exact known risk is
+\[
+ \Pr(E)+\min_z\Pr(E^c,z).
+\]
+With no $E$ and only the single-resource marginals known, write $r=\min_{i,b}\Pr(z_i=b)$. The exact robust failure rates are $r$ for deterministic terminal policies, and $r/2^{m-1}$ with a single privately randomized plan.
+\end{theorem}
+
+\begin{proof}
+Any plan misses at least one assignment by the first theorem's counting argument. Conversely predetermine any assignment $z^*$ to miss, first inspecting the opposite site on every resource. Both reads are needed on every resource in $z^*$, and every other assignment saves at least one. The resulting failure set is exactly $\{z^*\}$. This gives both known-law expressions, including the need to count only surviving earlier histories when choosing which assignment to miss.
+
+The largest possible mass of a word $z$ with fixed marginals is $\min_i\Pr(z_i)$. For attainment, put all events matching the respective word coordinates on nested intervals of these lengths in one uniform source. A deterministic plan must miss a word, and choosing one in the rarest coordinate class attains $r$. With private randomization, uniformly omit a word among the $2^{m-1}$ assignments in that class. Its total probability is always $r$, so the failure bound is $r/2^{m-1}$. Conversely a law can give all words probability at least $r/2^{m-1}$: assign this much to each first, subtract the resulting $r$ from each coordinate value's marginal, and distribute the remaining mass by any product law with the resulting normalized marginals. If no mass remains the first assignment already supplies the law. Every deterministic plan misses a word of at least the given mass; mixtures cannot do better against this one law.
+\end{proof}
+
+\paragraph{Comparison and readout.}
+With two resources and three checks this gives the exact meaning of the previous compound support test. A missing joint world makes guaranteed rescue possible even though each source separately still has both options. A positive probability on that fourth world can matter; separate marginals and finite nonoccurrence do not show it is absent. Under uniform marginals the deterministic robust risk is $1/2$, while a shared randomized plan achieves $1/4$. If a fixed-order comparator is not allowed to skip an unneeded inspection based on its last answer, a three-check list omits a site and fails on all assignments that need it. If the comparator can skip redundant site checks, it is already using the contingent information and should get the same decision. No operational benefit is claimed against a matched direct policy, and the model does not show a native resource can provide the assumed stable Boolean read.
+\end{document}
