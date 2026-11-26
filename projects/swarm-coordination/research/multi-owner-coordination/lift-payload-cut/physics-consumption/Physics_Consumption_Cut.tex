@@ -1,0 +1,60 @@
+\documentclass[11pt]{article}
+\title{A lift's velocity write does not certify physics consumption}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Matched source cuts.}
+At the exact Open-RMF pin cited in the README, the lift's payload
+selector uses a translated cabin box, and the selected nonzero
+velocity branch writes only to a payload with an existing
+\texttt{LinearVelocityCmd} component. The branch does not create
+one. At both pinned Gazebo versions the selected physics body
+dispatches the model's velocity to a supported world-velocity
+setter after checking model availability, top-level identity,
+free-group availability and engine feature support. Its source
+rotates the local velocity using the pose. A matched quarter-turn
+fixture checks that the recorded setter request differs from its
+local stored vector. No real physics integration is executed.
+
+The inspected outer update orders physics command application,
+the optional step, and simulator state update. In the selected
+cleanup path, v8 sets the command value to zero and retains
+its component; v9 requests component removal. The pinned v9
+component manager marks it removed and hides it from component
+lookup. The serial fixture makes this logical removal visible
+to the following payload lookup. Two matched invocations after
+initial allocation reach two setters under the v8 cut but only
+one under the v9 cut. Explicit recreation by an additional
+producer restores a new write and setter call in the latter.
+That producer is a control, not an assumption about either
+unmodified stack supplying it.
+
+\paragraph{No write, a zero setter, and no setter.}
+The previous selected lift-only replay showed that withholding
+a write does not clear storage before a consumer. This follow-up
+uses a cut after a successful cleanup. With no fresh writer,
+the retained v8 zero is next dispatched to the selected
+compatible setter, whereas the removed v9 component generates
+no setter call. Neither a missing component nor the absence
+of a second setter proves physical stillness. Even the zero
+setter record is an invocation, not measured settling.
+
+The four unsupported-recipient cases each receive an earlier
+lift write, never invoke the selected world-velocity setter,
+and nevertheless undergo the same cleanup. Thus cleanup
+cannot identify successful consumption. Under the modeled
+continuing payload scope, a guarantee of repeated positive
+write-through across v9 cleanup requires an intervening
+compatible producer. Mere validity of the original trip
+or initial component allocation cannot establish that
+precondition. If present, such a producer must be tied to the
+current command and authorized effect instead of replaying a
+stale write by assumption.
+
+This is a source-backed producer/consumer seam, not a full
+Gazebo build, deployment ABI finding, physical lift behavior,
+measurement of quiescence, or a release assertion. The selected
+Open-RMF build declaration does not itself establish which
+Gazebo pin a deployment uses. All order and compatibility
+premises outside the selected bodies remain explicit.
+\end{document}

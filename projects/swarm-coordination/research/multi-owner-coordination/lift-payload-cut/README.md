@@ -28,3 +28,5 @@ hardware, or physical clearance claim.
 [Effect-side gate](effect-side-fixture/): execute the modeled whole-batch check at the native write cut; distinguish new-write inhibition from clearing an earlier command.
 
 [Bounded retirement](bounded-retirement/): exact timing for a lawful stop authority to preserve an old useful prefix and meet a later revoke cut.
+
+[Physics consumption and cleanup](physics-consumption/): pinned v8/v9 selected setter and cleanup cuts; separate component presence, actual setter invocation and settling.
