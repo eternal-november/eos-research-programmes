@@ -1,0 +1,57 @@
+## Independent mathematical review
+
+**Verdict:** PI-0–PI-4 are mathematically sound under the manuscript’s explicit assumptions: a finite retained history forest, authorized access to the current full history, nonempty finite control menus, fresh normalized rows, fixed real rewards, and a product of complete policy coordinates. The evaluation category and optimal subcategory are valid. PI-5 and the extension-fibre formula in PI-6 also have correct finite proofs. No substantive repair of those constructions is needed.
+
+This review concerns the written mathematics. It does not independently certify the companion program’s reported enumeration counts.
+
+### Small statement corrections
+
+**PI-3: bind the endpoint valuation.** The factorization sentence introduces \(w\) through \((D,B_{DE}(w))\) without explicitly naming the terminal object. Replace “a fixed optimal arrow from \(C\) to \(E\)” by “a fixed optimal arrow \((C,u)\to(E,w)\).” This is the previously acknowledged typing correction.
+
+**PI-6: make uniqueness conditional on existence.** The fibre formula and proof are correct, but the final sentence should say:
+
+> When an extension exists, it is unique if and only if every uncovered target greedy set is a singleton.
+
+Without that explicit condition, the sentence can be read as asserting uniqueness even when forced controls disagree. A counterexample to that reading has two source roots mapping to one target root, identity maps on two tied controls, and a source greedy policy choosing different controls at its two roots. There are no uncovered target coordinates, so the singleton condition is vacuous, but there is no compatible extension.
+
+### Results checked
+
+| Result | Audit finding |
+|---|---|
+| **PI-0: naive substitution** | The \(4\)-versus-\(2\) policy count follows from the displayed substitution rule. The attainable-law difference and equality of every optimized terminal valuation are correct. This proves failure of a bijective policy-preserving associator for that interface, without asserting impossibility for a richer interface. |
+| **PI-1: complete cuts** | A complete structural cut partitions all decision coordinates into prefix and suffix coordinates, including histories behind unchosen controls and zero raw outcomes. The path-sum decomposition and Bellman equality are exact. Nested-cut coherence is restriction and union of the same literal history tables. |
+| **PI-2: root and all-history selection** | The loss recursion telescopes to the occupancy-weighted local-gap identity. The root-optimal fibre decomposition correctly requires optimality only at positive-mass suffix roots and leaves every zero-mass suffix table unrestricted. The stronger all-history family factors as a product because all local greedy coordinates remain independently selectable. |
+| **PI-3: Eval/Opt** | For \(C\le D\le E\), the decision sets satisfy \(H_{CE}=H_{CD}\amalg H_{DE}\). Policy evaluation therefore composes, and table union defines associative, correctly typed composition. Empty tables give identities. Greedy factorization proves closure of \(\operatorname{Opt}(\mathsf A)\) and uniqueness of a supplied optimal arrow’s restrictions. |
+| **PI-4: rectangularity** | The fixed-score condition is exact. Uniform equality for arbitrary independent score families is equivalent to full projection onto the positive coordinates. The missing-tuple indicator construction proves necessity, including the strict bound using \(\min_{k\in K_+}p_k>0\). |
+| **PI-5: native comparison** | Backward induction proves the directed value inequality; surjective control maps give equality and the inverse-image characterization of greedy controls. Exact row pushforward makes absent target raw atoms have zero mass, so raw-map surjectivity is unnecessary for scalar equality. Fixed-policy compatibility yields equality without control coverage. |
+| **PI-6: extension fibre** | Compatibility imposes coordinatewise equalities, and the target complete-policy product gives exactly the stated fibre. Under control surjectivity and source greediness, covered coordinates are feasible precisely when their forced images agree. |
+
+### Forests and boundary cases
+
+The cut construction remains valid for a disjoint forest. A cut is taken across **every** component. Evaluation at a designated root assigns hitting mass zero to cut nodes in other components, so the root-optimal decomposition correctly leaves those suffixes unrestricted. By contrast, the category’s endpoint valuation lies in \(\mathbb R^C\) and records evaluation at **all** cut roots.
+
+Shared nodes between successive cuts cause no problem. If a terminal belongs to \(C\), any later comparable complete cut must retain it; its segment is empty and transports its valuation identically. Rewards are assigned to transitions, so stopping before acting at \(D\) counts every preceding transition reward exactly once.
+
+The category proof does not require all histories to have the same depth or all branches to reach a cut simultaneously. Structural completeness, finite termination, and preservation of the history coordinates suffice.
+
+### Optional precision improvements
+
+**PI-3 non-fullness witness.** The existing argument is immediate in a single-root arena. In a general forest, the witness should be a policy that is optimal at every source-cut root but nongreedy at an off-policy coordinate. Optimality at one designated root alone does not ensure equality with the entire optimal endpoint vector. The theorem’s “generally non-full” claim remains correct.
+
+**Zero-objective reduction.** The final reduction with zero rewards and zero terminal values concerns the associated zero-continuation policy family. It does not assert
+\[
+\operatorname{Opt}(\mathsf A)=\operatorname{Eval}(\mathsf A)
+\]
+while arbitrary valuation objects remain in both categories. Specifying the zero-continuation fibre would prevent that stronger reading.
+
+**Root indexing and restrictions.** The root-optimal notation is explicitly introduced relative to a designated root, and the proof consistently uses it. A sentence stating that suffix root optimality is relative to each suffix’s own root, and that \(v\) is restricted to the suffix terminal set whenever necessary, would make the forest conventions completely explicit.
+
+### Scope assessment
+
+The manuscript maintains the necessary boundary between three conclusions:
+
+1. Scalar evaluation composes across complete cuts.
+2. Complete evaluated policies and all-history greedy policies form actual categories on one supplied arena.
+3. Transport to the programme’s native context/content presentations requires additional comparison, descent, calibration, and coherence data.
+
+The first two conclusions are established. The third is correctly retained as an obligation. In particular, neither scalar Bellman equality nor local control surjectivity silently supplies a compatible global target policy; the missing-middle witness and extension-fibre theorem expose that distinction.

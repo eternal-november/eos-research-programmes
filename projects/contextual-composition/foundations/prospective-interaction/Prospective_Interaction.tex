@@ -1,0 +1,1004 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs,tabularx,array}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!45!black]{hyperref}
+\usepackage{enumitem}
+\setlist{itemsep=3pt,topsep=5pt}
+\setlength{\emergencystretch}{2em}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\pr}{pr}
+\newcommand{\R}{\mathbb R}
+\newcommand{\A}{\mathsf A}
+\newcommand{\Cut}{\operatorname{Cut}}
+\newcommand{\Eval}{\operatorname{Eval}}
+\newcommand{\Opt}{\operatorname{Opt}}
+\newcommand{\BOpt}{\operatorname{BOpt}}
+\newcommand{\RootOpt}{\operatorname{RootOpt}}
+\newcommand{\reporev}{777a28abb23ba9ccf9a98d0d14e0fb845907c5a8}
+\newcommand{\reposrc}[2]{\href{https://github.com/eternal-november/eos-research-programmes/blob/\reporev/projects/contextual-composition/#1}{#2}}
+\hypersetup{pdftitle={Prospective Interaction: Continuation Evaluation, Selection, and Policy Composition},
+ pdfauthor={},pdfsubject={A finite-history pilot for proactads}}
+\title{Prospective Interaction\\
+\large Continuation Evaluation, Selection, and Policy Composition}
+\author{}
+\date{Working mathematical note --- 26 November 2026}
+\begin{document}
+\maketitle
+\vspace{-1.5em}
+\begin{abstract}
+Anticipatory control requires a model of possible continuations and a rule
+for choosing actions using their consequences. A scalar value calculation
+can compose even when the corresponding policy interface loses information:
+a three-stage example has four policies in one bracketing and two in the
+other, although both give the same optimal value for every terminal score.
+This note develops a finite pilot that retains complete policy tables on an
+explicitly authorized history interface. Evaluation composes across complete
+cuts; all-history optimal policies form a wide subcategory of the category
+of evaluated policies. An exact loss formula separates root optimality from
+optimality at every retained history. A sharp rectangularity criterion
+identifies when local choices can be assembled, and a value-comparison
+theorem for independently supplied native maps identifies control-coverage and policy-descent
+conditions. The Bellman recursion is standard; the purpose is to delimit its
+use in the contextual-composition programme. These results support prospective
+equipment on a finite controlled realization. A lifted context/content
+presentation, general feedback, and model or reference revision remain
+separate obligations.
+\end{abstract}
+
+\section{Scope, evidence, and the proposed mathematical interface}
+\label{sec:scope}
+The design question is whether prediction and anticipatory regulation require
+a broader interaction calculus, or additional structure on an existing one.
+The present pilot makes that question testable at a restricted interface.
+Its input is a finite, fully retained controlled history arena, a fixed
+predictive row for each complete control, edge rewards, and a terminal
+continuation valuation. Its output includes evaluated \emph{complete policies},
+their optimal subfamily, and comparison laws. The scalar value alone is an
+insufficient output: it can hide a failure to preserve implementable policies.
+
+The mathematical work is a finite design study: an explicit adaptation of
+dynamic programming and coordinatewise policy constraints to a retained
+history interface. Its purpose is to identify the positive assembly laws
+and concrete failures that a later prospective presentation must respect.
+The finite comparison results are self-contained; their interpretation in
+the surrounding native doctrine is conditional on the separately supplied
+material/interface data.
+
+Capucci and Myers construct contextful arrows through contextads and wreath
+products \cite{contextads}. The contextual-composition programme's
+provisional interactad package retains
+one-sided context and content presentations and a full pseudodistributive law
+\(\tau:N\odot_C M\Rightarrow M\odot_C N\), including native cells and the unit
+and multiplication coherence data \cite{terminology,relative}. That interface
+sets the eventual standard for a proactad construction. A Bellman equation
+does not itself supply such a crossing. The construction below is deliberately
+one level earlier: it establishes what finite prospective evaluation and
+selection can contribute to a supplied controlled realization.
+
+\paragraph{Pinned assumptions.}
+Every retained decision history has a finite nonempty menu of complete
+controls, including any admitted law label. The structural history tree is
+finite. Raw zero-probability outcomes and histories behind unchosen controls
+remain distinct. Current revealed history is explicitly authorized as the
+controller's observation. Controls select fresh-outcome rows; an existing
+reserve is never redrawn. Where a row represents a joint draw, its central
+joint service is an explicitly supplied interface. Rewards and continuation
+values are fixed real-valued inputs.
+
+These assumptions restrict both information and assembly. Merely retaining
+an audit history does not authorize a controller to read it. Finitely many
+raw outcomes do not imply finitely many admitted probability-law labels.
+If the supplied rows are forecasts, all optimality statements concern those
+forecasts; equality with the actual execution law is an additional condition.
+The scalar reward is a supplied evaluation criterion, not a proof that a
+stakeholder's substantive requirement is satisfied. Hard admissibility must
+be encoded separately in the legal control doctrine.
+
+\paragraph{Declared kernel and residuals.}
+The pilot holds the primitive network, observation permission, predictive
+model, and objective fixed. It does not construct coefficient or grade maps,
+infer a controller's authority, identify observationally indistinguishable
+histories, or learn a model. It proves composition across cuts of \emph{one
+common arena}; it does not compose arbitrary opaque component controllers.
+Infinite horizons, arbitrary whole-plan commitments, decentralized
+information, and reference revision require further interfaces.
+
+\paragraph{Evidence classes.}
+The propositions and theorems below have written finite proofs. The companion
+Python program supplies exact rational diagnostics for specified examples,
+including independent path enumeration against backward recursion. No new
+proof-assistant verification is claimed. The source-reading route and its
+pinned revision are supplied separately.
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{@{}lXl@{}}
+\toprule
+ID & Question answered & Location\\
+\midrule
+PI-0 & Can equal optimized values hide failed policy associativity? & \S\ref{sec:obstruction}\\
+PI-1 & What composes across a retained cut? & \S\ref{sec:cuts}\\
+PI-2 & How do root and all-history selection differ? & \S\ref{sec:selection}\\
+PI-3 & Which actual categories does the pilot supply? & \S\ref{sec:categories}\\
+PI-4 & When is independent local maximization exact? & \S\ref{sec:rectangle}\\
+PI-5 & What survives a supplied native comparison? & \S\ref{sec:native}\\
+PI-6 & When does an optimal source policy extend or descend? & \S\ref{sec:fibre}\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{A value-preserving failure of policy associativity}
+\label{sec:obstruction}
+Consider the tempting substitution rule for a controlled process
+\(f:X\to Y\) followed by \(g:Y\to Z\):
+\begin{equation}
+ A_{g\circ f}(x)
+   =\coprod_{a\in A_f(x)}\prod_{y\in Y} A_g(y).
+ \label{eq:naive}
+\end{equation}
+It records an initial control and a continuation control for each
+intermediate output. For sequential assembly, the question is whether the
+intermediate output retains the information needed by subsequent controls.
+
+\begin{proposition}[Naive substitution obstruction; PI-0]
+\label{prop:naive}
+Rule \eqref{eq:naive}, with only the displayed external interfaces, need
+not admit a policy-preserving associator. This failure can remain invisible
+to every optimized terminal-value calculation.
+\end{proposition}
+\begin{proof}
+Let \(f:1\to\{0,1\}\) have one control and emit a fair bit. Let
+\(g:\{0,1\}\to1\) have one control and forget the bit. Let
+\(h:1\to\{0,1\}\) have two controls, deterministically emitting \(0\) and
+\(1\). All rewards are zero.
+
+In \((h\circ g)\circ f\), a continuation control of \(h\circ g\) is chosen
+for each output of \(f\). There are four tables
+\[
+ (0,0),\quad(0,1),\quad(1,0),\quad(1,1).
+\]
+In \(h\circ(g\circ f)\), the interface before \(h\) is a singleton. There
+are only two constant tables, \((0,0)\) and \((1,1)\). Thus no bijection
+of the retained policy sets exists. Their attainable output laws also
+differ: the first bracketing permits probabilities
+\(\{0,\tfrac12,1\}\) of output \(1\), while the second permits
+\(\{0,1\}\).
+
+For every \(v:\{0,1\}\to\R\), however, each policy's expected value is a
+convex combination of \(v(0)\) and \(v(1)\). Both bracketings contain both
+constant policies, so both optimal values equal
+\(\max\{v(0),v(1)\}\).
+\end{proof}
+
+This is an obstruction to the proposed interface, not an impossibility
+theorem for prospective interaction. A common retained-history arena, or
+an explicitly typed controller-memory boundary, can preserve the relevant
+bit across both bracketings. If the controller is forbidden to observe or
+retain that bit, rebracketing cannot grant permission: the admissible table
+family must enforce the restriction. Section~\ref{sec:rectangle} measures
+the resulting assembly condition.
+
+\section{Finite retained arenas and exact cut evaluation}
+\label{sec:cuts}
+\begin{definition}[Finite controlled history arena]
+\label{def:arena}
+A finite controlled history arena \(\A\) is a finite rooted tree (or
+disjoint forest) with decision histories \(H^{\mathrm{dec}}\) and terminal
+histories \(L\). At each decision history \(h\), there is a finite nonempty
+set \(A(h)\) of complete controls. For \(a\in A(h)\), there are:
+\[
+ W(h,a),\qquad
+ q_{h,a}:W(h,a)\to[0,1],\qquad
+ \sum_{w\in W(h,a)}q_{h,a}(w)=1,\qquad
+ r(h,a,w)\in\R.
+\]
+The finite raw carrier \(W(h,a)\) is retained in full. Its successor
+\(h[a,w]\) records the full history extension, including the control label
+and raw witness. Different such extensions are distinct tree nodes.
+Terminal histories have no controls and retain their declared completion
+or forced-stop status. A terminal valuation is \(v:L\to\R\).
+\end{definition}
+
+A deterministic complete policy is an element
+\[
+ \Pi_\A=\prod_{h\in H^{\mathrm{dec}}}A(h).
+\]
+Every coordinate is present before any policy is selected. A zero history
+has zero mass under a particular selected row; an off-policy history lies
+behind a control not selected by that policy. Neither distinction deletes
+a coordinate. Probabilistic service rows may themselves be controls in the
+finite menu; randomization over policy tables is not added implicitly.
+
+For a supplied policy \(\pi\), evaluation and optimal evaluation are defined
+by backward recursion:
+\begin{align}
+ V^\pi(h)&=v(h), & V^*(h)&=v(h) &&(h\in L),\notag\\
+ V^\pi(h)&=\sum_w q_{h,\pi(h)}(w)
+       \bigl(r(h,\pi(h),w)+V^\pi(h[\pi(h),w])\bigr), \label{eq:eval}\\
+ Q(h,a)&=\sum_w q_{h,a}(w)
+       \bigl(r(h,a,w)+V^*(h[a,w])\bigr),
+ &V^*(h)&=\max_{a\in A(h)}Q(h,a). \label{eq:bellman}
+\end{align}
+Finite well-foundedness makes both recursions defined. No stationarity,
+discounting, or infinite-horizon convergence is being assumed.
+
+A \emph{complete cut} \(K\) is an antichain meeting every structural
+root-to-terminal path exactly once, including paths through zero outcomes
+and through unchosen controls. Let \(F\) be the prefix stopped immediately
+before acting at \(K\), and let \(G_k\) be the subtree beginning at \(k\).
+If \(k\) is terminal, \(G_k\) has the unique empty policy.
+
+\begin{theorem}[Retained-cut composition; PI-1]
+\label{thm:cut}
+There is a canonical bijection
+\begin{equation}
+ \Pi_\A\ \cong\ \Pi_F\times\prod_{k\in K}\Pi_{G_k}.
+ \label{eq:policycut}
+\end{equation}
+For a root \(h_0\), write \(R_F(\pi_F)\) for expected reward before the
+cut and \(p_{\pi_F}(k)\) for its hitting law. Then
+\begin{equation}
+ V^\pi(h_0)=R_F(\pi_F)+
+       \sum_{k\in K}p_{\pi_F}(k)V^{\pi_k}_{G_k}(k).
+ \label{eq:cutvalue}
+\end{equation}
+Consequently, if \(B\) denotes optimal continuation evaluation,
+\begin{equation}
+ B_\A(v)=B_F\bigl((B_{G_k}(v|_{L(G_k)}))_{k\in K}\bigr).
+ \label{eq:bellmancut}
+\end{equation}
+For nested cuts, the policy bijections obey associativity and unit
+coherence while retaining all coordinates.
+\end{theorem}
+\begin{proof}
+The decision histories partition into those strictly before \(K\) and
+those in the subtrees rooted at \(K\). Restriction of a policy to these
+disjoint coordinate sets gives \eqref{eq:policycut}; union is its inverse.
+Every selected raw path has a unique first meeting with \(K\). Factoring
+its product probability at that meeting and splitting its accumulated
+reward proves \eqref{eq:cutvalue}, including terms of mass zero.
+
+For each \(k\), backward recursion gives a policy attaining the largest
+continuation value at every history of \(G_k\): choose a maximizing control
+at each node. These choices can be made simultaneously because the policy
+coordinates form the displayed product. Substituting their values into
+\eqref{eq:cutvalue} and maximizing the prefix proves
+\eqref{eq:bellmancut}. Conversely, no supplied suffix exceeds its optimal
+value, so the same expression bounds every complete policy.
+
+For nested cuts, either order of restriction records the same controls at
+the same primitive histories. Union has the same property. All
+associativity and unit diagrams therefore commute as coordinate identities.
+\end{proof}
+
+This is standard finite dynamic programming with the policy coordinates
+kept visible. Its assembly input is a common primitive-history arena. The
+project's all-policy open-assembly theorem likewise concerns a presented
+primitive network and its full policy family, rather than an operation on
+arbitrary isolated opaque operand policies \cite{transport}.
+
+\section{Root optimality and optimality at every history}
+\label{sec:selection}
+Define the local greedy sets and nonnegative losses by
+\[
+ G(h)=\argmax_{a\in A(h)}Q(h,a),\qquad
+ \delta(h,a)=V^*(h)-Q(h,a)\geq0.
+\]
+A policy is \emph{all-history greedy} when \(\pi(h)\in G(h)\) for every
+decision history. This is equivalent to attaining \(V^*(h)\) from every
+history \(h\), including histories of probability zero under the root
+execution. A \emph{root-optimal} policy is only required to attain
+\(V^*(h_0)\) at the specified root.
+
+\begin{theorem}[Exact policy loss and selection fibres; PI-2]
+\label{thm:loss}
+Let \(d_\pi(h)\) be the probability that execution from \(h_0\) reaches
+\(h\). For every complete policy,
+\begin{equation}
+ V^*(h_0)-V^\pi(h_0)
+   =\sum_{h\in H^{\mathrm{dec}}}d_\pi(h)\delta(h,\pi(h)).
+ \label{eq:loss}
+\end{equation}
+Hence root optimality is equivalent to greediness at every history with
+\(d_\pi(h)>0\). The all-history greedy family is
+\[
+ G_\A(v)=\prod_{h\in H^{\mathrm{dec}}}G(h).
+\]
+For the cut in Theorem~\ref{thm:cut}, write \(V_G(k)=B_{G_k}(v)\),
+with \(v\) restricted to the relevant subtree's terminals.
+Suffix root optimality is relative to each suffix's own root.
+Then
+\begin{equation}
+ G_\A(v)\cong G_F(V_G)\times\prod_{k\in K}G_{G_k}(v).
+ \label{eq:greedycut}
+\end{equation}
+The root-optimal family instead has the exact fibre decomposition
+\begin{equation}
+\begin{split}
+ \RootOpt_\A(v)\cong
+ \coprod_{\pi_F\in\RootOpt_F(V_G)}
+ \left(
+ \prod_{k:\,p_{\pi_F}(k)>0}\RootOpt_{G_k}(v)
+ \ \times\
+ \prod_{k:\,p_{\pi_F}(k)=0}\Pi_{G_k}
+ \right).
+\end{split}
+\label{eq:rootfibre}
+\end{equation}
+\end{theorem}
+\begin{proof}
+Set \(\Delta_\pi(h)=V^*(h)-V^\pi(h)\). Subtracting the two evaluations at
+the selected control gives
+\[
+ \Delta_\pi(h)=\delta(h,\pi(h))+
+       \sum_wq_{h,\pi(h)}(w)\Delta_\pi(h[\pi(h),w]).
+\]
+At terminals \(\Delta_\pi=0\). Finite expansion gives
+\eqref{eq:loss}; every summand is nonnegative. Equality at the root
+therefore has exactly the stated positive-occupancy criterion.
+
+All-history greediness restricts to precisely the local greedy conditions
+in each disjoint segment; suffix optimal values are the continuation values
+used by the prefix. This proves \eqref{eq:greedycut}. For
+\eqref{eq:rootfibre}, subtract \eqref{eq:cutvalue} from the optimum:
+\[
+\begin{split}
+ V^*_\A(h_0)-V^\pi_\A(h_0)
+ ={}&\left[B_F(V_G)-E_F^{\pi_F}(V_G)\right](h_0)\\
+ &+\sum_kp_{\pi_F}(k)
+       \left[V_G(k)-V_{G_k}^{\pi_k}(k)\right].
+\end{split}
+\]
+Here \(E_F^{\pi_F}\) is evaluation with the prefix policy fixed. The
+bracketed terms are nonnegative. Their weighted sum vanishes exactly
+when the prefix is root-optimal and every positive-mass suffix is
+root-optimal. Zero-mass suffix policies remain unrestricted.
+\end{proof}
+
+All-history selection is a substantive requirement. It can express
+contingency-wise preparedness or support later re-entry at any retained
+history. It cannot be silently substituted for the weaker root objective.
+In the companion depth-three arena, the complete table set has \(8192\)
+members, \(1024\) are root-optimal, and exactly one is all-history greedy.
+The retained zero and off-policy coordinates account for the difference.
+
+\section{Categories of evaluated and selected policies}
+\label{sec:categories}
+Fix the entire arena \(\A\). Its complete cuts form a finite poset:
+\(C\leq D\) when every structural path meets \(C\) no later than \(D\).
+Let \(H_{CD}\) contain the decision histories from \(C\) inclusive to
+\(D\) exclusive; execution stops before acting at \(D\). Let
+\(\Pi_{CD}=\prod_{h\in H_{CD}}A(h)\). A shared terminal node simply
+persists across the cuts, with an empty segment.
+
+For \(\pi\in\Pi_{CD}\), evaluation defines a monotone affine map
+\[
+ E_{CD}^{\pi}:\R^D\longrightarrow\R^C.
+\]
+Optimal evaluation \(B_{CD}:\R^D\to\R^C\) is monotone. The finite cut
+theorem gives, for \(C\leq D\leq E\),
+\begin{align}
+ E_{CE}^{\pi\amalg\rho}
+     &=E_{CD}^{\pi}\circ E_{DE}^{\rho},
+       &B_{CE}&=B_{CD}\circ B_{DE}, \label{eq:segmentcomp}\\
+ G_{CE}(w)&\cong
+       G_{CD}(B_{DE}w)\times G_{DE}(w).
+       \label{eq:segmentgreedy}
+\end{align}
+The symbol \(\amalg\) here means union of tables on disjoint history
+coordinates. In particular \(C\mapsto\R^C\), with arrows \(B_{CD}\),
+is a functor \(\Cut(\A)^{\mathrm{op}}\to\mathbf{Pos}\).
+
+\begin{theorem}[Evaluation category and optimal subcategory; PI-3]
+\label{thm:categories}
+There is a category \(\Eval(\A)\) whose objects are pairs \((C,u)\) with
+\(u\in\R^C\), and whose arrows
+\[
+ (C,u)\longrightarrow(D,v)
+\]
+are policies \(\pi\in\Pi_{CD}\), for \(C\leq D\), satisfying
+\(u=E_{CD}^{\pi}(v)\). Composition is table union.
+
+There is a wide, generally non-full subcategory \(\Opt(\A)\) in which an
+arrow is required to satisfy
+\[
+ \pi\in G_{CD}(v),\qquad u=B_{CD}(v).
+\]
+For a fixed optimal arrow from \((C,u)\) to \((E,w)\) and an intermediate cut
+\(D\), its factors are uniquely its restrictions, through the object
+\((D,B_{DE}(w))\).
+\end{theorem}
+\begin{proof}
+Equation~\eqref{eq:segmentcomp} makes composition well typed in
+\(\Eval(\A)\). Disjoint table union is associative; the unique empty
+table at \(C=D\) evaluates by the identity and supplies the identity
+arrow at \((C,u)\).
+
+An all-history greedy policy evaluates to \(B_{CD}(v)\), so every
+\(\Opt(\A)\) arrow is an \(\Eval(\A)\) arrow. Equation
+\eqref{eq:segmentgreedy} proves closure under composition and the stated
+factorization. Empty tables are greedy, so the subcategory is wide.
+For non-fullness, take a single-root arena with a root-optimal table
+having a nongreedy off-policy coordinate: it has the same endpoint
+valuations as a greedy table while remaining outside \(\Opt(\A)\).
+\end{proof}
+
+Boundary optimality also supports a category. The distinction from
+all-history optimality concerns restriction, not closure alone.
+
+\begin{proposition}[Boundary-optimal alternative; PI-3b]
+\label{prop:boundary}
+The same objects, with arrows satisfying
+\[
+ u=E_{CD}^{\pi}(v)=B_{CD}(v)
+\]
+at every boundary history in \(C\), form a wide subcategory \(\BOpt(\A)\).
+There are wide inclusions
+\(\Opt(\A)\subseteq\BOpt(\A)\subseteq\Eval(\A)\).
+Unlike \(\Opt(\A)\), \(\BOpt(\A)\) need not admit restriction of an arrow
+to boundary-optimal suffixes at every retained intermediate cut.
+\end{proposition}
+\begin{proof}
+For composable boundary-optimal arrows, \(v=B_{DE}(w)\), so
+\[
+ E_{CE}^{\pi\amalg\rho}(w)
+ =E_{CD}^{\pi}(B_{DE}w)
+ =B_{CD}(B_{DE}w)
+ =B_{CE}(w)=u.
+\]
+Empty tables give identities. All-history greedy arrows are boundary
+optimal, giving the inclusions.
+A root-optimal policy can choose a suboptimal suffix at a zero-hitting
+cut history by Theorem~\ref{thm:loss}. Its suffix restriction then fails
+boundary optimality at that history, although the complete arrow is
+boundary optimal. Equation~\eqref{eq:segmentgreedy} proves that
+all-history greedy arrows retain optimal factors at every such cut.
+\end{proof}
+
+\(\Eval(\A)\) retains supplied, possibly suboptimal policies. Optimization
+is additional selected structure. At a fixed cut \(C\), an identity-segment
+arrow exists only when \(u=v\). Thus the construction does \emph{not} already
+contain same-time changes of valuation, reference, or model. It also makes
+no fibration assertion: a factorization of an already supplied complete
+table is different from a universal lift of an arbitrary external map.
+The arena parameter remains fixed throughout.
+
+\section{A sharp criterion for assembling local choices}
+\label{sec:rectangle}
+Information restrictions, commitments, or coupled feasibility may replace a
+product of local policy sets by a proper subset. A scalar Bellman step then
+solves a relaxation unless the required combination of local choices is
+actually admissible.
+
+\begin{theorem}[Positive-coordinate rectangularity; PI-4]
+\label{thm:rectangle}
+Let \(K\) be finite, \(p\) a probability law on \(K\), each \(U_k\) a finite
+nonempty set of local alternatives, and
+\(\varnothing\ne S\subseteq\prod_{k\in K}U_k\) the admissible complete
+table family. For scores \(u_k:U_k\to\R\), let
+\[
+ J_S(u)=\max_{s\in S}\sum_kp_k u_k(s_k),\qquad
+ J_{\mathrm{sep}}(u)=\sum_kp_k\max_{a\in U_k}u_k(a).
+\]
+Then \(J_S(u)\leq J_{\mathrm{sep}}(u)\). For a fixed score family,
+equality holds precisely when \(S\) contains a table selecting a local
+maximizer at every positive-mass coordinate. In that case its maximizing
+tables are exactly the members of \(S\) with this property.
+
+Write \(K_+=\{k:p_k>0\}\). Equality for \emph{every independent family
+of real score tables} is equivalent to
+\begin{equation}
+ \pr_{K_+}(S)=\prod_{k\in K_+}U_k.
+ \label{eq:rectangle}
+\end{equation}
+\end{theorem}
+\begin{proof}
+For a supplied \(s\), the gap from the separated value is
+\[
+ \sum_k p_k\bigl(\max_a u_k(a)-u_k(s_k)\bigr)\geq0.
+\]
+It vanishes exactly at positive-coordinate local maximizers. Finite
+nonemptiness makes the maximum over \(S\) attained and proves the
+fixed-score statement.
+
+If \eqref{eq:rectangle} holds, choose a local maximizer at every
+positive coordinate and extend that tuple to \(S\). This gives equality.
+Conversely, if a tuple \(a^*\) is missing from the positive-coordinate
+projection, take \(u_k(a)=\mathbf1_{\{a=a^*_k\}}\) there and zero scores
+elsewhere. The separated value is \(1\). Every admissible table misses
+at least one positive coordinate, giving value at most
+\(1-\min_{k\in K_+}p_k<1\). Uniform equality fails.
+\end{proof}
+
+\begin{example}[Hidden observation or prior commitment]
+\label{ex:diagonal}
+Let \(p=(\tfrac12,\tfrac12)\), \(U_0=U_1=\{0,1\}\), and
+\(S=\{(0,0),(1,1)\}\). With \(u_0(b)=1-b\) and \(u_1(b)=b\),
+the constrained value is \(1/2\) while independent maximization gives
+\(1\), using the forbidden table \((0,1)\). The same admissible family
+can arise from different mechanisms: an unobserved bit, a prior commitment
+to one common action, or an explicit cross-history constraint. A repair
+must preserve the actual mechanism. Observation permission can change the
+first problem; it need not relax either of the other two.
+
+For \(p=(1,0)\), the same \(S\) satisfies \eqref{eq:rectangle}.
+Its scalar evaluation is exact for all scores even though it contains only
+two of the four retained raw tables. Value equality therefore does not
+certify full native table coverage.
+\end{example}
+
+The necessity result concerns arbitrary independent local scores. A fixed
+model with only a restricted family of terminal valuations may fail to
+distinguish omitted duplicate or dominated alternatives. Likewise, if
+feasibility depends on the prefix policy, the theorem applies to each
+fixed prefix and its actual suffix family; it does not remove that
+dependency.
+
+\section{Evaluation along independently supplied native maps}
+\label{sec:native}
+The project already distinguishes primitive/native comparison data from
+the scalar conditional-law equations that those data must satisfy
+\cite{conditional,relative}. The following theorem evaluates a supplied
+comparison. It does not reconstruct its coefficient, full-grade, world,
+or boundary arrows from probability rows.
+
+Let \(S,T\) be finite arenas. Suppose a history map \(F:H_S\to H_T\)
+preserves depth and terminal/forced-stop status, and for each source
+decision history there are maps
+\[
+ \phi_h:A_S(h)\to A_T(Fh),\qquad
+ \rho_{h,a}:W_S(h,a)\to W_T(Fh,\phi_h a).
+\]
+Require exact compatibility:
+\begin{align}
+ (\rho_{h,a})_*q^S_{h,a}&=q^T_{Fh,\phi_h a},
+       \label{eq:push}\\
+ F(h[a,w])&=(Fh)[\phi_h a,\rho_{h,a}w], \label{eq:body}\\
+ r_S(h,a,w)&=r_T(Fh,\phi_h a,\rho_{h,a}w),\qquad
+ v_S=v_T\circ F\quad\hbox{on terminals}. \label{eq:reward}
+\end{align}
+For a \emph{native} interpretation, the underlying comparison in the
+chosen source doctrine, with its material and interface squares, is an
+additional supplied hypothesis.
+
+\begin{theorem}[Control coverage and value comparison; PI-5]
+\label{thm:native}
+Under \eqref{eq:push}--\eqref{eq:reward},
+\[
+ V^*_S(h)\leq V^*_T(Fh).
+\]
+If every \(\phi_h\) is surjective, then at every source history and control,
+\begin{equation}
+ V^*_S(h)=V^*_T(Fh),\qquad
+ Q_S(h,a)=Q_T(Fh,\phi_h a),\qquad
+ G_S(h)=\phi_h^{-1}(G_T(Fh)).
+ \label{eq:nativeequal}
+\end{equation}
+No raw-map surjectivity is required for these scalar statements. These
+evaluated comparison data, and their control-surjective subclass, are
+closed under identities and composition.
+
+For already compatible policies \(\pi_S,\pi_T\), meaning
+\(\pi_T(Fh)=\phi_h(\pi_S(h))\) at every source decision history,
+fixed-policy values agree:
+\[
+ V^{\pi_S}_S(h)=V^{\pi_T}_T(Fh),
+\]
+even without control surjectivity.
+\end{theorem}
+\begin{proof}
+Induct backward on the source tree. Terminal values agree by hypothesis.
+For a source control, the induction inequality at its successors, followed
+by exact pushforward and reward preservation, gives
+\[
+ Q_S(h,a)\leq Q_T(Fh,\phi_h a).
+\]
+Maximizing over source controls gives the stated value inequality.
+If every control map is onto, the induction starts with equality at
+terminals and gives equality for every source control. Surjectivity then
+identifies the two maxima and their maximizing preimages, proving
+\eqref{eq:nativeequal}.
+
+A target raw atom outside the image of \(\rho_{h,a}\) has zero mass by
+\eqref{eq:push}; it contributes nothing to this scalar sum. It remains an
+actual target history. Identity and composite maps satisfy the same
+equations because pushforwards and the successor and reward squares
+compose; composites of surjective control maps are surjective.
+
+For compatible fixed policies, the induction compares the selected rows
+only, with no maximization. It yields equality without any coverage
+condition on unselected controls.
+\end{proof}
+
+Control coverage is a sufficient structural condition, not a necessary
+condition for scalar equality. A target may add a duplicate control or a
+strictly dominated control without changing any optimal value. At a
+one-stage boundary each control contributes an affine profile
+\(L_a(v)=\bar r_a+p_a\cdot v\); the Bellman operator sees only their upper
+envelope. Raw labels, grades, and dominated or duplicated alternatives
+can survive outside that observation.
+
+\subsection{The exact greedy extension fibre}
+\label{sec:fibre}
+An equality of optimal values does not choose a compatible target policy.
+For a supplied complete source policy \(p\), define the forced controls at
+a target history by
+\[
+ D_k(p)=\{\phi_h(p(h)):Fh=k\}.
+\]
+Let \(G_T(k)\) use the fixed target model and continuation valuation.
+
+\begin{theorem}[Greedy extension and descent; PI-6]
+\label{thm:fibre}
+The full family of all-history greedy target policies compatible with \(p\)
+is exactly
+\begin{equation}
+ \prod_{k\in H_T^{\mathrm{dec}}}
+ \left(
+ G_T(k)\cap
+ \{b\in A_T(k): b=d\text{ for every }d\in D_k(p)\}
+ \right).
+ \label{eq:extfibre}
+\end{equation}
+If the control maps are surjective and \(p\) is all-history greedy, this
+family is nonempty if and only if the forced controls agree on every
+nonempty \(F\)-fibre. Covered target coordinates are then forced.
+Uncovered coordinates retain their full greedy sets. When an extension
+exists, it is unique if and only if each such set is a singleton.
+\end{theorem}
+\begin{proof}
+Compatibility gives exactly the displayed constraints at each target
+history. The target's complete policy space is a product, so the constraints
+assemble as \eqref{eq:extfibre}. Under the additional assumptions,
+Theorem~\ref{thm:native} puts every forced image in \(G_T(k)\). A covered
+factor is therefore nonempty precisely when all its forced values agree;
+then it is a singleton. An uncovered factor is \(G_T(k)\), which is finite
+and nonempty. The existence and uniqueness statements follow.
+\end{proof}
+
+This is an optimizer-constrained finite analogue of the existing relative
+extension-fibre theorem \cite{conditional}. That source theorem fixes the
+target structural skeleton; the present control coordinates can bundle
+structural choices and law labels. Identifying those two presentations
+requires the appropriate normal-form interpretation.
+Surjectivity on histories removes uncovered-coordinate freedom but
+does not remove disagreement between merged source histories.
+
+\subsection{Optimization does not repair a missing intermediate policy}
+\label{sec:middle}
+For a finite comparison \(f=(F,\phi,\rho)\), its policy relation is
+\[
+ R_f=\{(p,q):q(Fh)=\phi_h(p(h))\text{ at every source decision history }h\}.
+\]
+The source policy-transport relation satisfies
+\(R_gR_f\subseteq R_{gf}\); equality requires an intermediate complete
+policy \cite{transport}. A simple optimal version of the source's strict
+witness survives the new selection condition.
+
+After a fair root bit, a source policy chooses at each of two histories a
+law on four raw bits \((X,Y,U,V)\). Each choice is a product
+\(L\otimes H\), where \(L\in\{D,A\}\) couples \((X,Y)\) and
+\(H\in\{\mathrm{good},\mathrm{bad}\}\) couples \((U,V)\).
+The first two couplings are
+\[
+ D(0,0)=D(1,1)=\tfrac12,\qquad
+ A(0,1)=A(1,0)=\tfrac12,
+\]
+with the other two raw weights zero. Good is the diagonal coupling on
+\((U,V)\); bad is the antidiagonal coupling. All sixteen raw source
+atoms are retained, including zeros. Every bit marginal is fair.
+Root reward and terminal continuation values are zero; the second-stage
+reward is the pointwise function \(\mathbf1_{\{U=V\}}\). Its expectation
+is \(1\) under good and \(0\) under bad, independently of \(L\).
+The first comparison merges the two root histories but retains the joint
+four-bit outcomes. A middle policy must consequently choose the same full
+law at both source histories. The second comparison projects
+\((X,Y,U,V)\mapsto(U,V)\), forgetting \(L\) while retaining the actual
+law \(H\). This projection preserves the reward at every raw atom,
+including atoms of zero mass. The structural skeleton remains fixed;
+good and bad are admitted laws, not extra reward tags. All material
+coefficients in this witness may be units.
+
+Explicitly, \(f\) sends the root raw bit to a singleton and merges the two
+subsequent histories. At those histories its control map is
+\((L,H)\mapsto(L,H)\) and its raw map is the identity on four bits.
+The map \(g\) leaves the singleton root fixed, sends controls
+\((L,H)\mapsto H\), and has raw map
+\((x,y,u,v)\mapsto(u,v)\). The omitted carriers can equivalently remain
+as two singleton factors in the fixed structural skeleton. Terminal
+history maps are induced by these control and raw maps. The comparison
+equations are
+\[
+ (\rho_g)_*(L\otimes H)=H,\qquad
+ r_S(x,y,u,v)=\mathbf1_{\{u=v\}}=r_T(\rho_g(x,y,u,v)).
+\]
+Thus the finite map data and reward square can be checked directly.
+
+The source policy
+\[
+ ((D,\mathrm{good}),(A,\mathrm{good}))
+\]
+and target policy \(\mathrm{good}\) are compatible under the composite.
+Both are all-history optimal. No middle policy is compatible with the
+source policy, because it would need both distinct coupling labels.
+The finite diagnostic finds four compatible optimal source--target pairs,
+of which only two factor through the middle. The nonconstant reward makes
+selection nonvacuous. Thus restricting to optimal policies does not make
+the existing policy relation compose strictly. A general policy-lifting
+or fibration claim would need additional hypotheses.
+
+\section{What the finite result does not identify}
+\label{sec:boundaries}
+\subsection{Fresh execution versus a whole-plan commitment}
+The fresh-row convention in Definition~\ref{def:arena} matters. If a label
+instead carries a whole joint law on an already retained reserve \(R\)
+and fresh witnesses \(W\), execution must retain the actual reserve and
+sample the conditional fresh law. Assigning the whole law to the fresh
+service kernel would redraw the reserve.
+
+The source nonblocking doctrine supplies calibration equation C1 and the
+gluing identity C2, along with incoming-signature validity and pointwise transport of fresh
+service tables, including zero tables \cite{nonblocking}. Authorizing the
+identity history view does not establish these conditions. A Bellman
+maximizer among individually admitted whole plans need not be a calibrated
+selector of those plans. Applying this pilot to that doctrine requires
+an interpretation proving calibration and admissible assembly for the
+selected policy family.
+
+\subsection{Finite cut evaluation versus horizon revision}
+At time \(0\), setup costs \(1\); at time \(1\), completion pays \(3\)
+only if setup occurred. Waiting pays zero, and there is no terminal
+salvage value. The two-step optimum is setup then completion, returning
+\(2\). Repeated one-step optimization with terminal valuation zero
+chooses waiting at both times, returning zero.
+
+This does not contradict the cut theorem: the correct continuation
+values at time \(1\) are \(3\) for a ready state and \(0\) for an unready
+state. Resetting both to zero changes the optimization problem.
+Horizon-one and horizon-two optima need not even agree at the root.
+Consequently, independent finite-horizon optimization does not supply
+the coherent controller family required by the source's native
+infinite-prefix/finality result \cite{nonblocking}.
+
+\subsection{Concurrent predictions need their joint law}
+Let \(D_1,D_2\) be binary demands, each with marginal probability \(1/2\).
+Capacity \(c\in\{1,2\}\) has cost
+\[
+ J(c)=\tfrac34c+2\Pr(D_1+D_2>c).
+\]
+Independent demands give
+\(J(1)=5/4<J(2)=3/2\), whereas a common shock \(D_1=D_2\) gives
+\(J(1)=7/4>J(2)=3/2\). The component marginals coincide and the
+optimal joint decision reverses.
+
+Thus a prospective concurrency interface must retain the joint law or
+other data sufficient for the actual joint objective. With a genuinely
+factorized feasible set and an additive sum of separate local objectives,
+the optimizer factors as a product of local optimizer sets; the proof is
+termwise maximization. Shared constraints or a nonseparable cost remove
+that premise. This example is a decision-theoretic obstruction, not a
+construction of the programme's concurrency tensor.
+
+\subsection{Prediction, regulation, and revision are distinct operations}
+Feedback specifies how interaction recurs. Prospective evaluation uses
+consequences beyond the present boundary. Regulation additionally identifies
+what is to be maintained or prepared. Reference or model revision changes
+those supplied data. None of these operations follows merely from naming
+another one.
+
+For this design study, allostatic equipment means a proposed interface for
+context-sensitive anticipatory regulation; reference revision is a possible
+additional operation, not a physiological theorem or a prerequisite imposed
+on every anticipatory controller. The setup example already models
+preparation for a later benefit with a fixed objective. To add changing
+references or predictive models, the structure must state who or what
+authorizes the change, what observation triggers it, how continuation
+valuations are transported, and how existing commitments remain valid.
+The same-cut boundary of \(\Eval(\A)\) exhibits missing valuation-revision
+arrows. Model revision changes the arena parameter itself and requires
+comparisons between differently modelled arenas.
+
+\section{Consequence for a prospective interaction programme}
+\label{sec:consequence}
+The finite arenas studied here admit \emph{prospective equipment}:
+retained admissible controls and predictions, continuation evaluation,
+and a separately specified selection relation. At this proved level,
+the equipment adds structure to an existing arena. Whether the intended
+native interaction doctrine admits it with the required crossing and
+coherence laws remains open. Taking equipment as the first candidate is a
+research strategy; the finite construction does not settle the
+generalization-versus-specialization question for that native doctrine.
+
+The distinction is testable. On a fixed arena with zero rewards and zero
+terminal values, every policy is greedy, so the selected zero-continuation
+fibre reduces to the full policy family on that arena. This is a degenerate reduction
+inside the common finite host. It is not an embedding theorem for arbitrary
+reactads or interactads, since finiteness, observation permission, and
+fresh-row assembly remain assumptions.
+
+Categorical cybernetics offers an established comparison point:
+parametrized optics organize systems with choices and selection relations
+\cite{cybernetics}; work on categorical reinforcement learning treats
+Bellman operators through optics and a contravariant representable
+construction \cite{rl}. The present finite recursion is not a novelty
+claim relative to that literature. The question specific to this programme
+is whether that evaluation/selection structure can preserve the richer
+native presentations, cells, law labels, and controlled forgetting.
+Proposition~\ref{prop:naive} and Theorem~\ref{thm:fibre} show why value
+semantics alone cannot answer it.
+
+A full proactad proposal in the programme's sense would still need the
+following concrete extension of the interface:
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{Presentation and forgetful comparison.}
+Specify candidate prospective context and content presentations, their
+pure endpoint actions, and a forgetful comparison to the chosen interaction
+doctrine. Declare which predictions, objectives, and selection witnesses
+are objects or cells, and which are external parameters.
+\item \textbf{Crossing and coherence.}
+Construct the proposed crossing on native cells, with pure-middle balance
+and all unit/multiplication modifications. A scalar Bellman identity is
+only a required evaluation equation for such a construction.
+\item \textbf{Admissible selection and transport.}
+Prove the relevant analogue of rectangularity, or retain the constrained
+selection relation when it fails. Prove calibration for committed whole
+plans and account for merged and uncovered histories using actual lift
+fibres.
+\item \textbf{Feedback and optional revision.}
+Specify a consistent finite or infinite continuation doctrine. If model
+or reference revision is included, specify its authorized arrows and the
+preservation obligations on existing commitments. State stability, viability, or regret
+claims only with their own hypotheses and evidence.
+\end{enumerate}
+
+The next discriminating extension is therefore a presentation-level
+interpretation of this finite category of policies and its selector,
+with explicit observation and commitment interfaces. If that
+interpretation closes under the existing native crossing, prospective
+interaction is additional equipment. If it fails, the failed square,
+lift fibre, or coherence law can identify precisely which generalization
+is required. The current obstructions justify preserving more interface
+data; they do not yet require replacing the existing interaction calculus.
+
+\appendix
+\section{Executable diagnostics and reproducibility}
+\label{sec:checks}
+The companion \texttt{checks/check\_finite\_prospective.py} uses only the
+Python standard library and \texttt{fractions.Fraction}. Run:
+\begin{quote}
+\texttt{python3 checks/check\_finite\_prospective.py}
+\end{quote}
+It writes \texttt{checks/results.json}. Ordinary Python execution is
+required; optimized mode that disables assertions is inappropriate for
+these diagnostics.
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\toprule
+Diagnostic & Executed result\\
+\midrule
+Full retained arena & \(13\) decision histories, \(16\) terminal histories,
+\(8192\) complete policies; direct enumeration and backward evaluation
+both give value \(2\).\\
+Loss and cut coordinates & All \(8192\) loss identities and table
+split/reassembly checks pass; \(1024\) root optima, one all-history optimum.\\
+Rectangularity & All \(15\) nonempty binary table families, under three
+prefix laws; \(720\) score comparisons.\\
+Associativity obstruction & Four versus two policies; attainable final
+probabilities \(\{0,\tfrac12,1\}\) versus \(\{0,1\}\).\\
+Native comparison & Strict comparison without control coverage;
+duplicate/dominated omissions; inverse-image optimal controls when onto.\\
+Missing middle & Four compatible optimal composite pairs, two with a
+middle policy.\\
+Concurrency and horizon & The capacity choice reverses with the coupling;
+two-step preparation gives \(2\), rolling one-step evaluation gives \(0\).\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+The main arena emits a fair bit and pays zero under root control A; control B retains
+both bit witnesses with law \((1,0)\) and pays \(1/2\). At each ensuing
+history, preparation costs \(1/2\) and increases the final work reward from
+\(1\) to \(2\). The alternatives are explicitly \(\mathrm{prepare}\) and
+\(\mathrm{skip}\); skipping costs zero. Each has a singleton fresh raw
+carrier and leads to its own retained final decision history.
+Raw bit \(1\) adds \(1/4\) to the work reward. At the last
+stage, work earns that reward and rest earns zero. Terminal values are
+zero; both final controls also have singleton fresh raw carriers.
+These data give root action values \(13/8\) and \(2\).
+Direct path evaluation does not use the backward values. It separately
+computes occupancy and checks \eqref{eq:loss}.
+
+The finite enumerations do not prove the real-score theorem, arbitrary
+map naturality, or the general category laws; their written proofs appear
+above. The associativity diagnostic checks \(25\) rational terminal-score
+pairs; Proposition~\ref{prop:naive} supplies the all-real-scores argument.
+No empirical performance or proof-assistant certificate is asserted.
+
+\section{Source boundary}
+Repository references below refer to the project
+\texttt{projects/contextual-composition} in
+\begin{quote}
+\url{https://github.com/eternal-november/eos-research-programmes}\\
+Revision: \texttt{\reporev}
+\end{quote}
+Each source link in the bibliography includes this full revision and its
+file path; \texttt{SOURCES.json} records the content hashes.
+PDF and TeX links are paired where both are present in the pinned tree;
+the three control-family notes are available there as TeX only.
+The contextual-composition files used here
+were first read at \texttt{f325c370\ldots}; comparison with the pinned
+revision found no changes in that project. Source results are credited
+at their stated hypotheses. The pilot does not rerun historical repository
+proof-assistant checks or promote a source's conditional native theorem
+to an unconditional realization theorem.
+
+\begin{thebibliography}{9}
+\bibitem{contextads}
+M.~Capucci and D.~J.~Myers.
+\emph{Contextful Arrows via Wreath Products}.
+Version 2, 2026; first version, 2024.
+\href{https://arxiv.org/abs/2410.21889v2}{arXiv:2410.21889v2}.
+
+\bibitem{terminology}
+Contextual Composition Programme.
+\emph{Interactads: a provisional terminology note}.
+[\reposrc{foundations/terminology/Interactad_Terminology_Note.pdf}{PDF},
+\reposrc{foundations/terminology/Interactad_Terminology_Note.tex}{TeX}].
+The package to be named; Two qualified usages.
+
+\bibitem{relative}
+Contextual Composition Programme.
+\emph{One relative construction for context content and effects}.
+[\reposrc{foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.pdf}{PDF},
+\reposrc{foundations/relative-construction/delivery/One_relative_construction_for_context_content_and_effects.tex}{TeX}].
+In particular, \emph{Comparison maps and controlled forgetting}.
+
+\bibitem{conditional}
+Contextual Composition Programme.
+\emph{Full-control-history conditional families of open timeline amalgamations}.
+\reposrc{foundations/native-whole-scope-feedback/Conditional_Open_Timeline_Families.tex}{Pinned TeX source}.
+\emph{Unselected law-labelled control histories} and
+\emph{Exact relative extension and descent theorem}; theorems
+\emph{Unselected conditional-family normal form} and
+\emph{Relative lift fibre, including uncovered raw histories}.
+
+\bibitem{transport}
+Contextual Composition Programme.
+\emph{Policy relations compose only laxly: the missing-middle obstruction}.
+\reposrc{foundations/native-whole-scope-feedback/Policy_Relational_Transport.tex}{Pinned TeX source}.
+Theorems \emph{Normal lax relational transport} and
+\emph{All-policy lift of presented open assembly}; the separate strict witness.
+
+\bibitem{nonblocking}
+Contextual Composition Programme.
+\emph{Nonblocking recurrent interaction: history-law implementations and certified opaque exports}.
+\reposrc{foundations/native-whole-scope-feedback/Nonblocking_History_Controllers_and_Certified_Exports.tex}{Pinned TeX source}.
+\emph{Global admissibility and actual implementations};
+\emph{Calibrated complete-plan gluing} (C1--C2);
+\emph{Relative native finality with implementations}.
+
+\bibitem{cybernetics}
+M.~Capucci, B.~Gavranovi\'c, J.~Hedges, and E.~F.~Rischel.
+\emph{Towards Foundations of Categorical Cybernetics}.
+Version 2, 2022.
+\href{https://arxiv.org/abs/2105.06332v2}{arXiv:2105.06332v2}.
+
+\bibitem{rl}
+J.~Hedges and R.~Rodr\'iguez Sakamoto.
+\emph{Reinforcement Learning in Categorical Cybernetics}.
+Version 2, 2025.
+\href{https://arxiv.org/abs/2404.02688v2}{arXiv:2404.02688v2}.
+\end{thebibliography}
+\end{document}

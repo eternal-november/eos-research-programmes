@@ -1,0 +1,77 @@
+Boundary-selection audit — 26 November 2026
+
+Review status: informed LLM written-proof audit, not formal certification.
+This focused review was informed by the project discussion and earlier
+mathematical audit. It is not a blind review and does not claim a
+proof-assistant certificate.
+
+Reviewed file:
+/workspace/scratch/035e00fce434/prospective-interaction/Prospective_Interaction.tex
+
+SHA-256 of the inspected manuscript:
+7fdc366d2445de7d69eb03945f763c4a817f8066fd0e5651afc2b894bca67dbc
+
+Scope: new Proposition PI-3b (prop:boundary), its closure and restriction
+claims, and the surrounding category definitions and typing. Earlier
+reports remain unchanged. No manuscript edits were made by this reviewer.
+
+Verdict: the proposition and proof are sound under the existing finite
+retained-arena assumptions. Boundary optimality suffices for categorical
+closure. All-history optimality additionally supplies optimal restriction
+and factorization at arbitrary retained intermediate cuts.
+
+Typing and closure
+------------------
+For C <= D <= E, take arrows pi:(C,u)->(D,v) and
+rho:(D,v)->(E,w) in BOpt(A). Their conditions give
+
+    E_DE^rho(w) = v = B_DE(w),
+    E_CD^pi(v) = u = B_CD(v).
+
+Hence policy-evaluation composition and Bellman composition yield
+
+    E_CE^(pi union rho)(w)
+      = E_CD^pi(E_DE^rho(w))
+      = E_CD^pi(B_DE(w))
+      = B_CD(B_DE(w))
+      = B_CE(w)
+      = u.
+
+The composite therefore lies in BOpt(A). Empty tables are identities at
+every object. All-history greedy arrows are boundary optimal, and every
+boundary-optimal arrow is an Eval(A) arrow. Thus both displayed inclusions
+are wide subcategory inclusions. In a forest, optimality is required at
+every history of C, exactly as stated; a single designated-root condition
+would not suffice for the vector endpoint equation.
+
+Explicit suffix-restriction obstruction
+---------------------------------------
+Let a root r have one control with two raw successors x,y of probabilities
+1 and 0, respectively, and zero immediate reward. At x, the sole action
+gives reward 0 and terminates. At y, two actions give rewards 0 and 1 and
+terminate. All terminal values are zero. Retain both raw successors and
+all resulting terminal histories.
+
+The complete policy choosing reward 0 at y is optimal from r, because y
+has hitting probability zero. With C={r}, D={x,y}, and E the terminal cut,
+it is a BOpt(A) arrow from (C,0) to (E,0). Its suffix restriction evaluates
+to (0,0) on D, whereas B_DE(0)=(0,1). The suffix is therefore not
+boundary optimal. Composition is union of disjoint policy coordinates,
+so a factorization of this same complete table cannot replace that suffix
+by another table. This validates the existential obstruction in PI-3b.
+
+All-history greedy policies have optimal values at both x and y, including
+zero-hitting and off-policy histories. The already proved greedy segment
+factorization gives their optimal restrictions at every complete
+intermediate cut.
+
+Surrounding prose
+-----------------
+The inspected version explicitly says that Eval(A) retains supplied,
+possibly suboptimal policies. This resolves the potential antecedent
+ambiguity after insertion of BOpt(A). The subsequent same-cut and
+no-fibration qualifications remain consistent with all three categories.
+
+No substantive mathematical or typing defect was found in the inspected
+addition. The distinction between closure and restriction is material and
+is now stated accurately.
