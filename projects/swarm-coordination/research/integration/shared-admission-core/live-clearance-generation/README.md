@@ -53,3 +53,6 @@ what it costs to install, and when a delayed receipt invalidates reuse.
 
 The [publication-owner migration](publication-owner/) moves the actual
 station journal and ownership barrier to a separate SQLite store.
+
+The [silent-export follow-up](silent-export/) tests taken-over work when
+only an earlier checkpoint and an independent copy of the handoff survive.
