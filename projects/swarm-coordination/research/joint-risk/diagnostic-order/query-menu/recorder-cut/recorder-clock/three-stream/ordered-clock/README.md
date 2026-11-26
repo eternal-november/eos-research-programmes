@@ -8,3 +8,5 @@ In the worked case, two streams can fail only in the same episode once all recor
     diff -u results.json actual.json
 
 The replay is synthetic. The acquisition model comes from the [two-stream study](../../README.md); it is not a claim about a measured clock or a real dataset.
+
+The [private-clock follow-up](private-clocks/README.md) shows that this tractability need not survive independently unknown offsets: simple ordered interval graphs then suffice for hardness.

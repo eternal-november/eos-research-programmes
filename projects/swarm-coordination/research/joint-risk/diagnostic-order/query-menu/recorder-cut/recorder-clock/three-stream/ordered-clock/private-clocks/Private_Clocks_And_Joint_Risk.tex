@@ -1,0 +1,111 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}
+\title{Independent unknown clock offsets make exact joint failure caps hard}
+\begin{document}
+\maketitle
+
+Ordered timestamps and a single common unresolved offset permit
+a polynomial worst-case empirical count. With independent unknown
+offsets, that result does not extend even to separated two-episode
+blocks with one fixed residual bound and two admissible permutations
+per block. The decisive constraint is the same offset throughout each
+stream, not a lack of time order within the individual blocks.
+
+\paragraph{Declared source law.}
+One complete anchor stream has a record for each episode at a known
+acquisition time \(s_i\) and a binary failure flag. Each of \(K\)
+complete other streams has local acquisitions \(t_j\) and flags,
+one unknown but constant offset \(d\in[0,1]\) private to that stream,
+and per-acquisition error at most \(9/4\). A record can match anchor
+episode \(i\) if \(|t_j-s_i-d|\le9/4\). A whole-stream bijection
+under a consistent offset is required. No other constraints tie the
+residuals or offsets together. A realized episode fails if at least
+one matched record has a failure flag. This is an empirical count
+over all compatible full joins; it is neither a fault frequency
+estimator nor a claim about a calibrated device.
+
+\begin{theorem}
+With the number of private clocks variable, deciding if there is a
+compatible join above a given cap is NP-complete. Deciding if every
+join meets the cap is coNP-complete, even at a fixed rational cap
+fraction \(0<\alpha<1\). The construction has a feasible complete
+join for every admissible tuple of offsets.
+\end{theorem}
+\begin{proof}
+A certificate gives a bijection per stream. All residuals in a
+stream give closed rational intervals for its offset; intersect
+them with \([0,1]\) to check the certificate in polynomial time.
+For hardness, express a Boolean formula as non-tautological CNF
+clauses. Let each clause be one block and each variable be one
+non-anchor stream. A clause block based at \(h=10j\) has anchor
+times \(h,h+2\) with flags \(0,1\). The first position is the
+additional failure to be justified. In the stream for variable \(x\):
+\[
+\begin{array}{c|c|c}
+  \text{occurrence in the clause} & \text{local stamps} & \text{flags}\\
+  \hline
+  x & h+1,\ h+3 & 0,1\\
+  \neg x & h,\ h+2 & 0,1\\
+  \text{absent} & h,\ h+2 & 0,0
+\end{array}
+\]
+An anchor stamp is at most two units from its block base, and
+other records are at most three units from theirs. Even after
+an offset in \([0,1]\), different blocks have absolute residual
+at least seven and cannot join. The sorted pairing within each
+block is valid at every offset. If \(c\) is the local shift
+(\(1\) for a positive occurrence, \(0\) for a negative one),
+the swapped pairing requires both
+\(|c+2-d|\le9/4\) and \(|c-2-d|\le9/4\). The additional
+failure is therefore possible exactly for
+\(d\in[c-1/4,c+1/4]\cap[0,1]\). These positive-width intervals
+for the two polarities are disjoint. Choices of permutation
+in the blocks are independent once the offset is fixed.
+
+Any offsets and linkages induce a Boolean assignment by thresholding
+each offset at \(1/2\). Every additional failed position then
+belongs to a clause satisfied by that assignment. Conversely, for
+a Boolean assignment choose private offset zero or one and make
+a swapped pair in every block where the variable's literal is
+satisfied. The maximum union count is exactly the number \(m\)
+of anchor-prefailed positions plus the maximum number of satisfiable
+clauses. Hence a count of \(2m\) is possible iff the formula is
+satisfiable. At a fixed fraction \(\alpha\), add isolated forced-safe
+one-record blocks far from all previous blocks to reach
+\(\lceil(2m-1)/\alpha\rceil\) episodes; they admit the same trivial
+pairing at all offsets and do not change the count.
+\end{proof}
+
+\paragraph{Controls.}
+With clauses \(x\) and \(\neg x\), the worst count is three of four.
+Pooling pair eligibility over offsets gives four by using incompatible
+values for the same stream. With clauses \(x\) and \(\neg y\),
+private offsets give four, but constraining the two streams to
+one common unknown offset gives three. The exact replay checks
+300 finite formulas against direct truth assignment search, independently
+computing the admissible timestamp permutations by interval arithmetic.
+
+There is also a one-stream obstruction to reusing the common-offset
+slot representation after dropping the offset. With anchor stamps
+\(0,5,6,9\), local stamps \(1,5,16,17\), failure flags on the
+first and third local records, error bound \(7\) and offset in
+\([3,7]\), the possible failure sets in zero-based indices are
+\(\{0,1\},\{0,2\},\{0,3\},\{1,2\}\).
+For bases \(\{0,3\}\) and \(\{1,2\}\), removing \(0\) from
+the first basis leaves no permitted replacement from the second.
+Thus the pooled feasible sets are not the bases of one matroid;
+one cannot represent them by one ordinary saturating-slot matching.
+
+\paragraph{Where the previous algorithm still applies.}
+For any fixed offset vector, the ordered-slot solver remains
+exact. If only a fixed number \(g\) of groups have independent
+unknown offsets, with all clocks in each group sharing their one
+offset, enumerate the Cartesian product of the groups' interval
+cells and run the one-matching maximum in each cell. This is
+polynomial for fixed \(g\), not a uniform polynomial bound as
+\(g\) grows. Aligning or certifying offsets has value here because
+it constrains a reused decision, not because the actual episode
+identities must all be revealed. No deployment, calibrated
+sampling law or full R4 acceptance follows.
+\end{document}
