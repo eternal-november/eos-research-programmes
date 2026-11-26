@@ -7,3 +7,5 @@ In the three-state recovery model, making just one resource reservable is suffic
 Run python3 replay.py and compare its output with results.json.
 
 [The exact boundary without reservations](last-bare-check/) decides when one last bare inspection, or one atomic multi-group inspection, can certify a whole decision.
+
+[Protection through one more read](short-lease/) gives exact worst-case budgets when the reservation expires after the very next verification.
