@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage{amsmath}
+\title{Retained closure, a consuming cut, and reassignment of a backup window}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Scope and source correspondence.}
+An old delivery stage has a published identifier and a reserved way
+to retry. A source must remain out of a named bay until it receives
+the qualified terminal result. Another job could use the reserved
+radio transmitter before the retry deadline. The finite reference
+joins actual RWARE source and station transitions, the existing
+source-held authorization rule, a transactional station worker, and
+pinned SubT dispatch and rolling radio accounting. Versions and
+selected executable fragments are pinned in \verb|SOURCE.tsv|. All
+effects, debits and delivered evidence in each result are on the
+same run. The store is authoritative over a simulator transition,
+not over external motor motion. Application packet names, the link
+availability seam, endpoint topology, clock relation, receipt
+semantics and workload are supplied by this development adapter.
+The controller cannot inspect the station store or a fault parameter:
+the station makes its own authoritative receipt and the controller
+observes actual callbacks and local debit.
+
+\paragraph{Fixed positive operating envelope.}
+The mandatory floor is the old station result by tick seven and
+local release by tick eight, with two independent motions and
+radio callbacks preserved. At tick two the old request reaches the
+worker, which exits before its native step, after the private step,
+after staging the durable transaction, or after the commit. The
+caller receives no direct result in all four cases. Q's actual
+setup arrives at four and provides prepared authority at six; its
+station route and the final terminal path are available in the
+positive envelope. P's station route can drop at seven, hence
+before any published effect in the first three crash branches.
+The same common interruption may also lose an earlier Base probe
+at three. That send spends four bytes at Base, even without a
+callback. No optional effect is part of the mandatory floor.
+Setup and backup route loss are tested separately but not assumed
+to preserve the floor.
+
+\paragraph{Composing the decisions.}
+A first receipt attempt at six uses the actual canonical durable
+record. It offers a matching result when the old effect is
+settled; otherwise a two-byte older acknowledgement for a committed
+predecessor can arrive. Under the common interruption there is
+only one byte of Base headroom at six, so either result is masked.
+Thus identical delivered setup and silence have two concrete
+explanations even under the same interruption: an old effect
+still pending, or already durable. Restart safety comes from using
+the same key and the atomic store in both histories. It does not
+give permission to infer which history occurred.
+
+A three-byte optional send on Q and a three-byte backup retry both
+fit the five-byte window separately. Without a matching receipt,
+the retry may be necessary, and both actions cannot fit. A genuine
+result discharges that particular debt and permits the optional
+send on Q. It also ends the bay hold: the original carrier actually
+returns before the optional callback. The old clearance cannot then
+be reused for a second carrier. In the negative control the latter
+carrier requests its stock forward move and is blocked, even though
+the communication callback succeeds. In another negative control
+an unrelated predecessor receipt releases the optional radio
+capacity early and can leave the old effect unable to meet its
+deadline. The arithmetic rule, including the incompatibility of
+the two locally valid checks, is verified in \verb|Joint_Admission.lean|.
+It assumes the named matching condition and live-window accounting;
+Lean is not used to claim verification of either simulator.
+
+\paragraph{Constructive service argument.}
+If the matching result arrives at six, the effect is already
+published and the bay is released only after that callback. If
+not, the source stays out and no optional debit is placed on Q.
+An available P completes or returns the cached result at seven.
+If P's path drops, Q is ready, Q's transmitter still has all five
+bytes, and Base's old incoming request is older than one radio
+second. Q therefore reaches the effect handler with the original
+key, committing once or returning the original result. At eight
+the four-byte failed debit from three is outside the inclusive
+window. A successful nonmatching two-byte predecessor receipt
+at six fits with the new three-byte terminal result in both
+Base TX and source RX. The authentic current result then permits
+source return. All three positive paths preserve the independent
+motion and traffic, which use separate cells and receive budgets.
+A much later duplicate retry is executed to check that the
+committed native state and credit remain exactly one step.
+
+\paragraph{Comparison boundary.}
+The unchanged shared core and the direct rule with the same
+information and resources agree trace for trace. Each of the four
+arms executes 64 cases, 16 in the declared positive envelope. Both
+typed controllers meet the full floor in all 16 and settle and return
+on time in 37 of the full 64, with eight lawful optional sends. The
+core requests 1,419 radio bytes and actually debits 1,347, including
+the scripted follow-up retries. The receiver sees 37 on-time returns,
+not a probability estimate. The untyped arm misses three of the
+16 floor cases; the stale-clearance arm produces eight inaccurate
+admission claims while the native motion remains blocked. The untyped and
+stale-clearance arms are diagnostics, not claims of an improvement
+over a strong published assembly. The gate treats the retained
+old state, source motion and relayed settlement as different
+obligations. No independent transfer or inventory-wide coverage
+follows from this reference family.
+\end{document}
