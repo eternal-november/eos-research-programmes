@@ -1,0 +1,150 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\begin{document}
+\title{A physical feedback alphabet is not a free observation channel}
+\author{}
+\date{26 November 2026}
+\maketitle
+
+\paragraph{Audit.}
+A route index known only to the mover can select a later
+site reply. The extra information comes from an issued
+movement that the site operator can observe before replying,
+not from decoder confidence. Under complete independent
+support, an early byte and a late byte can answer a requested
+bit of a 24-bit site word with two lawful observable endpoints,
+but at most 16 independent bits with one endpoint. The second
+endpoint can be illegal with a tight carried physical duty.
+Also, if a site readout is unacknowledged, a reply encoder
+may need to distinguish histories across different site readouts.
+Two small, separately sufficient codebooks need not combine
+when the mover does not know which one the site used.
+This is scoped R1/L2 development rather than a field or
+independently selected non-radio transfer.
+
+\paragraph{Deterministic complete support.}
+The site initially knows $x\in\{0,1\}^K$. It sends $p$ bits.
+The mover privately learns $j$ later, can physically produce
+one of at most $2^q$ reliable, timely feedback symbols, and
+then receives $r$ bits from the site. It must output $x_j$.
+The early packet must reach both protocol participants'
+respective state (sent/received as appropriate), and each
+participant knows the agreed codebook. No timing, silence,
+actor identity, variable length, or unpriced extra signaling
+conveys additional information. All $x,j$ combinations are
+admitted here, and each selected feedback symbol must be
+legal wherever the mover selects it.
+
+The exact capacity in the fully feasible, reliably observed
+product regime is
+\[
+                  K\leq p+2^q r .
+\]
+For a fixed early symbol let $F$ be its source fiber. Within $F$
+the feedback partitions the indices into at most $2^q$ groups.
+In one group, two source words giving the same reply must agree
+on every index of the group. Thus the group's projection of
+$F$ has at most $2^r$ members. The product of the projections
+injectively represents each source word in $F$; hence
+$|F|\leq2^{2^q r}$. At most $2^p$ fibers cover all $2^K$
+words. To attain the bound, send up to $p$ coordinates early,
+divide the rest into groups of at most $r$ coordinates,
+use a feedback symbol to select a group, and send its bits.
+An early-known index need not consume a new decoding decision;
+the fixed length reply may still be sent. This is a variant
+of the familiar communication problem INDEX, not a claim
+to the one-way communication bound or graph coloring as
+new techniques (cf. \href{https://cris.tau.ac.il/en/publications/on-randomized-one-round-communication-complexity/}{Kremer, Nisan and Ron}).
+
+\paragraph{Finite guarded support, and who observes the readout.}
+On an arbitrary support of $(x,j)$, an exact synthesis
+procedure partitions the site words into at most $2^p$
+early classes. For a fixed class $F$ and index $j$, choose
+a feedback action that is legal in \emph{every} admitted
+world $(x,j)$ with $x\in F$. The action cannot depend
+on the hidden $x$ beyond the early message. For each
+feedback symbol, make a characteristic graph on site
+words: an edge joins two words when some index assigned
+to that feedback is admissible for both and needs different
+answers. Exactly a coloring with at most $2^r$ colors is
+an implementable last reply. Necessity is equal-view decoding;
+sufficiency is taking the unique needed bit in each nonempty
+class of receiver view and color. This specializes
+\href{https://ieeexplore.ieee.org/document/1055607/}{Witsenhausen's
+zero-error graph criterion} to the task-relative output and
+includes an earlier action-authorization search, not just
+late code design. Knowing which words occur, or which
+endpoints occur marginally, does not determine the joint support.
+
+For nondeterministic sensing at the site after a fixed feedback
+policy, vertices instead include $(x,y)$, where $y$ is the
+actual site-side output (including an admitted erasure).
+Edge formation uses exactly what the mover sees. If it knows
+$j$ but not $y$, vertices with distinct $y$ can conflict.
+Only a timely qualified acknowledgment can put $y$ in its
+decoding view and remove such conflicts. In the two-bit
+control a site-only bit splits four words into two locally
+one-bit-codeable classes; unacknowledged, the combined
+response graph nevertheless needs four colors. Based on
+the same support, a direct encoder/decoder enumeration agrees.
+No feedback or acknowledgment is silently added to the
+same-information comparison.
+
+\paragraph{Pinned optical and radio controls.}
+The \href{https://github.com/AprilRobotics/apriltag/tree/94be783968e5091bcc9972c72c84fd63efce2935}{actual
+AprilTag detector} sees the same printed tag at one of two
+authored aperture positions. A current authorized frame
+can deliver the group. A blank frame, different tag, certified
+old epoch, or arrival after the reply cut cannot. The same
+pixels in the latter two controls still decode successfully;
+epoch and time are separately provided provenance.
+This does not say that a tag authenticates an operator or
+verifies a mechanical release, that a real lens sees that
+scene, or that passive anonymous detections would support
+a named duty. The aperture positions and metadata source
+are authored, not output of a physically validated camera.
+
+Native SubT receives the actual early and late one-byte
+application payloads with independent endpoint callbacks.
+A missing eligible group suppresses the late packet in
+the implemented protocol, and an erased late packet spends
+transmitter bytes without a receive debit. An output already
+supplied in the early byte does not need to be reconstructed
+again. Timing and absence supply no extra answer value.
+These are byte-level simulator checks, not claims about
+physical framing overhead, cryptographic authentication
+or reliability in a cave. The site reply is a function
+of its word and its own readout only, not of the hidden
+route index. The mover decodes with its own index and
+received bytes. The late policy is evaluated only on declared
+timely qualified observations for the constructive rate claim.
+
+The tested old collision resource reuses PR 596's pinned
+warehouse replay, not a completion inferred from tag decode.
+In the authored coupling, issuing port 1 imposes the old
+one-quantum hold: physical clearance changes 18 to 19 or
+19 to 20, under a deadline of 19. It is the issued move,
+not the success of seeing it, that costs existing service.
+If it is forbidden for the entire tight-old product family,
+an envelope with two bytes but only one legal feedback
+symbol admits at most 16 independent queries. No assertion
+is made that every real route source is independent, or
+that outcome bits are available in those supports. The
+two simulator traces are joined under a declared scope law.
+
+\paragraph{Verification and next loss boundary.}
+There are 174 guarded synthesis comparisons, 29,808 exact
+cross-readout encoder comparisons, ten native optical frame
+controls, and 8,640 native packet cases including negative
+controls. Eight additional staged calls hold the actual radio
+process open after the early byte, decode the later generated
+frame at the site, and then submit the qualified reply. The direct
+counterparts agree. The sampled native
+runs do not exhaust all 24-bit inputs; the proof covers the
+declared product. Decoder equivalence and side-information
+refinement were checked in Lean. The remaining R1 question
+is a separately frozen, independently selected modality
+substitution with source-backed authority, clock and physical
+budgets. Presence of two test media does not discharge it.
+\end{document}

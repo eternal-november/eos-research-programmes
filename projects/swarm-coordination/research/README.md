@@ -146,6 +146,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Communication changes
 
+**SC-INDEXED-OPTICAL-REPLY: When can an observed movement replace a later packet bit?** The physical feedback endpoint must be lawful, current and recognized by the source in time. The guarded finite reply check also shows when two site-only readouts cannot use independent codebooks at the mover. [Proof and pinned replay](communication/physical-indexed-reply/README.md). Scoped R1/L2, not independent substitution.
+
 [Communication and observation regimes](communication/Communication_Regimes.tex) is a working reference for choosing assumptions and comparison cases, including non-radio modalities and enclosed spaces. It is not an exhaustive inventory or a contract obligation.
 
 **SC-NAV2-NAMED-CHARGE: Does docking success certify current at the station requested?** Two names can share one plugin, so the early success check does not establish which physical dock supplied its pose or current. A site witness plus a current witness certifies the stronger downstream job in the selected fixture. [Source-calibrated replay](communication/nav2-named-charge/README.md). Local source audit only, not a robot trial or independent R1 test.
