@@ -21,3 +21,5 @@ Split.lean contains two Lean 4.35 plus Mathlib checks. FREEZE.txt and
 core.py were fixed before constructing either new backend.
 
 [Fragment-generation follow-up](fragment-generation/README.md): the zero-overhead case needs a single eligible generation, or another actual source of that distinction.
+
+[Warehouse footprint follow-up](footprint-closure/README.md): native return and new work can run together on closed disjoint scope; the same advertised drop becomes unsafe to rely on if rebind remains open.
