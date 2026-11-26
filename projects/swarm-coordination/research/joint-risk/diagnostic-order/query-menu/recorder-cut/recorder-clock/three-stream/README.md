@@ -10,3 +10,5 @@ Run the standard-library replay:
     diff -u results.json actual.json
 
 This extends the [two-stream audit](../README.md) at the level of the declared linkage model. It does not establish hardness for a particular sensor, the shared-offset acquisition graphs used in that replay, or a population law.
+
+The [ordered-clock exception](ordered-clock/README.md) preserves the constraints from successes and still makes the worst count polynomial with a known or single shared offset.
