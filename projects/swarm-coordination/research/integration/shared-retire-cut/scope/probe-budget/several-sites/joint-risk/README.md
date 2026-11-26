@@ -5,3 +5,5 @@ A rescue needs one positively verified site in each binary resource. A budget on
 [Proof and modeling scope](Risk_With_Too_Few_Verifications.tex)
 
 Run python3 replay.py and compare its output to results.json.
+
+[Proper marginals and the last verification](parity-law/) characterize the remaining joint parameter and the exact value of observed history under parity uncertainty.

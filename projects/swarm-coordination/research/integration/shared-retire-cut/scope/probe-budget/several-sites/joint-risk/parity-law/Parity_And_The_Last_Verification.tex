@@ -1,0 +1,46 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{What lower-order observations miss in a short verification budget}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+Keep the preceding binary-resource model: exactly one site in each of $m\ge2$ resources is usable, every resource needs an actual positive check, and $2m-d$ unit checks are allowed, with $1\le d\le m$. Checks are reliable and have no side effects. The first check in a resource reveals its bit and can either verify the resource immediately or require a second check. No extra reading, reporting or outside random source is present unless declared. Earlier work may have affected the distribution of the resource bits; it is not counted as a separate failure event here.
+
+\paragraph{All proper marginal probabilities fixed.}
+If two full laws agree on every projection dropping a coordinate, their difference as a signed mass function flips sign across each hypercube edge: summing over the dropped coordinate gives zero. Consequently all laws with the given proper marginals have form
+\[
+ p_t(z)=p_0(z)+t(-1)^{\sum_i z_i}.
+\]
+This is the remaining full-parity character in the usual \href{https://arxiv.org/abs/2105.10386}{Fourier expansion of Boolean functions}; it is not an additional independently chosen fault at each coordinate. If $e$ and $o$ are the smallest even and odd masses under one feasible base $p_0$, then admissible $t$ lie in $[-e,o]$. Extra evidence may give a subinterval $[\ell,u]$.
+
+At a deficit of one, the controller can choose a single assignment to fail in, and every controller must fail in some assignment. Thus the known-law optimum is $\min(e+t,o-t)$. Under interval uncertainty and a fixed deterministic controller the exact robust value is $\min(e+u,o-\ell)$. With a common private random plan it is $\min(e+u,o-\ell,(e+o)/2)$. Indeed within either class the least-mass assignment is the best one to omit under every law. Mixing across those two assignments gives an affine loss in $t$. The best mixture either chooses one of the two assignments always, or splits them equally. Equivalently nature chooses $t$ as close as possible to the point where the two masses coincide. These laws all give the same proper marginal data; an exact measurement of the probability of even parity, which has slope $2^{m-1}$ in $t$, would distinguish them.
+
+\begin{theorem}
+Suppose now every proper marginal is uniform and $p=\Pr(\text{even parity})$ is fixed. Set $C=\binom{m-1}{d-1}$ and $A=\sum_{j=0}^{d-2}\binom{m-1}{j}$ (the empty sum is zero). The minimum known-law failure risk is
+\[
+ \frac{A+C\min(p,1-p)}{2^{m-1}} .
+\]
+If only $p\in[\ell,u]$ is known, the exact robust risk with no external coin is
+\[
+ \frac{A}{2^{m-1}}+
+ \frac{C}{2^{m-1}}
+ \min_{j=0,\ldots,C}\max_{p\in\{\ell,u\}}
+ \left[p\,\frac{j}{C}+(1-p)(1-\frac{j}{C})\right].
+\]
+With a shared private coin, the lattice $j/C$ is replaced by $[0,1]$, giving the inner optimum $\min(u,1-\ell,1/2)$. For the whole interval $[0,1]$, deterministic observation-dependent choice gives inner optimum $\lceil C/2\rceil/C$. In particular if $C$ is even the observations already suffice to attain the shared-coin optimum, although they reveal nothing about the unknown parity law.
+\end{theorem}
+
+\begin{proof}
+A uniform proper-marginal law is a mixture of uniform even and odd classes. Under either class, any $m-1$ distinct resource bits are uniform. Adaptive selection of the next resource and of the site inspected first preserves the uniform law of the first $m-1$ binary replies: each branch corresponds to exactly one assignment of the selected distinct bits in its own order, and has the same mass in both parity classes. A second-site check reveals nothing after a first negative. Early noncompletion can be extended to an arbitrary such prefix for the lower bound.
+
+Let $J$ count positives among those first $m-1$ replies. When $J<d-1$, even a correct final first check cannot save enough reads. When $J\ge d$, either last reply suffices. On the remaining $C$ prefixes, one needs the final first check to be positive. The known earlier bits mean selecting the last site is exactly choosing one parity. The previous replies cannot alter $p$, and their relative frequencies are equal in both parity classes. A deterministic choice that misses even on $j$ of those $C$ prefixes and odd on the others has precisely the stated boundary risk. All such choices can be realized, and a shared coin interpolates them. The cost accounting is attainable by making second-site checks only where needed and by the imposed budget; a first negative on the decisive last check leaves an infeasible completion, not permission to skip verification.
+\end{proof}
+
+\paragraph{Measurement boundary and a concrete comparison.}
+For $m=3,d=2$, the critical binomial count is two. If either parity is fixed but unknown, all pairs of resource bits have exactly the same observed law. The physical deadline still allows a deterministic controller to assign the two critical histories opposite last choices, achieving $1/2$ worst-case failure; a fixed majority-parity guess independent of those records would give $3/4$. If the true parity is known the optimum is $1/4$. For $d=1$ the single critical history cannot provide this randomization. In calibration, any per-episode query protocol that reads at most $m-1$ distinct resource bits has a transcript law independent of $p$, even choosing its next query from previous replies or prior independent episodes. A same-episode parity measurement builds a Bernoulli sample; treating bits from separate episodes as jointly observed would artificially erase the parameter. A finite number of such samples can support a statistical bound under a declared repeatable source law but cannot certify exact absence of a parity without a structural premise.
+
+The comparator is exact adaptive decision-tree evaluation with the same reads and risk law, not an independence assumption. The returned result identifies a tractable uncertainty family and when ordinary variation in observed histories can replace an external coin. The proper marginals and persistence are mathematical assumptions, not inferred for the warehouse or radio. No action-dependent reports, link errors or operational acceptance are claimed.
+\end{document}
