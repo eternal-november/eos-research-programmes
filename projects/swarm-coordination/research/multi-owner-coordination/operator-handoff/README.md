@@ -16,3 +16,5 @@ python3 -B replay.py /path/to/pins
 
 [Evidence and modeled handoff obligation](Operator_Handoff_At_Actuation.tex).
 For an exact run use `set -o pipefail` and pipe to `cmp results.txt -`.
+
+[Exclusive effect follow-up](exclusive-effect/): authored clock/qualified-release law, not inferred from task pause or ready events.
