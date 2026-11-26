@@ -1,0 +1,52 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{Admitting a new formation constraint without rechecking every pair}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Question.}
+The existing directed-position braking theorem gives an exact safe-stop test for scalar positions, common speed cap, and common acceleration interval $[-b,a]$. Suppose the old graph of position bounds and the current state have already passed it. An authorized change introduces one inequality $x_q-x_p\le c$, without changing the physical state. Can the old proof be reused, and what has to be computed again? Admission here means the amended formation still permits a safe stop. It does not itself grant authority or preserve a work deadline other than the inherited stop time. The calculation is on one exact, common snapshot.
+
+\begin{theorem}
+Write $h=a+b$. Give every old edge $i\to j$ its present slack $c_{ij}-(x_j-x_i)\ge0$ as weight. Let $D_{ij}$ be the shortest path weight in this slack graph. Denote the proposed new slack by $\sigma=c-(x_q-x_p)$. The exact threshold is
+\[
+ \sigma_*=\max_{\substack{i\leadsto p\\q\leadsto j}}
+ \left\{\frac{(v_j-v_i)_+^2}{2h}-D_{ip}-D_{qj}\right\}.
+\]
+The original state remains safely stoppable precisely if $\sigma\ge\sigma_*$. The added constraint requires no recheck of the already certified old paths. From the two distance profiles alone, compute the threshold in $O(n\log n)$ arithmetic and comparison operations rather than enumerating their Cartesian product. The profiles can themselves be computed with two nonnegative shortest-path traversals.
+\end{theorem}
+
+\begin{proof}
+The reduced weights telescope along each path, so $D_{ij}$ is the old shortest bound minus $x_j-x_i$. Thus the old certificate is exactly $D_{ij}\ge (v_j-v_i)_+^2/(2h)$ for every reachable pair. The candidate $i=p,j=q$ makes $\sigma_*\ge0$, and negative $\sigma$ already fails the new bound at the current state. For nonnegative $\sigma$, every new shortest path admits a simple representative. If it uses the new edge, its best weight is $D_{ip}+\sigma+D_{qj}$: concatenating the two best old walks with the edge always makes a walk, and any attaining simple path gives the reverse inequality for the global minimum. Accordingly the new all-pairs weight is the minimum of the old one and this one-edge expression. Applying the braking theorem and reusing the old inequalities gives precisely the threshold above, including newly reachable pairs. Equality is acceptable. The safe continuation can still attain the inherited minimum stop time, because the actuation limits and initial maximum speed have not changed.
+
+For the faster calculation use
+\[
+ \frac{(v_j-v_i)_+^2}{2h}
+ =\max_{\lambda\ge0}\bigl[\lambda(v_j-v_i)-h\lambda^2/2\bigr].
+\]
+The optimizing $\lambda$ is $(v_j-v_i)_+/h$, so the global maximum can be restricted to $[0,(\max v-\min v)/h]$. Switch the finite pair maximum and the scalar maximum. Each side now enters by its own upper envelope,
+\[
+ F(\lambda)=\max_{i\leadsto p}[-D_{ip}-\lambda v_i],\qquad
+ G(\lambda)=\max_{q\leadsto j}[-D_{qj}+\lambda v_j].
+\]
+The threshold is the maximum of $F+G-h\lambda^2/2$ on that interval. Form each line envelope by sorting slopes, keeping the greatest intercept at each equal slope, and scanning in sorted order, discarding a previous line when its intersection with the new line is no later than its entry breakpoint. Breakpoints are monotone thereafter. Merge the two ordered breakpoint lists. On each merged interval the objective is a quadratic with negative second derivative, so check its stationary point clipped to the interval. There are at most linearly many intervals after sorting. Each maximizing segment points back to a pair of original robots; if the new constraint is refused, their two old paths plus the proposed edge give a witness. The envelopes can be assembled by taking pointwise maxima of partial envelopes, provided they use the same snapshot, $h$, and directed distance interpretation.
+\end{proof}
+
+\paragraph{A small simultaneous batch.}
+Index the $k$ new edges by $r$, with endpoints $(p_r,q_r)$ and slacks $\sigma_r$. Reject negative slacks immediately. Construct a graph on the new edges: the transition $r\to s$ has weight $D_{q_r,p_s}+\sigma_s$ whenever that old path exists. Let $\Gamma_{rs}$ be its shortest distance from $r$ to $s$ plus $\sigma_r$, using the empty transition path when $r=s$. Every walk in the amended graph either uses no new edge, or has a first new edge $r$ and a last new edge $s$. Between any two consecutive new edges it uses only old edges. Thus the shortest new walk of that kind has weight
+\[
+ D_{i,p_r}+\Gamma_{rs}+D_{q_s,j}.
+\]
+The converse is by concatenation and works even when the component paths share vertices: a walk suffices for an implied bound. Hence the batch passes exactly when, for every finite $\Gamma_{rs}$, it is no smaller than the envelope threshold made from the left profile for $p_r$ and the right profile for $q_s$. This does not independently approve each new edge on the old graph.
+
+With a standard binary-heap bound for two directed distance traversals per proposal, the arithmetic/comparison cost is $O(k(m+n)\log(n+1)+k^2n+k^3)$. The first term includes sorting the $2k$ line envelopes; envelopes are built once per endpoint occurrence, then scanned without resorting for each pair. The last term is the closure of the $k$-edge transition graph. After the profiles are given, this avoids the $n^2$ cross product for each first--last pair and does not materialize an $n^2$ updated matrix. It is useful for a small set of proposed changes, not necessarily for a large batch. It supplies admission or refusal, not a concurrency protocol or the physical command plan.
+
+\paragraph{Dependent changes.}
+Let three velocities be $(0,1,2)$ and $a=b=1$. With no old edges, either candidate $1\to2$ or $2\to3$ with slack $1/4$ is individually admissible. Together they constrain the outer pair to slack $1/2$, below its required $1$. After accepting the first edge, the second edge needs slack $3/4$. Checking two proposals against the same old valid snapshot can therefore approve an unsafe batch, even if the proposals have different authors and the physical snapshot itself has not changed. A serialized check must include the first accepted edge when it evaluates the second. Tightening an existing constraint is handled by adding a parallel tighter bound; deleting or loosening one preserves safety at the unchanged state but can change the profiles needed for later additions. No cache is claimed valid across physical motion or an unobserved constraint change.
+
+\paragraph{Comparator and warranty.}
+The distance-closure part is inherited from \href{https://cse.unl.edu/~choueiry/Documents/DechterMeiri-AIJ.pdf}{ordinary directed difference-constraint reasoning} and the one-edge shortest-path update. The closest direct comparator uses the same two profiles and enumerates every affected robot pair with the exact braking debt. It gives the same decisions. For a batch, full reclosure of the physical constraint graph is an additional independent replay oracle. The increment is a factorization and arithmetic-work bound for a live admission query at matched inputs, not a new physical guarantee or an optimality claim over other algorithms. The code checks exact thresholds against direct evaluation and reclosure. It does not time a deployment, price acquisition of the common snapshot, maintain all-pairs shortest paths under arbitrary updates, or discharge the contract's independent transfer requirement.
+\end{document}

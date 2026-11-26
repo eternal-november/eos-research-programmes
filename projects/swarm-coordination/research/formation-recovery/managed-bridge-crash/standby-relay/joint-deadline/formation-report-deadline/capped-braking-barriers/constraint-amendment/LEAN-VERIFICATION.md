@@ -1,0 +1,1 @@
+Lean 4.35.0 with Mathlib compiled EnvelopeArithmetic.lean without errors or warnings. Both audits report only propext, Classical.choice, and Quot.sound. These checks establish the one-variable arithmetic identity; they do not verify the graph code or the underlying braking theorem.

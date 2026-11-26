@@ -14,3 +14,5 @@ This is a continuous forward-only safety law, not a guarantee of stopping at a m
 [Directed position constraints](directed-constraints/) remove the monotone-velocity assumption through shortest-path closure and show where unequal actuators break the test.
 
 [Delayed braking reports](report-delay/) give the exact clearance cost of a common blind prefix and show why the sum of two gaps can lose decisive information.
+
+[Incremental constraint admission](constraint-amendment/) reuses an old safe-stop certificate and tests a small batch of changes without rechecking every robot pair.
