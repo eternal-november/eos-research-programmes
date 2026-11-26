@@ -14,3 +14,5 @@ inputs declared in SOURCE.tsv. Python 3 and C++17:
 Four abstract lemmas in AccessCut.lean were checked in Lean 4.35.0
 via AXLE. The exact matched planner ties. No independent mission,
 field evidence or acceptance of I2 is claimed.
+
+[Source-local preflight](source-preflight/README.md) relaxes the geometry-to-radio correlation and checks actual active observations. [Command-overlap control](command-overlap/README.md) shows when the shared physical ledger invalidates otherwise timely evidence. Both exact matched references tie; neither consumes the independent case.
