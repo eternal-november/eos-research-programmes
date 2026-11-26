@@ -19,9 +19,10 @@ def interval(w):
            w.due-w.handshake-w.remaining)
     return (lo,hi)
 
-def execute(w,start,independent_tick=0):
-    # Actual modeled positions and duty events on a single clock.
-    independent=[(independent_tick,'separate-load-destination')]
+def execute(w,start):
+    # The independent load crosses disjoint cells during the handoff.
+    independent=list(zip((0,3,6,8,10),('separate-origin','separate-approach',
+        'separate-support','separate-exit','separate-load-destination')))
     pos='pickup'
     if start < w.decision or start < w.clear:
         return independent,pos

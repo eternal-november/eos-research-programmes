@@ -10,7 +10,7 @@ for a,b,c,e,f,h,s,d in product(range(2),range(2),range(4),range(2,5),
     l,r=interval(w)
     for t in range(8):
         i,o=execute(w,t)
-        assert i==[(0,'separate-load-destination')]
+        assert i[-1]==(10,'separate-load-destination')
         assert (o=='delivered')==(l<=t<=r)
         time_checks+=1
 
@@ -69,6 +69,12 @@ neg=[(0,0,(2,4)),(1,0,(4,6)),(0,0,(7,7))]
 assert schedule(pos)[1]=={(0,0):4,(1,0):7}
 assert schedule(neg) is None
 assert schedule([(0,v,w) for z,v,w in pos]) is None # miss the decision cut
+for start in (4,7):
+    w=Timing(1,start,(1,start+2),(1,start+4),2,2,start+4)
+    other,out=execute(w,start)
+    assert out=='delivered'
+    assert any(start<=tick<start+4 for tick,_ in other)
+    assert other[-1]==(10,'separate-load-destination')
 nonconvex=[{0,1},{1,2},{0,2}]
 assert all(a&b for a,b in combinations(nonconvex,2)) and not set.intersection(*nonconvex)
 # Material timed transfer realizes every narrow window used in the example.
