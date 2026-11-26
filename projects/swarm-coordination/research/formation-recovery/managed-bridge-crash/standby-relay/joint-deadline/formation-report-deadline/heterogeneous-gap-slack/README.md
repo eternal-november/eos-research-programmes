@@ -8,3 +8,5 @@ Run with Python 3 and SciPy:
 
     python3 replay.py > actual.json
     diff -u results.json actual.json
+
+The [asymmetric-gap follow-up](asymmetric-receipt/README.md) distinguishes clearance from link margin and gives an exact receipt deadline when the starting gap is hidden.

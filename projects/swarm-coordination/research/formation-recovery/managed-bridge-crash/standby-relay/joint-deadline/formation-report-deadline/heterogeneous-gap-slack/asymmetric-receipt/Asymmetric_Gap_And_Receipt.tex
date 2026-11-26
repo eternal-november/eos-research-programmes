@@ -1,0 +1,111 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{Asymmetric gap margins and the deadline for one formation observation}
+\begin{document}
+\maketitle
+
+Clearance and link margin of the same total width are not always
+interchangeable. In the worked model, both initial gaps individually
+allow the same advance, but the two require different early controls.
+A one-bit report about the gap has a sharp receipt deadline even
+when the common prefix is already moving.
+
+\paragraph{Known margins.}
+Use the two-robot rest-to-rest translation law: accelerations are
+bounded by \(a,A\) with \(0<a\le A\), speeds by \(W,V\) with
+\(0<V\le W\), and both advances begin at zero and end at the same
+\(D\) at rest. With \(y=x_2-x_1\), preserve
+\(-\ell\le y\le u\) throughout, with \(\ell,u\ge0\). In this
+parameterization the two tolerances are relative to the actual
+starting separation. Set
+\[
+ \tau=V/a,\quad H=T-2\tau,\quad E=VT-V^2/a,\quad
+ r=(V^2/a-V^2/A)/2,\qquad
+ B(t;a,v)=\int_0^t\min(a s,a(t-s),v)\,ds .
+\]
+For \(T\le2\tau\) the common triangular profile attains \(aT^2/4\)
+and robot 1 cannot do better. Otherwise the exact maximum is
+\[
+       E+\min\bigl(B(H;a,W-V),\,\min(u,r)+\min(\ell,r)\bigr).
+\]
+At time \(\tau\), robot 2 cannot advance past
+\(a\tau^2/2+\min(u,r)\), by the gap bound and its own speed and
+acceleration envelope. Reverse time to get the lower bound
+\(D-a\tau^2/2-\min(\ell,r)\) for its advance at \(T-\tau\).
+In between it contributes at most \(VH\). The remaining upper bound
+is robot 1's standalone capacity.
+For sharpness choose a start lead \(p\le\min(u,r)\) and end lag
+\(n\le\min(\ell,r)\) whose sum is the required extra advance.
+These are nonnegative. Keep robot 1's ramps of length \(\tau\);
+robot 2 reaches \(V\) at time \(\tau-2p/V\), and uses a reversed
+ramp with \(n\) at the end. In the middle it travels at \(V\)
+while robot 1 adds a scaled capped triangular profile of area
+\(p+n\). The relative position increases to \(p\), decreases
+to \(-n\), then returns to zero. Every speed and acceleration
+bound holds. For \(a=V=1,A=4,W=3,T=4\), bands
+\([-1/4,1/4]\) and \([0,1/2]\) have the same width yet permit
+advances \(3.5\) and \(3.375\) respectively.
+
+\paragraph{Unknown initial gap, known delivery time.}
+Keep those actuator bounds, deadline 4, and physical gap band
+\([1,8/5]\). The initial gap is either \(6/5\) or \(7/5\),
+giving relative bands \(A=[-1/5,2/5]\) and \(B=[-2/5,1/5]\).
+The command source cannot otherwise tell the cases apart before
+a truthful bit arrives simultaneously for both robots. Actual
+motion is deterministic given commands, with relative advances
+but no other gap observation; no clocks, dynamics or state
+measurements reveal the initial separation before the bit.
+Both cases separately permit target \(D=143/40\). With no bit,
+both advances must coincide in the two worlds, so the intersection
+band limits the maximum to \(17/5\).
+For that target the latest receipt time is exactly
+\[
+                              c=1-\sqrt{7}/4.
+\]
+
+To prove the cutoff, each case must saturate the two end-margin
+bounds and middle speed bound in the known-margin calculation.
+In case A, \(x_2(1)=7/8\) forces
+\(v_2(t)=\min(4t,1)\) throughout \([0,1]\).
+In case B, \(x_2(1)=7/10\) forces \(x_1(1)=1/2\), hence
+\(v_1(t)=t\) throughout \([0,1]\).
+Equality in each position integral forces equality of the
+velocity envelope, since the velocities are continuous.
+For a shared prefix through \(s\in[1/4,1]\), case B consequently
+has \(y(s)=s-1/8-s^2/2\), with \(y'(s)=1-s\).
+Relative deceleration is at most \(5\); before relative
+velocity can be nonpositive the gap must reach at least
+\[
+             s-1/8-s^2/2+(1-s)^2/10
+             =3/8-(2/5)(1-s)^2 .
+\]
+The time \(s+(1-s)/5\) is still no later than 1.
+To stay in B this peak must not exceed \(1/5\), which gives
+\(s\le c\). A receipt at or after 1 already violates the
+bound on the shared prefix at 1; earlier than \(1/4\) is not
+excluded by the necessary condition.
+
+\paragraph{Attaining the cutoff.}
+Share \(v_1=t\) and \(v_2=\min(4t,1)\) through \(c\).
+Case A then preserves both initial profiles until time 1.
+Case B brakes robot 2 at 4 until \(b=1-\sqrt7/5\), when it has
+the same speed as robot 1, then sets \(v_2=t\) through time 1.
+The gap in B hits \(1/5\) at \(b\) and does not exceed it.
+For the middle interval use \(v_2=1\) and
+\(v_1=1+(23/40)\min(t-1,3-t)\) in both cases.
+The final reversed ramps use lag \(1/5\) in A and \(3/8\) in B.
+They reach \(D\) and stop together. Earlier report receipt can
+use this same policy and wait to branch at \(c\).
+The replay verifies every piecewise gap extremum, including
+inside intervals, using exact arithmetic in \(\mathbb Q(\sqrt7)\).
+
+A direct sampled shared-prefix optimizer matches the target at
+receipt 0.33 and falls short at 0.35; the exact threshold follows
+from the proof rather than those samples. Compositional barrier
+certificates address continuous safety and connectivity; the
+additional question here is when a private observation must arrive
+to meet a joint deadline. The bit is an ideal input. This does
+not compare implementations or establish existence of a real
+gap sensor at the cut. The result is scoped R6, not a field or
+independent mission result.
+\end{document}
