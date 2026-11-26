@@ -12,3 +12,5 @@ This is a continuous forward-only safety law, not a guarantee of stopping at a m
 [Monotone-speed chains](monotone-chain/) extend the span test to arbitrary length when limits are common, and give the exact safe stop time.
 
 [Directed position constraints](directed-constraints/) remove the monotone-velocity assumption through shortest-path closure and show where unequal actuators break the test.
+
+[Delayed braking reports](report-delay/) give the exact clearance cost of a common blind prefix and show why the sum of two gaps can lose decisive information.

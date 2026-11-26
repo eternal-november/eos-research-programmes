@@ -1,0 +1,1 @@
+Lean 4.35.0 with Mathlib compiled DelayArithmetic.lean without errors or warnings. All three audits report only propext, Classical.choice, and Quot.sound. The checked statements concern arithmetic; the proof of the continuous reachability and observation claims is in the TeX note.
