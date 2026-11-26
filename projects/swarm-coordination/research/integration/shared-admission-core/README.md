@@ -76,3 +76,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Transfer to a physical latch and departure
 
 [Reversible warehouse actuator](physical-restart-transfer/README.md): replaying a set-down as a raw toggle can undo the old effect. Guarding every writer allows an overlapping repair; separately measured departure satisfies the deadline where the stated serial drain/check misses. Same-interface exact direct ties. This is held-in native simulation.
+
+## One issue rule across station and latch effects
+
+[Typed effect transfer](typed-effect-transfer/README.md): the same selector runs at each native receiving cut. A successful proof must cover every writer at one authority point through the actuation horizon, or use a true terminal fence and subsequent reading. A same-information direct selector matches. Modeled authority; held-in development only.
