@@ -14,3 +14,5 @@ Materialize SOURCE.tsv to an upstream directory, then run:
 Python 3.10+, NumPy, C++17. Phase_Refinement.lean separately checks
 three small proof primitives. Authored bridge and held-in cases;
 no independent or full architecture acceptance.
+
+[Live clearance and generation wrapper](../live-clearance-generation/README.md) consumes fresh native samples instead of supplied future rows. It runs and audits the actual chosen callback under reentry, retained transmit debit, and scope renewal.
