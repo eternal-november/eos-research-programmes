@@ -28,3 +28,6 @@ current native observation cannot certify closure of the old order.
 
 The [restartable native commit](native-atomic-commit/) implements the keyed
 publication boundary for a wholly replayable simulator.
+
+The [durable terminal release replay](durable-terminal-release/) joins
+the crash-recovered station result to a guarded source through live radio.
