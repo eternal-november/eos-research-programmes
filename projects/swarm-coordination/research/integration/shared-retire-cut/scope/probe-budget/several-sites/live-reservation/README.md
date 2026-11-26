@@ -5,3 +5,5 @@ In the three-state recovery model, making just one resource reservable is suffic
 [Proof, source scope and assumptions](One_Reservation_Through_Reconfiguration.tex) · [Independent policy search and trace replay](replay.py) · [Recorded results](results.json)
 
 Run python3 replay.py and compare its output with results.json.
+
+[The exact boundary without reservations](last-bare-check/) decides when one last bare inspection, or one atomic multi-group inspection, can certify a whole decision.

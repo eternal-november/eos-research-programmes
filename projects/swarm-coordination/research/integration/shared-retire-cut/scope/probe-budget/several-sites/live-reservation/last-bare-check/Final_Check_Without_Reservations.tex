@@ -1,0 +1,36 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{When can a last bare read certify a live joint choice?}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+There are $m$ binary resource groups, one usable site in each. A finite directed graph has distinct full availability vectors as its vertices. The environment starts at any vertex. It may traverse a total of at most $s$ edges during the episode, including several edges in one gap between successive inspections. It can see the name of the next inspection. A targeted bare check asks whether one side of one group is usable now; the answer is truthful and has no protective effect. A commitment must choose the full vector currently usable, with an earlier or current positive verification of every chosen side. It takes effect at the same cut as the final check. These are information and availability assumptions, not an implementation of atomic sensing or a measured transition law.
+
+For a vector $x$, let $N_s(x)$ be the vectors reachable from $x$ by at most $s$ edges. Say that one coordinate distinguishes $x$ from its reachable alternatives if there is a coordinate $i$ with $y_i\ne x_i$ for every $y\in N_s(x)\setminus\{x\}$. Because the query is binary, checking the named side $x_i$ makes exactly this distinction.
+
+\begin{theorem}
+There is a finite sure bound on bare inspections if and only if each starting vector has such a distinguishing coordinate. When this holds, one policy uses at most
+\[
+ m(s+1)(s+2)+(s+1)
+\]
+reads. The existence test is exact; this budget is an upper bound, not a claim of optimal inspection count.
+\end{theorem}
+
+\begin{proof}
+For necessity suppose a vector $x$ has no distinguishing coordinate. Consider any finite successful policy on the history constantly equal to $x$ and the coordinate $i$ it last inspects. There is a different $y\in N_s(x)$ with the same coordinate $i$. Follow the constant history through the penultimate inspection and traverse a path to $y$ in the final gap. (With one inspection the same witness can start in $y$.) The final answer is unchanged, so the same commitment cannot be correct in both histories. The argument also excludes a sure finite randomized policy: in a finite-horizon finite observation game, a policy that works surely against every deterministic scheduler must have deterministic realizations that work on all such schedules.
+
+For sufficiency maintain an upper bound $r$ on remaining moves, initially $s$. A full scan reads each of the $2m$ sites. Take $r+1$ consecutive full scans. They occupy disjoint read windows. At most $r$ scans can have an internal change, hence at least one scan ran on a constant vector. If any scan does not encode exactly one true site per group, or the scans do not all agree, at least one change has occurred during this round. Decrease $r$ and repeat. Otherwise let $x$ be the common recorded vector. Because some scan was constant, $x$ was an actual state during the round, and every chosen site of $x$ has a positive verification. Now check the distinguishing side for $x$ as the last read. If positive, the current state is $x$: it is reachable from that earlier occurrence by at most $r\le s$ moves and no other such state agrees on the queried coordinate. Commit. If negative, at least one change occurred since $x$ was actual, so decrease $r$ and repeat. At $r=0$ the round cannot consume a move and must succeed; the same construction suffices even if no distinguishing coordinate is specially chosen at that last round. The sum of round costs is at most $\sum_{r=0}^s(2m(r+1)+1)$, giving the claimed bound.
+\end{proof}
+
+\paragraph{The geometry of the last read.}
+For the earlier three-vector path $(L,L)\leftrightarrow(L,R)\leftrightarrow(R,R)$ with $s=1$, the middle vector has two neighbors, each changing a different coordinate. Every coordinate fails the test. If only the diagonal vectors $(L,L),(R,R)$ are possible, either coordinate distinguishes both for any finite $s$ and bare checking has a finite guarantee. The boundary depends on the transition law, not on comparing a stale snapshot with a current report by timestamp alone. If the law allows only one edge between each pair of inspections, the obstruction using a multi-edge final gap no longer follows; that is a different game.
+
+\paragraph{Atomic checks of several named groups.}
+If the final check may instead read a declared set $J$ of coordinates at one cut, replace the distinguishing-coordinate condition by the condition that every nearby different vector disagrees on at least one coordinate in $J$. A collection of separate reads cannot be substituted for this atomic check. The proof above is unchanged with a whole verified subvector in place of a bit: in the lower bound the last reported subvector stays unchanged; in the upper bound compare the whole subvector with the one in the previously coherent scan. If every set of width up to $k$ is permitted as a final check, the least sufficient $k$ is the maximum over $x$ of the minimum size of a set hitting every difference set $\{i:x_i\ne y_i\}$ for $y\in N_s(x)\setminus\{x\}$. An empty family can use one available ordinary check (or commit directly once the state is known). This is an exact sensor-scope requirement, not a claim that a common-cut sensor exists. The hitting-set hardness of optimizing that width is inherited already from directed stars: use the zero vector as the center and indicator vectors of arbitrary nonempty subsets as its one-step leaves, with all leaves absorbing. The other vertices add no nontrivial obligation.
+
+\paragraph{Relation to source mechanisms.}
+A full scan is not treated as an atomic snapshot; multiple scans give only the existence of a past true vector until the final targeted check. The last query works because of a restriction on what can change before commitment. An \href{https://dspace.mit.edu/entities/publication/355717a8-388a-46a4-afc6-800d0d1522b8}{atomic snapshot} is a different acquisition interface. With changes allowed after the final check, a reservation or further premise would be needed. The replay compares with exact knowledge-state search on small graphs and runs the explicit policy against all bounded paths for selected controls. No graph or change budget is inferred from the warehouse or radio fixtures, and no integrated disposition is established.
+\end{document}
