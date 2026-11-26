@@ -21,3 +21,5 @@ The replay compiles selected unchanged native polygon code for a fixed
 rectangle and separately verifies a rational uncertainty relation under
 assumed shared shifts. It does not run the monitor node or test physical
 clearance, sensing quality, real TF behavior or robot braking.
+
+[Acquisition and use cuts](scan-use/): native counters count monitor evaluations, not distinct acquisitions, and a repeated scan can still give a different current projection.
