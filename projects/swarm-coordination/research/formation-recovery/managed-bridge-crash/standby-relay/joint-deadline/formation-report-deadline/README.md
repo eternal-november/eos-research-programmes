@@ -16,3 +16,5 @@ The exact certificates are rational. The LP cross-check is numerical. The layout
 The [heterogeneous-actuator follow-up](heterogeneous-gap-slack/README.md) gives an exact two-robot bound at arbitrary allowed gap slack for crossed speed and acceleration limits.
 
 The [boundary recheck](boundary-recheck/README.md) determines the exact retained constraint summary for replaceable declarations at fixed terminals, and tests whole batches.
+
+The [braking margin comparison](capped-braking-barriers/README.md) separates relative speed from capped braking power and exact pairwise feasibility from joint input feasibility.
