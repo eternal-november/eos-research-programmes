@@ -12,3 +12,5 @@ Run with Python 3 and SciPy for the independent LP checks:
     diff -u results.json actual.json
 
 The exact certificates are rational. The LP cross-check is numerical. The layout, requirements and timing are authored development inputs, not a field or held-out test.
+
+The [heterogeneous-actuator follow-up](heterogeneous-gap-slack/README.md) gives an exact two-robot bound at arbitrary allowed gap slack for crossed speed and acceleration limits.

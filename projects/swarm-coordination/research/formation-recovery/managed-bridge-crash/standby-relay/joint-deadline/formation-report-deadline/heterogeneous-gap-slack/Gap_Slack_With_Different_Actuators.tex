@@ -1,0 +1,99 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}
+\title{Exact progress from a clearance band with different actuator limits}
+\begin{document}
+\maketitle
+
+Requiring the two robots to move in lockstep makes them inherit the
+slower robot's speed and the slower robot's acceleration. Allowing a
+small, physically bounded change of gap can recover some of that
+progress, but does not make the individually feasible targets joint.
+
+\paragraph{Law.}
+Robot 1 has acceleration bound \(a>0\) and speed bound \(W\).
+Robot 2 has acceleration bound \(A\ge a\) and speed bound
+\(V>0\), with \(W\ge V\). Velocity is absolutely continuous.
+Subtract the initial positions and let \(x_i(t)\) be their advances.
+Both start at \(x_i=0\) at rest, and both must be at the same advance
+\(D\) and at rest at time \(T\). The allowable gap variation is
+\(|x_2-x_1|\le\eta\) at every time. For an initial physical gap \(g\)
+this enforces a lower clearance \(g-\eta>0\) and an upper link
+distance \(g+\eta\). The test has no obstacles, staggered notice,
+unknown coefficients, or radio guarantee beyond geometry.
+The same kinematic limits apply to any independent comparison.
+
+\begin{theorem}
+Let \(B(t;a,v)=\int_0^t\min(a u,a(t-u),v)\,du\), the standalone
+rest-to-rest travel bound, and write \(\tau=V/a\). If \(T\le2\tau\),
+the exact maximum is \(aT^2/4\). Otherwise the exact maximum is
+\[
+ \min\bigl(B(T;a,W),\ B(T;A,V),\ VT-V^2/a+2\eta\bigr).
+\]
+\end{theorem}
+\begin{proof}
+For \(T\le2\tau\), robot 1's triangular speed profile has peak
+at most \(V\) and both can realize it with the same motion. Its
+own acceleration bound prevents any larger advance.
+
+Now let \(H=T-2\tau>0\) and \(E=VT-V^2/a\). At time \(\tau\),
+acceleration from rest gives \(x_1(\tau)\le a\tau^2/2\), so
+\(x_2(\tau)\le a\tau^2/2+\eta\). At time \(T-\tau\), the
+terminal rest gives \(x_1(T-\tau)\ge D-a\tau^2/2\), so
+\(x_2(T-\tau)\ge D-a\tau^2/2-\eta\). The middle displacement of
+robot 2 is at most \(VH\). Combining these yields \(D\le E+2\eta\).
+The argument covers every admissible velocity, including reversal.
+Each robot also has its own rest-to-rest upper bound.
+
+Let \(e\) be half the difference between the claimed maximum
+and \(E\); \(0\le e\le\eta\). The other two terms in the
+minimum ensure
+\[
+        2e\le V\tau-V^2/A,\qquad
+        2e\le B(H;a,W-V).
+\]
+Indeed robot 2's standalone optimum is \(VT-V^2/A\),
+and robot 1's optimum equals \(E+B(H;a,W-V)\):
+its speed envelope starts and ends with ramps between zero and
+\(V\), and in the middle is \(V\) plus the remaining capped
+envelope. The two inequalities describe how much lead robot 2
+can develop before the middle, and how much lead robot 1 can
+absorb during the middle.
+
+For sharpness, robot 1 accelerates at \(a\) until \(\tau\).
+Robot 2 reaches \(V\) at \(s=\tau-2e/V\) with constant
+acceleration \(V/s\), then holds \(V\). The first inequality
+implies \(s\ge V/A>0\). Robot 2's lead grows monotonically to
+\(e\). In the middle, robot 2 travels at \(V\); robot 1 travels
+at \(V\) plus the defining profile for \(B(H;a,W-V)\) scaled
+to have area \(2e\). Use a zero profile for zero area. The
+second inequality lets the scale be at most one. The lead
+decreases monotonically to \(-e\). Time-reverse the two initial
+speed profiles in the final interval. Both stop together at
+\(E+2e\), with the lead approaching zero from below. The speed,
+acceleration, and gap bounds hold continuously. Every smaller
+nonnegative advance is reached by scaling the paths and velocities.
+\end{proof}
+
+\paragraph{Matched tests.}
+Take \(a=V=1,A=4,W=3,T=4\). Lockstep permits distance \(3\).
+With half-width \(\eta=1/10\), the exact joint maximum rises to
+\(16/5\). Both robots can reach \(7/2\) separately under the same
+bounds, but doing so together violates the deadline or the gap.
+The required half-width for that target is \(1/4\) in this regime.
+The replay constructs nine rational velocity profiles and checks the
+gap extrema inside every interval, not only at sample points.
+An independent time-grid LP with piecewise-linear velocities
+agrees on all nine. The proof, rather than the LP's restriction to
+that basis, proves the optimum for all continuous paths.
+
+The earlier difference-constraint solution used proportional
+velocity and acceleration bounds to move both coordinates along a
+single segment. This result instead permits their different velocity
+profiles and quantifies the needed gap tolerance. When a standalone limit binds, the construction uses only the gap
+slack needed to reach that limit. An independent single-robot distance
+is not by itself a joint construction. Standard simultaneous
+barrier methods are relevant to viability but are not compared
+in operation here. This is a scoped R6 result, not a field
+or independent mission test.
+\end{document}
