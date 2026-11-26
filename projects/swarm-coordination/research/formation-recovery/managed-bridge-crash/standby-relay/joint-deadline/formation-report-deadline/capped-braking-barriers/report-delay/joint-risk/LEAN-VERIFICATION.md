@@ -1,0 +1,1 @@
+Lean 4.35.0 with Mathlib compiled CutoffRisk.lean with no errors or warnings. The three audits use only propext, Classical.choice and Quot.sound. The scalar decoder, overlap bound and rational erasure example are checked; the finite-history risk reduction and continuous braking argument are separate.

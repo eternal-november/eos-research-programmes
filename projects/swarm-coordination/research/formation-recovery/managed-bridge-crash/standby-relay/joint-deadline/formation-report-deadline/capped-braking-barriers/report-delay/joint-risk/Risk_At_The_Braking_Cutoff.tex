@@ -1,0 +1,49 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{Which report history counts toward the safe-stop risk?}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+Use the two opposing braking threats of the delayed-report study. In world A a faster rear robot is closing on the middle block; in B the middle block is closing on a slower front robot. Each affected endpoint can use its own initial speed. Success means maintaining the adjacent gap bands and stopping by the full-information worst-case time. The two end gaps can have unequal reserves. This note assumes both single-world problems are feasible, but no common policy with no information can succeed in both. Otherwise discard the impossible world from the success count, or take zero new risk if both worlds can be handled without a report.
+
+The \emph{latest safe disclosure time} $T$ is the last time through which a common middle motion can leave a safe continuation in each world. Such a prefix is attained: the previous exact test has a closed compact feasibility interval in the speed change at each candidate disclosure time; along any sequence of feasible disclosure times the parameters have a convergent subsequence and the test inequalities are continuous. Feasibility is downward closed by truncating a feasible prefix. After $w/a$, a feasible common prefix would already imply a no-report solution, which was excluded. Equal reserves $S$ give $T$ from
+\[
+ S=\frac{w^2}{4a}+\frac{wT}{2}-\frac{aT^2}{4},\qquad 0\le T<w/a.
+\]
+With unequal reserves the previous one-variable test replaces the expression. The common prefix until $T$ can be followed without using any reports.
+
+Observations are a shared, exogenous finite marked-event record: marks, omissions, and event times can depend on the threat and on earlier faults, but not on the braking controller or its random coins. Observations at $T$ are included in $H$, the record up to $T$. Finite records ensure that any two histories with equal $H$ remain indistinguishable through some time strictly greater than $T$. There is no other observable cue; in particular endpoint motion does not reveal the threat. The failure event $E$ is a previously incurred mission exposure that can be correlated with the whole record and world. $E$ itself need not be known to the controller; whatever is actually reported by time $T$ is included in $H$. Its occurrence cannot be undone or caused by this braking action. The mission failure event is $E$ or an unsuccessful stop.
+
+\begin{theorem}
+Write $f=\Pr(E)$ and $\mu_{ih}=\Pr(\text{world }i,H=h)$. For a known joint law the minimum mission risk is
+\[
+ f+\sum_h \min\{\Pr(E^c,A,H=h),\Pr(E^c,B,H=h)\}.
+\]
+It is attainable by a common prefix followed by a label choice at $T$. If only $\mu$ and $f$ are known and the coupling of $E$ to the observations and world is unrestricted, let $e=\sum_h\min(\mu_{Ah},\mu_{Bh})$. The exact robust bounds are
+\[
+ \min(1,f+e) \quad\text{for deterministic policies},\qquad
+ f+\min\bigl(e,(1-f)/2\bigr) \quad\text{with private randomization}.
+\]
+Nature chooses one law for the entire episode before the independent coin. None of these are conditional-on-every-history bounds.
+\end{theorem}
+
+\begin{proof}
+Fix any deterministic causal policy or any realization of its independent coins. It cannot succeed on an A and a B history that agree up to $T$. They would force the same motion through some time greater than $T$, leaving two safe continuations there, contrary to the definition of $T$. Thus in each $H$ cell at most one world label gets successful outcomes. Later marks cannot help. Conversely follow the attained common prefix and at $T$ choose either label per cell. The previous constructive result guarantees a safe stop for the chosen world. Choosing the greater surviving joint mass in each cell proves the known-law formula. Randomization after $H$ is implementable by that same prefix and no extra physical action.
+
+For a deterministic decoder, let $e'$ be its ordinary error ignoring $E$. An adversarial coupling can put $E$ into its success set first, attaining $\min(1,f+e')$. No policy with a smaller success set can do better. Minimize with ordinary Bayes classification to obtain the deterministic bound.
+
+With randomization, ordinary Bayes classification gives upper bound $f+e$; a fair independent choice in every cell gives $f+(1-f)/2$. For the matching lower bound, put $q_{ih}=\Pr(E^c,i,H=h)$ and let $R=1-f$. Any $q$ with $0\le q_{ih}\le\mu_{ih}$ and sum $R$ is an admissible law. Fill equal pairs across labels within cells up to total paired mass $2\min(e,R/2)$, which is possible by the definition of $e$. If $R>2e$, use all such pairs, then fill the remaining $R-2e$ with unused capacity. The resulting overlap is exactly $\min(e,R/2)$; if any further pair was possible before filling, then the original paired mass would not already equal the full overlap $e$. The known-law lower bound holds against all private mixtures for this one law.
+\end{proof}
+
+\paragraph{What a delayed or missing report says.}
+A single common symbol arriving at a guaranteed cut $\tau\le T$ gives its usual Bayes error in the absence of $E$. At $\tau>T$ even a perfect symbol gives no improvement over picking the more likely world when there was no prior observation. With variable delivery, an observed silence at $T$ is a cell of $H$. If everything except erasure perfectly identifies the threat by $T$, known risk equals the smaller of the two joint erasure masses. With known priors $\pi_i$ and only an aggregate erasure rate $d$, the exact robust deterministic and randomized risks are $\min(d,\pi_A,\pi_B)$ and $\min(d/2,\pi_A,\pi_B)$. Indeed the possible erasure mass in A ranges from $\max(0,d-\pi_B)$ to $\min(d,\pi_A)$; place as much erasure mass in the unprotected world as possible for each fixed choice, or balance the two as far as the priors permit against randomization. A fair independent coin and the fixed majority label achieve the randomized upper bound. With equal priors, 10 percent erasure gives 5 percent risk if independent, zero if known to occur in only one world, and 10 percent as the deterministic robust bound if its dependence is unknown.
+
+\paragraph{Same marginals and different admission decisions.}
+Take $a=w=c=1$, $W=2$, and $S=3/8$. A perfect common symbol at $1/4$ leaves enough clearance; the same symbol at $1/2$ arrives too late. The exact cutoff lies between these times. For an empty cutoff record and equal threat priors, suppose the earlier event has probability $1/4$. Concentrating it in one threat gives optimum mission risk $1/2$ instead of the $5/8$ under independence. If only its marginal is known, the robust risks are $3/4$ deterministic and $5/8$ randomized. The same 60 percent ex ante cap therefore accepts the known concentrated law but not the marginal-only robust model. With priors $(3/5,2/5)$ and $3/10$ prior failure mass only in A, the ordinary majority choice protects A and gives risk $7/10$; joint accounting protects B and attains $3/5$. A cap cannot be verified by selecting a coupling after observing the realized law.
+
+\paragraph{Evidence boundary.}
+Finite replay checks decoder enumeration, coarsening by timestamped prefixes, and integer-valued uncertainty about prior failure and erasure. This is a reduction to classical binary decision risk on physically usable histories, not a new statistical decision rule. Compare \href{https://doi.org/10.1214/aoms/1177729032}{Blackwell's comparison of experiments} and the direct same-information decoder. The effect of the braking dynamics is to compute the cutoff and justify treating later information as too late. Knowing the fraction of eventual reports is not equivalent to knowing the law of the cutoff record. Outcome-dependent labeling, action-dependent sensing, intermittently private records, and new physical faults after the cutoff are out of scope. Field calibration would have to establish actual threats and old exposures also on episodes where the production record is missing.
+\end{document}
