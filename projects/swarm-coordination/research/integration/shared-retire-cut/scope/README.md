@@ -13,3 +13,5 @@ Use the same upstream files as the parent, pinned in
 
 This is a selected headless RWARE and SubT replay; the scope guard
 is part of the research fixture. The matched direct comparison ties.
+
+[Budgeted availability checks](probe-budget/) compare a final inferred choice with a required fresh positive, including bounded false negatives.
