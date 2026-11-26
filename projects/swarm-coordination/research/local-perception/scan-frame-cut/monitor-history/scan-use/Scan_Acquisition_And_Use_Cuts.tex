@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{A scan acquisition and a monitor evaluation are different evidence cuts}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{The native meaning of the counter.}
+The pinned Navigation2 velocity callback invokes processing on valid
+velocity input. The scan callback stores the latest scan, and a use
+at a later evaluation reads it subject to the source's age check.
+With base-shift correction the projection also depends on the current
+evaluation time. The configured polygon counter counts evaluations,
+not distinct sensor acquisitions. The replay executes the unchanged
+velocity callback, scan ingestion, selected source and scan methods,
+point count and counter logic. It inspects the native processing path
+and uses a stand-in for the outer process call (no ROS, TF buffer,
+arbitration, braking or hardware). The fixture's predictor uses exact
+declared relative motion. All of these tests are ordinary observations
+inside the declared age window, not a protocol or deployment attack.
+
+A single acquisition can contribute two hits at successive valid
+uses and satisfy a two-evaluation trigger. Likewise two misses can
+satisfy a two-evaluation release. This is not evidence of two
+observations. Conversely, a single acquisition projected at three
+successive use cuts gives hit votes $1,0,1$ in one run even though its
+raw sample has not changed. An age check still rejects uses strictly
+beyond its configured timeout. Neither freshness nor acquisition ID
+by itself determines the current projected classification.
+
+\paragraph{A separate consumer: acquisition corroboration.}
+Consider an authored release authorization that requires at least $n$
+distinct accepted clear acquisitions after the most recent use-side
+hit, including a currently valid use-side clearance. This is a
+different requirement from the native consecutive-evaluation policy.
+Give accepted acquisitions a monotone sequence within a verified
+producer epoch, and take a fresh vote only on the first approved use
+of a new sequence. The vote is a complete current-use classification
+at the matching effect cut, not a promise that a sensor reading is
+accurate. A current hit vetoes release and resets the tally even on
+a repeated acquisition. A repeated clear vote adds nothing. A
+producer reset or unverifiable order requires explicit reconciliation;
+ordinary arrival stamps are not assumed to prove identity or causal
+order. Proof of geometric classification may itself require a
+joint uncertainty check, such as the preceding common-shift result.
+
+The proposed state retains the latest admitted sequence and a tally
+saturated at $n$. For a current hit, update the sequence and set the
+tally to zero. For a clear vote, increment only if the sequence is
+strictly newer. This implements the stated suffix-count law by
+induction: the last hit begins a new suffix, every first-use miss in
+that suffix adds exactly one and repeated evaluations do not add
+another acquisition. The implementation is compared against a
+separate trace scan on 87{,}376 exact traces. For $n>1$, equal visible
+readiness does not generally permit erasing the tally: two under-threshold
+values can be separated by enough new misses to lift the larger value
+to $n$ but not the smaller. Nor can the newest sequence be dropped:
+a common next sequence can be new in one history and a repeat in
+another, with otherwise identical tally at $n-1$.
+
+The replay gives a minimally important distinction. A clear use of
+acquisition $a$, a later hit from that still-current acquisition,
+and one clear use of the new acquisition $b$ produce votes $0,1,0$.
+The native evaluation counter remains latched in the configured
+fixture. The authored corroboration check also has only one vote
+since the hit. A deduplicator that drops the second use of $a$
+would instead credit two clear acquisitions and overlook the veto.
+Thus deduplication is a rule for positive corroboration, not a rule
+for suppressing updated observations of current conditions.
+
+\paragraph{What the interface cannot establish.}
+Distinct acquisition identifiers do not prove independent sensor
+errors, geometric clearance, or continuing validity between the
+tested use and the effect. The contract deliberately makes no
+current authorization on missing or invalid votes; stale evidence
+never increments a tally. Continuing validity at actuation and
+a stop actuator's confirmation are separate. A factored comparator
+with the same acquisition and use histories has the same result.
+No inventory item is architecturally discharged.
+\end{document}
