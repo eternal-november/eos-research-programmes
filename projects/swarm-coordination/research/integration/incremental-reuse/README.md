@@ -15,3 +15,5 @@ benchmarks are not independent test selection.
 [Upstream change producer](patch-producer/README.md): equal compiled rows can acquire a different source dependency. Preserving that dependency makes the next finite edit check sound at matched inputs.
 
 [Indexed witness receiver](indexed-repair/README.md): removes whole-map rebuilds in the sparse sequence, and compares both detailed counted work and a separate local pipeline timing sample against the previous worklist.
+
+[Recurrent progress at stable ports](recurrent-progress/README.md): reachable states and possible payment can both survive a change while a newly fair unpaid loop spoils progress. Exact reusable summary for sealed finite modules reports finite failure, fair infinite failure, possible payment and stranded prefixes separately.
