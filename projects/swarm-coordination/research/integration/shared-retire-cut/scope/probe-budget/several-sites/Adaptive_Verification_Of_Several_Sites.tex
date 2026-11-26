@@ -1,0 +1,46 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{The exact advantage of adaptive checks when several sites are needed}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+A rescue needs verification of $k$ distinct simultaneously usable sites. In each admitted world exactly $k$ sites are usable, and the full set persists throughout inspection and commitment. A selective check truthfully reports whether its named site is usable. Each check costs one, and a chosen site requires a positive report; inference alone is not permitted. The comparator is the best fixed inspection order with early stopping as soon as all $k$ positives are obtained. The test is a guarantee under every admitted world, not expected time. Discard sites that are never usable and let $n$ count the remainder.
+
+\begin{theorem}
+The fixed-order optimum is exactly $n$. If an adaptive controller can guarantee completion in $B$ inspections, then
+\[
+ n\le \binom{B+1}{k}-1,\qquad 1\le k\le B.
+\]
+This bound is attained for every $B,k$ by a finite family of exactly-$k$ worlds. In particular for $k=1$ fixed order loses nothing, while for $k=2$ the fixed order can cost $(B-1)(B+2)/2$ with optimal adaptive cost $B$.
+\end{theorem}
+
+\begin{proof}
+Under a fixed order, take the last of the $n$ potentially usable sites. Some world makes it usable, and exactly $k$ sites are usable in that world, so no other set can replace it. The order must reach the last site in that world. Inspecting all $n$ gives the matching bound.
+
+In an adaptive decision tree with budget $B$, remove repeated tests, which give no new information, and trim branches once they obtain all $k$ positives. A potentially usable site must appear as the label of at least one node with a possible positive answer, since it must be verified in a world that makes it usable. A node of that type has a prefix with $p<k$ positives and $z\le B-k$ negatives: even the most favorable continuation still needs $k-p$ positives. A deterministic policy has at most one node for each such binary prefix, and one label at each node. The count is
+\[
+ \sum_{p=0}^{k-1}\sum_{z=0}^{B-k}\binom{p+z}{p}
+ =\sum_{r=1}^{k}\binom{B-k+r}{r}
+ =\binom{B+1}{k}-1 .
+\]
+The upper bound also holds for a sure randomized policy in this finite family by fixing a seed that meets the bound on all worlds.
+
+For attainment, form the binary prefix tree of all strings that stop upon their $k$th positive and have at most $B-k$ negatives. Test a distinct site at each internal node. Define one world per terminal string, making exactly the sites at its positive nodes usable. Each internal node has a positive continuation in this tree, so all its distinct sites occur in some world. Following the tree uses at most $B$ checks. The attained number of sites exceeds the bound for $B-1$ (or fewer than $k$ checks is impossible), proving optimality. There are $\binom{B}{k}$ terminal strings; no assumption of independent free sites is made.
+\end{proof}
+
+\paragraph{Small separation.}
+With four sites and worlds $\{0,2\},\{0,3\},\{1,3\}$, inspect 0. On a positive, inspect 2 then 3 if needed. On a negative, inspect 1 and 3. Three checks suffice. Every site is required in at least one world, so a fixed order takes four in the worst case. For exact-two worlds viewed as graph edges, the negative branch before the first positive fixes an order of candidate vertices. Once $v$ is the first positive, the remaining task is to inspect its later neighbors until the other endpoint is found. For that order the worst cost is
+\[
+ \max_{v:\,d^+(v)>0}(\operatorname{position}(v)+d^+(v)),
+\]
+where $d^+(v)$ is the number of neighbors later in the order. Minimizing this expression over orders gives a second exact formulation in the two-site case.
+
+\paragraph{Two different held resources.}
+A compound replay pairs one berth choice in the pinned warehouse fixture with one sender allowance in the pinned radio fixture. For each of the four pairs of old scopes, rerun the two sources separately and enumerate each candidate combination. The original fixtures each leave exactly one viable choice; the old operation makes its staged effect and the old duty remains outstanding. Their product has one admissible pair in every episode. Neither source imposes a correlation between the two scopes. For a development control, impose a source law excluding just the joint case in which warehouse right and radio left are both available. The surviving support is exactly the four-site example above. With the same per-site Boolean observation interface, the correlated case fits three worst-case checks, while restoring the fourth possible world raises the adaptive optimum to four without changing either resource's own marginal support. This simulates a joint abstract decision over two pinned separate execution mechanisms, not an operational warehouse-to-radio mission, and the permitted Boolean inspection is not an observed limit of either stock adapter.
+
+\paragraph{Comparison and scope.}
+The predecessor with one required site has no useful adaptive branch after the first positive. Requiring several positive sites changes that structural property even though each individual check is unchanged. Related \href{https://arxiv.org/abs/2208.03810}{stochastic Boolean function evaluation} compares adaptive and fixed rules for expected costs under a probability law. Here the comparison is worst-case positive certification on an explicit correlated support under an exact-$k$ promise. The replay compares with direct minimax decision trees, including the attained case, and with the exact-two graph formula. Stable support and true positives are assumptions. No result for inspection side effects, false negatives, or observed availability changes is claimed. The conditional compound replay is a development control, not an independently selected transfer or integration acceptance result. A direct adaptive policy with the same information and the same source restriction achieves the same result. A native full-footprint read, where available and authorized, is a different comparator from selective Boolean tests.
+\end{document}
