@@ -21,3 +21,5 @@ source-level developmental simulation, not an independent transfer.
 [Residual-profile application](residual-profiles/README.md) uses the pinned Contextual Composition theorem on these native witnesses. It verifies reflection and attained-class coverage across both status branches and the declared command catalogues. Early timing and an expanded catalogue give distinct obstructions. No independent transfer or gain over the exact direct table.
 
 [Return footprint follow-up](return-footprint/README.md) tests a new consumer after actual settlement. The same native return reward and clear holder state can leave different shelf locations, changing a later due loaded delivery without changing unrelated service.
+
+[Deferred placement and deadline fallback](deferred-placement/README.md) exercises a standing older footprint, the new actual ingress observation and a live unload deadline. A timely stable designation serves both possible continuations; a late or erased one still permits the old duty through a timed fallback. The matched contingent reference ties; a changed designation is a source invalidation, not a missed reading.
