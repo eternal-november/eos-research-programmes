@@ -260,6 +260,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-REFIT-CERTIFICATE: Which old clearance evidence survives changing the learned score?** A computed refit separates two prior equal lower bounds. A convex hull retains the exact min for quasiconcave effective scores and may fail for other fits. An authored control omits the correctly received update. [Proof and exact replay](integration/refit-certificate/README.md). No calibrated sensor or stock planner failure claim.
 
+**SC-SELECTIVE-EVIDENCE: Can a report authorize progress when separate checks each look consistent?** A bounded domain-level report model admits a three-world obstruction despite pairwise shared safe actions. An independent cue changes the decision; a co-owned duplicate does not. [Proof and finite replay](integration/selective-evidence/README.md). Abstract evidence law only, no deployed system claim.
+
 **SC-RELEASED-BASE-CUT: Does a later route update exclude an unacknowledged release?** A pinned VDA 5050 validator accepts a replacement anchored at the old decision point only while that point is still the released frontier. The same later version cannot undo an accepted extension. [Scope and source replay](integration/released-base-cut/README.md). Acceptance only, not physical clearance.
 
 **SC-BLOCKADE-RECTIFICATION: Does recovering the reservation recover progress?** The pinned participant omits reached progress when rectifying a mismatched route. After the route matches, the moderator still needs a covering assignment to recognize the reached checkpoint. [Selected-logic replay](integration/blockade-rectification/README.md). Supplied assignment ranges, no physical or fleet failure claim.
