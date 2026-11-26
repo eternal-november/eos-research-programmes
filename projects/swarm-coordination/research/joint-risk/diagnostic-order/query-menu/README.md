@@ -11,3 +11,5 @@ The direct full-state replay also tests a nested menu with variable caps.
 The checker requires Python 3.10+. This is a model of exact admission
 and one-way communication, not a field measurement or a claim about
 approximate reports.
+
+The [calibration follow-up](calibration/README.md) gives matching-order sample bounds when the sender must learn the menu from full observations rather than receiving the law.
