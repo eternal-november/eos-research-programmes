@@ -56,3 +56,6 @@ station journal and ownership barrier to a separate SQLite store.
 
 The [silent-export follow-up](silent-export/) tests taken-over work when
 only an earlier checkpoint and an independent copy of the handoff survive.
+
+The [radio-bounded handoff](radio-bounded-handoff/) joins the silent export
+and consuming station on one native radio and simulator execution.

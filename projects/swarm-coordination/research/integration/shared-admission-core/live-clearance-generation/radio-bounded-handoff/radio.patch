@@ -1,0 +1,21 @@
+--- wire.cpp
++++ wire.cpp
+@@ -4,7 +4,7 @@
+     std::string cmd, payloadReceived;
+     while (std::cin >> cmd) {
+         if (cmd == "reset") {
+-            live=std::make_unique<Live>(5);
++            live=std::make_unique<Live>(320);
+             live->bind("setup","Q");
+             live->bind("proof","Far");
+             for(auto key:{"Free","X"}) {
+@@ -14,7 +14,8 @@
+             live->bind("unrelated","Free");
+             live->bind("extra","X");
+             live->bind("sink","X");
+-            for (auto tag : {"setup","owed","proof","extra","sink"}) {
++            live->bind("preq","Q");
++            for (auto tag : {"setup","owed","proof","extra","sink","preq"}) {
+                 live->w.app.callbacks[std::string(tag)+":7"] = [&](auto,auto,auto,const auto& bytes){
+                     assert(payloadReceived.empty());
+                     payloadReceived=bytes;
