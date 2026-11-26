@@ -266,6 +266,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-PROJECTED-DISPATCH: When can an ordered queue progress despite a missing pose?** The pinned global broker blocks until every pose read succeeds. One source-scoped projection runs earlier and unrelated work without overwriting pending receiver priorities. [Proof, Lean and replay](integration/projected-dispatch/README.md). Advantage over the stock gate in the fixture; matched dependency scheduler ties.
 
+**SC-INCREMENTAL-REUSE: Which checks survive an edited recovery world?** An exact rooted reach cut reuses proof outside the changed cone and keeps safety, deadline, local action consistency and shared-versus-independent resource bindings separate. [Proof, Lean and replay](integration/incremental-reuse/README.md). Strong ordinary witness repair can reuse more; no independent selection claimed.
+
 **SC-RELEASED-BASE-CUT: Does a later route update exclude an unacknowledged release?** A pinned VDA 5050 validator accepts a replacement anchored at the old decision point only while that point is still the released frontier. The same later version cannot undo an accepted extension. [Scope and source replay](integration/released-base-cut/README.md). Acceptance only, not physical clearance.
 
 **SC-BLOCKADE-RECTIFICATION: Does recovering the reservation recover progress?** The pinned participant omits reached progress when rectifying a mismatched route. After the route matches, the moderator still needs a covering assignment to recognize the reached checkpoint. [Selected-logic replay](integration/blockade-rectification/README.md). Supplied assignment ranges, no physical or fleet failure claim.
