@@ -48,3 +48,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Return-to-contact comparison
 
 [Terminal receipt and staging commitment](return-commitment/README.md): a timely terminal receipt avoids staging on the already-served branch while preserving report, inspection and egress deadlines. The gain is against the specified aggregate movement interface, not an equally informed direct planner or an end-to-end ACHORD implementation.
+
+## Joint cave-planning reduction check
+
+[Pinned COPS and coupled cave fork](cops-coupled-fork/README.md): the same report loses its direct and old rendezvous options when passage and contact both fail. A native flow planner solves the known subproblems; preposition and a local cue make a common implementable policy. Same-information direct ties; this is held-in I2 development.

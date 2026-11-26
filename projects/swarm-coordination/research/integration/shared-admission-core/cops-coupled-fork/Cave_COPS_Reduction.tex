@@ -1,0 +1,138 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\begin{document}
+\title{A native joint cave-planning comparison at a coupled recovery cut}
+\author{}
+\date{26 November 2026}
+\maketitle
+
+\paragraph{Audit.}
+Known travel blockage and a loss of direct radio contact affect the
+same outstanding report, not just two unrelated parts of a mission.
+The joint combined case can be recovered by a mule, but its position
+at the early branch cut matters. Two known-world feasible plans
+need not yield a feasible locally selected plan. With one common
+staging cell and one timely qualified local cue, the declared
+positive case is feasible. The native COPS model and an independent
+state search check the required subplans; the equally informed direct
+controller and the shared checker accept the same policy. This is a
+reduction/calibration result, not an advantage or I2 acceptance.
+
+\paragraph{Baseline and adapters.}
+\href{https://ntrs.nasa.gov/citations/20220001447}{Klaesson et al.'s
+cave-planning work} separates movement from information flow,
+allows carried data and explicit communication, and uses master-plan
+flow to restrict the movements of agents that do not know a plan.
+Its TRACE executive implements coordination under delays; no
+generic global-stop assumption is attributed to it. Here the
+actual pinned \href{https://github.com/FilipKlaesson/cops/tree/67d2e5dd4534b3f3eec95b6cfda9d4c9c1746ef0}{COPS}
+\texttt{solve\_flow} formulation, indices, objective and plan decoder
+run unchanged on a small ordered graph-shaped adapter. The numerical
+solver backend is HiGHS rather than the upstream solver options. It
+uses the original variable bounds and integrality and checks returned
+rows before interpreting a solution. Unused imports for graph
+visualization, coloring and clustering are inert, and unsupported
+operations fail. This is not a patched-by-hand approximation of the
+master constraints, nor the full upstream installation. Extra
+time-indexed constraints for the authored inspection, exit sites,
+contact changes and optional fixed prefix are explicit. The
+independent reference enumerates directed move and contact transitions
+with carried report and master knowledge, matching the modeled
+instantaneous same-slot communication closure. It is not COPS
+under a different label.
+
+\paragraph{Civil fixture.}
+One scout starts at S holding the designated report and has to
+inspect I at tick 3 and reach E at 4. A mobile helper starts at M,
+and a passive base stays at B. Lead motion, relay motion and
+permitted communication are distinct typed directed edges.
+The scout's normal shortcut reaches N at tick 1 and can use direct
+contact N--B. A blockage removes S--N. The scout can instead travel
+S--X--Y--I--E; without partition, X--B still gives the report to
+base at 1. If only the direct links fail, the reachable N--M
+rendezvous passes custody to the helper and its movement brings the
+report to a checkpoint Z with Z--B contact at 3. When both changes
+occur, the shortcut rendezvous is no longer reachable and X--B
+is lost. The same old report has to use Y--U or Y--G as the lead
+passes Y at 2. The helper later reaches Z and base gets it at 3.
+The native known-graph model admits a two-hop route for each possible
+remaining contact. The helper is required to end safely (M or Z);
+weather, traversal robustness, transfer durations finer than a tick,
+and report delivery beyond the tested terminal receiver are not
+certified. A packet delivery is not a robot position claim.
+
+In the compound case, an additional contact change removes one
+of Y--U and Y--G before handoff. Which remains valid is not
+available before the helper's first step. There are no hidden
+poses or branch identifiers at that cut. The fault envelope
+represents known initial blockage and partition and a local sensor
+law at time 1. The solver used with the full graph per case is
+an oracle about the hidden branch until that law supplies the cue.
+Accounting separately for that evidence is essential: successful
+plans synthesized for the two full graphs cannot both be supplied
+at time zero as locally selected outcomes.
+
+\paragraph{Two cuts and executable guard.}
+Without the optional common staging cell J, the first-step options
+for U and G are disjoint: for U the helper can stay at M or move
+to U immediately, while for G it must start toward W at tick 0.
+A received cue after that step does not repair the wrong committed
+route. Count this as a physical prefix obstruction, not a deficit
+in the COPS solver. The common staging move M--J makes both possible,
+with J--U and J--G each one step. At tick 1 it must learn which
+to choose for the appointment. The native decoded witnesses
+contain both actual communication edges at 2 and 3, the scout's
+continued inspection and exit, and a helper egress. The common prefix is not free: with branch
+already known the native optimum uses two helper moves for U and
+three for G, compared to three for either staged branch. If the cue
+is missing, a preauthorized retreat J--M still exists, and
+inspection and exits are possible without meeting the old report
+deadline; that is a constrained fallback, not successful service.
+If the helper did not install the plan and no authorized channel
+reaches it before the first move, the original master constraints
+reject the first staging move. Preinstallation is supplied in
+the positive case to both controllers, not smuggled in as a free
+late master signal.
+
+A separate staged pinned native SubT broker control sends a one-byte
+branch cue to the helper endpoint, checks its own receive callback,
+and takes the second-route action based on that receiver view.
+The lead-to-helper data handoff and helper-to-base packet are only
+counted after actual receipt. Transmit counters charge two bytes
+per attempted report hop, including failed attempts, and both
+controllers use the same one-byte cue attempt. The input geometry chooses which radio
+leg is present; it is not inferred from a packet. In these tests the
+broker actually delivers the short cue in each qualified positive
+path; the underlying truth, ownership and validity horizon of the
+cue are authored. Erased, late and wrong-version receipts do not
+supply a branch. A delivered cue followed by another change can
+be wrong about the still-available route; the initial receipt does
+not certify a support law through the handoff. The forced invalidated
+cue is a negative control, not a claimed supported policy.
+An unrelated native callback at 4 is preserved even on the
+failed report paths.
+
+\paragraph{Results and comparison boundary.}
+The four factorial classes separate nominal, blockage-only,
+partition-only and joint changes. Earliest admitted base receipt
+in the native plan is 1, 1, 3 and 3, respectively, but the
+last requires a new reachable transfer and not the old rendezvous.
+There are 55 matched COPS/direct conditions, including master
+scope and forced prefix/branch tests, 120 native packet controls
+and ten same-process local selections. Two abstract finite cut
+lemmas were checked in Lean. Exact schedules are fixture-relative;
+observational slots for cue receipt are charged and not equated with
+learning a real mine map. The result shows an established flow
+formulation can solve the known subproblems and a standard common
+local-prefix search can assemble the tested adaptive policy; no
+claim is made that the source package already solves the larger
+partial-information fork in a single call.
+No end-to-end comparison to TRACE, ACHORD's full live
+\href{https://lillyclark.github.io/files/ACHORD_RA_L_IROS_.pdf}{networking
+and return behavior}, or reproducible field rate is claimed.
+A valid continuation experiment should now test the case where
+choosing a branch changes an already staged old effect or the
+future opportunity to obtain evidence, without giving the adapted
+joint planner less authority or information.
+\end{document}
