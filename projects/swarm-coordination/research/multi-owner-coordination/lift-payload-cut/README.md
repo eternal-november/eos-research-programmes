@@ -24,3 +24,5 @@ Only the command and payload write is observed; no ROS, Gazebo,
 hardware, or physical clearance claim.
 
 [Scoped effect windows](scoped-effect-window/): a separate jointly indexed authority model and exact issue-time calculation.
+
+[Effect-side gate](effect-side-fixture/): execute the modeled whole-batch check at the native write cut; distinguish new-write inhibition from clearing an earlier command.
