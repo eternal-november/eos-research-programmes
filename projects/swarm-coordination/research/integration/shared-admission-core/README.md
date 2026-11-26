@@ -60,3 +60,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Reply shape and the earlier consumer
 
 [Packed reply versus early prelude](ack-packing-window/README.md): the same final fields can give different old physical effects. Early independent availability and a spare route repair different sides of the shared-airtime obstruction. Matched exact direct ties.
+
+## Fixed-cut proof revalidation
+
+[Named history fibers](named-fiber-revalidation/README.md): complete qualified replacements reuse all untouched fiber profiles. Equal current decisions and counts do not support the same named retraction. Atomic edits and the exact profile-state bound are checked; the factored direct cache ties the affected plant work.
