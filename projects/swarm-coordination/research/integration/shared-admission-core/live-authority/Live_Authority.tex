@@ -1,0 +1,119 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\begin{document}
+\title{Receipt, reservation and physical clearance across route replacement}
+\author{}
+\date{26 November 2026}
+\maketitle
+
+\paragraph{Audit.}
+A current Open-RMF range, a previously delivered grant, and an actually
+cleared crossing are separate inputs. On the pinned moderator, ordinary
+route replacement installs a new reservation and resets the range.
+The old readiness receipt does not authorize the new reservation.
+After fresh readiness, the same numerical range can refer to a
+different path. A physically disjoint new path can be used before the
+old crossing clears, but reusing the old receipt for the new path
+does not justify that choice. These are native grant observations in a
+cross-simulator fixture; there is no result about a deployed robot's
+actuation or an independent mission.
+
+\paragraph{Interface.}
+Pin the producer and reconstruct the old moderator from a durable
+\texttt{SET}, \texttt{READY}, \texttt{REACHED} prefix before accepting
+new work. The old participant is modeled as occupying crossing X.
+The native authority source starts with the new participant waiting
+at the near end; at tick 4 the old participant reports readiness
+to depart. Under the geometry in this fixture, the range then grants
+the second participant its first leg although the old participant
+has not yet reached physical exit. The separately pinned warehouse
+producer supplies concrete clearance timestamps 6, 18 and 19, with
+clearance credited only after actual crate and carrier effects. The
+bridge treats them as the old participant's departure times across
+X and declares the clocks aligned. This does not derive Open-RMF
+physical clearance from Open-RMF status or map a real warehouse's
+layout to the Open-RMF geometry.
+
+A normal \texttt{set} event at a chosen time replaces the second
+participant's path. The replacement either keeps the same coordinates
+or runs away from X along disjoint Y. Native \texttt{ready} on the
+new reservation can reauthorize the new path. Redispatched readiness
+for the old reservation is an ordinary delayed event in the controller
+replay, not evidence of current authority. An independently booked
+route reaches its checkpoint at tick 13 in every replay. The second
+crossing must finish by tick 20, the carried clearance by 19, and
+the completion remains a modeled one-tick effect.
+The driver retains actual ordered tuples of reservation identity,
+granted end, geometry and incumbent status; it does not replace the
+native decision with a Boolean from the checker.
+
+\paragraph{Two authority laws.}
+An option carries its observed grant identity and exact path,
+as well as the chosen launch time. A receipt at tick 5 and, when
+available, a new observation at tick 11 can qualify that option.
+The interpreter checks actual physical clearance, precise active
+grant, and the carried and independent effects. The second
+observation cannot establish what a later publisher will do.
+No choice sees the private warehouse completion time. Scenario
+classes include both early and late cases, conditioning only on
+the declared readiness schedule and the observation rule.
+
+Two downstream laws are deliberately kept distinct. Under
+\emph{issue-only authority}, issuing an approved command authorizes
+its modeled effect to finish; subsequent edits do not retroactively
+rename the effect. Under \emph{through-effect authority}, the
+same authorization must extend through modeled completion too.
+The pinned moderator identifies the active grant, not which of these
+plant contracts holds. With a single grant cutoff $r$ and ties
+ordered as update before use, an issue at $t$ with duration $d$
+separates the laws exactly when $t<r\leq t+d$. For arbitrary
+replacement, eligibility is also identity- and geometry-indexed.
+
+\paragraph{Witnesses and limits.}
+At the same disclosed view at tick 11, a permitted old operation at
+tick 12 can be admissible when the change is at 13, and inadmissible
+when it is at 12. Their exact common choice set is empty in the
+selected two histories. If the change occurs after issue but before
+completion, the case separates the two authority laws; an operation
+under the issue-only law does not consume a fresh permit for an
+unexecuted action. When the edit comes earlier and current Y is
+requalified, it can finish while X remains physically occupied.
+Exactly the same coordinates under a new reservation still require
+authority for the new version: they preserve geometry, not identity.
+
+A different interface can requalify inline at the acting source.
+Five selected replays keep the same moderator process live through
+the modeled command and issue a native reached event only if the
+current grant still matches at completion. One run selects X and one
+selects newly granted disjoint Y; missing current authority or live X
+blocks issue. A replacement within the modeled execution interval
+prevents the old acknowledgement under the through-effect law. All
+five preserve the unrelated reached event. This is a serialized
+local-source control, not a claim that a remote snapshot is a lease,
+that a physical motion can be canceled instantly, or that a native
+status alone verifies the modeled progress.
+
+The tests cover 240 native moderator schedules, 5,040 logged
+native cuts, ten warehouse runs, and 11,520 whole-trajectory
+option comparisons against direct checks of both native authority
+and physical clearance. All direct comparisons agree. Grouping
+without revealing the physical future gives 32 local view classes
+across the enumerated families; four admit a common option. These
+are development counts, not probabilities, and do not measure
+planner superiority. Lean checks the time boundary and the
+identity/common-view obstructions, not the native code. The setup
+does not solve stable handoff, reauthorization under a new site
+controller, or safety after a change that was not included in the
+admitted support.
+
+An appropriate comparison cannot assume a global pause. Existing
+\href{https://whoenig.github.io/publications/2019_RA-L_Hoenig.pdf}{action
+dependency graph execution} already accounts for relevant predecessor
+completion while continuing disjoint work. The strongest stock
+baseline here begins from the durable reconstruction and is given
+the same scoped observations. The remaining test is a frozen selector
+facing independently supplied authority and physical constraints, not
+interpreting the absence of a new message as evidence that a grant
+stayed in force.
+\end{document}

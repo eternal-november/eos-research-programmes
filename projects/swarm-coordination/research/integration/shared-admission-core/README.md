@@ -36,3 +36,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Action-dependent follow-up
 
 [Two-cut reactive diagnostic](reactive-observation/README.md): two probes can produce the same timely evidence yet differ in whether the old clearance still meets its deadline. The same checker also distinguishes state-dependent silence from an unqualified loss model. The direct adaptive comparison ties.
+
+## Native authority follow-up
+
+[Live reservation replacement](live-authority/README.md): the same native range can refer to a newly granted path, while an earlier reservation receipt and the actual crossing clearance remain separate. Five in-process controls also distinguish inline qualification from a remote snapshot. The matched direct check ties.
