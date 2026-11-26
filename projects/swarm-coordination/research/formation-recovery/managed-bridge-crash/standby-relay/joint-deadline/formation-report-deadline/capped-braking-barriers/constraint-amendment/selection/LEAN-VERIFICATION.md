@@ -1,0 +1,1 @@
+Lean 4.35.0 with Mathlib checked SelectionArithmetic.lean without errors or warnings. The axiom readout gives propext, Classical.choice and Quot.sound. The lemma checks which integer lengths violate the rational slack inequality; it is not a formal complexity proof.
