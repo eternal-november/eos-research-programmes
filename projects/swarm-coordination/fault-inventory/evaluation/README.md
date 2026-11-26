@@ -57,3 +57,12 @@ successor entry from a qualified exclusive effect handoff; and common wind
 exposure from independent demands. They add leads for F01, F05, F26, F38
 and S20. The register has 104 scoped leads and 6 without. These are
 not architecture dispositions. Both inventory pins and crosswalk remain unchanged.
+
+## Recovery feedback and outside corridor duties through #559
+
+Two scoped studies test an adaptive response that sustains degradation (I07)
+and an explicit physical-exclusivity duty owed to a maintenance crew (S07).
+The external closure replay distinguishes reporting a change from applying it;
+it does not show a policy ignoring a closure it has correctly installed.
+The register has 106 scoped leads and 4 without. All dispositions remain open,
+and neither inventory pin nor the directional crosswalk changed.
