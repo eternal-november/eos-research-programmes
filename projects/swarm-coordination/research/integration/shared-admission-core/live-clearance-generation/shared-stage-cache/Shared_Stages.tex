@@ -1,0 +1,117 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\title{Shared stage debits, qualified cache reads and a consuming cut}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Target and pins.}
+Can prior source and transport events generate a nonrectangular family
+of observable evidence, with a consequence for a guarded live recovery?
+This is a held-in realization of the comparison docket, not
+a claim that a production stack has this path topology or achieves the
+latency calculated here. The replay executes pinned RWARE movement and
+grid update code and the selected pinned SubT dispatch, radio and
+application callback code; exact Git blobs are in \verb|SOURCE.tsv|.
+Endpoint registration, causal forwarding, stage layout, external link
+seam, caches and acquisition/consumption rules are authored. The
+radio seam permits only an unambiguous receive or a failed path; no
+noise, propagation or field link-quality assumptions are inferred.
+The simulator's local motion order and transport clock are synchronized
+by this fixture; there is no distributed simultaneity theorem.
+
+\paragraph{Construction.}
+One carrier's real movement produces old reads of occupancy of a named
+bay. Each read is taken once from the current grid after the appropriate
+move or stay. Either bit can recur, and the construction realizes all
+six-bit old cache vectors without inventing a false sensor value.
+Then the source latches a new occupancy bit at the protected cut. The
+six labeled copies travel along logical forwarding paths
+\[
+(0,4),\quad(1,3,4),\quad(1,2),\quad(0,1),\quad(2,4),\quad(0,2,3)
+\]
+in label order. Only a real callback advances to the next hop or
+updates the addressed cache. Each stage has a separate sender and
+recipient, capacity four bytes and at most three one-byte refreshes.
+One unreceived four-byte background send at a selected stage is real
+TX debt but does not create a receive. At quarter-tick four its age
+is exactly one radio second, and the native capacity test still
+includes it. At tick five it is outside the native window. Other
+stages have headroom. Thus the blocked paths are exactly those that
+visit a live depleted stage, or the union if two such sends remain
+live. The second cause is an actual packet debit, not a second mask
+applied to caches. Actual unrelated radio delivery and carrier motion
+occur in every fixture. The separate source bit is hidden from the
+controller during acquisition and inspected by the evaluator only.
+
+\paragraph{Deciding under a protected snapshot.}
+For each live-debit mode let $F$ be its actual stale path set. A bare
+cache word is legal for bit $b$ iff it agrees with $b$ outside $F$
+for some admitted mode. This follows in both directions: fresh
+callbacks copy the latch unchanged; each cache value left by a
+failed refresh is realizable by a past native read. On a fixed set
+of queried labels $V$, opposite truths have a common view iff
+some pair of possible stale sets $F,G$ satisfies $V\subseteq F\cup G$.
+If no such pair exists, some queried label would be simultaneously
+fresh in the two candidate explanations. Conversely, assign the
+common fresh-required values outside the stale sets and arbitrary
+values where both may be stale. These choices are consistent exactly
+when the queried labels are in the union.
+
+At the inclusive cut with at most one depleted stage this rules out
+every five-label fixed plan but all six suffice. For adaptive reads,
+the replay computes the exact decision tree: a view with one possible
+true bit costs zero; a mixed view branches on any unread label,
+taking the maximum child cost plus one, then minimizing over labels.
+Conditioning never uses the hidden debit index. The optimum is
+five. With two depleted stages, even all six bare values can be
+identical for opposite truth. For example, the old bits can leave the
+word $000001$ in either case: only label \texttt{e} is fresh for
+truth zero using stages $0,1$; only label \texttt{f} is fresh for
+truth one using stages $1,4$. The replay computes the witnesses
+from actual callback traces.
+
+A qualified read returns the value and whether this cache received
+the specific latched sample, not a generic link-up indication, message
+age inferred from arrival, or guarantee of current bay state. In
+this fixture the additional bit is local metadata derived from a
+real final callback at the one labeled latch. A reused or forged
+qualification is outside the model. With one depleted stage the
+fixed pair $\{\texttt{a},\texttt{c}\}$ always includes a fresh cache;
+every individual label has a possible failed refresh, so two
+worst-case reads are necessary even with adaptivity. With two live
+debits, a fresh label still exists in every mode, but the replay
+finds worst-case depth six with either fixed or adaptive
+acquisition when the read contains the freshness bit.
+After expiry one read suffices in either representation.
+
+\paragraph{Consumption and comparison.}
+All 4,096 generation cases pass. At the inclusive cut, no carrier
+reentry is allowed between the latch and the decision's actual
+application callback. The fixture uses the current bit to select
+direct when clear and a distinct logical bypass when occupied;
+only these authorized callback effects are verified, not physical
+bypass motion. One serialized cache query is charged one outer
+quarter-tick. The supported due time is tick nine after the tick-four
+latch, so the optimal adaptive bare and fixed qualified acquisition
+complete all 768 single-debit-or-none executions; the exact fixed
+bare plan cannot guarantee service within that budget. The qualified
+arm takes at most two and the bare adaptive arm at most five.
+A policy with stronger observability (e.g. one atomic direct reader,
+or a trusted live stage ledger) is not dominated by the opaque-cache
+comparison. The explicit-world solver itself attains the optimum;
+there is no gap against it. A separate native reentry witness violates
+the hold after an all-fresh acquisition: the same qualified decision
+can still generate a real radio callback despite no longer being
+lawful. The lost assumption is occupancy stability between the two
+cuts, not sensor accuracy.
+
+These mechanisms generate actual stale combinations for a specified
+architecture; they do not derive this architecture's scope from the
+inventory labels or certify what faults an external mission admits.
+The six paths were selected to realize the earlier discriminator.
+No hardware, physically modeled bypass, independent transfer,
+confirmatory benchmark, runtime timing measurement or I1 acceptance
+is claimed.
+\end{document}

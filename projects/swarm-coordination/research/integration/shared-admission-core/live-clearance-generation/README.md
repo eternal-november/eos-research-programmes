@@ -37,3 +37,7 @@ supplier before an unresolved effect across a primary path loss.
 
 The [I1 comparison docket](comparison-docket/) records the evidence,
 strong comparator scope, and next held-in discriminator before a freeze.
+
+The [shared-stage cache replay](shared-stage-cache/) derives stale-report
+combinations from native pending debits and tests qualified reads through
+a protected consuming cut.
