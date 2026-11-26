@@ -1,0 +1,131 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Losing episode identity can square the calibration cost}
+\begin{document}
+\maketitle
+
+\paragraph{Result.}
+For the fixed-cap menu with \(d\) possible bundles, let \(\alpha\)
+be the fraction of calibration rows that truly link the necessary
+coordinates to one episode. The worst-case number of recorded
+rows needed to learn the entire menu is of order
+\(d^2\log(d)/\alpha^2\) if those links are hidden, and
+\(d^2\log(d)/\alpha\) when they are reliably marked. These rates
+are for independent, outcome-independent linking at fixed
+familywise error and the fixed exposure-law family below.
+They count assembled rows, not the number of original
+source episodes consumed or the cost of knowing a link.
+Even an honest link flag is insufficient if the linkage process
+can select records by the missing joint outcome.
+
+\paragraph{Data and law.}
+Use the active-window law from the
+\href{../Risk_Bits_Before_The_Query.tex}{risk menu}
+with density \(1+\epsilon\sum_j\sigma_j\chi_{S_j}\)
+against the uniform law on \(n\) bits, where
+\(\epsilon=1/(2d)\), \(|S_j|=m\ge2\), and every candidate
+includes the earlier committed variables. In this calibration
+study all source episodes are from the active regime.
+The sign menu still answers the original joint-cap problem
+if the operational window probability is supplied separately;
+this does not estimate that probability. The objective is all
+signs, not just the mean number of mistakes.
+
+A recorded row first picks a partition \(P\) of the coordinate
+labels, independently of outcomes. Each block is filled by
+the corresponding coordinates of a distinct independent original
+draw from the one fixed law. No original draw is reused across
+recorded rows. A tag tells whether a given \(S_j\) lies in one
+block; in the hidden case the observer only sees the assembled
+bits. Define \(\alpha_j=P(S_j\text{ lies in one block})\) and
+assume every \(\alpha_j\ge\alpha>0\). A matcher score, coarsened
+timestamp or fraction linked on average is not this assurance.
+
+\paragraph{What the assembled row measures.}
+If \(S_j\) lies in one block, its parity expectation is
+\(\epsilon\sigma_j\). If it crosses blocks, its parity splits
+into the product of characters of nonempty proper subsets
+of \(S_j\). Each mean is zero by the original low-order
+marginals, and the factors are on independent draws.
+Therefore the hidden-row expectation is exactly
+\(\alpha_j\epsilon\sigma_j\).
+If all sets share a nonempty earlier set, at most one block
+can contain any candidate. In that case the \emph{whole}
+conditional assembled density is just the constant term plus
+the old characters supported in that one block; averaging retains
+the same linear density with coefficients
+\(\alpha_j\epsilon\sigma_j\). Outside this common-anchor case,
+cross-products can appear in the whole density. The individual
+parity identity still holds.
+
+\paragraph{Sharp data rates.}
+Without a tag, the sign of the sample parity mean uses a
+margin of at least \(\alpha\epsilon\). Hoeffding and a union
+bound give sufficient size
+\(8d^2\alpha^{-2}\log(d/\delta)\).
+With a tag, score parity only on rows with the
+query correctly linked and set its score to zero otherwise.
+Its law has conditional mean \(\epsilon\sigma_j\) on
+the informative rows, occurring with probability \(\alpha_j\).
+The signed Chernoff bound is
+\((1-\alpha_j+\alpha_j\sqrt{1-\epsilon^2})^N\).
+Thus \(8d^2\alpha^{-1}\log(d/\delta)\) suffices.
+Neither sign rule needs the exact linkage rate; fixed
+budgeting uses the stated lower bound.
+
+For the lower bounds choose the partition to keep every
+coordinate together with probability \(\alpha\) and otherwise
+separate all coordinates. With singleton blocks the row is
+uniform under every menu. Under a hidden partition, the
+observed density is \(1+\alpha\epsilon\sum_j\sigma_j\chi_{S_j}\).
+An alternative that flips one sign differs from the all-positive
+reference by \(2\alpha\epsilon\) in each relative density cell,
+with denominator at least \(1/2\). Its KL is at most its
+chi-square divergence, hence at most \(2\alpha^2/d^2\).
+With a supplied tag the conditional unlinked component has
+no divergence and the linked component's KL is at most
+\(2/d^2\), so the joint KL is at most \(2\alpha/d^2\).
+Use the uniform prior on the reference and the \(d\)
+single-flip alternatives. Average KL to the reference
+bounds mutual information; independence makes it scale
+with the number of recorded rows. Fano then requires
+\[
+ \frac{d^2}{2\alpha^b}
+ \big[(1-\delta)\log(d+1)-\log2\big]
+\]
+rows, with \(b=2\) for hidden and \(b=1\) for tagged linkage
+when the bracket is positive. This matches the stated rates at
+fixed error up to constants. These lower examples use the
+same partitions and candidate menu in the two information
+interfaces.
+
+\paragraph{When tags do not help.}
+Take two menu laws with opposite exchanged signs at \(S_1,S_2\)
+and all other signs the same. Apply the \emph{same} outcome-dependent
+retention rule in both: keep the whole source episode exactly
+when \(\chi_{S_1}=\chi_{S_2}\). On that event the two original
+densities coincide. The event has probability \(1/2\);
+the symmetric difference \(S_1\mathbin{\triangle}S_2\) excludes
+the common earlier set and is not a menu character, so its
+mean is zero. On rejected rows, form singleton blocks from
+independent rejected source trials. The two laws had identical
+singleton marginals and identical retained subdistributions,
+so their rejected singleton marginals also match.
+The entire tagged data law is now the same in both worlds,
+while two decisions at the original cap differ. No amount of
+this data identifies them. A correct retention indicator
+does not say why those rows were retained.
+
+\paragraph{Checks and relation to earlier work.}
+Null and positive cases check 168,896 exact assembled-law
+cells across all 203 six-coordinate partitions, ten one-flip
+chi-square controls, a disjoint-block case with a new
+cross-character, and the single shared censor rule above.
+The classical statistical concern that linkage errors can
+distort downstream inference appears in
+\href{https://www150.statcan.gc.ca/n1/en/catalogue/12-001-X199300114476}{Scheuren
+and Winkler}. Here the distinction on the same fixed menu is
+observable linkage versus latent linkage versus selection on
+unseen joint outcomes. The experiment does not validate any
+actual link source, independence premise, or R4 acceptance.
+\end{document}
