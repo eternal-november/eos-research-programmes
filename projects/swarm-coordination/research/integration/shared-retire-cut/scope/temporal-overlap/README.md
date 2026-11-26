@@ -7,3 +7,5 @@ A single simple temporal network with positive holds determines exactly which ol
 - [Exact solver comparisons](replay.py) and [recorded results](results.json)
 
 Run python3 replay.py and compare its output with results.json. Run python3 map_replay.py for the separate authored cut examples. The mapped case is not a stock VDA implementation test.
+
+[Open and closed endpoints](touching/) extend the flow test to real event times and specify when a potentially empty hold breaks the order reduction.
