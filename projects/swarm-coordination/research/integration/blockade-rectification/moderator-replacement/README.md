@@ -12,3 +12,5 @@ Check out [rmf_traffic at 4da6ff6](https://github.com/open-rmf/rmf_traffic/tree/
     diff -u results.txt actual.txt
 
 The fixture uses the native geometry and protocol classes in process. It does not connect to ROS, a transport, or a robot. See the earlier [selected-method test](../blockade-rectification/README.md) for the branch where the moderator explicitly reports a different reservation, rather than missing one.
+
+The [rolling-approach model](rolling-approach/README.md) separates the modeled physical report from the native grant and gives the fastest conditional move that still allows a safe stop before clearance.
