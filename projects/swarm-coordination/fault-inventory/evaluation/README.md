@@ -29,3 +29,13 @@ authored model; the source replay does not establish that a stock adapter
 executes that crossing. P06 remains open without a scoped lead under its
 independent-monitor discriminator. Both inventory pins and the mapping
 table are unchanged, and all 110 architecture-level dispositions remain open.
+
+## Shared-frame monitor evidence through #541
+
+The first scoped P06 lead compares the same frame correction with a
+declared independent relative-motion reference. Its rate and corroboration
+follow-ups retain the actual counter dependency instead of treating
+valid ages or distinct acquisitions as independent errors. The node-level
+safety and deployment premises remain open. The register now has 97
+labels with scoped leads and 13 without; all 110 architecture-level
+dispositions remain open. Both inventory pins and the crosswalk are unchanged.
