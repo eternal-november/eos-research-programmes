@@ -72,3 +72,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Restart around the actual effect
 
 [Restart and supplier loss](restart-and-replacement/README.md): identical absent receipts can hide paid and unpaid duties. A one-key station gate with a staged timer tolerates loss of a prepared route and its notice while a separate duty proceeds. RIFL-strength atomicity is modeled, not improved on; scoped to a held-in application effect.
+
+## Transfer to a physical latch and departure
+
+[Reversible warehouse actuator](physical-restart-transfer/README.md): replaying a set-down as a raw toggle can undo the old effect. Guarding every writer allows an overlapping repair; separately measured departure satisfies the deadline where the stated serial drain/check misses. Same-interface exact direct ties. This is held-in native simulation.
