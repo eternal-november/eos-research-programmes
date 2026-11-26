@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{What pairwise braking certificates retain and what they miss}
+\begin{document}
+\maketitle
+
+A relative-speed braking calculation can understate required
+clearance when a robot cannot accelerate because it is already
+at its speed cap. Even exact pairwise calculations need not
+compose when two gaps consume the same middle actuator.
+Both obstructions have exact, executable boundaries in the
+single-file model.
+
+\paragraph{Two robots with independent caps.}
+Positions are ordered and the physical gap is to remain in
+\([D_s,D_c]\) forever. Motion is forward only, with velocities
+\(0\le v_1\le W\), \(0\le v_2\le V\), \(V\le W\), and
+acceleration bounds \(a,A\), respectively, all positive.
+No new fault, binding wall, or terminal service is included.
+Let \(K=a+A\), \(w=(v_1-v_2)_+\), and
+\(e=(w-K(V-v_2)/A)_+\).
+The minimum distance to the lower clearance limit needed
+at this state is
+\[
+              C=\frac{w^2}{2K}+\frac{A e^2}{2aK}.
+\]
+The minimum distance to the upper link limit needed is
+\(U=(v_2-v_1)_+^2/(2K)\). The controller can preserve both
+limits iff the actual margins meet these bounds.
+
+For shrinkage, the left robot can brake as hard as possible and
+the right can accelerate as hard as possible, both clamped to their
+speed ranges. These velocities minimize the closing speed pointwise;
+no other controls can need less clearance to get to the time they
+first match. If the right robot does not hit its cap first, integrating
+the closing triangle gives \(w^2/(2K)\). If the cap binds, the
+closing speed there is \(e>0\); the remaining closing triangle has
+slope \(-a\), not \(-K\). Replacing \(e^2/(2K)\) by \(e^2/(2a)\)
+gives the formula. While they equalize, the gap shrinks monotonically,
+so the upper constraint cannot become tighter. For increasing
+separation, the fastest simultaneous braking and acceleration
+meet at a common speed between the initial speeds and at most \(V\),
+so neither cap blocks the needed intervention. After either
+equalization, maintaining the common speed holds the gap invariant.
+
+With \(a=1,A=4,V=1,W=3\), velocities \((1,0)\) and \((2,1)\)
+have the same closing speed one. The necessary clearance is \(1/10\)
+and \(1/2\) respectively. With margin \(3/10\), a relative-speed
+formula alone accepts both while the second is already unrecoverable.
+
+\paragraph{Three robots with a common acceleration cap.}
+Suppose the forward velocities initially are \(v_0+2w,v_0+w,v_0\)
+for \(v_0\ge0,w>0\). All have acceleration magnitude cap \(a>0\)
+and speeds from zero through at least \(v_0+2w\).
+Let \(c_1,c_2\) be the current margins above the lower gap limits,
+and assume the upper link margins start valid. Put \(m=w^2/(4a)\).
+There exists a controller preserving all constraints forever iff
+\[
+             c_1\ge m,\quad c_2\ge m,\quad c_1+c_2\ge4m.
+\]
+The first two inequalities are the exact isolated pair constraints.
+The last follows by integrating the unavoidable closing of the
+outermost pair: their total initial closing speed is \(2w\)
+and can be reduced at no more than \(2a\).
+
+To attain, decelerate the leftmost robot at \(a\) and accelerate the
+rightmost at \(a\) for \(T=w/a\). Let the middle robot's speed be
+\[
+        v_0+w+\theta a\min(t,T-t),\qquad -1\le\theta\le1 .
+\]
+It stays between the outside speeds. Thus both gaps shrink
+monotonically and the total loss is \(4m\). The individual losses
+are \(2m-\theta m\) and \(2m+\theta m\). A value of \(\theta\) fits
+both margins exactly under the three inequalities. Then hold equal
+speed. In the replay the pair budgets \(2/5,2/5\) each permit the
+isolated maneuver but not the assembly, while \(1/4,3/4\) permits
+the assembly. This is a simultaneous input conflict, not incomplete
+knowledge of the individual gaps.
+
+\paragraph{Matched barrier comparison.}
+For two robots the published common-cap distance barriers of
+Wang, Ames and Egerstedt reduce in one dimension to comparing
+relative speed with a square root of distance margin.
+Setting the relative acceleration bound to \(K\), their
+uncapped-relative stopping distance is \(w^2/(2K)\).
+The counterexample is to retaining that expression after changing
+the independent speed law, not to their theorem under its own
+assumptions. Their compositional method also requires simultaneous
+input feasibility; the three-robot case shows why its separate
+pairwise premises are not alone sufficient. The new formulas
+provide an exact comparator for these restricted states.
+
+For the hidden-gap deadline example, the outward braking margin
+of the forced common prefix is positive at receipt 0.33 and
+already negative at 0.35, even though both positions still
+satisfy the static band. At the exact critical receipt the closed
+braking bound is tight, and the previously proved trajectory
+grazes the link limit. The published strict positive barrier domain
+does not certify that equality case; a strictly positive physical
+margin would be a stronger law. The replay checks 720 exact
+two-robot integrations and the three-robot construction.
+This is a bounded kinematic comparison, not a general
+barrier-controller benchmark or completion of R6.
+\end{document}
