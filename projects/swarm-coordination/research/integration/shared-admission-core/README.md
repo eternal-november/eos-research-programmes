@@ -68,3 +68,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Finding which history fibers changed
 
 [Scoped source edits](scoped-source-edits/README.md): declared joint links and their incidence provide complete local recompilation for this model. An edit can add a previously absent bad history or change a latent dependency without changing the current proof. Full join and fresh admission agree; a same-input direct index can do the same local work.
+
+## Restart around the actual effect
+
+[Restart and supplier loss](restart-and-replacement/README.md): identical absent receipts can hide paid and unpaid duties. A one-key station gate with a staged timer tolerates loss of a prepared route and its notice while a separate duty proceeds. RIFL-strength atomicity is modeled, not improved on; scoped to a held-in application effect.
