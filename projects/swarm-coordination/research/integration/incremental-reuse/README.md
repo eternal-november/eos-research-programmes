@@ -13,3 +13,5 @@ scope. FREEZE.txt and reuse.py are the pre-scenario freeze. The authored
 benchmarks are not independent test selection.
 
 [Upstream change producer](patch-producer/README.md): equal compiled rows can acquire a different source dependency. Preserving that dependency makes the next finite edit check sound at matched inputs.
+
+[Indexed witness receiver](indexed-repair/README.md): removes whole-map rebuilds in the sparse sequence, and compares both detailed counted work and a separate local pipeline timing sample against the previous worklist.
