@@ -1,0 +1,88 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{A successful clock notification and a historical clock bound are different evidence}
+\begin{document}
+\maketitle
+
+A LinuxPTP status poll can show a new sync ingress with an old
+offset estimate. The selected source offers a stronger fact:
+a time-sync notification reached from the successful-update path.
+That is still not evidence that a past acquisition used the same
+offset. The missing step can be made explicit and checked when
+measurement, rate, and delivery bounds are available.
+
+\paragraph{Native notification.}
+In the pinned \texttt{clock\_synchronize}, a failed offset update
+returns before \texttt{NOTIFY\_TIME\_SYNC}, in both adjustment
+and free-running branches. A successful update can notify even
+if the servo reports unlocked. A successful jump can reset the
+ingress field to zero before notification, so the event cannot
+always date the offset. The same notification method selects
+the \texttt{TIME\_STATUS\_NP} payload; that payload alone does
+not identify whether it was polled or notified.
+
+The C replay compiles the pinned synchronization, notification,
+timestamp update/reset, and management-copy logic. Clock adjustments,
+servo outcomes, units and transport are inert fixture inputs.
+There is no actual clock or subscription. The controls include
+failure with advanced ingress but no notification, a nonzero
+ingress in success cases, jump with zero ingress, and later UTC,
+runtime, serialization and subscription conditions under which
+a fresh calculation does not yield an observed event. The
+runtime and delivery cases test the supplied failure modes, not
+a measured loss model. Thus a captured, source-identified event
+with a matched nonzero ingress can distinguish the first two
+cases. Absent delivery cannot distinguish estimate failure from
+lack of a usable notification. Servo state, a time-base change,
+and accuracy still require their own evidence. Native source
+provenance is a premise; receipt of the same structure alone
+does not establish it.
+
+\paragraph{Exact historical bound under a declared rate law.}
+Let the true offset be constant on acquisition interval \([u,v]\).
+Outside it the same clock, with no unmodeled steps, has drift rate
+bounded by \(\rho\ge0\) in absolute value. This means the offset
+is Lipschitz continuous with constant \(\rho\), with no drift over
+\([u,v]\). Let \(b(t)\) be the compressed time coordinate: \(t\)
+before \(u\), \(u\) during \([u,v]\), and \(t-(v-u)\) after \(v\).
+A valid trace factors through \(b\) as a \(\rho\)-Lipschitz
+function on compressed time. To see necessity, split a
+cross-epoch time difference at \(u\) and \(v\); the offset
+changes by zero in the omitted part. Sufficiency follows because
+\(b\) does not enlarge time differences.
+
+Keep only authenticated measurement bounds \([a_i,c_i]\)
+whose reports arrive before the decision, with each value dated
+at its actual estimation time \(t_i\). Write \(s_i=b(t_i)\)
+and include any prior interval at \(s=u\). The bounds are
+consistent iff \(a_i-c_j\le\rho|s_i-s_j|\) for every \(i,j\).
+Necessity follows from the drift law. For sufficiency the
+function \(L(s)=\max_i(a_i-\rho |s-s_i|)\) is Lipschitz and
+lies within every measured interval at its knot. The upper
+dual \(U(s)=\min_i(c_i+\rho|s-s_i|)\) is also a feasible trace.
+It follows that the exact permissible epoch offset interval
+is \([L(u),U(u)]\): the two extremes are attained, and convex
+interpolations realize all intermediate values.
+
+For a query whether the old offset was at least \(3/4\),
+answer yes iff \(L(u)\ge3/4\), no iff \(U(u)<3/4\), and otherwise
+leave it open. Inconsistent evidence is a separate outcome.
+This rule cannot use an accurate measurement delivered only
+after the admission cut. Clock identity and no unmodeled steps
+are necessary to apply the same \(\rho\), and path-delay bias
+must be included in the input error intervals. They are not
+deduced from the LinuxPTP notification.
+
+\paragraph{Matched numerical check.}
+With epoch \([0,4]\), prior \([0,1]\), drift bound \(1/10\),
+and a current exact reading \(1/2\) at time 8, the exact historical
+interval is \([1/10,9/10]\). It straddles the threshold even
+though the current measurement is fresh. A previous estimate at
+time \(-1\) in \([87/100,91/100]\) narrows it to
+\([77/100,9/10]\) if delivered by time 8. Late delivery leaves
+the original interval. The replay compares 320 exact interval
+constructions against a separate finite-knot linear program.
+Model times and errors are authored, not LinuxPTP calibration.
+The result advances the interface check but does not establish a
+historical query in a deployed system or full R4 acceptance.
+\end{document}

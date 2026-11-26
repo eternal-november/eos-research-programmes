@@ -8,3 +8,5 @@ Save the pinned [clock.c](https://github.com/richardcochran/linuxptp/blob/227bbd
     diff -u results.txt actual.txt
 
 No runtime permissions or network connection are used. The test does not claim that current status necessarily reports this path in a given deployed synchronization configuration.
+
+The [notification and historical bound follow-up](notify-historical-bound/README.md) checks a stronger source event and separates freshness from a bound over the acquisition epoch.
