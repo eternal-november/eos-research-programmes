@@ -1,0 +1,71 @@
+\documentclass[11pt]{article}
+\title{Matching a shared frame is not enough when the available writer has the wrong axes}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Question.}
+A robot owner may request a horizontal world vector $h$ and a
+building operator a vertical world vector $v$. They may agree on
+the same numeric frame declaration, which might not match the
+pose consumed by physics. We test this shared-setup error and a
+closely related control limitation: even with the correct frame
+observed, does each existing command footprint represent the
+effects that actor is authorized to supply?
+These are declared owner obligations, not an access-control API
+implemented by Gazebo. The independent contributions are modeled
+at the assembly boundary before sending one physical command.
+
+\paragraph{Exact representation condition.}
+Let $H$ be the horizontal plane, $V$ its vertical orthogonal
+complement and $R$ the consumer's proper rotation. Under a
+declared native split the robot writer supplies local $H$ and
+the lift writer supplies local $V$. When the selected phase order
+preserves both, the two representable scoped world spaces are
+$RH$ and $RV$. Thus a given desired pair is separately
+representable exactly when $R^{-1}h\in H$ and $R^{-1}v\in V$.
+All such pairs are representable exactly when $RV=V$, equivalently
+$RH=H$. Even in that case the old numeric local coordinates
+cannot be carried forward unchanged unless the required inverse
+images stay unchanged. A positive nonzero vertical effect is not
+representable by the existing lift-only slot if $RV$ is not the
+world vertical line. No choice of a better scalar for the same
+slot resolves that limitation. The stock velocity producer can
+write all axes; restricting its input to the local plane is
+part of this experiment's separate-authority policy, not a
+Gazebo feature or claim about all alternative controllers.
+
+\paragraph{Paired source controls.}
+The source fixture starts with the selected native velocity
+writer, lift writer, and world setter from the prior replay.
+The authored identity pose and no-collision fixed geometry make
+the local split work. Reuse the same shared identity assumption
+at the same pose position, but give the stand-in consumer a
+quarter-turn about the horizontal $y$ axis. The same requested
+horizontal $x$ goes to negative world $z$ and the lift's local
+vertical command goes to world $x$. The native-shaped outcome
+matches the desired sum there only if desired $x$ and $z$ are both
+zero (the $y$ direction is fixed).
+
+The separate positive control grants one composed writer authority
+to submit the checked sum of both contributions. It reads the
+consumer-bound frame, rotates each independently authorized world
+contribution back into local coordinates, verifies both components,
+then writes their sum. The same selected native consumer gives
+the correct total without broadening either owner's declared
+world remit. The comparison exercises 54 input and frame cases.
+An authored version guard leaves the initially empty slot untouched
+if its observed frame is not the frame connected to consumption.
+This requires the test's serial binding; it is not a solution to
+infer pose or to retire an old preexisting effect.
+
+\paragraph{Boundary.}
+This supplies a scoped shared-setup and inter-owner frame-interface
+comparison using selected native code and authored poses and rights.
+It does not run Gazebo dynamics, test a real frame deployment,
+or claim a robot or lift can operate in a tilted pose. A version
+guard could be less conservative if it used the exact demand
+signatures in the adjacent quotient result. A matched direct
+assembler with the same wider write permission and current frame
+also succeeds. No field behavior, safety certification, operating
+deadline, or architecture disposition is asserted.
+\end{document}

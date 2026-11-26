@@ -30,3 +30,5 @@ inspected, not run.
 [Dual writer follow-up](dual-writer/): replacing the removed component can restore or overwrite the next lift intent depending on the order of the writers.
 
 [Scoped frame quotient](frame-quotient/): one correct aggregate vector can conceal incompatible separately attributed world effects.
+
+[World-scoped composition](world-split/): compare the source local-axis split against a composed writer with current consumer frame and explicitly granted remit.
