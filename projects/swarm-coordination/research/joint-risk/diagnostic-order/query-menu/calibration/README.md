@@ -10,3 +10,5 @@ complexity even when no individual exposure window flags are supplied.
 Requires Python 3.10+. Probability-vector checks use rational arithmetic.
 The numerical sample bounds are illustrative evaluations of proved
 inequalities, not measured risk or operational acceptance.
+
+The [partial-observation follow-up](partial/README.md) compares the full-vector rate with what is possible from adaptive one-bundle samples.
