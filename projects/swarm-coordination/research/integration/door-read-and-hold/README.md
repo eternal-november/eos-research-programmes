@@ -8,3 +8,5 @@ Save these pinned files: [door.cpp](https://github.com/open-rmf/rmf_simulation/b
 
     python3 replay.py door.cpp DoorOpen.cpp SupervisorHasSession.cpp > actual.txt
     diff -u results.txt actual.txt
+
+The [retired-session follow-up](retired-session/README.md) tests duplicate opens after removal and the effect on another hold, using the pinned supervisor methods.
