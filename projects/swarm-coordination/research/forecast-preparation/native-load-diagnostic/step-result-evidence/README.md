@@ -15,3 +15,6 @@ Materialize `SOURCE.tsv` and use Python 3.10+, NumPy and C++17:
 
 This tests a stronger selected-code fixture and an authored continuation
 change, not factory telemetry, measured rates or independent acceptance.
+
+The [reserve-commitment replay](../reserve-commitment/) applies this
+calibration to a different, later native mission with real staging costs.
