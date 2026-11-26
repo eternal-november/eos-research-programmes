@@ -1,0 +1,64 @@
+\documentclass[11pt]{article}
+\title{An open door report can omit an unobserved leaf}
+\begin{document}
+\maketitle
+
+The pinned Open-RMF door-open phase requires a matching supervisor
+session and an open report. In the selected simulator logic an
+expected leaf can fail lookup and be omitted from the report's
+open calculation. The session requirement does not recover that
+missing physical evidence.
+
+\paragraph{Same report, different fixture state.}
+The Gazebo door helper tries the named joint in the door entity,
+then in its parent. When neither lookup succeeds it logs a warning
+and returns a null entity. The mode calculation skips a null joint.
+It emits OPEN if every joint it checked is near its configured open
+position, even if the expected set was empty or some leaf was skipped.
+The publication code does not attach a list of checked joints.
+
+A two-leaf fixture compares a fully observed, open doorway to one
+where the right leaf is at its closed position in the fixture's
+ground truth but cannot be found by either native lookup. The same
+native method, publication and given clock value produce equal
+door state fields. The same valid session lets the native phase
+mark both completed. A visible closed leaf instead leads to MOVING
+rather than OPEN in this mixed fixture. A positive nested entity
+control verifies that the parent lookup can recover a visible leaf.
+An empty expected list yields OPEN as a separate control.
+No assumption is made that a missing joint is actually closed
+outside the fixture. Missing lookup means unknown, not closed.
+The simulator warning is separate evidence if the consumer can
+receive it and identify its door and sample.
+
+\paragraph{A distinct time cut.}
+With two fully observed open leaves, a genuine old OPEN report
+can still be paired with a new matching session. The selected
+phase predicate completes on that input even if a fresh report of
+the now visibly mixed door would not. Source inspection identifies
+the use of \texttt{combine\_latest} and the subsequent predicate;
+the replay does not run RxCPP or assert a delivery schedule in a
+healthy ROS connection. Pairing by name and membership doesn't
+establish that the measurement belongs to the current hold.
+
+\paragraph{What can be repaired at this interface.}
+A complete-sample guard at the simulator seam requires a nonempty
+declared joint list, resolves every leaf, and tests each measured
+position. The test keeps the healthy and nested cases available
+and refuses the unresolved or empty ones. It cannot repair a
+misdeclared set of leaves, decide the physical obstruction of
+the unseen leaf, or prove the door stays open after the sample.
+A safe transit still needs a justified opening geometry and a
+time/authority condition covering the transit: no incompatible
+command or independently possible physical motion can undo the
+required clearance before exit. An explicit epoch-bound device
+hold or a bounded motion model can serve that purpose if the
+source supports it. Simply attaching a current requester to an
+old door status is not such a proof.
+
+Unlike a resolver given the same expected joints and actual
+samples, the stock phase does not see their completeness from
+the report. The replay identifies this difference and an explicit
+repair for the selected missing-input case. It does not
+establish a deployment fault, a new controller, or I1 acceptance.
+\end{document}
