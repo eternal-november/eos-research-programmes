@@ -10,3 +10,5 @@ From this directory, supply the directory with both pinned files from the parent
     diff -u results.json actual.json
 
 The relevant information is the complete source-compatible matching family. The consumer is the monotone cap on this empirical sample, not arbitrary linkage, causal attribution, or population risk.
+
+The [three-stream follow-up](three-stream/README.md) finds the computational boundary for arbitrary linkage graphs and an exact easier case for unconstrained successful records.
