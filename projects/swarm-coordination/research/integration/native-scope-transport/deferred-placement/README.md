@@ -16,3 +16,5 @@ The two controller modules and their respective freeze files precede
 their native checks. A changed source with late motion preserves the
 matched result; permitting later reassignment defeats the original
 guarantee. No independent contract milestone is claimed.
+
+[Designation lifetime](designation-lifetime/README.md) moves the authority change past actual unload and holder clearance. The same final job is feasible with a different earlier shelf position; settlement did not retire the standing footprint.
