@@ -39,3 +39,12 @@ valid ages or distinct acquisitions as independent errors. The node-level
 safety and deployment premises remain open. The register now has 97
 labels with scoped leads and 13 without; all 110 architecture-level
 dispositions remain open. Both inventory pins and the crosswalk are unchanged.
+
+## Shared frame and cross-owner command-slot evidence through #551
+
+The scoped lift study changes the consumed frame while the fixture shares
+an unchanged frame declaration. Its cross-owner comparison distinguishes
+the declared world remits from the native local slots. This is a first
+scoped lead for F02 and F33, not a deployed fault or clearance claim.
+The register now has 99 scoped leads and 11 without. Both inventory pins
+and the crosswalk remain unchanged; all 110 architecture dispositions are open.
