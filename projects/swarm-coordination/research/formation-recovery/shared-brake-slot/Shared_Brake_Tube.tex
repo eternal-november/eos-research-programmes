@@ -1,0 +1,101 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{An exclusive shared brake can make a formation certificate false}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Pins.}
+After a fault, two vehicles traveling along a straight corridor must stop
+at specified checkpoints without losing clearance or geometric radio reach.
+They still have one shared braking-capacity unit. One design can split it;
+another awards the entire unit to one vehicle for each fixed-duration
+slot, or idles. This is an actuator model, not data about a deployed
+platform or an RF reception claim. Positions and velocities are known;
+the obstruction is physical in the stated control class, not missing
+evidence. The fault does not itself violate the current gap; only the
+available braking interface changes. Constant nonnegative deceleration,
+no acceleration or reverse travel, no disturbance after the fault, and
+fixed slot boundaries are stipulated.
+
+In units with slot duration and acceleration limit both one, the two
+initial speeds are $v>0$ and the deadline is $T=2v$. Let $q$ denote
+front-minus-rear gap change from the fault cut. Clearance is $q\ge-D$
+and geometric communication requires $q\le U$ throughout, where
+both slacks are nonnegative relative to the initial gap. The terminal
+gap change $k$ fixes two individual distances when both stop:
+their sum is $2v^2$, so the front and rear go $v^2+k/2$ and $v^2-k/2$.
+For example $k=0$ meets both individual caps $v^2$ exactly. Any
+fixed-obstacle cap on these monotonically traveled distances can
+therefore be checked directly. A relaxed post-fault gap is a changed
+requirement, not evidence of having preserved the original one.
+
+\paragraph{Exact split-capacity comparison.}
+The deadline and nonnegative velocities force all capacity to be spent
+almost everywhere: total velocity is $2v-t$. Thus total travel is
+$2v^2$. Each individual speed is between $\max(0,v-t)$ and
+$\min(v,2v-t)$ by its deceleration bound and its need to stop by $T$.
+Hence $|k|\le v^2$. The extreme schedules award the first $v$ units
+of time solely to one vehicle, then the next $v$ to the other. Their
+relative-velocity deviations have a consistent sign until stop.
+Convex combinations of the two schedules remain physically admissible
+under splittable actuation and make each intermediate $k$ with a monotone
+gap change. Thus the split interface meets the entire tube precisely
+when $|k|\le v^2$ and $k\in[-D,U]$. In particular an equal split
+keeps $q=0$ precisely, not only at the sampled stops.
+
+\paragraph{Exact exclusive-slot law near zero terminal displacement.}
+Now require $v\in\mathbb N$ and award the sole channel to one vehicle
+on each unit slot. Neither idling nor braking a stopped vehicle meets
+the deadline; exactly $v$ of the $2v$ slots go to each vehicle. For
+integer targets $|k|\le v$, a trajectory exists if and only if
+\[
+ k\in[-D,U],\qquad k\equiv v\pmod 2,\qquad \max(D,U)\ge1 .
+\]
+The last condition is necessary independently of the target.
+The continuous gap at time two is $(3a_0+a_1)/2$, where
+$a_i\in\{+1,-1\}$ is the signed gap acceleration. It has magnitude
+at least one. For parity, integrating all slots gives
+$k=\sum_{j=0}^{2v-1}(2v-j-1/2)a_j$. The signed halves cancel.
+The residual integer is twice the sum of weights with positive sign
+minus $v(2v+1)$, hence has the asserted parity.
+
+For sufficiency use two-slot blocks with opposite assignments.
+Each returns relative velocity to zero, brakes both vehicles once,
+and moves the gap monotonically by one unit in a chosen direction.
+Use $|k|$ such moves toward $k$ and $(v-|k|)/2$ excursions that return
+to zero, inserting the latter first. If $k\ne0$, the endpoint condition
+allows a one-unit excursion on its side. If $k=0$, choose either side
+with slack at least one. The construction stays inside the tube at every
+continuous time. The claim does not characterize arbitrary $|k|>v$,
+unequal initial speeds, or changeable slot lengths during a run.
+
+\paragraph{Consequence and baselines.}
+At $v=2$, $D=U=1/2$, the terminal constraint alone admits exclusive
+schedules but none keeps the tube. Giving the increasing-gap side
+one unit suffices without weakening the clearance lower bound. At
+odd $v$, exact restoration of $k=0$ is impossible for the exclusive
+interface, even with a very wide tube. In physical units, the excursion
+floor is $a h^2$ for deceleration $a$ and slot duration $h$; the parity
+test applies to $v=V/(a h)$ for physical speed $V$ in this family.
+With $V=2,a=1$, halving the hold from one to one-half preserves the
+deadline and both checkpoint distances while reducing the witnessed
+excursion from one to one-quarter. The original two half-unit slacks
+then suffice without changing clearance or radio geometry.
+
+\href{https://arxiv.org/html/2210.01354v2}{Breeden and Panagou,
+Section II-B} assume a compact convex admissible input set for
+their joint-CBF method. A certificate after convexifying the
+slot-exclusive set proves a statement about a different actuator,
+not a defect in that result. The convex comparison here is exact.
+\href{https://arxiv.org/html/2609.29939v1}{Safe Formation Control of
+Open Multi-Robot Systems} treats managed prospective edges before
+departure; no such warning or prospective physical capacity is added
+in this post-fault comparison. Maeda--Endo--Matsuno's decentralized
+crash-recovery comparison remains open in this study.
+Exact direct enumeration agrees on 2268 band/target queries and
+checks 4706 exclusive schedules with within-slot integration. Four
+Lean statements check the key algebraic kernels. This isolates a
+controller-to-actuator boundary in R6, not full R6 acceptance or
+any independent mission result.
+\end{document}

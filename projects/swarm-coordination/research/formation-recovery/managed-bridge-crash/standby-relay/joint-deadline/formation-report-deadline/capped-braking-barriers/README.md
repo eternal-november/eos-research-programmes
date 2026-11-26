@@ -16,3 +16,5 @@ This is a continuous forward-only safety law, not a guarantee of stopping at a m
 [Delayed braking reports](report-delay/) give the exact clearance cost of a common blind prefix and show why the sum of two gaps can lose decisive information.
 
 [Incremental constraint admission](constraint-amendment/) reuses an old safe-stop certificate and tests a small batch of changes without rechecking every robot pair.
+
+[Exclusive shared brake slots](../../../../../shared-brake-slot/README.md) separate a viable convex brake allocation from a fixed-slot hardware interface with the same capacity. The exact persistent excursion and terminal parity obstructions are present even with perfect information.
