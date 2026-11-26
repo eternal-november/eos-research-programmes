@@ -1,0 +1,80 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{When a new stop authority changes a feasible retirement}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Declared authority and actuation model.}
+The source replay and authored write-side gate establish why denying
+a new write is not acknowledgement that an older one can have no
+further effect. This study specifies what additional contract would
+be needed to schedule prospective withdrawal of that older effect.
+It does not obtain such a contract from the selected source code.
+
+An older authorized action can start at any integer tick
+$s\in[a,b]$. Its natural inclusive effect interval is $[s,s+h]$.
+Its operator has a mandatory useful prefix through $s+m$ inclusive
+with $0\le m\le h$. Effects in the prefix count as service only
+as defined by this model; neither full mission completion nor
+egress is inferred. A stop request sent at $x$ reaches the
+actuator fence at $f\in[x+u,x+v]$. The fence blocks starts at
+$f$ or later, including equality. For earlier starts, actuator
+quiescence is guaranteed only from $f+g$, with $g\in[j,k]$.
+All these intervals are closed, the time index is absolute,
+and the uncertainties on $s,f,g$ combine freely. The most general
+plant effect trace in the model includes every tick in
+$[s,\min(s+h,f+g-1)]$ if $s<f$, and otherwise no effect.
+A payload owner can revoke its permission from tick $C$ onward,
+which imposes an obligation of no residual old effect there.
+Any update to who can request the fence must itself be effective
+before $x$. Authority is not inferred from delivery of a message,
+and the fence is an additional enforceable actuator premise,
+not a logical session retirement.
+
+\paragraph{Exact timing.}
+The guaranteed useful prefix requires both $s<f$ and
+$s+m<f+g$. The worst cuts are latest start and earliest fence
+arrival and quiescence, giving
+$x\ge b+1-u$ and $x\ge b+m+1-u-j$.
+Once those conditions hold, old effects can occur at or after
+$C$ unless either they naturally end before $C$ or the
+latest guaranteed transition to quiescence is no later than
+$C$. These are precisely $b+h<C$ or $x\le C-v-k$.
+For necessity when neither holds, take latest start, latest
+fence arrival and latest settling lag; $\max(b,C)$ is a
+realized offending effect tick. Thus the feasible send times
+are an exact integer interval after also intersecting the
+sender's effective authorization window. If relying on multiple
+joint branches, compute these constraints within each branch
+and intersect results; do not combine the earliest fence of
+one branch with the latest physical effect of another.
+
+Lean checks the quantified equivalence for one branch.
+Independent explicit event histories and effect sets match
+7{,}200 cases and 64{,}141 possible send choices. No report of
+quiescence is generated merely by passing this model check.
+
+\paragraph{Why the timing of new rights matters.}
+Let the old action start at tick 1, naturally run through
+tick 7, require its useful prefix through tick 4, and be forbidden
+at tick 6 onward. Settling lag is one tick. A remote permitted
+request arrives in 1--3 ticks; its required send would need to
+be both at or after 3 and at or before 2. Granting a local
+operator enforceable fence authority with arrival in 1--2 ticks
+gives exactly one feasible send, tick 3. Making that right
+effective at tick 4 is too late. If lag can instead be two ticks,
+the same early local grant no longer suffices. A stock session
+acknowledgement is not proof of the required lag bound.
+Positive service in this example comes from changed lawful
+powers with a better bounded transport contract, not from
+crediting silence or broadening the owner's permission.
+A direct planner with the same amended rights and mechanics
+can reproduce the result.
+
+\paragraph{Limit.}
+Timer and authority readiness, tail bounds, execution observation
+and freedom of branch combinations all need source justification.
+The example does not show native lift quiescence, the permission
+infrastructure, egress, a qualified controller, or a win over a
+matched strong integrated stack. No contract disposition is made.
+\end{document}
