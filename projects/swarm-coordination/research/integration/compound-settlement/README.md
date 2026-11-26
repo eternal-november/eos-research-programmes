@@ -19,3 +19,5 @@ There are 24 compared cutoff rows, 6 native forced controls, 12 separate
 placement and 12 fragmented cases, and 4,000 split arithmetic comparisons.
 Split.lean contains two Lean 4.35 plus Mathlib checks. FREEZE.txt and
 core.py were fixed before constructing either new backend.
+
+[Fragment-generation follow-up](fragment-generation/README.md): the zero-overhead case needs a single eligible generation, or another actual source of that distinction.
