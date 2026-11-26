@@ -17,3 +17,5 @@ summary and its canonical-row hash. `LiveScope.lean` was checked
 on AXLE Lean 4.35.0. The native fixture uses authored qualified
 scope and receipts; no independent case or advantage over an
 equally informed exact controller is claimed.
+
+[Ordered native source producer](source-producer/README.md) derives live scope from a complete accepted command suffix. Conflicting amendments have different outcomes before and after acquisition, disjoint ones proceed, and actual unload alone is not carrier clearance. Matched exact gate lookup ties.
