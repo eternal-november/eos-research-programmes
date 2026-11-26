@@ -66,3 +66,14 @@ The external closure replay distinguishes reporting a change from applying it;
 it does not show a policy ignoring a closure it has correctly installed.
 The register has 106 scoped leads and 4 without. All dispositions remain open,
 and neither inventory pin nor the directional crosswalk changed.
+
+## Scoped evidence search through #563
+
+Three studies map the last unmapped scoped entries to runnable, explicitly
+bounded examples: member provenance (E03), a learned evidence law changing
+and a correctly received update ignored by the authored decision policy
+(E02/S12), and selectively unreliable reports (E04). This makes 110 labels
+with scoped evidence leads. It does not establish a complete generative
+model, validate the inventory, cover combinations, or satisfy any of the
+110 architecture-level dispositions. Both inventory pins and the crosswalk
+remain unchanged.
