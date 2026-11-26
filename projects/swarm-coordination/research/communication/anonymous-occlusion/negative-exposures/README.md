@@ -11,3 +11,5 @@ clock linkage and bounded loss.
 
 Standard-library synthetic raster and exact timing replay. This is not a
 field validation or independent non-radio substitution study.
+
+[Staggered partial views](staggered-views/README.md) derive a virtual earlier negative from qualified overlap after both reports arrive. It also records the stronger whole-trajectory test, finite clock-world coupling, and a late delivery control.
