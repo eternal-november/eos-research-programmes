@@ -1,0 +1,47 @@
+\documentclass[11pt]{article}
+\title{A shared environmental input does not spend two opposite worst cases at once}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Source seam.}
+The pinned Gazebo wind system reads a single world wind velocity
+and iterates through qualifying links. For each it selects the
+local mass, position-dependent scaling and link velocity.
+The force on the selected body has the form
+$m_i k_i(w-v_i)$; an undefined scale contributes zero, a disabled
+link is skipped, and a missing wind component returns without
+these writes. The serial fixture executes the selected source
+force-application body with authored values and records the calls.
+It does not execute the wind update, sample transport, physics
+integration or real wind exposure.
+
+\paragraph{Same-cut resource law.}
+Take two eligible unit-weight links at rest with unit scaling.
+The first modeled role needs reserve against positive wind force
+and the second against negative wind force. For a common scalar
+wind input $w\in[-2,2]$ and one fungible reserve, simultaneous
+requirements are $\max(w,0)+\max(-w,0)=|w|$, with exact maximum 2.
+The sum of the two individual maxima is 4. If the model actually
+allows independent wind inputs, the two extreme demands can
+coexist and 2 would be insufficient. The common input is
+therefore a substantive envelope, not transferable to arbitrary
+spatial flow. Sixty-five dyadic matched source points include
+both attaining endpoints. More generally for fixed local
+velocities and nonnegative fixed scales in this scalar law,
+opposing one-sided demand is a convex piecewise-affine function of
+the common input and attains the maximum at an interval endpoint.
+The pair with unequal local velocity and scaling verifies that
+the same wind can produce opposite force directions and unequal
+magnitudes. Common cause is not identical per-body effect.
+
+A separate authored observation history keeps one old report of
+$+2$ while the other report sees the current $-2$. Pairing both
+as one cut appears to require 4, but the selected source writes
+use the current shared input and the actual opposed demand is 2.
+The alternative comparison assumes that the single reserve can
+serve either role within the cut; without this reachability
+or with incompatible current epochs there is no such service
+guarantee. The replay does not claim any Gazebo report delay.
+This is a scoped F38 source and model comparison, not field
+weather assurance, architecture coverage or an operating policy.
+\end{document}
