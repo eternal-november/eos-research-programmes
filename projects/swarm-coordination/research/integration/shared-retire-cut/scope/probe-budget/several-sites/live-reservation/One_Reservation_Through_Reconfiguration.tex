@@ -1,0 +1,39 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{One reservation is enough for a rescue through live changes}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+Two resources, warehouse $W$ and radio $R$, each have a left and a right choice. The possible \emph{unreserved} availability states are
+\[
+ A=(W_L,R_L),\qquad B=(W_L,R_R),\qquad C=(W_R,R_R).
+\]
+For each rescue, initially any state is possible. Between successive targeted reads, the environment can change state, with a total budget of $s$ transitions, and can see the next queried name. One variant allows just $A\leftrightarrow B\leftrightarrow C$; a second variant additionally permits the direct $A\leftrightarrow C$ change at unit cost. Responses are truthful. The controller can commit immediately after a read, before another state change. It needs a positive verification for each chosen site and both choices still usable at commit. An old positive alone does not establish continued availability, but a later observation can establish that the same verified choice is usable again.
+
+For a lockable resource, a positive read atomically reserves the chosen site. That reservation protects it from subsequent changes in baseline availability through commitment, and cannot obstruct the other resource's independent reservation or use. This is new authority, not additional information. It does not prevent the state law from changing. The original separated warehouse and SubT fixtures do not implement or validate these guarantees. Their earlier compound replay motivates the three states, but neither this transition law nor a finite switch budget is inferred from the fixtures.
+
+\begin{theorem}
+On either transition graph, the exact worst-case number of targeted reads with one or two lockable resources is $s+3$. If neither resource is lockable, exactly three reads are necessary and sufficient for $s=0$, and no finite read bound suffices for $s\ge1$.
+\end{theorem}
+
+\begin{proof}
+First, give the controller both reservations. If its first query is a common site, $W_L$ or $R_R$, a positive is consistent with two adjacent states that have opposite choices of the other resource. Stay at one of these states set so that the first query of that other resource is negative, costing no transition. The already-reserved resource cannot distinguish the states. Thereafter deny another $s$ queries of the outstanding resource, using a transition along the adjacent edge only when the queried site would otherwise be positive. If the first query is a rare site, answer negatively in $B$ and stay there until the first reservation. The initial negative is already free. Whichever resource remains unreserved can be flipped along one of the two edges incident to $B$, so the same argument forces $s$ further negatives. In both cases two positive reads are still required. Extra reads of a reserved resource do not help. This proves the lower bound even on the path.
+
+For the upper bound let just $W$ be lockable. Exchange the roles and reflect left/right to treat the case of only $R$ lockable. Start with $W_L$ if $s$ is even and with $R_R$ if $s$ is odd. Until the first positive, alternate these two choices after each negative. A negative of $W_L$ identifies $C$; a negative of $R_R$ identifies $A$. After the first negative, each further negative in this phase charges a distinct intervening transition.
+
+If the first positive locks $W_L$, start checking $R_L$ and then alternate radio choices after each miss until a positive. If the preceding phase had a negative, its last one was $R_R$ false in $A$, so the first $R_L$ miss requires another transition after that evidence. Subsequent radio misses charge distinct transitions, since the correct radio choice immediately after a miss is its opposite. If the first phase had no negative, there can instead be one free radio miss. In either case the total is at most $s+1$ negatives and two positives.
+
+If the first positive is bare $R_R$, keep it as verification of that site. Start checking $W_R$ and alternate with $W_L$ after misses until the warehouse reservation succeeds. A positive $W_R$ identifies $C$ now, so the earlier verified $R_R$ can be used without another radio check. A positive $W_L$ leaves $A$ or $B$; perform one last check of $R_L$. If positive use it; if negative then the previously verified $R_R$ is currently usable.
+
+For the count in this last case, write $n$ for the number of negatives before the first positive $R_R$. If $n=0$, the initial choice was $R_R$ and $s$ is odd. The first warehouse miss can be free, later ones cost distinct moves, and at most $s+1$ warehouse misses are possible. This bound is even. If $n>0$, the last prephase negative was $W_L$ false in $C$. The first $W_R$ miss therefore costs a new move after that last negative, even though a bare positive intervened, and all later warehouse misses cost distinct moves. Their budget is at most $s'=s-n+1$, which is even by the initial choice of parity. A last successful warehouse read is $W_R$ after an even number of warehouse misses, and $W_L$ after an odd number. Only the odd case uses an extra final radio read, and it has at least one fewer miss than the even bound in either subcase. Altogether the controller uses at most $s+3$ reads. The proof only charges a change when the states must differ, so it also works with direct transitions.
+
+With no locks and no changes, use the static three-read policy and the existing lower bound. Now allow one change. Consider a putative finite sure policy on the all-$B$ history, and let its last read be of $W$ or $R$. Just before that read, switch $B\to A$ if it reads $W$, or $B\to C$ if it reads $R$. The last answer and entire earlier transcript are unchanged, but the other resource now needs a different site, so the same commitment cannot work in both. No change after the final read is needed. This argues about sure guarantees and not an average over stochastic changes.
+\end{proof}
+
+\paragraph{Liveness of evidence.}
+Two truthful bare positives can describe a pair that was never jointly usable: first read $W_R$ in $C$, then later $R_L$ in $A$ after $C\to B\to A$. Even one change can make an old positive stale while the pair still looks admissible in the static support. A joint snapshot solves the same-history question at its acquisition instant, whereas the locked side solves persistence through the final check. Compare \href{https://dspace.mit.edu/entities/publication/355717a8-388a-46a4-afc6-800d0d1522b8}{atomic snapshots} and \href{https://web.stanford.edu/class/cs240/WWW/readings/89-leases.pdf}{time-bounded leases}; neither premise about a particular implementation is supplied by this proof. The matched comparator searches causal policies at exactly the same observation and reservation interface. The replay checks the formula and separate explicit traces of the one-lock construction. This is a finite model of recovery through a live change, not a measured timing or integration claim.
+
+\end{document}

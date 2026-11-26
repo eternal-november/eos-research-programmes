@@ -9,3 +9,5 @@ Run python3 replay.py and compare stdout with results.json. This is an abstract 
 The optional compound control replays two separately pinned resource adapters with a declared coupling between their old scopes. For dependencies and the command, see NATIVE.md.
 
 [Joint risk under a hard read budget](joint-risk/) gives sharp failure bounds for known joint laws and unknown coupling with fixed single-resource marginals.
+
+[Live checks with one reservation](live-reservation/) separate true readings from retained authority and give an exact bound after bounded state changes.
