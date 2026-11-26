@@ -1,0 +1,135 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}
+\title{One standby relay, several possible recipients}
+\begin{document}
+\maketitle
+
+A relay must keep an existing geometric link while it moves to serve
+whichever recipient a report names. Each pair of possible recipients may
+admit a deadline even though no policy meets it for all recipients. The
+distinction is one shared standby state, rather than a new placement for
+each pair.
+
+\paragraph{Model.}
+Let \(C\subset\mathbb R^d\) be nonempty, compact and convex. A finite
+nonempty set of worlds \(J\) has nonempty closed service regions
+\(F_j\subseteq C\). A truthful report names \(j\) at time zero.
+Before that report there is no observation that distinguishes the worlds.
+The relay may have any common position and velocity achievable while
+remaining in \(C\); in particular, any placement at rest in \(C\) is
+available before the clock starts. From the report to the deadline \(T\),
+it must remain in \(C\), satisfy \(\|\dot v\|\le a\) almost everywhere and
+\(\|v\|\le V\), and end at rest in \(F_j\). The bounds \(a,V\) are positive
+and isotropic; velocity is absolutely continuous. A common stationary
+delivery dwell \(w\) after arrival can be budgeted separately, provided
+service remains available during that dwell. Obstacles, moving recipients,
+link intermittence, and faults during forwarding are not part of the
+model. Region membership is not a packet-delivery guarantee.
+
+\begin{theorem}
+Define
+\[
+ r=\min_{x\in C}\max_{j\in J}\operatorname{dist}(x,F_j),\qquad
+ D(T)=
+ \begin{cases}
+ aT^2/4, & T\le 2V/a,\\
+ VT-V^2/a, & T\ge 2V/a .
+ \end{cases}
+\]
+There is a causal policy meeting the deadline for every world if and only
+if \(r\le D(T)\). Therefore the optimal post-report duration is
+\[
+ T_*=
+ \begin{cases}
+ 2\sqrt{r/a}, & r\le V^2/a,\\
+ r/V+V/a, & r\ge V^2/a .
+ \end{cases}
+\]
+Motion before the report cannot make the best freely chosen standby
+placement faster.
+\end{theorem}
+\begin{proof}
+Let \((x_0,v_0)\) be the common state when the report arrives and let
+\(x_j(T)\) be a terminal position. Set \(\tau=\min(T/2,V/a)\).
+Compare each trajectory with the same reference velocity, \(v_0\) up to
+\(\tau\) and zero thereafter. Before \(\tau\), the difference is bounded
+by \(at\), by the acceleration bound. After \(\tau\), the difference is
+bounded by \(\min(a(T-t),V)\), by terminal rest and the speed cap.
+These bounds equal \(\min(at,a(T-t),V)\) on their respective intervals.
+The reference velocity is a device for the estimate and need not be a
+feasible trajectory. Integrating gives
+\[
+ \|x_j(T)-(x_0+\tau v_0)\|
+ \le \int_0^T\min(at,a(T-t),V)\,dt
+ =D(T).
+\]
+Project \(x_0+\tau v_0\) onto \(C\). If its projection is \(p\), the
+projection inequality \(\langle x_0+\tau v_0-p,z-p\rangle\le 0\) for
+\(z\in C\) follows by minimizing distance along the segment from \(p\) to
+\(z\). Expanding squared distances gives
+\(\|p-z\|\le\|x_0+\tau v_0-z\|\). Apply it to each \(x_j(T)\). This
+proves necessity without assuming the common state is at rest.
+
+For sufficiency choose a minimizing standby point in \(C\); it exists
+by compactness. Each \(F_j\) is compact, so choose a closest point
+\(z_j\) and write the distance as \(d_j\). For \(T>0\), move on the
+segment from standby to \(z_j\) at speed
+\((d_j/D(T))\min(at,a(T-t),V)\), taking the constant path if \(d_j=0\).
+The profile starts and ends at rest, has integral \(d_j\), and stays
+within both bounds; the segment stays in \(C\). For \(T=0\), feasibility
+is exactly the existence of a common point. Solving \(D(T)=r\)
+gives the formula.
+\end{proof}
+
+\paragraph{How many worlds need to be checked?}
+When the \(F_j\) are convex, each allowed standby set
+\(\{x\in C:\operatorname{dist}(x,F_j)\le D(T)\}\) is convex.
+By Helly's theorem, checking all simultaneous subfamilies of at most
+\(d+1\) suffices; each subfamily still requires one common standby.
+This bound cannot be reduced in general. Take the service sets to be
+the individual vertices of a regular \(d\)-simplex within \(C\).
+With side length \(s\), the smallest enclosing radius of a
+\(k\)-vertex face is \(s\sqrt{(k-1)/(2k)}\). Its centroid is equidistant
+from the \(k\) vertices, and their mean squared distance to any other
+point increases by the squared distance to the centroid.
+The displayed value follows by summing squared distances between
+ordered distinct vertices. Choose \(D(T)\) between the
+\(d\)-vertex and \((d+1)\)-vertex values.
+
+\paragraph{Pinned geometry.}
+Use the first acute triple (indices \(1,2,3\)) among the first five
+initial positions in the published 3D scenario. The authored model
+keeps the relay in a ball of radius \(1.65\) around recipient \(2\).
+Each new service ball has radius \(R=0.8\). All three anchors lie in
+\(C\). If \(b\) is their smallest enclosing radius, then
+\(r=\max(0,b-R)\). The lower bound is the triangle inequality at every
+anchor. A smallest-ball center lies in the convex hull of the anchors
+(project onto their hull if necessary); the segment from it to each
+anchor lies in \(C\) and reaches the corresponding service region
+within distance \((b-R)_+\).
+
+The replay certifies the enclosing ball by positive weights
+\(\lambda_j\) whose sum is one. Their weighted centroid \(c\) is
+equidistant from all three anchors \(p_j\), at squared distance \(b^2\).
+For any \(x\), \(\sum_j\lambda_j\|x-p_j\|^2=b^2+\|x-c\|^2\).
+The pairwise tests allow durations starting at approximately \(0.55105\)
+with \(a=1,V=0.2\); the joint deadline is \(0.57816\). At duration
+\(0.57\), every pair passes with a pair-specific standby and the three
+together fail, even allowing pre-report motion. The decisions use
+rational squared distances; the displayed cutoff times are rounded.
+
+\paragraph{Boundaries.}
+Welzl's enclosing-ball method is an applicable direct geometric
+baseline for the equal-radius example; it gives the same placement and
+radius. The contribution here is the exact reduction from causal motions
+with a possibly nonzero common velocity, not a better enclosing-ball
+algorithm. The source formation controller handles managed departures
+with bridging edges formed in advance. Only its initial geometry is
+reused; this is neither a simulation of that controller nor a ranking
+against it. If \(C\) is not convex, the distance condition need not
+suffice: take \(C=\{-1,1\}\) with a different terminal in each component.
+If free standby placement is removed, the motion lower bound still
+applies, but need not be attainable. This result does not discharge R6
+or certify an independent mission.
+\end{document}
