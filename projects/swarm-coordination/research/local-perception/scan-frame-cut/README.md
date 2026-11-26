@@ -20,3 +20,5 @@ python3 replay.py /path/to/pins | cmp results.txt -
 The selected methods run unchanged with serial stand-ins. The manager's
 delegation to TF is inspected, not native TF buffer execution. No actual
 vehicle, hazard or braking claim.
+
+[Monitor history](monitor-history/): exact trigger and release histories under declared common shifts and bounded changes between epochs.
