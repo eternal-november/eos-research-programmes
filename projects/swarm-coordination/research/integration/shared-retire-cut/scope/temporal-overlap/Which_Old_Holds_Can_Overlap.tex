@@ -1,0 +1,49 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{Which old holds can overlap at a recovery cut?}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+An allocator hands off a resource with old jobs still outstanding. An old job $i$ holds $w_i\ge0$ integer units on $[e_i,x_i)$, from actual entry until actual clearance. The source promise for all endpoints is a feasible integer simple temporal network (STN): constraints $z_v-z_u\le c_{uv}$, with a reference $z_0=0$. It entails $x_i\ge e_i+1$ for every hold. Endpoints are times of physical effects in the model, not message or grant times. The law can constrain different jobs jointly. At a fixed tick $t$, the new allocator must bound the total old resource in one possible history. It cannot add each job's individual worst case if those cases cannot coincide.
+
+\begin{theorem}
+Write $d(u,v)$ for the shortest upper bound on $z_v-z_u$, taking $+\infty$ when no path exists. Keep jobs satisfying
+\[
+   -d(e_i,0)\le t,\qquad t<d(0,x_i).
+\]
+On those jobs form the strict partial order
+\[
+   i\prec j \quad\Longleftrightarrow\quad d(e_j,x_i)\le0 .
+\]
+A set of kept jobs can all hold the resource at $t$ in one history if and only if it is an antichain of this order. In particular the maximum old load is the maximum weight of an antichain.
+\end{theorem}
+
+\begin{proof}
+To require each $i$ in a proposed set to be active, add $0\to e_i$ of weight $t$ and $x_i\to0$ of weight $-(t+1)$ to the difference graph. In a graph with feasible old constraints, any new negative closed walk contains a negative simple cycle using at least one new edge. Each new edge is incident to $0$, so a simple cycle uses at most one of each type. A cycle using only one new edge violates one of the displayed eligibility bounds. A cycle using both new edges has negative weight precisely if an old path from $e_j$ to $x_i$ has weight at most zero. The same-job possibility is excluded by the old positive-duration bound. Conversely any such old path yields a negative closed walk, whether or not the path itself touches $0$. Thus the conditions are necessary and sufficient. Feasible integral schedules follow from integer shortest-path potentials, shifted to zero at the reference.
+
+The relation expresses forced completion of $i$ before or at entry of $j$. If $i\prec j\prec k$, then the old path $e_k\to x_j\to e_j\to x_i$ has bound at most $-1$ after using the duration of $j$, so $i\prec k$. A self-relation contradicts positive duration and feasibility. This proves the partial-order claim. Nonnegative weights allow us to maximize total occupancy by selecting any antichain and finding a schedule in which all selected jobs are active. Such a schedule cannot add positive unselected load above the maximum.
+\end{proof}
+
+\paragraph{Algorithm and witness.}
+On the eligible jobs make left and right copies of every vertex and connect a source to the left copy and the right copy to a sink, each with capacity $w_i$. For every $i\prec j$ connect left $i$ to right $j$ with capacity one larger than the total weight. The answer is total weight minus the maximum flow. To see this, replace each job conceptually by $w_i$ interchangeable, mutually incomparable copies, with all the same comparisons to other jobs. Dilworth's width theorem and its bipartite matching construction give the formula on the copied graph. Integral flows in the compressed graph correspond to matchings of the copies: distribute the finitely many units leaving or entering each job among distinct copies of the appropriate side. No actual expansion in the magnitudes of weights is required. An antichain of optimal weight consists of the jobs with reachable left copy and unreachable right copy in a minimum cut. Such jobs are pairwise incomparable and their weight is at least total weight minus cut value; equality follows from the width formula. The original STN with their active bounds gives an attaining schedule for audit. When only the tick changes, the precedence relation stays unchanged and eligibility changes only at its entry and exit window endpoints.
+
+\paragraph{Exactly what an allocator may inherit.}
+For arbitrary nonnegative per-job weight queries on the same law and tick, the eligible names and their undirected comparability graph are the exact summary. They suffice by the antichain rule. Unit weight on one name tests eligibility. Unit weight on two eligible names gives one if comparable and two otherwise, so deleting either distinction can change a later answer. This statement ranges over arbitrary such probes, not just one fixed operational demand. The graph does not retain the direction of a comparison or enough timing information to reconstruct an attaining physical schedule without the source. In a map or role cut a pending job can stay on the list until actual release; a new allocator can change how much the named old effects consume in its accounting without recomputing their possible overlap, but only if the normalized names, the eligibility bounds and the relevant comparisons still refer to the admitted histories.
+
+\paragraph{Absolute timing updates do not change the eligible conflict graph.}
+Compile the order from the relative constraints only, leaving all edges incident to the zero reference outside the stored graph. Add, remove, or replace absolute bounds and suppose the resulting STN is feasible. To answer the load query, update each job's eligibility under that STN. The original relative order, restricted to the updated eligible set, is still exact. Indeed any new path that could create a comparison must pass through the reference. For two eligible jobs, the part from $e_j$ to the reference has bound at least $-t$ and the part from the reference to $x_i$ has bound at least $t+1$, so such a path has weight at least one. It cannot introduce a comparison. Conversely a relative path that created a comparison is still present. This argument also covers multiple replaced absolute bounds at once; the stored graph never used them.
+
+The two time-window vectors can be recomputed without full closure of the amended graph. A shortest path from the reference can be taken simple and then uses only one initial absolute edge followed by a relative path. A shortest path into the reference has only one final absolute edge. Thus each updated window endpoint comes from a minimum across those boundary edges and the relative distances, or is infinite if none applies. Updating a relative bound is different: with one job forced to end before another starts, the pair cannot overlap even if both remain individually eligible, and removing that relative edge can change the maximum. A caller that republishes an absolute activation or inspection time can therefore reuse the order, but may not freeze dependencies through a changed relative handoff restriction.
+
+\paragraph{Information bound.}
+The exact named interface can require quadratic bits. Split the $n$ jobs into two groups as evenly as possible and independently choose which cross-group precedence edges are present, all directed from the first group to the second. Give each job its own positive-duration constraint and put no absolute bounds on times. These are feasible temporal laws: one may put the first group before the second. No cross pair acquires an extra forced precedence by transitivity, since there is no mixed second-to-first edge. Every individual hold can be active at the named tick by translating a feasible schedule with that job active. Thus the two-job unit probes distinguish all $2^{\lfloor n^2/4\rfloor}$ choices. A fixed-width summary supporting all such named weight queries needs at least $\lfloor n^2/4\rfloor$ bits in this family. This does not apply when weights and queried job sets are fixed in advance.
+
+\paragraph{Alternate source laws.}
+If there are several alternative STNs, solve each and take the largest load. The union of their pair-compatibility answers need not give a valid graph: three histories can permit exactly the pairs $\{a,b\},\{a,c\},\{b,c\}$, with no history permitting all three. This is a genuine obstruction to joining possible pairs independently after a map or authority branch. It is not an objection to the theorem for a single STN. Multiple simultaneous intervals are covered when each is a separately named positive hold in the same STN with fixed weight; contingent absence, mutually exclusive uses or signed net production require a different encoding or the event formulation.
+
+\paragraph{Comparator and evidence.}
+\href{https://cdn.aaai.org/ICAPS/2004/ICAPS04-032.pdf}{Muscettola's resource envelopes} already solve the more general stepwise resource accounting problem by event maximum flow, and reuse flows between cuts. The comparison here gives independent flow on occurred events: events due by $t$ form a closed set under necessary precedence, with each entry adding $w_i$ and each exit subtracting it. The same negative-cycle argument shows which such sets are feasible (allow forced and forbidden events from each window). The new interface is the narrower characterization of feasible old-job sets, geometric scope, and reweighting queries; no improvement over the established event algorithm's runtime is claimed. The exact replay compares both flow formulations with full STN closure and attains every reported optimum with a concrete schedule. The separate map example uses authored physical occupancy under a pinned high-level specification, not a trace of a deployed robot.
+\end{document}
