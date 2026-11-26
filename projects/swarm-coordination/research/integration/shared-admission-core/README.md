@@ -56,3 +56,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Hosted cave cue and prior physical duty
 
 [Hosted and dedicated cave probes](hosted-cave-probe/README.md): individually feasible route choices may spend a still-live old clearance tick while obtaining the cue. The initial check rejects that hosted prefix even if an erased cue would later prevent any new report. Same-information exact direct ties.
+
+## Reply shape and the earlier consumer
+
+[Packed reply versus early prelude](ack-packing-window/README.md): the same final fields can give different old physical effects. Early independent availability and a spare route repair different sides of the shared-airtime obstruction. Matched exact direct ties.
