@@ -18,3 +18,14 @@ on use. The register now has 93 labels with scoped leads and 17 without.
 No new labels or mappings were added, and every integrated disposition
 remains open. A source-backed result tests the cited part of a source,
 not the whole vehicle, interface, or coupled mission.
+
+## Rollout and calibration evidence through #535
+
+The register now has 96 labels with scoped leads and 14 without.
+The first leads for F03, F24 and P07 distinguish a map/policy rollout
+from the old execution and its physical clearance, with a separate
+source replay for coordinate capture. The version/role crossing is an
+authored model; the source replay does not establish that a stock adapter
+executes that crossing. P06 remains open without a scoped lead under its
+independent-monitor discriminator. Both inventory pins and the mapping
+table are unchanged, and all 110 architecture-level dispositions remain open.
