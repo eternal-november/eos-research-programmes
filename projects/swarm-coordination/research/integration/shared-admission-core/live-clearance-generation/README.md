@@ -19,3 +19,6 @@ broker debit interposed between preflight and send.
 
 The [source-step lease follow-up](source-step-lease/) checks when a remote
 consuming cut does not need a fresh warehouse read.
+
+The [source-held pledge follow-up](terminal-pledge/) trades the remote
+clock bound for an effect guard, terminal evidence, and a possible wait.

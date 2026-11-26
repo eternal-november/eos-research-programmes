@@ -1,0 +1,86 @@
+\documentclass{article}
+\title{Holding a source effect until a remote obligation is terminal}
+\begin{document}
+\maketitle
+
+\paragraph{What changes.}
+The previous source-step lease avoids a synchronous remote read only under
+a justified bound on source action opportunities. This follow-up replaces
+that timing premise with a source promise, a local effect guard, and
+positive evidence of remote closure. The physical promise is absence of
+the named carrier from the bay, not that the bay is empty of all objects.
+The carrier has left and faces back into the bay. Its old command source
+asks to return at every opportunity. The guard runs before each native
+source step and replaces only a command that would enter the protected
+bay. An unrelated carrier's move and radio delivery still run at the first
+cut. There is no concurrent source actuator outside the wrapper, no forced
+physical displacement and no need for synchronized clocks. A command
+already issued to a different actuator would require a separate
+effect-side interlock.
+
+\paragraph{Two local interfaces.}
+Install a source hold before publishing the capability for the named
+operation. The receiving application can spend it while the operation is
+live. A successful native callback records paid closure; a failed attempt
+can still consume native transmitter budget and does not close the
+obligation. An authorized cancellation, when applied at the receiver,
+records a fence before making a terminal receipt available; it does not
+claim the report was delivered. For this fixture only, either terminal
+kind permits return. Arrival of a receipt for this named operation
+clears the physical hold. Merely requesting cancellation, or polling
+before the fence is installed, does not. After a terminal result the receiver
+must continue refusing old uses. No timer can substitute for both obligations
+under arbitrary receipt loss. The wrapper has one live capability identity
+and models restarts of the application control state, not the underlying
+warehouse or broker. A deployed version needs non-reused identities or
+an independently justified supersession rule; a transport envelope must
+bind the receipt to the right operation and source hold.
+
+The two critical local orders are distinct. At the source, first install
+or recover the guard, then accept relevant movement. At the receiver,
+an effect and its terminal update occupy a single modeled operation,
+while cancellation installs its terminal state before any receipt. An
+interruption between effect and terminal recording is not covered by the
+atomic modeled step. An actual implementation needs an idempotent effect
+or an effect-side commit/recovery record; stable storage of a Boolean alone
+does not establish that property.
+
+\paragraph{Invariant and obstruction.}
+A nonterminal receiver implies an active source hold. The transition
+proof checks this implication from initial issuance through all finite
+histories of effect, fence, receipt and other steps, interpreting protected
+restart as state preservation. A guarded native return is disallowed when
+the hold is active, so every possible admitted remote effect has the
+required source clearance. Retiring the guard on cancellation request
+violates the implication. Forgetting the guard at source restart, or
+forgetting the terminal fence after the source has released, violates it
+in opposite directions. Without terminal evidence, a closed receiver and
+one still able to use the capability can have the same local source view.
+Unconditionally returning on that view cannot guarantee safety. Delaying
+only the conflicting movement carries an explicit liveness cost instead:
+a lost terminal receipt can leave return blocked indefinitely.
+
+\paragraph{Replay.}
+The schedule enumerates orders of offer arrival, two use attempts, request
+and application of cancellation, a terminal read opportunity, and a
+control restart, respecting request before applied fence and attempt 1
+before attempt 2. First-attempt RF loss and three restart scopes are swept.
+The existing broker fixture executes active transmitter/receiver checks,
+RF behavior, and actual delivery callbacks; the pinned warehouse executes
+each admitted or guarded movement. The effects and custody protocol are
+not fabricated as a table of returned outcomes. The wrapper still supplies
+which messages have arrived and its durable-state semantics.
+
+In 7,560 configurations per arm, the scoped guard gives 2,394 deliveries,
+no unauthorized deliveries or duplicates, and all independent first-cut
+continuations. It ties an independent same-information route check using
+the same pledge. A blanket halt preserves the checked safety and deliveries
+but misses every unrelated first-cut continuation. Releasing on cancellation
+request permits 1,638 unauthorized deliveries. Forgetting the source guard
+on restart permits 882; forgetting terminal receiver state permits 120 and
+8 extra callbacks across the sweep (counts can overlap). These are schedule
+counts in a finite fixture, not rates. An actual timeout-based best
+established adapter is not compared. This establishes a reusable local
+contract shape and an explicit availability limit, not acceptance of the
+inventory, an independent mission result, or transport to physical robots.
+\end{document}
