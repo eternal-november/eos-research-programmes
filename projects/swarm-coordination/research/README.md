@@ -194,6 +194,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Multiple owners
 
+**SC-CAUSAL-APPOINTMENT: Can two truthful authority receipts justify the next grant?** Two independent ledgers can report the same positive versions while the appointment depends on a later withdrawal in only one run. A scoped predecessor comparison is necessary and sufficient on the pair; current operating access and physical occupancy remain separate checks. [Proof and replay](multi-owner-coordination/causal-appointment/README.md). Scoped cooperative and limited-trust R5; full causal reader ties.
+
 **SC-NAMED-WITHDRAWAL:** An unchanged old footprint can hide which shelf a new owner may lawfully move. An actual local conditional withdrawal handles either placement without globally disclosing identity; a fixed bay cannot. [Proof, exact profile splits and native replay](multi-owner-coordination/named-withdrawal/README.md). Same-information direct policy ties.
 
 **SC-LANE-WITHDRAWAL: When can a successor start after an owner withdraws?** Port-side authority and physical clearance are different: a prior start can stay live after revocation. A receipt-only rule, a timeout and an independent reserve have different service consequences. [Proof](multi-owner-coordination/lane-withdrawal/Withdrawal_With_Live_Lane_Use.tex) · [Replay](multi-owner-coordination/lane-withdrawal/README.md).
