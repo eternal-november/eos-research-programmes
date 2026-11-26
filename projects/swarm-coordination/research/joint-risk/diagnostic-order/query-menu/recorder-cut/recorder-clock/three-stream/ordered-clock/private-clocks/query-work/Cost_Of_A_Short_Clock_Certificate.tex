@@ -1,0 +1,106 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}
+\title{A short clock certificate can be expensive to obtain}
+\begin{document}
+\maketitle
+
+One fixed admission question suffices to separate certificate size
+from the work of selecting measurements. The certificate has length
+\(m\), but the coordinator can need \(m^2\) queries to find it.
+The gap does not require a later consumer that changes its mind.
+
+\paragraph{Interface.}
+There are \(m\) disjoint acquisition blocks, each with two episodes.
+The first episode starts successful in the anchor, the second
+failed. Each block has \(m\) separate clock sources relevant
+only there. Use the pinned model in which their complete streams
+have maximum residual \(9/4\), fixed private offsets in \([0,1]\),
+and stamps shifted by one in the relevant block with flags
+\(0,1\). They have two successful records in other blocks.
+With the two anchor timestamps separated by two units and
+the block bases separated by ten, the previous calculation
+gives a feasible sorted join at every offset. A relevant
+source can move its failure to the first episode precisely
+when its offset lies in \([3/4,1]\).
+An ideal query asks one named source for this historical bit.
+All bit assignments are possible by choosing offsets zero
+or one. Neither the source of the bit nor parallel read
+latency is assumed: work counts total individual queries,
+with exact decisions required in both outcomes.
+
+The worst compatible failure count is \(m\) plus the number
+of blocks with at least one affirmative bit. Use threshold
+\(2m-1\), so the cap is violated iff every block has an
+affirmative bit. Padding isolated, forced-safe episodes can
+fix the cap fraction without changing the queries.
+
+\begin{theorem}
+For any \(m\ge1\), the shortest certificate on every input has
+\(m\) answers; exact deterministic decision needs \(m^2\) in the
+worst case. For zero-error randomized algorithms the optimal
+worst-case expected number is \(m(m+1)/2\).
+\end{theorem}
+\begin{proof}
+To certify violation, show one affirmative bit in each block.
+Every certificate must show one in every block, or there
+is a completion in which the omitted block is all negative.
+To certify the cap, show a block with all answers negative.
+Without such a block, every block can still have an affirmative
+bit. Thus both minimal certificates cost \(m\).
+
+The deterministic adversary answers negative on the first
+\(m-1\) queries of each block and affirmative on the last.
+Before all \(m^2\) queries, any unfinished block can be assigned
+all negatives or a final affirmative, so both verdicts remain
+possible. Reading all bits attains the bound.
+
+For the randomized lower bound, consider positive inputs with
+one affirmative per block, independently uniform among the
+\(m\) locations. Every exact algorithm must find every affirmative.
+Conditional on observed answers the remaining location in any
+unresolved block is uniform, including when the queries are
+interleaved with work on other blocks. Its expected rank in
+the query order is \((m+1)/2\). Sum over blocks and average over
+inputs to bound the worst expected work for any algorithm.
+
+For the matching upper bound, uniformly permute the blocks and
+the sources within each block. Stop reading a block at its
+first affirmative and stop the procedure on finding an
+all-negative block. If no block is all negative, each costs
+at most \((m+1)/2\) in expectation. With \(z\ge1\) all-negative
+blocks, the expected number of positive blocks before the first
+negative is \((m-z)/(z+1)\), by symmetry of the \(z+1\) gaps
+in the order. The expected total is at most
+\[
+     m+\frac{(m-z)(m+1)}{2(z+1)}
+       \le \frac{m(m+1)}{2}.
+\]
+The last inequality follows by substituting
+\(z=1\) for the largest
+left-hand expression. This proves the value without an assumed
+probability law on real clocks.
+\end{proof}
+
+\paragraph{What the test separates.}
+At four blocks the certificate, exact deterministic worst work,
+and zero-error worst expected work are respectively 4, 16 and 10.
+A coordinator can simply refuse to admit an unresolved case;
+the theorem is about deciding both branches, not about the least
+cost of a safe refusal. If a source already supplies a trustworthy
+aggregate per block, the coordinator reads fewer values, but the
+proof must then account for evidence acquisition where the
+aggregate was produced. Parallel queries may reduce wall time
+without changing the work count. A recent polling response is
+not itself the historical bit; the companion LinuxPTP and rate
+model results explain which additional evidence would license it.
+
+The replay independently evaluates the two-record timestamp
+permutations for 530 Boolean fixtures. A decision-tree recurrence
+checks deterministic depth through seven blocks, and direct
+enumeration of randomized block orders checks the constructive
+strategy through five. This is a scoped classical AND-of-OR
+query model realized by the project's clock constraints, not a
+claim of a new decision-tree lower-bound technique, measured
+sensor cost, or full L1/R4 acceptance.
+\end{document}

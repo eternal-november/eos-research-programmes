@@ -12,3 +12,5 @@ The boundary is scope of the unresolved offset: known offsets, a single common o
 The [certificate follow-up](coverage-audit/README.md) bounds the hard case from both sides and states when a bound cannot settle a cap.
 
 The [LinuxPTP freshness replay](ptp-freshness/README.md) checks a concrete source boundary: a new ingress time does not, by itself, certify a new offset estimate.
+
+The [historical query follow-up](query-work/README.md) gives the exact cost of finding a short clock certificate even for one fixed risk cap.
