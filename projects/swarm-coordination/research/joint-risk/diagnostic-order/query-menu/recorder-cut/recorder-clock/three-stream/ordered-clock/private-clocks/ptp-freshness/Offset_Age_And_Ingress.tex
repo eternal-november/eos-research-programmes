@@ -1,0 +1,46 @@
+\documentclass[11pt]{article}
+\title{A newer LinuxPTP ingress timestamp need not carry a newer estimate}
+\begin{document}
+\maketitle
+
+The pinned LinuxPTP management report \texttt{TIME\_STATUS\_NP}
+copies the stored master offset and the sync ingress timestamp.
+Those fields need not refer to one successful offset calculation.
+An ingress timestamp alone is not a certificate of estimation age.
+
+\paragraph{Executed selected code.}
+The synchronization method stores the newly delivered ingress time
+before asking \texttt{tsproc\_update\_offset} for an estimate.
+In filter mode without a valid filtered path delay, that method
+returns an error before writing to the offset pointer. For the
+non-free-running case, the synchronization prefix then returns
+without undoing the ingress write. The management switch case
+copies both fields as they stand. This is separate from the
+source's explicit \texttt{step\_window} rejection, which returns
+before the ingress write.
+
+The replay starts with stored offset 6 and ingress 100. A sync
+with ingress 1120 reaches that filter path. Without a valid delay,
+the report is now offset 6 with ingress 1120, even though no offset
+was computed at that ingress. With valid delay 114 and the same
+origin and ingress, the source recomputes offset 6 and reaches
+the later synchronization code. At the compiled seam the
+management fields are identical between the two branches.
+A valid delay of 113 produces offset 7 as a positive control.
+The report identity and other exported metadata are held fixed
+in this fixture. No setter is replaced in the selected prefix
+or export case. The surrounding servo, actual timers, wire
+serialization and network are not part of the replay.
+
+\paragraph{Implication for the risk audit.}
+A consumer requiring an offset estimate at the acquisition cut
+must establish that the timestamp and value belong to the same
+successful calculation, or otherwise bound the retained estimate's
+age. Even a fresh current measurement need not certify an entire
+past acquisition epoch. A usable historical clock-class query
+also needs the clock identity/epoch, a phase and rate envelope,
+and error bounds backed by the actual clock and sensor sources.
+The fixture does not calibrate those bounds or show a field
+failure. It rules out using this report alone as a fresh historical
+query in the stated code path.
+\end{document}
