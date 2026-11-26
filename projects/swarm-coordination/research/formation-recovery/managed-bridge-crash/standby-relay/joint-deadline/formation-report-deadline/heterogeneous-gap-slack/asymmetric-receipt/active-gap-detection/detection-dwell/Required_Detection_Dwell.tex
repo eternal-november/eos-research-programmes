@@ -1,0 +1,120 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{When seeing a formation gap requires a sustained view}
+\begin{document}
+\maketitle
+
+The optimal point sample only touches the detection threshold.
+It does not provide an interval of usable observations. A
+detector that needs a sustained view changes the optimum, even
+with zero additional transmission delay.
+
+\paragraph{Law.}
+Keep the forward-only two-robot model with \(a=V=1,A=4,W=3\),
+time 4, target common rest-to-rest advance \(D\), and physical
+gap band \([1,8/5]\). The hidden initial gaps are \(6/5\) and
+\(7/5\). The detection range is \(6/5-d\), \(0<d\le3/800\).
+Now the controller may schedule one interval \([s,r]\) of
+length \(h>0\). It obtains a valid detection at \(r\) only if
+the view was available for the whole interval. It gets no
+partial readout before \(r\). A valid negative is distinct
+from erasure. Assume \(0<h\le1/10\).
+This is an authored acquisition law, not a guarantee from
+a camera, optical receiver, or radio source.
+
+\paragraph{Exact delay and advance.}
+Write \(y=x_2-x_1\) and \(t_0=\sqrt{2d}\). While the prefix
+is common, the far gap cannot be detected anywhere in the
+safe intersection band. A useful view requires \(y(t)\le-d\)
+throughout \([s,r]\); in particular \(s\ge t_0\). The exact
+advance is \(D=143/40-\lambda\), where
+\[
+  \lambda=
+  \begin{cases}
+    \sqrt{3d/2+9h^2/16}, &h\le2t_0/3,\\
+    f(t_0+h),&h\ge2t_0/3,
+  \end{cases}
+  \qquad f(t)=t-\frac12\sqrt{t^2-2d}.
+\]
+The two expressions meet at \(\lambda=t_0\). In the short case
+\(\lambda\le t_0\); in the long case
+\(\lambda\le t_0+h/2\), using \(\sqrt{h^2+2t_0h}\ge h\).
+Thus \(\lambda<0.137\) and the asserted advance exceeds \(17/5\).
+
+For the upper bound, consider a distinguishing interval ending
+by time \(1/2\). At each \(t\) in it the point-sample argument
+bounds robot 2's advance at time 1 by \(7/8-f(t)\).
+That argument still applies up to \(1/2\): the cut speed bound
+\(2\sqrt{t^2-2d}\le1\) is valid and at least half a unit of
+time remains to reach speed one. It applies even though the
+controller does not learn the observation until the end.
+For the short-dwell case, write \(b\) for the loss from \(7/8\).
+If \(b\ge t_0\), it is already at least \(\lambda\).
+Otherwise \(f(t)\le b\) for \(t\) in the view interval, and
+\(t-b>0\), so
+\[
+ f(t)\le b \quad\Longleftrightarrow\quad
+         \frac32t^2-4bt+2b^2+d\le0 .
+\]
+The permitted times have width at most
+\(\sqrt{16b^2/9-8d/3}\), implying \(b\ge\lambda\).
+For a longer dwell, \(r\ge t_0+h\), which lies on the
+increasing branch of \(f\) (its minimum is at
+\(2t_0/\sqrt3\)). Thus \(b\ge f(r)\ge f(t_0+h)\).
+For \(r\in[1/2,1]\) the cruder speed bound gives
+\(x_2(1)\le5/8-d<7/8-\lambda\).
+If there is no distinguishing read before time 1, the shared
+prefix gives \(x_2(1)\le7/10\). In all cases the near-case
+middle and final advances are at most \(2\) and \(7/10\).
+
+\paragraph{Attaining the bound.}
+For the short dwell choose \(s=4\lambda/3-h/2\),
+\(r=4\lambda/3+h/2\). The bound on \(h\) gives
+\(\lambda\le s\), and these two values are the roots of
+the quadratic above with \(b=\lambda\); \(s\ge t_0\).
+For the longer dwell start at \(s=t_0\) and end at
+\(r=t_0+h\), with \(\lambda\ge s\).
+In both cases the end is below \(1/4\) under the declared
+parameter bounds. Robot 1 accelerates at one throughout the
+first unit. Robot 2 waits until \(\lambda\) and accelerates
+at four, capping its speed at one after the view interval.
+Both endpoints have relative displacement \(-d\):
+in the short case by the root equations; in the long case
+by zero advance at \(s\) and the definition of \(f(r)\).
+Inside the interval \(y\le-d\): before the ramp this follows
+from \(t\ge t_0\); on its overlap with the ramp the quadratic
+relative displacement is convex and at most its values at
+the two ends. The most negative relative gap in the prefix
+is \(-2\lambda^2/3\), safely inside the intersection band.
+
+At delivery the speed difference \(w=3r-4\lambda\) is
+nonnegative, since the chosen end lies on the rising side
+of the relative-displacement trajectory. In the near
+branch robot 2 continues its fast ramp to the cap. Its
+relative lead at 1 is \(p=3/8-\lambda>1/5\).
+For the far branch, a feasible slower option brakes robot 2
+at four until its relative speed reaches zero, then follows
+robot 1's initial velocity through time 1. Its final relative
+gap is \(-d+w^2/10<1/5\), using \(w\le r<1/4\).
+Mix this option with the fast ramp so the relative lead at 1
+is \(1/5\). Both have nondecreasing relative gap after receipt.
+In the middle and final intervals use the scaled triangular
+speed adjustment of area \(p+1/5\) and reversed ramps with
+end lags \(1/5\) and \(p\). They attain \(D\) at rest.
+If the report is erased, use the far branch's initial option,
+middle area \(2/5\), and end lag \(1/5\). This retains the
+intersection band and achieves \(17/5\), not the larger target.
+
+\paragraph{Check and scope.}
+For \(d=63/20000\), \(h=1/25\), the exact interval is
+\([2/25,3/25]\), with delay \(3/40\) and advance \(7/2\).
+The replay checks continuous velocity and gap bounds for
+five rational cases, including a longer dwell that must begin at the earliest geometrically possible time. A sampled two-world trajectory LP
+can attain the same figure at this interval; it cannot
+start the interval at 0.075 and gives lower advance if
+the interval is moved to start at 0.085. The proof supplies
+the exact optimum over continuous time; the LP checks only the
+sampled comparator. Dwells outside the declared range, other sensor laws, speed
+changes, clock error and real evidence delivery are not
+covered. This is partial R3a/R6, not full contract acceptance.
+\end{document}
