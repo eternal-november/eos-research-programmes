@@ -1,0 +1,46 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{A timely range can still use an inconsistent pair of frames}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Native boundary and model law.}
+The pinned Navigation2 collision-monitor source checks sample age.
+With \texttt{base\_shift\_correction} it requests a transform to the current
+base time from the scan's acquisition time through its configured fixed
+frame. The manager passes those frames and stamps to the TF buffer.
+Without base-shift correction the source requests a latest transform
+between sensor and base. The selected scan and source methods execute
+unchanged against a declared, exact two-sample transform provider, not
+ROS TF buffer execution or observed calibration behavior. The modeled
+stationary obstacle is observed on an aligned ray.
+
+\paragraph{The joint evidence condition.}
+Let $P_i$ take coordinates in the base at time $i$ to a stable reference,
+and let $E$ be the fixed sensor-to-base extrinsics. The correct current
+coordinates of a stationary point seen at $s$ are $P_t^{-1}P_s E p$.
+If the reported poses instead have left-multipliers $G_s,G_t$, the
+result is $P_t^{-1}G_t^{-1}G_sP_s E p$. The same unknown multiplier
+cancels exactly. Distinct multipliers cannot guarantee equality for
+all points, although a particular point may be fixed by their relative
+rotation. A common frame label, age threshold, or successful lookup
+does not provide this equality. An unchanged generation is only
+useful insofar as it warrants the within-generation trajectory law.
+
+\paragraph{A matched contrast.}
+The fixture moves the base from 0 to 1 while observing a wall at 4.
+The raw delayed range is 4 and true current range is 3. An unchanged
+map bias cancels. If it decreases by 2 between stamps, the selected
+code returns 5 from the declared transform pair. A declared stable
+relative-motion reference gives 3 on the same delayed scan, and a
+new scan at the current stamp gives 3. Turning off motion compensation
+returns 4, not 3. An ideal rule requiring range above 3.5 would
+therefore pass both wrong values; this threshold is part of the
+authored comparison, not the native collision policy.
+
+The replay checks 225 transform cases. The alternatives require a
+relative reference not affected by that particular change or a fresh
+measurement. Neither qualified sensors, timing synchronization, field
+behavior, collision avoidance, nor braking dynamics are established.
+This is a scoped P06 probe, not an architecture disposition.
+\end{document}
