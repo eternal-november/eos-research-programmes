@@ -1,0 +1,88 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{The offset in a pose reading also shifts the remaining curve}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Interface.}
+In one corridor-face coordinate, let $q(t)$ be the issued quadratic
+reference, $0\leq t\leq1$. At a reading cut the actual path parameter
+$s$ is unknown in a warranted prior interval $[l,r]$. The available
+observation says that $q(s)+z\in[L,U]$, where the calibration offset
+$z$ is initially in $[a,b]$. Motion after the reading follows a
+parameter in $[s,1]$. The verification envelope takes all these
+parameters seriously. During the future cut the offset may be any
+$z'\in[a,b]$ with $|z'-z|\leq d$; the static law has $d=0$.
+For $d>0$ the envelope allows time to elapse while the path
+parameter stays at $s$. This is a bounded-difference law with all
+such pairs admitted, not a drift-rate theorem.
+The ceiling $c$ is inclusive. Tracking error, other faces, approach
+dynamics, logging delays, and how the motion monitor warrants $[l,r]$
+are outside this scalar model. The distinction at issue is that $z$
+is the \emph{same} offset used to obtain the reading and start the
+future error bound. Giving each use an independent $[a,b]$ lowers
+what can be certified.
+
+\paragraph{Exact calculation.}
+For any allowed subinterval $J$ of past parameters, the range of
+$q$ is the closed interval $[m_J,M_J]$; continuity yields every
+ordinate between its extremizers. Intersect this with the reading
+constraint,
+\[
+  [A_J,B_J]=[m_J,M_J]\cap[L-b,U-a].
+\]
+An empty intersection for $J=[l,r]$ means inconsistent evidence,
+not successful clearance. For nonempty intersections, the largest
+feasible future offset given observed-path ordinate $y=q(s)$ is
+$\min(b,U-y+d)$. Indeed take the greatest admissible current
+offset $\min(b,U-y)$; the evidence constraint is feasible at that
+offset by the interval test, and it can rise by $d$ or hit $b$.
+
+At any $s$ a quadratic peaks on $[s,1]$ at $s$, at $1$, or at
+its fixed vertex $v$ if concave and $v$ is within the suffix.
+For the first case, optimize the nondecreasing function
+$\min(y+b,U+d)$ over $[A_{[l,r]},B_{[l,r]}]$, attaining its right endpoint.
+For a fixed future parameter $f\in\{1,v\}$, use
+$J=[l,\min(r,f)]$, omitting empty subintervals and intersections.
+The greatest feasible future height is
+\[
+    q(f)+\min(b,U-A_J+d).
+\]
+The minimum feasible $y$ maximizes this formula. In each case the
+chosen ordinate is attained by some past parameter in $J$, and
+the chosen offset pair and future parameter are jointly feasible.
+Take the largest of the resulting numbers. This proves exact
+classification and attainment rather than a separately upper-bounded
+sum. The comparison uses a separate quadratic root-sign oracle to
+decide the existence of violations, and 900 exact instances with
+and without allowed drift. The prior checked interval lemma in the
+parent provides the same extremizers, but the conditioning theorem
+here is a separate mathematical proof, not a new Lean file.
+
+\paragraph{Sharp distinction in a curved case.}
+Take $q(s)=4s(1-s)$, $s\in[1/3,1]$, $z\in[0,1/3]$, and
+$[L,U]=[9/10,1]$. For $1/3\leq s\leq1/2$, the future peak of
+$q$ is $1$, but $q(s)\geq8/9$ forces $z\leq1/9$. The pair
+$s=1/3,z=1/9$ reaches height $10/9$ at the peak if $d=0$.
+For $s\geq1/2$, $q$ decreases, so future physical height is
+at most $1$ with a static offset. The marginal bounds alone are
+exactly $\max q=1$ and $\max z=1/3$: the latter is compatible with,
+for example, the late descending branch and $q(s)=2/3$. The maxima
+do not coexist. The joint bound admits ceiling $10/9$ when the
+sum of separate maxima $4/3$ would refuse.
+
+The exact bound allowing drift is
+$1+\min(1/3,1/9+d)$: the early branch attains it and the late
+branch is bounded by $\min(4/3,1+d)$.
+At this ceiling any positive drift can invalidate the decision;
+after $d=2/9$ the joint advantage over the marginal sum disappears.
+If the asserted prior lower bound is not warranted, an earlier
+$s$ on the ascending branch can agree with the same reading and
+violate the ceiling even without drift. The adjacent source replay
+does not warrant this reading or progress interface. An equally
+informed planner retaining the offset relation can use the same
+calculation. This is an exact scalar conditioning result, not a
+physical clearance, learned drift or contract acceptance claim.
+
+\end{document}

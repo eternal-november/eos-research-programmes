@@ -27,3 +27,5 @@ python3 corridor.py actual.txt | cmp results.json -
 axiom audits (propext, Classical.choice, Quot.sound only; no sorryAx).
 This selected callback execution and authored model are not a controller
 implementation, map activation test, or physical clearance result.
+
+[Conditioning follow-up](pose-conditioned/): retain the shared offset between a bounded pose observation and the remaining curve, with exact drift sensitivity.
