@@ -13,3 +13,5 @@ and one-way communication, not a field measurement or a claim about
 approximate reports.
 
 The [calibration follow-up](calibration/README.md) gives matching-order sample bounds when the sender must learn the menu from full observations rather than receiving the law.
+
+An [episode-linkage follow-up](episode-linkage/README.md) distinguishes hidden linking, verified labels, and outcome-dependent selection before fitting the menu.
