@@ -1,0 +1,128 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\begin{document}
+\title{A gap in old physical use is reusable only on the right clock and scope}
+\author{}
+\date{26 November 2026}
+\maketitle
+
+\paragraph{Audit.}
+Retained warehouse commands really leave an intermediate gap in
+sampled bay occupancy. A fixed-duration new use can fit that gap
+even though the old tape later returns. The same candidate loses
+when the old and new resource names alias in a different clock world.
+The two supports have the same possible site names and offsets.
+The clock/resource binding, not merely a better marginal clock bound,
+is load-bearing. This is an I1 fixture extension, not a validated
+clock transport or stack result.
+
+\paragraph{Sources and admissibility.}
+Instrument the pinned warehouse simulator and its ordered command
+producer from PR 588 at integer simulation barriers, including the
+three already scheduled follower steps. A bay is occupied if a
+robot is on its cell or a shelf occupies that cell. No claim is made
+about continuous time between barriers or about occupancy after
+the logged horizon. The selected 32-sample tape begins at zero;
+bay zero is occupied on $[7,17)$ and $[30,31)$ and bay one on
+$[0,6)$ and $[19,32)$. The prospective use is a two-tick use of
+a receiving-side resource. A binding identifies which old physical
+bay it aliases and converts old indices to receiving indices by
+$t_{new}=t_{old}+\delta$. Positive disjointness is not the same
+fact as missing occupancy data.
+
+Using a past run as a prospective certificate requires that its
+old use windows be the currently carried schedule, guarded against
+unmodeled start/reentry or expanded to include all possible continuations.
+The fixture fixes the recorded trace and assumes the new use does
+not change the old schedule. Old grants, previously accepted
+physical effects and the actual no-reentry premise must be proved
+separately in a real case. This temporal check is an additional
+premise for use, not a replacement for the active authority check in
+PR 597. The equal tick scale, constancy of the offset over the
+epoch, association to a resource version and allowed values of
+the offset are all declared in the experiment.
+
+\paragraph{Exact fixed-use query.}
+A start $s$ uses integer instants in $[s+l,s+r)$, $l<r$. In a
+world where scopes alias and the old run is $[a,b)$, the known
+blocking start indices are precisely
+\[
+ a+\delta-r+1\ \leq s\ \leq b+\delta-l-1 .
+\]
+Both half-open intersection inequalities are strict; treating a
+touching endpoint as occupied would give a different test. Union
+these intervals within and across the admitted whole worlds.
+For an aliasing world with $m$ samples beginning at zero, full
+coverage additionally requires $\delta-l\leq s\leq\delta+m-r$.
+Intersect those bounds across aliasing worlds. Any actual witnessed
+overlap in an admitted world is enough to establish possible
+conflict, even if another world is partly unobserved. Without a
+known conflict, a start outside full coverage is unknown rather
+than safe. In the wholly witnessed-disjoint case the old tape
+constrains no start. This is exact for a fixed operation whose
+chosen start does not affect the old tape, not for adaptive usage
+or proofs of new motion.
+
+At receiving tick 8, use $[8,10)$. Pairing (bay zero, $+3$) with
+(bay one, $0$) is safe in both worlds: they use old indices 5,6
+on bay zero or 8,9 on bay one. The opposite pairing produces an
+overlap in both worlds. Independent product of marginals rejects
+even under the first law. The data generate the occupation families,
+not either pairing law. A receiver must establish its pairing or
+conservatively admit all compatible pairs.
+
+\paragraph{Native provenance is not calibration.}
+Selected pinned LinuxPTP code from PR 503 emits two numerical poll
+shapes with current ingress and offsets 6 or 9, and exactly the
+same poll shapes on a selected stale estimate path. The valid
+cases emit a sync notification; in this particular fixture the
+failed estimator cases do not. Notification works as a freshness
+premise only for the tested path; it is not evidence of lock,
+error magnitude, transmission latency or an offset at another
+instant. The fixture declares a sample of relative offset through
+the normalized value $\text{raw}-6$, an authenticated acquisition
+event and receipt at the cut, its time provenance, and an external
+error bound. The estimator code establishes none of those additional
+premises on its own.
+
+A broad current sample leaves $[0,3]$ as the allowed epoch offset.
+Under the declared rate/error law a narrower earlier valid sample
+received by admission at tick 4 gives $[0,1]$ and selects offset
+zero out of $\{0,3\}$. The same numerical stale poll or a valid
+notification arriving after admission does not narrow the set.
+On bay one, the former selection permits the use at tick 8;
+retaining offset 3 supplies a concrete conflict witness. A valid
+earlier sample with offset 3 also supplies the opposite verdict.
+The signed-window comparison follows the actual acquisition bounds
+of PR 503, not the numerical range of native poll records.
+
+\paragraph{Reconstruction and comparisons.}
+The normalized covered window and forbidden union are sufficient
+for the fixed three-way start query. They are not a reconstructive
+certificate for named replacements. In a checked control two
+supports give the same covered window and forbidden union. One
+has a single live conflict witness with a particular name, the
+other also has a physically identical source trace from the
+reflected warehouse run under a second name. Removing the first
+named source leaves a safe start in one and a conflict in the
+other; retain the binding-specific witnesses and source tapes for
+this update interface. Changing the use from two to three ticks
+also invalidates a saved verdict at 17 for one observed bay.
+
+There are ten native warehouse traces, four pinned notification
+controls, 61,200 direct signed-window classifications, and parity
+with the unchanged shared admission core on each fixed example
+menu. All comparable verdicts agree. Four supporting statements
+in \texttt{ClockBinding.lean} were checked without placeholder
+axioms; they do not verify the simulator or the fixture's timing
+law. Costs are trace/event qualification and normalization, not
+just querying the compiled intervals. A direct interval solver
+could use the same representation. The
+\href{https://static.usenix.org/events/osdi06/tech/full_papers/burrows/burrows_html/}{Chubby recipient sequencer}
+is a comparison for grant generation checking, not for witnessing
+the old physical tail. \href{https://ijcai.org/proceedings/2001/69}{Dynamic
+temporal scheduling} is a comparison when future observations may
+change the start. No planner-performance gain, independent
+acceptance or mission-level novelty is claimed.
+\end{document}
