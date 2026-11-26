@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage{amsmath,amsthm}
+\newtheorem{theorem}{Theorem}
+\begin{document}
+\title{When old evidence can certify clearance after refitting}
+\maketitle
+
+\paragraph{Scope.}
+A civil warehouse controller considers admitting a vehicle to a zone. At a
+decision cut it needs every occupied sensor sampling location to have
+a certified clearance lower bound above the required margin. In the
+development fixture the samples, associations and zone membership are fixed.
+A calibration fit changes how two raw features jointly bound clearance.
+A separately stipulated error envelope and aging debit turn that score
+into a lower bound; regression does not verify either physical premise.
+This model does not establish any sensor's accuracy or safe hardware
+behavior.
+
+\paragraph{A computed refit.}
+The two models are fit by exact least squares to full-rank sets of four
+authored labeled points. The old learned score is $2+x$; the updated score
+is $x+y$. The two retained clouds are
+$A=\{(1,2),(2,1)\}$ and $B=\{(1,1),(2,2)\}$.
+They have identical feature marginals and identical old-model minima of
+three. Both pass the threshold $2.5$ with stipulated error debit $0.25$.
+The new minima are three and two, so only $A$ passes. If the first
+capsule incurs additional age debit, the bound lasts through precisely
+$0.25$ under the stated margin. If zone geometry or sample associations
+changed, recomputing the old cloud's score is not that new decision.
+
+\begin{theorem}
+Fix a convex feature domain and any new lower-bound score $f$ on it.
+The minimum score on every nonempty finite cloud is determined by its
+convex hull, and equals the minimum score on the vertices, exactly
+when $f$ is quasiconcave: throughout every line segment it is no lower
+than the lesser endpoint score.
+\end{theorem}
+\begin{proof}
+Quasiconcavity extends to finite convex combinations by induction.
+The score on each interior sample is therefore at least the minimum
+over the vertices. All vertices are samples; equality follows.
+Conversely, take a point on a segment with score below both endpoints
+and compare the two endpoints alone with the endpoints plus that point.
+The hulls are identical; the minimum scores are not.
+\end{proof}
+
+Every affine fit satisfies the criterion. A non-affine fit requires a
+test of its complete effective lower-bound score, including any
+feature-dependent error debit. For $f(x,y)=x^2+y^2$ the sample $(0,0)$
+changes the minimum of the cloud $\{(-1,0),(1,0)\}$ without changing
+the hull. No hull-only re-evaluation can preserve both verdicts in
+that extended model class. A convex hull summarizes a fixed collection
+of paired feature vectors; it does not grant authorization, supply missing
+features, re-associate samples, or preserve exact per-subzone minima
+after splitting the admissible scope.
+
+\paragraph{A received change is not necessarily used.}
+The authored legacy consumer is given the current, correctly fitted model
+and retains the old executed admission stamp; it decides using the old
+score instead of the received update. With correct delivery and
+interpretation held fixed, that mistake admits the $B$ case that the new
+law leaves uncertified. This is an explicit omission control, not a
+claim that any pinned fleet planner omits a valid closure. Reapplying the
+new law over the retained hull ties the raw-data and matched incremental
+checks. This tests certificate reuse under a declared refit family; there
+is no novelty or architecture-disposition claim.
+\end{document}
