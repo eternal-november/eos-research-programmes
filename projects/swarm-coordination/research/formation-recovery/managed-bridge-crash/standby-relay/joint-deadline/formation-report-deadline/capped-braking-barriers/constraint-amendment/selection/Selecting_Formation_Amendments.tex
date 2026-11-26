@@ -1,0 +1,38 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{Checking a formation amendment is easier than choosing which amendments to keep}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+Consider the exact full-state braking test for scalar relative-position constraints. Start from a feasible graph of mandatory bounds and a common physical snapshot. A set of authorized proposals may be accepted or declined; all accepted bounds bind immediately and must be preserved until rest. The problem is to keep at least a given number of them. No motion, shift of operator authority, observation of private state, or scheduling of the proposals occurs during selection. Each proposal has unit value. The result concerns selecting constraints, not the already polynomial check of a fixed selection.
+
+\begin{theorem}
+Selecting a largest admissible subset is NP-hard even with only three initial speeds, common acceleration and braking limits equal to one, no pair of robots initially at the same position, and individually admissible proposals of equal slack. The decision version is NP-complete. Minimal infeasible sets of individually admissible proposals have no uniform bound on their size.
+\end{theorem}
+
+\begin{proof}
+Start with a directed unweighted graph $G$ and vertices $s_0,t_0$. A length-bounded edge cut of budget $B$ deletes at most $B$ edges to destroy all directed $s_0$--$t_0$ paths of length at most $L$. If the source contains a direct edge then deleting it is mandatory; remove it and decrement the budget. This keeps the decision problem equivalent, including immediate rejection if the budget becomes negative. We may therefore take the starting graph to have no direct edge.
+
+Assign each vertex of $G$ an interior robot of speed 1. Add a robot $s$ of speed 0 and a robot $t$ of speed 2. The speed interval is $[0,2]$. Write all edge weights as slacks at the initial state: a slack $d$ for $i\to j$ imposes the bound $x_j-x_i\le x_j^0-x_i^0+d$. Put in two mandatory bounds $s\to s_0$ and $t_0\to t$, each of slack $1/4$. Each edge of $G$ becomes an optional bound of slack $1/[2(L+1)]$. Give the robots distinct initial positions. If physical clearance bands are needed, order the initial positions at distances $D+1$ and add adjacent lower bounds $D>0$ and upper bounds $D+2$. The new band edges then have slack 1.
+
+Any walk using a band edge has slack at least 1 and therefore meets every pair's braking debt. Ignore such walks to check for a violation. The only debt of 1 is from $s$ to $t$; a walk with positive debt of $1/4$ must use at least one of the mandatory edges, so it already has enough slack. All same-speed pairs have zero debt. A walk from $s$ to $t$ avoiding band edges consists of the two mandatory edges and a selected walk from $s_0$ to $t_0$. If the latter has length $\ell$, its total slack is
+\[
+ \frac12+\frac{\ell}{2(L+1)}.
+\]
+This is less than 1 exactly when $\ell\le L$. Shortest violating walks have a simple representative because all weights are positive. Thus the exact braking test accepts the selected subset if and only if the omitted edges form a length-bounded cut. A singleton is always admissible because the original graph has no direct $s_0\to t_0$ edge. Setting $L=4$ imports the directed unit-edge hardness from \href{https://page.math.tu-berlin.de/~skutella/TALG2010-final.pdf}{Baier et al., Theorem 3.11}. The arithmetic has polynomial bit length. Membership in NP uses the selected-edge list and the polynomial fixed-selection viability check.
+
+For a conflict of size $k\ge2$, take $G$ to be one directed path of $k$ edges from $s_0$ to $t_0$, and set $L=k$. All $k$ proposals jointly violate the bound; removing any breaks the path. Thus every proper subset passes, even with the same three velocities. A checker that retains only failures of at most some fixed number of proposals will miss one of these instances.
+\end{proof}
+
+\paragraph{Constructive boundary.}
+In the embedded unit-length family, use breadth-first search to find a shortest remaining $s_0$--$t_0$ path. If it exceeds $L$ (or none exists), the current selection is safe. Otherwise every safe subset omits some edge of that path; branch on each of its at most $L$ proposals. Depth $B$ gives a complete decision procedure in $O((|V|+|E|)\sum_{i=0}^B L^i)$ time, excluding input construction. A physical witness for rejection is that path between the mandatory edges. For arbitrary braking instances the same witness branching is valid but the depth-$B$ search has no bounded branching factor unless the number of proposals in an unsafe path is bounded. If bounds have independent priorities or are activated at different physical states, this proof does not price or order them.
+
+\paragraph{Why serialized admission does not optimize service.}
+Take one proposed edge $s_0\to u$ followed by $n$ two-edge branches $u\to z_i\to t_0$, and set $L=3$. A greedy policy that accepts the common edge first and then scans the branches can keep only $n+1$ of the $2n+1$ proposals: it must reject one edge from each branch. Rejecting the common edge instead keeps $2n$, which is optimal because keeping all proposals violates the braking test. Every greedy acceptance may be locally correct, and the controller may obey the same state and clearance law, yet the retained service differs. Here the service proxy counts each maintained bound equally; no claim is made that an actual fleet values constraints this way.
+
+\paragraph{Comparator and evidence.}
+On the embedded family the correct comparator is a length-bounded cut solver, not ordinary disconnectedness or pairwise compatibility. The reduction preserves decisions and number of rejected proposals; it is not a claim of new hardness for length-bounded cuts. The replay compares exact full-graph braking closure, exhaustive selection, and bounded-search cut on fixed small cases, including a conflict whose every proper subset passes. The result separates adjudication on an identical physical snapshot from the harder optimization over a set of legal amendments. It does not require new claims about actual hardware or policy deployment.
+\end{document}
