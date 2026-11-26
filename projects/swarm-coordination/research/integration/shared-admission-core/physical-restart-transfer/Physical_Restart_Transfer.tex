@@ -1,0 +1,69 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{A completed unloading can be undone by a delayed raw command}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Audit.}
+In the preceding restart test a native packet attempt reached an application
+that atomically recorded its own station effect. This held-in transfer uses
+the same admission code but replaces that application with native RWARE
+load and layout transitions. Controller restart and writer authority are
+modeled; packet transport and the causes of route loss are not simulated in
+this physical fixture. The physical load transition is executed from pinned
+RWARE and checked against actual grid, poses, and custody. The simulated
+actuation-local serialization is not a hardware claim.
+
+\paragraph{Positive envelope.}
+Keep one named shelf Y in the designated refuge and clear the carrier from
+that cell no later than tick 6 after the initial cut. No re-pick of that
+shelf is admissible. Keep independent delivery at tick 1. A primary writer
+may lose access after shared heading preparation at tick 2; a separate local
+writer can actuate the same carrier at 4 instead of the primary at 3.
+An already issued old command can still arrive at tick 5 on its own queue.
+In both mirrored layouts every monitored tick maps to one native simulator
+step. Clear means the robot vacated one shelf-storage cell, not that the
+cell has no shelf or a laden traveller can enter.
+
+\paragraph{Two kinds of restart.}
+The restarted issuer sees identical refuge, named shelf and missing
+acknowledgement whether the old raw \texttt{TOGGLE\_LOAD} physically set
+down Y or did not take effect. A blind retry in the first branch re-picks
+the shelf; waiting in the second leaves it held. A true read of the load
+latch chooses correctly in the two terminal branches. In a third, the old
+toggle is still in flight. A correct negative read then still leads to a
+re-pick when the older command arrives. The same failure occurs when only
+the new writer checks the physical state. Neither failure depends on
+a lying monitor or a bad physical identity.
+
+\paragraph{Two mechanisms.}
+A raw toggle may be forwarded only while this carrier actually holds
+named Y at the designated refuge. At that actuation cut the guarded
+operation is idempotent set-down rather than a toggle. Its proof reads
+the same latch that the step changes, and requires all eligible writers
+to go through that guard. It does not apply to a different shelf, later
+reauthorized loading, independent writes, or a guard sampled remotely
+before issue. Only the stated finite attempt window is covered.
+The carrier must then separately advance clear of the refuge.
+
+The serial comparator waits until a certified terminal closure of the
+old path at tick 5, then checks the same latch. It is safe in this model.
+If Y is still held, it unloads at 6 and clears at 7, a tick late. The live
+guard lets the replacement unload at 4 while an old command could still
+arrive; the guard suppresses an old re-pick and allows clearing at 6.
+This is a difference against the stated post-drain policy. A direct
+planner given the same actuation gate and resource access ties it.
+A faster real fence or overlapping the physical steps is not ruled out.
+
+\paragraph{Verification and limits.}
+The two orientations across 288 cases include paid, unpaid, still-armed,
+primary route loss, current read, all-writer and new-writer-only guards,
+and separate clearance. The independent job produces native reward in
+every case. The shared interpreter checks both due effects and rejects an
+unwanted re-pick. A separate direct calculation agrees; Lean checks the
+load-state transition law. This connects the mechanism to a simulated
+physical effect, unlike treating issued commands as durable completion.
+It does not establish a physical interface for a deployed machine,
+the strongest published architecture comparison, or an independent test.
+\end{document}
