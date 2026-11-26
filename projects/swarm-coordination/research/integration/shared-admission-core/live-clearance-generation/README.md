@@ -25,3 +25,6 @@ clock bound for an effect guard, terminal evidence, and a possible wait.
 
 The [recurring-request replay](native-recurring-request/) checks when a
 current native observation cannot certify closure of the old order.
+
+The [restartable native commit](native-atomic-commit/) implements the keyed
+publication boundary for a wholly replayable simulator.
