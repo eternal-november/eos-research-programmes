@@ -16,3 +16,6 @@ warm planar fault cut and tests an authored hidden remote offset.
 
 The [pre-cut evidence study](precut-evidence/) tests a sensed and actually
 forwarded branch distinction before the old link is lost.
+
+The [uncertain-cut study](uncertain-cut/) separates reusing a bridge axis
+from reusing the command after the cut time and inherited velocity change.
