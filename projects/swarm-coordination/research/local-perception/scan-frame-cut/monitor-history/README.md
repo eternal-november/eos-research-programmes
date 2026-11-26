@@ -25,3 +25,5 @@ clearance, sensing quality, real TF behavior or robot braking.
 [Acquisition and use cuts](scan-use/): native counters count monitor evaluations, not distinct acquisitions, and a repeated scan can still give a different current projection.
 
 [One correction across two-stamp uses](one-correction-timeline/): preserve a single correction history through both counters; adjacent and overlapping stamp windows differ.
+
+[Critical shift rate](rate-threshold/): invert the bounded change law, retaining strict interval endpoints and the old monitor counters.
