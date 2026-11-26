@@ -11,3 +11,5 @@ Only Python standard library is needed. DirtyCone.lean checks the exact
 reach cut with Lean 4.35 + Mathlib. Incremental_Reuse.tex states the
 scope. FREEZE.txt and reuse.py are the pre-scenario freeze. The authored
 benchmarks are not independent test selection.
+
+[Upstream change producer](patch-producer/README.md): equal compiled rows can acquire a different source dependency. Preserving that dependency makes the next finite edit check sound at matched inputs.
