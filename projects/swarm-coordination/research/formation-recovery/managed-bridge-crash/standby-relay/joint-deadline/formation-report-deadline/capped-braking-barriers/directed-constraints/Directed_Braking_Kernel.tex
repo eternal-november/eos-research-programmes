@@ -1,0 +1,39 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{Exact braking under directed relative-position constraints}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+Robot $i$ has scalar position $x_i$ and speed $v_i\in[0,W]$. All robots have the same control interval $[-b,a]$, with $a,b,W>0$, and $\dot x_i=v_i$, $\dot v_i=u_i$ almost everywhere. For each directed edge $i\to j$ a fixed bound $x_j-x_i\le c_{ij}$ must hold at every time. Lower and upper gaps in single file are edges in opposite directions; the graph can also couple nonneighbors. Measurements are the full initial state. No obstacles, additional faults, sensing delay, command sampling or hardware behavior are modeled. Assume the position constraints have a solution, so there is no negative cycle. All sets are finite except the continuous state and time.
+
+\begin{theorem}
+Let $d_{ij}$ be the shortest directed path cost, including negative edge weights and taking $+\infty$ when there is no path. Put $h=a+b$. The maximal set from which it is possible to satisfy all position bounds indefinitely is given by
+\[
+ d_{ij}-(x_j-x_i) \ \ge\ \frac{(v_j-v_i)_+^2}{2h}
+ \quad\text{for every distinct reachable pair }i\to j,
+\]
+together with the speed caps. Moreover one trajectory reaches equal speeds at minimum time $(\max_i v_i^0-\min_i v_i^0)/h$ and then reaches rest at minimum total time $\max_i v_i^0/b$.
+\end{theorem}
+
+\begin{proof}
+Along every path the relative constraints add, so the shortest bound applies. If $w=v_j^0-v_i^0>0$, that difference cannot decrease faster than $h$; the relative position grows by at least $w^2/(2h)$ before time $w/h$. This also gives necessity for a shorter candidate stop: the pair cannot both already have stopped if its speed difference is still positive.
+
+Write $S_{ij}=d_{ij}-(x_j-x_i)$ and $B_{ij}=S_{ij}-(v_j-v_i)_+^2/(2h)$. At an active $B_{ij}$ with $w=v_j-v_i>0$, the derivative is $-w-w(u_j-u_i)/h$ and is nonnegative exactly when $u_i=a$ and $u_j=-b$. At $w_+=0$ with $v_j<v_i$ the derivative is positive; at equality of speeds it is zero. No robot can receive both signs: that would require active pairs $i\to j\to k$ with two strictly positive increments $p,q$. But $S_{ik}\le S_{ij}+S_{jk}$ by shortest-path closure, and $(p+q)^2>p^2+q^2$. This contradicts the bound on $S_{ik}$. At the lower speed cap no required braking sign is possible; at the upper cap no required positive sign is possible. With positive spread all robots at the global maximum can be assigned $-b$, all at the minimum $a$, and the other unconstrained inputs zero.
+
+Here are the details passing from derivatives to trajectories. First consider strictly feasible position bounds. Take $m=\min_i v_i^0$, $M=\max_i v_i^0$ and $T=(M-m)/h$. If $T=0$, brake all together. Otherwise, use a clock $s\in[0,T]$, constrain every velocity between $m+as$ and $M-bs$, and enforce these equalities for one index originally attaining each extreme. In auxiliary time let $\dot s=T-s$, $\dot x=(T-s)v$, $\dot v=(T-s)u$ with the two exterior inputs fixed and all other inputs in the given interval. The set is closed and convex. At $s<T$ the sign choice above respects the active bounds on the velocities, the clock, and the active $B_{ij}$. At $s=T$ the vector is zero. In the affine space of the two exterior equalities, there is a point strictly satisfying all other, nonredundant constraints: choose a strictly feasible position, choose $s<T$ sufficiently close to $T$, and place other velocities strictly between the two clock bounds. Self-pairs are omitted. Each active differentiable convex inequality can therefore be made strictly inward by adding a small multiple of the direction toward that point. Taking the perturbation to zero proves contingent tangency. The velocity map has compact convex values, is continuous in state, and has linear growth on the ambient space after clipping the factor to $[0,T]$. The \href{https://bayen.berkeley.edu/sites/default/files/siam08.pdf}{Marchaud viability theorem} gives a solution. Returning to physical time $s$ gives the original dynamics on $[0,T)$; bounded speeds and accelerations extend it to $T$. At $T$ all speeds are $M-bT=m+aT$. Common braking gives total time $M/b$, with no change in relative positions. The original extrema prove the two matching time lower bounds.
+
+To drop strict position feasibility, add $\epsilon>0$ to each original bound. The original position is strict for every edge of that relaxed system and hence for every distinct reachable shortest-path pair. Its distances only increase, so the same initial state satisfies the relaxed braking inequalities. The paths just constructed have the same stop time for every $\epsilon$. Their positions and velocities are uniformly bounded and Lipschitz on that interval; a uniformly convergent subsequence as $\epsilon\downarrow0$ preserves $\dot x=v$ by integration and preserves the two acceleration bounds by the two-sided bounds on each velocity increment. The limiting trajectory respects the original position constraints and stops at the same time. Holding rest extends it indefinitely.
+\end{proof}
+
+\paragraph{Why check indirect constraints?}
+For two successive edges of slack $1/4$ under $a=b=1$ and speeds $(0,1,2)$ in edge order, each edge passes its own test. The indirect pair needs slack $1$ and has only $1/2$. The obstruction already follows by adding the original position constraints and integrating the relative speed; it is not a property of one controller. The algorithm uses shortest-path closure and exact pair inequalities, not trajectory sampling. The replay checks the closure against repeated relaxations and checks rational tangent witnesses. The continuous-time existence proof is separate from that replay.
+
+\paragraph{Why common limits matter.}
+Take three single-file robots, rear first, speeds $(3,2,0)$ and symmetric per-robot limits $(9,1,1)$. Use excess above the clearance minima of $1/20$ in the first gap and $1$ in the second, with generous upper limits and a common speed cap at least $3$. All three pairwise necessary stopping-distance inequalities, now using rate $a_i+a_j$, hold; the outer span allows $21/20$ and requires only $9/20$. The two adjacent inequalities are tight. The first therefore forces the middle robot to accelerate at $+1$ until the initial difference closes at time $1/10$; the second forces it to brake at $-1$ until time $1$. Equality in the stopping-distance integral forces each input extreme almost everywhere over its positive interval. These cannot hold together. The construction is thus not a heterogeneous-actuator theorem.
+
+\paragraph{Comparable method.}
+The \href{https://liwanggt.github.io/files/B5_Composable_Barrier.pdf}{composable barrier controller of Wang, Ames and Egerstedt} uses simultaneous barrier feasibility to construct controls, and \href{https://public.websites.umich.edu/~dpanagou/assets/documents/JBreeden_ACC23.pdf}{Breeden and Panagou} study composition of multiple barriers under input constraints. Here the closer comparison is direct continuous controlled invariance on the same scalar graph: it must agree with the exact set above. No advantage over a decentralized implementation is implied. The result uses the triangle inequality on directed slacks; it does not transport to arbitrary Euclidean separation, changing graph constraints, or independent bounded disturbances.
+\end{document}
