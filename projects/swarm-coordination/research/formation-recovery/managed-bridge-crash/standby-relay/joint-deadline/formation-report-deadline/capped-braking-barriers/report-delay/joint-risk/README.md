@@ -5,3 +5,5 @@ For opposing hidden braking threats, the physical cutoff determines the exact re
 [Proof and modeled scope](Risk_At_The_Braking_Cutoff.tex) · [Exact finite replay](replay.py) · [Recorded results](results.json)
 
 Run python3 replay.py and compare its output to results.json. The report process is exogenous and shared; no measured risks or field performance are asserted.
+
+[Separate random seeds](separate-seeds/) quantify the additional risk when groups cannot implement one shared randomized decision.

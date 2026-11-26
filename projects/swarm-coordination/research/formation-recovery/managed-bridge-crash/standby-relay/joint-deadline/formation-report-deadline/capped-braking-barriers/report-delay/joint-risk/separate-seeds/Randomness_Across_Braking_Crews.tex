@@ -1,0 +1,33 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{Independent braking coins do not implement a shared randomized decoder}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+In the two-threat stopping model, use equal end reserves between the timely common-report threshold and the no-report threshold, including the former and excluding the latter. Each middle robot must maintain clearance from both endpoints, through the adjacent bands, and the middle robots sit at their mutual minimum clearances initially. The block can follow a common prefix until the report and then take either feasible continuation. The rear and front can infer which world holds from their own initial speeds and cooperate. There are $g$ nonempty groups of middle robots. Each group has a private random seed shared within the group, independent across groups and independent of the fixed episode law. No middle group can observe endpoint or other group motion, exchange messages, or otherwise obtain a further shared or private informative observation during braking. In particular an erasure has exactly the same entire common observation history in either world, including timing; no header or clock fluctuation is a common random source. A successfully delivered report identifies the world on time to every group. The prior probabilities are $\pi_A,\pi_B$. Only total erasure probability $d$ is calibrated and nature may couple the erasure to either world before any seeds are drawn. Count an unsuccessful stop as failure in the model, not as a population estimate.
+
+\begin{theorem}
+The exact worst-case failure probability minimized over these controllers is
+\[
+ \min\{\pi_A,\pi_B,\ d(1-2^{-g})\}.
+\]
+One seed shared across the entire block is the $g=1$ case. For equal priors, 10 percent erasure and four separately randomized groups, the guarantee is 9.375 percent, compared with 5 percent using one shared seed. No randomization is best in some regimes where always protecting the majority world already attains the displayed bound.
+\end{theorem}
+
+\begin{proof}
+On the common erased history, fix one group's seed and consider just one designated middle robot in that group. Its causal trajectory as a function of time is identical in either world if the run is successful. The no-report bound applies to that robot's cumulative left and right spans: even if both endpoints use their best possible actions, that trajectory cannot preserve clearance in both worlds. This lower bound does not require that the other middle robots use identical actions or that the designated robot wait until the report. Thus each group's feasible seeds for world A and B are disjoint. Write $p_i$ for its probability of A-compatible seeds; the probability of B-compatible seeds is at most $1-p_i$. Since seeds are independent, full-mission success on erased A is at most $\prod_i p_i$, and on erased B at most $\prod_i(1-p_i)$. These product bounds hold for every fixed law. Conversely they are attained by a common prefix, followed on erasure by each group choosing A with its own probability $p_i$ and otherwise B. If all groups choose correctly the nominal robots follow exactly the known safe continuation, so every gap and the stop deadline hold. A delivered report lets every group choose correctly.
+
+The possible mass $q$ of erased A lies in $[\ell,u]=[\max(0,d-\pi_B),\min(d,\pi_A)]$. The controller maximizes the guaranteed successful mass
+\[
+ \min_{q\in[\ell,u]}
+ \left[q\prod_i p_i+(d-q)\prod_i(1-p_i)\right]
+\]
+on erasures. By the arithmetic--geometric mean inequality, replacing all $p_i$ by their mean $p$ weakly increases both products. Now the minimizing law chooses $q=u$ for $p\le1/2$, and $q=\ell$ for $p\ge1/2$. On each half the resulting expression $q p^g+(d-q)(1-p)^g$ is convex, so a maximum on that half is at an endpoint. The candidates $p=0,1/2,1$ give guaranteed mass $d-u,d\,2^{-g},\ell$. Subtract the largest from $d$; the result is the stated risk. This also covers $d=0$ and $g=1$.
+\end{proof}
+
+\paragraph{Consequences for the preceding cutoff result.}
+The earlier randomized cutoff guarantee uses a single randomized decision that the whole middle block can implement. It does not assert that independently randomized agents get that guarantee. A shared seed can be installed before the maneuver or supplied as part of a trusted common observation, provided it stays independent of the actual chosen law. If the observation itself has different erasure records, the same finite-history partition must be redone before using this bound. True motion feedback, information carried by the timing of silence, or an adaptive law that sees the seed invalidates the given model. The matched statistical comparator is direct robust decoding at the same observation and randomness interface; the physical contribution is the no-report obstruction and the proof that agreement on the chosen branch suffices under the gap law. No distributed sensing hardware, deployed policy, or causal erasure rate is inferred.
+\end{document}
