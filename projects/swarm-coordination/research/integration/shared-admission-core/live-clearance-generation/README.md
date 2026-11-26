@@ -22,3 +22,6 @@ consuming cut does not need a fresh warehouse read.
 
 The [source-held pledge follow-up](terminal-pledge/) trades the remote
 clock bound for an effect guard, terminal evidence, and a possible wait.
+
+The [recurring-request replay](native-recurring-request/) checks when a
+current native observation cannot certify closure of the old order.
