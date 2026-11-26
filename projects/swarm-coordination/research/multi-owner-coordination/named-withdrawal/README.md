@@ -19,3 +19,5 @@ qualified same-cell label and installed authority; the study does
 not establish either for a real warehouse.
 
 [Actual placement lineage](lineage/README.md) extends the same new right across real older re-seats and exchanges. A complete effect sequence preserves exact readout, an unchanged-generation requirement is conservative, and one unobserved delta makes the legacy placement ambiguous. Stale unsafe proposals are audited without actuation.
+
+[In-flight predecessor scope](in-flight/README.md) exercises the same physically executed prefix with two old continuations. A verified local phase receipt can release the new named withdrawal before whole drain. A coarse hold can lose its deadline; the same-information direct planner ties.
