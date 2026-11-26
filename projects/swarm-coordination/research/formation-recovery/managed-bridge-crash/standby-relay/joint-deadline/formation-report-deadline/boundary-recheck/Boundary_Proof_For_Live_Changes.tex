@@ -1,0 +1,98 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}
+\title{What a retained formation proof needs to know about later constraints}
+\begin{document}
+\maketitle
+
+A local controller can reuse a proof after a change without retaining the
+whole constraint graph. It must retain the bounds between locations where
+later requirements can attach. Checking only the individual locations, or
+checking changed requirements separately, need not preserve admission.
+
+\paragraph{Lift and query family.}
+A finite feasible base \(G\) constrains real variables by inequalities
+\(x_v-x_u\le c_{uv}\). For the single-file model these are differences
+of positions; for a simple temporal network they are differences of
+times. For absolute choices include a reference index in the interface
+with prescribed value zero. Let \(S\) be the
+declared set of indices, the only endpoints of replaceable requirements.
+Future changes can add any finite batch of difference inequalities
+between members of \(S\). A replaceable requirement must be kept outside
+the frozen base so that removing it does not leave a stale implication.
+The consumer asks for exact feasibility of the whole batch, and, if
+needed, an extension of a feasible assignment on \(S\). It does not ask
+for physical observations, unknown route changes in \(G\), or a policy
+under uncertain observations.
+
+\begin{theorem}
+For the feasibility consumer, the exact retained information is the
+matrix \(d(u,v)\) of base shortest-path bounds between indices in \(S\),
+with \(+\infty\) for unavailable paths. Two feasible bases have the
+same matrix iff they agree on every admissible batch, even when only
+single-edge tests are used to distinguish them. Every assignment on
+\(S\) satisfying the retained bounds lifts to a base assignment.
+\end{theorem}
+\begin{proof}
+Any base solution satisfies the path bounds. Conversely suppose the
+declared values \(y_s\) satisfy them. Use one base feasible potential
+\(q\), and choose \(M\ge\max_{s\in S}(y_s-q_s)\). Set
+\[
+   x_w=\min\bigl(M+q_w,\ \min_{s\in S}(y_s+d(s,w))\bigr).
+\]
+Ignore infinite terms, and use \(q\) alone if no values are declared.
+Each finite-distance term follows the edge inequalities by the path
+triangle inequality. Taking pointwise minima preserves those
+inequalities; the \(q\) term covers vertices not reachable from \(S\).
+At any \(s\in S\), the \(s\)-term gives \(y_s\), and no other term
+can be smaller, by the retained bounds and the choice of \(M\).
+This gives an extension and preserves every new constraint on \(S\).
+It is an exact reduction for the declared consumer.
+
+To distinguish unequal matrices, take entries \(d_1(u,v)<d_2(u,v)\).
+Add the single reverse edge \(v\to u\) of weight \(c\).
+The base is feasible, so inconsistency arises precisely if the new
+edge closes a path of total weight \(d_i(u,v)+c<0\). Choose \(c\)
+to make this true in the first base but not the second. This also
+works if \(d_2=+\infty\), since no reverse cycle would exist there.
+No exact representation of this whole query interface can collapse
+the two entries.
+\end{proof}
+
+\paragraph{Size and proof work.}
+With \(k\) terminals and \(q\) possible rational weights in \([1,2]\),
+make a complete directed base with each of its \(k(k-1)\) off-diagonal
+weights chosen independently. These are exactly the shortest-path
+entries: a two-edge path costs at least two. Thus any fixed-width
+summary for all admissible single-edge tests needs at least
+\(\lceil k(k-1)\log_2 q\rceil\) bits in this family. The bound is
+not a claim for a sparse known corridor, a fixed successor,
+or a comparator given different admissible changes.
+
+After compilation, a feasibility check reads at most \(k(k-1)\)
+finite retained bounds plus the changed batch. A full interior
+assignment still needs access to the base or a decoder and its
+stored distances. The example compares edge counts of the receiver
+check, not total proof cost, runtime, or memory including decoding.
+Ordinary simple temporal network closure and incremental
+propagation remain the direct comparators; this result specifies
+the exact restriction and its failure mode rather than proposing
+a faster general shortest-path algorithm.
+
+\paragraph{Witness and boundary.}
+An internal path implies that a formation's total span is at
+most four. Two local replacements individually allow requiring
+three units of separation at either gap. Installing both requires
+span at least six, so the checks must share one retained outer bound.
+A second case removes an old replaceable upper bound of four,
+leaving base upper bound ten. Requiring span at least seven is
+now feasible. A receiver that retained the old bound inside its
+base still refuses; it tests the wrong law.
+
+The exact replay compares 780 changed batches against the full graph,
+lifts 371 assignments, and verifies 729 distinct three-terminal
+query signatures. The chain family consumes four edges in each
+compiled test while the full test grows to 501. These are defined
+formation constraint systems, not independent physical missions
+or full R2 acceptance.
+\end{document}
