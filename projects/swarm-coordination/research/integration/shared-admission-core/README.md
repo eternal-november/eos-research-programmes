@@ -40,3 +40,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Native authority follow-up
 
 [Live reservation replacement](live-authority/README.md): the same native range can refer to a newly granted path, while an earlier reservation receipt and the actual crossing clearance remain separate. Five in-process controls also distinguish inline qualification from a remote snapshot. The matched direct check ties.
+
+## Clock and resource binding follow-up
+
+[Clock-bound bay occupancy](clock-bound-occupancy/README.md): a sampled gap is reusable for a fixed start query when clock and physical scope can be joined within a world. Equal normalized profiles need not survive named removal in the same way. The direct tick checker agrees.
