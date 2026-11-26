@@ -1,0 +1,91 @@
+\documentclass{article}
+\usepackage[hidelinks]{hyperref}
+\title{A supplier change before a native station effect has settled}
+\begin{document}
+\maketitle
+
+\paragraph{Envelope and law.}
+This follow-up to
+\href{https://github.com/eternal-november/eos-research-programmes/pull/634}{the durable release replay}
+moves the second fault before the actual station effect in three admitted
+crash-phase branches. The duty is exactly one named native station effect
+by cut 7; the source must stay off its bay through that effect and return
+by cut 7. Independent warehouse motions and radio callbacks are due at
+cuts 3 and 6. The protected carrier can return in one native step.
+An intended primary station command arrives through native radio at
+cut 2. Its worker then exits before publication or after publication
+without a reply. The new primary request is tried at cut 7. A second
+fault can make P's path unusable before that retry. A qualified Q can
+retry the unchanged operation. The receiver has a single reachable
+SQLite authority for the native effect; neither router sees the
+evaluator's hidden path or old paid flag before it commits to its
+preparation decision. Synchronized outer cuts, fail-stop phases,
+echoed native callbacks, setup semantics and trusted authorizations are
+fixture premises. This is not an independent mission.
+
+The positive envelope requires either the primary retry path to survive,
+or both a real setup delivery to Q at cut 4 and Q's retry path to work
+at cut 7. A reply must reach the source at cut 7. Both normal and
+compound branches are admitted; the primary can be lost on histories
+where no station effect yet exists. Outside the stated branches, refusal
+to reenter is safe but does not count as successful service. Common
+cause loss of both paths and loss of the confirmation are exercised as
+boundary cases, not counted in the guaranteed service envelope.
+
+\paragraph{Concrete interfaces and proof.}
+Setup sends two bytes on native radio; a callback equips Q with named
+retry authority after two fixture ticks. P and Q each submit the same
+three-byte operation, and the receiver checks the exact app key against
+the pinned local atomic step journal. A native erased send still spends
+sender bytes. The old cut-2 debit has expired before cut 7, so healthy P
+can retry. If P loses the path at cut 7, its debit is on P only;
+the broker gives no accepted request and did not charge receiver capacity.
+The preauthorized Q then fits into both its own ledger and the common
+receiver ledger, and invokes the same journal key. Side work uses its
+own accepted destination and source motion. Its one-byte transmissions
+and the setup can share the Side transmitter while respecting the
+five-byte limit; the return receipt and side traffic fit at their
+common destination. Neither a prepared sender nor a transmitted request
+is itself a station effect.
+
+Each delivered eligible request either creates the durable native
+transition or returns its stored result. Induction over delivered
+attempts preserves at most one published effect, including a late
+primary request after the source returns. At least one such attempt
+arrives by cut 7 in every admitted positive branch by the route and
+capacity argument. The qualified response is emitted only after that
+result becomes authoritative. The return follows its actual callback;
+if the callback is erased, the carrier remains held. Hence the joint
+guarantee follows through the same actual histories in which both
+independent jobs run, without treating their success as evidence of the
+paid key.
+
+\paragraph{Comparison and scope.}
+A reactive policy waits to see P's actual failure, then starts the
+same setup at cut 7. It cannot finish the two-tick preparation by the
+required cut; it misses even if Q is healthy. The lower-bound witness
+fixes the smallest setup step budget and two histories with identical
+preparation views and opposite later primary path. Preparing only
+after observing P's later loss cannot succeed on the lost-P case.
+An equally informed direct RIFL-style application with pre-staged
+backup and the same route effects ties; the reactive arm is only
+a timing ablation, not the strongest established composite system.
+Pre-staging costs a real setup message even when the primary is healthy.
+
+The held-in sweep has 64 configurations per arm. The staged and direct
+policies each meet all 20 cases in the positive envelope; reactive meets
+16. In the other cases all three preserve exactly-once station effect
+and safe source return by the tested late cut. The counted request,
+setup and reply bytes total 1,004 for staging versus 880 for reactive;
+that comparison includes late attempts and excludes the identical
+independent traffic. These are finite schedule totals, not estimates.
+
+Every scenario also tries a returning P at cut 12. Its actual callback
+cannot duplicate the effect. A missing service case can settle and
+return safely at that later cut in the fixture, missing the bound.
+The replay runs the native station worker and both native plant/radio
+adapters end to end for each arm. These checks establish a reusable
+held-in envelope and explicit local readiness conditions, not inventory
+coverage, field validity, a frozen transfer, or advancement over the
+strongest published assembly.
+\end{document}
