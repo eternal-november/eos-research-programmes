@@ -1,0 +1,47 @@
+\documentclass[11pt]{article}
+\title{A velocity producer can restore a component and overwrite a lift command}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Selected source and boundary.}
+Use the prior pinned Open-RMF lift writer and Gazebo 9 physics
+dispatch and removal callbacks. Add the selected model-linear
+write in the pinned Gazebo \texttt{VelocityControl::PreUpdate}
+and the actual \texttt{SetComponentData} set-or-create helper.
+The body and equality/rotation/feature stand-ins do not run
+Gazebo, a transport or a physical engine. The robot's current
+vector intent is provided as an already-selected input; angular,
+link and message handling are outside this trace. The pinned runner
+orders all pre-update calls before update calls. The pinned system
+manager groups the calls by priority (which may be configured) and
+inserts them into their priority groups. The fixture compares two
+serial phase orders, not the load order in a particular launch.
+
+\paragraph{Recreation alone does not warrant continuation.}
+The selected robot writer writes the whole model vector $R$ and
+creates a missing command. The lift writer changes the vertical
+coordinate to $z_L$ only if the component is already present for
+the selected payload. So robot first and lift second leave
+$(R_x,R_y,z_L)$. Lift first and robot second leave $R$, whether the
+lift write was skipped because the component was initially absent
+or ran on an initially allocated component and was then overwritten.
+These are distinct ways the intended lift effect can be lost.
+In the following selected physics cut each compatible scenario calls
+one setter, and the component is then removed. Across three ticks
+of each order and both initial allocations, the native selected
+setter calls therefore differ by vertical intent but not count.
+The horizontal coordinates coincide in these fixed-pose cases.
+
+If $R_z=z_L$, matched traces have the same numeric setter value yet
+differ in which writer supplied the vertical value. The command
+vector and cleanup alone therefore cannot prove that the selected
+lift intent reached the last-write cut. A lift write, component
+recreation and a compatible consumer do not by themselves suffice:
+the phase evidence also needs the last winning writer for each
+consumed coordinate, or a checked recomposition of scoped inputs.
+This is not a claim that making the lift last is an authorized
+control policy. In a real assembly both writers' authority,
+allowed dimensions, interference, and the consumer's physical
+effects need to be checked. No deployed compatibility, motion,
+quiescence or I1 disposition is asserted.
+\end{document}
