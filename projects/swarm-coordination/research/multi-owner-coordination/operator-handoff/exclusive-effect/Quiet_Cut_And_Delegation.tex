@@ -1,0 +1,68 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{A qualified release and a safe timer can jointly shorten an authority handoff}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Law and evidence.}
+A shared actuator is subject to a modeled exclusive-effect law:
+the successor must not start while residual effects of the old
+operator can still occur. The old operator withdraws at local
+time zero. Its first effect-free cut is $-\delta_A+q$ in
+common time for old clock offset $\delta_A$ and tail $q\ge0$.
+In the declared horizon the local clocks have equal rates and
+constant offsets. The new operator has offset $\delta_B$ and
+a separately granted next authorization, effective when either
+of the permitted transitions below starts. It gets no live
+advance observation of the old operator except a possible
+qualified release. Such a release is bound to the same actor,
+effect resource and command version and cannot arrive before
+the old effect-free cut. Its latency after that cut is $\lambda$,
+or it is absent. Scoped delay intervals describe admitted
+joint traces, not measured distributions or an implementation
+of trusted release. Neither a task pause, stop request receipt,
+nor a software acknowledgement that retirement started qualifies
+by itself. Establishing an actual effect-free cut is external.
+
+\paragraph{Exact fixed-fallback comparison.}
+A timer at successor local time $x$ would start in common time
+$x-\delta_B$. Put $d=\delta_B-\delta_A+q$.
+When trying the first of the safe timer and a qualified release,
+the effect-free blackout is $\min(x-d,\lambda)$ on a trace
+with release and $x-d$ otherwise. A negative value represents
+overlap. Because $\lambda\ge0$, no-overlap on every trace
+is equivalent to $x\ge\max d$. A finite nonempty set of
+joint traces is assumed. A later timer cannot shorten any
+trace's blackout, so $x=\max d$ is optimal among these
+fixed-fallback policies, with or without qualified release.
+This is not an optimality claim for policies with extra sensors,
+negotiation, retry or varying authority. The Lean kernels check
+the quantified no-overlap equivalence and monotonicity of the
+pointwise blackout. A direct world-time enumeration confirms
+3{,}200 cases across clock, tail and receipt variations.
+
+\paragraph{Two witnesses.}
+Consider traces $(d,\lambda)=(1,1)$ and $(5,4)$.
+The safe timer alone leaves blackouts 4 and 0; a release-only
+policy leaves 1 and 4. Combining them gives 1 and 0, hence
+a one-tick worst case instead of four for each isolated policy.
+Both sources of evidence must be available under the same declared
+authorization. Pairing the old early cut with the slow receipt
+from the other hypothesis creates a four-tick case, as would
+dropping the early receipt in the first actual trace. Reusing a
+timer certified with zero tail where the old tail is now one
+can produce a one-tick overlap even though the timestamps still
+look valid. Equality is allowed precisely at first effect-free
+cut. A noncausal or stale receipt could change that safety
+conclusion and is outside the model.
+
+\paragraph{Scope.}
+The two decision channels are combined on the same joint trace,
+not by min of incompatible worst cases. Logical grants can
+overlap or be absent; this model's exclusive actuation law
+is about effective control of one shared effect, not the number
+of task holds or a general owner election. No controller real
+time, physical validity of a receipt, or closed architecture item
+is claimed. The handoff gives a scoped F26 comparison and a
+producer requirement for a qualified release interface.
+\end{document}
