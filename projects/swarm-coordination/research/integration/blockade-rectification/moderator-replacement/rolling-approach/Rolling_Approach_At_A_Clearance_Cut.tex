@@ -1,0 +1,93 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{The latest clearance report with a safe rolling approach}
+\begin{document}
+\maketitle
+
+Waiting at the stop line is safe but need not be the fastest way to
+finish after clearance arrives. A vehicle can arrange to arrive at the
+decision with positive speed while preserving a full stop if clearance
+is withheld. The best speed can be strictly below the fastest safe
+approach speed: a faster vehicle needs to be farther from the line
+in order to retain its stop.
+
+\paragraph{Interface.}
+A civil corridor vehicle starts at rest at zero, moves forward only,
+and has an acceleration magnitude bound \(a>0\), with no binding
+speed cap. Its stop line is \(\ell>0\); the target is \(L>\ell\)
+and requires terminal rest. A truthful report arrives at known time
+\(q\ge0\), distinguishing a crossing that is physically clear and
+cannot be reoccupied from a crossing that must not be entered.
+Before that report, controls must be identical. In the latter
+case (or with no report) the vehicle must be able to stop no later
+than \(\ell\), without crossing. The line already includes any
+space required for clearance. No risk is inferred from the
+software assignment itself; the source of the physical report is
+an explicit premise.
+
+\paragraph{Exact decision at the cut.}
+For fixed speed \(v\) at \(q\), the maximum distance traveled from
+rest is the integral of
+\(\min(at,v+a(q-t))\), namely
+\(a q^2/4+qv/2-v^2/(4a)\). The minimum is \(v^2/(2a)\),
+by waiting and using the last part of the interval to accelerate.
+The two profiles interpolate to any intermediate distance. To
+retain a stop at the line, position \(x\) must satisfy
+\(x+v^2/(2a)\le\ell\). The stopping coordinate is nondecreasing
+along every admissible forward prefix:
+its derivative is \(v(1+\dot v/a)\ge0\) almost everywhere.
+Consequently satisfying the bound at \(q\) ensures it beforehand.
+The exact speed range and best position for each speed are
+\[
+  0\le v\le\min(aq,\sqrt{a\ell}), \qquad
+  x_*(v)=\min\left(\frac{a q^2}{4}+\frac{qv}{2}
+                     -\frac{v^2}{4a},\ \ell-\frac{v^2}{2a}\right).
+\]
+This is attainable with a single prefix for both branches.
+Without clearance, brake to a stop. With clearance, the minimum
+additional time at this prefix is
+\[
+   \frac{2\sqrt{a(L-x_*(v))+v^2/2}-v}{a}.
+\]
+Indeed the maximum displacement starting at \(v\) and ending at
+rest in time \(t\ge v/a\) is the integral of
+\(\min(v+au,a(t-u))\), equal to
+\(at^2/4+vt/2-v^2/(4a)\). Solving at distance \(L-x_*(v)\) gives
+the expression and the attaining velocity profile. Taking the
+minimum over the exact speed interval solves the original problem.
+When \(q=0\) the range collapses to zero.
+
+\paragraph{A closed-form case.}
+If \(q\ge 2\sqrt{\ell/a}\), every boundary state
+\((\ell-v^2/(2a),v)\) in the speed range is attainable. For example,
+time the fastest rest-to-rest approach to \(\ell\) so that its
+deceleration passes through that state at \(q\). On the boundary the
+objective becomes
+\((2\sqrt{a(L-\ell)+v^2}-v)/a\).
+It is minimized at \(\min(\sqrt{a(L-\ell)/3},\sqrt{a\ell})\).
+For \(L\le4\ell\) it equals \(\sqrt{3(L-\ell)/a}\), compared
+with \(2\sqrt{(L-\ell)/a}\) at rest on the line. For \(L>4\ell\)
+it equals \(2\sqrt{L/a}-\sqrt{\ell/a}\). The calculation of the
+boundary also applies at an earlier \(q\) whenever its minimizing
+state can already be reached; the one-dimensional optimization
+covers the remaining early case.
+
+\paragraph{Replay and comparison.}
+Use \(a=\ell=1\), \(L=28/25\) and \(q=11/5\). The exact prefix
+can wait \(2/5\), accelerate for one, and brake for \(4/5\).
+At the cut it is at \(49/50\) with speed \(1/5\); it can stop
+exactly at the line if the report is absent. On clearance,
+accelerating for \(1/5\) and then braking for \(2/5\) reaches the
+target at \(14/5\). Waiting stopped at the line finishes only
+at about \(2.89282\). The replay checks the exact piecewise paths,
+an independent sampled velocity LP at the named speed, and
+81 numerical comparisons of the reduced scalar objective.
+
+The example uses the earlier inherited-state motion calculation
+and the native assignment replay's distinction between a grant
+and physical exit. It does not supply a real observation channel.
+An equally informed direct trajectory optimizer can choose the
+same prefix. No claim is made for binding speed limits, delayed
+or incorrect reports, shared risk estimates, or a deployed
+crossing controller. This is one scoped model result, not I1 acceptance.
+\end{document}
