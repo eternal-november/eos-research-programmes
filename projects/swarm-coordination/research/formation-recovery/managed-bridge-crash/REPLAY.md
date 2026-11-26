@@ -13,3 +13,6 @@ velocities at the four request cuts under declared acceleration limits.
 
 The [local-sensing deadline study](local-sensing-deadline/) keeps the
 warm planar fault cut and tests an authored hidden remote offset.
+
+The [pre-cut evidence study](precut-evidence/) tests a sensed and actually
+forwarded branch distinction before the old link is lost.
