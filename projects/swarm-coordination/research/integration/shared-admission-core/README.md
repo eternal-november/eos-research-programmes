@@ -80,3 +80,7 @@ shared variable used in the correlation control was inferred from traces.
 ## One issue rule across station and latch effects
 
 [Typed effect transfer](typed-effect-transfer/README.md): the same selector runs at each native receiving cut. A successful proof must cover every writer at one authority point through the actuation horizon, or use a true terminal fence and subsequent reading. A same-information direct selector matches. Modeled authority; held-in development only.
+
+## Native partially effective prefixes
+
+[Two-plant admission with ordered past effects](native-prefix-phases/README.md) retains a no-callback TX charge and distinguishes unloading from departure. The unchanged core uses both to select a qualified backup in a tight held-in local view; matched direct oracle ties.
