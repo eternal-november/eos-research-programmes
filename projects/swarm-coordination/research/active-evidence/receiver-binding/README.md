@@ -14,3 +14,5 @@ ProbeCost.lean is checked with Lean 4.35 and Mathlib. This executes a
 headless simulated broker fixture, not a live network.
 
 [Qualified next-service update](qualified-next/README.md): actual probe receipt can identify a separated receiver while spending the very credit that a larger next duty needs. The pinned checker keeps compatible whole histories.
+
+[Risk-limited acquisition](risk-choice/README.md): for the same native receipt effects, a whole-plan cap and an observation-conditional cap select different exact probe fractions. Stipulated fixed laws, not probabilities measured from the simulator.
