@@ -1,0 +1,76 @@
+\documentclass{article}
+\usepackage[hidelinks]{hyperref}
+\title{A real process-restart boundary for native warehouse simulation}
+\begin{document}
+\maketitle
+
+\paragraph{Question and authority.}
+\href{https://github.com/eternal-november/eos-research-programmes/pull/632}{The recurring-request replay}
+showed that warehouse state alone is not a durable keyed completion fact.
+Here the authoritative plant is a deterministic replay of the committed
+native-action journal. A shadow simulator evaluates an actual native
+RWARE step, but that evaluation has no external effects. The transition
+becomes effective only when the store commits it. The writer records the
+action, exact stock reward and intent-keyed receipt in the same SQLite
+transaction. Losing the acknowledgment does not erase that record. This
+is a concrete local simulated effect and durability boundary, not a way
+to undo a physical robot's motion.
+
+Each key denotes a single step request with specific command bytes. If the
+key already has a receipt, retry returns its original result and tick
+without reapplying the action. A different command using the same key is
+refused. New keys do not get suppressed even when command bytes recur.
+No key reclaims, competing authorizations, fences for external actuators,
+or upper bounds on receipt retention are supplied here. Native placement,
+two-stage reward and request rotation are from the pinned fixture; there
+is one possible replacement shelf choice at every request rotation. It
+does not cover a nondeterministic unrecorded source.
+
+\paragraph{Invariant.}
+There is one committed sequence of action/result pairs. Replay validates
+each result against the native transition. Under the one-writer lock,
+a new request appends one transition and installs its receipt in the
+same commit, or changes neither. A repeat with the same body reads the
+same row, and a conflict makes no transition. This inductively associates
+each published key with exactly one authoritative step. The guarantee
+uses database transaction consistency; it does not imply progress if the
+database never becomes writable, and the unbounded journal currently
+requires replay proportional to its length on a cold update. No external
+motion publisher can consume a private step as authoritative.
+
+\paragraph{Discriminating replay.}
+Actual child processes exit with status 77 before native evaluation,
+after native evaluation, after staging database writes, and after commit
+before replying. A new child starts from the same WAL database and retries.
+The four tested actions are an independent carrier's real move, first
+credit for A, set-down of A, and first credit for B. Results compare to
+an independently stepped single-execution reference, including position,
+heading, shelf ownership, request, tick, reward and flags. Sixteen
+combined cases all match. Two concurrent replacement processes also
+produce one commit and one cached reply for the same key.
+
+In the split-write comparator, the native action journal is published
+first and the separate keyed receipt is written later. It matches in
+twelve of sixteen cases. All four crashes after publishing the action and
+before the terminal record cause a second native step. For the first
+acceptance of A, the repeat gets a zero reward rather than the original
+half credit; for B it moves the carrier out of the goal. This does not
+claim there were four duplicate station credits. It proves the step or
+receipt semantics can break even if the warehouse would not give the
+same reward twice at that point. An independently informed transactional
+implementation with the same authority is expected to match; the tested
+split-write ablation is not a strong established exactly-once
+implementation. The construction implements, rather than improves on,
+the relevant effect-local atomic pattern of
+\href{https://github.com/eternal-november/eos-research-programmes/pull/606}{the prior station model}.
+
+\paragraph{Boundary.}
+The process exits test local file-backed application recovery, not power
+failure, storage loss, replication failure, or kernel behavior under an
+external unlogged effect. In a simulator that publishes effects through
+a separate physics service, tracing a database row cannot make physics
+atomic with the receipt. An actuator-local accepted operation key or
+independently recoverable physical evidence would be needed there.
+This is a held-in source adapter building block, not an independent
+cross-family test or I1 acceptance.
+\end{document}
