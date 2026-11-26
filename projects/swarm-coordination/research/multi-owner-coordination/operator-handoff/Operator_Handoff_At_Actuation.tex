@@ -1,0 +1,43 @@
+\documentclass[11pt]{article}
+\title{A task can stay paused after a particular operator's interruption is released}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Native task-level interface.}
+The selected public Open-RMF wrapper creates a live interruption handle
+and schedules the request. The selected task manager assigns interruption
+tokens to active, emergency-pullover and waiting tasks that exist.
+Its ready callback checks that the current task slots are idle or marked
+interrupted. A matching release removes that interruption's tokens, not
+other valid holds. This replay executes the selected TaskManager entry,
+release, token-assignment and ready-dispatch bodies with a serial worker
+and task objects. The wrapper and public declaration are inspected.
+The fixture's task-ready predicate is supplied; no driver, traffic,
+hardware or ROS callbacks are run.
+
+\paragraph{Positive handoff is not established by ready once.}
+Both experiments initially retain an operator interruption and an
+independent co-hold. Both receive the normal first ready callbacks.
+In the second experiment the operator later intentionally releases
+its own interruption; the co-hold remains. All current task slots
+still appear paused, the accumulated ready-callback values match,
+and only the owner-specific retained interruption differs. Release
+the co-hold too and the task no longer counts as interrupted in
+the fixture. This is ordinary requested lifetime management, not
+an attack or a claim that the native pause logic misbehaves.
+
+An external handoff procedure in this fixture requires continuous
+retention of the particular interruption it requested, explicit
+operator authority, and a separately qualified actuator observation.
+The first comparison with both explicit authority and a confirmed actuator
+is accepted;
+the released operator, or an unqualified actuator observation,
+is not. The actuator condition is authored, not validated by
+an interrupted task notification. Sixteen paired checks vary the
+present task slots, modeled actuator condition and external authority.
+A dashboard presenting only paused and ready-ever would be
+insufficient for this declared procedure. Conversely, even a
+valid retained task hold alone cannot establish effective control
+or absence of earlier motion. This is a scoped S20 design check,
+not a deployed supervision incident or an architecture disposition.
+\end{document}
