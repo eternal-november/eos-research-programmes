@@ -1,0 +1,26 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,hyperref}
+\newtheorem{theorem}{Theorem}
+\title{Which old route still matters after a map and allocator change?}
+\author{}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Source boundary.}
+The \href{https://github.com/VDA5050/VDA5050/blob/511d01d71587e8a3dc5e71d4f41dc52466f4284c/VDA5050_EN.md\#67-maps}{tagged VDA 5050 2.1.0 text}, Sections 6.7.1--4, separates map download from activation, identifies a map by a map ID and version, and makes the controller responsible for the correct active version when sending a node position. A node position carries the map ID in a common project coordinate system. This study does not shift that origin, infer the physical route from a state packet, or assume how a stock vehicle updates an already committed route. The following map-dependent traversal is an authored plant adapter, not a compliance or vulnerability test.
+
+\paragraph{Test contract.}
+Work on two bypasses in the same physical frame. The old robot is assigned the same endpoints in both map revisions, but the modeled planner binds the left bypass under map A and the right bypass under map B because its traversability data differ. Binding the route is separate from enabling the map and separate from physically clearing it. In one admissible history the old route bound before the map change; in the other it bound after. At the handoff cut both histories show map B active and the same successor allocator authorized. The old body can still be inside its bound route, whatever the allocator is now. A separate operation takes the newer map but does not touch either crossing. The new allocator can offer a rescue at one site on an approved time slot. Failures and clearances in the fixture are given by the timed occupancy trace, not inferred from version or authority fields. Authority may permit a safe abort, but the test does not credit abort until the affected site is physically released.
+
+\begin{theorem}
+For one deterministic future use at a declared site and tick, and more generally any fixed nonnegative demand schedule with an additive capacity, the exact residual old-work input is the pointwise maximum old occupancy over jointly admissible histories. With every nonnegative single-slot demand available for querying, this function is also necessary up to equality for preserving all answers. The most recent map version and role assignment alone are not a sufficient representation.
+\end{theorem}
+
+\begin{proof}
+At each site and tick a proposed fixed demand is independent of the old realization. It can therefore be added after taking the maximum feasible old occupancy. A fixed schedule is safe for every old history exactly when each sum is at most the corresponding capacity. Distinct maxima are separated by choosing the demand equal to the capacity less the smaller occupancy at the differing site and tick and zero elsewhere. The proof assumes the old histories satisfy the original capacity law, and all demands fitting that one capacity are legal queries. For the insufficiency claim let the left and right bypass each have one unit of capacity. The two histories above can have the same latest visible map and role, while their retained routes occupy different sites at the rescue tick. The same left or right rescue cannot be guaranteed for both. Version equality on the latest snapshot does not retire existing effects, and inequality of the old version does not stop reuse for a future use which lies outside every old footprint.
+\end{proof}
+
+This transfers the rolling-allowance idea from #467 to timed spatial occupancy. In the authored transition family, changing the old release time can either remove the relevant conflict or leave the rescue blocked despite a valid role switch. The direct same-history check has the same output. The useful change is the retained interface, not a stronger physical guarantee. A changing demand, a future branch contingent on old work, partial occupancy not describable by the chosen cells, and agreement about service outside these sites each require a different source interpretation.
+
+\end{document}
