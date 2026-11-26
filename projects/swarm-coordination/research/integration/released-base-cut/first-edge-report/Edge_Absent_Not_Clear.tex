@@ -1,0 +1,68 @@
+\documentclass[11pt]{article}
+\title{When an accepted route's first edge is missing from the report}
+\begin{document}
+\maketitle
+
+In the pinned ROS-Industrial VDA 5050 adapter, an accepted update's
+first edge can be missing from the reported edge states even though
+the next navigation request includes that edge. A prospective
+observer must not interpret the omission as physical clearance or
+as absence of an authorized movement.
+
+\paragraph{What the source does.}
+The adapter validates an update against the last released node,
+replaces its active route, and asks \texttt{StateManager::set\_order}
+to record it. The state manager clears its node and edge arrays.
+It writes the first edge inside the branch for update number zero,
+then loops over edges starting at index one. By contrast,
+\texttt{process\_navigation} looks up the next released node after
+the last completed node and looks up its incoming edge from the
+active order, without consulting the reported edge array. The edge
+request includes the edge identity and trajectory metadata. The
+adapter's publish method sends the state manager's state.
+
+\paragraph{Matched witness.}
+The common starting order has released node \(A\), sequence zero,
+with an unreleased horizon. At the cut the robot is at \(A\).
+In each of two separate histories, the same order identity receives
+its first update. Both updates release node \(X\), sequence two,
+with the same node records. The first update in one history uses
+edge \texttt{LEFT}; the one in the other uses \texttt{RIGHT}.
+Both pass actual selected graph and stitch validation. These are
+two alternative lawful payloads, not one publisher sending duplicate
+identities with conflicting payloads in a single run.
+
+The fields assigned by \texttt{set\_order} are identical in the two
+histories, including the accepted update number and the released
+node \(X\). Both edge arrays are empty. The next navigation callback,
+however, gets the distinct edge in each history. At update number
+zero the same difference is visible in the edge array. An additional
+control keeps \(X\) in the horizon: the edge array is again empty,
+but the node's release flag is false and the callback is not made.
+Thus the full selected report can distinguish authority to reach
+\(X\), but not the first edge used to do it.
+
+\paragraph{What this prevents and what it does not.}
+If only one of the alternatives can occupy a resource that a recovery
+needs, no rule based on this report alone can distinguish those
+cases before dispatch. A controller with a trustworthy copy of the
+exact accepted payload can discriminate, provided order identity and
+revision identify that payload in the current session. Alternatives
+include a source-side report of the still-authorized edge or an
+independent physical observation tied to the recovery. None of these
+automatically proves that the robot has cleared a resource, or that a
+future accepted release cannot reach it. A full controller must
+establish those claims separately. The result does not say that all
+VDA 5050 implementations omit the edge or that this is a new ability
+over a direct controller with the same payload and observations.
+
+\paragraph{Execution boundary.}
+The replay compiles the pinned graph/update validator and unchanged
+bodies of the state update and navigation selection methods. It
+supplies inert stand-ins for types, request construction and runtime
+services; the fields used by the stand-ins match the inspected source.
+The run is serialized and stops at the callback. The adapter's
+subscription and publication paths are inspected, not executed.
+No transport, robot dynamics, external target, field behavior,
+or full I1 acceptance is tested.
+\end{document}
