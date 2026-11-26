@@ -12,3 +12,5 @@ Materialize the exact SOURCE.tsv pins into an upstream directory, then:
 
 Python 3.10+, C++17. Alias_Window.lean is the separately checked kernel.
 No independent selection, live deployment or architecture acceptance.
+
+[Departure-qualified late binding](physical-departure/README.md): pinned warehouse motion yields the lower time bound that excludes an early shared receiver, under an authored bridge. Exact comparison survives a bounded clock shift, but not equality or changed heading and gate versions.
