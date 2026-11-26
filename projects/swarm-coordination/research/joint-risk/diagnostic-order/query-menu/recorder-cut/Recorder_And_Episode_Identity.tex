@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{A recorder timestamp is not by itself an episode identifier}
+\begin{document}
+\maketitle
+
+\paragraph{Result.}
+Two calibrated source histories can give identical recorder rows in
+the chosen ROS~2 subscription path and have different two-site failure
+counts. This is a source-backed example of the identity premise
+in the \href{../episode-linkage/Risk_From_Unlinked_Episodes.tex}{risk
+linkage study}, not evidence that a released or deployed ROS system
+actually interchanges records.
+
+\paragraph{Pinned path.}
+The selected \href{https://github.com/ros2/rosbag2/blob/eaf9712a2b23105eac104d64a6938a40cc5d5c74/rosbag2_transport/src/rosbag2_transport/recorder.cpp}{recorder
+subscription} passes the message bytes, topic, receive timestamp
+and publication timestamp to its writer. In the non-Windows code
+used here, the receive timestamp is the recorder node clock when
+simulation time is enabled and the RMW receive value otherwise.
+The send field is the RMW source timestamp in both. The selected call
+does not pass a sequence argument and the
+\href{https://github.com/ros2/rosbag2/blob/eaf9712a2b23105eac104d64a6938a40cc5d5c74/rosbag2_cpp/include/rosbag2_cpp/writer.hpp}{writer declaration}
+defaults it to zero. The executable uses this exact subscription
+method and a writer spy that implements the pinned input signature.
+It does not run ROS middleware, a storage plugin or the whole recorder.
+
+\paragraph{Two physical histories, one recorded view.}
+Two underlying source episodes occur. Each site eventually submits
+one failure bit per episode. At both sites the published sequence of
+bits is \(1,0\); each publication and reception has the same clock
+fields and callback order in both histories. In the first history,
+both sites' first messages originate in the first episode.
+In the other history, site B publishes the later episode's result
+first, which is possible when there is no enforced acquisition-order
+publication. All synthetic publication timestamps are later than both
+source events, so neither ordering requires negative processing time.
+
+Telemetry uses only a bit payload, with no acquisition identity.
+In the simulation-clock fixture all calls land on one recorder clock
+plateau, but source publication stamps still differ. In the alternative
+mode even the receive stamps differ across callbacks. In both modes
+the two histories produce exactly the same writer inputs, including
+topic order and payload. The genuine pairing gives one failed episode
+of two in the first case and two of two in the other.
+Adding the authoritative episode key to the payload makes the writer
+inputs distinguishable without changing the timestamp code.
+The source guarantees neither that earlier acquisitions are published
+earlier nor that globally unique measurement identifiers are absent from
+all payloads. If every site demonstrably emits exactly once per episode
+in common acquisition order, matching by rank suffices. Those are
+additional exposure-specific obligations, not properties of a
+publication timestamp.
+
+\paragraph{What remains certified without full links.}
+If \(c\) matched pairs are already certified, count their joint failures
+as \(u\). Suppose the two remaining lists have \(N\) entries each,
+with \(a,b\) failures. In the absence of further constraints on pairing,
+the exact empirical union-count interval is
+\[
+     [\,u+\max(a,b),\ u+\min(N,a+b)\,].
+\]
+The overlap of failure entries ranges from \(\max(0,a+b-N)\) to
+\(\min(a,b)\). Any integer in that range is realized by pairing that
+many failure entries, then placing the remaining ones against zeros.
+This gives the sharp interval, not only a worst-case bound from an
+independence assumption. At one matched pair in the two-episode
+fixture, the finite ambiguity disappears. The checker independently
+enumerates all remaining permutations for 7,736 list and certificate
+configurations through five entries. Real temporal ordering, bounds
+on processing or certified matching constraints could narrow the set
+of permutations, and missing or duplicate records require a different
+model. This interval is about attribution in a fixed finite set of
+episodes, not an estimate of population risk or R4 acceptance.
+\end{document}

@@ -15,3 +15,5 @@ approximate reports.
 The [calibration follow-up](calibration/README.md) gives matching-order sample bounds when the sender must learn the menu from full observations rather than receiving the law.
 
 An [episode-linkage follow-up](episode-linkage/README.md) distinguishes hidden linking, verified labels, and outcome-dependent selection before fitting the menu.
+
+The [recorder replay](recorder-cut/README.md) tests what the pinned ROS bag callback actually says about matching payloads to their source episodes.
