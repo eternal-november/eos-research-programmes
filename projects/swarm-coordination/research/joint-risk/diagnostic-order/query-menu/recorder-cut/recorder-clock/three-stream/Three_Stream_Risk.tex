@@ -1,0 +1,107 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}
+\title{Three complete streams can make an empirical risk cap hard to check}
+\begin{document}
+\maketitle
+
+Two partially linked streams admit sharp upper and lower empirical
+failure counts by weighted assignment. A third stream changes the
+problem even when each non-anchor stream can be linked independently
+to the anchor. The difficulty is not validating a candidate join.
+It is choosing the joins whose failures cover the most or fewest
+of the same episodes.
+
+\paragraph{Interface.}
+An anchor stream has one record per episode. Every other complete
+stream has the same number \(n\) of records, one per episode, and
+has a source-justified bipartite graph of permitted record-to-anchor
+links. Each of its perfect matchings is a possible linkage, and
+any collection of those matchings is jointly possible; there
+are no additional cross-stream source constraints. Assume each
+graph has a perfect matching. The audit asks for the union of
+binary failures across streams. This is an empirical sample
+calculation under a declared linkage model, not a time model or
+a probability estimate. Arbitrary graphs need not be realizable
+in the bounded-clock regime of the earlier recorder study.
+
+\begin{theorem}
+With one anchor and two other streams, deciding whether some
+linkage attains at least a given empirical failure count is
+NP-complete. Therefore deciding whether every linkage meets an
+upper cap is coNP-complete, even at any fixed rational fraction
+in \((0,1)\). Deciding whether some linkage attains at most
+a given count is also NP-complete. These claims hold when the
+anchor has no failures and each graph is independently feasible.
+\end{theorem}
+\begin{proof}
+Matchings are polynomial witnesses for the existential decisions.
+Reduce from perfect three-dimensional matching: sets \(X,Y,Z\)
+each have size \(q\), and the \(n\) given triples are the anchor
+episodes, initially all successful. Stream B has a failure
+record for each \(x\in X\), allowed exactly at that element's
+incident triples. For each \(y\in Y\) there are
+\(\deg(y)-1\) successful records, confined to the triples
+incident to \(y\). Thus a possible set \(S\) of failure episodes
+in B has exactly one triple per \(x\) and per \(y\).
+Conversely any such \(S\) extends to a valid B matching by pairing
+the other records inside their \(y\)-classes.
+
+For the lower-count question, stream C has one failure record
+per \(z\), allowed exactly at its incident triples, and \(n-q\)
+unconstrained successful records. A possible failure set \(T\)
+has one triple per \(z\), and both \(|S|\) and \(|T|\) equal \(q\).
+Hence \(|S\cup T|\le q\) iff \(S=T\), a perfect matching in
+the supplied triples.
+
+For the upper-count question, instead give the constrained C
+records successful flags and the unconstrained records failure
+flags. Its success set \(T\) again picks exactly one triple per
+\(z\). Now the overall count is
+\(|S\cup(\{1,\ldots,n\}\setminus T)|=n-|T\setminus S|\).
+It is \(n\) iff \(S=T\). An upper cap of \(n-1\) therefore
+holds iff the original triple instance has no perfect matching.
+For a fixed rational cap fraction \(0<\alpha<1\) and \(n\ge2\),
+add isolated matched safe episodes to bring the total to
+\(\lceil(n-1)/\alpha\rceil\); the allowed integer count is
+still \(n-1\).
+
+If a triple class is empty, or B cannot be perfectly matched,
+the original instance is negative; both can be checked before
+construction. Map those cases to a fixed negative, individually
+feasible instance in the appropriate reduction. For example,
+use the four even-parity triples on \(\{0,1\}^3\); no pair is
+complementary, B can match the two \(x\) and two \(y\) classes,
+and C can match its \(z\) classes. This preserves the independent
+feasibility promise.
+\end{proof}
+
+\paragraph{An exact easier upper bound under a different source law.}
+If every successful non-anchor record can be assigned to any
+episode, the maximum count is polynomial even for many streams.
+Build one graph of all failure records from the other streams
+and all episode positions not already failed at the anchor.
+The answer is the anchor's count plus the maximum cardinality
+matching in this graph. A joint labeling cannot do better:
+choose one representative failure record for each additionally
+failed position. Conversely, start with such a maximum matching
+and restrict it to each stream. Augment that stream's partial
+matching of failures until all its failure records are covered.
+This is possible by feasibility, and augmenting paths keep every
+previously assigned position occupied by a failure, even if the
+specific record changes. Assign the unconstrained successes to
+the remaining positions. Every position counted by the global
+matching still fails. It is the constraints on otherwise healthy
+records, not merely there being three data sources, that matter
+to the hardness construction.
+
+\paragraph{Evidence and scope.}
+The replay checks all 256 hypergraphs on two elements per part,
+including 193 with separately feasible constructed graphs. It
+checks both extrema via exact feasible-set enumeration and checks
+the easier upper-count algorithm on 380 separate seeded cases.
+These are authored graph comparisons. They do not show that a
+particular sensor source admits those graphs, or establish sensor
+fault support, population risk, or full R4 acceptance. Direct
+assignment still applies to the two-stream problem.
+\end{document}
