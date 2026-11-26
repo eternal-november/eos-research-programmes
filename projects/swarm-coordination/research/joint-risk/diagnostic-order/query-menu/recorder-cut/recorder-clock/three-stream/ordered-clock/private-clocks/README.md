@@ -10,3 +10,5 @@ The boundary is scope of the unresolved offset: known offsets, a single common o
 [Lean](PrivateClockGadget.lean) verifies the continuous real inequalities for sorted and swapped pairs, block isolation, polarity, and the equivalence with Boolean clause satisfaction for the abstract literal relation. The polynomial reduction and padding are in the TeX proof. Run the Lean file under Lean 4.35.0 with Mathlib; the [axiom audit](AXLE_AUDIT.txt) contains no placeholder axioms.
 
 The [certificate follow-up](coverage-audit/README.md) bounds the hard case from both sides and states when a bound cannot settle a cap.
+
+The [LinuxPTP freshness replay](ptp-freshness/README.md) checks a concrete source boundary: a new ingress time does not, by itself, certify a new offset estimate.
