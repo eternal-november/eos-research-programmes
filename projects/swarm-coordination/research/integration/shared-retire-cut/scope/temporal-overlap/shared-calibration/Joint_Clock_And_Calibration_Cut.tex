@@ -1,0 +1,118 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{Which old holds can share a cell under one uncertain calibration?}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Admission question, pins, and kernel.}
+At an integer cut $t$, how much of a shared site's capacity can old
+admitted work still occupy? Hold $i$ has nonnegative demand $w_i$,
+a positive half-open interval $[e_i,x_i)$ in a single feasible
+integer simple temporal network, and a retained coordinate $u_i$ in
+a fixed calibrated gauge. At this particular cut its demand falls on
+the site precisely when $e_i\leq t<x_i$ and $u_i+z\in Q_i$.
+Here $z$ is \emph{one common} unknown planar translation,
+$z\in K$ for a nonempty compact rational polytope $K$, and $Q_i$
+is the closed rational polygon of reference positions at which hold
+$i$ contributes load (it may include a specified footprint margin).
+The network and $K$ can be jointly instantiated independently.
+This is an occupancy abstraction for holds, not a claim that an issued
+target proves a robot has reached it. Position trajectories, rotation,
+actuator changes, hidden timing--geometry dependence, and probabilistic
+risk are not encoded by this product model. Each changes the checks
+required before using it for physical admission.
+
+The preceding adapter replay, \texttt{released-base-cut/calibration-capture}
+(PR 531), justifies distinguishing the \emph{captured} local target from a
+new target recomputed from the order. It supplies neither the shared
+translation law nor the occupancy abstraction.
+
+\paragraph{Exact assembly.}
+Use the earlier temporal closure to compute eligibility at $t$ and the
+required-before relation between eligible holds. For a fixed $z$, restrict
+that graph to the holds whose translated polygons admit $z$; weighted
+antichain gives exactly the achievable load at this $z$. There is no reason
+to use either the temporal peak or the geometric peak as the joint value.
+To compute the joint maximum without sampling, enumerate all intersections
+of nonparallel boundary lines of $K$ and the eligible
+polygons $Q_i-u_i$, keeping points in $K$. Evaluate each resulting mask
+of jointly compatible holds with the temporal procedure.
+
+For completeness, take a maximizing admissible schedule and translation,
+and let $S$ denote the holds that contribute to its load. The common
+feasible set for those holds is
+\[
+   C_S=K\cap\bigcap_{i\in S}(Q_i-u_i).
+\]
+It is nonempty and compact. A vertex of $C_S$ lies on two independent
+constraint lines: otherwise a sufficiently small movement in either
+direction tangent to all active lines would stay feasible, contradicting
+extremality. This also covers a segment endpoint or a singleton
+enforced by closed inequalities. That vertex is among the enumerated
+points, and the original temporal witness is still admissible at it
+by the product hypothesis. Extra contributing holds cannot lower
+load. Conversely an enumerated point paired with the antichain witness
+schedule is a legal joint history. The implementation checks attained
+loads, not just the maximum formula, and independently compares against
+enumerating job subsets with exact Fourier--Motzkin elimination and a
+difference-constraint schedule witness. It does not time these methods
+against an optimized comparator.
+
+\paragraph{Two pairs of separations.}
+For unit loads, take four old holds $A,B,C,D$. Let $A$ be required to
+end before $B$ starts or at the same instant; likewise for $C,D$.
+Make $A,B$ share one retained reference position, $C,D$ another, and
+choose a site narrow enough that translations that place the first
+position in it cannot also place the second in it. Every job is
+separately eligible geometrically and temporally. The timing peak is
+two via cross-pair overlap and the geometric peak is two via within-pair
+overlap. The joint peak is one. A capacity-two rule with one proposed
+additional unit can therefore admit at the cut under the joint check
+but not under either separate peak. This does not certify occupancy at
+later cuts or authorize the new operation independently of its other duties.
+
+Even when the timing relation is empty, testing all geometric pairs
+loses information. For the site $x,y\geq0$, $x+y\leq3$, retain the
+three targets $(0,0),(-2,0),(0,-2)$ and allow translations in
+$[-4,4]^2$. Every pair can share the site, but all three would demand
+$z_x,z_y\geq2$ and $z_x+z_y\leq3$. Changing the two $-2$ coordinates
+to $-1$ preserves all pair answers and makes the triple possible.
+Conversely, checking geometry for all subsets of at most three jobs,
+always intersecting with $K$, is sufficient in this planar convex model.
+For proof, let a minimal infeasible family of the convex sets
+$K\cap(Q_i-u_i)$ have at least four members. For each of four members
+pick a point belonging to all sets except possibly that member.
+The four lifted vectors $(x,y,1)$ are linearly dependent. Separating
+positive and negative coefficients and normalizing to sum one gives
+the same point as convex combinations of disjoint groups. Each set
+contains every point of at least one group, so their common combination
+belongs to every set, contradiction. Thus the geometric conflict rank
+is sharply three, even though the temporal conflicts have rank two.
+
+\paragraph{Reuse and the boundary of the claim.}
+For a change limited to $K$, keep the intersections of the old footprint
+lines and their membership masks. Filter them against the new $K$ and
+add intersections involving at least one new support line, then evaluate
+current temporal eligibility and the weighted antichains. No old
+verdict or bound is inherited without the new cut check. A moved old
+target changes its polygon, so this reuse premise is then false.
+A direct planner retaining the same half-planes and clock graph can use
+the identical work; the comparison establishes a reusable interface and
+a gain over separated summaries, not a gain over equally informed
+optimized planners.
+
+If a common cause jointly selects a calibration support and a clock
+network from a finite set of labelled product branches, compute the
+maximum inside each branch and then take the maximum over branches.
+Dropping the labels can reintroduce impossible joint states: one replay
+has the old hold active only in the branch where it is geometrically
+out of the site, and the projected product reports load one instead of
+zero. Treating that product as an overapproximation is safe only when
+it really contains every physical history. In particular a nominal
+timing network with unjustified fixed transit times need not contain
+the histories allowed by the calibration fault. All tested polygons
+are closed; a corner that survives only at equality can contribute the
+maximum. Neither that boundary convention nor the common-error model is
+validated by robot or field observations.
+\end{document}
