@@ -1,0 +1,60 @@
+\documentclass[11pt]{article}
+\title{The released frontier in a selective route replacement}
+\begin{document}
+\maketitle
+
+VDA 5050 distinguishes the released base from the mutable horizon.
+The old released prefix may continue while the horizon is changed.
+A release that has already been sent but has not been acknowledged
+cannot be treated as part of the definitely unreleased horizon.
+
+\paragraph{Acceptance witness.}
+An initial order has released decision point \(A\), with \(B\)
+unreleased in its horizon. Update 1 extends the base from \(A\) to
+\(B\). Update 2 has the same order identity, starts at \(A\), and
+releases the alternative \(X\), omitting \(B\). Both graph messages
+validate in isolation. In the selected client code:
+\begin{itemize}
+\item If update 2 arrives first, it stitches at \(A\). Update 1 is
+then rejected because the update number is not strictly increasing.
+\item If update 1 arrives first, the released anchor is now \(B\).
+Update 2 fails to stitch at \(A\) despite its greater update number.
+A different update 2 anchored at \(B\) passes but leaves the earlier
+release intact.
+\end{itemize}
+The replay checks these exact verdicts using the upstream validator
+body and substitute field-compatible structs and error plumbing.
+Node attributes outside the fixture are held equal at stitch points.
+Delivery order is a test input: this does not assert that one healthy
+MQTT session reorders messages. The distinction also arises if release
+delivery is uncertain and the update is the next processed message.
+
+\paragraph{Control consequence.}
+If the old release has never been sent and cannot be issued by another
+publisher, the retained prefix can finish while the fleet computes
+the replacement. There is no release of \(B\) to rescind. After
+dispatch of update 1, absence of its acknowledgement alone is
+consistent with both acceptance histories. Sending update 2 at \(A\)
+does not certify that \(B\) is excluded. Within the one-order model,
+evidence that the robot accepted the specific update 2 at \(A\)
+does resolve the race: that acceptance excludes an earlier accepted
+update 1 at \(B\), and the strict update-number test rejects update 1
+thereafter. Such evidence must identify the order and actual accepted
+order update; a publisher-side send or unrelated progress is not
+enough. Resets, competing issuers, and changes of order identity
+would require separate evidence.
+
+The pinned adapter tests a node's release flag before handing it to
+the navigation callback. Its existing unreleased-node test exercises
+that guard. Neither the new validator replay nor the guard certifies
+a robot's physical clearance or the completion of an already
+dispatched operation. A different action or source can still
+occupy the bay, and that requires an independent check.
+
+\paragraph{Comparator.}
+This is an applicable stock mechanism to beat, not an improvement
+over a planner given the same accepted anchor and update evidence.
+It provides a real selective alternative for work still in the
+horizon, with a boundary at the latest potentially accepted release.
+No independent two-fault mission or I1 acceptance follows.
+\end{document}
