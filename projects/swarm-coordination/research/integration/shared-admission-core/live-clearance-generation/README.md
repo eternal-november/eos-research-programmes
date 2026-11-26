@@ -13,3 +13,6 @@ Materialize SOURCE.tsv, then run:
 Python 3.10+, NumPy, C++17. Guarded_Reuse.lean checks the small proof
 kernel. Authored control/fault envelope and bridge; not an independent
 or field result.
+
+The [consuming-cut follow-up](consuming-cut/) tests a real return or
+broker debit interposed between preflight and send.
