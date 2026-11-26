@@ -42,3 +42,5 @@ radio or multi-vehicle motion. A separate independently selected input and
 source calibration are still needed.
 
 `parallel_slice.py` is a restricted two-crew check with independent local histories and one optional scoped transfer of probe evidence. It checks real overlap with a different crew’s forwarding interval; it is not a general multi-agent planner.
+
+[Live corridor rebind](live-rebind/README.md) combines physical cell-limited observation, timed authority access, native broker callbacks and actual modeled egress. A staged handoff can reach a pending effect before the charged optional cutoff. Independent case and matched operational advantage remain open.
