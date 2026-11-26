@@ -1,0 +1,80 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{A fresh calibration does not identify an outstanding navigation target}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Calibration, not a map-version claim.}
+Let $T$ map coordinates in one stable robot-local gauge to the specified
+world gauge. A calibration update revises the estimate of $T$; it does not
+rename the physical world, change the map origin, or establish that the
+new estimate is correct. The pinned adapter keys this transform by
+\texttt{map\_id}. This study does not assert that a VDA 5050 map activation
+uses this API or that versioned maps may have different origins.
+
+\paragraph{What the source replay separates.}
+The unchanged dispatch method looks up the transform and constructs a
+\texttt{NodeRequest} by value before handing it to navigation. The
+unchanged setter replaces the transform under its map key. It does not
+change the handed request. Subsequent dispatch calls decline to send a
+replacement while the order is marked executing. A later native
+position update uses the current transform, not the one used for the
+outstanding request. The serial fixture executes those method bodies
+with an inert callback that captures but does not finish the request.
+
+Two runs start with world estimate $x=u+1$ for local coordinate $u$.
+Both then use $x=u$. The same released target $x=4$ is dispatched on
+opposite sides of the update. They agree on the accepted order, current
+transform and position snapshot, including after resampling. The
+already-issued local requests are $u=3$ and $u=4$. If the corrected
+identity is accurate in the actuation gauge and the consumer retains the
+numeric request, the two now target different world points. Delivery of a
+request is the observed cut; motion and arrival are not observed.
+This example uses sequential calls only, no purported data race.
+The source's existing navigation test shows that the transform is used
+when dispatch constructs the request; it does not cover this handoff.
+
+\paragraph{An endpoint revalidation law.}
+For an outstanding point request $p$, record the local target $u$ that
+was actually issued or enough information to derive it, such as the
+dispatch transform $T_d$ with $u=T_d^{-1}p$. If $T_c$ is verified and
+applies to the same physical local gauge, the existing request meets a
+closed Euclidean world-position tolerance $\epsilon$ exactly when
+\[
+  \left\|T_c u-p\right\|_2\leq\epsilon.
+\]
+The target in the all-current calculation $T_c(T_c^{-1}p)$ is always
+$p$ and is therefore not an evaluation of the old request. If explicit
+heading is present, also test its circular distance against its
+separate heading tolerance. If no heading was requested, there is no
+such obligation. A changed calibration is not itself sufficient to
+invalidate an old request: rotation about the target leaves a
+position-only request at the same point but can change the required yaw.
+The replay checks both outcomes and all 162 integer translation cases
+over its declared grid.
+
+If the same transform pair applies to outstanding position-only targets
+in a filled, bounded polytope $P$, testing its vertices exactly checks
+the whole envelope. To see this, write $T_cT_d^{-1}(p)-p=Ap+b$.
+For $p=\sum_i\lambda_i v_i$ in $P$, triangle inequality bounds its
+norm by $\sum_i\lambda_i\|Av_i+b\|$, hence by the largest vertex
+error, which is attained at a vertex. With a common yaw tolerance the
+relative rotation contributes a single circular error for all explicit
+yaws. This envelope check can overestimate the error for a smaller discrete set if
+the envelope includes extra positions outside its convex hull.
+
+\paragraph{Recovery interface and limits.}
+The useful witness is a target actually handed to an actuator, tagged to
+the execution instance and its local coordinate gauge. A planner that
+separately retains that target and a verified current transform gets the
+same endpoint check. Retiring every old request after recalibration
+is conservative even for some requests that would be unchanged. Neither
+a fresh pose nor the geometric check establishes that a route is clear,
+that another component has physically vacated a shared cell, or that
+a controller can revoke an executing request. If the current transform
+is uncertain, the point and heading tests must be valid for its entire
+admissible set; if the local gauge has changed, an actual bridge between
+gauges is required. The fixture neither represents that change nor
+executes an MQTT stack, controller motion, full map activation, or a
+mission acceptance test. No inventory entry is discharged.
+\end{document}
