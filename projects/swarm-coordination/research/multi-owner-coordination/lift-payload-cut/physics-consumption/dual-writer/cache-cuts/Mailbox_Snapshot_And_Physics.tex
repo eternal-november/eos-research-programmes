@@ -1,0 +1,49 @@
+\documentclass[11pt]{article}
+\title{Clearing a velocity slot does not clear either upstream velocity copy}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Source cut.}
+At the same Gazebo 9 pin, the selected callback saves
+\texttt{targetVel} under a mutex. The selected snapshot method
+copies that target into the linear and angular values used by
+the model writer. The inspected \texttt{PostUpdate} calls the
+snapshot method on its unpaused path; the selected linear
+\texttt{PreUpdate} expression sets or creates the component
+from the sampled value. The test executes those source bodies
+at explicitly chosen serial cuts, together with the selected
+lift write, physics setter and removal seam. Conversion of the
+stand-in message vector is by identity. The test does not claim
+that real callback, scheduler, or engine timings match this fixture.
+
+\paragraph{Receipt versus consumption.}
+The case starts with a nonzero horizontal target and a steady
+independent vertical lift write. In the silence control no new
+velocity message arrives for four subsequent cycles. The native
+snapshot still copies the target and the model writer recreates
+the same horizontal intent after each physics cleanup. Looking
+only at the empty component after cleanup misses the ready
+upstream command.
+
+Next compare a valid zero-horizontal command received before or
+after the snapshot used for the next setter. The target mailbox
+contains the same zero at the write cut in both cases. The actual
+horizontal setter value is zero in the former and the previous
+value in the latter. The latter then reaches zero after another
+snapshot in this declared schedule. For a separate controlled
+diagnostic, zero only the sampled copy while retaining the target
+in the mailbox; the selected native snapshot brings back the
+old value at the next cut. This last mutation is an authored
+comparison, not a stock reset interface.
+
+These witnesses distinguish last received value, qualifying
+snapshot, actual writer and physics consumption. To retire an
+old scope without losing an unrelated vertical duty, a design
+must bind a new authority epoch or a qualified retirement event
+to both copies and to the consumed update, or otherwise prevent
+the stale source from effecting either copy. A completed cleanup,
+silence, or acceptance of a replacement message alone cannot
+certify that obligation. A zero setter call still is not a
+physical stop, and the replay claims neither latency outside
+the chosen scheduler nor field behavior or architecture coverage.
+\end{document}
