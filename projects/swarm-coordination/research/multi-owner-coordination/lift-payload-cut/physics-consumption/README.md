@@ -26,3 +26,5 @@ python3 -B replay.py /path/to/pins | cmp results.txt -
 the selected lift write, physics setter dispatch, and cleanup bodies. The
 component manager implementation and outer physics update order are
 inspected, not run.
+
+[Dual writer follow-up](dual-writer/): replacing the removed component can restore or overwrite the next lift intent depending on the order of the writers.
