@@ -19,3 +19,5 @@ Use `set -o pipefail` and pipe the command through `cmp results.txt -`
 to check the stored trace. An extracted helper and the selected linear
 writer expression are executed; scheduler and priority configuration
 are inspected, not run. See [evidence and limits](Producer_Order.tex).
+
+[Mailbox and snapshot cuts](cache-cuts/): the producer can recreate old commands after consumer cleanup and even after receipt of a replacement, until the appropriate snapshot.
