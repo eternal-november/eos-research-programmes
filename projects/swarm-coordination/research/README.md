@@ -192,6 +192,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Multiple owners
 
+**SC-NAMED-WITHDRAWAL:** An unchanged old footprint can hide which shelf a new owner may lawfully move. An actual local conditional withdrawal handles either placement without globally disclosing identity; a fixed bay cannot. [Proof, exact profile splits and native replay](multi-owner-coordination/named-withdrawal/README.md). Same-information direct policy ties.
+
 **SC-LANE-WITHDRAWAL: When can a successor start after an owner withdraws?** Port-side authority and physical clearance are different: a prior start can stay live after revocation. A receipt-only rule, a timeout and an independent reserve have different service consequences. [Proof](multi-owner-coordination/lane-withdrawal/Withdrawal_With_Live_Lane_Use.tex) · [Replay](multi-owner-coordination/lane-withdrawal/README.md).
 
 **SC-SCOPED-ADVICE: Does a lawful expansion of permissions make the old report sufficient?** Exact admission under restricted disclosure retains only the currently authorized history predicates. A later grant can demand a distinction the old report deliberately omitted; the count of supplemental report states is exact. Lean checks the authorized profile and recovery obstruction. [Proof](multi-owner-coordination/scoped-advice/Scoped_Advice_And_Amendment.tex) · [Replay and scope](multi-owner-coordination/scoped-advice/README.md).
