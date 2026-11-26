@@ -44,3 +44,6 @@ a protected consuming cut.
 
 The [old-work deadline replay](old-work-deadline/) tests qualified cache
 reads when the old carrier's motion and its transfer cannot be postponed.
+
+The [joint-closure replay](joint-closure/) composes keyed station restart,
+physical return, shared debit, and supplier change on one evolving history.
