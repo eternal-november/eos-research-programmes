@@ -1,0 +1,72 @@
+\documentclass[11pt]{article}
+\title{Exact total velocity and separately warranted world intents need different frame evidence}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Modeled interface.}
+The selected physics setter input in the lift replay takes a model
+local vector and rotates it into world coordinates using the pose
+read at consumption. The two-writer replay separately shows how
+horizontal and vertical local coordinates can survive or be lost at
+that seam. Those studies do not assign real-world authority. Here
+consider a declared interface whose robot owner supplies a horizontal
+world vector $h$ and whose lift owner supplies a vertical world
+vector $v$. The operator may choose local commands before the exact
+consumer rotation $R$ is known, using an observation $o(R)$.
+Rotations are invertible and both contributions share the same $R$.
+An aggregate downstream law requires only $R(x+y)=h+v$.
+A different law with separately attributable scoped contributions
+requires $Rx=h$ and $Ry=v$. In the latter the pieces are checked
+before summing, not inferred from a native undifferentiated setter.
+Both laws here require exact effects, not approximate tracking.
+No mass, stopping, scheduling or tolerance model is assumed.
+
+\paragraph{Exact observation quotient.}
+For a given observation cell and fixed demand, a frozen aggregate
+local vector exists exactly when $R^{-1}(h+v)$ is constant on the
+cell. A frozen pair with the separate law exists exactly when both
+$R^{-1}h$ and $R^{-1}v$ are constant there. Necessity is uniqueness
+of each inverse value. Sufficiency is choosing any compatible
+representative and its inverse vector or pair. For a declared family
+of demands with the same observation interface these tests must
+hold for each demand. Thus the signatures across all demands give
+the coarsest valid partition: every coarser collapse of distinct
+signatures identifies some demand with two different required
+local answers. Every refinement is adequate with the same law.
+The Lean result checks the pairwise inverse equivalence. Its global
+interpretation follows by assigning each supported observation cell
+a representative, not by assuming advance access to the true pose.
+
+\paragraph{A sharp separation and cost.}
+Let $h$ be world $x$, $v$ world $z$, each unit length, and allow
+identity or the proper rotation interchanging $x$ and $z$ and
+reversing $y$. Both rotations fix $h+v$. The same aggregate local
+command works, while the separately attributed pair must remain
+$(x,z)$ in one frame and become $(z,x)$ in the other.
+No observation merging those cases can support the separate
+guarantee. For the 24 proper signed axis permutations the aggregate
+signature has 12 values: the omitted axis and the signs of the
+two present coordinates. The separate pair has 24: the preimages
+of the first and third basis vectors fix the remaining oriented
+basis vector. A fixed-length single frame summary must therefore
+use at least 4 bits for the aggregate issue and 5 bits for the
+separate issue in that family. These are theoretical distinctions,
+not measured packet costs. Enumeration confirms both counts
+and compares against a direct local-vector search on 1{,}400
+mode-and-demand cases.
+
+\paragraph{Obligations on a repair.}
+A prior pose sample does not automatically realize these cells:
+the qualified observation must describe the pose at the setter
+cut, or a certified relation must preserve the needed signature
+through that cut. If a later pose changes the inverse horizontal
+and vertical contributions while fixing their sum, a cached
+aggregate permission remains insufficient for the scoped law.
+A fresh frame observation can resolve that uncertainty in the
+model but cannot establish the writer's ownership, a right to
+act, or physical compliance. The native Gazebo/Open-RMF source
+does not implement this labelled decomposition or a qualified
+frame attestation. An equally informed direct assembler can
+choose the same vectors. This is a scope/evidence separation and
+not an implementation win, effect-settlement proof, or I1 claim.
+\end{document}
