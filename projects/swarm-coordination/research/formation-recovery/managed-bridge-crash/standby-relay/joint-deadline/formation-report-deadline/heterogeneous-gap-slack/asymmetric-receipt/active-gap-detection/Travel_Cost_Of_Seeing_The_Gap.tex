@@ -1,0 +1,107 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{The travel cost of making a formation observation possible}
+\begin{document}
+\maketitle
+
+A timely gap bit permits an advance that the same formation cannot
+guarantee if it has to move to make the observation possible.
+For a shortfall \(d\) in detection range, the exact loss in this
+model is \(\sqrt{3d/2}\), not \(d\).
+
+\paragraph{Source and motion law.}
+Two single-file robots have the previous asymmetric-gap model
+with \(a=V=1,A=4,W=3\), deadline 4, and a fixed physical gap band
+\([1,8/5]\). Their initial gap is \(6/5\) (near) or \(7/5\) (far).
+Both start at rest and must make one common advance \(D\) by
+time 4, again at rest. In this study reversals are not admissible;
+each velocity is nonnegative. The earlier optimum with a free
+timely bit already has a forward-only realization, so that
+comparison has not lost its witness.
+
+The only gap evidence is one ideal range sample the controller
+may schedule. It returns detection iff the instantaneous gap is
+at most \(6/5-d\), with \(0<d\le3/800\). The reading is delivered
+immediately, and a valid negative reading is distinct from
+absence of a report. All commands before the sample must agree
+in the two worlds. The measurement model deliberately omits
+sensor noise, occlusions, and delivery latency. It is not a
+claim about any real camera or communication system.
+
+\paragraph{Exact upper bound.}
+Write \(y=x_2-x_1\) for the difference of advances. Before the
+sample every common history keeps \(y\in[-1/5,1/5]\).
+At a distinguishing read \(q\), the far case cannot be
+detected within that intersection band, and the near case
+needs \(y(q)\le-d\). If there is no distinguishing read
+before time 1, the near case must still satisfy the far case's
+upper gap bound at 1. Hence \(x_2(1)\le1/2+1/5=7/10\),
+which later gives \(D\le17/5\).
+
+If the read is early, \(x_1(q)\le q^2/2\) and so
+\(x_2(q)\le q^2/2-d\). Forward-only motion forces
+\(q\ge\sqrt{2d}\). For \(q\le1/4\), a speed \(v\) at the
+read requires \(x_2(q)\ge v^2/8\) by integrating the minimum
+feasible velocity from rest. The remaining distance up to
+time 1 is at most \(1-q-(1-v)^2/8\), attained by reaching
+speed one as quickly as possible and cruising. Both position
+and this bound are increasing in the allowed cut values.
+Consequently
+\[
+ x_2(1)\le\frac78-q+\frac12\sqrt{q^2-2d}.
+\]
+The strongest value over those \(q\) is \(7/8-k\), where
+\(k=\sqrt{3d/2}\). Indeed
+\(q-\sqrt{q^2-2d}/2\ge k\) by squaring with \(q-k>0\);
+the resulting inequality is \(3(q-4k/3)^2\ge0\).
+The maximizing time \(4k/3\) lies in the early interval.
+For \(q\in[1/4,1]\), the speed bound alone gives
+\(x_2(1)\le q^2/2-d+1-q\le25/32-d<7/8-k\) in the declared
+range of \(d\).
+
+In the near case, robot 2 can add at most two units between
+times 1 and 3. Robot 1's final acceleration bound gives
+\(x_1(3)\ge D-1/2\), and near-case lower clearance gives
+\(x_2(3)\ge x_1(3)-1/5\); so the final interval adds at most
+\(7/10\) to robot 2's advance. Thus any policy has
+\(D\le143/40-k\). This is above \(17/5\) for all the
+specified \(d\); the late-read bound is not stronger.
+
+\paragraph{An attaining active measurement.}
+Let \(q=4k/3\). Robot 1 accelerates from time zero at one.
+Robot 2 waits until \(3q/4\), then accelerates at four.
+At the read both speeds are \(q\), with
+\(x_1=q^2/2,\ x_2=q^2/8,\ y=-d\).
+The controllers can now tell which physical gap they started with.
+
+After a near reading keep robot 1's ramp until 1 and let robot 2
+continue to accelerate until its speed cap. The leading gap at
+1 is \(p=3/8-k\). In the far branch interpolate robot 2's
+velocity after the read between \(v_1(t)=t\) and the near branch's
+fast profile, with weight \((1/5+d)/(p+d)\) on the latter.
+Relative displacement grows monotonically to \(1/5\). In both
+branches from 1 to 3, robot 2 cruises at one and robot 1 adds
+a triangular speed profile with area \(p+1/5\).
+The final reversed ramps use lag \(1/5\) in the near branch
+and \(p\) in the far branch. Both reach the asserted optimum.
+All accelerations, speeds and gap extrema are verified in
+the exact replay, including the initial negative excursion.
+
+If the report is erased, the same prefix can preserve the
+intersection band: use the far branch's initial ramp to \(1/5\),
+add only \(2/5\) in the middle, and use lag \(1/5\) at the end.
+This safely achieves \(17/5\), not the target with reliable
+evidence. It counts as service only if that smaller advance
+is independently allowed.
+
+\paragraph{Matched comparisons.}
+At \(d=3/800\) the read is at \(1/10\) and the maximum is
+\(7/2=3.5\), compared with 3.575 when directly informed and
+3.4 with no usable bit. A separate sampled shared-prefix LP
+agrees at the named read and brackets nearby alternatives.
+The continuous proof, not the sampled comparison, supplies the
+global upper bound. This is a motion cost of acquiring an ideal
+range reading under fixed laws, not a sensor characterization or
+a win over an equally informed trajectory optimizer. No full
+R3a, R6, or I1 acceptance follows.
+\end{document}
