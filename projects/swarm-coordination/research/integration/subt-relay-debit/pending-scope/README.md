@@ -8,3 +8,5 @@ Stage SOURCE.tsv's pinned inputs as in the earlier native harness.
 Requires Python 3 and a C++17 compiler. Budget.lean was checked in
 AXLE Lean 4.35.0. The direct same-information policy ties. This is
 a civil simulator calibration, not a radio deployment or a holdout.
+
+[Timed native source producer](timed-source-producer/README.md) projects from actual histories, checks pending route scope and permits timed overlap. Under a physical route loss, cancellation can restore the mandatory tail only before the optional debit is incurred. Same-information direct decision tree ties.
