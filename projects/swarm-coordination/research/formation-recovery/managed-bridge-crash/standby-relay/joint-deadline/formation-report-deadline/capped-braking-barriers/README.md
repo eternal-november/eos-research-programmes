@@ -10,3 +10,5 @@ The [proof](Exact_Braking_Barriers.tex) gives two independent failure modes for 
 This is a continuous forward-only safety law, not a guarantee of stopping at a mission target, communications or real robot behavior.
 
 [Monotone-speed chains](monotone-chain/) extend the span test to arbitrary length when limits are common, and give the exact safe stop time.
+
+[Directed position constraints](directed-constraints/) remove the monotone-velocity assumption through shortest-path closure and show where unequal actuators break the test.

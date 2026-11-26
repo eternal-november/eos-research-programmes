@@ -1,0 +1,1 @@
+Lean 4.35.0 with Mathlib checked DirectedOverlap.lean without errors or warnings. Both theorem audits report only propext, Classical.choice, and Quot.sound. These checks cover the overlap contradiction and exact counterexample arithmetic, not the continuous existence theorem.
