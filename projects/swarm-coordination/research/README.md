@@ -252,6 +252,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 ## Integration development
 
+**SC-RELEASED-BASE-CUT: Does a later route update exclude an unacknowledged release?** A pinned VDA 5050 validator accepts a replacement anchored at the old decision point only while that point is still the released frontier. The same later version cannot undo an accepted extension. [Scope and source replay](integration/released-base-cut/README.md). Acceptance only, not physical clearance.
+
 **SC-MRWS-RETAINED-LOADS: Must healthy carriers redo their pickups after another carrier fails?** The pinned native restart discards their outstanding loads. Keeping authorized consecutive class batches lowers new pickups from five to two in the callback fixture, or to at most four if another carrier is lost before receipt. The same native station completes the same order. [Model and replay](integration/mrws-retained-loads/README.md). Movement deadlines and a live proof of old-grant retirement remain open.
 
 **SC-MRWS-BLOCKED-SOURCE: Can a loss also remove the means of replacing the lost load?** In executed native ticks, a stopped robot on the only shelf for a missing class makes recovery impossible under the fixed movement and extraction rules. An off-shelf control gives a 93-to-70 tick improvement over the native discard rule after one fault, and a compound completion when the discard route blocks the next required shelf. [Model and replay](integration/mrws-blocked-source/README.md). This is a development comparison, not an I1 holdout.
