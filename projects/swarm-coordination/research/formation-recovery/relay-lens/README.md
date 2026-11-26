@@ -12,3 +12,7 @@ lean RadioLens.lean
 ```
 
 The numeric references use SciPy 1.17.0. Lean 4.35.0 with Mathlib checks eight algebraic statements. The exact deadline theorem is for the speed-limited civil model with a single trustworthy sign disclosure at a specified time, not for a measured radio network. The constant-speed acceleration comparison is separate.
+
+## Optical follow-up
+
+[Stopped-vehicle optical occlusion](../opaque-relay/README.md) makes the same obstacle affect both motion clearance and line of sight. It gives an exact aperture boundary and distinguishes static bridge feasibility from a live switch.

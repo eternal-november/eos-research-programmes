@@ -1,0 +1,145 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{A stopped robot as both a clearance constraint and an optical occluder}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Claim and scope.}
+In a civil inspection corridor a stopped robot can leave the required
+one-relay bridge impossible at \emph{every} nominal range even when two
+relays at a finite range suffice. In another regime each side has a valid
+one-relay position, but switching sides under a requirement of continuous
+two-terminal contact is impossible. A particular boundary family has an
+exact range and speed limit for the switch when optical interruption is
+permitted. These are model-level R6 physical feasibility checks, usable
+before a coordination decision. They do not show a failed robot can be
+localized, which direction an inspector should choose under partial
+information, or that a visible link delivers a packet.
+
+\paragraph{Collision and contact are different predicates.}
+The terminal points are \(P=(-a,0)\) and \(Q=(a,0)\), \(a>0\).
+The intervening stopped vehicle has an effective opaque disk with radius
+\(0<r<a\). An inspecting relay center obeys clearance radius \(q\) with
+\(r\le q<a\) and corridor center half-height \(H\ge0\).
+The lateral dimension is unconstrained. These parameters already absorb
+the stipulated obstacle, body and wall margins; they need not be equal.
+An edge joins points at distance at most \(R\) if their segment does not
+enter the open opaque disk. Tangency is allowed at the \emph{certified}
+radius, for example if \(r\) is an inflated optical margin; strict
+obstruction would change boundary cases. Anchors are optical points
+without additional body-clearance constraints for the one-relay result.
+Static placements presume known geometry and availability at that
+position, not an authorized route to it. Optical orientations are
+unconstrained. No map uncertainty, velocity matching at endpoints,
+nonholonomic dynamics, interference, packet scheduling or accidental
+physical optical access is assumed.
+
+\paragraph{Exact one-relay feasibility.}
+By reflection take location \((x,y)\) in the first quadrant. For
+\(0\le t\le1\), the point at fraction \(t\) along the chord from \(P\) is
+no farther from the origin than the corresponding point from \(Q\):
+the squared distance difference is \(4tx(1-t)a\ge0\).
+The segment from \(P\) is thus the harder visibility check and
+also the longer link. The minimizing projection parameter onto its
+support line is \(a(a+x)/((a+x)^2+y^2)\in[0,1]\).
+The resulting squared distance to the segment is
+\(a^2y^2/((a+x)^2+y^2)\). Write \(k=r^2/(a^2-r^2)>0\).
+Both edges are optical exactly when \(y^2\ge k(a+x)^2\).
+
+The feasible interval of \(z=y^2\) at fixed \(x\ge0\) is
+\[
+ [\max(q^2-x^2,k(a+x)^2),\ \min(H^2,R^2-(a+x)^2)] .
+\]
+The left endpoint is positive. Nonemptiness requires four pairwise
+comparisons between the two lower and two upper bounds.
+The clearance/height comparison says \(x\ge b=\sqrt{\max(0,q^2-H^2)}\).
+Each of the remaining three gets weakly harder as \(x\) grows:
+\[
+ k(a+x)^2\le H^2,\qquad a^2+q^2+2ax\le R^2,\qquad
+ (1+k)(a+x)^2\le R^2 .
+\]
+Consequently testing these at \(x=b\) is necessary and sufficient.
+The left endpoint of the interval at \(b\), square-rooted, constructs
+a valid \(y\), with reflected versions also valid. For rational inputs
+the tests reduce to comparisons of \(\alpha+\beta\sqrt{B}\) with a
+rational, where \(\beta\ge0\); check the residual sign before squaring.
+When \(H\ge q\), the formula becomes \(H^2\ge ka^2\) and
+\(R^2\ge a^2+\max(q^2,ka^2)\). The axial ray is optimal here, but
+assuming axial placement when \(H<q\) can miss an actual bridge.
+
+\paragraph{Separating witnesses.}
+Take \(a=3,\ r=1,\ q=21/20,\ H=3/2\). At \(R^2=1011/100\),
+a distance-only rule can approve \((0,q)\). The optical rule needs at
+least \(R^2=81/8\). Now set \(H=211/200\), which is below the optical
+height \(3/\sqrt 8\). No single optical relay works at any range.
+The chain through \((-3/2,21/20)\) and \((3/2,21/20)\) works at \(R=3\):
+every link has strictly positive optical margin, the relay centers
+satisfy the body and wall clearance, and the four points are pairwise
+at least unit distance apart. No assertion of optimal two-relay
+\emph{range} or maintainable upstream deployment follows. The capacity
+gain here comes from adding a relay, not making a stronger controller
+at matched physical resources. Independently, for \(a=13,\ r=1,\ q=5,\ H=4\)
+off-axis \((3,4)\) really works at \(R^2=272\); fixed axial placement
+cannot obey clearance and height. At the same \(a,q,H\) but \(r=5\),
+even the off-axis optimum fails the optical height check.
+
+\paragraph{Static feasible endpoints do not give a live switch.}
+Every allowed one-relay optical position has
+\(|y|\ge h_0=a\sqrt{k}>0\), independently of \(R\).
+Any continuous change from a positive to a negative position must pass
+through \(y=0\), losing simultaneous visibility. If relay speed is
+bounded by \(V>0\), a contiguous interruption between the last
+positive-side service and the first negative-side service of at least
+\(2h_0/V\) is necessary. This is a lower bound, not a universal optimum.
+If both ends must remain within nominal distance during the movement,
+crossing the axis outside \(q\) forces \(R\ge a+q\).
+When \(H\ge\max(q,h_0)\), that and availability of the endpoints
+\((0,\pm\max(q,h_0))\) suffice for those endpoints: travel along the
+vertical rays and one semicircle of radius \(q\).
+
+In the boundary family \(H=q=h_0<a\), the two service stations are the
+\emph{only} feasible positions, so an outage budget \(W\) permits
+such a switch, retaining both nominal distance bounds, exactly when
+\(R\ge a+q\) and \(W\ge\pi q/V\). Indeed a rectifiable path outside the
+clearance disk has length at least \(q\) times its net angular change
+in absolute value, by the polar speed formula. Endpoint angles differ
+by an odd multiple of \(\pi\); the right semicircle achieves the bound
+at speed \(V\). All its interior points fail optical service.
+For \(a=5,r=3\) this gives \(q=H=15/4\): radius \(25/4\) already serves
+either fixed station, but radius \(35/4\) is needed for a switch under
+the nominal distance rule. This is an explicitly tight geometric
+limit, not a gap due to finding a sufficiently fine time step.
+A spatial grid not containing \(x=0,y=\pm q\) can miss feasibility at
+that exact boundary; a geometry-adaptive planner may insert the stations.
+
+\paragraph{Prior mechanism, comparisons and residuals.}
+\href{https://doi.org/10.1016/j.jfranklin.2023.05.013}{Maeda, Endo and Matsuno}
+address local leader-following, a stopped robot, reconstruction and
+collision avoidance.
+\href{https://en.endo-lab.jp/research/detail/499}{The laboratory description}
+identifies pre-stop direction and local waiting as ingredients of its
+navigation work. The more recent
+\href{https://doi.org/10.1109/TASE.2026.3741309}{Endo et al. distributed MPC}
+also treats local sensing, collision avoidance and connectivity recovery.
+Only scope from the published abstracts and lab descriptions is used;
+no full controller reproduction or theorem subsumption is claimed.
+Maintaining connectivity by explicitly testing segment visibility is
+already used in
+\href{https://experts.umn.edu/en/publications/visibility-based-deployment-of-robot-formations-for-communication/}{visibility-based deployment}.
+A direct exact planner given the same continuous constraints cannot beat
+the infeasibility result and can use its constructive position witness.
+This is a resource and maneuver boundary for one restricted instance
+family, not an advantage over such a planner. The older project
+\href{https://github.com/eternal-november/eos-research-programmes/pull/396}{relay lens}
+used separate range and obstruction of motion; here the same obstacle
+removes segment visibility in otherwise navigable configurations.
+
+Lean checks the chord comparison, algebraic visibility test and two
+elimination steps. Exact rational ray/segment calculations check
+finite point, threshold, slot and trajectory sample controls. The
+analytical argument, not the samples, establishes continuum feasibility
+and the speed bound. Installation timing, active observation, report
+custody and acknowledgment, retained route clearance, and whether an
+independent failover source can provide an equivalent acceptance
+interface remain separate. No inventory or contract disposition changes.
+\end{document}
