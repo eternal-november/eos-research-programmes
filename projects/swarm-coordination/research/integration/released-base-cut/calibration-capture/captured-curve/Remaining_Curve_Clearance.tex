@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\title{Rechecking what remains of an issued curve after recalibration}
+\date{26 November 2026}
+\begin{document}
+\maketitle
+\paragraph{What the adapter supplies.}
+The pinned ROS-Industrial VDA adapter transforms the node request to
+robot-local coordinates but passes the edge trajectory field through
+unchanged. Its control-point type describes world coordinates. The
+replay runs the unchanged selected dispatch, node and edge methods,
+captures the callback, and carries the exact integer control points
+from that callback into the separate corridor calculation. Three
+calibrations check the distinct coordinate treatment. The source
+does not show if a downstream planner uses the edge, when it converts
+it, or which curve its controller executes. It is wrong to join node
+and edge numbers as if both were already in one frame. The modeled
+consumer below explicitly retains the curve after an initial
+world-to-local conversion; its initial transform is the identity.
+
+\paragraph{Question and interface.}
+When can a controller keep the uncompleted suffix of the captured
+local curve after a new calibration or a changed clearance envelope?
+The model uses one rational quadratic B\'ezier span with positive
+weights, representing a degree-two clamped three-control-point
+trajectory. Let $p_i$ denote the retained coordinates; the field values
+received through the callback are not silently substituted for $p_i$
+when the initial calibration is nonidentity. A fixed revised map
+$A u+b$ is augmented by an unknown offset $z$ in a given compact convex
+polygon $K$. Each corridor face requires $n\mathbin\cdot x\le c$.
+A lower bound $\ell$ on curve progress means that all actual future
+reference parameters until this contract ends lie in $[\ell,1]$ and
+that the consumed execution instance is the one supplying the curve.
+The classifier is exact for that declared envelope: its universal
+test ranges over every $t$ in the suffix and every $z$ in $K$.
+Each failure witness attains a violating point in that envelope;
+the model does not decide that the actual controller will visit it.
+A certificate that begins beyond observed progress requires an extra
+proof, such as a monotone progress witness and a measured cut.
+A stale status flag, command receipt, reached goal, or the presence of a
+path target is not that witness. The corridor must already include any
+conservative margin for body footprint and tracking error and must stay
+valid through the claimed horizon.
+
+\paragraph{Exact reusable check.}
+Write $D(t)=\sum_i w_i B_i(t)$ and
+$N_n(t)=\sum_i w_i B_i(t)\,n\mathbin\cdot(Ap_i+b)$,
+where $B_i$ are the quadratic Bernstein basis functions.
+All $w_i>0$ and $\sum_i B_i(t)=1$ give $D>0$ on $[0,1]$.
+Let $h_K(n)=\max_{z\in K}n\mathbin\cdot z$; its witness is a vertex,
+including for a degenerate polygon. The exact face test is
+\[
+  (c-h_K(n))D(t)-N_n(t)\ \geq\ 0 \qquad(\ell\le t\le1).
+\]
+One tests the two endpoints and, only for a convex scalar quadratic
+with its minimizer strictly inside the interval, that minimizer.
+Thus no tolerance sampling is needed and exact tangency passes. The
+accompanying Lean file checks denominator positivity, interval quadratic
+nonnegativity, and the projected support equivalence; it does not
+formalize the downstream interface, the VDA code, or Python execution.
+The independent numerical-algebraic implementation in the replay
+interpolates the quadratic from three points for each actual $K$ vertex
+instead of using the support and control coefficients. All 1{,}200
+test verdicts agree and every rejection has a concrete parameter,
+face and offset witness.
+
+With an unchanged span and weights, the local numerators and denominator
+are unchanged. Updating a known affine transform uses the same captured
+local coefficients and reevaluates affected rows. Changing only a
+face bound or its projected uncertainty uses the old transformed
+polynomial for that normal and adjusts the multiple of $D$.
+Progress changes only the interval; increasing a justified bound does
+not invalidate an earlier positive decision under identical physical
+inputs. A new normal, uncertainty support, frame, or changed curve may
+require a new validation; a passed face decision cannot be reused
+across it without a comparison. Multiple frame corrections compose
+with the capture-to-current coordinate map, not by adding coordinate
+differences; each continued execution must satisfy the law of its cut.
+This is semantic reuse and exact witnessed classification, not a
+speedup over an equally informed direct planner.
+
+\paragraph{Distinguishing examples.}
+For the captured points $(0,0),(2,-4),(4,0)$ with unit weights, a
+half-turn about $(4,0)$ keeps the endpoint and places both transformed
+endpoints inside the modeled corridor. The transformed interior
+has $y=8t(1-t)$ though: a ceiling of $1$ is violated at $t=1/2$.
+The suffix is safe exactly for
+$\ell\geq 1/2+\sqrt 2/4$. With a second change tightening the ceiling to
+$1/2$, the previously safe suffix beginning at $0.86$ fails. The
+paired unit-weight curve with middle control point $(2,2)$ reaches
+exactly $y=1$ and is safe at the first ceiling, although its control
+hull fails that test. The parameter lower bound and fixed calibration
+are inputs to these examples, not outputs of the callback. They
+separate wrong endpoint-only reuse from conservative retirement
+based on an enclosing hull.
+
+\paragraph{Omitted laws.}
+These results do not establish motion, safe approach to the suffix,
+dynamics, release of an old physical hold, or continuing viability
+after another fault. The union of uncertain outcomes may involve
+rotation or a curved/nonconvex safe set; the scalar quadratic test is
+not asserted for those cases. No hazard has been induced in live
+equipment. No stack or contract acceptance is claimed.
+\end{document}

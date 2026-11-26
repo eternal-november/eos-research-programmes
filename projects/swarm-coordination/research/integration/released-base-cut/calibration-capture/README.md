@@ -30,3 +30,5 @@ The C++20 fixture supplies inert stand-ins for unrelated interfaces. The
 callback receives the actual transformed request type and keeps it pending.
 The proof compares with a direct planner retaining the same local target;
 there is no claimed advantage over that baseline.
+
+[Captured curve follow-up](captured-curve/): world trajectory versus converted node position in the callback, plus exact suffix revalidation in a separate corridor model.
