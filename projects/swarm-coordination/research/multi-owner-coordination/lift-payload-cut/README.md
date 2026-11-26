@@ -30,3 +30,5 @@ hardware, or physical clearance claim.
 [Bounded retirement](bounded-retirement/): exact timing for a lawful stop authority to preserve an old useful prefix and meet a later revoke cut.
 
 [Physics consumption and cleanup](physics-consumption/): pinned v8/v9 selected setter and cleanup cuts; separate component presence, actual setter invocation and settling.
+
+[Recipient capability at entry](role-entry/): join a normally accepted lift session to matched compatible and impaired selected physics recipients.
