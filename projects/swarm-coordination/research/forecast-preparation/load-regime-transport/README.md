@@ -12,3 +12,6 @@ every probe. The matched controlled-sensing calculation ties.
 
 Python standard library only. The replay establishes the finite model and
 does not validate whether a physical probe can preserve the loaded regime.
+
+The [native loaded-diagnostic test](../native-load-diagnostic/) supplies
+an actual capacity-reserving observation path for this finite comparison.
