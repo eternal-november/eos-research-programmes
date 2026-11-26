@@ -10,3 +10,5 @@ Run with Python 3 and SciPy:
     diff -u results.json actual.json
 
 The exact arithmetic checks physical bounds between knots. The LP is an independent sampled comparison. [Lean](SensingLoss.lean) checks the real inequality and the rational named optimum, not the vehicle dynamics. No camera, real radio, or deployed controller is tested.
+
+The [detection-dwell follow-up](detection-dwell/README.md) derives the exact longer-read cost when visibility must hold continuously over a nonzero interval.
