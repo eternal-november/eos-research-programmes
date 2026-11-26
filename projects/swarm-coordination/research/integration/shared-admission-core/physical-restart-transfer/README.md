@@ -20,3 +20,5 @@ Requires Python with NumPy and Git. Native code is verified before execution.
 
 Restart and writer queues are modeled, not field observations. This is not
 an independent mission, hardware guarantee, or I1 acceptance.
+
+[Repeated-effect extension](../reopening-physical-effects/README.md): a valid later pickup restores the same latch and pose. An old command can then fire unless the guard also respects duty identity or a genuinely nonreused generation.
