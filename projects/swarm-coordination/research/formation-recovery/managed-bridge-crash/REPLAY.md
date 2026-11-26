@@ -7,3 +7,6 @@ Reproduce with Python 3 and NumPy: **PYTHONPATH=src OPENBLAS_NUM_THREADS=1 pytho
 The [qualification-window study](qualification-window/) checks the actual
 published bridge/departure overlap and a separate acceleration-limited
 example where good geometry does not guarantee enough time for a handshake.
+
+The [warm-start recovery study](warm-start-recovery/) uses the actual
+velocities at the four request cuts under declared acceleration limits.

@@ -1,0 +1,108 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\title{Do not erase velocity at a stopped-robot cut}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Target and pins.}
+Use the four departure requests from the published
+\href{https://arxiv.org/html/2609.29939v1}{KTH managed-removal examples}.
+At the request cut only, counterfactually stop the departing body at
+its current pose and remove its radio. Retain every surviving
+position and velocity from the unmodified point-mass run. The full
+geometric graph already splits in two, so continuous global
+connectivity is not demanded retroactively. Preserve all old surviving
+established edges and the separation between all live bodies and the
+stationary failed body throughout. Restore a cross-component link
+at the source activation margin and settle all survivors at rest.
+The declared speed cap is $V=1$ and acceleration caps are $1/2,1,2$
+in simulation units. These are constraints of the counterfactual,
+not claims about physical limits of the published vehicles. No noise,
+disturbance, position or velocity error is imposed; this is a
+full-state capability comparison with synchronous immediate control.
+No further arbitrary collision hazards are considered.
+The source has nonzero differences in velocities on old surviving
+edges, so insisting on unchanged relative offsets from the cut
+would itself violate differentiability. We constrain clearance and
+links, not a motion-incompatible exact old shape.
+
+\paragraph{Universal directional bound for settled service.}
+Fix any candidate cross pair with initial distance $d>R$ and let
+$e$ point from the first member to the second. Let the closing
+velocity projections initially be $u_i=e\cdot v_i$ and
+$u_j=-e\cdot v_j$. A still-connected rest endpoint at horizon $T$
+requires the integrated sum of projected closing motion at least
+$d-R$. Each such projected velocity is bounded above at real time
+$t$ by
+\[
+\min\{V,\ u_i+At,\ A(T-t)\}.
+\]
+The terms follow from bounded speed, initial signed velocity, and
+the same input bound backwards from zero terminal velocity. The
+candidate set can satisfy service only if at least one cross pair
+can close by $d-R$ under these upper integrals. All survivors must
+also have enough time to stop. Relaxing a signed projection to the
+full initial speed gives a weaker necessary test. No collision path
+or fixed control policy is assumed in either lower bound. Beyond
+the longest braking time all upper integrals are monotone in $T$;
+the piecewise affine intersections integrate directly. This gives
+a lower deadline bound in the stated continuous model, rather than
+a failure found by numerical controller search.
+
+\paragraph{Constructive checked upper bound.}
+Each survivor first uses maximum braking along its own velocity
+until stationary. Between the individual stopping times and
+acceleration switches, each relative trajectory is quadratic.
+The deviation of a relative segment from its chord is at most
+$\|a_i-a_j\|\Delta^2/8$. Lower chord distances minus this bound
+check clearance; maximum endpoint norm plus it checks every
+surviving established edge. Pointwise speed follows from the
+endpoint speed bound and affine velocity on each segment.
+Next each component applies one synchronized bounded rest-to-rest
+translation toward a closest cross pair in the braked configuration.
+It suffices to move each component half the remaining gap.
+The triangular speed profile switches once (or cruises at the speed
+cap if necessary), and preserves all internal offsets during this
+phase. The same pairwise continuous bounds check both motion
+phases, including the static failed body. At the end there is a
+bridge with positive slack relative to nominal sensing range.
+This is not an optimization claim for the brake-then-translate
+controller or a claim about a switched control law outside these
+four initial poses.
+
+\paragraph{Positive and negative matched deadlines.}
+All twelve pose/cap cases produce a witness within 0.001 modeled
+time units of the projected lower bound. For example at acceleration
+cap one the planar request has a speed-only static estimate
+of about 0.22960, a warm settled lower bound about 0.95879, and
+a verified settled trajectory about 0.95929. The source reports
+small but nonzero velocities. The large timing correction is
+acceleration plus coming to rest, not the small braking prelude
+alone. If a separate authored acceptance law requires an intact
+rested link for 0.25 units and a matching callback, that dwell is
+added after the verified stop; the replay records an infeasible and
+feasible-by deadline in the same task for each pose/cap. A missing
+callback still does not establish qualified service. There is no
+declaration that the published robot uses that transport protocol.
+The lower/upper numerical bins come with slack between the
+required negative/positive deadlines and do not assert
+last-digit platform-independent precision.
+
+\paragraph{Relation to established controllers.}
+The published manager prevents the abrupt mode by maintaining its
+old support until bridge activation. The connected-start theorem in
+\href{https://arxiv.org/pdf/2609.19912}{Geurts et al.} is a maintenance
+baseline; it does not supply the disconnection recovery initial
+condition. The physical deadline obstruction applies also to
+any planner given the same bounded plant and terminal requirements.
+\href{https://en.endo-lab.jp/research/detail/499}{The authors' account}
+of Maeda, Endo and Matsuno's recovery uses local neighbor behavior
+and the failed member's previous direction (and can wait).
+The exact published crash-control implementation has not been
+replayed here. The ability of local crews to choose or track this
+full-state witness under delayed evidence and a real failure
+transition remains open. No physical, independent-mission, complete
+R6 or field claim follows.
+\end{document}
