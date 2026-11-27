@@ -1,0 +1,101 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{When retiring a reader can preserve an old transfer}
+This study follows one old, keyed warehouse operation across an early
+receiver retirement, delayed radio dispatch and an authority change.
+The receiver being retired is a diagnostic-only participant. Its
+controlled withdrawal is authorized in the fixture and does not
+cancel the mandatory receipt. A distinct listener can remain bound
+to the same endpoint; the policy is not authorized to withdraw it.
+Only the studied simulator declarations carry these permissions.
+
+\paragraph{Native effect and boundary.}
+The broker waits for all registered participants to have a pose before
+popping its queued datagrams. The test introduces one participant
+without its first pose; the diagnostic and unrelated traffic are both
+observably pending. After the pose arrives, it walks the endpoint's
+remaining bindings. In the selected radio implementation, each
+attempt that fits is debited at the sender before checking propagation.
+A diagnostic directed to a distant receiver can therefore fail without
+a callback and nevertheless spend bytes. Native receiver retirement
+before dispatch removes that receiver's binding. Retirement afterward
+does not reimburse already recorded bytes. If one other listener
+remains, early retirement need not prevent an attempt.
+
+Let $C$ be the sender's one-second allowance. The old digest delivery
+has size $M=173$. At the single modeled prior-debit time $t=0.25$,
+there are $d$ bytes already charged, followed by a diagnostic of $z$
+bytes offered to each of $m$ remaining listeners. Write
+\[
+d_0=d,\qquad
+d_{i+1}=\begin{cases}d_i+z&d_i+z\le C,\\d_i&\text{otherwise.}\end{cases}
+\]
+Under the declared good old link, fresh pose and empty old receiver
+ledger, an old send through the primary at deadline $T$ fits exactly
+when $M+d_m\le C$ for $T\le1.25$ (and $M\le C$ after expiry).
+Equivalently $d_m=d+z\min(m,\lfloor (C-d)/z\rfloor)$ for $z>0$
+and $0\le d\le C$. Retirement changes the effective $m$, not the
+debit already recorded.
+At $C=320,d=140,z=8,T=1.25$, an early sole binding retirement leaves
+the old send possible. One remaining or previously attempted binding
+leaves at least 148 live bytes, one too many. At $T=1.2501$ the budget
+no longer distinguishes those runs. Negative cases keep the old
+meaningful duty; an ordinary silence is never accepted as settlement.
+
+\paragraph{Recovery scheduling.}
+In the two-copy arm both pre-authorized senders already hold the same
+digest. The backup also has a separate 160-byte optional job to serve.
+Use the primary when its live debit permits the old send and use the
+backup otherwise. The decision is local to the qualified broker and
+uses the actual post-dispatch primary ledger and its known expiration,
+not hidden cause or future observation. The selected envelope has no
+other intervening debit; in a changed envelope both future send
+windows must be rechecked. First preserve the old operation, then
+maximize optional service. If the primary can serve, using it leaves
+the backup able to send the optional report; if it cannot, serving
+both is impossible within the two-send alternatives and fixed
+capacity. The native result matches enumeration with the same ledger.
+The static backup arm preserves the old duty but misses the optional
+one; the static primary arm can miss the old duty. A stronger control tries the primary immediately and, if no callback
+arrives, tries the backup within the same modeled tick. It also matches
+old and optional service, and its charged bytes tie: the rejected
+capacity attempt costs no debit in the source. It issues one more
+attempt exactly when the primary cannot fit. The test does not assign
+that extra invocation latency or a resource cost. There is no
+demonstrated service advantage over ordinary this-tick fallback
+where such feedback is implementable.
+
+The native ingress merely queues an offered datagram. The surrounding
+broker plugin normally calls dispatch at the end of the pose callback.
+The test separately models a deadline with one such dispatch
+opportunity and no second pose callback at the cut. That is an
+assumption on the schedule, not a physical frequency bound. For this
+cut an ordinary fixed hedge queues both old sends before dispatch.
+At 320 bytes the backup is still charged even in runs where
+the first copy has filled the receive window enough to reject a
+duplicate. It delivers the old result but loses the optional report.
+Sending only the backup also loses that report. A fixed schedule
+that sometimes omits the backup cannot guarantee old delivery in
+the indistinguishable over-budget branch. The locally informed
+choice preserves the optional report whenever the primary can carry
+the old data. An equally informed direct selector still matches it;
+the advantage identifies a specific feedback or information
+dependency, not a universal architectural win.
+
+\paragraph{Evidence scope.}
+The selected broker executes native pose-cache ingestion, queued submission, dispatch, debit,
+retirement and the receiving callback. The actual old worker is
+crashed after committing the old result and then fenced. The
+destination has a backed checkpoint before the radio timeline. It
+installs only after receiving the matching fenced digest; it returns
+the existing keyed result rather than redoing the operation. Both
+the unrelated radio callback and a native independent warehouse
+move are checked. The radio fixture uses an authored range predicate
+and controlled civil timing, not a full RF or hardware experiment.
+The digest payload is fixed-length test framing; the authorization
+of backups, provisioning cost, risk law, and future arrival support
+are not inferred. This is a held-in recovery comparison and a
+certificate distinction, not I1/I2 acceptance or an advantage over
+an equally informed direct policy.
+\end{document}
