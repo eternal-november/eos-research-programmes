@@ -1,0 +1,87 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Commit the report behind the work counted at the cut}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Claim and scope.}
+The old, mandatory report is the exact pinned MRWS completion carried in a
+173-byte packet. A designated SubT supplier \(Q\) may have a 60-byte optional
+probe queued or charged already. A ready \(R\) is preauthorized as fallback.
+The appointment, rejoin, venue paths, single Base receiver and optional
+withdrawal permission are authored; actual sender debits and callbacks come
+from the selected broker/RF code. No field delivery or stock API is asserted.
+
+\paragraph{Interface.}
+Preparation can copy or inspect evidence without stopping dispatch.
+The consuming adapter takes the same mutex as native queue dispatch, scans
+the actual ledger and extant queue, removes the exact pending optional
+packet only if authorized and useful, and appends the chosen mandatory
+send in that same critical section. It does not wait for a pose, run the
+dispatcher, or call a client while holding this added critical section.
+An observed receipt, a prior snapshot, or a successful queue removal
+alone does not replace the sender's debit. Negative controls use ordinary
+scripted dispatch orders in the deterministic fixture.
+
+\paragraph{Prefix certificate.}
+Let \(t\) be the append cut, \(L\) the live \(Q\)-charge counted at \(t\),
+and \(b_i m_i\) the length times number of candidate receiver calls for
+earlier entry \(i\) from \(Q\), after any authorized removal. The guard is
+\[
+  L+\sum_{i\text{ ahead from }Q} b_i m_i + 173 \;\le C .
+\]
+The native effect is an attempt per bound recipient, not one per queue entry.
+Every later enqueue is behind the report. For its actual attempt at or after
+\(t\), remaining pre-cut charge is at most \(L\). All intervening charge ahead
+of it is bounded by the retained prefix sum. These two facts prove the
+sender allowance, without keeping the lock from append until actual dispatch.
+This uses FIFO, nonexpanding endpoint/attempt sets, a monotone clock and no
+other charge source. In the selected positive envelope there is also a working
+route and a separately uncongested Base with a dispatch by the deadline.
+A sufficient bound on sender attempts is not itself evidence of reception.
+The sum need not be necessary if some predecessor will be skipped, or expire
+before it can interfere. It is sharp for a retained prefix that can all
+charge while the old \(L\) remains live.
+
+\paragraph{Discriminating cases.}
+A normal dispatch between preparation and publication can move the original
+probe from pending to spent even with no callback. If its charge is still
+live, trying to remove it cannot recover the allowance. The guarded append
+uses \(R\) when it must. Conversely, a pending 60-byte probe with two bound
+receivers can charge 120 bytes to \(Q\); the guard for that retained case
+is 293 bytes, not 233. At 292 the two-receiver case requires authorized
+removal or the fallback. At 293 the retained queue suffices. Appending
+another optional packet behind the report does not change that bound.
+An endpoint set that can expand before dispatch, or an insertion ahead
+of the report, breaks the prefix argument even with an atomic append.
+One would have to cap attempted effects as well or requalify at them.
+
+\paragraph{Comparison.}
+At capacities at least 173, 360 traces per arm: optimistic preparation
+delivers 272, a coherent guard charging one call per queue entry delivers
+336, and the prefix-aware guard delivers 360. Fallback counts are 72, 120,
+and 132, respectively; optional removals are 24, 24, and 36. An
+always-ready fallback can preserve all tested old reports at the price of
+using it for all of them. The same-information direct formula agrees on all
+1,296 traces, and disjoint traffic is delivered in all traces. Lean checks
+the migration arithmetic, generic prefix implication and the double-receiver
+threshold. Scope: selected deterministic interleavings, not a threaded stress
+or deployment run. The transaction uses the standard
+\href{https://www.cs.columbia.edu/~wing/publications/HerlihyWing90.pdf}{linearizability}
+pattern; the useful result is what this particular effect owner must count.
+
+\paragraph{What is charged to repair.}
+Approach reads all \(q\) queue rows and \(b\) native \(Q\) debit rows when
+evaluating \(Q\), plus per-key endpoint lookup and at most one queue erase.
+The replay checks those read counts. For bounded message lengths this is
+\(O(q\log(1+e)+b)\) with \(e\) endpoint keys (plus linear worst-case erase).
+It holds the existing broker-wide mutex during that work, not a lock just
+on \(Q\); the simulation places independent work after publication rather
+than proving any wall-clock bound or progress during the native all-pose
+stall. Index maintenance under churn, an actual producer for the
+authorization, and the independent test remain open. No novelty, I1 or
+R2 acceptance is claimed.
+\end{document}
