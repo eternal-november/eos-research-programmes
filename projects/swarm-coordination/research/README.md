@@ -334,6 +334,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-SUBT-PAIRED-RETRY: Can a failed send change whether a retry works?** Two histories agree on either send in isolation, but trying both exposes a debit incurred by only one of the failed early attempts. [Exact boundary and selected native replay](integration/subt-relay-debit/paired-retry/README.md). This limits the retry guarantee, not the option to skip the early send.
 
+**SC-SUBT-ARTIFACT-CONFIRMATION: When does a score reply show that the old report settled?** Pinned tutorial forwarding can clear a pending report via an echo, while a closed scorer's later reply loses the earlier membership distinction. [Source-derived models and Lean checks](integration/subt-relay-debit/artifact-confirmation/README.md). Selected source audit, not a native mission replay.
+
 **SC-SUBT-RESERVE-DUTY: Can a reserve deliver the copied report without spending its own next reply?** One sender's rolling transmit allowance couples required delivery to two different recipients. A second history flips the safe choice between using that reserve and waiting for the primary. [Source replay and boundary](integration/subt-relay-debit/recurring-reserve/README.md). Not a field run or a gain over the matched scheduler.
 
 **SC-ROLLING-SENDER: Can every rolling window pass while no common sender assignment works?** Individually feasible windows can force opposite choices for one packet. A lawful change of issue time restores the test case; a whole-second wait still leaves the earlier debit in force. [Proof, matching baseline and pinned replay](integration/subt-relay-debit/rolling-sender/README.md). Not a field or independent mission claim.
