@@ -20,3 +20,6 @@ The package defaults to flat and unnormalized. No upstream change was made.
 Materialize `SOURCE.tsv` beside the harness or use the [Space
 source-complete archive](https://chatgpt.com/space/page_f5a09a52f6b881919b10d91ecf2caa80).
 Run `sh run.sh | cmp expected.json -` (Python 3, NumPy and Git).
+
+[Delayed cue reference](timed-reference/README.md) shows when a later
+binding can still interpret a local flag that has already left view.
