@@ -37,3 +37,6 @@ a returned graph route and clearance along its missing connector differ.
 
 [Native SADG completion and swept physical release](sadg-swept-release/README.md):
 center coordinates do not certify a changing body footprint through a crossing.
+
+[Cave mouths, trigger volumes and a two-edge trapping cut](compound-mouths/README.md):
+reconstructs the nominal topology and separates a passage obstruction from a radio outage.

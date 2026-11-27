@@ -1,0 +1,96 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{Two passage mouths and a distinct contact boundary in Cave Circuit 01}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{Scope.}
+The inherited development mission treats an edge of the published
+Cave Circuit 01 visibility graph as a unit movement. That is a
+deliberate abstraction, not a certificate of travel or a simulation of
+a rock striking a passage. This note evaluates whether the chosen edge
+has a source-derived mouth and whether another independently specified
+edge removal can eliminate the return route. The world is already
+viewed; the independent evaluation geometry and event order stay unspent.
+
+\paragraph{From tiles to mouth coordinates.}
+The pinned \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/src/ConnectionHelper.cc}
+{connector helper} transforms each tile's type-local connection points
+by the tile pose, tests three coordinate differences against the
+componentwise tolerance $1.5$, and uses the first match.
+The pinned \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/src/apps/dot_generator.cc}
+{generator} assigns weights from the tile types, not from estimated
+seconds of travel. The replay recomputes 56,750 port-pair tests among the
+158 labeled staging and tile vertices; it matches all 163 published
+weighted edges with one pair of mouths per edge. The largest within-pair
+coordinate discrepancy is below $10^{-4}$ m. The twelve named caps
+are not graph vertices and are separately checked not to match any
+labeled port at that tolerance. No collision asset geometry or grid lookup
+is expanded in this computation.
+
+For the short return edge $2\!-\!3$, both source mouth positions are
+near $(62.5,50,0)$ m. For the alternate route's $13\!-\!42$ edge,
+they are near $(100,62.5,0)$ m. The fourth rockfall detector box is
+centered at $(99.3555,62.4272,7.54495)$ with side lengths $(16,25,15)$
+m. The alternate mouth is only $0.04495$ m below its bottom;
+the short mouth is over $28.85$ m from the box. At the alternate
+mouth center, either endpoint of the matched pair intersects the
+detector for an axis-aligned performer box whose vertical half-extent
+is at least $0.04495$ m, and not for a smaller box centered there.
+This is a statement about the declared box with that sampled center,
+not a requirement that a moving robot sample the center. The pinned
+\href{https://github.com/gazebosim/gz-sim/blob/2a076e91c6df7699284ab93e244894bb0f55336f/src/systems/performer_detector/PerformerDetector.cc}
+{detector} evaluates the performer component box at the parent
+position, and its fourth SDF publisher matches entry. Intersection
+is not evidence of a delivered deployment command, rock settling,
+or blocked traversal. The other three detector boxes' matched mouth
+locations are listed by the replay.
+
+\paragraph{Two distinct failure consumers.}
+With the short edge removed, a courier can still reach dock 39 from
+scout 3 via $8,6,16,42,13,1,43$. Removing only $13\!-\!42$ leaves the
+short path through tile 2. Removing both traps tile 3 in a 78-vertex
+component of the imported movement graph, with neither dock 39 nor
+staging 0 reachable. A second walk directly from the published labels
+independently agrees on all four reachability verdicts. The two-edge
+cut is minimal by inclusion; these are not the only candidate cuts.
+Report custody and vehicle egress must then be handled separately:
+an authorized holder across the cut can deliver an already surviving
+copy, while that cannot extract the stranded vehicle. No refuge is
+presumed. A named fallback still needs modeled and tested reachability.
+
+The \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/src/VisibilityRfModel.cc}
+{pinned visibility RF computation} uses the sender/receiver poses,
+the loaded graph and coordinate lookup, representative breadcrumb
+positions and RF configuration. It does not use the detector
+predicate or a newly placed collision body as a ray blocker. In the
+loaded nominal graph without breadcrumbs the weighted visibility cost
+between tile labels 3 and 39 is 12, assuming the queried coordinates
+are classified into those labels. If one incorrectly used the edited
+motion graph for RF as well, the cost would be 25 after the short
+closure and the pair would be disconnected after both removals.
+These are weighted graph costs, not measured packet outcomes.
+Because the fourth event is triggered by approach, it can affect
+physical passage and robot motion, which may in turn affect radio.
+It cannot be counted as direct radio occlusion in this evaluator.
+For a matched joint-fault test, establish contact loss separately
+(e.g.\ a separately instantiated relay/pose change with the same
+loaded LUT), and account for any common cause explicitly.
+
+\paragraph{Next experiment and falsifier.}
+Record the local approach clearance, actual motion, named report key,
+authority and settlement, effective RF inputs and contact in a
+single history. The first useful development comparison checks route
+closure only, contact loss only, their combination, and a second
+closure or reserve failure before the named receipt settles. Compare
+a timed return-and-rendezvous or data-mule baseline that may use the
+same observations, authority and live reserve; the unmodified
+weighted graph is not a fair route oracle. Require a positive
+admitted history with inspected work, a delivered report, and
+egress or established fallback; the two-edge witness is a
+boundary control, not a positive. If a vehicle can still bypass a
+supposedly blocked mouth, or the observed pose is never classified
+into the asserted label, reject that source bridge rather than
+counting the nominal cut as a deployed effect. No independent
+mission acceptance or operational superiority is shown here.
+\end{document}
