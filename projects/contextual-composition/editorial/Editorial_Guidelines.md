@@ -252,6 +252,25 @@ A blind LLM report tests how a manuscript is received without privileged project
 
 Repair at the scale of the failure. Cut an incidental drafting note locally, rebuild a section whose parts do not make an argument, and narrow a claim when its evidence is weaker than the headline. A polished abstract cannot repair a paper whose results have no coherent argument.
 
+## 13. Mandatory capability-attribution gate
+
+**No capability attribution without an obligation-matched witness.** This is an admissibility rule for drafting, comparison, and informed review, not a preference for cautious wording. A source's existence, familiarity, topical relevance, or expressive power is not evidence that it establishes the proposition attributed to it. Apply this rule equally to the programme and to established art.
+
+**Fix the problem before evaluating alternatives.** Record the independently supplied inputs, required outputs, semantic distinctions, admissible contexts, and strength and quantifiers of the intended guarantees. Keep interface construction, execution, verification, and replacement distinct. Before a comparative judgment, examine the new structure on its own terms: derive its consequences for synthesis, admissibility, information requirements, obstruction, and composition. Trace these to actual results and hypotheses; record unexplored possibilities separately. Do not let the questions already answered by familiar literature determine the questions asked of unfamiliar mathematics.
+
+For every material assertion that an alternative already supplies a capability, produce a comparison witness in the working notes:
+
+1. State the exact proposition being attributed, and identify the inspected theorem, construction, specification, or executable result that supports it. A citation without the supporting inference is insufficient.
+2. Show how the supplied inputs instantiate that result, how its hypotheses are discharged, and how its output and guarantees satisfy the original obligation, including the relevant maps, observers, and quantifiers.
+3. Account for all residual work: coupling models, constructing interfaces, supplying invariants, resolving information dependencies, proving compatibility, or imposing external engineering discipline. Identify who or what discharges each obligation. Do not assume any part of the required solution as an input to the alternative.
+4. If several methods are invoked together, establish their compatibility and the guarantee of their assembly. If a new bridge or extension is needed, distinguish the construction actually established from the capability of the existing method.
+
+**Test the interface, not the ingenuity of its users.** Where an interface admits two implementations or assemblies that disagree on the required guarantee, identify the missing distinction or law. Correct behavior under additional discipline is evidence for the disciplined system, not for the bare interface. Compare both approaches at the same semantic and evidential level. A solution to a toy instance does not establish a construction over the theorem's full class.
+
+**Disposition is mandatory.** Classify the comparison as established at the required interface, partial (name the remaining obligation), expressibility only, unresolved, or obstructed (supply the counterexample or violated necessary condition). A one-way correspondence is not equivalence. Only an established witness licenses an attribution at that strength. An unresolved comparison licenses neither a redundancy verdict nor a novelty claim. Do not weaken a proved result or require it to outperform unrelated methods because a reviewer proposes an unverified baseline.
+
+Enforce this gate when applying sections 6 and 12. Reject unsupported comparative assertions as grounds for edits; retain material open questions as such. Preserve the neutral blind-review report. The witness record belongs in the audit notes; the manuscript needs only the relevant conclusions and their support.
+
 ##
 
 TODO:
