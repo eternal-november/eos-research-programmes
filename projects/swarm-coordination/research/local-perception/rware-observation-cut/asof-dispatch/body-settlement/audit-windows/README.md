@@ -10,3 +10,7 @@ Stage the exact aliases in AUDIT_INPUTS.tsv, then run sh run-audit.sh.
 AuditWidth.lean (Mathlib) checks the indexed singleton kernel. AXLE.txt
 lists its axiom audit. Neither verifies source correspondence or constitutes
 an independent mission. An equally informed direct encoding ties.
+
+[Scoped audit upgrades](upgrade/README.md) give exact supplemental sizes
+when a later appointment enables named rounds, and an exact two-phase
+capacity trade-off if the first message may convey finer distinctions.
