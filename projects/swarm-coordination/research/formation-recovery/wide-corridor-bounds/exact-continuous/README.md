@@ -20,3 +20,7 @@ archive](https://chatgpt.com/space/page_f5a09a52f6b881919b10d91ecf2caa80).
 Run `sh run.sh | cmp expected.json -`. Python 3, NumPy and SciPy
 with HiGHS required. This does not model acceleration, moving
 obstacles, changing sensor ranges or action-dependent fault support.
+
+[Moving inspection interval](moving-coverage/README.md) lifts the
+cell proof to time and preserves the speed bounds without time
+rescaling. Checking only phase knots misses a strict coverage limit.

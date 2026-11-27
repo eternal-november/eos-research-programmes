@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{A Moving Inspection Interval Cannot Cross a Gap at a Phase Knot}
+\date{2026-11-27}
+\begin{document}
+\maketitle
+
+\paragraph{Pins.}
+This is a deterministic simulator-level reference for known
+piecewise-affine requirements in a single-file corridor. It uses the
+previous closed difference-constraint sensing, radio and clearance
+cells, with order, speed bounds and health fixed over a phase. Time
+windows and motion of the protected interval are prescribed. The
+runtime does not learn the moving window or fault identity here.
+Bodies and radio are modeled by the given inequalities; continuous
+coverage of a modeled interval is not telemetry quality or hardware
+delivery. No acceleration or rest constraint is imposed.
+
+\paragraph{Time lift.}
+Use coordinates \((t,x)\), where \(t\) is the physical clock, not a
+free curve parameter. On each closed interval of positive duration
+write the inspection-window shift as \(s(t)=u t+d\). Add \(s(t)\)
+to its upper endpoint bounds, subtract it from lower endpoint bounds,
+and leave absolute arena, separation and radio inequalities in
+their original coordinates. Every old sensing cell becomes a closed
+convex polyhedron in \(t,x\). The accepted model is their union
+within the prescribed phases. Where a phase boundary is shared,
+continuity and closedness force the two one-sided limits to
+satisfy their corresponding requirements. A separate mandatory
+zero-duration event would need its own explicit cut, not a
+zero-width cell treated as optional.
+
+The last-visit proof of the preceding continuous static result
+applies unchanged to the lifted path \((t,x(t))\). Choose last
+visits using physical time. Chords have that same elapsed time
+between endpoints, since the first coordinate interpolates from
+\(t_j\) to \(t_{j+1}\) at unit rate; a zero-time chord has equal
+position by the speed inequalities. Thus exact feasibility at a
+deadline reduces to finitely many simple lifted cell sequences with
+nondecreasing time and
+\[
+ |x_{j+1,i}-x_{j,i}|\le v_i(t_{j+1}-t_j).
+\]
+This does not hand the controller a post-fault truth before its
+observations: the program tests an exogenous known timed plant.
+The held-in exact certificate harness checks rational feasible
+points and rational Farkas witnesses, refusing reconstruction
+failure rather than rounding a verdict. Independent chord coverage
+subtracts the known shift on each phase and tests the intervals
+in relative coordinates. General exact rational linear programming
+can replace the numerical proposal step.
+
+\paragraph{Sharp two-robot discriminator.}
+Take robots at \(0,4\) at both \(t=0\) and \(t=4\).
+The first is stationary, the second has speed at most one, and their
+gap must stay in \([1,6]\); sensing radius is two and ordinary single
+coverage is required at every point of \([s(t),s(t)+1]\).
+For peak \(h\geq0\), let
+\(s(t)=h\min(t,4-t)/2\). The phase knot \(t=2\) alone allows the
+moving robot at most \(6\) and hence a covered far edge at most
+\(8\); knots permit exactly \(h\le7\). In particular a physically
+speed-feasible trajectory through those three placements is not
+yet covered throughout.
+
+For \(h>2\), while \(1<s(t)<2\) on the outward leg the interval
+straddles the end \(2\) of the fixed footprint. The movable
+robot cannot leave a gap at that seam, so its position is at most
+\(4\). At \(t_c=4/h\), continuity still enforces \(x_2(t_c)\le4\).
+Between this cut and the peak the robot can advance by at most
+\(2-4/h\). At the peak its far sensing edge must cover \(h+1\),
+hence
+\[
+ h+\frac4h\le 7.
+\]
+Conversely, hold at \(4\) through the seam and thereafter track
+\[
+ x_2(t)=4+\max\{0,\min(t,4-t)-4/h\}.
+\]
+This speed-feasible trajectory has gap in \([4,6]\).
+Before the crossing the two footprints touch and cover the whole
+required interval. Between \(t_c\) and the peak the left required
+endpoint moves at slope \(h/2>1\) and never falls behind the
+moving footprint's left endpoint. Its right endpoint remains
+covered because the tightest right-hand inequality is at the
+peak. The return is symmetric. If \(h\le2\), static positions
+are sufficient. Thus the exact maximum is
+\((7+\sqrt{33})/2\), not 7; Lean checks the scalar polynomial
+equivalence in the relevant regime. At \(h=6.5\), the three
+samples at \(t=0,2,4\) can all pass but no continuous coverage
+trajectory exists, even with the entire window known. This is
+physical infeasibility in the model, not an information delay.
+
+\paragraph{Evidence and limits.}
+Across 25 rational peaks and 307 lifted routes the feasibility
+decoder agrees with the analytic inequality, and constructive
+positive paths pass exact relative-interval chord checks.
+The bound is input to a future scheduling or control proof, not a
+guarantee that a mobile crew sees the shift on time. A direct
+spacetime linear planner supplied the same union of cells can
+perform the same exact check. No novelty or contract acceptance
+is claimed over that mechanism, no independent mission is used,
+and compatible continuations under multiple unobserved future
+requirements remain to be tested.
+\end{document}
