@@ -8,3 +8,7 @@ but not the other. The exact direct calendar ties.
 Materialize INPUTS.tsv into the local aliases and run sh run.sh.
 Compare stdout to expected.json. This is a composed development
 replay, not a native renderer/sensor or independent mission.
+
+[Producer qualification](producer-cut/README.md) joins the exact post-render
+callback and depth publication/point masking source before starting the same
+native receive-budget test.
