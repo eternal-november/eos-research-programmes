@@ -1,0 +1,85 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Graph paths and the unreturned endpoint connectors}
+\author{}\date{}
+\begin{document}\maketitle
+\paragraph{Pinned public interface.}
+The \href{https://github.com/ctu-mrs/spheremap/tree/da51db39172e4291c52ee8c509971eea579e13cc}
+{public SphereMap server} documents returning a graph path via nearby spheres.
+In the selected source, the bounded start query enumerates a search box
+of half extent \(m+R\), where \(m\) is the endpoint parameter and \(R\)
+the enforced maximum node radius. It minimizes signed sphere gap among
+enumerated nodes without a subsequent scalar cutoff. The tested goal query
+has the additional signed gap cutoff \(m\); its default does not request
+the optional connectability check. These are distinct semantics.
+The public service returns internal points and their stored obstacle
+distances and can report success when that internal path is nonempty.
+It obtains the latest transform in the pinned callback. This is not a
+claim about how the full competition supervisor checks and executes
+waypoints, about map freshness, or about the stock graph search's
+completeness.
+
+The selected-source replay compiles the exact start, goal and graph
+routing wrapper from the public pin, with an explicit finite box
+enumerator and supplied graph-internal route. For the default \(m=10\)
+and \(R=3\), a stored sphere centered at \((12,12,0)\) with radius \(3\)
+is in the box at requested start \((0,0,0)\). Nevertheless its signed
+Euclidean gap is \(\sqrt{288}-3>10\). The internal route to the next node
+\((12,15,0)\) is nonempty and the same in both selected call branches.
+The original ROS service predicate and default latest transform were read
+in source; full ROS, voxel enumeration, and A* were not run.
+An independent arithmetic selector matches 4,098 calls in this shim.
+
+\paragraph{Two matched geometric completions.}
+With fixed obstacles at \((12,12,-3)\) and \((12,15,-3)\), both
+graph nodes have exact clearance \(3\).
+One completion also has a point obstacle at \((4,4,0)\) outside either
+graph ball. The same node radii and internal route remain valid. The
+unreturned straight start connector has clearance \(3\) in the first
+completion and \(0\) in the second. This is constructed geometry, not
+a claim that the complete live occupancy source would output the same
+map in both cases. For a consumer that receives only this reply and
+needs actual arrival to clear an old crossing or finish an inspection,
+the two outcomes are indistinguishable at the stated interface.
+Refining the query to enforce a scalar gap is independently useful,
+but even a small enough distance does not certify a physical connector.
+
+\paragraph{Exact certificate using only current free balls.}
+Let \(F=\bigcup_i B(c_i,r_i)\) be known free space from open balls,
+with no other source premises. For a closed swept body \(K\), robust
+avoidance over all consistent obstacle sets is \(K\subset F\).
+Sufficiency is immediate. For necessity take the maximal consistent
+obstacle set, the complement of \(F\). If radii are exact and
+mutually consistent, this maximal obstacle set still satisfies those
+distances: it contains every candidate obstacle set, so each distance
+to it is at most the given exact radius, and the excluded open ball
+makes it at least that radius. With changing obstacles, all balls
+must be qualified for the time at which the swept body uses them.
+
+A common sufficient shortcut shrinks each ball by the robot's radius
+then covers the center line. It can reject a physically robust case
+because a swept cross-section can be covered jointly by both balls.
+For two equal balls of radius \(r\), centers at \((\pm a,0,0)\) and a
+closed ball of radius \(b\) moving along their entire center segment,
+the exact strict condition is \(a^2+b^2<r^2\).
+Between the centers, the nearer center is at axial distance at most
+\(a\) and the perpendicular distance is at most \(b\).
+Beyond the endpoint planes, the swept body's endcaps are inside the
+\(b\)-ball about the corresponding center. Necessity follows at
+the transverse point \((0,b,0)\), whose distance to both centers is
+\(\sqrt{a^2+b^2}\). Lean checks the key squared inequalities and a
+strict counterexample: \(r=10,a=6,b=6\) is covered, but independent
+shrink-and-cover would require \(a+b<r\).
+The latter is an explicit conservative reference, not an assertion
+about the source planner's collision implementation.
+Neither proof establishes a missing outer connector without coverage for
+that particular connector at the needed times.
+
+\paragraph{Disposition.}
+A bounded route continuation should distinguish an internal map path,
+a time-qualified swept connector, and a verified endpoint effect.
+A separate equally informed exact swept-geometry check agrees with the
+stated criterion. No gain over every established local planner, no
+native collision replay, and no independent I2 acceptance are claimed.
+
+\end{document}

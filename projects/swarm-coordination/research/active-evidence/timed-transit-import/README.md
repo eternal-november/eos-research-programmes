@@ -31,3 +31,6 @@ calibration must verify which model and lookup table actually loaded.
 
 [Rockfall event versus deployment](rockfall-event-summary/README.md):
 verify trigger direction, remaining count and physical effect separately.
+
+[SphereMap endpoint connectors](spheremap-endpoint-connector/README.md):
+a returned graph route and clearance along its missing connector differ.
