@@ -8,3 +8,6 @@ epoch and the system-readiness seam are authored, not Gazebo facilities.
 
 Stage the pinned blobs in INPUTS.tsv as a sibling pins directory and run
 python3 -B replay.py ../pins. The expected stdout is results.txt.
+
+[Allocation lineage within a world](state-incarnation/README.md) tests the
+separate authorized explicit-ID restore path, which needs no global rewind.

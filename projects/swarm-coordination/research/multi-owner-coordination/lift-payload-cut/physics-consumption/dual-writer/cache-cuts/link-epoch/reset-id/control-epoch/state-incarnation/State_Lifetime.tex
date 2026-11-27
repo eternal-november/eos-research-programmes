@@ -1,0 +1,65 @@
+\documentclass{article}
+\begin{document}
+\title{An explicit state restore can reuse a body number without a world rewind}
+\maketitle
+
+\paragraph{Scope.}
+Gazebo Sim 9 is pinned at
+\texttt{62f198e0478159549b748c4b4c66f0cbe2fcbf6f}.
+The test exercises an authorized state supplier in a serial graph fixture.
+It runs the native state-bearing world-control callback, pending state
+application, non-map \texttt{SetState} overload, entity creation, and
+removal processing. Serialized components, full system restarts, joint
+hierarchies, physical motion, external access policy, and real transport
+are not in the test. Empty component lists and graph storage are
+fixture inputs. The parent study and ordinary allocator guard assumed
+the declared regular allocation path; this study adds a distinct
+selected state application path.
+
+\paragraph{Same accepted controls, different allocation lifetime.}
+The first native allocation of the watched vertex has number 11.
+The authorized supplier sends a state record deleting that number,
+then a state record restoring it with that explicit identifier.
+Both service replies are positive in both arms.
+\begin{itemize}
+\item If both inputs arrive before the next application of buffered
+state, the second is the pending state that is applied. The vertex
+remains present. No new lifetime is created by that application.
+\item If one application/removal cut completes between the inputs,
+the first input really removes the original. The second then creates
+a new vertex at the supplied number 11. The native graph path to create
+it does not go through ordinary monotonic allocation, and no world
+rewind occurs.
+\end{itemize}
+The compared application cuts are paused; simulated time remains
+constant and world-incarnation authority does not change.
+The final selected membership and numeric identity agree. Thus a
+receiver checking the current world generation in addition to the
+number can still misapply an old allocation-scoped receipt. This
+does not imply that an authorized semantic restore may never carry
+an old duty forward; that requires a separately qualified map.
+
+\paragraph{A source distinction and its lifetime.}
+Creation marks the vertex as newly created. The pin clears that flag
+in the step lifecycle after the selected source cut. A late poll for
+the flag plus current ID can therefore agree with the coalesced arm.
+Capture the actual birth at the source cut, and qualify the receipt
+with a non-rewinding allocation lineage within the world generation
+(or a fresh non-reusable operation key bound to that lineage).
+For each tracked vertex the fixture increments a separate counter at
+the actual birth witness, before it is cleared. A new allocation's
+receipt can be admitted without invalidating the unaffected entities'
+scope. Source-side observation must cover all permitted ways to
+replace that vertex; starting a counter from an arbitrary late poll
+does not supply that coverage. This is an authored projection; the
+stock state callback does not provide a certified external issuance
+history.
+
+The replay compares 248 schedules of up to five such pairs and 1,032
+pairs of admitted state inputs. An unrelated, separately numbered
+allocation still executes at each round. Neither the authorized
+body-state difference nor the supplier's cut is inferred from client
+reply timing. A factored direct checker given the same source events
+ties. No latency, cryptography, physical settling or cross-plant
+proof-reuse claim is made.
+\end{document}
