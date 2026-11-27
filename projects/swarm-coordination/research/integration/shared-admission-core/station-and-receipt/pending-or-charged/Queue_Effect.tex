@@ -1,0 +1,70 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{A pending send and a spent send at a live repair cut}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Scope.}
+Protect one old warehouse completion report through a replacement of its
+designated radio supplier. Pinned MRWS completion and pinned SubT dispatch
+are coupled with deterministic path/pose seams, one optional datagram, and
+one serialized rejoin boundary. The appointment, right to remove the
+optional entry, ready backup and deadline are authored. The old body
+comes from the native \texttt{ORDERCOMPLETE}; the adapter checks its
+actual receipt. This is not exclusive-custody proof, field evidence,
+or I1/R2 acceptance.
+
+\paragraph{Dependency discovered at the effect source.}
+The optional datagram goes from \(Q\) to Side and does not occupy Base
+receive capacity. If a pose failure blocks dispatch, it remains queued and
+there is no debit. If it leaves the deque but its path is erased, there is
+no receive callback either, even though \(Q\)'s rolling debit is live.
+Neither condition affects incumbent \(P\). Both can matter after the
+appointment changes to \(Q\). A second failed pose update occurs while the
+report is outstanding. Late recognition selects already authorized
+fallback \(R\). Independent traffic at rejoin uses disjoint resources.
+
+\paragraph{Exact cut.}
+For the rejoin dispatch, let \(C\) be capacity, \(L\) the actual unexpired
+charge to \(Q\), and \(K\in\{0,1\}\) indicate the pending optional send
+kept ahead of the old report. Given viable paths and no other relevant
+traffic, service by \(Q\) occurs iff \(L+60K+173\le C\).
+At \(173\le C<233\), a pending send must be removed to use \(Q\); an already
+charged send cannot be removed and requires another lawful sender or expiry
+by deadline. The native charge remains live at exactly one second and is
+gone at the next quarter-second tested. If the policy must protect the old
+packet then avoid the backup when possible, absent callback alone cannot
+attain this profile: the observation class has both histories. Conservative
+use of the backup can still protect the report. At \(C\ge233\) both histories
+permit \(Q\) without removal; below 173 no sender can send the report.
+The optional probe carries no old obligation and is assumed withdrawable.
+
+\paragraph{Discovery cost and control boundary.}
+The adapter consults the actual deque and ledger, not a stipulated future
+truth table, at a serialized cut. The identity scan inspects \(q\) queue
+entries, the debit check scans a ledger of length \(b\), and removal may
+scan and compact the deque: \(O(q+b)\) for bounded packet lengths. This is
+not a bound for incremental index maintenance. Such an index would have to
+cover enqueue, pop, charge, expiry and migration and remain coherent with
+dispatch. If the optional send moves to the ledger after inspection but
+before consumption, an unserialized inspection-plus-removal need not retain
+the allowance. Recipient-side revocation checks, as in the
+\href{https://www.usenix.org/legacy/event/osdi06/tech/full_papers/burrows/burrows.pdf}{Chubby sequencer},
+provide a relevant prior control boundary, not a way to erase an effect
+that occurs before the recipient. No stock API is claimed for the adapter's
+queue surgery.
+
+\paragraph{Comparison and residual.}
+The same-information direct formula matches all 288 runs. In the 72 runs
+per arm with \(C\ge173\), qualification gives 72 on-time receipts with 22
+backup uses; using the backup uniformly when \(Q\) is selected at tight
+capacity gives 72 with 30. Keeping the queue and omitting budget-based
+substitution gives 64 and 18. Four qualified runs remove the named probe.
+The improvement is in the usable information and action interface, not over
+an equally informed scheduler. The native broker's all-member pose gate
+still applies, so unrelated work proceeds at rejoin, not during that
+blackout. Actual appointment provenance and recurrent maintenance of a
+coherent observer, and an independent mission, are open.
+\end{document}

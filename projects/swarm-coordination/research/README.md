@@ -382,6 +382,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-STATION-AND-RECEIPT:** An actual ordered warehouse completion supplies the old radio body. [Joint pickup/receive guard and replay](integration/shared-admission-core/station-and-receipt/README.md) show why either budget in isolation can green-light extra work that loses an old duty. The exact typed direct scheduler ties; authored cross-plant fixture, not independent mission acceptance.
 
+**SC-PENDING-OR-CHARGED:** Changing the report supplier makes an optional probe's actual sender debit relevant. [Pinned replay and exact cut](integration/shared-admission-core/station-and-receipt/pending-or-charged/README.md) distinguish a removable queued probe from an already charged failed send despite identical missing callbacks. A qualified fallback preserves service; the same-information direct check ties.
+
 **SC-WEIGHTED-PACED-SYNTHESIS:** Mode-specific local duration yields an exact pace/latency frontier and minimum-latency substitution table. [Weighted proof and replay](recurrent-coordination/paced-port-synthesis/weighted-deadlines/README.md) show that equal Boolean interfaces and equal length can still need growing state for arbitrary deadlines; a fixed cap restores finite summaries. Restricted commissioned-mode result.
 
 **SC-EVIDENCE-TREE-RISK:** Tree pair marginals plus evidence/continuation flags give an exact fixed-whole-law admission check for a fixed policy, without summing incompatible cohort maxima. [Proof, rational witnesses and compact/full replay](joint-risk/evidence-tree/README.md). Source nodes can still matter when not counted as physical exposures. Scoped numerical examples, no field law.
