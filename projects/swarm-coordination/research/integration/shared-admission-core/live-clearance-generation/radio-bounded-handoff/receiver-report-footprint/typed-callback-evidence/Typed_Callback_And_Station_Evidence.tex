@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{A typed bridge from broker evidence to old-duty consumption}
+This development adapter separates three facts: an attempted send can
+spend bytes; a named application callback can make a packet available;
+an authoritative station may consume that packet to retry the same old
+operation. None entails the next without a distinct premise. The
+example uses the pinned broker fixture with a paid headroom read and
+its previously checked civil warehouse station handoff.
+
+\paragraph{Input and interpretation.}
+An order-preserving local trace tap observes the native attempt
+function's pre- and post-window rows, its returned admission value,
+and the selected application callback. An attempt stores sender,
+recipient, timestamp, offered bytes, the actual TX charge, and
+radio admission. A callback is linked to its exact attempt occurrence
+and checked for the authorized endpoint, size and sender. These
+occurrence identifiers are local to a taped run, not authenticating
+network identities. Within this synchronous fixture a radio-admitted
+attempt must be followed by exactly one corresponding application
+callback at the same time. That equality is an adapter assumption
+checked here, not a property of an asynchronous deployment; in a
+different runtime radio admission and later callback must be separate
+events with an independent occurrence link.
+
+The extractor replays just the relevant TX and RX windows by identity,
+checks each transition against the raw tap, and preserves an attempt
+that charges TX even when no callback arrives. An old row exactly one
+second old is still live. No new RX debit is permitted on a rejected
+attempt; late purging of old RX rows can depend on the position of
+the rejection. Checks do not recover ambient RF truth from ledger
+rows, infer that a tape is complete, or authenticate a fabricated
+yet internally consistent tape. Common trust in this extracted
+source path is a premise.
+
+\paragraph{Application.}
+At the station's cut read the local authority row, named permit and
+snapshot tag in one read-only SQLite transaction. A consumer demands
+the old keyed digest delivered by the authorized route and no later
+than the chosen deadline, together with the matching fenced snapshot.
+Only then may it install the receipt and retry. The native retry
+supplies the cached result and the native old authority must still
+be fenced. One radio result is backed by an equally sequenced earlier
+copy taken before the fence; it gets the same packet at the same
+time, but cannot accept it because its local tag and authority are
+wrong. This negative uses different native station state, not an
+invented warning bit or a renamed outcome. An earlier mission
+deadline can reject the delivered packet without implying that
+it was lost.
+
+The callback-only projection also fails before the outcome is known.
+The measured early callback lists are identical for shared and
+independent report routing, including time, payload and logical
+endpoint. In the former the report has already spent one byte in
+the old receive ledger, so the old primary fails. In the latter
+it spent that byte in the verifier ledger and the primary succeeds.
+The attempt origin and actual resource identity supply a necessary
+distinction for a feasibility statement at the cut. This is a
+pair of source-generated cases, not a claim that every joined
+deployment must need this tap.
+
+Discarding the attempt debit is unsound for a later scheduling
+decision. Treating callbacks alone as old authorization is also
+unsound. Keeping full simulation state is not required by this
+scoped consume function, but the local history, episode label
+structure, receive route, named fence and timing cannot be silently
+interchanged. This scoped tape demonstrates the evidence interface
+that separate native source facts feed; it is not a generalized
+runtime monitor, blind selection, an independently evaluated mission,
+an exhaustive inventory disposition, or an advancement claim.
+\end{document}
