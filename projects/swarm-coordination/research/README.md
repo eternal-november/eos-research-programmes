@@ -194,6 +194,8 @@ From either study directory, run `python3 -B pilot.py --json | cmp results.json`
 
 ## Multiple owners
 
+**SC-NATIVE-APPOINTMENT-CUT: Does a final simulator state identify an appointment's prerequisite?** Before the retry, a real snapshot of a named receipt distinguishes crashes before and after durable publication. Both converge to the same native state. The frozen historical checker needs that named dependency, not anonymous activity or the later state. [Proof and pinned replay](multi-owner-coordination/causal-appointment/authority-windows/order-refinement/native-appointment/README.md). Scoped R2/R5; the gate law is authored.
+
 **SC-CAUSAL-ORDER-REFINEMENT: Can an old common-cut proof survive new dependencies?** Closed endpoints are exact when projected new cuts are still old ideals. A lost causal relation can separate old-equivalent grant rules; the old certificate then cannot substitute for the original rule. [Proof, Lean and replay](multi-owner-coordination/causal-appointment/authority-windows/order-refinement/README.md). Scoped R2/R5, not independent transfer.
 
 **SC-AUTHORITY-WINDOW-COMPOSITION: When is an old grant proof enough to check a new partner?** For one historical version interval per ledger, two extremal causal cuts give an exact common-cut test, and at most two grants witness incompatibility. One revocation gap per grant destroys that witness bound. [Proof and replay](multi-owner-coordination/causal-appointment/authority-windows/README.md). Fixed-history authority only; direct factored comparator ties.
