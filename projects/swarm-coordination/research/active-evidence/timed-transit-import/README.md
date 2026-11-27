@@ -34,3 +34,6 @@ verify trigger direction, remaining count and physical effect separately.
 
 [SphereMap endpoint connectors](spheremap-endpoint-connector/README.md):
 a returned graph route and clearance along its missing connector differ.
+
+[Native SADG completion and swept physical release](sadg-swept-release/README.md):
+center coordinates do not certify a changing body footprint through a crossing.

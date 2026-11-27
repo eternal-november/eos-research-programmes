@@ -1,0 +1,77 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{An action dependency needs a swept release, not merely a goal coordinate}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{Pinned comparison and declared kernel.}
+The \href{https://github.com/alexberndt/sadg-controller/tree/c2626d996121a9d6c128844a167b917db24418ac}
+{authors' public SADG controller} marks a vertex complete when its
+received pose's \(x,y\) equal its goal's coordinates. The quaternion is
+not tested at that cut. An active dependency tests whether the
+predecessor vertex is complete; the controller can then publish the
+successor's goal. These operations were executed unchanged, with
+supplied staged vertices, a single active dependency and inert ROS and
+optimizer stand-ins. The stock agent emits identity quaternion in its
+movement method. Varying yaw below is an explicit extension to a new
+plant contract, not a claim of collisions in the stock demo, or an
+obstruction to adapting the published SADG theory. No claim about
+switch optimization, compilation of the supplied vertices, mobile
+radio timings or full ROS execution is made.
+
+\paragraph{Consumer's physical obligation.}
+In the constructed ground fixture the old actor's center has reached
+\(x=4\). It is required to remain there until the other actor finishes
+its crossing. The crossing's swept effect lies on the \(x\le3\) side
+(the example uses a point receiver on that side); its non-waivable
+condition is that the former actor's footprint is entirely in \(x>3\)
+through the crossing interval. Its rectangular footprint has
+half-length \(l\), half-width \(w\), and yaw \(\theta\). Its backward
+support from its center is exactly
+\[
+               h(\theta)=l|\cos\theta|+w|\sin\theta|.
+\]
+The controller with an authorized old-body observation can qualify a
+release if \(4-\max h(\theta)>3\) over the whole allowed angular interval.
+The positive signal is evidence about the named old body in a common
+frame, with known \(l,w\), no backwards translation, and a rate bound
+that applies to the through-crossing horizon. A coordinate, a goal
+publication, or a sample without a freshness bound cannot substitute
+for those premises.
+
+A definite yaw at receipt with certified age \(a\), remaining crossing
+time \(T\), and \(|\dot\theta|\le\omega\) gives the box
+\([\theta-\omega(a+T),\theta+\omega(a+T)]\) absent other restrictions.
+The maximum is attained at a boundary or at a quadrant maximum.
+The native pose type in this selected callback does not supply the
+additional age bound. A replaced body, reference frame, or permitted
+motion law needs a new qualification; an old positive release is not
+a permanent permission. Under a rectangular independent yaw support
+and an attainable rate bound the check is necessary as well as
+sufficient for this half-plane obligation. For a lateral reading
+\(\theta=\pi/2\), set \(g=4-3\),
+\(R=\sqrt{l^2+w^2}\), and suppose \(w<g<R\). The first dangerous turn
+magnitude is exactly \(\arcsin(g/R)-\arctan(w/l)\).
+The certificate is strict at tangency. This is proved by solving
+\(l\sin\delta+w\cos\delta=g\) in the increasing portion of the
+first quadrant; if \(\delta\) exceeds the first solution, that
+unsafe yaw remains an admitted possibility.
+
+\paragraph{Selected replay.}
+For \(l=1.5,w=0.5\), long-axis and short-axis face poses give the
+same source vertex result and the same successor publication. Actual
+tail positions in the two static modeled cases are \(2.5\) and \(3.5\).
+The qualified checker sends in the second case only. With a lateral
+sample and \(\omega=0.15\), \(T=1\), age one gives a worst tail
+at \(3.079051\), while age two allows \(2.897328\).
+The native vertex for the unrelated job still publishes in all arms.
+The extension replaces only the completion premise in the supplied
+dependency: it does not model a changed global plan. The closed-form
+test agrees with a quadrant-based independent policy on 972 parameter
+tuples. An ADG with the same qualified effect evidence can implement
+the same hold, so this is not a performance advantage over an
+equally informed ADG. It identifies which evidence would be needed
+by such a matched comparator, and what data stock coordinate
+completion omits under the altered geometry.
+
+\end{document}
