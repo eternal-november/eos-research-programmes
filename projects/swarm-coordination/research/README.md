@@ -386,6 +386,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-GUARDED-APPEND:** Between preparation and native queue insertion, a probe can change from removable to charged. The [guarded append](integration/shared-admission-core/station-and-receipt/pending-or-charged/guarded-append/README.md) commits against the actual covered prefix, including a separate attempt per bound recipient. No new pause through dispatch or independent mission assertion.
 
+**SC-BINDING-IMPACT:** A new subscriber can change the send cost of previously queued work. The [source-qualified prefix update](integration/shared-admission-core/station-and-receipt/pending-or-charged/guarded-append/binding-impact/README.md) tests both affected reports, treats a trailing attempt differently, and separates sender allowance from receiver membership. Matched direct formula ties.
+
 **SC-WEIGHTED-PACED-SYNTHESIS:** Mode-specific local duration yields an exact pace/latency frontier and minimum-latency substitution table. [Weighted proof and replay](recurrent-coordination/paced-port-synthesis/weighted-deadlines/README.md) show that equal Boolean interfaces and equal length can still need growing state for arbitrary deadlines; a fixed cap restores finite summaries. Restricted commissioned-mode result.
 
 **SC-EVIDENCE-TREE-RISK:** Tree pair marginals plus evidence/continuation flags give an exact fixed-whole-law admission check for a fixed policy, without summing incompatible cohort maxima. [Proof, rational witnesses and compact/full replay](joint-risk/evidence-tree/README.md). Source nodes can still matter when not counted as physical exposures. Scoped numerical examples, no field law.
