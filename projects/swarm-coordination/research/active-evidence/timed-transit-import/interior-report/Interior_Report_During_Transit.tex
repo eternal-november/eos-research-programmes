@@ -1,0 +1,98 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Preserving an interior report while contracting a committed cave transit}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{Changed interface.}
+The \href{https://github.com/eternal-november/eos-research-programmes/pull/378}{parent
+transit reduction} excludes any material interior effect. Keeping a
+robot's route and decision sites unchanged does not justify contracting
+away a report another robot can consume while the first is still moving.
+Retain the event and its time, not a new movement decision at that site.
+One application is a robot carrying an inspection result through a radio
+gap while a second robot has a time-sensitive action gated by that result.
+
+The development path uses vertices
+\((5,29),(6,29),(6,30),(7,30),(8,30)\) from the pinned
+\href{https://github.com/LTU-RAI/SubTGraph/tree/21a1bcabf37c8f2f6f236ba40b916094d9903b5b/benchmark}{SubTGraph
+natural/01 grid}, with grid degrees \(1,2,2,2,3\).
+The receiver and a third agent have disjoint checked grid edges.
+An authorized launch at elapsed tick \(s\) commits one traversal over
+the four edges; no alternative route, wait, abort or useful local
+movement decision during it. The first edge takes \(d\) ticks and the next
+three take one each. The only primary report attempt issues when the
+carrier reaches the first interior vertex, using its own local arrival
+event. The receiver authorizes its move at \(D+1\) exactly when the
+expected report was delivered by \(D\). The other agent completes a
+modeled move with no such dependency and sends a separate native packet.
+The controller never reads the hidden choice of duration or RF window
+before committing. Clocks here are local elapsed-time bases with a known
+calibration to the designated cutoff. Clock drift and early/late
+alignment uncertainty are not covered. The normalized grid establishes
+adjacency, not this timing law, radio visibility, successful receipt,
+safety interlocks or battery behavior.
+
+\paragraph{Exact single-attempt launch set.}
+For a declared history with certified link window \([l,u)\) in integer
+ticks, delivery deadline \(D\), egress deadline \(E\), and prescribed
+callback latency \(\delta\ge0\), the geometric and timing test is
+\[
+  \max(0,l-d) \le s \le \min(u-1-d,D-d-\delta,E-d-3).
+\]
+An empty interval means no launch. This checks both receipt at \(s+d+\delta\)
+and egress at \(s+d+3\); it does not map one to the other.
+The radio replay pins model time to \(1/4\) second per tick, with a sender
+allowance of \(C\) bytes and one possibly unsuccessful previous send of
+\(b\) bytes at zero, \(b\le C\). For the \(p=3\) byte report, if \(p>C\)
+no launch is admissible; if \(b+p>C\), additionally require \(s+d\ge5\).
+The prior debit is live at tick 4 and gone at 5. No other same-sender
+traffic and no binding independent receive debit are admitted here.
+Under these conditions a pointwise substitution of event times and the
+live debit yields exactly the displayed bounds. Consecutive admitted
+worlds need not have the same durations, windows or debits. For histories
+with identical available prelaunch information, intersect these intervals
+\emph{within} paired histories, not across freely recombined marginals.
+A controller receiving an earlier observation must be checked in each
+actual observation class instead.
+
+With \(D=2,E=5\), match \(d=1\) or 2 with \([1,2)\) or \([2,3)\),
+respectively. Launch 0 works in both cases: native receipt at 1 or 2
+supports the second robot's tick-3 move, while egress remains 4 or 5.
+Exchanging the two windows preserves both marginal supports and both
+egress times. It eliminates any common launch: the slow world would
+require a negative launch. Sending instead at exit loses even the
+original aligned case, despite preserving the route and egress.
+A callback delayed by one tick also breaks the original late arm.
+The pinned native run tests immediate callbacks only; the delayed
+case is a separate check of the interface.
+
+\paragraph{What the native replay checks.}
+Pin the selected SubT broker, radio attempt, and ROS receipt paths.
+The fixture supplies pose keys from the physical path at the actual send
+site; the broker samples that pose before dispatch. RF availability is a
+supplied good/erased link seam, not a derivation from the cells or poses.
+A native application callback with the exact expected bytes, not a
+neighbor update or sender debit, admits the modeled receiver action.
+The 1,536-case native sweep checks source debit and delivery, with two
+separate boundary cases for the one-second sender window. The separate
+tile-clock replay agrees with the interval for 1,924,560 start queries
+with fixed callback delay, capacity and contact inputs varied. This is
+a selected-source replay and checked finite abstraction, not a full
+cave simulator, end-to-end robot run, or stochastic channel guarantee.
+
+\paragraph{Comparator and residual.}
+A vanilla endpoint-only contraction is inadequate; a timed route plan
+with an interior communication event agrees. This is not an advance over
+the equally informed time expansion. The existing
+\href{https://superintelligence.jpl.nasa.gov/public/documents/papers/PlanRob-2020-Planning-and-Optimization-for-Multi-Robot-Planetary-Cave-Exploration.pdf}{cave-planning
+reference} already reasons over data transfer and routes; a native
+implementation comparison to its complete formulation was not performed.
+The new proof is limited to the specified event sort and gives no reuse
+for cases in which the recipient changes the carrier's in-transit law,
+the attempt shares a mutable queue, or callback time is not characterized.
+A recheck must expose each of those extra effects. This leaves the
+independent mission, the larger learned-layout family and I2 acceptance
+open.
+
+\end{document}
