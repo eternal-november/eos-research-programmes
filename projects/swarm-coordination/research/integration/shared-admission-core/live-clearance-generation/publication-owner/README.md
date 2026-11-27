@@ -15,3 +15,5 @@ SQLite WAL and NumPy:
 A native SQLite migration calibration, tied with an equally informed
 direct rendezvous rule. It does not implement distributed consensus,
 physical-effect migration or an independent swarm mission.
+
+[Scoped receipt archive](receipt-archive/README.md) reuses one archive consumer on the pinned SubT scoring cut and this RWARE publication owner, distinguishing read-only completion from authority to reapply. Held-in; neither branch closes I1.
