@@ -19,3 +19,7 @@ Materialize `ASOF_INPUTS.tsv` here, or use the [source-complete Space
 archive](https://chatgpt.com/space/page_f5a09a52f6b881919b10d91ecf2caa80).
 Run `sh run.sh | cmp expected.jsonl -` (archive names `run-asof.sh` and
 `asof.jsonl`). Python 3, NumPy, Git and SQLite WAL are required.
+
+[Native shared-window transport](shared-window/README.md) sends the
+actual historical result, the second-delivery confirmation and
+the latest update through a single pinned broker callback path.
