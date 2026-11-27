@@ -1,0 +1,98 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{What a partial, staggered acquisition can certify}
+A fresh publication need not contain fresh samples. A failed vector
+acquisition can nevertheless have completed a relevant prefix. This
+study tests whether a source-side adapter can reuse that prefix for
+a named signed direction. The guard consumes raw acquisition events,
+not the ordinary filtered publication. The force interpretation,
+source-clock relation, electrical bias, and command sign are declared
+calibration premises, not properties measured on a physical robot.
+
+\paragraph{Selected source.}
+The pinned Ouijabot callback reads a signed analog channel at a time.
+One exception prevents replacement of the whole vector but does not
+prevent the old vector's publication. The harness observes both the
+actual sign evaluation and the successful voltage property return
+without changing the native filtered update. In the modeled failures
+on channels 2 and 3 (zero-based), channels 0 and 1 have fresh qualified
+samples even though the ordinary published vector stays unchanged.
+Failure on channel 0 or 1 does not supply the required pair. The
+adapter also distinguishes a commanded-sign generation changed
+between sign evaluation and voltage return; that channel cannot be
+used under the declared same-generation rule. Temporal interleavings,
+clock readings and ADC outcomes are test controls. The source check
+does not show an actual device can produce reliable epoch tags, or
+that a recorded software sign equals motor or contact force.
+
+\paragraph{The exact two-sample discriminator.}
+In the selected normalized direction $I_0-I_1$, let acquired centers
+be $x,y$ at times $s,t$, with common additive reference bias $b$.
+Each coordinate has independent initial error at most $e$ and
+drift at most $L$ times its age at decision time $T$.
+Assume $\lvert b\rvert\le B$ and slope bound $D$ throughout.
+All combinations of the independent errors and bias law are admitted.
+Then the exact lower bound is
+\[
+ x-y - 2e - L(2T-s-t) - \min(2B,D\lvert s-t\rvert).
+\]
+The difference of biases cannot exceed either bound. Its maximum
+is attained by centering the two limiting endpoint values around
+zero and connecting linearly. The errors and current drifts can
+simultaneously attain their adverse endpoints. Setting the bias
+terms independently to their full extrema can needlessly refuse
+service; canceling the shared reference as though all samples
+were simultaneous can wrongly admit it.
+
+In the controlled prefix witness, $x=2$, $y=1$, $T=0.10$,
+$s=0$, $t=0.01$, $e=0.05$, $L=0.2$, $B=0.5$, and $D=4$.
+The exact lower endpoint is $0.822$. Independent offsets give
+$-0.138$, and treating the offset as constant gives $0.862$.
+A threshold of $0.8$ separates the first and second guards;
+a threshold of $0.84$ separates the first and third. The ordinary
+held publication gives neither valid acquisition time nor this
+fresh pair. The measured scope is the native source trace and
+these authored uncertainty premises, not physical force.
+
+\paragraph{More staggered readings.}
+For ordered times $t_i$ with effective coefficients $g_i$ summing
+to zero, write $p_i=\sum_{j\le i}g_j$ and
+$w_i=D(t_{i+1}-t_i)$. If the absolute amplitude bound is removed,
+the exact support is $\sum_i |p_i|w_i$, since
+$\sum_i g_ib_i=-\sum_i p_i(b_{i+1}-b_i)$.
+The support remains exact for a finite amplitude $B$ if and only if
+all nonzero-prefix increments can be set to
+$-\operatorname{sgn}(p_i)w_i$ with $b_i\in[-B,B]$. For a zero
+prefix, its increment remains in $[-w_i,w_i]$. Call these
+intervals $[\ell_i,u_i]$ (a singleton for a nonzero prefix).
+The least feasible amplitude for the unrestricted support is half
+the largest of zero, a contiguous sum of $\ell_i$, and a contiguous
+sum of $-u_i$. This is a one-pass check using the two maximum
+subarray recurrences.
+
+Necessity follows by telescoping over any contiguous interval.
+For sufficiency, the reachable interval at $j$ is obtained from
+the previous interval by adding $[\ell_{j-1},u_{j-1}]$ then
+intersecting with $[-B,B]$. Its lower bound is the maximum of
+$-B+\sum_{i=a}^{j-1}\ell_i$ over $a\le j$ and its upper bound
+the minimum of $B+\sum_{i=c}^{j-1}u_i$ over $c\le j$. In comparing
+one lower and one upper expression, the common suffix contributes
+only $\sum(\ell_i-u_i)\le0$. The preceding unshared interval is
+bounded by $2B$ from the contiguous-sum conditions. Thus each
+reachable interval is nonempty; backward selection yields an
+attaining path. Below this amplitude, the unrestricted support
+cannot be attained; a constrained finite linear program still
+gives the true support. The coefficients here must act on the
+same physically interpreted bias. For an unsigned voltage bias
+and mixed signs, transform the bias weights by the qualified
+signs before testing the zero-sum premise.
+
+The smaller formula and the threshold were checked against exact
+vertices, reconstructed rational paths and an independently
+assembled LP. An equally informed guard using the LP ties.
+Changes to the reference epoch, update timing or physical sensor
+mapping can invalidate reuse. This is an R1/L2 development source
+case, not an independent non-radio substitution, detailed sensor
+model or I1/I2 result.
+\end{document}
