@@ -13,3 +13,5 @@ Place them beside the replay. It checks column 5 (Git blob ID) before use.
 
 The four arithmetic statements in `RelaySelection.lean` passed Lean 4.36.0
 with Mathlib and printed axioms without `sorryAx`.
+
+[Return-to-contact with the same relay and deadlines](return-window/README.md): movement reduces the fixed-site obstruction; a late gate report cannot save the reserve.
