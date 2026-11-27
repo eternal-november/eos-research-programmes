@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{Waiting for the first qualified camera frame consumes motion slack, not just notice time}
+\maketitle
+
+\paragraph{Interface.}
+Retain the far site $x=3.9$, $q=\sigma-.15$, $\sigma=4/h$,
+$h=6.37$, $\alpha=10$, and the unit speed bound. At the end of the
+nominal dwell the robot is at rest. If the next valid frame is
+captured only at $q+\epsilon$, the robot must remain stationary
+until then. A qualified capture-completion mark is observable at
+release; the true world bit is separately usable after an additional
+processing delay $L$. This is a two-cut specified detector, not an
+assumption of calibrated field timing or a proof that a native
+camera call will expose at any requested time.
+
+\paragraph{Exact charged slack.}
+Write $\delta=7-h-\sigma\simeq .002056515$. Both worlds are
+feasible exactly when
+\[
+  0\le\epsilon\le\delta,\quad
+ 0\le L \le .1 + \sqrt{(\delta-\epsilon)/\alpha}.
+\]
+For $\epsilon>\delta$, even a known far world is impossible:
+the pointwise highest velocity starting from rest at $q+\epsilon$
+gives $x(2)\le4+2-\sigma-\epsilon<h-1$. This argument allows
+any motion consistent with the actuator; it is not a failure
+of a specific planner.
+
+For the allowed waits put $z=\sqrt{\alpha(\delta-\epsilon)}$ and
+$v_*=1-z$. The exact last branch point is
+$r_*=q+\epsilon+.1+z/\alpha$. From capture, accelerate to unit
+speed, then brake to $v_*$ at $r_*$. In the far branch resume
+positive acceleration then coast, losing exactly $z^2/\alpha$
+of range compared to the maximum. This reaches $h-1$ at time 2,
+and $x(\sigma)\le4$ automatically from the maximum-speed envelope
+starting at the station. The far coverage follows as in the parent.
+For late, continue braking from unit speed to rest exactly at $4$
+at time $q+\epsilon+.2>2/3$, then hold. An earlier bit can be
+held until the same calibrated branch point.
+
+For necessity at a cut $r$ slightly beyond $r_*$, ending the common
+segment at $v_*$ allows a unit-speed plateau: integrate the minimum
+of the acceleration cones and the speed ceiling. The combined
+common-plus-far maximum with this $v_*$ is exactly $h-1$ and does
+not increase with $r$. It is strictly smaller for $v<v_*$, since
+the far displacement is strictly increasing on that range and the
+common bound is nondecreasing. Thus $v\ge v_*$. The late stopping
+peak is after its seam, since $r_*+v_*/\alpha=q+\epsilon+.2>2/3$.
+The common position must fit below $4-v^2/(2\alpha)$ to stop safely
+and above $h-1-(2-r)+(1-v)^2/(2\alpha)$ to attain the far target.
+Together those require $r\le7-h-[v^2+(1-v)^2]/(2\alpha)\le r_*$
+because $v_*>1/2$. The usual ignore-early-bit argument rules out
+any even later feasible receipt. This proves the exact relative
+processing bound stated above.
+
+\paragraph{Native rate gate and a design comparison.}
+The pinned CoSTAR SDF specifies 20 Hz. Execute the pinned
+\texttt{Sensor::Update(now,force)} body with a stand-in nominal time
+and a counted callback. The regular gate skips before
+\texttt{nextUpdateTime} and adds a period to that planned time
+when admitted; it does not reset the phase to the actual call
+time. The forced arm bypasses the regular gate in the fixture
+and does not advance that planned time. Calls of the underlying
+renderer, pose read and actuation rights are separate; production
+packages are not asserted to expose any authorized external force
+operation. A known aligned regular phase is another adequate
+comparison, not a capability gap versus a forced call.
+
+A nominal unknown phase over 50 ms cannot guarantee this far task.
+Even zero processing leaves only $\delta$ of stationary waiting.
+At modeled processing .105, the allowable wait is
+$\delta-.00025\simeq .001806515$. These are not empirical phase
+frequencies. For 1,000 audited phases at 50 microsecond resolution,
+the native gate admits 37 into that physical service envelope at
+.105. Forcing at the pinned eligible capture would pass the timing
+test in that arm; it does not fix processing .125. The independent
+motion check uses exact rational paths between the analytical
+boundaries. Safety, frame validity and independent mission
+verification remain open.
+\end{document}
