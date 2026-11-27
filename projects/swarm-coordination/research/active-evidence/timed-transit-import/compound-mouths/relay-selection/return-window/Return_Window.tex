@@ -1,0 +1,86 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{Returning to contact before spending the cave relay}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{What carries over.}
+The parent relay check holds both senders fixed. That is not a fair
+null if the custodians can move before sending. This check allows
+movement on the published cave graph, still using the weighted
+visibility graph and the parent experiment's hard radio gates:
+cost at most 10 and a declared 72 m range. Origin-to-label lookup,
+unit-time movement, and every physical edge closure are modeled.
+A hard-gate pass gives named one-slot service in this model; the
+calculation does not measure packet delivery or passage clearance.
+
+\paragraph{Costs and benchmark.}
+Custodians start at 18 and 16, the fixed receiver occupies 39, and
+an installer at 13 has one optional relay. A mobile actor can move
+one edge, wait or send during a slot. Senders cannot move while
+sending; the receiver admits one report per slot. A send at
+slot $t$ settles at its end, before the activation effective in
+slot $t+1$. Installing a relay takes one slot at its chosen site,
+may be delayed, and is irreversible. Each custodian retains
+its report until settlement. The egress obligation applies to
+both custodians and the installer. There is no other resource
+or motion conflict, report transfer, optional inspection or
+unverified fallback in this benchmark.
+
+With fixed installed site and cut, feasibility is equivalent
+to choosing two distinct send slots and corresponding contact
+vertices within the outbound and remaining egress budgets, with
+a feasible installer path. Necessity follows by reading those
+cuts from the run; sufficiency follows from the available shortest
+walks and waits around the send slots. An independent time-expanded
+recurrence tracks positions before and after each admissible send.
+It agrees on 2,400 finite deadline queries: four cut patterns, five
+placement or motion scopes, and 120 triples per arm. The most
+permissive placement arm allows any of the 158 tile origins that
+the installer can reach in time, not just the two prior sites.
+
+\paragraph{What actually needs the relay.}
+For completion cuts $(1,2,9)$ (old report, new report, all
+egress), no relay is needed with the alternate mouth open:
+$A$ sends from 18 in slot 0, $B$ moves to 42 and sends in slot 1.
+That schedule still fits when only $2$--$3$ is closed.
+If only $13$--$42$ is closed, $B$ can make the slot-1 send
+from 42 without a relay, but has no time to egress by 9.
+A no-relay return-to-contact schedule reaches egress 9 if $B$'s
+report deadline is 5 instead; $B$ walks to 2 before sending.
+With relay 13 effective in slot 1, $A$ can settle before the
+change and $B$ can move to 6, send in slot 1, and egress by 9.
+Fixing both sender positions rejects that feasible case.
+Permitting all placements rather than only 13 does not add
+any feasible deadline triple in the finite sweep. Closing both
+gates traps $B$ in the movement graph; radio does not supply an exit.
+
+\paragraph{Recipient and timing of the gate observation.}
+Compare an open alternate mouth to a closed one with the
+short gate open in both. They remain in that condition for
+the horizon. A qualified read at 13 tells the installer which
+world holds; this is an assumed local input, not a detector
+event. The two local histories at $B$ at the start of slot 0
+are identical without an extra signal. Its first motion has
+to be chosen then. When closed, only position 6 at the end
+of slot 0 supports the three deadlines, and an effective
+relay is necessary. When open, only 42 works without a
+relay; with relay 13, both 6 and 42 work. The installer has
+no time to travel and make a different installation effective
+in slot 1. Thus a blind common choice is 6, which spends
+the relay even in the open world. A closure bit available to
+$B$ before slot 0 instead selects 42 without spending in the
+open world, and 6 with spending in the closed world.
+A perfect report at slot 1 cannot restore the option. For
+zero-error randomization the same obstruction holds on each
+seed that satisfies both histories; their finite intersection
+has probability one when each succeeds with probability one.
+The three Lean statements check the action-table step after
+the motion calculation.
+
+An equally informed conventional scheduler can use the
+same decision. The result identifies an evidence recipient
+and cutoff, not a verified way to sense, send or act on that
+bit in the simulator. It calibrates matching for I2; no independent
+acceptance mission or new operating envelope is claimed.
+\end{document}
