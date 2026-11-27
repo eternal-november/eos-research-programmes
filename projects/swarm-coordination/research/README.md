@@ -390,6 +390,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-QUEUE-CUT-REWIND:** The last protected send is enough for a current sender limit, but its summary cannot replace ordering when a migration exposes an earlier send. [Index, exact witness and matched replay](integration/shared-admission-core/station-and-receipt/pending-or-charged/guarded-append/binding-impact/cut-rewind/README.md) account for edit costs in a finite model; not a native integration.
 
+**SC-SENDER-RX-ALLOWANCE:** The selected broker applies the current sender's limit to the shared receiver's byte history. A supplier change can reverse the required report order. [Pinned callback and debit replay](integration/shared-admission-core/station-and-receipt/sender-rx-allowance/README.md) plus a matched earliest-due-date reduction; no independent mission.
+
 **SC-WEIGHTED-PACED-SYNTHESIS:** Mode-specific local duration yields an exact pace/latency frontier and minimum-latency substitution table. [Weighted proof and replay](recurrent-coordination/paced-port-synthesis/weighted-deadlines/README.md) show that equal Boolean interfaces and equal length can still need growing state for arbitrary deadlines; a fixed cap restores finite summaries. Restricted commissioned-mode result.
 
 **SC-EVIDENCE-TREE-RISK:** Tree pair marginals plus evidence/continuation flags give an exact fixed-whole-law admission check for a fixed policy, without summing incompatible cohort maxima. [Proof, rational witnesses and compact/full replay](joint-risk/evidence-tree/README.md). Source nodes can still matter when not counted as physical exposures. Scoped numerical examples, no field law.
