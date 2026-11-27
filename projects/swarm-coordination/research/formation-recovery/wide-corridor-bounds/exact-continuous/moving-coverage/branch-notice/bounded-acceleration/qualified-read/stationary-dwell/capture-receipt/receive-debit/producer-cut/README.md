@@ -12,3 +12,7 @@ and the inherited radio/INPUTS.tsv. Put the compiler(s) on PATH; run
 sh run.sh and compare stdout to expected.json. The Space package carries
 all the exact source inputs. The selected post-render stage starts from
 supplied texture data, not a rendered environment or hardware measurement.
+
+[Finite-point verification](wire-validation/README.md) checks what happens
+when the native dense flag survives the bridge and a downstream filter
+takes the flag as a guarantee.
