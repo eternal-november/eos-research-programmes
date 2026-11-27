@@ -1,0 +1,90 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Rewinding a protected FIFO cut after supplier migration}
+\author{}\date{}
+\begin{document}\maketitle
+\paragraph{Scope.}
+This is an integer event model for the sender prefix check of the
+preceding broker binding replay, not a new native integration. A row
+has an immutable sequential rank, sender \(s\), destination \(e\),
+payload size and (optionally) one named required receiver at position
+\(k\) in its ordered recipient list. The operations are append, lawful
+withdrawal of an unexecuted row, growth by appending a new receiver,
+and atomic movement of a required row to the tail of a different sender's
+queue. Positions of existing receivers therefore do not change.
+Capacities are fixed effective sender allowances after any retained
+old debit. Debit expiry, actual dequeue and charging, physical action,
+authorization provenance and RX/path service are not modeled here.
+
+\paragraph{Representation and invariants.}
+For live rows define \(N_{s,e}(j)\) as the total bytes from \(s\)
+to \(e\) at ranks strictly earlier than \(j\), and let \(m_e\)
+be the number of bound receivers. For a protected row \(j\) of size \(b_j\),
+the no-expiry projected debit through its named receiver is
+\[
+       H_s(j) = \sum_e m_e N_{s,e}(j) + k_j b_j .
+\]
+With nonnegative bytes and \(1\le k_j\le m_{e(j)}\), the full
+prefix through the latest protected row dominates every earlier
+required TX prefix for that sender. Retain a slack scalar for that
+latest row, the weighted total for all pending rows, a heap of
+protected ranks, and a sparse partial-sum tree per live sender-endpoint
+pair, with an inverse map from endpoints to live senders. The tree is a
+standard \href{https://doi.org/10.1002/spe.4380240306}{Fenwick tree}
+on a fixed rank universe. It records logical bytes, not a prediction of
+which attempts will actually charge.
+
+Appending a protected row evaluates it against the current total plus
+its named-receiver cost and makes it latest only if admitted.
+Withdrawal of a row before the latest cut releases precisely its full
+weighted term; removal strictly after it has no effect on certified
+slack. Removing the latest row exposes a smaller cut: recompute at
+the new rank, not at the old rank. A growth at \(e\) changes the
+total of each incident sender by its total pending bytes to \(e\),
+and changes latest-cut slack only by \(-N_{s,e}(j)\). Reject the proposed
+change if any resulting latest-cut slack is negative, before making
+any edits. These updates preserve the defining sum. To migrate across
+distinct senders, check that the destination can take the row first;
+if rejected, keep the old protected row and its ordering. If admitted,
+append and retire the old row as one modeled atomic step. Distinct
+sender budgets are essential to this elementary order of checks. The
+new and old cuts must be at the actual queue owner for this model to
+apply; no claim that observing a remote change makes it atomic.
+
+\paragraph{Why only storing the latest projection fails.}
+Two queues contain the same pair of 60-byte probes to \(E\) and \(F\)
+and the same two 173-byte reports. One has \(E\) before the earlier report
+and \(F\) between reports; the other swaps the probes. They agree on
+each endpoint's total bytes and on every endpoint coefficient at the
+latest protected cut. The same latest report is lawfully removed.
+Both earlier reports now have the same 233-byte slack at capacity 466.
+Growing \(E\) reduces the first queue's slack by 60 and leaves the
+second unchanged. The fourth such edit must be refused in the first
+case and can be accepted in the second. Thus the latest weighted
+total, even together with the latest coefficient vector and the
+rewound slack scalar, cannot support subsequent growth checks.
+Saving order information or revisiting the queue is necessary in this
+comparison. This is not a lower bound against every indexed data structure.
+
+\paragraph{Cost and evidence.}
+With hash tables at expected constant lookup cost and rank horizon \(T\),
+one byte/rank update takes \(O(\log T)\); protected-heap pushes and
+eventual purges add amortized \(O(\log T)\). A bind checks the \(d_e\)
+current sender-endpoint incidences, \(O(d_e\log T)\) in the worst case
+apart from amortized heap purges, instead of walking the pending queue.
+Cancelling the latest and rewinding can read all \(d_s\) endpoints of its
+old sender, \(O(d_s\log T)\). Migration charges both steps; pending rows,
+sparse trees and stale buried heap keys cost \(O(n\log T+T)\) space
+for \(n\) pending rows. No continual-horizon storage or real-time queue
+lock bound follows. In 14,400 seeded steps, a full recomputation matched
+all admissions and exact slacks, including 1,430 migration requests
+(1,149 feasible). The indexed binding checks visited 4,236 incidences
+and made 3,127 prefix queries; the scanning implementation visited
+69,430 queue rows for binding. These are different primitive counts,
+not a measured speed ratio; inspection, updates and 945 rewind-edge
+visits are separately reported. Another direct solver with the same
+index has the same cost, and a dense shared destination can erase the
+advantage over scanning. Lean checks the indistinguishability pair.
+There is no independent workload or general R2 acceptance.
+\end{document}
