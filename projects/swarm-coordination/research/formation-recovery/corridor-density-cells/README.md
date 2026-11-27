@@ -3,3 +3,5 @@
 [Statement, constructive proof, and limits](Corridor_Density_Cells.tex). Shortest paths give the exact displacement budget for local terminal choices. A common rest-to-rest profile attains it while preserving all initially satisfied hard difference bounds. In the ranked span family, a pre-motion message must identify a group small enough for the shared deadline.
 
 Run `node check.js` without dependencies. Expected: 22,400 rational-box queries, 580 attainment witnesses, 645 incremental closures, 1,506 support cells, and 24 physical obstructions. The eight Lean statements were audited in Lean 4.35 with Mathlib. The continuous profile proof and prerequisite local clock/evidence interface are separate. This study does not claim measured forecast availability, packet delivery or R6 closure.
+
+[Delayed notice at a rest cut](notice-at-rest/README.md) accounts for preparatory space that can be reused by different label branches and gives the optimal cyclic code for the declared family. A no-stop counterexample pins the limit of the model.
