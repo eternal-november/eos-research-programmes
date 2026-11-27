@@ -26,3 +26,6 @@ actual exposure, settling and modeled rest-to-rest angular timing.
 
 [RF-cut local RGB](optical/README.md) follows a rendered, source-qualified
 color sign through the stock image path without a new RF message.
+
+[Capture cadence](cadence/README.md) separates a wait at rest for an
+eligible frame from a processing delay after the robot starts preparing.
