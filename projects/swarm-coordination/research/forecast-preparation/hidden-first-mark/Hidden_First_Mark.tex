@@ -1,0 +1,135 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{A known replay marginal can conceal which reserve to stage}
+\begin{document}\maketitle
+\paragraph{Lift and law.}
+A simulated mission is considering moving a pending old report
+ahead of a different crew's diagnostic. The early task class
+\(W\in\{0,1\}\) is locally known before committing an optional
+fallback. A successful old report needs no fallback. Missing it
+costs one normalized service credit; separately staged reliable
+backup costs \(1/2\) and avoids that loss. Assume that prior
+authority and capacity supply this one backup when chosen, and
+that safety and other inherited work do not change.
+These prices and the candidate tape laws below are authored.
+This is a forecast of \emph{which class} will benefit from
+preparation, not a real channel estimate or a claim that reordering
+always improves packet arrival.
+
+\paragraph{Source map.}
+In the pinned SubT broker, a diagnostic refused at the TX cap does
+not consume a packet mark; a diagnostic that passes the RF test
+but fails the full RX ledger does. Fix \(H=0\) for the former,
+\(H=1\) for the latter. Both diagnostics lack an application
+callback. The replay has two supplied marks, \(A,B\), at 250 or
+750 on the 1,000-mark grid. The controlled thresholds make both
+marks adequate for the diagnostic RF test and only 750 adequate
+for the old report. With the historic order, the old report reads
+\(Y=A\) if \(H=0\) and \(Y=B\) if \(H=1\), interpreting the two
+marks as binary. With the changed order it reads \(A\) in both.
+The source check executes both orders at all 16 physical inputs,
+using unchanged selected-source queue, ledger, RF and callback
+code and the existing controlled-draw seam. Initial full ledgers
+are supplied fixture states. A measured distribution for the
+source's random number generator is not claimed.
+
+\paragraph{Fixed experiment and exact non-identification.}
+The historical diagnostic has the first dispatch entitlement.
+Later data collection can select classes and can record even
+\(W,H,Y\), the missing side callback, and how many draws were
+consumed, but cannot test the reverse order or read the erased
+first mark. This is the experiment constraint, not a claim that
+a simulator operator could never change its instrumentation.
+For each episode take independent fair \(W,H,B,X\).
+Both candidate laws set \(A=X\) at \(H=0\). At \(H=1\),
+law zero has \(A=W\) and law one has \(A=1-W\). Then the full
+permitted historical observation laws are the same. So is the
+ordinary unconditional \((A,B)\) tape law, even though it is
+not conditionally independent of \(W,H\). Neither repeating
+the fixed experiment nor adaptively sampling classes within
+it can discriminate (condition on the transcripts).
+In the contemplated queue order the old success rates by
+class are \((1/4,3/4)\) or \((3/4,1/4)\).
+Even an independently known unconditional success of \(1/2\)
+does not fix the choice: the whole sharp segment has
+\(r_0\in[1/4,3/4]\), \(r_1=1-r_0\).
+Choose the unobserved \(H=1\) first-mark probabilities in the
+two classes complementary to realize every point.
+
+A known law warrants protecting just its low-success class.
+That increases expected service net of preparation by \(1/8\)
+over no preparation. Protecting only the wrong class loses \(1/8\).
+In the indistinguishable historical experiment every randomized
+preparation rule has opposite improvements under the two laws,
+so its worst improvement is at most zero. No preparation attains
+zero; the value of consistently learning the law is \(1/8\).
+Choosing the correct backup only after observing \(H\) or after
+the missed old report is not an admissible comparison.
+
+\paragraph{A changed experiment and the stopping boundary.}
+Before an independent development episode, a pilot may decline
+one separately approved optional job to reserve an earlier
+diagnostic slot for the old packet. This yields the reversed
+visit order without suppressing the other crew's attempt;
+the model supplies this authority only in explicitly reserved
+trials. Its opportunity price \(c\) is charged before observing
+\(H\) and the tape. Assumptions are that the mode law is stable
+across permitted experiments, the revised order does not change
+the offered source state, and the two acts have zero competing
+receive or transmit footprint. The comparison uses the actual
+report callback \(Y'=A\), not a labeled counterfactual. An
+optional trusted local phase export reads the actual fixture's
+before-TX vs after-RX side ledger effect and tells which cohort
+the trial belongs to. This is an authored recording interface,
+not available through every stock receiving callback. No
+individual experiment may select \(H=1\) in advance.
+Under the qualified export, a trial identifies the law exactly
+with probability \(1/2\) and otherwise learns nothing. With
+\(n\) opportunities and risk \(1/8\) before learning, the exact
+recursion is
+\[
+ J_0=1/8,\qquad
+ J_n=\min\{1/8,\ c+J_{n-1}/2\}.
+\]
+Test until identified or out of time iff \(c<1/16\); ties at
+the threshold admit either. This charges the whole early
+opportunity, including unsuccessful trials.
+
+Without the phase export, align the reversed-order receipt
+with \(W\); its success bit is Bernoulli \(1/4\) versus \(3/4\).
+Compare exact likelihood stopping at the same price. At
+\(c=1/32\), the best receipt-only policy takes exactly one trial
+and stops for any positive finite horizon. In log-odds units
+\(\log_3\), the prior state is zero and each trial moves by one.
+At \(|k|\ge2\), the regret for stopping is at most \(1/40<c\).
+At \(|k|=1\), that regret is \(1/16\); a new trial reaches
+\(|k|=2\) with probability \(5/8\) and zero with \(3/8\).
+By horizon induction the trial costs more than stopping, using
+\(J(0)=3/32\) whenever there is another opportunity and \(1/8\)
+otherwise. At zero a single trial reduces net loss to \(3/32\).
+With the qualified phase export two opportunities reach \(5/64\)
+and the limit is \(1/16\), at the same per-trial price.
+This exact difference presumes no incremental export price;
+if that assumption changes, include it in the qualified price.
+The symmetric Bayes-optimal rules are minimax over the two
+mirror laws by symmetry; their worst risk equals their average.
+Fixed-budget likelihood errors, the Bellman checks and 45
+qualified horizon/price comparisons are reproduced separately.
+Three Lean lemmas check the arithmetic, not the simulator.
+
+\paragraph{Comparators and limits.}
+A direct conditional-likelihood or controlled-sensing policy at
+the same experiment access ties. See
+\href{https://arxiv.org/abs/1205.0858}{Nitinawarat et al.}
+for controlled sensing and
+\href{https://proceedings.mlr.press/v286/marmarelis25a.html}{Marmarelis et al.}
+for trajectory-confounding sensitivity; this is a small identified
+interval and experiment design example, not their generalization.
+Known independent fresh marks conditional on the class and phase
+would exclude the two alternatives. The experiment concerns
+the stock visit-indexed simulator law; event-keyed randomness
+as a different structural intervention need not share these
+counterfactuals. No simulated correlation is assigned to a
+real fleet. This is scoped R3b with an executable source seam,
+not full acceptance or a held-out test.
+\end{document}
