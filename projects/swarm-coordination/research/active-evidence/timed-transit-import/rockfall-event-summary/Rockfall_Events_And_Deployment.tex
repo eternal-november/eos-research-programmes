@@ -1,0 +1,70 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{A rockfall summary is not a count of deployed obstacles}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{Source and boundary.}
+The pinned \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/worlds/cave_circuit/01/cave_circuit_01.sdf}
+{held-in cave world} uses two exit-triggered and two entry-triggered
+obstacle publishers, in that order. Resolve the global comments against
+the actual match field. The
+\href{https://github.com/gazebosim/gz-sim/tree/2a076e91c6df7699284ab93e244894bb0f55336f/src/systems}{Dome source pin}
+notifies true when a tracked performer first intersects the detector
+volume and false when it ceases to intersect. Initial nonintersection
+and unchanged intersection do not emit another event.
+The \href{https://github.com/osrf/subt/wiki/RockFalls-tutorial#dynamic-rock-placement}
+{official tutorial} documents one and five deployments for the Large
+and Medium models respectively. Their Fuel asset bytes, collision meshes,
+exact deployment image release, and actual runtime transport delivery
+are not recovered. Use the cap as a declared fixture input.
+
+The harness compiles the original detector transition, deployment loop
+and \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/src/GameLogicPlugin.cc}
+{event summary callback}. It stages region-intersection Booleans rather
+than executing physics, and provides a successful model-creation seam
+with no name collision, a resolved XML match and supplied delivered
+command batches. The callback sees the same raw remaining counts that
+the selected deployment loop writes. A positive count describes unused
+deployments, not clear passage. A creation call is counted separately;
+it does not establish settling or collision.
+
+\paragraph{Different futures with the same summary.}
+For five allowed deployments, one command or two within one nonzero
+second both log a single \texttt{rock\_fall}. The actual remaining
+counts at that cut are four and three. In general, when \(m\ge2\)
+deployments remain and the first command is delivered in a fresh
+positive second, batches of size \(1,\ldots,m\) all yield the same
+single event and leave \(m-1,\ldots,0\), respectively. The logger uses a
+per-model integer second and does not record the count.
+Thus that summary quotient is not stable under a future demand for an
+additional deployment. This is a difference in simulator resource state,
+not proof that the hazards left behind differ in mobility or optics.
+
+A related failed interpretation runs in both directions. With one
+allowed deployment at second zero, a creation call occurs but the
+zero-initialized deduplicator records no event. With five requests at
+second one, the first positive remaining report sets the deduplication
+second and the zero at the end of that same batch does not advance the
+logger's zero counter. Another command at second two cannot create
+another obstacle, but it produces a fresh \texttt{rock\_fall} summary
+and region event. With a one-command cap first used at positive time,
+the analogous second request logs \texttt{max\_rock\_falls} and does not
+broadcast a new region event. An independent count and event-state
+recurrence agrees on 192 detector and 4,608 logger sweep cases.
+
+\paragraph{Evidence for the planner and for the evaluator.}
+A held-in I2 trace would preserve detector transition and performer,
+delivery to the deployment loop, raw counter transition, successful
+model creation, platform-relative clearance, actual link/contact, and
+report receipt at distinct cuts. A summary can help align evaluator
+logs but cannot substitute for any of them. Do not supply the evaluator
+counter or full simulator state to the installed controller: the
+\href{https://github.com/osrf/subt/wiki/Cloudsim-Architecture}{documented bridge}
+separates simulator and robot interfaces, and this replay does not
+instrument the full deployed topic set. A matched control must see
+the same actual local progress, sensing or receipt as the proposed
+controller. Native physical clearance and an independent mission
+remain open.
+
+\end{document}

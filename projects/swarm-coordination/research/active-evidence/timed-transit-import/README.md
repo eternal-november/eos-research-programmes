@@ -28,3 +28,6 @@ contraction is correct for arbitrary crew control.
 
 [Effective cave radio model](effective-radio-model/README.md): cave asset
 calibration must verify which model and lookup table actually loaded.
+
+[Rockfall event versus deployment](rockfall-event-summary/README.md):
+verify trigger direction, remaining count and physical effect separately.
