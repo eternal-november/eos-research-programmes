@@ -1,0 +1,98 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{Disjoint radio endpoints do not imply a disjoint replay}
+\begin{document}\maketitle
+\paragraph{A scoped claim.}
+In a fixed selected-source SubT simulation, changing the visit order
+of two packets can change which packet gets the favorable random
+mark even when poses, power, transmit and receive ledgers are pairwise
+disjoint. This is a shared mutable simulator dependency, not physical
+interference, malicious control, or evidence that one schedule
+has higher marginal reliability. The fixed-mark deterministic
+pose-scope result does not assert stochastic commutativity.
+
+\paragraph{Pinned traversal and consumption points.}
+The broker iterates the queued datagrams and each registered receiver
+for the destination endpoint. Native radio code rejects over-budget
+TX before touching the random source. Otherwise it debits TX,
+computes power, optionally samples one shared static normal engine
+for positive power variance, and consumes one process packet mark
+before asking if the receiver has byte capacity. In this replay
+the power seam has zero variance; the positive-variance branch is
+inspected, not replayed. The earlier harness's constant test mark
+is replaced by a controlled list at exactly the existing
+\texttt{rand} shim. No packet test, ledger code, queue traversal,
+or callback logic inside the pinned functions is patched.
+
+\paragraph{Replayed discriminator.}
+The old report's threshold lies strictly between marks 500 and
+501 and the side report's between 100 and 101 on the native
+1,000-mark grid. The fixed list 250,750 makes the old report fail
+when it visits before the side report but succeed when it visits
+after; the side succeeds in either order. Reversing that list
+reverses the old difference. A dropped/blocked side callback
+does not determine mark consumption either. The actual TX rejection
+leaves the old report the first mark and it fails; the actual
+RX rejection has already used the first mark and the old
+report succeeds. For a multicast-like endpoint, the two registered
+receivers get separate attempt calls; flipping recipient order
+moves the RX debit to the other actual recipient. A retry of the
+same old body is a second actual attempt and gets a new mark.
+
+The replay checks the native outcome for all 1,000 marks
+individually, composes the exact one-million ordered grid pairs
+and runs 81 pairs through the queue in both orders and under the
+paired per-attempt seam. Of the grid pairs, 808,201 give both side
+callbacks and 399,200 of those reverse the old outcome. There
+are 199,600 flips in each direction; the unconditioned old
+success count is 499,000 in either schedule. These are enumerated
+test values, not an estimate of the distribution of the C runtime,
+Gazebo, or a real channel.
+
+\paragraph{A valid transfer law and its kernel.}
+To retain exact stock seeded traces, preserve the order and count
+of the relevant random-consuming events (not only the order of
+successes). To compare under a declared common exogenous episode,
+one can supply a mark indexed by physical attempt identity,
+including sender, actual recipient, retry incarnation and random
+primitive. Do not use the logical application receipt key as
+the randomness index. Two attempts reusing a common positive-or-
+negative mark would, for example, have success at least once
+with probability \(1/2\), not \(3/4\) as with two independent
+fair marks. Separate independently sampled marks from truly
+shared causes, including the source's breadcrumb and geometry
+state, deadlines and receiver/sender budgets.
+
+Fix assignments of latent marks with the semantics above. If two
+actions only write disjoint mutable state, neither changes what
+the other reads (including clock and causal enabledness), and
+both have the same immutable per-action indices and shared
+environment state, composition commutes on labeled effects.
+The proof is componentwise: each action receives the identical
+arguments before and after the other act. The order of entries
+in a trace may still differ. Projected effect order must not
+hide a real temporal requirement. Moving a real availability
+or a reserve expiry changes arguments; keying marks cannot
+justify that reorder. Nor does it imply a transport guarantee.
+
+For independent fresh marks, adaptively choosing the next unused
+event index using only past observations leaves its mark with the
+original conditional law. The finite continuation law follows
+by conditioning and induction on the number of physical draws.
+The indexed simulation and sequential fresh draws can therefore
+have equal run laws under those assumptions while yielding different
+paired fixed-seed traces. Peekable future marks, index collisions,
+correlated innovations or a different order of genuine shared RF
+causes invalidate the argument. This specifies one counterfactual
+coupling, not the unique physically correct one.
+
+\paragraph{Comparison and residual.}
+Event-indexed draws are established: see
+\href{https://random123.com/}{Salmon et al.'s counter-based generators}
+and \href{https://business.columbia.edu/sites/default/files-efs/pubfiles/4261/glasserman_yao_guidelines.pdf}{Glasserman--Yao on common random numbers}.
+The work here detects the exact effect-side dependency at the native
+SubT rejection cut and separates it from capacity and scope in the
+candidate architecture. It does not implement a new generator,
+qualify a stochastic law for the simulator, provide application
+settlement or prove independent mission success.
+\end{document}
