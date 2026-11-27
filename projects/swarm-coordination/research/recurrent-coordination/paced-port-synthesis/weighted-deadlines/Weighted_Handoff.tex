@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{Latency-weighted summaries for paced corridor substitution}
+\begin{document}\maketitle
+\paragraph{Lift and kernel.}
+Retain the fixed commissioned ports, local qualified custody triggers,
+no global clock observation and recurrent admissible offers of the
+paced handoff subclass. Replace the common latency \(g\) by a verified
+positive integer bound \(g_i(m_i)\le G\) of the commissioned mode
+at each link. The consuming local due time after the
+preceding qualified arrival is that same bound. Assume mode-specific
+evidence, settlement and release really can be bounded in this way,
+and that the simultaneous maxima trace is admitted. This does not
+follow from an average duration or separate upper margins.
+There is no live reconfiguration, alternative path or inferred
+network guarantee. A receipt protocol such as the earlier phase
+adapter needs requalification against new timings.
+
+\paragraph{Exact timed compatibility.}
+With fixed modes, abbreviate the bounds by \(g_i\). At saturated
+offers \(r_k=kP\) and full durations all starts are forced to
+\(r_k+\sum_{j<i}g_j\): they cannot occur before their actual causal
+predecessor, while delaying a full operation misses the local due
+time. \(P\ge g_i\) is necessary to avoid overlap of successive jobs
+on one link. At the joint station between \(i,i+1\), the outbound
+operation for job \(k\) starts \(g_i\) after that job's incoming
+start. Incoming for \(k+1\) begins \(P\) after that same reference.
+With \(P\ge g_i\) the two half-open reservations overlap iff
+\(P<g_i+g_{i+1}\). Thus a shared port requires
+\(P\ge g_i+g_{i+1}\). In the padded local program, arbitrary offers
+with gaps at least \(P\) have these same relative formulas and can
+only reduce the conflicting overlap. More distant jobs apart are
+at least \(2P\) apart and cannot cause an additional incident
+conflict since both durations are at most \(P\). The construction
+observes qualified local arrivals, serves or awaits actual
+settlement and pads the resulting export to \(g_i\). It handles
+every admitted duration under the same progress assumptions as
+the original controller. Worst end-to-end time is exactly
+\(\sum_i g_i\); the forced full-duration trace makes the upper
+bound sharp even against an informed unbounded-memory scheduler.
+
+\paragraph{Constructors, not just a Boolean test.}
+For fixed \(P\), export a matrix indexed by the two exterior
+commissioning modes whose entry is the shortest feasible sum of
+durations, or infinity. Store selection witnesses separately.
+Join compatible facing modes at the connecting port, add the
+disjoint-block costs, and minimize over intermediate choices.
+Separators retain their actual port and latency semantics.
+This is an exact reduction to a layered shortest path: any
+mode path witnesses a padded controller, and every admissible
+controller has a mode path satisfying the forced-interval
+test. Replacing a block with the same weighted matrix preserves
+realizability under all matching exterior deadline queries.
+It does not directly transport the old programmed controller
+or preserve new hidden cross-block resources. An equal Boolean
+matrix preserves only existence with no finite bound asked.
+
+A capped timing charter \(D\) needs only values from
+\(\{0,\ldots,D,\infty\}\) (integral durations), hence at most
+\(\lceil\log_2(D+2)\rceil\) bits per entry once the modes are fixed.
+Clipping any sum above \(D\) to infinity commutes with join:
+nonnegative added durations cannot restore a clipped path.
+For a selectable pace, evaluate the finite display
+\(P=1,\ldots,2G\), keeping only its decreases in optimal latency;
+higher \(P\) gives no new compatibility. This exports a local
+pace/latency frontier. With both exterior modes fixed at
+duration 3 and port 0, a middle duration-1 mode sharing
+that port gives pace at least 4, latency 7. A duration-2
+mode on separate ports gives pace at least 3, latency 8.
+Neither dominates. Optimizing only latency would lose the
+lawful faster-offer option.
+
+\paragraph{Lower bound at unchanged length and physical interface.}
+Fix \(n\ge2\), the exterior modes with duration one,
+\(P=2\), and independent ports at every joint station.
+Each of the \(n-2\) internal links is fixed to duration
+one or two. The \emph{same} Boolean matrix admits one
+outer mode pair regardless of those choices and every block
+has the same length. Exact latencies attain all \(n-1\)
+integers from \(n\) to \(2n-2\). Any two are separated by
+an admissible consuming deadline equal to the smaller
+latency. Thus a standalone exact interface for arbitrary
+deadlines (no timing side information) needs at least
+\(n-1\) distinct summary values at fixed length, or
+\(\lceil\log_2(n-1)\rceil\) fixed-width bits. This is a
+contextual distinction about deadline feasibility, not a
+claim that all physical control decisions need extra local
+memory. Capping the query deadline or exporting extra
+timing parameters changes the interface.
+
+\paragraph{Evidence and comparison.}
+Timing comes from the previously declared local custody
+primitive, not a new simulator or hardware test. Direct
+interval and configuration enumeration agrees on 19,600
+menu and pace cases; 277,830 capped joins and 8,128
+equal-length timing variants are checked. Lean verifies
+the unequal-duration overlap and clipping kernel.
+The ordinary min-plus comparison is the relevant
+\href{https://cs.nyu.edu/~mohri/pub/jalc.pdf}{semiring
+shortest-distance baseline}; the contribution is the
+timed physical reduction and distinction in reuse, not
+a faster graph algorithm. This remains a restricted
+moonshot result, not unbounded action-dependent synthesis.
+\end{document}
