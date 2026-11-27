@@ -1,0 +1,149 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Who can audit an old duty after a change of authority?}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{Scope and actors.}
+This is a finite strict-incentive refinement of
+\href{https://github.com/eternal-november/eos-research-programmes/pull/663}
+{the attributable-refusal result}. It concerns already enrolled
+civil service operators with fixed tolls and deposited bonds,
+not selecting the finance contract or establishing participation.
+At a named public missed-duty observation \(M\), an eligible operator
+\(i\) can save \(d_i\ge0\) by refusing rather than performing, while
+an unable operator is compliant. There is a possible unilateral
+deviation history consistent with \(M\) attributable to each checked
+subject \(i\). For example, every other missed duty could be genuinely
+unavailable if at least \(|M|-1\) such failures are admitted. That
+condition is not assumed for cases outside the specified observation
+class. The intended reference holds the operator's information and
+pre-existing financial terms fixed. It is not a simultaneous
+coalitional equilibrium or a claim about real financial enforcement.
+
+The settlement service commits in advance to a lottery over lawful
+audit allocations. An admissible unit audit names the earlier duty,
+its eligibility and historical holder rather than just the new holder
+of its equipment. It correctly distinguishes refusal from inability,
+can settle before the financial deadline, and charges at most the
+existing bond \(B_i>0\) only after attributable refusal is proved.
+No audit can confer physical access or authorize a late rescue.
+The operator does not learn the random audit draw before deciding,
+cannot influence the verifier, and gains \(d_i\) if unaudited. A
+qualified audit is certain to detect that modeled refusal; lower
+disclosure or reliability needs a new edge/evidence contract. Under
+these assumptions, strict compliance at every such eligible
+unilateral deviation is equivalent to \(p_i>r_i=d_i/B_i\), where
+\(p_i\) is conditional on the public observation and on the appropriate
+authority state. The law of no punishment for honest inability
+holds separately in every role. A profitable deviation not in the
+specified family may invalidate the incentive result.
+
+\paragraph{Known late authority: exact feasibility and a realizable lottery.}
+Represent one audit as an edge from a subject to a verifier with
+integer capacity \(k_v\); edges require both permission to use the
+historical evidence and time to produce it. Each draw is an actual
+matching with at most one audit of each subject. Let \(N(S)\) denote
+the verifier neighbourhood of subjects \(S\). The exact largest
+common additive slack over the incentive thresholds is
+\[
+ \epsilon_* =
+ \min\!\left\{ \min_i (1-r_i),\quad
+    \min_{\varnothing\ne S\subseteq M}
+   \frac{\sum_{v\in N(S)} k_v - \sum_{i\in S}r_i}{|S|}\right\}.
+\]
+Positive slack is necessary and sufficient for the strict contract.
+Necessity follows from the unit individual bounds and checking the
+expected total audits across each cut. For sufficiency, use
+\(r_i+\epsilon\) with \(0<\epsilon\le\epsilon_*\). A flow from the
+subjects of those demands through the allowed verifiers fits the
+capacities by max flow/min cut. Split each verifier into \(k_v\)
+unit slots. Clearing denominators gives a bipartite multigraph with
+maximum degree \(Q\), the common denominator. Pad both sides and
+fill deficits with dummy edges to make it \(Q\)-regular. Repeatedly
+remove a perfect matching, discarding dummy edges in the deployed
+schedule. A uniform draw among the resulting \(Q\) schedules gives
+the desired rational marginals, and no schedule overspends a verifier.
+Max flow yields the same upper slack for small or negative
+\(\epsilon_*\): at a negative proposed slack the audit lower bounds
+are \(\max(0,r_i+\epsilon)\). In every cut, retaining only the positively
+constrained subjects can only shrink the required neighbourhood.
+The exhaustive cut and decomposition code is a reference
+implementation; its length can depend on the denominators.
+
+For \(r=(3/5,3/5,2/5)\), two single-slot verifiers have more total
+capacity than total threshold. Initially the first two subjects
+share just one admissible verifier, so strict compliance is impossible
+and the common slack is \(-1/10\). A successor arrangement granting
+the second verifier valid historical-audit power for the middle duty
+changes no capacity and moves the slack to \(2/15\). The explicit
+lottery delivers probabilities \(2/3,2/3,7/15\), all strict.
+A nominal appointment after the settlement cut changes no edge. The
+native entitlement example in the prior study motivates the named-old
+duty premise; it does not establish any proposed verifier or lottery.
+
+\paragraph{A different cut: choose the subjects before recognizing the role.}
+Suppose the audit subjects must be chosen irreversibly while several
+verifier graphs are compatible with the public record. Only after that
+choice is the actual graph known to the assignment layer, in time to
+make a lawful assignment. A valid draw must be matchable in
+\emph{every} possible graph, but can use a different particular matching
+in each. The exact marginal region is the convex hull of indicators
+of those common matchable sets. Intersecting the edge lists is too
+conservative: a single subject eligible for verifier A in one role
+and only B in another is always auditable if allocation waits.
+Intersecting separately achievable marginal vectors can instead
+be too permissive.
+
+With only two graphs, separately achievable identical marginals do
+suffice for this timing pattern. Route flow from the first role's
+verifier slots through each subject's unit-capacity edge, to the
+second role's slots. The two given fractional assignments fit together
+at the shared subject edge; an integer-capacity circulation
+(add a return edge from sink to source) decomposes into integral
+circulations. Each integral draw supplies the same subjects and a
+valid assignment to each graph. This is a direct flow instance of the
+classical two-transversal-matroid intersection principle, not a new
+general combinatorial theorem.
+
+Three graphs can already fail. In each graph exactly one different
+pair shares one verifier, with a separate second verifier for the
+third subject. Each recognized role supports inclusion \(1/2\) for
+each of the three subjects, and the first two graphs also have a
+common lottery with those marginals. Across all three, no pair of
+subjects is matchable in every role. A draw therefore audits at most
+one, so three thresholds \(49/100\) cannot all be strictly exceeded.
+For a family with one such conflicting-pair role for every edge of an
+arbitrary finite graph \(G\) and separate slots for all other subjects,
+the feasible draws are exactly the independent sets of \(G\).
+The maximum common inclusion probability equals \(1/\chi_f(G)\):
+normalize independent-set covering weights to a lottery for one
+direction, and scale a lottery with minimum marginal \(p>0\) by
+\(1/p\) to get covering weights for the other. In a five-cycle each
+single role permits one half, while early choice permits only two
+fifths. A contract can restore the higher threshold by delaying
+subject selection until the applicable role is known, provided it
+can still obtain evidence before the cutoff. This intervention is
+different from learning who holds a nominal title, and can fail when
+an immutable evidence window demands earlier selection.
+
+\paragraph{Comparators, checks and what does not transfer.}
+The strong direct comparator enumerates all legal deterministic
+assignments and solves for a lottery, not an aggregate-capacity-only
+policy. It agrees on 576 known-graph cases, including 183 with a
+constructed strict lottery. Common subject versus edge sets, two and
+three roles, all 64 four-vertex graphs and the five-cycle were checked
+against explicit feasible draws and linear programs. Selected strict
+capacity obstructions were checked in Lean. The broader
+\href{https://economics.sas.upenn.edu/sites/default/files/filevault/SSRN%2016_009%20third%20version.pdf}
+{costly-verification literature} and
+\href{https://www.sciencedirect.com/science/article/pii/S0167506008708173}
+{matroid intersection} supply comparison structure. The contribution
+here is the governance timing and historical-authority interpretation
+with a concrete discriminator, not novelty of Hall, bipartite matching
+or fractional coloring. An auditor whose legal or physical scope
+is not established, a manipulable draw, a binding participation
+constraint or shared penalty exposure needs another analysis. No
+architecture or independent R5 acceptance is claimed.
+
+\end{document}

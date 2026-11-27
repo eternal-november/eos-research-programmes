@@ -14,3 +14,7 @@ column and run:
 
 Lean kernel: `DefaultEvidence.lean` (4.35.0 with Mathlib).
 Ordinary classical axioms appear; no `sorryAx`.
+
+[Limited audits across changing roles](audit-authority-timing/README.md):
+qualified capacity, auditor scope, and the timing of choosing audit subjects
+jointly determine whether the earlier incentive promise is realizable.
