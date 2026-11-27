@@ -1,0 +1,89 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{What a Speed Qualification Costs at the Notice Cut}
+\date{2026-11-27}
+\begin{document}
+\maketitle
+
+\paragraph{Pin and comparison.}
+Keep the exact acceleration-limited reference: two robots at \(0,4\)
+with the second at rest initially, bound \(\alpha=10\), unit speed
+cap, the same separation and radio, and the two moving inspection
+windows with far peak \(h=6.37\). The notice is truthful and may be
+acquired at a single selected time \(r\), but now qualification requires
+\(|v(r)|\le w\) for \(0\le w\le1\); that bound is a hypothetical
+characteristic of the reading interface. Hold the amount, truth and
+identity of the reported information fixed. There is no minimum
+settling dwell, extra read latency, observation failure model or
+hardware guarantee. The quantity computed is the \emph{latest}
+feasible acquisition; it does not assert that any given detector can
+produce the qualified sample at that time.
+
+\paragraph{Sharp bound.}
+Use the preceding notation
+\[
+ \sigma=4/h,\quad \eta=2/3-\sigma,\quad
+ \delta=7-h-\sigma,\quad k=1-\sqrt{2\alpha\delta},\quad
+ r_a=2/3-\sqrt{k\eta/\alpha+\eta^2/2}.
+\]
+Every valid acquisition already requires \(r\le r_a<\sigma\);
+the far continuation needs velocity at least \(k\) when it reaches
+its live seam at time \(\sigma\). It can gain at most
+\(\alpha(\sigma-r)\) velocity after acquisition, starting at no
+more than \(w\). Consequently any viable qualified acquisition obeys
+\[
+ r\ \le\ R(w)
+ :=\min\bigl\{r_a,\ \sigma-(k-w)/\alpha\bigr\}.
+\]
+This is necessary even if the label itself is perfect. Define
+\(v_* = k-\alpha(\sigma-r_a)\). The first branch of the bound
+is active for \(w\ge v_*\simeq0.565012\) and the second gives
+a line of slope \(1/\alpha\) for lower caps.
+
+\paragraph{Construction.}
+Use the same preparatory backward acceleration, coast and then
+forward acceleration as the preceding result, arriving at
+position 4 and velocity \(k\) at \(\sigma\) on the far branch.
+For every \(R(w)\) the acquisition falls within the last,
+positive-acceleration stroke. At that instant let
+\(v=k-\alpha(\sigma-R(w))\), which lies in \([0,\min(w,v_*)]\),
+and
+\(x=4-(k^2-v^2)/(2\alpha)\). Continue the original motion for
+far; it satisfies the exact seam and peak constraints. Before
+the split a late window is still contained in the fixed footprint,
+so the common preparation is admissible in both worlds.
+
+If \(v\le k/\sqrt 2\), just brake to rest at \(-\alpha\), then
+hold. The highest position reached is
+\(x+v^2/(2\alpha)\le4\), maintaining overlap throughout; the
+lower clearance is not tight. This also describes the
+zero-velocity reading at an already prepared position
+\(4-k^2/(2\alpha)\), where no late braking is needed.
+If \(v>k/\sqrt 2\), brake at \(-\alpha\) through the late seam
+\(c=2/3\). For these numerical pins its velocity there is
+\(2v-k-\alpha\eta\) in \((-0.07,-0.04)\), so the speed cap has not
+saturated. The actual position there is
+\[
+ 4+k\eta+\alpha\eta^2/2-\alpha(c-R(w))^2\ \le\ 4,
+\]
+by the bound \(R(w)\le r_a\). Accelerate at \(+\alpha\) to stop
+without ever moving forward past 4. Prior to \(c\) the fixed footprint
+covers the late interval; a small temporary advance is allowed.
+Throughout the construction the actual gap stays inside \([1,6]\).
+Thus both continuations are admissible and the bound is attained.
+
+\paragraph{Evidence boundary.}
+The rest-qualified value is about \(0.548224\), against unrestricted
+\(0.604725\). A lookup with the same truth and bits need not be
+interchangeable if it must be taken at a different state. The exact
+replay brackets all 12 tested caps with rational enclosures of the
+irrational optimum of width at most \(10^{-6}\), and verifies
+piecewise-quadratic feasibility of both constructed branches
+at rational extrema. One exact zero-speed witness is included.
+Lean checks the necessary velocity margin and allowed cut velocity.
+The count is not a measurement precision. An equally informed direct
+controller can select the same trajectories; no superiority over it
+or any deployed reader is claimed. Actual evidence acquisition,
+settling time, wall visibility, and independent contract acceptance
+remain open.
+\end{document}
