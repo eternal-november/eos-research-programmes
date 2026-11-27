@@ -7,3 +7,5 @@ Run `node check.js` without dependencies. Expected: 3,040 parameter cases, 133,6
 [Selective recipients](selective-recipients/README.md) removes the assumption that the same notice reaches everyone, and gives the exact required neighborhood at the same modeled cut.
 
 [Staggered receipts](staggered-receipts/README.md) shows why separate motion budgets and terminal geometry are not enough once receipt cuts differ. A positive trajectory and an explicit strict upper bound leave the exact staggered optimum open.
+
+[Earned notice](earned-notice/README.md) charges motion and source airtime to acquire the sign. A moving dwell works in a case where a stationary read cannot; an expired ledger or a qualified callback is checked in selected native broker code.
