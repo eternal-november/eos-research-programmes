@@ -1,0 +1,55 @@
+\documentclass{article}
+\begin{document}
+\title{A dense point-cloud flag can survive clipping and defeat the finite-point filter}
+\maketitle
+
+\paragraph{Compared interface.}
+The pinned RGB-D point path sets \texttt{is\_dense=true} before
+applying the native mask. It can replace all three coordinates of
+a point by infinity; it does not revise that flag. The selected
+CoSTAR launch forwards camera points through a bridge, and the
+pinned ROS bridge binary-copy conversion preserves the flag and
+the serialized coordinates. The reference downstream chain here
+uses pinned melodic-era \texttt{pcl\_conversions} and PCL 1.8.1.
+These comparator versions and a consumer using them are explicit
+fixture choices, not a finding that the deployed robot ran this
+filter or these exact package builds.
+
+\paragraph{Native exercise.}
+Inject three raw points in each selected frame. Move one target
+among all three positions while its raw value is finite near,
+finite beyond the software depth clip, positive or negative
+infinity, or NaN. Include both depth-subscriber modes. Use selected
+native sensor control assignment, callback copy, clip/mask and
+packed XYZ, native ROS conversion of data/metadata, PCL conversion
+and typed cloud unpacking, and PCL's selected finite filter and
+extrema routines. Stand-ins supply frame buffers, message types,
+known standard XYZ field mapping and scalar vector operations;
+no wire serialization timing or rendered target is exercised.
+The PCL point-cloud type documents a dense flag as a promise that
+all point data are finite; the fixture focuses on XYZ.
+
+The stock setter marks every case dense. In all 21 cases with an
+invalid XYZ point, the flag remains true at the PCL input.
+The native filter bypasses the finite predicates when this
+flag is true and returns every point and index. In the 15
+cases involving infinities, the selected extent calculation
+also returns a nonfinite X extrema value in the fixture. No
+NaN-specific extent claim is made about another library build.
+
+\paragraph{What the repair does and does not supply.}
+Demoting the unchecked flag before invoking the original PCL
+filter makes the existing finite check run. It produces a
+finite output cloud from the known valid points in all cases
+and returns their original point indices. In particular a
+compacted position is not the same index as the original ray
+once a previous point was dropped. A direct finite mask and
+index map agree exactly. This repairs the downstream
+finiteness contract, not visibility or acquisition. It cannot
+reconstruct the discarded far observation, distinguish clipping
+from missing rendering from the final message alone, or certify
+free space where no valid observation remains. The producer-side
+scope in the parent study is still required for its far cue.
+No independent benchmark, field measurement, physical safety or
+architecture acceptance is claimed.
+\end{document}
