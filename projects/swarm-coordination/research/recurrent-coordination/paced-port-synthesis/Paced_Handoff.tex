@@ -1,0 +1,152 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{Finite boundary summaries for a paced directed handoff pipeline}
+\begin{document}\maketitle
+\paragraph{What is and is not solved.}
+This is a decidable recurrent subclass, not a result about
+general action-dependent evidence or endogenous changes of
+route. Fix a civil corridor of \(n\) consecutive handoffs between
+stations \(0,\ldots,n\). Both endpoints of a handoff use
+one exclusive service port for its operation. Each link has a
+nonempty finite menu of verified configurations, specifying
+which port at each end and which transfer/latch discipline the
+hardware can use. An endpoint can support two incident handoffs
+at once only on different independent ports. The configured
+ports are chosen once at commissioning; changing them consumes a
+maintenance operation prohibited while this continuous workload
+is offered. This is a plant restriction, not a synthesis search
+bound. The replay uses two ports and four configurations;
+the proof works for arbitrary fixed finite configuration alphabet.
+
+\paragraph{Supply, effect and clocks.}
+Offered jobs enter in order with lower spacing \(P\).
+The service contract on each station is to complete and export
+a qualified handoff within \(g>0\) of the preceding qualified
+arrival, including the front offer. Scope is one downstream
+direction, with no overtaking or alternate route. A qualified
+local start must be realizable when both declared ports are
+available; its actual physical transfer and recognized evidence
+can take any admitted duration in \((0,g]\), with an all-\(g\)
+environment supported. This is a bounded service assumption
+on approved macro-operations, not proof that the interlock,
+motion, notice or recovery is physically realizable in \(g\)
+for a new configuration. A schedule cannot fabricate the latch.
+At a successful physical transfer the receiver becomes the sole
+next certifier for that load; acknowledgment of a proposal
+does not transfer custody. The effect/latch primitive provides
+scoped non-replay: no copy of an earlier use can qualify a later
+use of the port, and the old producer relinquishes practical
+control before the result enables the next use. This can be by
+an actual physical one-slot interlock; importing stale network
+receipts instead requires a separate freshness result.
+
+The runtime controller observes only its local qualified trigger
+and relative duration, not another port's clock or a common
+view of the corridor. Relative durations measured at different
+ports have the stated common bound and no unmodeled drift;
+clock offsets are irrelevant. Use physical half-open reservation
+intervals: earlier effects and releases precede a coincident new
+start. Worst-case latencies include primitive evidence and
+transport. A local controller may reserve both of its installed
+ports starting on the qualified trigger, wait for the actual
+transfer, and only export the new successor trigger at \(g\).
+Pads cost time and hold the ports. Later jobs are not refused.
+Environment progress means time reaches each \emph{finite}
+event deadline; no plant adversary may stop time permanently.
+A finite maximal run with pending qualified work is incorrect.
+After a finite last offer and completed service, an idle run is
+allowed. There is no bound on mission duration or global reset.
+
+\paragraph{Exact physical boundary.}
+For each fixed configuration, the admissible saturated offer
+trace \(r_k=kP\), with all local operations taking \(g\),
+forces each start at \(r_k+i g\) on link \(i\) (numbering
+links from 0). It cannot start earlier than its predecessor,
+and any delay leaves less than \(g\) to meet its local due
+time. At \(P<g\), even two first-link operations conflict.
+When \(g\le P<2g\), at an internal station the outbound
+operation for job \(k\) and inbound operation for job \(k+1\)
+overlap in this trace. If they need the same physical port,
+no controller, including a centralized fully informed one,
+can serve every admitted job under that configuration. If
+\(P\ge2g\), they do not overlap; equality is admissible
+because the intervals are half-open and settlement is ordered.
+The two consecutive jobs on one link do not overlap for
+\(P\ge g\). For a nonsaturated admissible trace and the padded
+solution, jobs \(k\) and \(k+d\) differ by at least \(dP\).
+For \(|d|\ge2\) the two incident intervals cannot have
+positive overlap; same-job incident operations also only touch.
+Thus the preceding two-job constraints are sufficient for
+every trace, not just the saturated one. A local finite-state
+pad-and-latch program realizes every compatible choice for
+all jobs. There is at most one active job per boundary; at a
+middle station, inbound and outbound for different jobs can
+overlap, and each completed transfer changes that job's
+actual certifier. All admitted jobs finish end-to-end exactly
+\(ng\) after entry in this implementation. With finite timer
+ticks or the specified local hardware timer, controller memory
+is bounded by local \(g\) and the installed mode, not \(n\)
+or job count. The replay's index for jobs is an evaluator label,
+not a globally visible runtime counter.
+
+\paragraph{Constructive finite summary and replacement.}
+For a corridor block export the relation on its two outer link
+modes: the pair is admitted iff a joint internal mode assignment
+can meet the physical test. At a junction insert the exact
+binary port-compatibility relation, not an independent check
+that each side can operate in isolation. Compute the block
+relation by Boolean relational composition, retaining a middle
+witness for any entry used during synthesis. External contexts
+with the same \(P,g\) and no hidden cross-block resource see only
+this boundary relation. An equal relation preserves closed
+realizability, and its new stored witnesses reconstruct the
+replacement's controllers. If the context can pin both exterior
+modes, any absent/present difference is observable.
+Anonymous equality of port counts is not enough. For example,
+when overlap is forced, the two outer links both pinned to
+\((0,0)\) require distinct middle modes from \((0,1),(1,0)\);
+each adjacent pair is separately possible, but the whole
+three-link corridor is not. The state summary is at most
+\(|M|^2\) bits per block for a fixed mode alphabet \(M\);
+one must retain the decomposition or selector to construct
+all \(n\) outputs. A linear chain of tables costs
+\(O(n|M|^3)\) to compile complete summaries, or
+\(O(n|M|^2)\) for an assignment on the closed instance.
+Latency \(ng\) is a separate scaling statement, not encoded
+as an arbitrary external deadline in the bounded Boolean
+interface. A shorter or longer replacement can change a fixed
+end-to-end deadline even when its relation agrees. Exact
+timing reuse requires matching length or changing the
+length-scaled charter. Hot replacement while work is live is
+not proved.
+
+\paragraph{Related models and checked scope.}
+This is a path-constraint reduction because worst-case
+saturated jobs force the relevant timed intervals. Ordinary
+path constraint propagation at the same interface ties.
+\href{https://doi.org/10.4230/LIPIcs.FSTTCS.2014.639}{Muscholl and Walukiewicz}
+use finite rendezvous components and causal memory. A fixed
+pairwise physical completion can be encoded as a local
+rendezvous, but mapping these real-time offer/due constraints
+and genuine private delay to a general decidability theorem
+would require a separate observer-preserving encoding.
+\href{https://lmcs.episciences.org/736}{Jacobs--Bloem} study
+template synthesis on parameterized token networks, not these
+instance-specific commissioned modes. The sole certifier for
+one job is not a single global token: different jobs can be
+live on adjacent links. \href{https://arxiv.org/abs/2611.04561}{Bollig et al.}
+study a two-process externally restricted message adversary;
+real custody enablement and shared physical ports here are
+not such an adversary. Acyclic geometry alone supplies no
+information hierarchy.
+
+The replay compares 11,522 mode/cadence cases with exhaustive
+configuration enumeration and direct interval collision,
+and exercises 140,400 modeled events up to 64 links.
+Lean checks relational association and the two exact
+overlap inequalities, not the whole event simulation.
+This is a constructive but deliberately narrow moonshot
+subclass. A failed physical latch, unbounded blackout, a
+live rewiring, risk-driven pace, or arbitrary interacting
+local controllers still need separate theories.
+\end{document}
