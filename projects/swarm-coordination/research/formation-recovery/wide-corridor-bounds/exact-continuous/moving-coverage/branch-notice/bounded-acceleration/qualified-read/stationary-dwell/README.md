@@ -11,3 +11,7 @@ Run `node replay.mjs | cmp expected.json -`. Exact rational arithmetic
 cross-checks the inequality against integration of the velocity envelope;
 it does not execute hardware or measure sensor response. The replay ran
 in V8. This is a scoped model, not independent contract acceptance.
+
+[Stationary capture and delayed receipt](capture-receipt/README.md) charge
+site travel and dwell separately from waiting for the bit, with sharp
+site-dependent cutoff cases.

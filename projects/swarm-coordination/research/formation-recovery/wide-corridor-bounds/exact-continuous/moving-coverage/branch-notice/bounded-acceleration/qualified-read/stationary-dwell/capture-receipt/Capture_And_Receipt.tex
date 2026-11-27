@@ -1,0 +1,161 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{A stationary sensing cut need not be a stationary receipt cut}
+\maketitle
+
+\paragraph{Design question and model.}
+The same mobile formation member must cover one of two inspection
+windows. Rather than wait at a sensor for its result, may it leave
+the sensor early and start preparing a common maneuver? Use the
+pinned acceleration study: initial $x=4,v=0$, bounds $|v|\le1$,
+$|\dot v|\le\alpha=10$, coverage/radio/clearance throughout, horizon
+$[0,2]$, peak $h=6.37$. A sensor at $x=4-p$ requires stationary
+dwell of length $d$, ending at prescribed capture time $q$. It
+captures the true fixed world and makes the bit available at $r\ge q$.
+No extra movement restriction or changing observation referent during
+transmission is assumed. The robot may move between $q$ and $r$
+but must use a single policy there. This is a specified detector
+and delay model, not an available physical sensor or link.
+
+\paragraph{Exact separability for near sites.}
+Use $\sigma=4/h$, $c=2/3$, $\eta=c-\sigma$,
+$\delta=7-h-\sigma$, $k=1-\sqrt{2\alpha\delta}$, and
+\[
+ s=k/\alpha,\quad r_0=\sigma-s,\quad
+ p_0=\alpha s^2/2,\quad
+ r_a=c-\sqrt{s\eta+\eta^2/2}.
+\]
+For $0\le p\le p_0$, the exact feasibility conditions are
+\[
+ d\ge0,\qquad
+ d+2\sqrt{p/\alpha}\le q\le r_0-\sqrt{2s^2-4p/\alpha},
+ \qquad q\le r\le r_a .
+\]
+The preparation, departure and delivery bounds consume different
+resources. The left bound follows by integrating the speed cones
+from initial rest and final rest over $q-d$. A triangular profile
+attains it at these $p$ without hitting the speed bound.
+For the upper bound on $q$, the far branch must reach its seam
+$\sigma$ at $X\le4$ and $V\ge k$. From stationary sensing,
+$T=\sigma-q\ge s$. The lower velocity envelope
+$\max(-\alpha t,k-\alpha(T-t))$ implies signed advance at least
+$\alpha s^2/2-\alpha(T-s)^2/4$. This cannot exceed $p$.
+Finally, the parent sharp common-state cutoff gives $r\le r_a$
+independently of how sensing was qualified.
+
+For sufficiency, complete the stationary capture and hold until
+$q_p=r_0-u$ where $u=\sqrt{2s^2-4p/\alpha}$. Accelerate backward at
+$-\alpha$ for $u/2$, then accelerate forward at $\alpha$ to the far
+seam. This is exactly the lower envelope, ends at $(4,k)$ and
+starts its forward acceleration at $r_0-u/2\le r_0<r_a$.
+Consequently the common state at $r_a$ is the same as in the
+parent sharp-cut proof, including its prepared velocity. The
+maximum retreat supplemental to the site is $\alpha u^2/8$,
+so $x\ge4-p_0$ and pre-seam speed magnitude never exceeds $k$.
+The overlap needed before the far seam is preserved; given the
+late window, the original sharp-cut braking suffix remains
+valid after $r_a$. An earlier received bit can be held until
+that planned branch. Both worlds attain their old obligations.
+In particular the construction does not remain stationary after
+$q$ unless it chooses to wait for the start of the common stroke.
+
+With $p=0$ and $d=.42$, a capture at $.425$ and a receipt at
+$.590$ are feasible. Requiring rest all the way until receipt
+would instead violate the necessary rest cutoff $r_0<.549$.
+A capture at $.445$ cannot work at that same site even with
+receipt at $.590$: the far departure bound already fails.
+This differs from just granting the robot an unearned bit at
+receipt, and from counting the whole communication delay as dwell.
+
+\paragraph{Counterexample outside the near-site range.}
+The physical departure and common information bounds do not
+always separate. Set $p=.1$, $q=\sigma-.15$, and use dwell from $.2$
+to $q$, with a reachable stationary site at $.2$. The known far
+branch accelerates to unit speed then coasts and reaches $(4,1)$ at
+$\sigma$. The known late branch can hold. A shared preparation
+with a bit at $.57$ also works: follow the far acceleration until
+then, and brake to a stop below $4$ in the late branch.
+
+Nevertheless $r_a$ is impossible for these same pins. Equality
+in the parent sharp-cut bound forces $X=4,V=k$ in the far
+branch: the terminal bound combined with $V\eta$ is strictly
+increasing on $V\ge k$ for the pinned constants, and at $k$ the
+terminal lower bound is exactly $4$. Starting at rest at $q$,
+in the available $.15$ the largest advance with terminal speed
+$k$ is $.15-.05-\delta<.1$. This integrates the minimum of the
+speed ceiling and the two terminal acceleration cones; their
+unit-speed plateau has positive duration. Hence attaining $(4,k)$
+from the site is impossible. A near-optimal far-only departure
+cannot be combined with the globally latest shared notice here,
+even though each scalar test passes independently.
+
+There is an exact farther-site family. Choose $p\ge .05$ and pin
+$q=\sigma-p-1/(2\alpha)$, so maximum-speed motion from the rest
+site would reach $4$ at $\sigma$ with unit velocity. This does
+not assert that $q$ is the latest possible far-only departure.
+Require enough time for the initial rest-to-rest motion and dwell:
+\[
+ \tau(p)+d\le q,\quad
+ \tau(p)=\begin{cases}2\sqrt{p/\alpha}&p\le .1,\\
+ p+1/\alpha&p\ge .1.\end{cases}
+\]
+The lower rest-to-rest time is the integral bound on the two
+acceleration cones; it is attained by bang--bang motion, with a
+unit-speed plateau in the second case. In particular eligible
+sites satisfy $p<.24$. Put
+\[
+ m=\min(1,\sqrt{\alpha p}),\quad z=\sqrt{\alpha\delta+(1-m)^2},
+ \quad v_*=1-z,\quad
+ r_* = 7-h-\frac{v_*^2+(1-v_*)^2}{2\alpha}.
+\]
+Then the sharp receipt cutoff is $r_*$. For $p\ge .1$, it
+simplifies to $\sigma-(1-2\sqrt{\alpha\delta})/(2\alpha)
+\simeq.59228404$, independently of $p$ within this scheduled
+family.
+
+For sufficiency, after capture accelerate to $m$. When $p>.1$,
+coast for $p-.1$ (there is otherwise no coast), then begin
+braking. Branch at $v_*$, at time $r_*$ as follows by direct
+substitution using $m^2=\alpha p$ below .1. In the late world
+continue to rest at $4$ after $c$ and hold. In the far world
+re-accelerate to unit speed then hold that speed. Relative to
+the fastest forward path from the station, the signed loss at
+time 2 is $(z^2-(1-m)^2)/\alpha=\delta$. The far footprint
+condition follows from final equality, the unit speed bound, and
+the fact that no path from $q$ can exceed $4$ by $\sigma$.
+Both witnesses are safe before the branch.
+
+For necessity at $r$ slightly after $r_*$ (and before $\sigma$),
+the maximal common advance for final velocity $v$ in time $T=r-q$
+is the integral of $\min(\alpha t,1,v+\alpha(T-t))$.
+For $v=v_*$ at $r_*$ its summit is exactly $m$ (or a unit plateau).
+By the construction, this maximal advance plus the maximum far
+suffix meets the requirement at equality. For fixed $v_*$ this
+combined maximum does not increase when $r$ grows: differentiation
+of the integral on each affine regime gives
+$\partial_T \mathrm{advance}\le1$, while the latter suffix loses
+time with marginal displacement one. For $v<v_*$ the common
+upper envelope is nondecreasing in $v$ and the far suffix
+maximum is strictly increasing there. Thus any feasible state
+at the later cut has $v\ge v_*$. These pinned parameters satisfy
+$v_*>1/2$ and
+\[
+ r_*+v_*/\alpha=\sigma+1/(2\alpha)-(1-m)^2/\alpha>c .
+\]
+Therefore the late world's earliest braking stop is at or after
+$c$, and requires $x+v^2/(2\alpha)\le4$. The far terminal requires
+$x\ge h-1-(2-r)+(1-v)^2/(2\alpha)$. Adding yields
+$r\le7-h-[v^2+(1-v)^2]/(2\alpha)\le r_*$.
+Ignoring an earlier bit until a later cut excludes later feasible
+receipts as well. This farther-site theorem uses its specified
+relation between $q$ and $p$, not arbitrary other station schedules.
+
+\paragraph{Checks.}
+The exact replay compares squared inequalities with independently
+integrated envelopes, brackets $r_a$ in $[.604725,.604726]$ and
+checks 30 continuous rational witness paths at their quadratic
+extrema and brackets $r_*$ in $[.59228403,.59228405]$. The pinned reference using the same information and
+controls ties. No field readiness, packet probability, jerk
+robustness, independent mission or architecture acceptance follows.
+\end{document}
