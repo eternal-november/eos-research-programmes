@@ -11,3 +11,6 @@ Stage the exact inputs recorded in `SOURCE.tsv` under `INPUTS`. Then:
 sh run.sh INPUTS ../development-topology.json | cmp expected.json -
 ```
 The Space backup already includes the staged `up` directory and `topo.json`.
+
+[Native COPS flow comparison](cops-comparison/README.md): 32 selected
+fixed launch/history subproblems agree; no multi-world or full TRACE claim.
