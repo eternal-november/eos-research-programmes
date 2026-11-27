@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{The audit value of unresolved source identity}
+There are $n$ distinct subjects, $g$ interchangeable complete readers,
+$1\le g<n$, and one sparse reader that can verify exactly one of the
+subjects. A pre-choice information cell leaves $k$ possible identities
+for the sparse receipt. Choose subjects before resolving the identity
+but assign them to readers afterward. Each reader verifies at most one
+subject. Every choice in the distribution must admit an assignment in
+every remaining role. The service value is the least inclusion
+probability of any subject, with the controller's randomization private
+and independent of the unrevealed role. A late assignment can use the
+resolved role; an early decision cannot. This law is about available
+qualified readers, not about how to obtain physical clearance or
+enforce audit outcomes.
+
+\paragraph{Exact value.}
+Any set of at most $g$ subjects fits. A set of size $g+1$ fits if and
+only if it contains the whole cell. If $g=n-1$, always choose all
+subjects. Otherwise, if $k>g+1$, choose a uniform size-$g$ set and
+obtain the sharp bound $g/n$. For $g<n-1$ and $k\le g+1$, write
+$b=n-k$ and let
+\[
+q_*=\begin{cases}
+g/(n-1), & b\ge g,\\
+b(n-g)/(b+n(n-g-1)), & b<g .
+\end{cases}
+\]
+Then the exact value is $p_*=(g+q_*)/n$. Here $0<q_*<1$; no
+vanishing denominator is used because $k\le g+1<n$.
+
+For any policy, extend smaller sets to size $g$ without lowering any
+marginal. Excluding one cell member, every feasible choice contains
+at most $g$ of the remaining $n-1$ subjects, so $p\le g/(n-1)$.
+If the policy chooses a large set with probability $q$, total
+expected inclusion is $g+q$. Its outsider count is at most
+$b-q(n-g-1)$ in expectation. Thus $np\le g+q$ and
+$bp\le b-q(n-g-1)$, yielding the displayed $p_*$ in the $b<g$
+case by eliminating $q$. For attainment choose large sets with
+probability $q_*$, always take all cell members and choose the other
+$g+1-k$ uniformly outside. On small sets take an average of
+\[
+a=\frac{k(p_*-q_*)}{1-q_*}
+\]
+from the cell. Substitution gives $a=0$ if $b\ge g$ and $a=g-b$
+otherwise: both are permitted small-set counts. Choose uniformly
+within the two classes. Each cell member has inclusion $p_*$ and
+the sum is $g+q_*$; outsider symmetry gives $p_*$ there too.
+For $g=1$ this recovers $1/(n-1)$ exactly when the cell has at
+most two possibilities. The original three-subject case needs just
+one timely membership bit, not the exact role.
+
+\paragraph{Queries before commitment.}
+Suppose the only evidence action asks whether one named receipt is
+the sparse one, returns a qualified yes or no immediately, and is
+charged separately from the $g+1$ verification slots. A deterministic
+policy that improves uniformly on the blind $g/n$ while $g<n-1$
+must shrink every cell to at most $g+1$ candidates. On the all-no
+path, each distinct query removes at most one, so $n-g-1$ queries
+are necessary. Ask that many distinct questions, stopping on a yes;
+this attains the bound. Exact identification needs $n-1$ in the
+same model. Batch/group questions, indexes built for the current
+manifest, absent or stale answers, and posterior-error guarantees
+are not covered by this information lower bound. In particular no
+transport-byte improvement follows when the full role and the cue
+both fit in the same octet.
+
+\paragraph{Source check.}
+The sandbox replay uses separately backed SQLite archives from an
+actual selected warehouse worker. It confirms the queried receipt
+against both an exact manifest tuple and its keyed log effect in
+one read-only transaction. Competing queries recover the full role
+on the same archives. Query calls use independently initialized,
+equally warmed connections and order permutation; VM progress counts
+are local diagnostics for the stated SQLite build, not execution time
+or a lower bound for all SQL plans. The single qualified point query
+takes 24 callbacks in the positive case and 11 in either negative
+case; the fixed-order adaptive full identification takes 24, 35,
+or 22. The batch check takes 51. Role exclusivity and archive
+availability are known in these cases. A stale or missing record is
+not evidence that some other receipt exists unless the exactly-one
+law has been established separately.
+
+An independent matching-based linear program agrees on tested finite
+cases; the proof above supplies the universal bound rather than the
+floating-point check. This is a named reconstruction and quantitative
+audit-policy result, not actual enforcement, measured runtime
+advantage, an independent mission, or full R5/I1 acceptance.
+\end{document}
