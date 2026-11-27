@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage{amsmath}
+\title{Equal cave relay sets do not determine equal native receive effects}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+
+\paragraph{Audit.}
+At the same modeled cave junction, two deployment histories have
+the same two static breadcrumbs, the same endpoints, and the same
+minimum-cost relay tile, yet the native visibility model and broker
+deliver a report in only one. A fresh model first receiving both
+positions can disagree with a live model that learned the positions
+sequentially. This is an I2 development comparison of a source
+interface, not a field experiment, independently chosen mission, or
+full stack test.
+
+\paragraph{Source seam.}
+The pinned SubT \texttt{UpdateIfNewBreadcrumbs} scans the observed
+poses for previously unseen static names. When a new name appears,
+it passes the complete accumulated position set to the visibility
+model. The actual route-table method appends these positions to the
+matching tile's breadcrumb list without replacing its first entry.
+Route construction then uses that entry for hop geometry.
+In the original simulation this method concerns named static
+models, so the experiment uses additions only. Neither pose edits
+to an installed model, stock revocation, nor live failure detection
+is used as an automatic removal mechanism.
+
+The replay imports the exact published Cave Circuit 01 visibility
+graph and SDF tile origins. It computes all shortest visibility
+costs on the 158-vertex graph with Dijkstra and an independent
+Floyd--Warshall recurrence, then passes their exact three-tile
+projection to the original route update. The exact converter from
+world coordinates to a tile is not imported: the four distinct
+sample points are explicitly mapped to the stated tiles in a
+declared four-point lookup seam. The sample positions one metre
+from the tile origin are development probes, not surveyed
+traversability, collider clearance, nor verified coordinates in a
+production LUT. For the source witness there are only two proposed
+static breadcrumbs and both are in the same projected tile, so
+omitting other vertices from the relay enumeration does not remove
+any allowed relay. The full graph has already contributed to every
+visibility cost in the projection.
+
+The source extracts also run the original route-to-power calculation,
+transmission and receiver accounting, broker dispatch, and bound
+receive callback. The selected RF envelope has high transmit power,
+zero fading variance, fixed admissible RNG draw, and an explicitly
+set hard range. No measured packet probabilities are inferred from
+this envelope. No hard range used here is attributed to field
+hardware. Separate traffic is dispatched on its own unaffected
+native route in every test.
+
+\paragraph{Witness and exact boundary.}
+Use tiles $3,2,39$, with visibility costs $12$ direct and $6,6$
+through tile~2. At the declared visibility-cost cap of~10, no
+direct transmission is possible. The endpoint origins are
+$(75,50,0)$ and $(50,25,0)$. The two eligible positions in tile~2
+are $a=(49,50,0)$ and $b=(51,50,0)$. The required geometric max hop
+is $26$ via $a$ and $\sqrt{626}$ via $b$. For simulator range
+parameter $R$ in the interval $[\sqrt{626},26)$, only $b$ qualifies:
+the pinned code rejects a range strictly larger than the cap. At
+$R\approx25.509996$ this is not a floating-point tie. Install $a$
+first and the old first entry remains $a$ even after $b$ is present.
+Reversing discovery selects $b$, and the same two-byte report reaches
+its bound callback. A fresh table seeing both at once selects $a$
+because the executed comparator chooses the smaller coordinate
+when the two points differ on just that axis. The pinned
+Gazebo Math comparator is not assumed to be lexicographic. Sole-relay and no-relay controls discriminate selection
+from absolute unreachability. This is replacement by cold
+reconstruction of a development state, not a command the stock
+controller can necessarily issue during the mission.
+
+The route's tile and graph-cost outputs have not changed between the
+two valid complete discovery histories. The missing distinction is
+the effective first representative per tile. Keeping the entire
+ordered insertion trace is unnecessary on this append-only,
+frozen-graph seam with consistently ordered candidate sets: preserve the original named position set for
+detecting actual new registrations and the first representative
+of each already populated tile. A new distinct name can add a tile
+or supply its first representative, but it cannot change an existing
+one. With these data and exact graph and lookup, reconstruction of
+the route-cost run has the same sorted sets and reads the same
+first entries; by induction each subsequent admitted addition
+maintains those facts. This argument excludes graph/LUT updates,
+per-name movement and deletion, position sets outside a strict weak ordering regime,
+and non-static hardware behavior. A same-information direct
+calculation ties; the comparison against aggregate replay shows lost
+state, not a better route algorithm.
+
+\paragraph{Verification.}
+The program exhausts the stated imports and one-metre axis offsets,
+keeping nondegenerate same-tile pairs. For each, it tests an interval
+point between the two hop lengths and controls below and above,
+and compares eight deployment and reconstruction shapes. In
+particular, restarting with the two live positions alone is distinct
+from seeding a cold table from the persisted first representative.
+Both first-entry reconstructions reproduce their respective source
+delivery results in every sampled cut. Results separate a selected
+relay, finite modeled power, actual application delivery, and receive
+debit. A selected relay can still fail the range condition. The
+package supplies source hashes and a clean extraction replay.
+\end{document}
