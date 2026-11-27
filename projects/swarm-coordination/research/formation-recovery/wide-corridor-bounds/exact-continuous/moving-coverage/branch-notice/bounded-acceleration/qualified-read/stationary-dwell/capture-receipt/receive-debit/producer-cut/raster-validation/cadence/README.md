@@ -10,3 +10,6 @@ From the parent raster-validation root, with its sensor/radio/motion.py
 materialized from the existing source manifest, run
 python3 -B cadence/cadence.py and compare to cadence/expected.json.
 The Space archive contains the exact parent.
+
+[Force invocation scope](manager-force/README.md) checks which other sensors
+consume work and whether the deadline is at first useful callback or return.
