@@ -1,0 +1,112 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Exact Continuous Recovery in a Finite Union of Wide Corridor Cells}
+\date{2026-11-27}
+\begin{document}
+\maketitle
+
+\paragraph{Audit.}
+The controlled variables are the ordered robot positions on a line,
+with coordinate speed bounds \(v_i\geq0\). A closed, rational polyhedral
+set of allowed positions is the same union of coverage cells as in
+the preceding wide-corridor model. All admitted survivor sets have the
+required sensing coverage of the protected interval, while the
+clearance, coordinate and required radio span constraints hold throughout.
+The admissible environment, loss family, track ordering, endpoints and
+bounds stay fixed over the leg. The question is the minimum time
+from \(A\) to \(B\), not whether an initially broken requirement can
+be counted as satisfied on time zero. There is no imposed bound on
+acceleration or jerk and no mandatory rest interval, no changes to the
+admitted loss sets, and no private observations in this solve.
+
+\paragraph{A finite exact reduction.}
+Let \(P_1,\ldots,P_m\) be a finite closed convex cover of the allowable
+space \(S\). Suppose a continuous speed-feasible trajectory \(x\)
+runs through \(S\) for time \(T\). If \(T=0\), its endpoints coincide.
+Otherwise choose any cell containing \(x(0)\) and let \(t_1\) be
+the last time through \(T\) at which the path is in that cell.
+The inverse image is closed, so the maximum is attained.
+If \(t_1<T\), take a sequence of times strictly above \(t_1\)
+converging to it. Finiteness gives a cell visited by infinitely
+many of those times. Closedness puts \(x(t_1)\) in that cell too;
+its last visit is strictly later. Switch there, and iterate.
+Every selected cell has last visit strictly greater than those
+already used, with the possible initial zero-length stay.
+Thus the procedure terminates at \(T\) using at most \(m\) distinct
+cells. It does not require a minimum dwell or a finite number of
+crossings of the original trajectory.
+
+Replace each portion between consecutive chosen cuts by its affine
+chord. Both endpoints of this chord lie in that cell, so the
+continuous chord stays inside it. For each robot the displacement
+is at most \(v_i\) times the original duration. This proves
+speed feasibility with exactly those durations, including fixed
+coordinates and any zero-duration identical endpoints. At a seam
+velocity may jump. This is why the reduction applies to positions
+with box speed bounds, not to an acceleration-limited state
+augmented by velocities. For a cell that already contains
+\(B\), any feasible remaining path can similarly be replaced
+by an in-cell chord to \(B\) using no more time.
+
+For each possible simple cell route choose seam positions \(z_j\)
+and durations \(d_j\geq0\). Both endpoints of segment \(j\) must
+be in its cell and
+\[
+  -v_i d_j\le z_{j+1,i}-z_{j,i}\le v_i d_j .
+\]
+Solve the rational linear program minimizing \(\sum_j d_j\),
+with the fixed start and finish positions. Nonintersecting cells
+can be pruned before the enumeration. At fixed speed the feasible
+chords concatenate, giving the converse direction. A rational LP
+with a finite infimum here attains it; nonnegative duration and
+bounded position variables allow the search for a minimizer
+to be restricted to the objective sublevel of an arbitrary
+feasible witness. Exact finite LP algorithms can therefore decide
+each route, and the finite minimum is exact. No feasible route
+implies no continuous speed-feasible path. The simple route
+count can grow exponentially or worse; no online tractability or
+performance gain over a stronger exact geometric solver is claimed.
+
+\paragraph{Certificates, not a floating decision.}
+The held-in harness uses the source-indexed cells from the earlier
+replay. Intersection pruning uses exact shortest-path difference
+constraints with a zero reference coordinate, not the floating
+adjacency test. For each unpruned route HiGHS proposes a primal
+and dual of the minimization form \(A x\le b\) with unrestricted
+variables (positive durations represented as rows). The harness
+reconstructs rational candidate values and checks
+\[
+  A x\le b,\qquad A^\top y=c,\quad y\le0,\qquad c^\top x=b^\top y .
+\]
+For an infeasibility claim it checks a rational \(y\geq0\) with
+\(A^\top y=0\) and \(b^\top y=-1\). These are exact comparisons,
+including objective equality, not nominal tolerances. The
+harness stops unconfirmed on a failed reconstruction; it does not
+implement general exact LP fallback. The conceptual completeness
+claim uses an exact solver, not indefinite trust in rational
+rounding of a floating estimate.
+
+\paragraph{Checks against a matched direct planner.}
+All 77 old ascending pairs, 24 additional wide pairs with
+noncomparable endpoints, and four controls agree with the
+previous uninstrumented same-information route planner. There
+were 744 audited route LPs, three of them infeasible with
+exact Farkas witnesses. The 119 winning chords passed the
+independent exact survivor-interval-order test from the wide
+corridor source. The two broad examples still take exactly 7 and
+\(7/2\); the disconnected case previously misclassified by a
+coarse sample remains infeasible. In a separate control the static
+cell graph is connected, but a robot fixed by its zero speed cap
+would have to move to attain the finish, so the route LP refuses
+correctly. Refusal is not an otherwise successful service claim.
+
+This is an exact speed-only specialization of the
+\href{https://arxiv.org/abs/2205.04422}{graphs-of-convex-sets
+motion-planning framework}, using the previous corridor cell
+construction. It closes the continuous finite-route argument and
+certificate-verification gap for that scoped wide model. It does
+not establish that the sensors or radio physically implement
+the specified inequalities, does not solve the acceleration-limited
+or time-varying support problem, and is not an independent contract
+acceptance test.
+\end{document}
