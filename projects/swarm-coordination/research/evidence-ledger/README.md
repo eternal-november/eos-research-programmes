@@ -7,3 +7,5 @@
 [Preselection and paired-outcome audit](../integration/paired-acceptance-audit/README.md): development instrument for I1/I2 and other independent comparisons. No holdout has been selected or spent.
 
 [I1 integration preflight at #678](i1-integration-preflight/README.md): latest inventory and source-pin audit, explicit freeze gates, and the next joined development trial. No architecture disposition or independent test has been closed.
+
+[Focused cave preflight at #732](cave-preflight-732/README.md): current native comparator results, next joined-case requirements, and explicit freeze blockers. The earlier I1 inventory and source-pin audit remains the scope for any architecture disposition.
