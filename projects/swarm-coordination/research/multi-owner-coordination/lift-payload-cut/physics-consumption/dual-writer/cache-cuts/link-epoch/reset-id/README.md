@@ -10,3 +10,6 @@ Stage the inputs listed in INPUTS.tsv in a sibling pins directory. Run
 python3 -B replay.py ../pins and compare stdout with results.txt. This is a
 selected-source graph replay, not a full Gazebo/transport run. The authored
 archive example demonstrates a receiver condition, not a stock receipt API.
+
+[Control and capture cuts](control-epoch/README.md) compare queued reset
+acknowledgements, source rewind and late receipt emission with the same pose-clock projections.

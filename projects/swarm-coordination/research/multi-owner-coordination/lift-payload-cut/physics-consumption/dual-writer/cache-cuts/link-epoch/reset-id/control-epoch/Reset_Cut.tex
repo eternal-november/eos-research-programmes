@@ -1,0 +1,72 @@
+\documentclass{article}
+\begin{document}
+\title{A reset acknowledgement and a rewound clock are not a body-incarnation witness}
+\maketitle
+
+\paragraph{Audit.}
+Gazebo Sim 9 is pinned at
+\texttt{62f198e0478159549b748c4b4c66f0cbe2fcbf6f}.
+Execute native world/playback control callbacks, queue drain and clock
+advance with the native graph reset and allocator from the previous study.
+The exact branch that calls the entity-manager reset is executed, as
+is the source scheduler branch that calls the system-manager reset.
+The system manager's completion in the test is a labeled stand-in,
+not a claim of full plugin reload, physical settling, transport timing
+or synchronous notification in stock Gazebo. The order of publishing
+statistics and entering the systems branch is checked against the
+pinned runner. The native clock service, scheduler and physics engine
+are not instantiated.
+
+\paragraph{Three distinct cuts.}
+A successful world-control reply means the server queued an entry.
+The actual queue drain assigns the rewind flag for every entry in
+iteration order. It does not OR the flags or queue individual completed
+rewinds. In particular, an accepted reset followed by an ordinary pause
+has different effects if both calls are drained together or if the first
+is drained and completed before the second. The two executions agree on
+the two ordered requests and positive replies. This defeats any reset
+confirmation based only on that view. In the 216 three-request batches
+of the selected alphabet, 72 actually enter the rewind branch, and
+80 contain an earlier reset request overwritten by a final non-rewind
+request. The pinned callback maps both all and time-only to rewind, and
+warns rather than supporting model-only; the fixtures do not infer
+behavior across other versions or other command channels.
+
+An independent obstruction survives a bare clock read. A seek to the
+epoch through the selected playback callback and a rewind both put
+the simulated time and iteration at zero. Only rewind sets the reset
+flag and restores the allocator. The next allocation in the fixture is
+11 after rewind and 12 after seek. The selected native code distinguishes
+these internally. This is an equality of the simulation-time and
+iteration projection, not equality of every clock field or a claim
+that live log playback generally preserves world contents.
+Statistics are published before the systems branch. Even a correctly
+recognized reset clock does not prove that the system manager call
+has finished, much less that a robot has stopped.
+
+\paragraph{Source-side guard and late emission.}
+The authored authority lives outside the rewound state. Under a serial
+producer cut it closes allocation receipt capture when a true rewind
+is selected, before executing the graph reset, and opens the new
+incarnation after the modeled systems-return cut. It rejects capture
+while closed or without the qualified incarnation supplier. The
+counter would have to be durable across issuer failure to extend the
+guarantee to restart; the fixture does not implement such persistence.
+It exercises three actual allocation lifetimes at exactly the same local
+simulation time and numeric entity number, using the selected native
+frame and graph rules. Capturing the incarnation inside the serialized
+effect operation preserves their separation. Reading the current
+incarnation when an old result is later sent changes its label and
+would match the current allocation's key. An immutable issuance key
+with the same source binding is equivalent in the direct account.
+
+A useful implemented interface would separately name accepted reset
+intent, actual graph cut, relevant source readiness, and the original
+capture schema. The tested opening condition is adequate only for the
+selected allocator service, not for old hardware effects, controller
+availability, or complete progress after reset. Delayed legitimately
+retained old evidence may still answer a query about the old
+incarnation; it cannot be retagged to authorize the new one. There is
+no claim of an independent mission, priority, or architecture
+acceptance.
+\end{document}
