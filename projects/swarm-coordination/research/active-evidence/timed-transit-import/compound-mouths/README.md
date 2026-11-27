@@ -16,3 +16,5 @@ The event and RF sources are checked evidence for the interface
 interpretation, not executed code in this replay. The numerical part
 reimplements a selected connector predicate and checks the reconstructed
 edges against the published graph before reporting cut witnesses.
+
+[Relay selection across the alternate mouth](relay-selection/README.md): a cheaper visibility route can lose an old report while enabling a new one, and access to the noninterfering site can change.
