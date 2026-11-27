@@ -13,3 +13,7 @@ under the names in column 1. It checks original Git blob IDs. Run:
 
 The timing lemmas in `TimelyScan.lean` were checked by AXLE with
 Lean 4.36.0 and Mathlib.
+
+[RGB-D cross-control](rgbd-clip/README.md): in the pinned source an extra
+depth-image subscriber can change the point export itself. This does not
+establish a rendered hit or authoritatively clear a passage.

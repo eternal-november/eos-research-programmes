@@ -1,0 +1,55 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{Subscriber-Dependent Clipping at a Cave Camera Point Export}
+\date{2026-11-27}
+\begin{document}
+\maketitle
+\paragraph{Scoped witness.}
+The ordinary camera parameters in the pinned CoSTAR configuration are
+near/far \(0.01/300\) m; the depth-camera override specifies \(0.1/10\) m.
+At the selected Dome-era gz-sensors source pin, changing only the
+depth-image connection bit can change the point-cloud XYZ for the
+same supplied renderer frame and a continuously connected point consumer.
+A depth sample of \(37\) m becomes \(+\infty\) in all three packed XYZ
+fields with that connection and stays a finite point without it.
+The keyed input here is \emph{a supplied finite sample}, not an assertion
+that a specified obstruction actually appears in a rendered pixel.
+
+\paragraph{Mechanism and conditions.}
+The camera is configured with the ordinary SDF far clip. Its depth and
+RGB point callbacks copy separate fresh buffers. Only within
+\texttt{depthPub.HasConnections()} does the update apply the depth-specific
+strict near/far tests to the depth buffer. The later point branch copies
+an infinite depth sentinel to XYZ, using the same buffer; the packet
+packer writes those XYZ fields without finite filtering. Under a fresh
+finite input with both buffers corresponding to the same sample, depth
+\(d>10\) and an available finite point, the packed field survival therefore
+depends on the depth-image connection. At \(d=10\) the far clip does
+not change the buffer. A raw infinite sample is not evidence of a
+nearby obstruction in either connection arm. This identifies a
+testable violation of observation noninterference, not a statement
+about unmodeled renderer noise, synchronization, or point recovery.
+
+The replay extracts the two copy callbacks, clipping block, point
+sentinel mask and packet FillMsg implementation from exact blobs.
+The owning message, publishers, frame delivery, and color decoder use
+shims. It supplies the same 11 samples across every four-update
+connection sequence, always with a point consumer. All 2,112 packed
+XYZ field comparisons matched the direct finite/strict-cut oracle.
+At the near boundary the native type is float buffer versus double
+configuration; the replay checks the adjoining float representations.
+
+\paragraph{Discriminator for the native mission.}
+Before reading this point stream as evidence of an open or blocked
+mouth, verify the actual running image, the effective Ignition connection
+at update (a ROS bridge may already hold it even without a new recorder),
+acquisition and arrival times, and two matched positive controls on opposite
+sides of 10 m. For a recording intervention that actually changes the
+native connection bit, absence of the distant return in the recorded run
+cannot validate absence in the baseline run. If the bit never changes, this
+mechanism predicts no \emph{incremental} recorder effect. A negative sensor
+result by itself is not swept clearance. The point export cannot be used
+as cross-channel evidence by quietly substituting the larger ordinary
+clip. Neither the independent cave mission nor transfer of an observation
+law to a non-radio holdout is discharged.
+\end{document}
