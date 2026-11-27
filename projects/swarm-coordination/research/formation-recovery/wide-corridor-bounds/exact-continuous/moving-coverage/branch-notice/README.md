@@ -16,3 +16,7 @@ a local replay. Lean 4.36.0 and Mathlib check three arithmetic and
 propagation lemmas. No actual sensor, fault-report infrastructure,
 new speed guarantee over the same-information planner, or independent
 mission is claimed.
+
+[Acceleration-limited notice cutoff](bounded-acceleration/README.md)
+shows the position-only cutoff is too late even when both known worlds
+remain physically feasible. The exact worked example retains velocity.

@@ -1,0 +1,132 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{A Sharp Acceleration-Limited Notice Cut for the Moving Inspection Window}
+\date{2026-11-27}
+\begin{document}
+\maketitle
+
+\paragraph{Audit.}
+Use the same two worlds and physical speed/separation/coverage
+constraints as the preceding known-time notice study. The mobile
+robot now starts at rest and also obeys \(|\dot v|\le\alpha=10\)
+with \(|v|\le1\). Acceleration may switch without a jerk bound;
+position and velocity are continuous. The analysis is for the
+specific peak \(h=637/100\), the initial positions \(0,4\), and
+the same horizon \([0,2]\), with physical coverage and radio
+preserved throughout. Rest by time 2 is not required. The
+only distinguishing input is still a truthful notice at the
+declared time. This is a model contract on motion, not evidence
+that a physical motor or message carrier meets these constraints.
+
+\paragraph{A useful endpoint upper bound.}
+For fixed start velocity \(v\in[-1,1]\), the maximum positive
+displacement over horizon \(T\) is
+\[
+  P(T,v)=T-\frac{(1-v)^2-(1-v-\alpha T)_+^2}{2\alpha}.
+\]
+It is the integral of the pointwise velocity ceiling
+\(\min(1,v+\alpha t)\); its maximizing trajectory uses that ceiling.
+At reveal \(r<c=2/3\), the late branch must be back at or below 4
+by \(c\), and the far branch must reach \(h-1\) by 2. For the same
+position and velocity at \(r\), their available displacements
+combine to the necessary bound
+\(h-5\le P(F,v)+P(L,-v)\), for \(F=2-r\), \(L=c-r\).
+Maximizing over the shared velocity gives \(F-L+\alpha L^2\)
+when \(\alpha L\le1\) and \(F+L-1/\alpha\) otherwise.
+Indeed the sum is concave with derivative
+\(\min(F,(1-v)/\alpha)-\min(L,(1+v)/\alpha)\);
+the maximizing \(v\) is \(1-\alpha L\) or \(0\) respectively
+since \(F\ge L\). This is only an endpoint upper bound:
+it drops the far branch's still-live overlap condition.
+At \(r=16/25\) it already gives \(1508/1125<137/100=h-5\), although
+the preceding speed-only controller can guarantee that cut.
+
+\paragraph{The missing seam gives the sharp bound.}
+Use
+\[
+ \sigma=4/h,\quad \eta=c-\sigma,\quad
+ \delta=7-h-\sigma,\quad k=1-\sqrt{2\alpha\delta}.
+\]
+These are fixed by the model. Here all are positive, \(k<1\),
+the post-far-seam horizon \(2-\sigma\) is at least \(2/\alpha\),
+and \(1-k<\alpha\eta\). Suppose \(r\le\sigma\) and write
+\(d=\sigma-r\), \(L=c-r=d+\eta\). At the far seam \(\sigma\) the
+actual far-branch state \((X,V)\) must have \(X\le4\).
+The terminal condition and the saturated-speed displacement bound
+require
+\[
+ X\ \ge\ 4-\delta+(1-V)^2/(2\alpha),\qquad V\ge k.
+\]
+For the common state \((x,v)\) at \(r\), the far branch also obeys
+\(X\le x+vd+\alpha d^2/2\) and \(v\ge V-\alpha d\).
+The late branch's actual position at \(c\) is at least
+\(x+vL-\alpha L^2/2\), so this latter expression cannot exceed 4.
+Eliminating the common state gives
+\[
+ X+V\eta\le4+\alpha(d^2+2d\eta+\eta^2/2).
+\]
+The term \((1-V)^2/(2\alpha)+V\eta\) is nondecreasing for \(V\ge k\)
+by \(1-k\le\alpha\eta\). The smallest compatible left side is
+therefore at least \(4+k\eta\). Lean checks this algebraic
+combination. The resulting necessary condition is
+\[
+ L^2\ge k\eta/\alpha+\eta^2/2,\qquad
+ r\le r_a:=c-\sqrt{k\eta/\alpha+\eta^2/2}.
+\]
+Numerically \(0.604725<r_a<0.604726<\sigma\).
+A controller feasible at any later cut beyond \(\sigma\) could
+also run with an earlier notice just above \(r_a\) by ignoring it
+until the intended time. Since that earlier instance has the
+same two histories, this would contradict the obstruction.
+The bound does not merely rule out learned policies that wait
+at rest until receiving the notice.
+
+\paragraph{Exact construction at equality.}
+Hold at the initial position until
+\(\sigma-5k/(2\alpha)\). Accelerate backward at \(-\alpha\)
+for \(k/(2\alpha)\), coast at \(-k/2\) for another \(k/(2\alpha)\),
+then accelerate at \(+\alpha\) for \(3k/(2\alpha)\).
+The planned state at \(\sigma\) is exactly \(X=4,V=k\).
+The minimum preparatory position is \(4-k^2/(2\alpha)\),
+and the entire excursion before the far seam stays at or below 4.
+At the cut \(r_a\) the robot is still on the third stroke;
+the common motion is safe for both worlds up to the notice.
+For far, keep that stroke then accelerate to unit speed and
+coast. Its peak becomes exactly \(h-1\) because
+\((1-k)^2/(2\alpha)=\delta\). After \(\sigma\) the far
+left endpoint advances at slope greater than one, so the
+near edge of the robot's footprint cannot overtake it.
+The upper speed bound and equality at terminal time ensure
+coverage of the far edge all the way.
+
+For late, change to \(-\alpha\) at \(r_a\) and keep it through
+\(c\). By equality in the eliminated condition the position
+is exactly 4 at \(c\), with velocity \(k+\alpha\eta
+-2\alpha(c-r_a)\in(-0.07,-0.04)\). Apply \(+\alpha\) to arrest the
+small backward speed, then hold. Thus the robot stays at or
+below 4 as the mandatory overlap begins. It never approaches
+the lower gap, and before \(c\) its temporary forward excursion
+is allowed because the stationary robot still covers the
+whole required interval. The known constants put the start,
+notice and arrest in their stated order; all clearance and
+unit-speed inequalities allow the paths.
+An earlier notice can be deferred to this cut. Both worlds
+are therefore individually feasible even with bounded
+acceleration, and this is a strict causal cutoff distinct
+from the model's physical impossibility at larger far peaks.
+
+\paragraph{Replay and residuals.}
+The replay tests the general endpoint bound against exact
+piecewise-derivative maximization on 1950 duration/acceleration
+triples. It checks 53 rational reveal cuts in the sharp
+example, with 16 constructive rational branch pairs and 37
+analytic rejections. Feasible branch witnesses use a rational
+upper enclosure of \(k\) and check the position inequalities
+at exact quadratic extrema. The isolating interval brackets an
+irrational formula, not a measured time error. The optimization
+and direct matched reference gain no extra information from the
+plant. This does not supply a usable observation channel, preserve
+the same cutoff under bounded jerk, or solve arbitrary partially
+observed acceleration-limited formations. No independent
+mission or contract acceptance is asserted.
+\end{document}
