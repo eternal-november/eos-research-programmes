@@ -17,3 +17,7 @@ branches receive authored buffers and connection booleans. It does not
 run an Ignition bridge or test which connection regime actually occurs,
 the stock deployed build, a rendered cave observation, or local
 availability before a movement decision.
+
+[Depth bridge retirement](bridge-retirement/README.md): a registered bridge
+can disappear as a process yet still affect the depth clamp numerically.
+The named topic/node retirement and the process-only callback differ.
