@@ -1,0 +1,50 @@
+\documentclass{article}
+\begin{document}
+\title{Forcing one sensor's capture is not the same invocation as forcing the whole manager}
+\maketitle
+
+\paragraph{Scope.}
+Run the selected pinned Sensor::Update, Manager::RunOnce and
+Manager::Sensor method bodies. The fixture supplies three loaded
+sensors, exact time and callback accounting. Sensor work weights
+and deadlines are model inputs, not measured render costs.
+The public C++ getter gives the local caller one sensor pointer.
+No external permission or actual deployed controller is assumed.
+
+\paragraph{Models and comparisons.}
+The target must furnish one capture. The other two sensors'
+regularly due tasks must still run at this cut. Their not-yet-due
+captures are optional. An ordinary manager call invokes the
+native gate for each member and can fail to provide the target
+when it is not due. The native manager's force flag goes to
+every member, not just the target; that is a different workload.
+Its forced callbacks do not advance nominal scheduling.
+A scoped implementation runs the ordinary cut and forces the
+target only if its qualified result is still missing.
+A negative control that forces first and then runs ordinary
+processing can generate two target captures when it was due.
+
+When callback cost is additive, the minimum work to return
+with the named result set is the sum over the target and the
+other due sensors. Scoped conditional forcing attains that
+cost for every admitted case. It is not an advance over an
+equally informed direct gate. If the receiver can act on
+early callbacks instead of waiting for manager return, an
+optional extra update after all required results does not
+cause a deadline miss at that cut, though it still costs work.
+If it occupies the earlier global schedule it can matter.
+The ordering of the actual loaded IDs is therefore recorded.
+
+\paragraph{Results and residuals.}
+Test all three-member orders, due masks and costs 1/2. In
+1,536 cases, wide force exceeds the minimal return-bound
+budget in 288; 96 of those can still supply all named
+results by budget under an early-callback law. The unconditional
+target-first control duplicates target output in 192 cases.
+The scoped control keeps all due work and has no duplicates.
+The model assumes synchronous access to the member callback
+result at the accounting cut, and no safety assertion follows
+for other consumers of unsolicited extra frames. No actual
+camera acquisition, force availability under the stock mission,
+or independent architecture acceptance is asserted.
+\end{document}
