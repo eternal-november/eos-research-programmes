@@ -1,0 +1,123 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\title{Staggered notices can make feasible formation endpoints unreachable}
+\date{27 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Audit.}
+Five homogeneous robots occupy two contiguous two-gap blocks.
+All start and finish at rest, \(a=2\), speed cap 2, deadline
+\(T=2\). The initial gap is \(g>0\) and every actual gap must
+remain in \([g,g+3]\) throughout. One of the two blocks needs
+extra terminal span \(\delta\). The middle robot learns which
+block at time 0. Its two immediate neighbors learn at time 1;
+the two outer robots never do. Until its own receipt each
+robot has identical admissible observations in the two worlds,
+including no indirect reading of the middle's moving response.
+These are given receipt cuts, not a measured network or sensor.
+There is room for the described motions at both ends.
+
+\paragraph{The terminal screen accepts four.}
+Use displacements, in order from left to right:
+\[
+       (-2,-1,2,2,2)\quad\hbox{or}\quad(-2,-2,-2,1,2)
+\]
+for left and right demand respectively. These vectors meet the
+terminal gap bounds, both outer robots have common targets, and
+the needed block gains 4. They also meet the strongest individual
+travel and branch-separation bounds: each absolute displacement
+is at most \(B(2)=2\); an immediate neighbor's half-difference is
+at most \(B(1)=1/2\). Checking these facts plus all hard terminal
+constraints as a difference system would accept the target.
+That system is a relaxation here, not a matched sufficient
+trajectory test.
+
+\paragraph{A hard gap must be feasible before the deadline too.}
+Write \(M_{\rm L}(t),M_{\rm R}(t)\) for the middle robot's
+displacements in the two worlds, and \(N_{\rm L},N_{\rm R}\)
+for those of its left neighbor. Put
+\(D_M=(M_{\rm L}-M_{\rm R})/2\), \(A_M=(M_{\rm L}+M_{\rm R})/2\),
+and similarly \(D_N,A_N\).
+Let \(F\) integrate the full rest-to-rest velocity envelope
+over \([0,2]\), and \(G\) integrate the shorter envelope over
+\([1,2]\), extended by zero beforehand. On \([3/2,2]\),
+\(F-G=3/2\). If both demands are met with gain
+\(\delta=4-\eta\), necessarily \(\eta\ge0\) and
+\(D_M(2)\ge 2-\eta\), by adding the two terminal demand
+inequalities and bounding the two outside displacements.
+At every point the middle's half-difference velocity is
+bounded above by the full velocity envelope \(u\);
+also \(|A_M'|\le u-D_M'\), by the two separate bounds
+on \(|M_{\rm L}'|\) and \(|M_{\rm R}'|\).
+The nonnegative deficit integrated to time 2 is at most
+\(\eta\). Thus \(D_M(t)\ge F(t)-\eta\) and
+\(|A_M(t)|\le\eta\) for every \(t\).
+The neighbor's half-difference starts at rest at its
+time-1 notice, so \(D_N(t)\le G(t)\).
+
+On the entire final half-unit of time, the half-difference in
+the left near gap is consequently at least \(3/2-\eta\).
+Both real gaps must stay in the same allowed interval of
+width 3. Their mean extra gap \(A_M-A_N\) lies
+in \([3/2-\eta,3/2+\eta]\). In particular
+\[
+     A_N(t)\in[-3/2-2\eta,\,-3/2+2\eta]
+       \qquad(3/2\le t\le2).
+\]
+At exact terminal saturation \(\eta=0\), this forces the
+left neighbor's mean to move by \(3/2\) and become stationary
+by time \(3/2\). The mean is itself acceleration bounded,
+and its maximum rest-to-rest travel in that time is \(9/8\).
+So the terminal target 4 is physically unreachable.
+
+The obstruction persists below 4. Let
+\(q=|A_N'(3/2)|\). Since the mean is at rest at time 2,
+maximal braking takes at most the remaining half-unit.
+The unavoidable displacement before stopping from speed \(q\)
+is at least \(q^2/4\), but the final band's full width is
+\(4\eta\). Hence \(q^2\le16\eta\).
+From rest to time \(3/2\) with final speed magnitude \(q\),
+the pointwise envelope
+\(\min(2t,q+2(3/2-t))\) bounds the absolute velocity.
+Its integral is at most \(9/8+3q/4\).
+Since at least \(3/2-2\eta\) was required, it follows that
+\[
+             3/8\le 2\eta+3q/4\le2\eta+3\sqrt\eta .
+\]
+Consequently \(\eta\ge ((2\sqrt3-3)/4)^2\). This is an
+explicit strict upper bound, not a claim of tightness.
+
+\paragraph{Positive matched trajectory.}
+In the left-demand world take the five displacements
+\[
+ \left(-F,\;-\tfrac34F+\tfrac14G,\;
+             \tfrac34F+\tfrac14G,\;
+             \tfrac34F+\tfrac14G,\;F\right)
+\]
+and mirror them in the right-demand world.
+Each robot uses profiles with coefficient magnitudes
+summing to at most 1. Therefore the original acceleration
+and speed bounds hold. The neighbors' sign-dependent term
+is zero until time 1, and the outer motions are common.
+The left-world extra gaps are
+\((F+G)/4,\ 3F/2,\ 0,\ (F-G)/4\),
+all in \([0,3]\) for the whole motion. The target block
+gains \(29/8\), greater than the middle-only capacity
+\(7/2\) at the given cut. This is a constructive lower
+bound and an explicit example where a late neighbor
+receipt helps. It does not reach the relaxed terminal
+upper value.
+
+\paragraph{Verification and residual.}
+The proof separates a false positive in a terminal-only
+relaxation from an independently feasible continuous
+policy. Four Lean lemmas check the real algebra, and
+4,097 exact dyadic instants check the attainable profile,
+its evidence cuts, and the saturated envelope comparison.
+There is no assertion that the grid is a runtime safety
+test or that the upper and lower bounds identify the exact
+optimum. The result does not re-open the equal-cut theorem
+of PR~712, and no actual observation, independent mission,
+or R6 acceptance is claimed.
+\end{document}
