@@ -1,0 +1,76 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\title{A Scoring Event Is Not an Exact Report Receipt}
+\date{27 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Audited cut.} This is a scoped comparison for a
+fallback that has the native \texttt{artifact\_report\_attempt}
+event projection, rather than a report acknowledgement. It asks
+an exact native-key membership question. In SubT
+\texttt{083c6a8acb0c25aa1a35e34517e628cd3b52ae77}, the scorer keys
+by type and C++17 \texttt{std::to\_string} on the three coordinates
+(GameLogicPlugin.cc lines 2271--2279). That gives six fractional
+decimal places with the assumed C locale. The event writer uses a
+fresh default output stream for the pose values (lines 2375--2395).
+The selected ignition-math6 \texttt{Vector3} operator first rounds
+each coordinate to six decimal places, then streams its number
+with default six significant digits. These are different
+projections. The selected library source is
+\texttt{4ca6553b3ee6cae6696e8abe3aa70ca163274de4}, consistent with
+the pinned SubT build's math major version; the exact installed
+Gazebo/ROS distribution is not asserted.
+
+\paragraph{Matched witness.} Take a known recognizable artifact
+at $(100,100,100)$ and an identity artifact origin. The possible
+submitted positions each add a signed permutation of
+$(1,2,3)2^{-19}$. Their differences from the artifact are exact
+dyadic values. Every squared distance is $14\cdot 2^{-38}$.
+Each of these 48 different submitted positions qualifies for the
+same physical artifact credit in the chosen model and has a
+distinct score-cache key. In the event projection all three
+displayed coordinates are 100, the distances are equal, and
+artifact type, closest artifact, effect, running total, event ID
+and times can be kept the same. For a later exact membership
+query, choose one of the 48 keys. Its own history says yes, the
+other 47 histories say no. No decoder of this event projection
+alone can answer all queries. A fixed-width extra summary must
+have at least 48 states, equivalently six bits here, and choosing a
+sign/permutation index attains this within the declared single-row
+family. The receiver is assumed to already have the candidate
+family. This is not a bound for arbitrary reports, repeated rows,
+or tasks that only care whether the physical artifact scored.
+
+\paragraph{Independent persistence boundary.} The in-process unique
+map update and event write occur in ScoreArtifact before
+OnNewArtifact updates totalScore. The event stream is flushed there.
+The score-file update happens later; it is not in a transaction
+with that event or the total-score update. In one prefix the event
+has flushed but the memory total is not yet updated; in another
+the memory total has updated but the score file is still old.
+Their selected event plus score-file projection can agree.
+This is an ordering witness assuming the stated visible file
+prefixes, not a test of file-system persistence after power loss,
+nor a claim that the unique key was not already inserted. Treat
+a captured event, an exact canonical result export and a durable
+settlement proof as separate interfaces.
+
+\paragraph{Verification.} The source-derived JavaScript formatter
+and membership sweep checks 159 dyadic families and 366,336
+candidate/history comparisons; four Lean declarations prove the
+decoder lower bound and the selected persistence-cut ambiguity.
+No native formatter has yet been executed in this workspace. The
+example uses default C++17 numeric rendering, which can be checked
+against the C++17 draft sections string.conversions and
+facet.num.put.virtuals. Logs outside the projection, such as a
+complete trustworthy association of the raw request with its
+actual effect, may carry more information. That stronger evidence
+is a matched comparison rather than a refutation. No independent
+mission or architecture disposition is accepted.
+
+\paragraph{References.} \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/src/GameLogicPlugin.cc}{Pinned score producer};
+\href{https://github.com/gazebosim/gz-math/blob/4ca6553b3ee6cae6696e8abe3aa70ca163274de4/include/gz/math/Vector3.hh}{selected vector formatter};
+\href{https://timsong-cpp.github.io/cppwp/n4659/string.conversions}{C++17 conversion rules};
+\href{https://timsong-cpp.github.io/cppwp/n4659/facet.num.put.virtuals}{C++17 stream formatting}.
+\end{document}
