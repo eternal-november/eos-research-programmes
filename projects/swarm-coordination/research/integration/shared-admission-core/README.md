@@ -88,3 +88,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Recovery-induced radio debit follow-up
 
 [Self-renewing diagnostic debit](live-clearance-generation/radio-bounded-handoff/recovery-debit-loop/README.md): two successful checks at a separate receiver can repeatedly bar a live warehouse handoff on the same transmitter. Joint reservation meets all deadlines when the second check can wait for the debit to expire. The exact direct comparison ties. This is scoped I07/F47 evidence, not accepted inventory coverage.
+
+## Second fault changes the suffix supplier
+
+[Selected-source replay](live-clearance-generation/radio-bounded-handoff/suffix-supplier-change/README.md): one local notice and one received preparation request can redirect the old suffix while unrelated work continues. The new supplier needs its own current license and rolling headroom. Scoped positive I1 development; the same-information direct budget calculation ties.
