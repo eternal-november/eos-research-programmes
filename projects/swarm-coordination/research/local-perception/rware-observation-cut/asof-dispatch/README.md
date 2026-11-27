@@ -23,3 +23,7 @@ Run `sh run.sh | cmp expected.jsonl -` (archive names `run-asof.sh` and
 [Native shared-window transport](shared-window/README.md) sends the
 actual historical result, the second-delivery confirmation and
 the latest update through a single pinned broker callback path.
+
+[Replacement-body settlement](body-settlement/README.md) tests when the
+historical dispatch remains valid but the same requested move has effective
+or canceled outcomes, inseparable from the replacement's current observation.
