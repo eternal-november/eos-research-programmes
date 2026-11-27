@@ -1,0 +1,83 @@
+\documentclass{article}
+\usepackage{amsmath}
+\title{When a terminal receipt cannot improve uniform worst-case service}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Boundary.}
+The cave replay improves the time promised to histories already
+settled; it does not improve ordinary uniform feasibility in the
+checked family. This is not just a tie in a solver: a policy that
+gets a terminal receipt can be compiled to one without it under
+two exact structural hypotheses. The dossier reconciles the positive
+earlier-egress result with the deadline-only null result. No
+comparison with an independently deployed mission is made.
+
+\paragraph{Law.}
+Let $z$ be a plant parameter determining everything that happens
+without treating the old terminal bit as an ordinary observation.
+In particular, let it determine the controller-facing transitions
+and physical effects for every fixed action trace. Let $b$ say
+whether the old named commitment was already settled in the
+sealed prefix. Include the locally known cumulative manual
+settlement bit in the ordinary observation where appropriate.
+When a permitted exact read returns, its only additional information
+is $b$ or that cumulative bit; otherwise it returns no observation
+of settlement. Which reads the implementation can emulate must be
+explicit. A read request can be left in place with its answer ignored
+if lawful, or replaced by an allowed action with exactly the same
+ordinary consequences and bookkeeping. There is no general claim
+that a read can be replaced by a no-op.
+
+Assume the admitted support is closed under the unpaid shadow:
+if $(z,1)$ is admitted then $(z,0)$ is admitted. Assume service is
+monotone: if a fixed trace suffices with $b=0$, it suffices with
+$b=1$ for that same $z$. Give the active controller the virtual
+read it would obtain if $b=0$, computed from the qualified read
+mask and its own local settlement bit. This constructs an ordinary
+causal controller. At every history this policy generates precisely
+the actions and ordinary observations of the active policy in the
+shadow; the actor neither queries nor observes the actual old
+bit in the paid plant. In an unpaid plant it inherits the active
+policy's guarantee. In a paid plant the shadow is admissible, and
+the same trace works by monotonicity. The Lean theorem checks this
+specialization on finite deterministic traces, not the
+correspondence or any optimization model. Extra non-settlement fields,
+queries that can change permission, and controls whose result is not
+emulable are outside the stated law.
+
+\paragraph{Executable test.}
+Reuse the parent native terminal outcomes and the full cave-motion
+game. Feed the exact active policy the qualified response it would
+see in an unpaid world with the same local gate state; implement
+its virtual read physically as one tick of waiting. This is exact
+in this fixture: the actual read occupies the same time as waiting,
+does not modify other duties, and its only result is the exact
+named membership or the declared absence of feedback. For known
+mask fixtures the virtual availability threshold is the public
+one. When both masks are admitted but hidden, choose the persistently
+unavailable shadow and use that mask in all real histories; both
+outcomes at both gates admit this shadow. The actor does not read
+whether the actual receiver got the report. The exact ordinary
+synthesizer is also run directly. Successful explicit erased
+policies recover the designated report themselves, complete the
+inspection, and egress in both paid and unpaid histories.
+
+\paragraph{Two independent obstructions.}
+If only $(z,b)=(0,0),(1,1)$ are possible and the lawful exit is $z$,
+reading $b$ reveals the actual route. The unpaid shadow of $z=1$
+is not admissible; service itself can remain monotone. Conversely,
+even with both ledger states admitted at the same plant, when the
+old result requires a manual retry in the unpaid world but that
+retry would interfere with a different live duty in the already
+paid world, no fixed retry decision works. The unpaid shadow still
+exists, but the same trace is no longer lawful or useful in the
+paid one. These one-cut countermodels are exhausted separately.
+A tighter egress promise for the already-served histories also
+breaks monotonicity without changing the underlying motion law;
+this is exactly the test objective of the parent development
+test. Uniform floor, conditional bound, and expected effort must
+not be identified. No claimed lower bound for probabilistic or
+unbounded policies follows from this replay.
+\end{document}
