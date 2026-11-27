@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{A named Gazebo link can survive a reconfiguration while its cached recipient does not}
+\maketitle
+
+\paragraph{Audit boundary.}
+The pin is Gazebo Sim 9 at
+\texttt{62f198e0478159549b748c4b4c66f0cbe2fcbf6f}.
+The selected native link lookup, \texttt{VelocityControl} pre-update,
+link callback and latch, component set-or-create, and physics linear setter
+dispatch run in a serial ECM/physics fixture. This checks the selected
+source behavior for explicit entity graphs, parents, poses and ordering.
+The fixture does not show that stock Gazebo supports changing a live
+module's links through any particular mutation path, and does not run
+real transport scheduling, physics dynamics or physical clearance.
+The available native graph/engine operations are modeled outside the
+extracted scopes; successful actuator dispatch is the local service
+criterion, not motion. The contract acceptance state is unchanged.
+
+\paragraph{Stock behavior and the distinguishing case.}
+The initial model has a link named \texttt{shoe} (entity 10) and another
+named \texttt{port} (entity 30). The first command establishes the cached
+link-ID map. The configured names and count do not change in either
+replacement scene. The native \texttt{Model::LinkByName} call under
+the new graph returns entity 11 for \texttt{shoe}. The stock pre-update
+checks that its map has the expected number of names; it does not retry
+that lookup. The native link callback uses the topic's scoped name and a
+Twist, and the subsequent native publisher tries the old entity 10.
+If entity 10 is absent, the inspected ECM refuses creation of a component
+there (the fixture models that guard). If it remains alive elsewhere, the
+selected physics backend can dispatch the new value to it. Neither
+outcome reaches 11. The independent port setter still runs.
+
+The native pending queue uses insert-by-name, so the first unread
+value for that link wins until the next link latch. In the replay, merely
+changing the binding to 11 transfers an old sampled velocity without a
+new qualifying command. A fresh callback with the right number but from an
+older appointment is indistinguishable at the stock input. If the
+existing writer has already placed a component, rebinding and clearing
+both source-side sampled and pending values still leaves the issued
+component. One negative test changes the old link's parent after that
+write but before consumption; the selected native transform then passes
+the old vector to the setter along a different world axis. This is a
+constructed serial fault interleaving, not a measured engine schedule.
+
+\paragraph{Selective extension, matched control and timing.}
+The authored cut receives an authorized pair (body identity, generation)
+and checks that the current named recipient matches. Before any use on the
+new binding, it drops that name's pending and sampled linear/angular
+state. A qualified source gate prevents earlier generations feeding this
+name afterward. If the old writer has a still-unconsumed command in a
+known exclusive slot, the cut removes just that effect. No effect already
+consumed is undone by this operation. Selective safe dispatch assumes
+that the serial fence covers the actual outstanding command and all
+writers of that slot, that identifiers are not reused and that the
+binding/permissions/frames remain fixed through their qualified cut.
+
+With those premises the chosen new value reaches the intended setter at
+the first tested cut exactly when its own command has passed the current
+latch; a callback that occurs after the latch cannot justify that cut.
+At the next unpaused cut it dispatches. The unchanged port still receives
+its old intended command on both cuts without any new publisher action.
+The 512 change-cut checks include two successive replacements, retained
+and removed predecessors, preexisting components, different old/new
+receipt orders, timely and late qualified input. Refusing a late first
+cut does not shut down the port. Restarting the whole plugin with the
+same fresh input but no port republish reaches the new link and lacks
+that continuing port setter in the fixture. An equally informed,
+factored direct history checker can do the same targeted reset and
+fence, so this is a selective mechanism and a negative control, not a
+speedup over such a checker.
+
+\paragraph{Unverified obligations.}
+The epoch/endpoint binding, old-slot fence, and stable cut are authored
+test premises; stock velocity messages in this path do not supply
+them. A generic retirement proof must carry through consumption and
+physical behavior; no such proof is obtained from the numerical setter
+signature. The source experiment does not show unchanged-receiver
+transfer to a different independently selected mission, authorization on
+deployed transport, or general live topology safety.
+\end{document}
