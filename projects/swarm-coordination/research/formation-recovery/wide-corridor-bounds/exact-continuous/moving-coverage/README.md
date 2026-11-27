@@ -20,3 +20,8 @@ Run `sh run.sh | cmp expected.json -` (the archive names them
 `run-moving.sh` and `moving_final.json`).
 Python 3, NumPy, SciPy with HiGHS; Lean 4.36.0 and Mathlib check the
 scalar endpoint algebra in `MovingZone.lean`.
+
+[Late notice of the owed window](branch-notice/README.md) separates
+physical feasibility from the common-prefix restriction. Near the
+physical limit, starting to move before notice helps only if the
+late-window branch can still retreat in time.
