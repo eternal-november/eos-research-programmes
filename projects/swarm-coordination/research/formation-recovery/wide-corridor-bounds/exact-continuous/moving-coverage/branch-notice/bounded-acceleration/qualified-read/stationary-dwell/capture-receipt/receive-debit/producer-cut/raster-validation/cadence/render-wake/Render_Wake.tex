@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{An unrelated render wake can supply or consume a qualified capture}
+\maketitle
+
+\paragraph{Scope.}
+The source semantics are those of the pinned Gazebo3 sensor-system caller
+and the pinned Sensors3 manager and rate gate. The caller's CMake requires
+Sensors3 at version 3.3 or later; this compatibility evidence does not
+identify the binary in a deployed image. The replay executes the selected
+methods in a serialized, initialized fixture with fixed, positive-rate
+members, at distinct increasing simulation times. Scene update is stubbed;
+a renderable instrument's callback records the supplied time. There is no
+wall-clock, event transport, concurrent interleaving, or real image claim.
+The service predicate consumes an exposure taken at or after the beginning
+of its qualified sensing window, not the latest cached image as such.
+
+\paragraph{Two distinct gates.}
+\texttt{PostUpdate} uses a mask and a nominal next update date to decide
+which sensor can wake the render worker. Mask expiry at equality removes
+the mask. When at least one sensor is active, \texttt{RunOnce} renews the
+masks of only those active sensors and calls the ordinary manager for all
+members. The manager uses the nominal due date without that wake mask.
+A pending-scene-only wake can update the scene without running this
+manager call. A regular update advances the previous due date by one
+period, even if that date was already in the past. A sensor's own mask
+is therefore neither a guarantee of no capture nor a guarantee that its
+next eligible capture will be serviced.
+
+\paragraph{Exact count on a masked interval.}
+Fix a time interval strictly inside target \(A\)'s mask, initial nominal
+due date \(d\), period \(P>0\), and a sorted set \(W\) of distinct
+external manager-wake times on the interval. A counted wake is a pass
+with a nonempty active set, not a scene-only wake. The assumptions
+exclude forces, resets, membership changes, and a change of \(W\) caused
+by a target capture. These times must be known or conservatively related
+by source evidence for operational use; they are not a controller
+oracle. For a prefix ending at \(t\), write \(W_t=W\cap(-\infty,t]\).
+Then the number of target captures is exactly
+\[
+ N(t)=\min_{0\le k\le |W_t|}
+   \left(k+\#\{w\in W_t:w\ge d+kP\}\right).
+\]
+At most \(k\) captures can precede \(d+kP\); each later capture
+uses a distinct wake. To see tightness, run the rate gate greedily in
+time order. If no wake is skipped, the \(k=0\) cut is tight.
+Otherwise let \(k\) be the number of captures before the last skipped
+wake. That wake is earlier than \(d+kP\), as are all its predecessors.
+All successors are used and occur at or after \(d+kP\). This cut is
+tight. For a qualified window \([q,t]\), at least one target update
+is possible in the replayed schedule exactly when \(N(t)>N(q^-)\).
+The cumulative count is monotone under adding wakes, but the
+difference for a specified acquisition window need not be. This is
+nested interval matching on an explicitly projected wake schedule,
+not a speedup over an equally informed scheduler.
+
+\paragraph{Opposite effects of extra activity.}
+In milliseconds relative to a setup tick, \(A\) starts nominally due
+at \(-48\), fires at \(0\), has its mask through time \(45\)
+(exclusive), and is now due at \(2\). In the tested relative window,
+old sensor \(B\) becomes due at \(11\) or is not yet due. Without an
+outside wake, a pending scene update cannot capture \(A\) during
+the mask. When \(B\) fires at \(11\), it yields its own old frame and
+also an \(A\) frame after the qualified opening \(q=10\).
+If an optional sensor \(C\) also becomes due at \(9\), that earlier
+wake consumes \(A\)'s scheduled slot and advances its nominal due
+date to \(52\). \(B\) still fires at \(11\); no usable \(A\) frame
+is captured then. Thus the same old frame survives the change and
+does not certify the target capture. Moving an unrelated configuration
+change earlier can hurt even when the target configuration and
+qualified deadline are unchanged.
+
+In the prior far-site stop-and-go motion model, the capture at
+\(q+1\) ms is sufficient with the declared 105 ms decode delay:
+\(\epsilon+10(L-0.1)^2=0.00125 < 7-6.37-4/6.37\).
+An exposure at \(q-1\) ms is not eligible; after the early wake
+the next possible regular exposure is no earlier than \(q+42\) ms,
+even with further permitted wakes. That misses the same motion
+bound even with zero processing delay. This joins source
+simulation timestamps to the model by a translation of the clock
+origin. It assumes the declared capture/processing contract and does
+not measure or enforce it. The direct scheduling baseline with the
+same external wake sequence and deadlines agrees.
+
+\paragraph{Retained evidence and residuals.}
+An unrelated wake reservation is a usable recovery resource if its
+time and scope are qualified and earlier wakes that can consume the
+same due slot are accounted for. Retaining only an active list, a
+target rate, or the old sensor's successful frame would omit a
+material distinction. The scope also excludes scene/clock rewinds,
+render completion latency, and actual packet delivery. No
+independent mission was used.
+\end{document}
