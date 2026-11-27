@@ -1,0 +1,134 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{One fixed risk law across tree-separated evidence cuts}
+\begin{document}\maketitle
+\paragraph{Lift.}
+An episode has one finite vector of binary potential physical
+failures and diagnostic events \(X\), drawn from one unknown but
+fixed joint distribution. The probability inputs are the exact
+one-site and specified two-site tables on a known tree. Do not
+impose conditional independence beyond the published constraints;
+cyclic edges, calibration uncertainty, or changes of latent source
+law are not silently discarded. At one authorized evidence cut
+the bit \(O\) is the OR of specified diagnostic sites. The selector
+uses that one observed bit to choose an allowed old/new work set
+\(S_0\) or \(S_1\), with all old still-binding exposures in both.
+A model-potential failure outside the selected set does not itself
+violate the work law, but may still constrain the joint law.
+This is a finite episode, no fresh risk budget or resampling of
+the law. Availability, action authority and the observation map
+are assumed and not inferred from statistical fits.
+
+\paragraph{The finite extended formulation.}
+For fixed declared policy and diagnostic set, assign to each node
+a bit mask of the Boolean ORs that its failure bit contributes to:
+the report flag, failure under each permitted continuation, and
+any separately audited prospective-only event. Let \(S_i\) be
+\((X_i,Z_i)\), where \(Z_i\) is the mask of OR outcomes in the
+subtree. For each node and its children put a nonnegative mass
+on local assignments \((S_i,(S_j)_{j\text{ child}})\), zero unless
+the parent's OR recurrence holds. Normalize the root table.
+For every child, match its whole boundary \(S_j\) marginal on
+both sides. Require the specified one- and two-site tables
+(the binary marginals and joint ones are sufficient). If separately
+calibrated, constrain an observable root-flag marginal on this
+same joint distribution.
+
+The formulation is exact. Any lawful original distribution
+induces these local marginals by deterministically extending each
+atom. Conversely sample the root factor, then recursively sample
+each child factor conditioned on the boundary already selected.
+At positive boundary mass, consistency gives a normalized
+conditional law for that factor, and induction recovers its
+entire declared marginal. At zero mass the conditional is never
+used. Every resulting atom obeys the deterministic OR relations.
+Project out the flags to recover one admissible law on all original
+sites, not a separate law for each observed report. The gluing is
+a witness construction, not a physical tree-Markov assumption:
+the augmented state holds correlated evidence. With a fixed number
+of ORs and bounded branching, the extended formulation has linear
+size in the number of sites. A reusable subtree can present the
+polytope of feasible joint boundary distributions. Equality of
+that polytope preserves its valid neighbors' feasibility queries;
+it does not imply a bounded-bit representation or a way to acquire
+the values in a blackout.
+
+\paragraph{Three different admission questions.}
+Write \(U_b=\bigvee_{i\in S_b} X_i\) and \(F=U_O\).
+Under the original ex ante cap, maximize \(\mathbb E[F]\).
+For a cap of \(\epsilon_b\) in every reachable observation cohort,
+the exact condition is
+\[
+ \max_{Q\in\mathcal Q}\mathbb E_Q[
+      \mathbf1_{\{O=b\}}(U_b-\epsilon_b)]\le0 .
+\]
+For \(Q(O=b)>0\) this is just the conditional bound after
+multiplication by its positive denominator, and zero-support
+cohorts do not contribute. A legitimately prospective amendment
+can designate a different future event without removing any old
+physical event or making the original bound disappear. That
+requires an independent authority premise. Each score is a
+linear functional of the same root flags and ambiguity set.
+Adding separate worst conditional or joint terms can silently
+allocate the same old exposure to two different cohorts.
+
+\paragraph{Discriminating fixed-law witnesses.}
+Let the tree be a star with fair center bit. Four leaves are
+old failure \(X\), optional failure \(Y\), and two diagnostic
+bits \(D,E\), all marginal \(1/4\), each with joint-one mass
+\(1/8\) with the center. Only state \(O=D\vee E=1\) admits
+the optional job; suppose the report probability is separately
+calibrated at \(1/2\). The actual audited event is
+\(F=X\vee (O\wedge Y)\). The exact worst original risk is
+\(1/2\), by the union bound on \(X,Y\) and attainable when
+their disjoint quarters occupy the two alarm quarters.
+The best possible risk is \(1/4\), attained by placing
+\(Y\) outside the alarm. The maximum quiet-cohort joint
+failure is \(1/4\), achieved when the old quarter is quiet;
+the maximum alarm-cohort joint failure is \(1/2\),
+achieved when both work quarters are in the alarm.
+Their sum \(3/4\) cannot occur under one law, even with the
+same known report frequency. These examples retain every
+center/leaf pair table by coupling the fair center independently
+to these explicit atoms. The uniformly safe ex ante bound
+\(1/2\) does not imply a conditional bound \(1/2\):
+the worst alarm-conditional risk is 1. A cap \(0.4\) that
+binds live old and new exposures rejects admission, while an
+authorized future-only cap \(0.3\) on \(O\wedge Y\) passes:
+its worst risk is \(1/4\). The original audit stays unchanged.
+If notice is late after irreversible optional entry, the
+full-law bound does not improve by observing the amendment
+later. This is a timing interpretation of the scopes, not
+a model of the administrative amendment protocol.
+
+Dropping inactive *exposures* from a score is not deleting
+their source nodes from the tree. In the three-node path
+where both edges enforce equality of all bits and each
+marginal is \(1/4\), the two outside counted failures have
+worst union \(1/4\) even when the center is not itself
+counted. Removing the center constraints admits disjoint
+outside quarters and spuriously gives \(1/2\).
+Even keeping separate probability intervals for failure
+and for the boundary state, instead of their joint state,
+cannot in general support a later conditional query.
+
+\paragraph{Checks, comparisons and limits.}
+The executable LP matches whole-law enumeration over
+small source state spaces on 320 extrema and reconstructs
+a single law from the factored solutions, verifying its
+marginals, objective and constraints numerically. Larger
+binary trees up to 127 sites check formula construction.
+The small stated rational witnesses and pointwise bounds
+are separate proofs; solver decimals alone are not
+deployment certificates. \href{https://arxiv.org/abs/1910.06321}{Padmanabhan--Natarajan}
+already give compact tree-marginal LPs for thresholds on
+a fixed sum. The present use is a few overlapping ORs,
+evidence-indexed activation, and changing risk scope;
+standard exact junction-tree lifts and a same-information
+allocator tie. \href{https://groups.csail.mit.edu/mers/papers/Ono-Williams_AAMAS10.pdf}{Distributed
+risk allocation} is an alternative where its chance-
+constraint and budgeting interface applies; preserving a
+whole-law coupling is the consumed premise here. No
+field calibration, independent transfer or full R4
+closure follows.
+\end{document}
