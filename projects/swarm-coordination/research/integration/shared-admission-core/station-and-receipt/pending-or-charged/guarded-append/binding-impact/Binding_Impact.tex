@@ -1,0 +1,82 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{When a new subscriber changes the cost of already queued work}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{Scope.}
+Two completion reports are already permitted and queued. They use
+different senders and required receivers, but the senders can each have
+an optional 60-byte probe addressed to a common endpoint. Reports are
+173 bytes and carry an exact named output of pinned MRWS completion.
+The tests use pinned SubT routing, native sender debits and callbacks
+with deterministic path and pose seams. Report admission, capacity
+envelopes and the right to defer a new subscription are fixture inputs.
+No hostile event or field intervention is considered.
+
+\paragraph{Rule.}
+The \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt-communication/subt_communication_broker/src/subt_communication_broker.cpp}{pinned broker}
+looks up endpoint bindings at dispatch, not at initial enqueue. Bind
+adds a receiver to the end of the native endpoint vector. For required
+attempt \(j\) of sender \(s\), let \(C_{sj}\) be its earlier guarded
+sender bound inclusive of that attempt. Bind at endpoint \(e\) increases
+the bound by exactly
+\[
+ D(s,e,j)=\sum_{\substack{i\text{ before the datagram of }j\\
+               s(i)=s,\;e(i)=e}} b_i .
+\]
+Each earlier datagram to \(e\) gains one possible attempt of size \(b_i\);
+all other earlier attempts retain their bound. Within the datagram of
+\(j\), an appended binding follows the named receiver, so it contributes
+nothing through \(j\) itself. This distinction fails if the membership
+change can reorder already bound peers. Actual use can be less if some
+attempts are suppressed or old debit expires. Equalities refer to
+the conservative prefix-bound update and are tight when every counted
+attempt charges before \(j\), with no intervening expiry.
+
+A binding can be committed by this certificate exactly when every
+protected sender still fits its bound (and the independently established
+non-TX premises still hold). For one capacity and live baseline per
+sender, the latest protected attempt has the greatest prefix bound,
+so it subsumes the other TX inequalities for that sender. It does not
+subsume membership, authority, RX allowance, path or deadline witnesses.
+This maximum reduction does not apply independently across sender
+budgets, nor across different expiry-aware allowance cuts.
+
+\paragraph{Native distinguishing cases.}
+At sender capacities 293 and 233, binding one additional subscriber
+to an earlier probe is admissible for the first sender but not the
+second. A check on the first alone can break the second report. At
+293 for both, both reports and the new subscription fit. When the
+changed endpoint affects only later entries, or adds an attempt to a
+protected datagram after its old required receiver, the test retains
+both reports without deferring the bind. Separately native unregister
+removes the needed endpoint binding: there is then plenty of sender
+credit but no named receipt. That is not a TX-budget failure and this
+guard for new binds is not a repair for membership loss.
+
+\paragraph{Replay and cost.}
+Controlled runs begin with two reports that fit under the old binding.
+Over 192 rows per arm, the ordinary bind arm never refuses and loses at
+least one report in 28 rows. The first-sender-only guard refuses 16
+binds and loses a report in another 12. The joint guard defers 28
+changes and preserves both reports in all rows. Independent traffic
+still delivers at the resumed dispatch. Selected stock Bind runs
+unmodified for its baseline; in the guarded fixture a predicate is
+inserted just before membership publication, under Bind's own mutex.
+No alternative scheduling advantage over the same-information direct
+calculation, which agrees in all 576 rows. No claims about measured
+contention, service during the pose stall, live registration of a not-yet
+pose-ready client, or independent mission acceptance.
+
+The replay scans the pending queue under the existing broker-wide lock;
+it does not implement a sparse index. The formula specifies what an
+index would retain and the capacity it would invalidate. Maintaining
+one under ordinary enqueue, native dequeue, expiry, membership removal
+and authority migration, without losing progress to long lock holds,
+is a separate implementation obligation. Receiver service costs and
+fallback for a rejected request must also be provided in a wider
+envelope. The binding guard is a source-qualified extension of the
+previous rule, not a claim of a new general transaction principle.
+\end{document}
