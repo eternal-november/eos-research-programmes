@@ -27,3 +27,7 @@ The [Space source-complete archive](https://chatgpt.com/space/page_f5a09a52f6b88
 already materializes them. Replay uses Python 3, NumPy, SQLite WAL and Git.
 Lean 4.36.0 and Mathlib check four scoped read-path lemmas in
 `StationReadCut.lean`. These do not formalize SQLite or the native plant.
+
+[Prepared vs armed succession](armed-recipient/README.md) checks when a
+second candidate can take over without reaching the first, and when
+an actual closure of the first candidate's publication store is required.
