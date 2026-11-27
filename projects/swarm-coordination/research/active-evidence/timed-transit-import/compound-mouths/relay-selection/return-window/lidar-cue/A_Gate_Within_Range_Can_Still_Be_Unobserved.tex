@@ -1,0 +1,103 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{A gate within nominal lidar range need not be observed at the decision cut}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{Consumer and scope.}
+The return-window benchmark needs a closure observation at the
+courier's initial choice, while it is still at tile 16. The
+nominal positions at 16 and 42 are $(100,100,0)$ and $(100,75,0)$.
+The alternate mouth checked in the earlier study is near
+$(100,62.5,0)$. Consider a level robot at the given positions and
+a narrow fitted passage model, where a solid box across the tracked
+tube makes it unusable:
+\[
+[99.5,100.5]\times[62.45,62.55]\times[0.2,0.7] .
+\]
+The geometry is deliberately constructed. It is not a Fuel mesh,
+a spawned rock or a collision test for the actual cave or Husky.
+The negative comparison concerns one lidar's returns, not all
+available modalities or the local controller's actual map.
+
+\paragraph{The source interface.}
+The pinned \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/submitted_models/costar_husky_sensor_config_1/model.sdf}
+{CoSTAR Husky configuration} puts its 3D front lidar at height
+$0.716$ m on a level base link, with a 100 m range, 1,800 horizontal
+samples, 16 vertical samples over $\pm0.261799$ radians, and nominal
+10 Hz. The selected \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/submitted_models/costar_husky_sensor_config_1/launch/vehicle_topics.launch}
+{model-specific bridge} connects the 3D point stream to the
+robot-local ROS \texttt{points} topic. It is not a gate-status
+feed. The pinned model spawner invokes this file rather than
+the generic file for that topic. The latter contains a rate-relay
+option; this specific launch does not include that option.
+Even the generic relay's callback forwards an argument without
+waiting for a sensor result. A service return does not establish
+that a new frame saw the changed gate. Other launch overlays and
+native transports were not excluded. Check the actual launch,
+subscriptions, frame metadata and delivery, not the generic
+configuration by name.
+
+The selected \href{https://github.com/gazebosim/gz-rendering/blob/4d0043361a135b7e43e0583516f1b3ddca9f434d/ogre2/src/Ogre2GpuRays.cc}
+{Dome renderer branch source} constructs nominal equally spaced
+inclination and azimuth directions. The
+\href{https://github.com/gazebosim/gz-sensors/blob/b7148d659ea430e93b9b1b14f3b8162386636a58/src/GpuLidarSensor.cc}
+{point producer} reads rendered ranges, applies noise and publishes
+the point cloud when it has a connection. The replay computes ideal
+geometric rays at those specified angles, independent of cubemap
+pixels, noise, lighting, exact installed software builds, and
+the robot-specific live frame. It does not execute rendering or
+the transport stack.
+
+\paragraph{Early range, late distinction.}
+For a level CoSTAR sample from 16, the two central rows are
+roughly $0.0614$ and $1.3706$ m at the target plane.
+Even with a $\pm0.05$ m height error and any base yaw, the highest
+possible negatively inclined row at the box is below $0.113$ m,
+and the lowest positively inclined row is above $1.319$ m.
+For the bound, use the minimum $y$ separation of either box face
+and subtract the maximum horizontal displacement of the lidar mount.
+The horizontal range in any direction that reaches the box is at
+least this separation. The magnitude of every nominal vertical
+inclination is at least one half its row spacing. Thus all ideal
+rays miss the box, regardless of horizontal angular sampling.
+With fixed background and ideal first-hit return values, the
+open and blocked constructions give identical lidar returns.
+Ranging noise dependent on those returns cannot add a distinction.
+
+At nominal yaw and height at 42, the closer viewpoint has 23
+intersecting ideal rays, all in one ring. That viewpoint can
+distinguish the ideal inputs if the box is not occluded and the
+unchanged background yields different first hits. It is reached
+only after the route choice the bit was supposed to inform.
+A different pinned \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/submitted_models/marble_husky_sensor_config_1/model.sdf}
+{MARBLE Husky configuration} yields ten hits from 16 at nominal
+yaw and height. Its geometry, mount, sample count and rate
+differ. This is a positive geometry control, not a comparable
+resource result or a guarantee over poses. The ray replay checks
+660 sampled yaw-height pairs for the CoSTAR negative, alongside
+the analytic strip for all admitted level yaws and heights.
+
+\paragraph{Capture and delivery have their own cutoff.}
+Even for a distinguishing beam pattern, a frame must capture
+the new condition and reach the decider before it branches.
+Under an ideal periodic sample law with arbitrary phase, order a
+closure at a scheduled sample after that sample. If the period is
+$p$ and the bounded consumption delay is $\ell$, all phases
+permit a strictly later sample by a decision budget $D$ exactly
+when $p+\ell\le D$. In integer time the next strict capture is
+$p-(\text{phase}\bmod p)$ from the change; phase zero witnesses
+necessity. The timing checks, including 5,020 finite phase-budget
+queries, do not turn a nominal rate into a transport guarantee.
+Faster scans alone do not change the geometric negative.
+
+The next test must justify which geometry and timing the actual
+decider sees, establish the closure or clearance of the relevant
+swept passage rather than classify a single return, and price
+any different viewpoint, sensor or rate. If the relevant object
+can change after capture, certify validity through the movement
+interval or keep a timely fallback. A pre-read map, generic
+rate reply, new front cloud or its absence is not by itself a
+qualified closure bit. No independent mission or native operating
+envelope has been spent or advanced by this preflight.
+\end{document}
