@@ -1,0 +1,132 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{An egress hold can consume the data mule's last upload slot}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{Scope.} This is held-in I2 calibration, not a new independent
+layout or a frozen stack. The topology is the already inspected
+\href{https://github.com/LTU-RAI/SubTGraph/tree/21a1bcabf37c8f2f6f236ba40b916094d9903b5b/benchmark}{SubTGraph natural/01 grid},
+as normalized by the parent study. Verify the actual adjacency, but do not
+infer travel times, equipment, permitted edges, optical visibility, link
+budgets or correlated failures from occupied cells. These are all explicit
+fixture inputs. No collision or packet-delivery measurements are claimed.
+
+\paragraph{Mission and local interface.}
+An inspection in cell \(X=(11,28)\) is underway before the fault
+and finishes at tick 1. The inspector normally leaves by \(X\to D=(11,27)\).
+A blockage removes this edge and changes the executable continuation to
+\(X\to V=(12,28)\to E=(13,28)\). The last leg uses a powered fixture
+whose operator must stay at \(R=(12,29)\) until the inspector is clear at
+\(E\). This dependency is a stated local hardware interlock, not a
+reservation or a scheduler acknowledgment. The egress authorization
+allows only these two inspector routes; the rest of the source grid is
+not an alternate route search domain for this result. The inspector may
+wait at \(V\) under the persistent hold while its last edge is unavailable.
+In all admitted blocked cases, the hold must arm at tick 2 and physical
+clearance would occur at an admitted \(c\ge4\) if it is kept. Missing the
+arm cut gives no egress by the declared deadline; the inspector does not
+enter under an unaccepted command. Other fallback survival is unassessed.
+
+The mule starts at \(U=(11,29)\). It gets the local hold request and, if
+the primary route to the base is unavailable, a report copy from the
+adjacent inspector at the tick-1 handoff. The fixture makes the needed
+status and completed exchange locally available at that cut. No shared
+hidden map or post-partition live planner state is supplied. Tick labels
+are elapsed from the local handoff and transport is synchronous with
+locally readable slot boundaries; clock drift and establishment of those
+boundaries are outside the kernel. The mule can go directly \(U\to T=(10,29)\)
+to upload or instead arm \(U\to R\) at 2 and stay through clearance. From
+\(R\), reaching \(T\) via \(U\) costs two ticks. Earliest possible departure
+uses the local positive crossing indication, or the declared latest-clear
+bound if that indication is unavailable. The timer is justified only by
+the admitted persistent hold and crossing law, not silence. The report
+and inspector are separate: the inspector keeps its copy, and publication
+is settled only by a final acknowledgment for that report. Upload attempts
+have one tick of duration, observe success only after an attempted send,
+and consume one unit of the mule's attempt budget even on a failed slot.
+No delayed acknowledgments, concurrent outstanding attempts, other
+uploader observations, multi-packet effects or alternate upload contacts
+in this fixture. A separate worker completes its local task at tick 2
+even in blackout; its routes and resources are disjoint.
+
+Nominally both robots reach authorized egress points at 2 and the base
+acknowledges at 2. With only primary contact loss the mule uploads at
+tick 2 and is acknowledged at 3. With only the blockage the inspector
+reaches \(E\) at 4, the mule reaches \(T\) at 6, and the independent
+primary upload was acknowledged at 2. With both faults, the duty to
+deliver the report now depends on when the mule can leave its hold and
+which upload slots remain. An independent report-first plan can deliver
+at 3 while missing inspector egress; even returning immediately from
+\(T\) cannot reach \(R\) by 2. This negative control does not rule out
+all independent or decentralized policy families. The joint envelope
+has a second, pre-settlement fault in the form of loss of a candidate
+backup upload slot. Waiting for global return of the primary link is
+not used.
+
+\paragraph{Exact attempt budget for this route and observation class.}
+Let each admitted history \(w\) give a clearance \(c_w\) and set \(G_w\)
+of successful send slots at \(T\). Given the admitted sensor and clearance
+bound, let \(a_w\) be the earliest safe arrival under the above interlock.
+It is \(c_w+2\) with exact live clearance, and \(C+2\) if only the common
+guaranteed latest clearance \(C\) is available. In the latter comparison
+there is no other information between arm and departure. In the former,
+the observed arrival derived from the hold is available to the uploader.
+Under these hypotheses, earliest safe departure weakly dominates delaying:
+leave as soon as permitted and wait at \(T\) to emulate any later feasible
+arrival. Prior to the first upload attempt, \(a_w\) is all the source
+information the policy consumes. If there is a later unsolicited status
+or a way to read channel health at \(T\), this reduction need not hold.
+
+For an arrival observation \(a\), the safe finite slot interval is
+\(B(a)=\{a,\ldots,H-1\}\), where \(H\) is the acknowledgment deadline.
+The least number of attempts sufficient in the worst case is
+\[
+ \max_{a}\ \min\{|S|:S\subseteq B(a),\
+       \forall w\ (a_w=a\ \Longrightarrow\ S\cap G_w\ne\varnothing)\}.
+\]
+An empty feasible family for the inner minimization means infinity.
+Sufficiency: issue the selected slots in order until acknowledgment.
+Necessity: for each arrival observation, follow the policy on its
+consecutive no-acknowledgment branch, extending arbitrarily after that
+branch becomes infeasible. Truncate the branch at the budget or deadline.
+All histories in the class follow it until their first successful slot,
+so its at-most-budget slots must meet every \(G_w\). A randomized rule
+requiring a guarantee for every seed offers no improvement. No claim
+here concerns positive expected service with smaller budgets.
+
+For \(H=8\), take \((c,G)=(4,\{6\})\) or \((5,\{7\})\). A local clearance
+observation gives a different physical arrival in each case; one upload
+attempt suffices. Waiting to tick 5 for guaranteed release misses the
+early-only contact regardless of attempt budget. Replacing the paired
+law by the product adds \((5,\{6\})\), where the only successful slot is
+physically unreachable. Adding only \((4,\{7\})\) keeps both marginal
+supports but requires two attempts: the two early arrivals cannot tell
+which slot works. The late-arrival arm still needs one attempt. The paired
+law comes from the fixture, not an empirical statement that cave falls
+and upload slot losses correlate. Deleting a slot or retracting the
+clearance premise must therefore trigger renewed admission checking,
+not validation from the old marginal sets.
+
+\paragraph{Comparison and next cut.}
+The \href{https://arxiv.org/html/2103.11470}{NeBula} return-to-network and
+data mule give the physical report-delivery actions. The
+\href{https://superintelligence.jpl.nasa.gov/public/documents/papers/PlanRob-2020-Planning-and-Optimization-for-Multi-Robot-Planetary-Cave-Exploration.pdf}{JPL
+intermittent-connectivity planner} is a route and rendezvous reference.
+An \href{https://whoenig.github.io/publications/2019_RA-L_Hoenig.pdf}{action
+dependency graph} can express waiting for physical clearance before
+departure: the last traversal is a prerequisite for releasing the hold,
+not a precedence that can safely be flipped by
+\href{https://arxiv.org/abs/2312.04190}{switchable reordering}. This does not
+test those implementations or show they cannot be extended. Equipment
+authority and an actual local discharge event must be part of any
+matched instantiation. Given both, an ordinary timed data-mule controller
+with the same history support and a local deadline-aware wait/send
+policy game equals the stated budget calculation on 5,616 cases. The 459
+positive selected plans also satisfy the route and deadline trace check.
+No matched service advantage or independent test clearance is established.
+A useful stronger case would let a post-failure diagnostic change both the
+lawful hold resource and the reachable return route, comparing a baseline
+that may perform the same diagnostic rather than denying it the input.
+
+\end{document}
