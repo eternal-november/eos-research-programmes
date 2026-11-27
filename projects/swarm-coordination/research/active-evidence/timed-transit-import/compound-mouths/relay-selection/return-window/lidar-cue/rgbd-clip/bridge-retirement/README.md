@@ -19,3 +19,8 @@ Use the [Space archive](https://chatgpt.com/space/page_f5a09a52f6b881919b10d91ec
 to run `sh run.sh | cmp expected.txt -` without network. The archive
 contains all inputs listed in `LIFECYCLE_INPUTS.tsv`, including exact
 #739 extraction source. Requires Python 3 and C++17. Do not disable assertions.
+
+[Cut qualification](frame-guard-cuts/README.md): matching connection bits
+bracketing a frame do not exclude a change and reversal between polls.
+A bounded transition token gives an exact discriminator in the declared
+serial source model, but is not furnished by stock Transport.
