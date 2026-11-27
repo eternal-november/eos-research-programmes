@@ -1,0 +1,3 @@
+# Render wake vs acquired camera sample
+
+Run `python3 run.py && python3 count.py` (C++17 and Python 3). The two stock Gazebo3 scheduler methods, Sensor/Manager gates, and dependency CMake file are preserved and blob-checked. The replay runs those methods on a serial, positive-rate, fixed-membership fixture; an instrumented capture records the virtual update time. It does not run Gazebo threading, rendering, ROS, elapsed-work timing, or a full mission. Frame eligibility and decode delay in the joined test use the stated modeled far-site timing, not observed hardware timing. See the TeX note for the exact restricted scope.
