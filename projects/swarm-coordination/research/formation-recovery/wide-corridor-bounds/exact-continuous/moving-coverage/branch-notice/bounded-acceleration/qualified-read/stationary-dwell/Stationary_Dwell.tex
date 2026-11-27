@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage{amsmath}
+\title{Continuous Stationary Dwell and Nonmonotone Read Feasibility}
+\begin{document}\maketitle
+\paragraph{Pin.} Use the same motion, two inspection requirements,
+time horizon and initial rest as the acceleration-limited study.
+A truthful notice becomes available immediately at the end of
+continuous rest of length \(d\ge0\) at any safe position. It
+completes at a prescribed time \(r\), with dwell beginning at
+\(r-d\ge0\). There is no fixed station, dwell speed tolerance,
+after-read latency or hardware guarantee. The same common
+pre-read motion must work for both worlds.
+
+\paragraph{Full feasible set.}
+Write \(\sigma,k,\alpha\) for the far seam time, required minimum
+seam speed, and acceleration magnitude. Let
+\[
+ s=k/\alpha,\qquad r_0=\sigma-s,\qquad
+ D_*=\sigma-(1+\sqrt2)s.
+\]
+Then the exact condition is \(0\le d\le r\le r_0\) and
+\[
+ r-d\ \ge\
+ \sqrt{\max\{0,\,2s^2-(r_0-r)^2\}}.
+\]
+To prove necessity, the far robot starts its suffix from rest,
+reaches speed at least \(k\) in \(T=\sigma-r\), and at that time
+has position at most 4. In particular \(T\ge s\).
+With \(u=T-s\ge0\), its velocity at suffix time \(t\) is at least
+\(\max(-\alpha t, k-\alpha(T-t))\). Integrating gives minimum
+signed advance \(m=k^2/(2\alpha)-\alpha u^2/4\).
+For \(m>0\) the read site must be no greater than \(4-m\).
+Starting and ending the preparatory motion at rest bounds
+its backward displacement in time \(r-d\) by
+\(\alpha(r-d)^2/4\): its speed in magnitude is at most
+the minimum of the two acceleration cones. This yields
+the displayed root. For \(m\le0\) no retreat is forced.
+
+For sufficiency when \(m>0\), move from 4 to \(4-m\) in
+\(2\sqrt{m/\alpha}\) by a backward triangular velocity profile,
+then hold through the dwell. When the notice is far, follow
+the lower velocity envelope until \(\sigma\), arriving at
+\((4,k)\), then follow the previously checked far suffix.
+The pre-seam suffix first goes backward, then forward, never
+crosses 4 before the seam, and its greatest retreat beyond
+the read site is \(\alpha u^2/8\). During both the preparation
+and suffix the second robot stays above \(4-\alpha s^2>1\).
+Its pre-seam speed is at most \(k<1\), including the
+first backward part as \(u\le\sqrt2s\). Both sensing footprints
+therefore touch or overlap until the far seam; coverage on the
+near portion follows from their far edge being above 3.
+The late branch can instead hold indefinitely at the read
+site, keeping the seam covered. If \(m\le0\), read at the
+initial stationary position and hold until \(r=D_*\);
+then use the far suffix for \(u=\sqrt2s\), where \(m=0\).
+The late branch remains stationary. This deals with all earlier
+cuts without assuming that an already chosen acquisition site
+can be changed after the notice.
+
+\paragraph{Consequences and replay.}
+The maximum duration is \(D_*\): on the later segment
+\(u+\sqrt{2s^2-u^2}\ge\sqrt2s\) for \(0\le u\le\sqrt2s\).
+Both \(r=D_*\) and \(r=r_0\) attain \(D_*\), while the allowable
+dwell at the middle cut \(r=\sigma-2s\) is only \(\sigma-3s\).
+A fixed dwell of 0.42 is feasible at 0.425 and 0.548, but
+not at 0.470. The latest completion for every feasible dwell
+remains \(r_0\simeq0.548224\). The exact replay compares over
+38,493 rational cases with independent trapezoid integration,
+and certifies the stated examples using both endpoints of
+a rational enclosure of \(k\). The duration threshold is
+approximately \(0.435484\), not a measured sensing time.
+An equally informed direct reference has the same feasible
+set. The analysis does not transport to a fixed read site,
+bounded nonzero speed, or a delayed notice.
+\end{document}

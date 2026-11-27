@@ -14,3 +14,5 @@ checks. Run `node replay.mjs | cmp expected.json -` with Node 22 or later.
 Checked in exact V8; Lean 4.36.0 plus Mathlib checks the scalar cap algebra.
 The read is a stipulated instantaneous qualified observation, not
 verification of a real sensor, dwell assumption, or an independent mission.
+
+[Stationary dwell](stationary-dwell/README.md) gives an exact duration limit and a case where feasible read times are disconnected.
