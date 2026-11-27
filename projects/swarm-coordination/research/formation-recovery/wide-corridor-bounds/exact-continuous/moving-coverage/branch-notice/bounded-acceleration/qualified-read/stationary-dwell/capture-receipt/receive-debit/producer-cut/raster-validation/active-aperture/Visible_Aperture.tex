@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{A controlled camera displacement restores a hidden cue only inside a calibrated aperture}
+\maketitle
+
+\paragraph{Model and comparison.}
+Retain the rendered far-site target at depth $Z=37$ or $38$,
+half-width $.28$, behind the nearer panel at depth 8 with half-width
+$.20$. Both lie on the same horizontal centerline, and the selected
+vertical row stays inside their vertical extents. The camera is
+stationary during capture. A dedicated station actuator may shift it
+right from rest, within a separate budget of $.2$ time units before
+the formation's stationary interval. This is modeled station hardware
+independent of the mobile member's longitudinal control. This is not
+free robot motion or an existing CoSTAR slider. During this single
+capture set, there are no earlier preview images or alternate sensors.
+Compare exact same-output consumers to an explicitly authorized
+producer read at a named ray, retaining the old depth emission and old
+radio report.
+
+\paragraph{Sampled aperture and physical lower bound.}
+Let $a$ be the pinned horizontal half-projection scale, $W=320$, and
+$s_i=a(2i+1-W)/W$ the ray slope in column $i$. At station offset $b$,
+the ray hits the target plane horizontally at $b+Zs_i$ and crosses
+the occluder plane at $b+8s_i$. For nonnegative shifts up to $.4$ any
+ray hitting the target cannot bypass the left side of the panel:
+its lateral coordinate at depth 8 is at least $-8(.28)/37$.
+Hence the open aperture for a ray supplying a positive qualified
+read in both worlds is exactly
+\[
+  \max\{0,.20-8s_i,-.28-37s_i,-.28-38s_i\}
+   < b <
+  \min\{.4,.28-37s_i,.28-38s_i\}
+\]
+in the interior of the modeled domain (the endpoint $.4$ itself is
+not operationally used). Geometric grazing boundaries are treated
+as nonqualifying. Test the finite ray set directly. The first usable
+ray is column 160, with interval approximately
+$(.185566202,.211439462)$. The continuous-ray lower threshold for
+a common ray would be $.1786667$: choose the largest ray slope
+that can still hit the farther target, and compare its crossing at
+depth 8 to $.20$. The sampled lower edge is therefore not just the
+continuous geometry threshold.
+
+For any column or world, the earliest positive target return is
+still above $.18556$ in this pin. In particular the world frames
+fully agree where $|b|$ is below the matching first edge (negative
+side by symmetry of the target and panel). This is an actual
+two-world obstruction to any decoder of the rendered frame there,
+not merely to the nominated single-ray algorithm. The independent
+old source patch is identical across both worlds and does not
+distinguish them.
+
+\paragraph{Add the charged motion and fixed encoder uncertainty.}
+With station actuator acceleration bound $A$ and speed bound $V$,
+the maximum displacement with rest at both ends over $T$ is the
+integral of $\min(At,V,A(T-t))$. Thus at $T=.2,A=20$, speed 2
+permits $.2$, whereas speed 1 permits only $.15$. The slower
+actuator cannot reach any open view here even with exact pose.
+The faster actuator can reach the midpoint of column 160's interval,
+at approximately $.198502832$ (rest-to-rest binding is attainable
+by a slower triangular stroke). With fixed signed encoder bias of
+magnitude at most $.010$, its whole aperture stays valid. The
+sharp error supremum for this allowed fixed-ray read is half the
+width of that interval, approximately $.012936630$. The other
+admissible rays have lower edges above $.2$. State error here is a
+constant physical calibration offset, not within-dwell camera
+motion or error in the raster depth value. At bias bound $.015$,
+every reachable command admits bias $-.015$, putting the camera
+at most $.185$. Both worlds then remain hidden, so another
+single-frame decoder cannot restore robust service. A proof for
+continuous preview, alternate hardware or changed time budget is
+outside this comparison.
+
+\paragraph{Selected actual source and timing effects.}
+Check 22 real software-rendered frames, including the attempted
+low-speed endpoint and both ends of the faster bias interval, with
+1,689,600 independent ray comparisons. At the useful position the
+same scoped raw read restores the target without suppressing the
+old image source emission; the stock point output still clips it.
+Feed those rendered pixels into the unmodified selected native
+callback/body code and the same broker calendar. The 60 cases
+retain the old native radio receipt; the 24 timely valid cues
+include only the visible bias settings and eligible budgets.
+Neither added airtime nor sharper source interpretation alone
+repairs an unreachable camera position. An equally informed
+direct controller and slot checker ties; this costs actual
+modeled displacement and source read access, not only a new label.
+The selected optics is authored, not an actual field camera or an
+independently selected cave mission. No full stack acceptance.
+\end{document}
