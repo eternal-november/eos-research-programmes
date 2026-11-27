@@ -1,0 +1,121 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\title{Which robots need the moving density notice}
+\date{27 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Audit.}
+Fix the two-block corridor and homogeneous rest-to-rest dynamics
+of PR~711. A specified recipient set gets a common identifying
+notice at time \(\tau\). Other robots cannot distinguish the
+worlds, including indirectly through observing a neighbor's
+reaction; this is an explicit observation restriction. The
+result characterizes recipient dependence, not radio delivery
+or how to enforce that restriction in a physical formation.
+Every clearance and modeled link bound holds throughout.
+The initial gaps are \(g\), the gap cap is \(R\), and write
+\(h=R-g\ge0\) for the slack per gap. Each block has \(m\)
+gaps; the terminal demand adds \(\delta\) to whichever
+block is identified. Let \(P=B(T)\), \(Q=B(T-\tau)\).
+
+\paragraph{Exact boundary.}
+If the middle robot is not informed, the exact maximum
+\(\delta\) is \(\min(mh,P)\), even if every other robot
+receives the notice. If the middle is informed, let
+\(\ell,r\) be the distances in gaps to its closest
+uninformed interior neighbor on each side, using \(m\)
+on a side with none. The outside boundaries can always be
+preprogrammed and need not be counted as recipients. Then
+\[
+ \delta_{\max}
+   =\min\left(mh,\;P+\min\left(Q,\tfrac{h}{2}
+                              \min(\ell,r)\right)\right).
+\]
+In particular, for \(\delta>P\) and \(h>0\), the required
+informed neighborhood runs at least through the first
+\(q-1\) robots on both sides of the middle, with
+\(q=\lceil 2(\delta-P)/h\rceil\), in addition to the middle.
+These \(2q-1\) recipients suffice when the other physical
+and temporal bounds hold. If \(\delta\le P\), none is needed
+if the cap permits the demand.
+
+\paragraph{Lower bound on required information.}
+Add the left-world and right-world terminal span
+requirements as in PR~711. The two outside displacements
+can contribute at most \(2P\), so the half-difference of
+the middle's positions must be at least \(\delta-P\).
+This half-difference is zero if its local views are shared,
+and at most \(Q\) otherwise. Across an uninformed robot
+\(i\), the same terminal position must be retained in both
+worlds. The span to that robot in either world belongs to
+one fixed interval of width \(|i-m|h\), because each of
+its gaps belongs to \([g,R]\). Hence the half-difference of
+the middle is at most \(|i-m|h/2\). The hard closed
+geometric cap also gives \(\delta\le mh\). In the case
+there is no uninformed interior neighbor on a side,
+the inserted bound \(mh/2\) cannot cut down the maximum:
+if \(Q>mh/2\), then \(P\ge Q\) already makes that bound
+redundant once \(\delta\le mh\) is enforced.
+
+\paragraph{Construction without informing outsiders.}
+If \(\delta\le P\), expand both blocks by \(\delta\) and stay
+blind. Otherwise let \(p=P\), \(z=\delta-p\). The outside
+boundaries move away from the middle by \(p f(t)\), where
+\(f\) is the full-horizon displacement profile normalized to
+finish at 1. The middle moves by \(\pm z\,b(t)\), where \(b\)
+is the similarly normalized profile over the shorter horizon,
+zero before notice. Since \(0<z\le Q\le p\), these scaled
+profiles respect the original actuator bounds. On a side
+with nearest blind index \(\ell\), choose preparation
+\[
+            s\in[z,\ell h-z]\cap[p-(m-\ell)h,p] .
+\]
+The inequalities \(2z\le\ell h\), \(p+z\le mh\), and
+\(z\le p\) make this interval nonempty. The blind robot
+at that index moves outward by \(s f(t)\) in both worlds.
+Interpolate the displacement linearly among the remaining
+robots between it and the outer boundary, and among the
+informed robots between it and the middle. If \(\ell=m\),
+the two exterior positions coincide by the imposed choice
+\(s=p\). Treat the right side in the same manner using \(r\).
+The near-span extra is \(s f(t)\pm z b(t)\).
+It is in \([0,\ell h]\) because \(0\le b(t)\le f(t)\le1\);
+the far span similarly fits its cap, and uniform
+interpolation gives the same result for every individual
+gap. Interior derivatives are convex combinations of
+the already bounded boundary derivatives. The active
+terminal block gains exactly \(p+z=\delta\).
+
+\paragraph{Order of normalized profiles.}
+For \(0<t<T\), let \(u(t)=\min(at,a(T-t),v)\).
+The shorter envelope's speed is
+\(w(t)=\min(u(t),a(t-\tau)_+)\).
+Thus \(w(t)/u(t)\) is nondecreasing: before \(\tau\) it is
+zero, and afterward it is the minimum of 1 and the maximum
+of \((t-\tau)/t,\ (t-\tau)/(T-t),\ a(t-\tau)/v\).
+All three ratios are nondecreasing on that interval.
+For any time split, integrate \(w(x)u(y)\le u(x)w(y)\)
+ over \(x\le t\le y\) in the horizon. Dividing by the
+positive integrals proves that the accumulated normalized
+short profile is no larger than the full one. When the
+short phase has no travel allowance, the moving branch
+is unnecessary. This supplies the continuous hard-gap
+bound, rather than extrapolating sampled gaps.
+
+\paragraph{Checks and limits.}
+With \(m=2,h=3/2,a=2,T=2,\tau=1/2\) and nonbinding speed,
+the full geometric demand 3 can be met by the middle
+and its two immediate neighbors. Informing only the
+middle reduces the exact maximum to \(11/4\); informing
+others but not the middle reduces it to 2. Exact terminal
+difference-feasibility checks agree on 73,662 inputs, and
+12,008 dyadic samples check the normalized profiles.
+Four Lean lemmas cover the key real interval steps.
+The strongest direct planner with the same observation
+restriction ties. A robot that can sense the middle's
+branch in time would not be in the blind class used here.
+Acquiring and propagating that information, later or
+inconsistent delivery, and any independent formation
+evaluation remain untested.
+\end{document}
