@@ -1,0 +1,118 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{The same conversion budget can favor different ADC schedules}
+The ADS1015 comparison fixed the available row menu. This extension
+uses that exact menu but models the raw pin levels as moving between
+conversions. It is a finite acquisition model using specified time
+slots and qualified stable signs, not a hardware timing estimate.
+The target is the normalized balanced direction
+$g=(1,1,-1,-1)$ at a decision cut $T$. This target needs three
+conversions even on frozen data.
+
+\paragraph{Model and sufficient data.}
+A conversion of an allowed singleton or differential row $q_j$
+at time $t_j$ returns
+\[
+    y_j=q_jv(t_j)+b(t_j)\sum_i q_{ji}+e_j .
+\]
+Each raw pin trajectory $v_i$ is independently $L_i$-Lipschitz.
+The common reference error is $D$-Lipschitz and has amplitude at
+most $B$; independent conversion errors satisfy $|e_j|\le\eta_j$.
+All these bounds are simultaneous hard supports with no additional
+coupling. Absolute levels of the four pins are free in this linear
+model. Quantizer clipping, physical rail and common-mode bounds,
+settling, conversion aperture, unstable sign interpretation and
+calibration uncertainty outside these terms are excluded. The
+budget allows at most three observations at the fixed slots
+$t_0,t_1,t_2$, with $T\ge t_2$.
+
+A finite uniform error requires the chosen rows to span $g$:
+otherwise a constant shift in their nullspace changes $gv(T)$
+without changing any data. The target has no two-row representation,
+so any finite solution here uses three independent rows with the
+unique coefficients $\alpha$ given by $g=\sum_j\alpha_jq_j$.
+Repeats, dependencies, and stopping short yield no finite bound at
+this target under the free-level assumption; they are not pruned
+merely to simplify the enumeration.
+
+\paragraph{Exact radius, not just a propagated error bound.}
+Use $\sum_j\alpha_j y_j$ as the center. Put $t_3=T$.
+For pin $i$, the coefficient of its $j$th interval increment
+has magnitude $|\sum_{k\le j}\alpha_kq_{ki}|$ by telescoping. The
+exact support of the difference between the center and $gv(T)$ is
+the sum of
+\begin{align*}
+ R_{\rm pin}&=\sum_i L_i\sum_{j=0}^2
+    \left|\sum_{k\le j}\alpha_kq_{ki}\right|(t_{j+1}-t_j),\\
+ R_{\rm noise}&=\sum_j|\alpha_j|\eta_j
+\end{align*}
+and the support of the bias weights
+$\beta_j=\alpha_j\sum_i q_{ji}$. The bias sum is zero. Valid
+three-row representations have either zero singletons or two:
+one singleton would have coefficient zero, which would imply a
+two-row representation, and three singletons cannot touch all
+four nonzero coordinates. In the all-differential case bias
+support is zero. With two singleton slots $u,v$, it is exactly
+$|\beta_u|\min(2B,D|t_u-t_v|)$. Each term can attain its
+worst endpoint jointly by choosing independent extremal pin
+increments, a centered bias pair linked by a linear admissible
+path, and extremal read errors.
+
+For any fixed observation vector, independent rows let a constant
+shift of the pin trajectories produce that vector without changing
+the error; solve the full-row-rank linear system for the shift.
+Thus each extremal error is achievable at the same transcript.
+The radius is minimax against arbitrary estimators, not just
+linear error propagation. This also compares deterministic adaptive
+row choice on the same fixed time budget: follow an all-zero
+output transcript to identify the chosen rows and then use the
+two extremal trajectories, shifted to produce exactly that
+transcript. The controller would choose those same rows in both
+histories. An invalid row set instead has a constant nullspace
+obstruction. A fixed minimizing design attains the lower bound.
+This argument does not evaluate adaptive acquisition times,
+randomized risk objectives, clipped domains or correlated signs.
+
+\paragraph{A sharp reversal at equal conversion count.}
+At times $(0,1,2)$ and cut $T=2$, take $L=(1,1,1,4)$
+and uniform independent conversion error $\eta$.
+The best mixed path reads singleton 0, then singleton 2,
+then differential $1-3$ (signs $+,-,+$); its pin radius is $3$,
+with the two singleton bias terms one slot apart. The best
+all-differential path reads $0-3$, then $2-3$, then $1-3$
+(signs $+,-,+$); its pin radius is $7$, because an older
+occurrence of the moving pin 3 matters before cancellation.
+The following minima of $R_{\rm pin}$ and the noise
+multipliers enumerate the five unordered spanning menus:
+\[
+\begin{array}{c|cc}
+\text{rows}& \min R_{\rm pin} & \sum |\alpha_j|\\ \hline
+ 01,03,23 &9&4\\
+ 01,13,23 &9&4\\
+ 03,13,23 &7&3\\
+ 03,S_1,S_2 &3&3\\
+ 13,S_0,S_2 &3&3
+\end{array}
+\]
+Here each two-digit label is an ordered differential and
+$S_i$ denotes a singleton. The primary 30 finite schedules include
+all permutations of these five menus. In each mixed minimum an
+adjacent singleton pair is attainable, the shortest spacing. The
+resulting optimum is
+\[
+  3\eta+\min\{3+\min(2B,D),\,7\}.
+\]
+The mixed path wins below effective drift $4$, the differential
+path wins above it, and they tie at equality. Amplitude can keep
+the mixed path preferable even if reference variation is fast.
+
+The replay checks all 585 ordered mode sequences of length at most
+three including repetitions (and zero observations), then 810
+independent primal set-membership LPs on the exact native MUX menu.
+The LP computes indistinguishable target extrema directly from
+a zero transcript; it is not given coefficient or error formulas.
+It agrees. This resolves a choice at the modeled cut, but does not
+instantiate real conversion windows, prove a particular motor
+force, or use the independent non-radio evaluation.
+\end{document}
