@@ -1,0 +1,86 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{A supplier replacement can change the receive allowance without changing the receiver}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{What is being checked.}
+The selected pinned SubT model has a separate rolling byte history at
+each transmitter and receiver. In \texttt{attempt\_send}, however, both
+comparisons use the capacity from the current \emph{sender's} radio
+configuration, passed in by the broker. The policy parameter is not
+the receive node's own configured capacity. This is a property of the
+selected simulator source, not a claim about deployed radios. The
+test reuses a named 173-byte MRWS completion and an independent 60-byte
+survey packet addressed to the same station, plus separate traffic
+to Home. Inputs include viable paths, deterministic draws and authority
+to choose publication order before queue ownership passes to the broker.
+
+\paragraph{Positive and negative cuts.}
+A sender with threshold 200 and a sender with 233 can each send their
+packet alone. With neither packet's old receive debit in range, both will
+deliver exactly when the larger-cap sender's packet comes last. At cap
+pair \((200,233)\) assigned to (completion, survey), completion first
+works; at pair \((233,200)\), survey first works. The marginal receiver,
+contents, total 233 bytes and sorted \emph{unassigned} capacities
+are the same. A controller that only sees this view and must commit
+once to an ordering cannot guarantee both receipts. A truthful
+distinction of the two assignments before order commitment suffices,
+or provision both possible smaller caps at 233, exactly. There is no
+claim of obtaining this information in an untreated deployment.
+
+An existing receive charge \(h\) adds to the required allowance when
+it is still live; the replay spans the native inclusive age-one-second
+boundary at ticks 4 and 5. Rejected receive leaves the sender bytes spent:
+TX capacity was checked and charged before the RX comparison. The exact
+application receipt, versus TX debit or a queue transition alone, is
+the settlement boundary in this fixture. Changing the station's
+configured cap among 1, 233 and 900 leaves the runs unchanged; changing
+the sender's does not.
+
+\paragraph{Reduction and law.}
+Fix a dispatch cut; all mandatory packets are available, all their TX
+attempts fit and reach their intended comparison, no bytes expire
+during the cut and the order is freely selectable. Set \(p_i\) to size
+and \(c_i\) to the qualified sender capacity. With initial load \(h\),
+an order \(\pi\) succeeds on all receipts iff
+\[
+              h+\sum_{r\le j}p_{\pi_r}\le c_{\pi_j}
+              \quad\text{for every }j .
+\]
+This is \href{https://ntrl.ntis.gov/NTRL/dashboard/searchResults/titleDetail/AD152722.xhtml}{Jackson's earliest-due-date rule}
+with cumulative bytes as the processing coordinate and sender limits
+as due dates. To see optimality, swap adjacent inverted caps \(c_a\ge c_b\)
+in a feasible order: the maximum prefix through both was at most \(c_b\),
+so the shorter new first prefix meets \(c_b\), and the full prefix still
+meets \(c_a\). Later prefixes are unchanged. Repeat to sort. Sorting by
+an abstract priority or by size alone does not replace these tests.
+
+If a common order must work for a nonempty finite class of hidden
+assignments, and sizes, initial receiver loads and destination sets are
+fixed, substitute each row's minimum cap over that class. Taking a minimum
+is exact here because every inequality must hold on every history and
+its left side is already determined by the common order. It is not a
+rule for uncertain sizes or receiver debit correlated with the cap, or
+for choosing a sender after a new read. For multiple fixed receiver
+sets, the same ascending-cap order solves all receiver subproblems
+simultaneously when each packet has the same threshold at each of its
+receivers. Each receiver sees a sorted subsequence, and each subsequence
+must pass its own initial-debit check. The generalization assumes the
+total per-sender TX attempt bills fit despite fanout; receiver-specific
+cap order or forced precedence can invalidate the reduction.
+
+\paragraph{Evidence and limits.}
+1,296 pinned callback-and-debit cases match the direct sender-threshold
+formula, including unsuccessful receipt with charged TX. Independently
+enumerating all orders agrees in 520 each of one-receiver, paired-world
+and fixed multi-receiver model cases. Lean checks the adjacent exchange,
+the paired obstruction, the sharp two-world capacity threshold and
+pointwise minimum law. The strongest applicable ordering baseline is
+the same rule, not a new scheduler. Packet creation uses actual selected
+warehouse completion; the physical or operational appointment, cap
+reporting and order authority are not instantiated here. In-block
+expiry, multiple retries, reset/membership and pose blindness each need
+separate premises. No independent mission or programme acceptance.
+\end{document}
