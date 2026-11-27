@@ -1,0 +1,109 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{Native Warehouse Observations: Pose Aliasing and a Movement-Acquired Request Cue}
+\date{2026-11-27}
+\begin{document}\maketitle
+
+\paragraph{Audit.}
+Use the pinned RWARE warehouse source named in \texttt{SOURCE.tsv}.
+Two possible initial positions of a civilian inspector share a
+known layout and goal, but no trusted initial pose outside the
+actual observation is provided. Reach the known bay in the
+fewest guaranteed actions. The evaluator sees physical simulator
+position; the decision procedure sees only its per-agent native
+observation, retained actions, and the declared task/cue law.
+There is no independent trial, hardware observation, or claim that
+this initial ambiguity persists when odometry or initialization
+provides a reliable pose.
+
+\paragraph{Selected-source boundary.}
+The harness executes the original selected
+\texttt{\_get\_default\_obs}, \texttt{\_make\_obs}, float vector writer,
+and original one-mover update bodies. The existing graph shim restricts
+one \texttt{FORWARD} per tick; simultaneous conflicting motion is
+not adjudicated here. The Gym shim supplies only the fixed flattened
+vector length, and no model of sensor noise is invented.
+The native dictionary path divides positions by axis extent when
+\texttt{normalised\_coordinates} is enabled, then
+casts the two coordinates to \texttt{np.int32}.
+Two different interior locations can therefore both report \((0,0)\).
+The flat path with the same option writes the fractions into a
+float vector. Without normalization, both paths retain the tested
+absolute locations. The source defaults to flat without normalization.
+The claim is about the tested configuration, not every RWARE
+observation interface, and flat/dictionary resource encodings
+are not assumed to cost the same on a wire.
+
+\paragraph{Opposite first moves.}
+At positions \((2,3)\) and \((4,3)\) facing up with the goal
+\((3,3)\) and an otherwise indistinguishable local crop,
+the normalized dictionary exports exactly the same whole
+observation. In two allowed actions, only right--forward
+works in the first world and only left--forward in the second.
+Even a future distinguishing observation after the first
+action cannot repair a wrong first turn by that deadline.
+The actual normalized float emitter distinguishes the worlds.
+All 36 variants (three grid sizes, three sensor ranges, two
+axes and two headings per axis) reproduce the same conditional
+boundary: 144 paired observation comparisons and 1800
+native action trials. Observationally selected flat controls
+use 144 native steps and reach their goals.
+
+\paragraph{Movement changes what is available to read.}
+In the \(7\times7\) two-pose case, initially neither local
+view includes the relevant shelf at the north end of its
+lane. Turning in place does not uncover it. A northward move
+lets the inspector read the current \texttt{shelf\_requested}
+value from its local crop. With paired shelves on opposite
+lanes and exactly one marked, the post-move crops differ
+only by this flag: \emph{the physical placements are the same
+under both queue qualifications}. The known binding from
+producer to shelf lets the flag locate the inspector. With
+both visible shelves neutral, or either marked shelf admissible
+without a known binding, the flag does not have that implication.
+
+The source event was exercised directly. The old carrier already holds
+its requested shelf and moves into the actual native goal. That
+updates the request queue before the observer samples it.
+The fixture uses two reproducible RNG choices, one selecting
+each next shelf, not a probabilistic reliability estimate.
+At that instant the inspector's output is unchanged because
+the new mark is still out of range. After its own northward
+probe, the positive output in one pose/queue pair is identical
+to the positive output in the opposite pose/opposite-queue pair.
+So is the negative output in the complementary pair.
+Without the old delivery the mark remains absent.
+Under a known assignment calibration, the inspector actually
+executes the observation-selected route and reaches the same
+bay in five actions from the old-delivery cut, six clock ticks
+including that preceding native delivery. The known calibration
+is extra information about the cue's reference, not inferred
+from it or available in the unknown-assignment arm. No shelf
+delivery by the inspector is asserted.
+
+\paragraph{Exact finite reference.}
+For the sensing comparison the inspector is authorized only
+to move, turn or wait; it cannot pick up a shelf to change the
+test. The planner partitions possible native successor states
+by the full available observation. A belief set can stop when
+all its states have reached the bay; otherwise at budget \(j>0\)
+one common action must send every resulting observation cell
+to a belief that can finish in \(j-1\) actions. This is an exact
+induction on the action budget, and it permits contingent
+future motion rather than requiring a fixed pair of paths.
+Native observations and transitions are same-cut in the finite
+reference, with no relevant reward/info leak in the sensing motion.
+There is no assumed early knowledge of either the true pose or
+the chosen mark, except in expressly calibrated arms.
+
+The minima are two with the flat location, five with the
+collapsed pose plus a known request binding, and eight with
+the collapsed pose and no usable binding; the latter value
+holds even when the post-delivery queue always marks one of the
+two shelves. Neutral paired shelves are a matched geometry control.
+These are exact results for the selected support and policy class,
+not on all warehouse reset histories. A trustworthy absolute pose
+or a known request-source mapping are separate remedies, and the
+same-information finite direct reference already exploits either.
+No contract or deployment acceptance follows.
+\end{document}

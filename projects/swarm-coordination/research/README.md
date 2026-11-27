@@ -411,3 +411,10 @@ With both short routes feasible, more range on just one anchor can replace the o
 **SC-EVIDENCE-TREE-RISK:** Tree pair marginals plus evidence/continuation flags give an exact fixed-whole-law admission check for a fixed policy, without summing incompatible cohort maxima. [Proof, rational witnesses and compact/full replay](joint-risk/evidence-tree/README.md). Source nodes can still matter when not counted as physical exposures. Scoped numerical examples, no field law.
 
 **SC-CARRIED-RISK-CERTIFICATE:** A different radio supplier can carry the same native current completion. Returning the last completed order instead breaks the old receipt-only risk proof even when supplied failure marginals agree. [Exact support monitor and native replay](joint-risk/evidence-tree/carried-certificate/README.md) separate qualified edit costs from unknown dependency discovery. No empirical risk or independent transfer claim.
+
+### Native shelf-request cues
+
+[Warehouse observation and request-cut replay](local-perception/rware-observation-cut/README.md):
+optional integer-normalized dictionary observations can collapse two interior
+poses. Moving into range of a real request flag restores a five-step plan
+only when the controller knows which shelf that flag identifies.
