@@ -1,0 +1,160 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{A new cave relay can preempt a viable direct route}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{Test interface.}
+One newly registered breadcrumb and two distinct civil inspection
+reports owed to the same dock on already-viewed Cave Circuit 01.
+This is a selected source-law check using the published weighted
+graph, an authored coordinate lookup that maps sampled origins to their
+respective labels, and declared hardware limits. Assume fixed positions,
+at most one breadcrumb at a sampled origin, and no other receiver-side
+breadcrumb. A pass means that two hard RF gates permit the selected
+link, not that the packet arrived or was accepted as settlement.
+
+\paragraph{Route choice can spend an old option.}
+The pinned \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/src/VisibilityTable.cc}
+{visibility table} scores the route through one intermediate by the
+maximum of the two weighted graph distances. It uses that route if
+strictly cheaper than the direct route; it keeps the direct route on a
+tie. The \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/src/VisibilityRfModel.cc}
+{RF computation} then tests the cost cap and uses the larger
+Euclidean range of the two radio legs in the relayed case, or the
+direct Euclidean range otherwise. The
+\href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt-communication/subt_rf_interface/src/subt_rf_model.cpp}
+{range function} rejects a selected range above its cap, without
+falling back to a displaced direct route.
+
+For reports $A$ from tile 18 and $B$ from tile 16, both to tile 39,
+the entries give (selected weighted cost, squared range in
+$\mathrm{m}^2$):
+\[
+\begin{array}{c|rr}
+ & A & B\\\hline
+\text{no relay} & (10,5000)&(13,8125)\\
+\text{relay at 13}&(9,5625)&(9,3125)\\
+\text{relay at 42}&(10,5000)&(10,5000)
+\end{array}
+\]
+At cost cap 10 and range 72 m, placing the relay at 13 lets $B$
+through but preempts $A$'s viable direct route. The flip holds
+exactly for $\sqrt{5000}\le R<75$ m under the stated assumptions.
+At 42, $A$ retains the direct route at a tie and $B$ gets a relay.
+The two sites are the only single-origin placements passing $B$ at
+72 m among all 158 labels in the supplied graph. Independent
+Dijkstra walks agree with all-pairs relaxation for all destinations
+from the five relevant vertices. Lean checks the hard-gate interval
+and serial activation conditions, not simulator correspondence.
+
+The declared 72 m cap is not the stock launch's 500 m limit.
+The same ordering issue has another observable in the source formula
+with nominal launch parameters: from 115 to 128 through a newly
+registered breadcrumb at 126, cost goes from 10 to 9 while mean
+path loss increases about 1.613593 dB. This is neither a guaranteed
+outage at the default nor a measured packet result.
+
+\paragraph{A passage cut changes which repair remains possible.}
+Starting from tile 13, placement at 42 takes one abstract move
+normally. Remove $13$--$42$ and it takes nine moves; remove $2$--$3$
+as well and it is unreachable. These are graph moves, not physical
+durations. For a deadline allowing one but not nine moves, the
+closure removes the site that permits both unchanged transfers.
+It does not itself remove radio contact. In the remaining
+single-site arm, suppose the scheduled sends are at cuts $a,b$
+and the newly selected relay becomes effective at cut $k$,
+including sends on $k$. Both hard gates pass exactly when
+$a<k\le b$. The supervisor must distinguish the effective update
+from the installation request, and the old authorized receipt from
+an attempted send. If $B there is no acceptable $13$-only
+schedule with those fixed sends and no extra supplier.
+The \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/src/CommsBrokerPlugin.cc}
+{stock discovery update} keeps a newly seen static name and
+pose; disappearance from the latest pose input is not a removal
+operation. An equally informed direct scheduler can make the same
+placement and timing choices. A routing system allowed to keep and
+test the direct alternative at the hard gate is another comparator;
+there is no class-wide obstruction to better radio routing.
+
+\paragraph{A source-qualified detector, not a closure event.}
+The pinned cave launch link resolves to the competition launch
+whose robot spawns declare performers. With the pinned
+\href{https://github.com/gazebosim/gz-launch/blob/a5cda4efad4b1298039d6015055ae278a663b78c/plugins/gazebo_factory/GazeboFactory.cc}
+{factory} and \href{https://github.com/gazebosim/gz-sim/blob/2a076e91c6df7699284ab93e244894bb0f55336f/src/LevelManager.cc}
+{level service}, string registration queues a $2$ m cube.
+It does not change an already registered performer's geometry.
+The executing build and live component must still be verified.
+The fourth detector's admissible parent centers are then
+\[
+[90.3555,108.3555]\times[48.9272,75.9272]\times[-0.95505,16.04495].
+\]
+Both nominal mouth samples near $(100,62.5,0)$ intersect, and
+the same horizontal location at $z=-1$ does not. The first
+active scan of a stationary newly registered performer inside
+can emit entry without any physical crossing. Record the
+registration, scan, deployment command, actual closure and RF
+update separately. This case does not establish actual blockage,
+verified egress or the independent mission.
+\end{document}
+s latest activation is at or before $A there is no acceptable $13$-only
+schedule with those fixed sends and no extra supplier.
+The \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/src/CommsBrokerPlugin.cc}
+{stock discovery update} keeps a newly seen static name and
+pose; disappearance from the latest pose input is not a removal
+operation. An equally informed direct scheduler can make the same
+placement and timing choices. A routing system allowed to keep and
+test the direct alternative at the hard gate is another comparator;
+there is no class-wide obstruction to better radio routing.
+
+\paragraph{A source-qualified detector, not a closure event.}
+The pinned cave launch link resolves to the competition launch
+whose robot spawns declare performers. With the pinned
+\href{https://github.com/gazebosim/gz-launch/blob/a5cda4efad4b1298039d6015055ae278a663b78c/plugins/gazebo_factory/GazeboFactory.cc}
+{factory} and \href{https://github.com/gazebosim/gz-sim/blob/2a076e91c6df7699284ab93e244894bb0f55336f/src/LevelManager.cc}
+{level service}, string registration queues a $2$ m cube.
+It does not change an already registered performer's geometry.
+The executing build and live component must still be verified.
+The fourth detector's admissible parent centers are then
+\[
+[90.3555,108.3555]\times[48.9272,75.9272]\times[-0.95505,16.04495].
+\]
+Both nominal mouth samples near $(100,62.5,0)$ intersect, and
+the same horizontal location at $z=-1$ does not. The first
+active scan of a stationary newly registered performer inside
+can emit entry without any physical crossing. Record the
+registration, scan, deployment command, actual closure and RF
+update separately. This case does not establish actual blockage,
+verified egress or the independent mission.
+\end{document}
+s sole
+transmission cut, there is no acceptable $13$-only
+schedule with those fixed sends and no extra supplier.
+The \href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/src/CommsBrokerPlugin.cc}
+{stock discovery update} keeps a newly seen static name and
+pose; disappearance from the latest pose input is not a removal
+operation. An equally informed direct scheduler can make the same
+placement and timing choices. A routing system allowed to keep and
+test the direct alternative at the hard gate is another comparator;
+there is no class-wide obstruction to better radio routing.
+
+\paragraph{A source-qualified detector, not a closure event.}
+The pinned cave launch link resolves to the competition launch
+whose robot spawns declare performers. With the pinned
+\href{https://github.com/gazebosim/gz-launch/blob/a5cda4efad4b1298039d6015055ae278a663b78c/plugins/gazebo_factory/GazeboFactory.cc}
+{factory} and \href{https://github.com/gazebosim/gz-sim/blob/2a076e91c6df7699284ab93e244894bb0f55336f/src/LevelManager.cc}
+{level service}, string registration queues a $2$ m cube.
+It does not change an already registered performer's geometry.
+The executing build and live component must still be verified.
+The fourth detector's admissible parent centers are then
+\[
+[90.3555,108.3555]\times[48.9272,75.9272]\times[-0.95505,16.04495].
+\]
+Both nominal mouth samples near $(100,62.5,0)$ intersect, and
+the same horizontal location at $z=-1$ does not. The first
+active scan of a stationary newly registered performer inside
+can emit entry without any physical crossing. Record the
+registration, scan, deployment command, actual closure and RF
+update separately. This case does not establish actual blockage,
+verified egress or the independent mission.
+\end{document}
