@@ -1,0 +1,94 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\title{Two corridor density demands with a notice received in motion}
+\date{27 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Audit.}
+This exact continuation of the corridor family removes the
+mandatory rest at the notice cut in PR~710, for two contiguous
+blocks only. All robots start and end at rest and have the
+same acceleration bound \(a>0\) and speed bound \(v>0\).
+Every adjacent gap remains in \([g,R]\). Each block contains
+\(m\) gaps initially of size \(g\). The two worlds require an
+extra terminal span \(\delta>0\) in the left or the right block.
+There is adequate extent at both ends. All agents receive an
+identical identifying notice at time \(\tau\in[0,T]\), with
+no distinguishing evidence before it. This is a condition on
+actual common receipt, not a way to obtain a timely notice.
+Use the rest-to-rest displacement budget \(B(H)\) of PR~709
+for a phase of length \(H\). Physical feasibility requires
+\(\delta\le m(R-g)\).
+
+\paragraph{Exact moving-cut deadline.}
+Subject to the geometric cap, the necessary and sufficient
+condition is
+\[
+                       \delta\le B(T)+B(T-\tau).
+\]
+For necessity, let \(L_i,M_i,C_i\) be the final displacements
+of the left, middle and right boundaries in world \(i\).
+The left demand requires \(M_{\rm L}-L_{\rm L}\ge\delta\),
+and the right requires \(C_{\rm R}-M_{\rm R}\ge\delta\).
+Adding them gives the bound: the two outside terms together
+contribute at most \(2B(T)\). The half-difference of the
+two middle trajectories has zero position and velocity at
+\(\tau\), since their local motion was common through that
+cut. It ends at rest and still satisfies both actuator bounds
+by convexity. Consequently \((M_{\rm L}-M_{\rm R})/2\le
+B(T-\tau)\). This bounds all admissible causal trajectory
+pairs, not only those that choose a symmetric prefix.
+
+For attainment let \(F(t)\) be integrated velocity
+\(\min(at,a(T-t),v)\) from 0 to \(t\).
+Let \(G(t)\) be the same integrated envelope for the shorter
+horizon \(T-\tau\), starting from zero at \(\tau\) and zero
+before then. Its speed at any common instant is no greater
+than the speed of \(F\), since the remaining time agrees and
+its elapsed time is smaller. Hence \(0\le G(t)\le F(t)\).
+Put \(\alpha=\delta/(B(T)+B(T-\tau))\), which is at most 1 in
+the feasible case. The outside boundaries move by
+\(-\alpha F(t)\) and \(+\alpha F(t)\) in both worlds.
+The middle boundary moves by \(+\alpha G(t)\) for the left
+demand and \(-\alpha G(t)\) for the right demand. The actual
+motions are known before the notice except for that sign;
+the middle stays still until the receipt. The two span
+increments are \(\alpha(F+G)\) and \(\alpha(F-G)\), both
+in \([0,\delta]\). Linearly interpolate displacements within
+each block. Convexity gives each interior robot the same
+actuator limits, and all hard clearances and geometric range
+bounds hold at every instant. Each robot comes to rest at
+\(T\). For \(T=0\) no positive demand is feasible.
+
+\paragraph{Matched controls.}
+A fixed blind motion must handle both demands; applying the
+two static rows gives exact capacity \(B(T)\). Waiting to
+move until after the notice gives \(2B(T-\tau)\). A mandatory
+rest cut instead gives \(B(\tau)+2B(T-\tau)\): each block
+can add at most \(2B(T-\tau)\) after the cut, and whatever
+shortfall remains is required in both blocks at the common
+cut. The pre-cut ends can provide at most \(2B(\tau)\) of
+total extra span; shared preparation split equally attains
+this limit when the cap permits. At \(a=2,T=6/5,\tau=2/5\)
+with no binding speed cap, the moving capacity is \(26/25\),
+forced rest and blind are \(18/25\), and waiting is \(16/25\).
+Only the moving informed policy can meet the unit demand in
+that comparison. With \(T=2,\delta=9/4,a=2\), the latest
+informative notice is \(\tau=2-\sqrt{1/2}\) under a nonbinding
+speed cap and adequate geometric span. A same-information
+direct scenario-tree controller cannot improve the half-difference
+bound and can use the same witness.
+
+\paragraph{Verification and scope.}
+The closed piecewise primitives agree with independent
+trapezoidal accumulation at 133,600 exact dyadic sample cuts
+across 3,040 parameter combinations; the analytic proof is what
+covers intermediate times. Four Lean lemmas cover the real
+algebra of the bounds. The extra rational comparison is
+verified in integer-scaled time and displacement units.
+No field movement, communication latency, private partial
+notice, more than two demanded alternatives, or R6 closure
+is established. In particular this does not solve general
+moving-cut code design.
+\end{document}
