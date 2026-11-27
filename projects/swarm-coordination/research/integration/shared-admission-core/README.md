@@ -84,3 +84,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Native partially effective prefixes
 
 [Two-plant admission with ordered past effects](native-prefix-phases/README.md) retains a no-callback TX charge and distinguishes unloading from departure. The unchanged core uses both to select a qualified backup in a tight held-in local view; matched direct oracle ties.
+
+## Recovery-induced radio debit follow-up
+
+[Self-renewing diagnostic debit](live-clearance-generation/radio-bounded-handoff/recovery-debit-loop/README.md): two successful checks at a separate receiver can repeatedly bar a live warehouse handoff on the same transmitter. Joint reservation meets all deadlines when the second check can wait for the debit to expire. The exact direct comparison ties. This is scoped I07/F47 evidence, not accepted inventory coverage.
