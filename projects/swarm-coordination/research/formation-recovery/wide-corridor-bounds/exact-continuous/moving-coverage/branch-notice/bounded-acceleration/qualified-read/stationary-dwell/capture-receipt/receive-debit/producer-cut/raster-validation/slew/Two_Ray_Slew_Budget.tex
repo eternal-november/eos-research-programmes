@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{Two camera angles can restore a covered cue, but only if they fit the capture deadline}
+\maketitle
+
+\paragraph{Changed detector law.}
+Retain the earlier authored far scene and initially reach commanded
+lateral offset $.2$ at rest by time $.2$. Actual offset has fixed
+unknown bias $\pm .015$. The camera's first angle is installed
+in advance, with a movable yaw actuator distinct from the formation
+control. During each useful exposure both pose and angle are fixed.
+The receiver must positively identify a far return through a named
+ray in each applicable phase; it may not infer a world from failure
+to see the target. The scene, target, identity and transport binding
+are fixed during these two exposures. Each exposure may take $.125$
+units and the modeled extra settling allowance is $.01$ total. This
+is an explicit alternative detector premise: two exposures with
+the original full $.27794$ dwell cannot fit. No measured integration
+time, station yaw actuator or optics are supplied by these premises.
+
+\paragraph{Exact geometric and slew limits.}
+For the two target depths $37,38$ and panel at 8, a small positive
+world ray slope $s$ has the open common positive aperture
+\[
+ (.20-8s,\ .28-38s).
+\]
+For arbitrary rays the same inequalities are necessary for a
+positive-side ray hitting both worlds; other placement constraints
+could only shrink the interval. An actual uncertainty interval
+cannot cross the central region where both worlds have no visible
+target. For nominal $b\le .2$ and symmetric radius $e$, one ray
+must cover both $b-e$ and $b+e$. This needs
+$s\ge(.2-b+e)/8$ and $s\le(.28-b-e)/38$ with strictness at the
+boundaries. The maximum possible radius supremum is attained for
+nominal $.2$ in the limiting sense and equals $0.64/46$, about
+13.913 mm. The previous fixed lattice remains more restrictive.
+With two rays sorted by slope, the high slope must reach the
+left endpoint and the low slope the right endpoint. The intervals
+need overlap, so $38s_{\rm high}-8s_{\rm low}\le .08$. Optimizing
+at nominal $.2$ (decreasing $b$ worsens the combined inequality)
+gives the no-slew radius supremum
+\[
+ e\le .08(46)(8)/(38^2+8^2)\simeq19.523\text{ mm}.
+\]
+At its endpoint the two intervals touch; any smaller nearby
+radius has a strict constructive cover. These are restrictions on
+positive single-ray evidence at each phase, not general bounds
+on arbitrary full-frame inference or concurrent separate detectors.
+
+At $b=.2,e=.015$, minimum angle change has the sharp infimum
+\[
+ J_*=\arctan(e/8)-\arctan((.08-e)/38)>.0001644\ {\rm rad}.
+\]
+Both endpoint constraints bound the respective slopes, and arctan
+is monotone. The limiting apertures have strict overlap, so one
+can approach this travel from above without losing coverage.
+With acceleration 4 and speed limit $.01$ rad per unit,
+a rest-to-rest slew needs at least $J_*/.01+.01/4>.01894$.
+The available slate after exposure and settling is only
+$q-.46\simeq .017943$ for $q=\sigma-.15$. Thus no such two-ray
+schedule can guarantee the required capture under the slower
+yaw limit at this nominal position.
+
+\paragraph{Constructive timing arm.}
+Use the slopes $.00190$ and $.00169$. They cover the whole
+bias range with overlap, even with a separate fixed angular
+calibration bias of magnitude $5\cdot 10^{-6}$ radians. Over
+this interval the angle error changes slope by less than
+$5.001\cdot 10^{-6}$, and the three strict endpoint/overlap
+checks remain valid. This angular bias is fixed across the
+rest-to-rest move; two unrelated angle errors would require
+a separate travel and calibration account. At speed limit $.02$
+and acceleration 4, the chosen angle difference is below $.00021$
+and takes at most $.00021/.02+.02/4=.0155$.
+The two exposures and guard therefore finish by $.4755<q$.
+The original diagnostic slopes $.002$ and $.0015$ also cover
+geometrically, but their slew misses this charged deadline even
+without a speed bound (and takes nearly $.03$ at the faster
+pinned speed limit). A direct controller informed of the same
+apertures, scheduler and actuator envelope yields the same result.
+
+\paragraph{Source execution and remaining obligations.}
+Run actual yaw projections before the two pinned native shader
+passes, with modeled poses and independent held still angles.
+The 168 sampled frames cross both schedules, seven lateral states,
+three angle-bias values and two true worlds. The selected native
+depth publication and scoped raw recognition are driven by the
+rendered values. Select a qualifying as-of return from the first
+completed eligible phase; if the second phase misses its cut, do
+not credit it. Keep the same old depth source service, actual
+old native radio callback, one-byte cue and exact receipt cutoff.
+All 504 joined cases replay under calibrated logic; the stronger
+arm has 126 timely cues, while the two failing arms still complete
+some instances without guaranteeing the uncertainty envelope.
+A native rendered image is not physical noise/visibility data,
+actuator timing or an independently selected scene. No R1/R6
+completion or architecture acceptance is claimed.
+\end{document}

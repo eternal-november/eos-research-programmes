@@ -20,3 +20,6 @@ No actual CoSTAR stack or frame geometry from an independent mission.
 [Active camera aperture](active-aperture/README.md) derives what displacement
 and stationary pose qualification are actually needed to restore the occluded
 far cue, retaining the old receiver duties.
+
+[Charged two-angle read](slew/README.md) contrasts geometric coverage with
+actual exposure, settling and modeled rest-to-rest angular timing.
