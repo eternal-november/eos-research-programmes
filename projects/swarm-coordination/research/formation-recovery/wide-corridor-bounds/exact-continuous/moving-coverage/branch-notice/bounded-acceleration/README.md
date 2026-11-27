@@ -15,3 +15,6 @@ isolation of the sharp cutoff. The accepted paths are checked at
 quadratic extrema, not just on time samples. Lean 4.36.0 and Mathlib
 check the scalar inequality kernel. No jerk constraint, measured
 mobility or working notice channel is implied.
+
+[Speed-qualified reading](qualified-read/README.md) quantifies the cost
+of requiring the same truthful notice to be taken at low speed or rest.
