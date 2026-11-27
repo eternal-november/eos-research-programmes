@@ -1,0 +1,112 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{The Last Useful Notice for a Moving Inspection Window}
+\date{2026-11-27}
+\begin{document}
+\maketitle
+
+\paragraph{Audit.}
+Two model robots begin at \(0,4\). The first stays still and the second
+has speed at most one, order and separation in \([1,6]\), and the
+modeled radio link given by the upper bound. Each footprint has sensing
+radius two; ordinary single coverage must hold at every point of the
+owed interval, of width one. Only the horizon \([0,2]\) is required,
+not the return of the previous example. The locally readable inputs
+are the robot's own state, the common time and a truthful qualified
+notice at a prescribed cut \(r\). There is no earlier evidence
+distinguishing the requirements. A future mission designation is
+not inferred from local geometry. The proof models the information
+cut; the fallible physical notice channel, clock error, and who can
+produce the notice are outside this specialization.
+
+\paragraph{Two individually specified worlds.}
+The far-world window starts at \(s_F(t)=h t/2\), \(h\ge0\). The other
+starts at \(s_L(t)=\min(3t/2,3/2)\). In the second world the two
+footprints can stay in their initial configuration. For \(h>2\)
+the previous seam argument requires the movable robot to be at
+most \(4\) at \(a=4/h\), when the far interval has just finished
+crossing position \(2\). It can achieve the terminal requirement
+exactly when \(h+4/h\le7\) by holding first then advancing at unit
+speed (for \(h\le2\) static positions suffice). Thus the physical
+limit is \(H=(7+\sqrt{33})/2\). With \(h\le5\) both worlds can use
+static positions without notice. The nontrivial common-prefix
+question is \(5<h\le H\). The policies are deterministic and
+must guarantee each realized world; private randomness cannot
+certify a randomized failure branch for this hard service law.
+
+\paragraph{Sharp reveal-time bound.}
+In the late-window world, the interval straddles position \(2\)
+from just after \(c=2/3\) through the deadline. Thus the second
+robot must be at most \(4\) from \(c\), including \(c\) by continuity.
+At an earlier reveal it can be ahead of \(4\) only by at most
+its remaining retreat distance \(c-r\). In the far world, reaching
+the terminal mobile position at least \(h-1\) by time \(2\)
+requires its cut position to be at least \(h-3+r\). The same
+prefix produces the same cut position. Consequently
+\[
+  h-3+r\;\le\;4+\max(0,c-r).
+\]
+Solving gives the maximum admissible reveal time
+\[
+ r_*(h)=
+ \begin{cases}
+ 7-h,&5<h\le19/3,\\
+ (23/3-h)/2,&19/3<h\le H.
+ \end{cases}
+\]
+This obstruction holds over all continuous causal speed-feasible
+prefixes, not just controllers that wait at their initial positions.
+
+For sufficiency, in the first case hold at \(4\) until notice.
+The far branch then advances at unit speed starting at
+\(\max(r,a)\); the late branch holds. Both \(r\) and \(a\) are no
+later than \(7-h\), by the cutoff and physical feasibility.
+The early window crossing remains covered by the touching initial
+footprints; after crossing, the far left endpoint advances faster
+than the moving footprint's left edge. The tight right-hand
+endpoint condition is at the deadline. These arguments also
+cover \(r\le7-h\) in the second case. If \(7-h<r\le r_*\),
+start advancing at \(7-h\) before the notice, which is no earlier
+than \(a\). The shared prefix remains covered in the late world
+because \(r<c\). At notice the far branch continues at unit speed;
+the late branch retreats at unit speed to \(4\). The retreat can
+finish by \(c\) precisely because of the upper inequality at the
+cut. The gap stays within \([1,6]\). For example at \(h=6.37\)
+the best wait-until-notice variant allows \(63/100\), and the
+prefix with a contingent retreat allows \(389/600\), an extra
+\(11/600\). At \(h=6.38\) a failure is instead physical, even
+with full advance information. Neither delay number is a
+measured protocol budget.
+
+\paragraph{Exact reference and decoder.}
+On each side of the switching times \(s=1,2\), the allowed mobile
+positions are one closed interval given by affine bounds after
+taking intersections with the gaps. At shared knots retain both
+one-sided constraints by continuity. In the open strata these
+intervals express actual coverage by the union of the two
+ordered footprints; affine interpolation of seam positions
+satisfies both bounds throughout a stratum.
+A forward reachable interval expands by the segment duration
+and intersects the next admissible interval. Backward propagation
+from each required completion yields two viable seam intervals.
+The common prefix uses the intersection of the two worlds'
+requirements and must land in both suffix intervals.
+Reconstruct earlier and later seam positions and use affine
+segments; the first post-notice point is the same physical point
+in both branches.
+
+The direct comparator assembles the complete time-knot network
+with two separate suffixes and a shared seam and checks its
+difference constraints by exact negative-cycle detection. The
+answer agrees on 3571 \((h,r)\) probes, plus 170 individual-world
+checks. There are 2535 constructive positive shared policies,
+checked against 94620 exact footprint-order event or open-stratum
+samples by an independent continuous-coverage criterion.
+66 rational cutoff equalities are tested. Lean checks exact
+interval expansion and scalar cut inequalities; it is not a
+mechanized verification of optical assumptions or the runtime.
+The constructive decoder is an instance of exact planning with
+nonanticipativity, not a claimed improvement over a
+same-information direct solver. Motion clearance and timely
+mission authority remain separate evidence obligations.
+\end{document}
