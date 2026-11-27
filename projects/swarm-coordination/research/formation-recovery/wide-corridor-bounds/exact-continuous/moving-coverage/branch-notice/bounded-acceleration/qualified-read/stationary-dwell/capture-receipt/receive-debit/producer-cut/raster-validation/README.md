@@ -23,3 +23,6 @@ far cue, retaining the old receiver duties.
 
 [Charged two-angle read](slew/README.md) contrasts geometric coverage with
 actual exposure, settling and modeled rest-to-rest angular timing.
+
+[RF-cut local RGB](optical/README.md) follows a rendered, source-qualified
+color sign through the stock image path without a new RF message.
