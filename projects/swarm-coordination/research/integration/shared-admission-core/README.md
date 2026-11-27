@@ -96,3 +96,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Ordered-class recovery in MRWS
 
 [MRWS retained-class handoff](ordered-retained-classes/README.md): the same admission interpreter uses a physical pickup budget, native class custody and prefix-ordered station acceptance rather than a radio suffix. Four picks suffice with the timely report, five without it. The exact direct comparison ties; no independent mission.
+
+## Checking that the declared cases survived export
+
+[History envelope audit](declared-history-envelope/README.md): omitting one adverse row leaves a coarse binding present but makes the old admission check pass, in both the radio and MRWS development cases. Exact history keys and separate source-effect checks reject those omissions and false evidence. This is a replay assurance check, not inferred plant completeness.
