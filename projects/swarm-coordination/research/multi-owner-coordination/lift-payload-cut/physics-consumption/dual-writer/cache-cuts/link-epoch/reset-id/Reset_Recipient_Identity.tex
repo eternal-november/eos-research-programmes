@@ -1,0 +1,77 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{A removed Gazebo entity's numeric identity can recur across a world reset}
+\maketitle
+
+\paragraph{Result and scope.}
+This selected-source replay tests Gazebo Sim 9 pinned to
+\texttt{62f198e0478159549b748c4b4c66f0cbe2fcbf6f}. The real allocator,
+single-remove processing, private copy, vertex diff, diff application
+and reset methods run in a serial graph fixture. Vertices have no
+component data, view contents or joints in this test; single-entity
+removal marking is supplied by the fixture for that scope. The pinned
+runner is inspected to establish that it stores the initial entity
+manager and calls this reset before stepping. The test does not
+instantiate a full server, engine, plugin restart, or remote transport.
+
+\paragraph{Exact allocator cut.}
+Within this scope, removing an entity leaves the entity counter unchanged.
+However, reset first copies the initial manager, including its counter
+$b$. It compares the present and initial graph by vertex identifier, then
+adds current-only vertices to the temporary graph and marks them for
+removal. Adding these vertices raises the counter up to their maximum
+identifier. Vertices already absent before the reset do not take this path.
+
+Let $S$ be the identifiers present just before the reset that were added
+after the initial snapshot, all above $b$. Assume no counter override,
+distributed allocation, reused identifiers or overflow before the test.
+All initial vertex identifiers are at most $b$. The counter after reset
+and normal removal processing is exactly
+\[
+c_{\mathrm{reset}}=\max\bigl(\{b\}\cup S\bigr).
+\]
+Initial-only vertices are already in the copy; remaining initial vertices
+do not raise the count. No component or view behavior is needed for this
+claim. The next ordinary allocations therefore repeat the old suffix
+of identifiers above $c_{\mathrm{reset}}$ that were previously issued.
+A retained high vertex prevents that particular suffix from repeating,
+even if reset subsequently removes the high vertex. This boundary agrees
+with all 2,550 source cases covering every live subset through eight
+new entities at five initial counts, including 1,275 cases with a
+reused suffix.
+
+\paragraph{Why it matters for a receiver.}
+The smallest exercised witness starts at counter 10, creates entity 11,
+fully removes it, resets and allocates entity 11 again. The number can
+now name a new actor incarnation, distinct from the subject of an old
+actual-effect receipt. In the explicit receiver negative control, an
+external archive retains a receipt from before reset. A replacement
+lookup by world, entity number and reused job number admits the old
+receipt for work the new actor has not done. A stale receipt and a
+legitimate new receipt can have the same source-visible tuple in that
+interface. This is an authored archive/admission example, not a fault
+in a stock receipt API or a claim that transport buffers survive reset.
+
+One adequate repair for the stated model is to bind admission to the
+authoritative world incarnation as well as to the body and operation:
+the incarnation counter or name must be outside the snapshot that can
+rewind. If the authority cannot establish the current incarnation,
+it cannot use an id-only receipt to admit this work. Operations that are
+intentionally carried across reset require their own explicit mapping;
+the example does not make all cross-reset evidence invalid. Other valid
+designs include a non-reusable operation identifier or a barrier proving
+that no earlier receipts remain available anywhere. Merely moving a
+generation field into the rewindable checkpoint does not provide the
+needed distinction. Both the explicit test and an equally informed direct
+receiver agree.
+
+\paragraph{Limits.}
+This invalidates a potential blanket use of native numeric entity
+identifiers as lifetime-stable appointment identifiers. It does not show
+that every reset reuses identifiers, that the selected source case
+physically repeats a move, or that an implementation already supplies a
+durable incarnation authority. This is a scoped interface obstruction
+and positive design requirement, not independent mission or architecture
+acceptance.
+\end{document}
