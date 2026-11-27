@@ -12,3 +12,6 @@ mission are claimed.
 
 [Contextual residual interpretation](residual-interpretation/README.md):
 exact native-to-export reflection, coverage, and frozen matcher reuse.
+
+[Exceptional readers](exceptional-readers/README.md):
+use the exact critical prefix for one, or compressed threshold flow for several.
