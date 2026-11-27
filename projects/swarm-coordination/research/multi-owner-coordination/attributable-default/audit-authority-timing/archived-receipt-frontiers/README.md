@@ -9,3 +9,6 @@ The Space archive includes the source inputs under up/. This uses
 ordinary local SQLite files and the pinned native RWARE journal. No
 real operator audits, hardware effect settlement, or independent
 mission are claimed.
+
+[Contextual residual interpretation](residual-interpretation/README.md):
+exact native-to-export reflection, coverage, and frozen matcher reuse.
