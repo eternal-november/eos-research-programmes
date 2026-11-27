@@ -1,0 +1,5 @@
+# Corridor notice and confirmation cut
+
+[Source, executable argument, and limits](Corridor_Receipt_Cut.tex). With the radio report already delivered, the same scout receive budget can block its confirmation after the maintenance cue. The selected pinned source distinguishes 2 and 3 bytes at the exact cut, even though the transport accepts both later. The timed movement and direct confirmation path are authored fixtures. No full Gazebo, field, or independent case is claimed.
+
+Materialize `src0` through `src5` from `SOURCE.tsv` and `upstream_replay.cpp` from `../replay.cpp` at repository ref `c59068b756835e8234a9aecc0de2fd082896556b` (blob `8fcff1aa0e7052c2c0038644e5c206f1dab3841b`). Run `sh replay.sh | cmp expected.txt -`. The final Space archive also contains those pinned inputs. The standalone `authored_reference.js` checks the original timing design with no receiver competition; the final C++ sweep compares 192 histories with the direct inclusive receive budget. Five Lean lemmas classify silence and the strict tick boundary, not source compilation or physical correspondence.
