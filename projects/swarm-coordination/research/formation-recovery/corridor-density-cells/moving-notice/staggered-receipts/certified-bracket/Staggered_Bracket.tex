@@ -1,0 +1,94 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{A rational two-sided bracket for the staggered density recovery}
+\date{27 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Audit.}
+Keep the five-robot fixture of PR~713 exactly: initial equal
+gaps \(g\), continuous allowed gaps \([g,g+3]\), acceleration and
+speed caps 2, rest endpoints and deadline 2. The middle knows the
+demand at time 0, its immediate neighbors only at time 1, and
+outer robots receive no distinguishing observation. Each world
+demands the extra span \(\delta\) in one of two two-gap blocks.
+The notice cuts, actor dynamics, authorized use of each cue,
+and all gap constraints are unchanged. The unrestricted optimum
+is not claimed. It lies in the exact interval
+\[
+        \frac{11087}{2896}\quad\le\quad \delta_*
+        \quad\le\quad \frac{88697}{23168},
+\]
+of width \(1/23168\). No source or hardware claim about notice time
+is introduced.
+
+\paragraph{A lower certificate for actual motion.}
+Each trajectory has piecewise constant acceleration in segments
+of length \(1/k\), with a shared denominator \(d\).
+Scale positions by \(2dk^2\) and velocities by \(dk\).
+For one acceleration numerator \(A\), the segment's scaled
+position is a quadratic curve with Bernstein coefficients
+\(X,\ X+V,\ X+2V+A\). The end state is the third coefficient and
+\(V+A\). Subtracting adjacent robots' coefficients gives the
+gap increment coefficients. If all belong to \([0,6dk^2]\),
+the increment belongs to that interval continuously, because
+the Bernstein polynomial weights are nonnegative and sum
+to one. Affine velocity is likewise checked by its endpoint
+bounds. The exact checker verifies acceleration, all gap
+coefficients, each robot's rest end, shared outer accelerations
+everywhere, and shared neighbor accelerations before time 1.
+It verifies both mirrored worlds and the exact demanded span.
+The eight-segment certificate reaches \(19/5\); the final
+256-segment certificate reaches \(11087/2896\). The optional
+linear search locates candidate piecewise accelerations.
+The certificate, not the floating search, is what establishes
+a lower bound. No claim about a mesh optimum is needed.
+
+\paragraph{An outer certificate for all causal motion.}
+The reflected-and-swapped pair of feasible worlds is feasible.
+Average it with the original pair. Signed speed, acceleration
+and ordered gap bounds are convex, and each demand and shared
+prefix is preserved. Thus it is enough for an upper bound
+to work on a left-demand trajectory with opposite outer
+motions throughout and opposite immediate neighbors up to
+and including the time-1 cut. The middle remains unconstrained
+by such a symmetry within the left world. No particular
+full-travel profile is imposed on the outer robots by the
+upper program.
+
+At sampling spacing \(h=1/k\), write scaled displacement and velocity
+\(X=2k^2x\), \(V=kv\), and
+\[
+ E=X_{j+1}-X_j-(V_j+V_{j+1}), \qquad
+ q=V_{j+1}-V_j .
+\]
+For any actual trajectory the two endpoint velocities and
+the acceleration bound give a tent upper envelope, and a
+reflected lower envelope, on the intervening velocity.
+Their integrals imply
+\[
+                  |E|\le 1-q^2/4,\qquad |q|\le 2 .
+\]
+The linear relaxation uses the upper tangents to
+\(1-q^2/4\) at each integer \(b=-2,-1,0,1,2\); they give
+\(4(\pm E)+2bq\le 4+b^2\). Every physically feasible trajectory
+satisfies these necessary inequalities. Also retain the
+speed and gap bounds at each sampled cut, initial and final
+rest, and the indicated information-sharing equalities.
+Hard gaps between cuts and exact intersample viability may
+fail for relaxed variables, so the result is an upper bound,
+not a controller.
+
+For each stored dual certificate the verifier regenerates
+those integer rows, sums them with exact rational coefficients
+(nonnegative for inequalities), and checks that the left
+side is exactly the desired terminal-span objective.
+At \(k=64\) the resulting upper bound is \(88697/23168\).
+The upper certificate does not impose the piecewise-constant
+template used for the lower witness. Independent integer and
+rational checkers require only Node and Python, not the
+optimization libraries used to search. The two verified
+bounds differ by exactly one numerator unit at denominator
+23168. This remains a model guarantee conditioned on the
+declared actual notices, with no packet delivery or independent
+mission result.
+\end{document}
