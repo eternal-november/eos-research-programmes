@@ -17,3 +17,8 @@ direct rendezvous rule. It does not implement distributed consensus,
 physical-effect migration or an independent swarm mission.
 
 [Scoped receipt archive](receipt-archive/README.md) reuses one archive consumer on the pinned SubT scoring cut and this RWARE publication owner, distinguishing read-only completion from authority to reapply. Held-in; neither branch closes I1.
+
+[Committed dependency changes](committed-dependencies/README.md) traces
+the actual query paths across two overlapping named requests and two
+publication transfers. Indexed local revalidation does not make the
+station's full authority transfer cheaper or confer exclusive ownership.

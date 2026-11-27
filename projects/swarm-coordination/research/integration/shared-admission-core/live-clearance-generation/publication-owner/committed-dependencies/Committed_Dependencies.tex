@@ -1,0 +1,129 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,hyperref}
+\title{Which Source Dependency Changes When a Pending Retry Becomes Cached?}
+\date{2026-11-27}
+\begin{document}
+\maketitle
+
+\paragraph{Audit.}
+The receiver consumes a read-cut projection of a named repeatable
+RWARE simulator command; it must not infer lasting permission to
+execute from that projection. Two requests are pending at the first
+publication cut and settle across two successive changes of source
+owner. SQLite commits the authoritative simulator step and keyed
+result in one transaction. The logical source is single-writer and
+each transfer is to one externally selected destination. There is
+no distributed election, duplicate-recipient protection, physical
+actuator rollback, or measured deadline in this fixture. The
+independent carrier is a separate native instance; no claim about
+its competing for this station's writer lock follows.
+
+\paragraph{Dependency discovery.}
+SQLite's trace hook observes the actual statements in the pinned
+\texttt{authorized\_step} body, with only CLI dispatch removed from the
+loaded source. On refusal it reads two exact atoms, current authority
+and command-specific permission. Given permission, it checks the named
+receipt, \emph{including absence}. Pending results also consume the ordered
+native log for reconstruction. A completed replay returns the stored
+keyed result without reading the log. The guarantee here is equality
+of a declared consumed projection at a cut, not minimal information for
+predicting the next native effect. Two different logs can yield the
+same next effect.
+
+The candidate records committed touches keyed by authority scope,
+permit intent, receipt intent, and a coarse ordered-log atom.
+Compared with a pre-supplied changed-name list, the added source
+mechanism is the mutation trigger in the effect transaction. Inserts
+and deletes mark the corresponding name; re-keyed updates mark
+both ends. An absent row is guarded by that same name and starts at
+zero if untouched. A new receipt materializes the prior absence
+dependency and switches the supported read path. Under the declared
+mutator envelope, no rollback is a committed touch and no affected
+atom can retain its old revision after commit. The checked signed
+integer limit makes a next overflow attempt fail atomically rather
+than alias a prior proof; this is a service limitation, not a proof
+that the system never runs out of values.
+
+\paragraph{Scoped reuse law.}
+Index each receipt of a read by source identity, subject request,
+expected era, and the ordered versioned atoms actually read. Compare
+only within a single read snapshot. With an unchanged identity and
+subjects, monotone equal revisions imply that the relevant projection
+atoms have not changed. In the refused branch these two guards
+preserve refusal. In the completed branch their equality and equality
+of the keyed receipt preserve the response regardless of other
+native steps. In the pending branch equality includes the log;
+otherwise reconstruction must be invoked afresh. This case split is
+checked in Lean. It assumes the matched source's deterministic
+evaluation discipline and trusted version maintenance; the Lean
+projection is not a proof of SQLite triggers. Mutations that touch
+then restore equal values may invalidate conservatively. A result
+used for an actual subsequent write is rechecked by the original
+\texttt{BEGIN IMMEDIATE} worker, not licensed by a prior snapshot.
+
+\paragraph{Joined experiment.}
+Start two permitted names at the old station. Crash the old worker
+just before or after its SQLite commit for the first request.
+Fence that source, copy the frozen database, validate both the native
+logical digest and metadata digest, and issue a new owner identity.
+The retry either applies once or returns the copied result. The
+second request is still pending at this point. Crash its worker
+around the commit at the new owner. When it commits, the first
+request's completed read stays valid locally, even though the pending
+read of the second request no longer does. Fence and copy again.
+With the second seal withheld at the initial receiving cut, the
+dependent request waits and the native independent carrier moves;
+after the seal becomes available the receiver authorizes the successor
+and completes the old request or reads its original result.
+Both retired stations refuse their respective late writes. The code
+keeps the one-way publication SQL and canonical logical seal of
+\href{https://github.com/eternal-november/eos-research-programmes/pull/643}{the
+pinned owner-migration test}, generalizing the era argument for the
+second transition. The sidecar and source identity are new authored
+metadata, not functionality attributed to stock RWARE.
+
+\paragraph{Costs and stronger comparisons.}
+The 24 traces cross two crash cuts per request, initial or delayed
+delivery of the second seal, and three held-in log sizes.
+The exact semantic re-read and independently rerun uninstrumented
+handoff reference agree on both results, when an affected request
+has to wait, and the independent carrier step. With an unchanged
+pending proof at the middle station, five point lookups (including
+identity) replace a projection involving 8, 12, or 20 ordered native
+rows as well as its point reads. The old cached proof uses four
+lookups versus three point reads in the uninstrumented projection;
+this is not a speedup on that branch. Initial population, trigger
+updates, snapshot transfer and seal validation are not free. Each
+instrumented ordinary row operation touches one metadata key or
+two on a primary-key update. Tombstone space scales with distinct
+touched keys in the current identity, not just live rows. These
+counts exclude SQL index search and I/O timing. The fixture's two
+full copies total 98,304 logical SQLite page bytes with the sidecar,
+against 65,536 without it, excluding WAL and transport. The small
+JSON serialization of this run's touched revision rows is not a space
+bound. No budget or service gain over a direct incremental design with
+the same trigger authority is claimed. The count/dependency-index
+strategy is an instance of incremental maintenance (see the
+\href{https://doi.org/10.1145/170036.170066}{SIGMOD view-maintenance
+work} and \href{https://www.cs.cmu.edu/~blelloch/papers/popl02.pdf}{adaptive
+functional programming}); the source-specific evidence is the commit
+cut and changing which atoms are consumed.
+
+\paragraph{Boundary controls.}
+Separate origins can use the same numerical revisions for different
+native logs; the identity check rejects the collision. Subject scope
+and owner transition are checked separately. Corrupting only copied
+metadata after the fence leaves the native digest valid but rejects
+retained revision proof transfer. A native-only direct consumer can
+still install a copy then perform fresh reads. With recursive
+triggers disabled, a deliberately excluded SQLite conflict
+\texttt{REPLACE} that deletes another receipt via its unique tick
+can leave stale versions for that removed name. The native producer
+does not use that statement; adding it or another bypass changes the
+cut-maintenance premise. Finally, one portable seal can activate
+\emph{two} destination copies; the exact worker in the fixture then
+applies twice even though the retired donor refuses. A separate
+authority binding of destination is necessary to strengthen that
+one-recipient premise. The test does not supply consensus, independently
+chosen transfer, complete R2/I1, or acceptance evidence outside simulation.
+\end{document}
