@@ -16,3 +16,7 @@ on a different driver. The Space ZIP includes all needed source inputs.
 
 Requires Python 3, Git, C++17/20, software Mesa EGL/OpenGL and a compiler.
 No actual CoSTAR stack or frame geometry from an independent mission.
+
+[Active camera aperture](active-aperture/README.md) derives what displacement
+and stationary pose qualification are actually needed to restore the occluded
+far cue, retaining the old receiver duties.
