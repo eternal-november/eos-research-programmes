@@ -1,0 +1,129 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{Recover a usable link while the formation is still braking}
+\begin{document}\maketitle
+\paragraph{Target and omissions.}
+After a sudden stop, preserve clearance and every established
+surviving old link throughout. Restore one cross-component link at
+the activation range for the last \(h\) time units before a common
+deadline \(T\); all surviving robots must be at rest at \(T\).
+The acquisition interval is a geometric proxy for a transport
+that can run in motion. No packet, throughput, control-message
+delivery, or measured radio law is claimed. A protocol that
+requires the sender and receiver to be stationary throughout its
+transfer has a different task and cannot use the overlap. The
+stopped failed body remains an obstacle. The fault can remove global
+connectivity immediately, so only surviving old links are kept.
+
+\paragraph{Exact scalar envelope.}
+Normalize relative progress to \(x(0)=0\) and \(v(0)=v(T)=0\),
+with \(\dot x=v\), \(|\dot v|\le A\), \(|v|\le V\) and
+\(x(t)\le L\) as the clearance constraint, where \(A,V>0\).
+Write \(C\ge0\) for the progress threshold activating the link.
+Reverse motions are permitted in the necessity claim. With
+\[
+ F(t;\tau)=\int_0^{\min(t,\tau)}
+  \min\{As,V,A(\tau-s)\}\,ds,\qquad I(\tau)=F(\tau;\tau),
+\]
+take \(\tau=\min(T,I^{-1}(L))\) for \(L\ge0\). Then for all
+\(t\in[0,T]\), \(F(t;\tau)\) is the largest attainable position
+with all these requirements. If \(I(T)\le L\), integrate the three
+pointwise velocity limits from speed, initial rest and final rest.
+Otherwise the profile saturates the clearance cap. Before its
+braking switch, the corresponding speed envelope bounds every
+trajectory. During braking its squared speed is exactly
+\(2A(L-F)\). Any trajectory with positive current velocity needs at
+least \(v^2/(2A)\) further progress before it can stop, so has
+\(v^2\le 2A(L-x)\). Where a proposed trajectory were ahead of
+the profile during braking, it would thus have strictly lower
+speed (negative speeds cannot overtake either). The positive
+part of the gap to the profile is absolutely continuous and
+cannot increase there; with no initial positive gap it stays
+zero. After the profile stops, the clearance cap itself is tight.
+The profile is realizable by accelerating, cruising if necessary,
+braking and then holding. Therefore the joint demand is exactly
+\[
+ T\ge h,\qquad C\le L,\qquad F(T-h;\tau)\ge C .
+\]
+The monotone realizing profile remains linked after the left end
+of the dwell. A two-component symmetric axial translation
+realizes the relative bound with twice the individual acceleration
+and speed. That lift assumes common timing and no tighter
+intermediate constraint than the stated axial clearance.
+
+\paragraph{A joint incompatibility despite separate feasibility.}
+Take \(A=1,V=4,C=1/4,L=3/5,h=2/5\). Rest-only needs time 1,
+while acquiring the link for the full dwell without stopping at
+\(T=28/25\) is possible: accelerate until \(71/100\), then brake,
+giving sufficient progress by \(18/25\) and positive velocity at
+the deadline. For joint rest and dwell the largest possible
+position at \(T-h\) is \(T^2/4-h^2/2<1/4\). The exact joint
+deadline is \(\sqrt{33/25}\), instead of 1.4 if no progress
+toward the dwell is admitted before rest. With tight clearance
+\(L=C\), first attaining the link necessarily reaches the cap
+at rest, and the 1.4 deadline is exact. The replacement of
+rest-first evidence by moving evidence works only where an
+extra safe closing distance is actually available.
+Lean checks the braking-curve comparison and rational
+incompatibility witness; it does not formalize the full ODE.
+
+\paragraph{Native warm states and universal lower bound.}
+Re-run to the four request cuts of the two published
+\href{https://arxiv.org/html/2609.29939v1}{KTH managed-removal point-mass examples}
+from the pinned source. At each departure request, counterfactually
+park the outgoing body and drop its edges while preserving both
+positions and velocities of surviving bodies. The source radii
+and old graph are reused. Speed cap 1, acceleration cap \(A\)
+and dwell duration are imposed in the recovery test, not measured
+vehicle capabilities. We impose no disturbance or state error.
+For any potential bridge at time \(T-h\), project both velocities
+towards the other along the initially separating axis.
+A robot with initial signed projection \(u\) can close by
+at most \(\int_0^{T-h}\min\{V,u+At,A(T-t)\}\,dt\).
+The sum must cover at least the initial separation minus range,
+for at least one pair. This is necessary even if pair identity
+could change after the start of the dwell, and even if all other
+constraints were removed. Rest at \(T\) also needs at least the
+longest individual braking time.
+
+\paragraph{Constructive upper bound and checks.}
+Brake each survivor from its actual velocity, then move both
+components symmetrically along the closest braked cross pair.
+Choose a closer rest endpoint than the old activation radius
+so that the crossing occurs before rest. The same identified
+bridge distance decreases linearly in the axial displacement
+during the entire dwell. Piecewise constant acceleration and
+a chord-deviation bound check every old edge, body and obstacle
+continuously, not just at sample endpoints. Number arithmetic on
+the native inputs is floating point with strict witness and
+rejection margins, not exact real root certification for arbitrary
+data. All 36 pose/cap/dwell combinations give witnesses within
+0.00101 model units of the relaxed motion lower bound and save at
+least 0.1054 relative to the lower bound under the rest-first
+law. For the planar request at acceleration 1 and dwell 0.25,
+the bound is about 1.02193 and the witness 1.02244, versus at
+least 1.20879 under rest-first. The ending pair gap is about
+1.47749, below the service radius 1.54; old links and clearance
+have their own measured certificates. The replay also cross-checks
+3,348 scalar-profile evaluations.
+
+\paragraph{Baselines, interface and residual.}
+Managed removal establishes a bridge before permitted departure;
+that is a way to avoid the abrupt starting condition, not a
+matched controller after an unannounced stop. The
+\href{https://en.endo-lab.jp/research/detail/499}{Maeda--Endo--Matsuno
+work and later distributed MPC} are substantive local
+crash-recovery comparisons. Their detailed controllers and
+hardware have not been reproduced. Breeden and Panagou's
+\href{https://arxiv.org/abs/2210.01354}{joint input viability}
+protects invariant domains, whereas here time to acquisition
+and terminal rest also matter. A same-plant direct solver with
+the more permissive mobile seal can exploit the same trajectories;
+the reported advance is an exact geometric boundary and a
+measured effect of changing the service interface, not an
+advantage over that solver. Warm replay uses globally known
+state at the cut, not a local-information implementation.
+Whether a real acquisition works in motion, is long enough,
+and can confirm the correct application or authority receipt is
+unresolved. No independent mission or full R6 claim is made.
+\end{document}
