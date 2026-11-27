@@ -100,3 +100,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Checking that the declared cases survived export
 
 [History envelope audit](declared-history-envelope/README.md): omitting one adverse row leaves a coarse binding present but makes the old admission check pass, in both the radio and MRWS development cases. Exact history keys and separate source-effect checks reject those omissions and false evidence. This is a replay assurance check, not inferred plant completeness.
+
+## Partial salvage and live station order
+
+[MRWS partial salvage](ordered-retained-classes/partial-salvage/README.md): a legal deposit makes a missing higher-rank item impossible to append. Actual partial transfer to a named buffer preserves the continuation; the fourth pick is needed without a qualified read. The pinned selected-source replay also tests donor loss on rejection and a separately authorized compensation arm. Matched direct ties; held in.
