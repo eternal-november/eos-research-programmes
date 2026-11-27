@@ -15,3 +15,7 @@ Out of 77 wide ascending cases across three meshes, all 231 lower
 bounds matched the route comparator; 224 rollouts were certified by
 their chords. Additional controls test a disconnected false arrival
 and two overconstrained crossing orders.
+
+[Exact finite-cell certificates](exact-continuous/README.md) supplies the
+continuous completeness argument and validates route optimum and failure
+certificates with rational arithmetic rather than accepting LP statuses.
