@@ -16,3 +16,7 @@ supplied texture data, not a rendered environment or hardware measurement.
 [Finite-point verification](wire-validation/README.md) checks what happens
 when the native dense flag survives the bridge and a downstream filter
 takes the flag as a guarantee.
+
+[Rasterized geometric validation](raster-validation/README.md) puts actual
+software OpenGL geometry and the pinned Ogre2 depth shaders before the same
+capture and radio slices; an upstream failure and a later mask differ.
