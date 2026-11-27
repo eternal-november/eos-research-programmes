@@ -40,3 +40,7 @@ center coordinates do not certify a changing body footprint through a crossing.
 
 [Cave mouths, trigger volumes and a two-edge trapping cut](compound-mouths/README.md):
 reconstructs the nominal topology and separates a passage obstruction from a radio outage.
+
+[Two native development replays](native-baseline-replays/README.md):
+a selected COPS motion comparator and a selected SubT radio/broker callback
+test of dispatch order. Separate fixtures, not a coupled or held-out mission.

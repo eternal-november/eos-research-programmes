@@ -1,0 +1,117 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,booktabs,hyperref}
+\title{Native Cave Development Replays: Motion Leaves and Registered Relay Cuts}
+\date{2026-11-27}
+\begin{document}
+\maketitle
+
+\paragraph{Claim and kernel.}
+These are two development replays on a published, already inspected cave
+layout. The test does not compose their clocks, verify an observation or
+deployment transition in a rendered scene, or consume the independent
+mission. Separate success of the components does not certify their assembly.
+
+\section{COPS motion comparator}
+
+The state is the tile, report progress (absent, carried, deposited), and the
+inspection bit. A traversal takes one tick. Inspection, pickup, a deposit,
+and a named receipt query each take a tick; the query is represented by a
+dwell in the native motion encoding. On a closed leaf no new traversal of
+edge \(2/3\) may start at or after tick 3. The initial tile is 43, inspect
+at 1, pick up at 3, deposit or query at 39, and egress through 0. The
+known-plant MILP can be given initial settled status and the gate history.
+Those are not given to the runtime policy. It sees the keyed dock result
+at the end of the query and the gate state only at its endpoints after
+the cut.
+
+In the imported graph every removed component touches at most one of the
+13 retained tiles, not a gate endpoint. In the stated leaf model excursions
+into a removed component cannot contribute a duty update, gate observation,
+or alternate through route; replace each excursion by waiting the same
+number of ticks at its attachment. This argument does not apply when
+the excursion can contribute evidence, relay repositioning, collision
+avoidance, or some other material effect.
+
+The selected source is COPS commit
+\texttt{67d2e5dd4534b3f3eec95b6cfda9d4c9c1746ef0}. The native code
+constructs and decodes the motion flow, using SciPy/HiGHS for the numerical
+solve. A fixture adapter adds deadline, forbidden-transition and forced
+occupancy constraints. The frontier reward, cluster planning, master and
+connectivity constraints are not invoked. The independent full-graph
+reachability comparison matched all \(4\cdot4\cdot6=96\) cases:
+initial settlement and gate state, four forced-prefix profiles, and six
+deadline pairs. For a new report with a closed gate, a known-plant
+early route meets report 14 and egress 17; the desk-first prefix cannot
+meet report 20 with egress 24 but can meet 21 with egress 24.
+Inspection-first can meet report 23 with egress 26 but not 21 with
+egress 24. These are scoped feasibility checks, not arbitrary global
+optima over all triples.
+
+The four-world exact causal search separately checks ordinary report due
+\(r\), ordinary egress \(h\), and already-settled fast egress \(f\), with
+inspection due 12. The tested successful triples are
+\((21,24,10),(23,26,8)\); \((20,24,10),(21,24,8),(22,26,8)\) fail.
+The successful policies replay the exact key in SQLite. Two groups of
+three additional native leaves verify a fast settled path and constrained
+continuations of a common unsettled route. In the latter pairs the forced
+common prefix reaches tile 3 at tick 11 or 13 respectively, before the
+closed and open continuations may use different motion. Indexing those
+native continuation solves by a known leaf does not itself produce
+a causal policy. The causal search and SQLite replay are the policy
+check, and no native COPS radio constraint is credited here.
+
+\section{SubT radio callback comparator}
+
+The extracted visibility code receives a five-site exact projection
+of weighted shortest-path distances recomputed from all 158 vertices and
+163 edges in the pinned DOT file. The position-to-tile lookup is authored for
+five point samples and is not a recovered stock voxel lookup. The exact
+paths and blob hashes of the extracted source inputs are listed in
+\texttt{radio/INPUTS.tsv}. The endpoint shim uses zero fading variance,
+high test transmit power, and a nonbinding bit budget; it exercises
+hard cost/range filtering, not calibration of wireless reliability.
+The native callback is checked for the source and expected two-byte payload;
+this is not an acknowledgment protocol, effect seal, or historical receipt.
+
+The old sender \(A\) is at tile 18 and the new sender \(B\) at tile 16.
+The dock is tile 39. No relay yields graph costs \(10,13\) respectively.
+With a registration at tile 13, both chosen routes cost 9 but their
+largest hops are \(75,\sqrt{3125}\) m. At tile 42, the old route remains
+direct at cost 10 and the new route costs 10; both largest hops are
+\(\sqrt{5000}\) m. This first picks a route under the upstream cost/tie
+rule, then checks hard maximum range. The differently defined comparator
+that can choose a feasible alternate route after seeing the range check
+is not the stock route-selection seam, even if it could use the same
+physical relay and airtime.
+
+At \(R=72\) m, the asserted callback results are
+\[
+\begin{array}{lcc}
+ & A & B\\
+\text{not registered} & 1 & 0\\
+\text{tile 13 effective} & 0 & 1\\
+\text{tile 42 effective} & 1 & 1.
+\end{array}
+\]
+Consequently tile 13 requires \(t_A<t_\mathrm{reg}\le t_B\), where equality
+assumes the registration update is processed before dispatch at that
+instant. Tile 42 requires just \(t_\mathrm{reg}\le t_B\). An event processed
+between the two sends, not a deployment command in the log, is the
+ordering boundary. The selected registration code disregards the moving
+marker, and neither removing a registered name from the next pose map
+nor publishing a changed position under the same static name withdraws
+the prior registered position in this tested scope. That observation
+does not establish deletion semantics across process reset,
+new names, or a full simulator lifecycle.
+
+The 112 ordered schedules sweep seven configured hard ranges, two sampled
+placements, two distinct send orders and four registration-cut arms
+(before either send, between, and two no-registration-during-send controls).
+Another 280 same-fixture sends check five registration phases.
+The executable is not a complete native COPS--Gazebo co-simulation:
+a report callback does not establish collision-free motion, egress, locally
+available advance notice, or lawful release of an earlier commitment.
+A subsequent benchmark needs an executable connection between actual
+motion and loaded geometry, authoritative registration/evidence, and
+timely availability at the decision-maker, with matching baselines.
+\end{document}
