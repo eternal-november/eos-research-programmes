@@ -12,3 +12,7 @@ engine or safety assertions.
 
 [Evidence and limits](Mailbox_Snapshot_And_Physics.tex). For a checked run,
 use `set -o pipefail` and pipe the command through `cmp results.txt -`.
+
+[Link recipient epochs](link-epoch/README.md) follow a configured link name
+through two scoped changes, separating cached entity, sampled command and
+an already staged physics input.
