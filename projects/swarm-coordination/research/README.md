@@ -394,6 +394,8 @@ With both short routes feasible, more range on just one anchor can replace the o
 
 **SC-ACCEPTED-RETURN:** The same restart can hide a durable but unexecuted return. The [joined bay and radio replay](integration/shared-admission-core/live-clearance-generation/joint-closure/accepted-return/README.md) distinguishes qualified no-right evidence from silence, and avoids spending the later release allowance announcing a live right. Source-backed motion and callbacks with authored authority and service envelope.
 
+**SC-RECEIVER-ABSENCE:** A fresh accepted higher update can exclude a particular lower release in a closed issue stream; an empty edge array or a publish request cannot. [Selected VDA source joined to the prior bay replay](integration/shared-admission-core/live-clearance-generation/joint-closure/accepted-return/receiver-absence/README.md). Closed stream, exact identity and physical clearance remain separate.
+
 **SC-WEIGHTED-PACED-SYNTHESIS:** Mode-specific local duration yields an exact pace/latency frontier and minimum-latency substitution table. [Weighted proof and replay](recurrent-coordination/paced-port-synthesis/weighted-deadlines/README.md) show that equal Boolean interfaces and equal length can still need growing state for arbitrary deadlines; a fixed cap restores finite summaries. Restricted commissioned-mode result.
 
 **SC-EVIDENCE-TREE-RISK:** Tree pair marginals plus evidence/continuation flags give an exact fixed-whole-law admission check for a fixed policy, without summing incompatible cohort maxima. [Proof, rational witnesses and compact/full replay](joint-risk/evidence-tree/README.md). Source nodes can still matter when not counted as physical exposures. Scoped numerical examples, no field law.
