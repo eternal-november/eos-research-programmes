@@ -1,0 +1,100 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{When archived receipt frontiers can replace a matching graph}
+\author{}\date{}
+\begin{document}\maketitle
+
+\paragraph{Question and kernel.}
+A service controller must choose old duties to verify before it knows
+which two evidence-reader slots will be available. It can assign
+the chosen duties to the actual reader slots afterward, before the
+verification deadline. Each valid slot supports one read of a named
+historical result, not an arbitrary number of queries or a replay of
+the old operation. Qualification requires the exact committed key,
+payload, tick and result at one authorized snapshot source. The
+effect log, apparent shelf/carrier state, and receipt are distinct.
+This is a development-scale transfer of the common-subject
+timing question from
+\href{https://github.com/eternal-november/eos-research-programmes/pull/691}
+{the audit study} to archival evidence availability. It does not
+supply culpability, financial enforcement or a deployed audit authority.
+The fixed jobs and read capacity are fixture inputs.
+
+\paragraph{One nested snapshot family, any number of reader roles.}
+Let \(q_i>0\) index the common ordered manifest of requested evidence.
+A slot with a certified complete frontier \(c\) can supply exactly
+the named evidence with \(q_i\le c\). It cannot claim completeness
+from a tick or latest business state alone; the complete-prefix
+hypothesis is on the consumed identities under the current scope.
+For each possible reader configuration \(w\), sort its slot frontiers
+\(c_{w,1}\ge c_{w,2}\ge\cdots\) and pad missing slots with zero.
+Let \(b_k=\min_w c_{w,k}\). A set of subjects can be chosen before
+configuration is known if and only if, in descending order,
+its required cuts \(q_{(k)}\) satisfy \(q_{(k)}\le b_k\).
+For a fixed role, if the \(k\)-th request outruns the \(k\)-th
+slot, there are fewer than \(k\) slots for the first \(k\) requests.
+If all inequalities pass, assign in rank order. Applying the
+criterion in each world and commuting the finite minimum with the
+rank-indexed inequalities proves the claim and gives a late binding
+for each actual slot configuration. The synthetic slots aren't new
+live stores and need not coincide with the held slots of any one
+role. Nor is their vector necessarily minimal for a fixed set of
+allowed queries.
+
+The same exact reduction applies to the attainable inclusion
+probabilities. Put \(S_t=\{i:q_i\ge t\}\) and
+\(N_w(t)=|\{k:c_{w,k}\ge t\}|\). A vector of probabilities \(p_i\)
+is feasible in role \(w\) precisely when \(0\le p_i\le1\) and
+\(\sum_{i\in S_t}p_i\le N_w(t)\) for every requested threshold \(t\).
+Necessity follows from count bounds. For sufficiency, any nonempty
+set of subjects has the same eligible reader neighbourhood as the
+suffix at its smallest required cut; nonnegative marginals and its
+suffix constraint give its capacitated Hall cut. A fractional
+matching is a lottery of actual schedules. Since
+\(|\{k:b_k\ge t\}|=\min_w N_w(t)\), common individually feasible
+marginals also admit one joint lottery in this structured family,
+even with three or more roles. Construct it on the synthetic slots
+and remap each draw when the role is recognized. Neither claim
+transfers to arbitrary holes, arbitrary role-dependent scopes,
+or a second fault after assignment that invalidates that slot.
+
+\paragraph{Native producers, matched countermodel.}
+The replay imports pinned native RWARE transitions, the durable journal
+from \href{https://github.com/eternal-november/eos-research-programmes/pull/633}
+{the atomic-commit study}, and real SQLite WAL transactions and backups.
+The named requests are the actual first acceptance, its later unload,
+and the second acceptance at native ticks \(8,13,27\).
+From coherent archived slot pairs \((27,8),(13,13),(27,13)\),
+the virtual pair is \((13,8)\): the first acceptance and unload can be
+chosen together, not the second acceptance. For every possible subset,
+an independent exact matching on the actual received historical
+records checks the reduction. Another \(387{,}200\) finite prefix
+comparisons agreed across slot counts and three configurations.
+
+The negative control does not delete a receipt by hand. Replay all
+native effects, but in the earlier journal's split publication mode
+kill two selected workers after durable effect commit, before their
+separate receipt write. There is no retry of those two intents in this
+arm. Each ordinary effect log and reconstructed simulator state still
+reaches the same final state at tick 27; a separate WAL backup carries
+only one of the three requested identity-bound receipts.
+Pair each sparse archive with the fully bundled archive, allowing
+either slot one query; across the three possibilities every role has
+some feasible two-subject draw. No pair is feasible in all three roles.
+Using the ordinary final tick as a completion prefix would admit
+all three pairs. All individual named subjects remain feasible.
+This reproduces actual evidence holes and the non-composition
+boundary without inferring anything about who refused a duty.
+
+\paragraph{Residuals.}
+Use the exact same-information matcher when a successor cannot
+establish a complete prefix or a common scope. It ties in all tested
+cases. The reduction compresses what needs to be compared once its
+premise is established; it does not derive the premise, claim lower
+end-to-end runtime, or turn archived receipt validation into verified
+physical settlement. Native contacts between actors, permissions of
+a genuinely transferred verifier, latency for a second fault and
+independent selection remain outside the fixture. The result is
+a checked evidence-side transfer, not a new I1 or R5 disposition.
+
+\end{document}

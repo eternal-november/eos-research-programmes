@@ -10,3 +10,6 @@ No actual enforcement or physical authorization is claimed.
 
 SciPy is used for independent direct LP comparisons. Lean 4.35.0 with
 Mathlib checks the three stated arithmetic witnesses in AuditCuts.lean.
+
+[Archived receipt frontiers](archived-receipt-frontiers/README.md): complete
+prefixes admit an exact common-role reduction; native archived gaps do not.
