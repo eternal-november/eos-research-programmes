@@ -9,3 +9,6 @@ near sites; a farther site separates it from the two scalar tests.
 Run python3 -B replay.py and compare stdout with expected.json. The
 replay uses exact rational checks and all extrema of the tested paths.
 The sensing and reporting premises are modeled, not source-observed.
+
+[Receive debit on the branch cut](receive-debit/README.md) accounts for the
+older native callback and the shared radio capacity before selection.
