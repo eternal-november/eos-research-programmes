@@ -1,0 +1,139 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Shared corridor preparation before a delayed density notice}
+\date{27 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Audit.}
+In the corridor rank-span family of PR~709, let the notice arrive
+at a prescribed cut where all robots must be at rest. Both phases
+may move every robot while preserving spacing and geometric
+link bounds. The first phase is identical in all worlds; the
+second uses only the delivered label. The exact required common
+preparation depends not just on how many worlds share a label, but
+also on where their blocks lie. Nonselected blocks may contract
+back toward their hard minimum during the second phase.
+The case of observing while still moving is a different problem.
+
+\paragraph{Cut, outputs and budgets.}
+There are \(n\ge1\) ordered, contiguous blocks of \(m\ge2\)
+adjacent gaps. Initially all gaps are \(g>0\). Every gap must
+remain in \([g,R]\), where \(H=m(R-g)\ge\delta>0\). The one hidden
+demand at the deadline is a rank-\(m\) span at least
+\(mg+\delta\) for the actual block. With a given label function
+\(c:\{1,\ldots,n\}\to\{1,\ldots,M\}\), the receivers know the
+candidate blocks of that label, not the actual block.
+Other than this delivered label there is no distinguishing
+information. Temporal evidence costs are not taken to be zero:
+the cut is a parameter and this test is conditional on actual
+delivery at that cut.
+
+The two rest-to-rest segments have per-robot travel allowances
+\(B_1,B_2\), obtained from the motion profile in PR~709, with
+unit mobility scales here. Let \(D=2B_2\), and let \(s_j\ge0\)
+be the extra span prepared in block \(j\). The total
+\(\sum_j s_j\) cannot exceed \(2B_1\), since it equals the net
+end-to-end span gain. Conversely every vector with
+\(s_j\le H\) and that sum bound can be realized: distribute the
+extra span evenly in its block, and center the cumulative
+displacements. Initial and terminal hard gaps hold, and the
+common normalized profile preserves them between the two cuts.
+There is assumed to be enough room at both corridor ends.
+
+\paragraph{Exact residual constraints.}
+For a realized label \(h\), let \(z_i\) denote the suffix
+displacement of boundary \(i\), shifted by \(B_2\) into
+\([0,D]\). The suffix bound for block \(j\) is
+\[
+ \delta\,{\bf1}_{c(j)=h}-s_j
+       \ \le z_j-z_{j-1}\ \le H-s_j .
+\]
+This follows from the hard minimum and upper span
+bounds; every candidate block must meet the additional floor.
+Summing lower bounds over an interval \(I=(i,j]\) gives
+the exact necessary constraints
+\[
+ \sum_{k\in I}s_k \ \ge
+ w(I):=\left(\delta\max_h |\{k\in I:c(k)=h\}|-D\right)_+ .
+\]
+For sufficiency, scan the block bounds for a given label with
+\(z_0=0\) and \(z_j=\max(0,z_{j-1}+a_j)\),
+where \(a_j=\delta{\bf1}_{c(j)=h}-s_j\). Its values are the maximum
+of zero and all interval sums of \(a\) ending at \(j\), so the
+interval tests bound them by \(D\). If clipping at zero occurs,
+the corresponding increment is nonpositive and is still at
+least \(a_j\); otherwise it is \(a_j\). In either case it is at
+most \(H-s_j\ge0\). Interpolate the boundary displacements
+linearly within each block. The middle robots stay within the
+same travel allowance and every hard gap in the prepared and
+terminal uniformly spaced block is lawful. The common continuous
+profile gives an actual suffix motion, not instantaneous restart.
+
+\paragraph{Constructing optimal preparation.}
+Write \(p_i=\sum_{j=1}^i s_j\). All interval tests become lower
+bounds \(p_j\ge p_i+w((i,j])\). Put \(p_0=0\) and choose
+\[
+ p_j=\max_{0\le i<j}\{p_i+w((i,j])\}.
+\]
+This is the least compatible cumulative profile. Since adding
+one block increases any interval weight by at most \(\delta\),
+\(0\le p_j-p_{j-1}\le\delta\), so the cap \(H\ge\delta\) is
+automatically respected. The minimum preparation gain \(p_n\)
+is the maximum total weight of a partition into contiguous
+intervals, including intervals of zero weight.
+The exact feasibility condition for the two phase times and
+the given code is \(p_n\le2B_1\).
+
+With \(\delta=D=1\), two notice labels and four blocks,
+assigning equal labels to adjacent blocks gives minimum gain 2.
+Alternating the labels gives minimum gain 1.
+Both codes leave precisely two worlds after a notice, but the
+two demands share a middle slack region only in the alternating
+case. Treating all previously opened slack as irrevocable would
+wrongly forbid this redistribution.
+
+\paragraph{Optimal label design.}
+Among codes with at most \(M\ge1\) labels, a cyclic assignment
+\(c(j)=1+((j-1)\bmod M)\) minimizes every interval weight at once.
+Any labeling of an interval of length \(\ell\) has a label
+with at least \(\lceil\ell/M\rceil\) occurrences; cyclic ones
+attain it simultaneously. Hence the exact optimized minimum
+preparation gain is
+\[
+ \begin{cases}
+  (\delta\lceil n/M\rceil-D)_+,&D\ge\delta,\\[2mm]
+  \displaystyle\max_{1\le p\le n}
+       \left[p(\delta-D)+\delta\left\lfloor(n-p)/M\right\rfloor\right],
+       & D<\delta .
+ \end{cases}
+\]
+For the first branch the cyclic interval weight cannot decrease
+in total when adjacent parts are merged: two positive weights lose
+at most one \(\delta\) in their combined ceiling count but pay
+the suffix allowance \(D\) only once. If one weight is zero,
+monotonicity is enough. For the second branch every nonempty part
+is positive; for \(p\) parts the sum of ceiling counts is at most
+\(p+\lfloor(n-p)/M\rfloor\), attained by giving \(p-1\) parts
+one block each and putting the rest in a single part.
+
+\paragraph{Boundary and verification.}
+The formula is for a mandatory rest cut, not a restriction that
+may silently be imposed on all possible controllers. With three
+blocks, no informative notice, \(\delta=1\), unit scales,
+\(a=2\), large speed bound and \(T=2\), uninterrupted
+rest-to-rest motion has budget 2, sufficient for all three
+blocks. Splitting at time 1 into two rest-to-rest phases gives
+budget \(1/2\) in each phase, insufficient. Momentum across the
+cut can therefore change the yes/no result. This negative control
+does not solve the general moving-notice problem.
+
+An independent integer enumeration of all prefix gains and
+boundary suffix motions checks 4,300 scaled queries; 150 tests
+compare best codes, cyclic assignment and the closed form.
+Four Lean lemmas cover the tight displacement, capacity-clipping,
+centered witness, and interval-merge steps. A direct matched
+difference/interval solver can express and attain the same
+solutions. These are model guarantees, not a source of the
+delayed message or a deployment result.
+\end{document}
