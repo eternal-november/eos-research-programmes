@@ -1,0 +1,83 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{A differential conversion is a stronger non-radio comparator}
+The pinned Ouijabot source uses an ADS1015 with four sequential
+single-ended channel reads for the native signed current vector.
+The comparison here is the acquisition of one specified
+normalized linear direction, not replacement of the whole vector or
+of the original control law. Sign and physical interpretation require
+separate calibration. The ADC menu is from the
+\href{https://www.ti.com/lit/ds/symlink/ads1015.pdf}{TI ADS101x datasheet},
+Table 8-4. A pinned Adafruit Python driver is executed with a mock
+register bus. This is not evidence of the library version on the
+original robot.
+
+\paragraph{Pair and sign boundary.}
+If $\sigma_i\in\{-1,+1\}$ are qualified signs, the comparison uses
+$I_0-I_1=\sigma_0V_0-\sigma_1V_1$ in the normalized model.
+Equal signs make the required value a signed AIN0--AIN1 differential
+conversion. A common additive offset to both pins cancels at this
+one observation, subject to calibration, range, and common-mode
+conditions. Opposite signs make the required value a signed sum.
+A single differential then cannot distinguish $(0.5,0.5)$ from
+$(0.7,0.7)$, despite their straddling a sum threshold of $1.2$.
+The register replay uses representable integer codes for this
+example. A chosen epoch change during the mocked conversion keeps
+the same numeric code but invalidates the interpretation that the
+two signs stayed qualified. A real read needs a source epoch and
+acquisition window, and use at a later cut needs further age and
+sign/physical consistency bounds. A host property return does not
+prove when the device sampled.
+
+\paragraph{Exact ideal observation frontier for a full component.}
+Normalize each of the three nonzero axis rows in the pinned source
+to signs in $\{-1,+1\}^4$. Multiplication by the qualified command
+signs gives a raw-voltage weight vector $g$ in this same set.
+A MUX observation is a singleton functional or a differential on
+one of the pairs $01,03,13,23$. In an ideal frozen-input model
+with open domain and exact linear readings, $g$ can be recovered
+from a set of observations exactly if it lies in their row span.
+If it does not, a perturbation in the nullspace preserves the
+observations and changes the requested value. This lower bound
+also applies to deterministic adaptive selection with less than
+the minimum number, by perturbing within any fixed transcript's
+chosen row nullspace so subsequent choices remain the same.
+It is an exact-scalar claim, not a lower bound for every threshold
+predicate or a claim that a quantized ADC recovers arbitrary reals.
+
+Two rows must cover all four nonzero coordinates, so both must
+be differentials and their pairs disjoint. The sole such matching
+is $01,23$, and the two within-pair signs of $g$ must be opposite.
+If this fails but $g$ has mixed signs, the connected differential
+menu contains an edge between opposite signs. Take that difference
+and two singletons, proving a sharp three conversions. If all
+signs agree, any chosen differential-edge component must have a
+singleton measurement because its equal additive shift affects
+the requested scalar. Including isolated vertices this requires
+at least four rows, achieved by four singletons. The independent
+integer-pattern and rational row-span enumeration checks all
+$3\cdot16\cdot255$ nonempty measurement-set cases. Each component
+has four sign patterns needing two, ten needing three, and two
+needing four.
+
+If measurements must be chosen before the sign vector is known
+and every future sign vector remains possible for an otherwise
+fixed raw sample, the stored reading space must cover all the
+corresponding rows. They span all four coordinates, so four
+independent conversions are necessary. This is about deferred
+queries on frozen values; a real sign change can invalidate the
+underlying physical model, not just change the lookup request.
+
+\paragraph{Executed scope.}
+The driver exercises all eight MUX codes, a negative differential,
+same-sign cancellation, the opposite-sign collision and an epoch
+negative. The mock explicitly counts conversion starts and bus API
+calls. In this fixture a write, two status polls and one result
+read are four calls for the one conversion, versus eight for two.
+The poll behavior is supplied by the mock; this is not a fixed
+physical I2C transaction count or a timing measurement. The result
+strengthens the comparator for the staggered sample study. It
+neither calibrates the physical transduction nor passes an
+independent non-radio mission.
+\end{document}
