@@ -5,3 +5,5 @@
 Run `node check.js` without dependencies. Expected: 3,040 parameter cases, 133,600 exact sample cuts, and checked rational comparisons. Four Lean statements audited in Lean 4.35 with Mathlib. Not a measurement of notice latency or a general moving-observer solution.
 
 [Selective recipients](selective-recipients/README.md) removes the assumption that the same notice reaches everyone, and gives the exact required neighborhood at the same modeled cut.
+
+[Staggered receipts](staggered-receipts/README.md) shows why separate motion budgets and terminal geometry are not enough once receipt cuts differ. A positive trajectory and an explicit strict upper bound leave the exact staggered optimum open.
