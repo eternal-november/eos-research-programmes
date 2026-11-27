@@ -92,3 +92,7 @@ shared variable used in the correlation control was inferred from traces.
 ## Second fault changes the suffix supplier
 
 [Selected-source replay](live-clearance-generation/radio-bounded-handoff/suffix-supplier-change/README.md): one local notice and one received preparation request can redirect the old suffix while unrelated work continues. The new supplier needs its own current license and rolling headroom. Scoped positive I1 development; the same-information direct budget calculation ties.
+
+## Ordered-class recovery in MRWS
+
+[MRWS retained-class handoff](ordered-retained-classes/README.md): the same admission interpreter uses a physical pickup budget, native class custody and prefix-ordered station acceptance rather than a radio suffix. Four picks suffice with the timely report, five without it. The exact direct comparison ties; no independent mission.
