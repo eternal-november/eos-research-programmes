@@ -16,3 +16,7 @@ Stage those inputs beside the files here; run `sh run.sh` with Python 3,
 NumPy, Git and a C++17 compiler. Expected stdout for the separate probes is in
 `committed_pose.json` and `radio_at_cut.json`. The complete Space backup also
 includes the hash-checked inputs, and recompiles the selected slices cleanly.
+
+[Later audit windows](audit-windows/README.md) distinguish the summary needed
+for present reachability from the retained executed effects for an authorized
+historical query after a recurrent physical reset.

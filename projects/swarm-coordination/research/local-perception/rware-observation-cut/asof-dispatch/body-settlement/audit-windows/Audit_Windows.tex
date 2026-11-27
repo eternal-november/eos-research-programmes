@@ -1,0 +1,87 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{Retention for a later authorized motion-window audit}
+\maketitle
+
+\paragraph{Claim and law.}
+A movement controller and a later auditor consume different evidence about
+the same repair. The controller can check current pose; the auditor asks
+whether the named body entered row 4 during a selected range of rounds.
+This is an exact native effect query, not a conclusion about blame,
+permission or risk. Before retention, fix the body, possible histories,
+round boundaries and admissible queries. An independently retained effect
+journal is an alternative supplier, not free storage.
+
+\paragraph{Native realization.}
+Start after the actual dispatch, probe and second delivery in the parent
+fixture. Two additional native occupants can approach the reserve or hold
+clear. In a 23-step round the reserve uses the same commands in either
+case: down, turn twice, up, turn twice. If two occupants have approached
+rows 2 and 4, both forwards are canceled by the native single-mover graph.
+Otherwise the reserve enters row 4 and returns. The two occupants return
+to their own starting poses. A final no-op normalizes the exposed
+previous-coordinate and last-action fields. The actors' sampled positions,
+headings, loads and the queue agree, and so does the reserve's complete
+sampled observation. No load command or dispatch change occurs in the
+rounds. This invariant iterates for any finite horizon in the stated
+step model (no step limit). The reserve's requested actions, old dispatch
+and sampled views do not distinguish any of the $2^n$ possible realized
+words for $n$ rounds. Continuous sensing, other actors' actions and the
+source journal are not in this kernel. The replay checks all words
+through five rounds at four prior dispatch/pose pairs (248 native runs).
+
+\paragraph{Named outcomes.}
+Let $x_j$ denote a realized entry by the fixed reserve in round $j$.
+An exact export for any named singleton distinguishes $2^n$ histories
+and needs $n$ bits. If only $q$ fixed singleton indices can be queried,
+$q$ bits are necessary and sufficient. Lean verifies both lower bounds
+by injective encoding or surjective decoding. If the only query asks
+whether the reserve ever entered, one bit suffices.
+
+\paragraph{Sharp width-$r$ bound.}
+Permit all windows of exactly $r$ consecutive rounds, $1\le r\le n$.
+The OR answers form a word $y$ of length $m=n-r+1$. A positive $x_j$
+sets precisely these query positions to 1:
+\[
+I_j=[\max(0,j-r+1),\min(j,m-1)]\cap\mathbb{Z}.
+\]
+Attainable answers are exactly the words in which every positive run
+bounded by zeroes on both sides has length at least $r$. Any $I_j$
+wholly inside such a run has full length $r$. Conversely, set $x_j=1$
+for each $I_j$ entirely in the positive answer set. For each positive
+query $i$ in a run $[a,b]$, choose $j\in[i,i+r-1]$, subject to
+$j\ge a+r-1$ if $a>0$ and $j\le b$ if $b<m-1$. These bounds have a
+common integer by the interior length condition and the boundary cases.
+Every positive answer is covered, and none outside the set is covered.
+
+Let $N(m,r)$ count those words. Count completions in the deterministic
+automaton with states start, zero and positive length saturated at $r$.
+A 1 at start enters saturation, exempting the first run; a 1 after zero
+starts at length 1. A 1 in a positive state grows or saturates it;
+a 0 can close a positive run only at saturation. All states accept at
+end, exempting the last run. The completion counts give lexicographic
+rank/unrank, so the sharp fixed-width size is $\lceil\log_2 N(m,r)\rceil$.
+Run reconstruction and rank agree on 16,356 possible output words
+through $n=12$. At $n=100$ the exact sizes are 100 bits for width 1,
+54 bits for width 5 and 1 bit for width 100.
+
+\paragraph{Changing the allowed consumer.}
+If all placements of several widths may be queried, the smallest width
+$s$ suffices, since a wider window is the union of contained $s$-windows.
+The smallest width is itself a lower-bound test. The reverse can fail
+after a new appointment: $101$ and $111$ agree on both width-two queries
+but disagree on the middle singleton. A narrower authorization can
+require a finer export or recoverable historical evidence; a fresh
+absolute pose reading cannot recover that difference. The union formula
+was checked on 37,886 queries.
+
+\paragraph{Residual.}
+An equally informed direct factored auditor ties. The sizes refer to
+fixed-width exports for declared queries, not peak encoding work,
+measured CPU, radio delivery or field service. The combinatorial
+argument is elementary and not offered as categorical novelty. Lean
+checks the indexed singleton kernel, not the native mapping or the
+sliding-window proof. Native cell entry does not establish continuous
+occupancy, legal power, or I1/I2 acceptance.
+\end{document}
