@@ -1,0 +1,79 @@
+\documentclass{article}
+\begin{document}
+\title{Partial salvage that preserves a live order}
+\maketitle
+\paragraph{Lift.}
+The inherited obligation is one completion of order \((8,7,6,5,4,3)\),
+by tick 12 at the existing station, while a separate local inventory
+unload goes ahead. The model uses one ingest port and initially only
+append actions at the station. Operator control of stock motion, a
+station withdrawal interface, guaranteed field latency and
+disposal of inaccessible inventory are not in the main envelope.
+
+\paragraph{Native counterexample.}
+An initial fault has stranded classes 7 and 6 on A. Their replacements
+join preexisting class 8 at ticks 5 and 6. At tick 7 the native LIFO
+partial transfer of one item from B's inventory \((5,4)\) takes 4,
+not 5. Delivering it to the station fulfills a narrow truthful local
+claim: class 4 was taken into station custody under the grant then in
+effect. At tick 8 B's critical fault strands class 5; the authorized
+replacement can pick and carry it, fulfilling the acquisition handler's
+separate physical claim. Jointly the handlers fail the order: 5 cannot
+follow 4. The native station first empties the donor, then throws on
+the monotone-rank check, so the failed entry is not an identity
+transition. The obstruction is the missing continuation condition for
+the first append, not false detection or failure to pick class 5.
+
+\paragraph{Continuation law.}
+At a station that takes a decreasing sequence until exact multiset
+completion, a decreasing prefix is structurally extendible iff its
+multiset is a submultiset of the required order and no missing rank
+exceeds the final accepted rank. For an empty prefix use an infinite
+final rank. Necessity follows from monotonicity and exact completion.
+For sufficiency, append the multiset difference in decreasing rank;
+all its elements fit. This proves a language test, not inventory
+availability or arrival by a deadline. Tied item ranks do not
+identify item names. The replay compares this rule with all decreasing
+permutations in 6,897 small cases with multiplicities and ties.
+
+\paragraph{Declared positive family.}
+The same partial operation can put 4 in a named separately authorized
+buffer at tick 7, without appending it. Declare both an available and
+an unavailable transfer at that tick and both a truthful tick-9
+local read and a missing read, followed by the same B fault at 8.
+The successful buffer effect remains in custody through the tick-11
+use. With four pickups available and a due tick of 12, all four
+declared maximal cases settle the order and finish the side unload.
+When actual named custody is verified on time, only three pickups
+are used. Otherwise pick the fourth item. A cap of three restricts
+the positive scope to the timely positive observation: absent a read,
+the same local view can hide the history with no buffered 4; that
+history necessarily needs 7, 6, 5 and 4 newly picked. For the model
+with no other eligible suppliers this is a lower bound on every
+safe hard-service action, not only on the tested selector. The
+time bound uses stipulated append release at 12 for C's class 3,
+not the speed of the simulator. The qualification of the
+custody read, available station and buffer port times, and
+dedicated side operation are modeled, and do not follow from a
+battery notice or an item message. The model does not claim that
+a failed transfer always costs no time; the null arm has no
+completed salvage, and the declared window has no competing
+task that uses that slot.
+
+\paragraph{Comparable alternatives and costs.}
+Buffer custody costs one set-down and, if used, one retrieval in
+addition to the local read. The no-read policy may leave the
+buffered 4 behind as a residual instead of claiming it was consumed.
+After a premature deposit, an authorized compensating station pop
+of 4 before trying 5 also works with three pickups. The tested
+compensation includes the original deposit, withdrawal and retrieval;
+it employs the inherited native pop but expressly adds a grant
+not supplied by the tested normal station workflow. Thus the
+append-only impossibility is not an impossibility in all control
+interfaces. The frozen admission kernel uses the exact pickup
+debits, qualified custody fact, both deadlines and cut-local view.
+The direct rule built from the same multisets, observations and
+costs gives the same result. This is a held-in constructive
+composition check with a matched negative, not an independent
+mission or an advancement over the equally informed scheduler.
+\end{document}
