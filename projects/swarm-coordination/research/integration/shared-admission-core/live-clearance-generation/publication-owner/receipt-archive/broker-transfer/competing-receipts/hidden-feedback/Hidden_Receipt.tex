@@ -1,0 +1,72 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\title{A received old result can be invisible to its consuming application}
+\date{27 November 2026}
+\begin{document}
+\maketitle
+\paragraph{Audit.}
+The heterogeneous receiver example of PR~722 needs live
+feedback before launching a redundant read. Test the boundary
+where native receive bytes have already been charged but the
+application has not heard the current result. The same exact
+native scorer supplies the two named archive records, its
+independent work closes the lookup, and the same native broker
+stages and forwards the actual copies. The separation of the
+bound ingress callback from the consuming application and
+its locally retained mailbox is an authored interface test.
+It is not an assertion that the stock plugin loses this callback.
+
+\paragraph{The missing-feedback obstruction.}
+There are two old result duties. \(A\) occupies two bytes,
+with either named sender \(P\) or \(Q\) having limit 4.
+\(B\) occupies three bytes, from \(R\) with limit 5.
+If \(P\) is gone, no bytes are charged at the scout when
+\(P\) was meant to deliver, and sending \(Q\) then \(R\)
+finishes both. If \(P\)'s current record instead actually
+reaches the next layer but its application notification is
+hidden, \(Q\) then \(R\) consumes four receive bytes on \(A\)
+and rejects \(B\). Sending \(R\) first would consume five
+including the hidden deposit, and then reject \(Q\).
+Without retrieving the hidden current record, neither remaining
+order finishes both at the named cut in that already charged
+history. Merely using better feedback about the budget at that
+late point cannot recover the missing result. This conclusion
+holds for the declared actions, limits and common window, not
+for a different transport or a postponed deadline.
+
+\paragraph{Retain the actual result at the receiving layer.}
+In the repair arm, the bound native callback captures the
+arriving record separately from the application notification.
+The receiver validates that still-available ingress record,
+commits a small local SQLite mailbox, reopens it, and retrieves
+the exact old result.
+It no longer launches \(Q\), and the two charged bytes from
+\(P\) still present in the ledger leave room for \(R\)'s three.
+There is no new radio packet or artificial refund in the
+repair. The local persistence and read are additional
+operations that have to fit the modeled cut; actual steady
+clock latency is not established.
+
+A stale two-byte \(P\) reply can still spend exactly the same
+two bytes while authorizing nothing. The mailbox checks type,
+sender and the current scoped result, not raw bytes or a
+delivery flag. The stale case is a negative control:
+it cannot rescue both duties in this envelope. If the fault
+instead happens before a qualified record is retained, even
+a current native deposit is not recovered by this repair.
+The protection is against losing the consuming notification,
+not arbitrary failure of the ingress recorder or its storage.
+
+\paragraph{Comparison and scope.}
+Sixteen two-source executions cover lost sender, visible current
+receipt, hidden current receipt, stale same-size receipt, local
+retention switch and both later orders. The native raw arrivals,
+source debit, receiver debit, distinct paid old duties and
+independent work agree with an independent scoped ledger rule.
+An equally informed direct mailbox and receiver policy ties.
+Two individually safe handlers can interfere after transport
+debit, and the location of the retained evidence resolves that
+specific composition failure. This author-controlled source
+test neither adds physical custody evidence nor accepts the
+independent mission.
+\end{document}
