@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+here=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+up=$(CDPATH= cd -- "$1" && pwd)
+topo=$2
+while IFS="$(printf '\t')" read -r local repo ref source blob; do
+  [ "$(git hash-object "$up/$local")" = "$blob" ]
+done < "$here/SOURCE.tsv"
+[ "$(git hash-object "$topo")" = 18cfca5eda6cad93f56ec0774324c8f74aca5cff ]
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT HUP INT TERM
+cp "$up"/subt/src? "$up"/subt/replay.cpp "$up"/subt/extract.py "$tmp"/
+(cd "$tmp"; python3 extract.py)
+sed '/^int main()/,$d' "$up/broker.cpp" > "$tmp/pinned_broker.h"
+g++ -std=c++17 -O2 -I "$tmp" "$here/wire.cpp" -o "$tmp/wire"
+python3 -B "$here/replay.py" "$topo" "$tmp/wire"
