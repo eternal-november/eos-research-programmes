@@ -1,0 +1,174 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\title{Exact corridor recovery deadlines after a lost formation observation}
+\date{27 November 2026}
+\begin{document}
+\maketitle
+
+\paragraph{Audit.}
+An ordered line of robots starts and finishes at rest. Surviving
+robots must preserve declared hard clearances and any required old
+geometric links continuously. Additional rank-span density and radio
+requirements must hold at the deadline. Robot order, effective
+actuator scales, admissible post-fault contexts and the information
+available before the maneuver are pinned. There are no subsequent
+observations that distinguish those contexts. This is a model of
+collision clearance and distance-based radio geometry, not packet
+delivery, transient impacts, movable obstacles or a general
+controller for robots with uncoordinated clocks. The result is an
+R6 synthesis in this family, not a native experiment or a novelty
+claim about shortest paths.
+
+\paragraph{What the graph means.}
+Give each robot and each of its available local observation cells one
+terminal position variable. A shared initial position and actuator
+scale are part of that local cell. Keep distinct variables for distinct
+cells, and keep fixed landmarks at scale zero. An admitted world
+supplies ordinary bounds \(y_j-y_i\le c\) on the variables of its
+locally observed cells. Take the union of these directed edges, with
+the same variable used wherever the same observation recurs. A lower
+span, an upper span, a rank-based density bound, or a no-pass interval
+against a fixed obstruction fits this interface. Old hard bounds also
+appear as terminal edges and must hold at the initial cut in every
+admitted world. The solver works on the whole declared support to
+construct a table before motion; no agent is told the actual hidden
+world. Each agent reads its own cell in the preinstalled table.
+
+Let \(x_i\) be the cell's initial position and \(k_i\ge0\) its speed
+and acceleration scale. Write \(d(i,j)\) for shortest directed
+distances in the joined difference graph. A negative cycle rules out
+all terminal configurations. Otherwise for a base displacement
+budget \(B\) the exact condition is
+\[
+ x_j-k_jB\le x_i+k_iB+d(i,j)
+ \quad\text{for every reachable pair }i,j .
+\]
+Necessity follows by summing every path and applying the local
+travel bounds. For sufficiency choose
+\[
+ y_j=\min_{i\leadsto j}\{x_i+k_iB+d(i,j)\}.
+\]
+The self term gives the upper reach bound and the test gives the
+lower bound. Appending an edge shows that the vector meets every
+constraint, including the bounds shared across worlds. Thus the
+minimum \(B\) is the maximum of zero and all positive violations
+\((x_j-x_i-d(i,j))/(k_i+k_j)\). A positive numerator with zero
+denominator is an impossibility at every time; an unreachable
+pair is omitted. These are different obstructions from a finite
+budget that simply misses the deadline.
+
+\paragraph{Continuous actuation and hard invariance.}
+For single integrators the base travel budget can be \(vT\).
+For double integrators fix \(a,v>0\), with each robot satisfying
+\(|\ddot x_i|\le k_i a\), \(|\dot x_i|\le k_i v\).
+Rest at both ends bounds its velocity magnitude at time \(s\)
+by \(k_i\min(as,a(T-s),v)\). Integrating gives \(k_iB(T)\), where
+\[
+ B(T)=
+ \begin{cases}
+ aT^2/4,&T\le 2v/a,\\
+ v(T-v/a),&T\ge 2v/a .
+ \end{cases}
+\]
+This bound applies to any admissible trajectory, including those
+that change direction. Conversely, take the integral of the
+nonnegative base envelope and divide it by \(B(T)\) to get
+a common progress function \(\lambda(s)\). Use
+\(x_i(s)=x_i+\lambda(s)(y_i-x_i)\). These are genuine continuous
+rest-to-rest motions (piecewise constant acceleration when
+appropriate). Their speeds and accelerations are within every
+scaled bound. At every instant this is a convex interpolation
+of the initial and terminal positions, so every old hard
+difference bound holds throughout. At zero budget the construction
+uses the constant path. The deadline is therefore obtained by
+inverting the displayed base budget at the graph's exact minimum.
+The common acceleration-to-speed ratio and rest cuts matter;
+no such construction is asserted for arbitrary different profiles,
+moving starts, or nonconvex geometry.
+
+\paragraph{A sharp information cost from hidden density demand.}
+Take \(n\) blocks of \(m\ge2\) consecutive gaps, all initially of
+size \(g>0\), with unit actuator scales and enough free extent
+at the ends. Throughout, require every adjacent gap in \([g,R]\).
+Exactly one block has a new maximum-density requirement at the
+deadline: its rank-\(m\) span must be at least \(mg+\delta\), with
+\(\delta>0\). This is a specified rank-span floor, not a surrogate
+claim about arbitrary area coverage. A loss of a separate
+diagnostic prevents the agents from learning which block requires
+the span; the adjacency requirement remains a geometric constraint.
+Availability of that separate message does not follow from the
+geometric links.
+
+If \(R<g+\delta/m\), even the identified demand is physically
+impossible. Otherwise an observation cell containing \(q\)
+possible demanded blocks must widen each of those blocks. Their
+disjoint gaps imply a net endpoint span gain of \(q\delta\).
+The endpoints can jointly contribute only \(2B(T)\).
+Conversely, widen every gap in the identified candidate blocks by
+\(\delta/m\), keep the others unchanged, and center the resulting
+cumulative displacement to fit in \([-q\delta/2,q\delta/2]\).
+This construction preserves every hard gap bound and attains
+\(B=q\delta/2\). Knowing the actual block costs only
+\(\delta/2\); with no notice the budget needed is \(n\delta/2\).
+If a sender knows the demanded block and an identical error-free
+message reaches every agent before motion, a message cell can hold
+at most \(q_*=\lfloor 2B(T)/\delta\rfloor\) candidates. For
+\(q_*\ge1\), exactly \(\lceil n/q_*\rceil\) distinguishable messages
+are necessary and sufficient by partitioning the blocks. When
+\(q_*=0\), information cannot compensate for inadequate motion.
+For example, with \(n=5\), \(\delta=1\), \(a=2\) and a nonbinding
+speed limit, the per-world time is 1, the no-message time is
+\(\sqrt5\), and at \(T=\sqrt2\) precisely three messages are needed.
+This lower bound does not assume a latency-free delivery device
+exists. It characterizes what such a delivered pre-motion notice
+would have to distinguish.
+
+\paragraph{Proof reuse and comparison.}
+A single added edge \(u\to v\) of weight \(c\) creates a negative
+cycle exactly when \(d(v,u)+c<0\). Otherwise the revised closure
+is the minimum of the old distance and the route
+\(d(i,u)+c+d(v,j)\): a best route need not traverse the new
+edge twice unless it uses a negative cycle. Joining two previously
+distinct observations of the same robot means adding both
+directions of a zero-weight equality, checking each update.
+The old deadline alone cannot answer this new query. Removing an
+edge instead requires recovering any shortest-path alternatives
+that used it, or recomputing closure. A tighter actuator scale
+without a graph change changes only the corresponding travel
+denominators. These computations do not infer a reliable sensor,
+scope amendment, or permission to relax hard clearance.
+
+The strongest matched fixed-deadline comparator is the same
+deadline's ordinary difference-feasibility problem with all
+local indistinguishability equalities and travel bounds; it ties.
+The shortest-path reduction uses the classical simple temporal
+problem algebra of \href{https://www.sciencedirect.com/science/article/pii/0004370291900066}{Dechter, Meiri and Pearl},
+though these variables denote spatial endpoints. It extends the
+known-order corridor recovery test by folding across local cells,
+interpreting higher-rank spans, and proving the motion and message
+cutoffs in the stated subclass.
+The \href{https://en.endo-lab.jp/research/detail/499}{Maeda, Endo
+and Matsuno experiment} recovers connectivity while avoiding a
+failed body; no claim is made to reproduce its controller here.
+\href{https://arxiv.org/html/2609.29939v1\#S3.SS2.SSS3}{Managed
+make-before-break} instead keeps a departing robot active until
+prospective links qualify. It is not a fallback for a missing
+pre-motion demand observation. \href{https://arxiv.org/abs/2210.01354}{Breeden and Panagou}
+construct joint viability domains under input limits; the
+restricted continuous interpolation here supplies an exact
+endpoint-to-motion witness instead of just checking that a
+single instant's inputs are feasible.
+
+\paragraph{Checks and residual.}
+The finite replay checks 22,400 scaled rational feasibility
+queries against endpoint enumeration, with 580 reconstructed
+attainment witnesses, 645 incremental closures, 1,506 demand
+cells and 24 individually physically impossible span controls.
+Lean checks eight lemmas, including the real finite-distance
+closed-box equivalence; the analytic dynamics and shortest-path
+calculation are given above, not represented as a fully formalized
+hybrid controller. Actual demand acquisition and delayed or
+partially delivered notices are separate obligations. This does
+not close R6 or imply an independent mission pass.
+\end{document}
