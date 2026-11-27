@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,hyperref}
+\title{A requested radio model is not evidence that a cave test ran it}
+\author{}\date{}
+\begin{document}\maketitle
+\paragraph{Source cut.} The pinned SubT
+\href{https://github.com/osrf/subt/blob/083c6a8acb0c25aa1a35e34517e628cd3b52ae77/subt_ign/launch/cloudsim_sim.ign}
+{launch template} requests visibility-range radio. The exact broker
+selection installs that model only if its visibility model initialized.
+The constructor depends on reading a visibility graph and its sampled
+lookup table; an unavailable table permits the selected range-only default
+to remain in place. This is a startup distinction. It does not imply
+per-send fallback in an already initialized visibility model. In particular
+the template's \texttt{generate\_table} setting does not establish that a
+missing table will be generated here: the generation branch in the pinned
+broker loader is commented out.
+
+\paragraph{Matched boundary.} Replay the selected original C++ loader
+operation on a staged valid table and on an absent file, then run the
+brokers' chosen original power callbacks at identical endpoint poses.
+Hold the request, radio constants and world declarations fixed. Exercise
+the native sampled-point lookup rather than assuming poses identify exact
+visibility vertices. The actual \texttt{cave\_circuit\_01} DOT and SDF
+supply the weighted graph and model origins. A small, explicitly staged
+lookup table associates unambiguous rounded model origins with their DOT
+tile IDs. This deliberately does not claim to have the stock binary LUT,
+the actual mesh point classification, full Gazebo, or recorded corridor
+motion. Static graph costs are computed separately from the pinned DOT;
+an independent direct arithmetic model checks both power functions.
+The construction tests a configuration dependency, not how to evade any
+operational control.
+
+For a mapped no-relay link, let \(c\) be the stored graph cost and \(d\)
+the direct distance. With both poses the same in the two runs, the
+range-only mode gives finite mean power for \(0<d\le500\). Under the
+visibility model without a relay it also needs a known cost \(c\le10\),
+and otherwise returns minus infinity. The base to the chosen sampled
+tile 2 is \(76.576759\) units away with graph cost \(16\): finite range mean
+\(-48.261455\) versus minus infinity. A mapped cost-1 control is finite in
+both modes. An unmapped pose \(92\) units from the base also differs,
+and a separate unmapped \(592\)-unit case is rejected by both. Across
+24,182 ordered no-relay queries, including those two controls, 1,046
+were finite under both, 15,513 finite under range only, and 7,623 finite
+under neither. These are counts for the staged test cases, not population
+estimates about links in the cave.
+
+The direction can reverse once a route through relay nodes is given.
+The separate staged relay row uses edges from the same actual DOT and
+origins from the same SDF: direct distance \(500.388849\), max hop
+\(33\), 28 staged relays and max graph hop cost \(6\). The visibility
+callback returns finite mean \(-72.633530\); range-only rejects the direct
+path. This is a conditional test of the native visibility RF consumer,
+not a claim that the stock chooser selects that route or that the
+benchmark supplies 28 deployable relays. Consequently the mode replacement
+is not, in general, a containment in either direction for finite-mean
+eligibility.
+
+\paragraph{Consumption and limits.} The relevant outcome here is whether
+the selected RF function deterministically excludes a candidate link at
+the power layer. Finite mean is not an application receipt, end-to-end
+delivery probability or deadline guarantee. The fallback function does
+not populate the optional relay-use output of the tested callback binding;
+the two initialized output values in the unit replay stay different.
+The replay calls the power functions with initialized output storage.
+It does not exercise packet dispatch or infer a runtime value for an
+out-parameter not set by that function.
+
+A configuration-only attestation cannot distinguish these two runs.
+A replay intended to exercise disabled contact must record the effective
+selected model and which table was actually loaded, then check the
+intended absence/presence of contact and the application outcome on the
+relevant trace. A read-only control comparing to the same effective
+model sees the same behavior. A dynamic obstacle can also change
+travel while this static graph/RF substrate has not changed; no result
+here infers that a rockfall blocks mobility or radio, or that an obstacle
+asset cannot change the live poses or the relay inputs. This is a held-in
+I2 evidence gate, not an independent mission or a coordination gain.
+
+\end{document}

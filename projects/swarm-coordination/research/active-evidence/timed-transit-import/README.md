@@ -25,3 +25,6 @@ obstruction and attainable integer-offset box arithmetic. The critical
 scope is no decision, observation, waiting, reversal or other material
 effect inside a committed macro action. The code does not claim such
 contraction is correct for arbitrary crew control.
+
+[Effective cave radio model](effective-radio-model/README.md): cave asset
+calibration must verify which model and lookup table actually loaded.
