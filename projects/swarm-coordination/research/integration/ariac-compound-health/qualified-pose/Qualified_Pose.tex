@@ -1,0 +1,79 @@
+\documentclass{article}
+\usepackage{hyperref}
+\begin{document}
+\title{A blackout, a qualified observation, and a spent read are different cuts}
+\maketitle
+
+\paragraph{Sources and inference.}
+NIST's \href{https://pages.nist.gov/ARIAC_docs/en/2024.1.0/competition/challenges.html}{2024 challenge documentation}
+describes interrupted sensor-topic publishing. The
+\href{https://pages.nist.gov/ARIAC_docs/en/2024.1.0/competition/orders.html}{order documentation}
+describes a public assembly-pose service separately.
+The selected ARIAC 2024.3.0 plugin conditions its ROS output on a
+health field; updating that field does not turn the underlying device
+off in that plugin. At the pinned compatible-family Gazebo Classic
+source, the logical sensor's raw publish precedes the updated event;
+the task manager's native tray input is an independently delivered
+cache update. A ROS header stamp here is set by the clock during the
+wrapper callback, not copied from a capture timestamp. The pinned
+raw schema carries no time or sample generation. These code facts do
+not certify the package binary in a particular evaluation image.
+A controller receives only the interfaces expressly admitted by the
+benchmark. Raw data in the fixture is instrumented ground truth,
+not an alternate observation granted to the controller. The paper
+does not adjudicate competition policy.
+
+\paragraph{Selected native replay.}
+Exact source methods are compiled with deterministic transport,
+scene, model lookup, and transform stubs. A connected or active
+camera produces its native sample even when the wrapper suppresses
+public ROS output. A delayed internal delivery can also leave the
+service reading the old cache even after a ROS publication from a new
+sample. In 800 selected process cuts there were 175 examples of
+each distinction. They are enumeration counts, not probabilities.
+This separates lack of public publication, lack of capture, and
+lack of a new internal cache installation. No real transport
+order or final robot outcome is inferred.
+
+\paragraph{Proposed service semantics.}
+A read claimed as current requires an admitted producer binding,
+the expected parking episode, the correct authorization generation,
+and an actual capture time in the stated validity window. In this
+model a producer emits the qualification tuple as part of the capture
+event; the stock transport does not supply that tuple. The sidecar's
+delivery order is unconstrained, and older admitted captures cannot
+replace a newer frame in the same epoch. Early, stale or unauthorized
+requests defer without spending the slot. These predicates are checked
+alongside the modeled station state in a single write transaction. A
+committed first result and its spent flag are the same durable record.
+A repeat of its key can reconcile the record. It returns the payload
+only while the source and authority still qualify its use; across a
+revocation or changed parking epoch it returns settlement without the
+payload. A new key does not obtain a second read. Changing and restoring
+the visible authority does not restore the old generation.
+
+The fixture has one stable identity for each order, one trusted source
+for its bound sample, and an authoritative store for the modeled
+station transitions and ledger. The publisher is trusted to attest
+capture authorization; an untrusted caller cannot introduce this
+tuple. Loss of the required producer or lack of a bound on its arrival
+therefore remains a real service obstruction. A separate order keeps
+its own slot and is unaffected by the tested order-local transitions.
+There is no assertion of atomicity with a physical pose or real camera
+exposure, of a working channel through a blackout, or that an old
+acknowledgment is in itself portable authority. The guarantee follows
+from checking the authority generation and inserting exactly one
+response keyed by the named duty in a serialized local transaction.
+
+\paragraph{Replays and baseline.}
+The prototype tests source-epoch and authorization controls, stale
+arrivals and physically typed cache values, independent duties and
+actual worker exits immediately before and after commit. In a lost
+committed result case, an eligible retry returns the first recorded
+pose even when a newer one exists. Outside the stated validity window
+it can reconcile settlement but cannot authorize current use. An
+equally informed factored store with the same source authority and
+transaction boundary has the same rule; no efficiency or capability
+gain against that comparator, independent mission result, or complete
+architecture disposition is claimed.
+\end{document}
