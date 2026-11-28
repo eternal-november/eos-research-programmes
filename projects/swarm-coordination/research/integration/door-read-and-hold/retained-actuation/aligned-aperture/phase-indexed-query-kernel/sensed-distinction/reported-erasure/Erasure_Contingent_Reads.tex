@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{Spend a read after a confirmed erasure, not at a fixed next phase}
+\paragraph{Named observation law.}
+Use the four actual modeled position/mode trajectories of PR 867.
+The numerical channel has one unknown static offset and bounded
+error $e=7/4$ deficit units per read. A distinct authorized slot
+can be used once, and every attempted read costs one, including
+the erased attempt. At most one read is lost. Its loss is learned
+before choosing the next slot. A numeric return does not reveal
+what other possibly erased value it substitutes for. The plant
+effect of sampling is assumed passive and the selected local
+proof arrives by cut 8 or 10 as specified. No delivery-time or
+sensor power is inferred from source status.
+The one-action label distinguishes whether the late right pulse
+is safe. The full-profile label distinguishes the two old profile
+types and answers a wider prospective class of queries.
+
+\paragraph{Exact feedback and fixed comparison.}
+At any successful time set, two conflicting histories remain
+possible iff their sampled difference span is at most $4e$,
+using PR 867's common-offset calculation. Therefore the
+erasure-only scheduler can use state (next possible phase,
+attempts left, losses left, successful phases) and branch on
+attempt success or loss. It declares success only once every
+conflicting pair is eliminated for every admitted numerical
+transcript. The recurrence tests every possible next phase and
+requires both branches when a loss remains. A fixed schedule
+passes exactly when every single-deletion subset separates.
+This is standard finite experiment scheduling, not a new
+algorithm relative to ordinary adaptive search.
+
+For the one-action query by cut 8, three attempted reads are
+enough with erasure feedback. Try after update 1. If it succeeds,
+try 4 and use 5 only if 4 is lost. If 1 is lost, try 3 and 8.
+Every terminal branch identifies the actual legal right-pulse
+decision. No two-attempt numerical policy can suffice after
+one loss and one arbitrary offset; every fixed three-attempt
+schedule fails, with an explicit equal-transcript witness for
+each of the 56 schedules. Four fixed attempts suffice.
+For the larger profile query, the erasure-only controller needs
+four versus five fixed attempts by cut 8; by cut 10 it uses
+three versus four. The replay checks the returned decision
+trees and an actual normalized same-read witness for each
+failed tested fixed schedule at the distinguishing budgets.
+
+\paragraph{Observation power and an honest stronger reference.}
+In the mode-only arm, source publications at cuts 4 and 5 both
+decide the one-action query. Either one may be erased and two
+fixed attempts still suffice, less than the numeric-only rule.
+By contrast, with one erasure even observing mode at every
+phase through 10 cannot recover the full profile: there is a
+conflicting pair with at most one differing mode sample.
+The gain for one-action numerical resource use is therefore
+conditional on unavailability of the stronger mode interface.
+No superiority over a same-interface adaptive direct scheduler,
+sensor availability in hardware, or independent mission follows.
+\end{document}
