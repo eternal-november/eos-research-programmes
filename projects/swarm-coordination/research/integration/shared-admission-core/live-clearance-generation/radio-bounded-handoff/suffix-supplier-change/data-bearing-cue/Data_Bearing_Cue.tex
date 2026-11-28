@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{A live supplier observation that advances the old transfer}
+\paragraph{Envelope and matched comparison.}
+The PR 857 single-probe construction needs a qualified negative when
+the probing supplier's route is unavailable. This experiment instead
+schedules one \emph{positive} attempt from each supplier in the receiver's
+tick-7 slot, with at most one selected by the existing preparation rule.
+Only one route is usable in the positive service envelope. Both may be
+heard or neither in refusal controls. The common receiver is authorized
+to observe the serial callbacks; the fixture charges both attempts, also
+when delivery fails. Neither route continuity through tick 8 nor
+authorization to prepare is inferred from the callback.
+
+The matched control sends a one-byte cue on each route and then a full
+173-byte suffix from the selected supplier. The alternative sends one
+actual result byte of that suffix as its cue and sends only the remaining
+172 after obtaining a matching preparation callback. The record grammar,
+fixed byte offset and scheduled sender-to-callback binding are already
+agreed. No wire metadata is counted as free if newly needed: this is
+the existing serial addressable slot, not a protocol for arbitrarily
+interleaved or replayed messages. Early archival data transmission is
+authorized separately from preparing to complete the transfer. The
+old result itself is checked and returned only after the full record is
+reassembled, validated and installed by the existing station.
+
+\paragraph{Exact ledger.}
+The dual early attempts leave the selected Q at prior debit
+$140+4+1$, so either suffix format fits Q and neither permits
+the second four-byte diagnostic in the same window. When P is
+selected, the spare debit after its header is decisive: the plain
+version needs $d+114+1+173\le320$ or $d\le32$; using the received
+byte as part of the suffix needs $d+114+1+172\le320$ or $d\le33$.
+At $d=34$ neither fits. The control and alternative see the same
+sender information; the difference is crediting actual delivered old
+payload rather than spending that byte only on a diagnostic. In the
+tested interface, both preserve the two diagnostic jobs and independent
+warehouse motion. If both early bits are lost or two suppliers are
+observed when the rule expects one, no supplier is installed. A
+missing license, erased preparation, or an altered byte in the
+stitched record does not result in settlement. Using a positive
+observation to justify a preparation candidate is distinct from
+accepting its data as the right old result.
+
+\paragraph{Limit of the gain.}
+The measured gain is one byte and one additional boundary configuration
+against the dedicated-cue, full-suffix control. A plain implementation
+that uses the same scheduled data-bearing cue and exact frame join
+obtains the same bound. A different codec could also change the
+173-byte requirement; there is no coding lower bound here. Ordinary
+piggybacking, fragmentation, and a keyed retry rendezvous are matched
+comparison mechanisms, not excluded merely by adopting the shared
+checker. The round does not tolerate losing the only positive attempt
+for the usable route. At the P boundary there is no extra byte for a
+charged lost attempt under this fixed format. The result is source-backed
+held-in service, not independent mission acceptance or a demonstrated
+advance over the strongest established assembly.
+\end{document}
