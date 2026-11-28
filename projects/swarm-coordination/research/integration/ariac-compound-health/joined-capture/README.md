@@ -1,0 +1,2 @@
+# Authorized capture to named pose result
+Run `python3 joined.py | cmp expected.txt -`. The sibling qualified-pose directory supplies pinned source and the previously checked service transaction. The archive includes both. The new frame is emitted only by the normal allowed ROS publication branch in the deterministic fixture, with extra capture and scope metadata carried at the production seam. No privileged cache data is exported.
