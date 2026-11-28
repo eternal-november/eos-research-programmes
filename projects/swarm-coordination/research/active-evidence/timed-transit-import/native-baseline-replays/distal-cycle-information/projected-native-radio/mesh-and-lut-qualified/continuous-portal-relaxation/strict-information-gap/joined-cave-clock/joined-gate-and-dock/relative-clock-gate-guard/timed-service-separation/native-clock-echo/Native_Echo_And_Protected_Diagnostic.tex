@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{Acquire clock evidence through the same native packet budget}
+The #889 physical gate timing, route, and exact dock handoff remain.
+In this fixture the clock exchanges are carried by the pinned native
+SubT radio broker, not preloaded into the gate worker. The fixed
+base and gate observers use the same qualified sites and registered
+breadcrumbs. The moving courier is not a calibration endpoint or
+relay. The two early calibration rounds and the late courier radio
+cuts are separated by more than the configured one-second accounting
+window. Thus the fixed endpoints' isolated calibration broker
+does not renew live later credits or bypass an active competing frame.
+
+At the motion-clock request cut $a$ a request is queued to the
+observer physically bound to the selected gate. The native callback,
+at simulated $a+d_1$, determines the moment for that gate's timestamp
+$g$; only a correct callback starts its echo. The observer's independent
+diagnostic and echo can be offered at the same reply cut $b$.
+For fixed simulated clock offset, receipt $(a,g,b)$ gives the same
+causal bound as before, with no symmetric-delay assumption. The two
+asymmetric delay patterns are fixture inputs, not propagation estimates.
+The response contains unchanged request and clock-era bytes and a
+three-byte lossless signed residual relative to the request's anchor.
+Native callback delivery from the selected enrolled source, matching
+request and era, is required before any row enters durable gate clock
+evidence. The fixture models an enrolled source that truthfully emits
+its clock era, not arbitrary message injection or cryptographic
+security. A six-byte comparison frame has the same evidence,
+plus a redundant framing byte. Packet checks charge native TX/RX
+payload bytes at actual accepted dispatches.
+
+A separate one-byte gate diagnostic is offered during the fresh
+exchange. At the native cap of six bytes per rolling second, one
+diagnostic plus the compact five-byte echo fits at that cut.
+Both receipts are observed in all 48 executions. With the six-byte
+frame and the diagnostic first, only the diagnostic fits at the cut:
+the gate falls back to older evidence, egress is still safe, and
+only 24 gate jobs meet their timing requirement. Putting the large
+frame first preserves fresh clock evidence but loses the independent
+diagnostic. An omitted reply discharges no evidence obligation and
+has the same safe fallback as old evidence alone. These alternatives
+retain the real gate and dock worker crash cuts.
+
+Waiting 1.125 seconds after the diagnostic for the large frame lets
+the old radio charge expire. Importantly the echo's reception $b$
+moves too; its interval is recomputed with $g$ unchanged and $b$
+later, not falsely treated as a narrower timely exchange. The
+retained wide plus late evidence remains sufficient in these
+worlds, so both actor duties also finish in all 48 cases without
+changing egress. The compact frame avoids that 1.125-second delay;
+it is not necessary for completing this particular mission if the
+late radio option remains open. Both are compared to the same budget,
+geometry, and independently named work. No optimal encoding,
+wire-level security, measured latency, or independent mission is
+claimed.
+\end{document}
