@@ -1,0 +1,52 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{A fault repair can release a pending send at the wrong time}
+The published cave scene, timed chords, native broker and exact
+crash-before/after settlement from PR 877, with the physical gate binding corrected by PR 878, are held fixed.
+A separately authorized diagnostic is requested while the old dock
+remains registered but its pose source is unavailable. The native broker
+neither processes that request nor debits its sender. The request actually
+persists in the native FIFO. Using the native unregister operation removes
+the dock and its endpoint bindings, but leaves the queue alone.
+A subsequent dispatch, now able to get every pose, services the diagnostic
+first, ahead of the protected settlement request.
+
+Let the courier's initial five-byte report and first one-byte audit
+sample dispatch at $t_0$. At $t_0+1.125$, those debits have expired.
+Write $q$ for bytes charged at this dispatch to earlier eligible requests
+from that courier. The settlement request (five bytes), and a separately
+owed second sample (one byte) on the next eighth of a second, share the
+same ledger and none of these new debits can expire by the sample.
+Both run at these cuts iff $q+6\le C$, under the native rolling quota
+and with the stated connectivity, unchanged recipient admission and
+all non-quota conditions held as in the positive case. At $C=6$, a
+two-byte pending diagnostic allows its own completion and the sample,
+but blocks the retry. A one-byte diagnostic allows the retry but blocks
+the sample. The same two pending bytes addressed to the removed,
+now-unbound dock do not debit at all; unrelated live traffic cannot be
+treated as though it too were addressed to a dead destination.
+
+For the authored two-byte diagnostic, moving its actual enqueue until
+$t_0+2.25$ lets the protected work settle on the earlier return cut
+and preserves the diagnostic and both samples. Egress is at most
+454.847823 s. If the request is already pending and cannot be deferred
+at source, the tested compensating plan allows the initial release and
+waits for the actual debit to expire before retrying at $t_0+2.25$,
+with ACK and sample at $t_0+2.375$. Egress is at most 454.972823 s.
+Both constructions complete all requested work in all 12 trials.
+The second costs an eighth of a second; deleting the diagnostic was
+not counted as success. A live broker queue is therefore a potential
+future resource use even when all present accounting looks clear.
+At the seam tested here, maintaining the same ledger across recovery
+requires either pending-work knowledge, controlled admission at the
+application, or a wait that is charged to deadlines.
+
+Only the source FIFO and rolling accounting, endpoint removal and
+the app callbacks are native. The pose failure, timely administrative
+permission, staged assets, shared journal and trackable waits are the
+same fixtures as before. This is not a general exact solver over all
+possible trajectories or adaptive priorities, a hardware test, or
+independent I2. A direct scheduler with the same admission powers can
+follow the same timing and settle the same report.
+\end{document}

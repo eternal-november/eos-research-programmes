@@ -1,0 +1,119 @@
+--- mission.cpp
++++ mission.cpp
+@@ -72,7 +72,7 @@
+    w.app.callbacks[key]=[&](auto src,auto,auto,auto data){
+       assert(src==a&&out.empty());out=data;
+    };
+-   assert(w.b.incomingMsgs.empty());
++   assert(w.b.incomingMsgs.size()<=1);
+    now=at;
+    w.b.incomingMsgs.push_back({a,b,bytes});
+    w.b.DispatchMessages();
+@@ -100,9 +100,11 @@
+  return x;
+ }
+ int main(int argc,char** argv){
+- assert(argc==5);Scene s(argv[1]);
++ assert(argc==6);Scene s(argv[1]);
+  const int world=std::stoi(argv[2]); const int rewind=std::stoi(argv[3]);
+  const unsigned cap=std::stoi(argv[4]);
++ const int variant=std::stoi(argv[5]);
++ assert(0<=variant&&variant<=4&&cap==6&&(rewind&3)==3);
+  Radio r(s,cap);
+  int cue=-1;
+  for(int i:{0,1}){
+@@ -155,31 +157,72 @@
+  std::cout<<"primary "<<(aux1.empty()?"-":aux1)<<" "
+    <<(data1.empty()?"-":data1)<<" "<<t<<std::endl;
+  auto reply1=readframe();assert(reply1=="-");
+- if((rewind&3)>=2){
+-    r.poseLost=(rewind&3)==2;
++ {
++    // Unlike the negative test in the parent, preserve the native FIFO
++    // across the pose failure. The pending request belongs to R, not D1.
++    r.poseLost=false;
+     r.w.b.pose_update_f=[&](auto name){
+        return std::make_tuple(name!="D1",Pose{s.xyz.at(r.where.at(name))},now);
+     };
+-    if(!r.poseLost){
+-       assert(r.w.b.Unregister("D1"));
+-       assert(r.w.b.endpoints.at("D1:7").empty());
++    auto& b=r.w.b;
++    std::string diagnostic;
++    auto collect=[&](auto src,auto,auto,auto bytes){
++       assert(src=="R"&&diagnostic.empty());diagnostic=bytes;
++    };
++    const size_t cost=(variant==2)?1:2;
++    std::string pending(cost,'d');
++    // Variant 1 holds the request outside the native broker. Variant 3
++    // enqueues an equally large request to the soon-unbound old endpoint.
++    if(variant!=1){
++       now=secs(t+500000);b.incomingMsgs.push_back({"R",variant==3?"D1":"Audit",pending});
++       const auto old=r.w.state("R").bytes_sent_this_epoch;
++       b.DispatchMessages();
++       // No consumption at offer time; request remains live in the FIFO.
++       assert(b.incomingMsgs.size()==1&&old==r.w.state("R").bytes_sent_this_epoch);
+     }
++    assert(b.Unregister("D1"));
++    assert(b.endpoints.at("D1:7").empty());
++    assert(b.incomingMsgs.size()==unsigned(variant!=1));
++
++    auto sendBackup=[&](long long tt){
++        r.w.app.callbacks["Audit:7"]=collect;
++        const auto data=r.route("R","D2",report,secs(tt));
++        r.w.app.callbacks.erase("Audit:7");
++        return data;
++    };
++    long long debitCut=t+1125000;
++    auto data=sendBackup(debitCut);
++    if(variant==4){
++       // Repair an already queued debit. Retry after it has expired; wait
++       // at the same certified radio stop and pay all elapsed time.
++       assert(data.empty()&&diagnostic==pending);
++       debitCut=t+2250000;
++       data=sendBackup(debitCut);
++    }
++    const auto earlyDiag=diagnostic;
++    std::cout<<"backup "<<(data.empty()?"-":data)<<" "<<debitCut<<std::endl;
++    const auto reply=readframe();
++    std::string ack;
++    if(reply!="-")ack=r.route("D2","R",reply,secs(debitCut+125000));
++    const auto audit=r.route("R","Audit",one(1),secs(debitCut+125000));
++    long long depart=debitCut+125000;
++    if(variant==1){
++       // Future useful request itself still executes: defer it until the
++       // retry debit is gone, rather than silently dropping it.
++       assert(diagnostic.empty());
++       depart=t+2250000;
++       diagnostic=r.route("R","Audit",pending,secs(depart));
++    }
++    const auto courierTx=r.w.state("R").bytes_sent_this_epoch;
++    t=depart;
++    for(int i=idx;i>0;--i){
++       t+=bound_leg(s.xyz[p[i]],s.xyz[p[i-1]]);
++       r.where["R"]=p[i-1];
++    }
++    assert(r.where.at("R")==0);
++    std::cout<<"return "<<(ack.empty()?"-":ack)<<" "
++      <<(audit.empty()?"-":audit)<<" "<<t<<" "<<courierTx<<" "
++      <<(diagnostic.empty()?"-":diagnostic)<<" "<<(!earlyDiag.empty())<<std::endl;
++    return 0;
+  }
+- // Native rolling window expires strictly after one second.
+- const long long step=(rewind&3)==1?1000000:1125000;
+- const auto data2=r.route("R","D2",report,secs(t+step));
+- std::cout<<"backup "<<(data2.empty()?"-":data2)<<" "<<t+step<<std::endl;
+- const auto reply2=readframe();
+- std::string ack;
+- if(reply2!="-")ack=r.route("D2","R",reply2,secs(t+step+125000));
+- auto aux2=r.route("R","Audit",one(1),secs(t+step+125000));
+- const auto courierTx=r.w.state("R").bytes_sent_this_epoch;
+- t+=step+125000;
+- for(int i=idx;i>0;--i){
+-    t+=bound_leg(s.xyz[p[i]],s.xyz[p[i-1]]);
+-    r.where["R"]=p[i-1];
+- }
+- assert(r.where.at("R")==0);
+- std::cout<<"return "<<(ack.empty()?"-":ack)<<" "
+-   <<(aux2.empty()?"-":aux2)<<" "<<t<<" "<<courierTx<<std::endl;
+ }
