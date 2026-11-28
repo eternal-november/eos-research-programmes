@@ -1,0 +1,2 @@
+# Physical courier fork across pinned cave assets
+Run `sh replay.sh` with Python 3, NumPy, Git and C++17 after supplying PINS.txt, the projected source files and the actual Cave01 LUT described by SOURCE_INPUTS.tsv and read.py. The research archive includes these. An optional `python3 branch.py --search` runs the lattice discovery; the verification is for the fixed paths, not global path optimization.
