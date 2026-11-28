@@ -1,0 +1,81 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{Transfer from a paid radio observation to an expiring door hold}
+\paragraph{Evidence and scope.}
+The exact decision code from
+\href{https://github.com/eternal-november/eos-research-programmes/pull/826}{the development bridge}
+is reused through
+\href{https://github.com/eternal-november/eos-research-programmes/pull/827}{the unchanged policy importer}.
+The old problem combined inspection and historical audit under
+a receive budget. This development test instead consumes live
+mechanical clearance, not a returned receipt, and pays
+observation latency and authority duration rather than packet bytes.
+It uses the pinned Open-RMF state publication, command, velocity
+limiter and fleet-phase methods from
+\href{https://github.com/eternal-november/eos-research-programmes/pull/810}{the retained-actuation replay}.
+The door position follows the command for exactly one update;
+this is a declared piecewise-linear plant, not measured motion or
+a Gazebo collision simulation. Gates, hold installation, source
+visibility, post-handoff CLOSE arrivals and clock are harness
+inputs. No stock API for acquiring this hold is asserted.
+
+\paragraph{Finite mission interface.}
+Choose public phase only, a stale writer sample, or a current
+writer sample. A sample adds one modeled update of acquisition
+and delivery time; if the observer path is absent it still costs
+the update but produces no usable evidence. The current observation
+is a Boolean threshold on the actual velocity written to gate 0
+at the first OPEN update, not a future close label. The family
+pins exactly one gate to the high-residual history: the two gates
+come from two and five prior CLOSE writes, with the correspondence
+swapped. Both report OPEN and the fleet phase accepts the matching
+session at both decision cuts. One late close may be absent or
+target either gate. It begins no earlier than tick one and remains
+pending until the indexed hold expires. The hold excludes new
+writes only while active; it cannot clear past limiter state.
+An independent third gate continues its own native closing writes.
+
+A response chooses a gate and a wait of zero to three updates.
+A crossing occupies four updates. It must finish by the deadline
+and both leaves must stay strictly within the declared
+$1/64$ aperture margin from start through exit. The replay checks
+every sampled boundary; linear interpolation makes that exact
+for this plant. It does not model the body of a crossing robot.
+
+\paragraph{Obstruction and recovery.}
+With no additional close, the five-write history is already
+outside the margin by the end of the earliest four-update
+crossing: the negative command magnitudes sum to $10/512$.
+The alternative low residual gate depends on the hidden swap,
+so the two public phase results do not justify a common choice.
+A stale reading from before the close history cannot identify the
+low-residual gate. The current writer bit does identify it under
+the declared two-history rule. At deadline four the one-update
+read leaves only three for crossing. At deadline five or six the
+read makes the low-residual gate reachable, but if the hold ends
+at tick one an arriving CLOSE can still spoil it. In the worst
+low-residual trace the dip through tick five is $15/512$.
+Keeping the hold through tick one (expiry at tick two) reduces the
+dip to $7/512$, within the strict $8/512$ allowance, even if CLOSE
+is written during the remaining crossing. Holding until the
+crossing ends is sufficient but not necessary in this same plant.
+This is a finite geometric margin bound, not a weakening of any
+external safety requirement.
+
+\paragraph{Matched check and residuals.}
+There are 5,400 executions in 36 declared deadline, lease and
+observation configurations, including reruns of the actual
+synthesized policy. A policy is found exactly for a delivered
+fresh read, deadline at least five and hold expiry at least two
+within the tested values. Exhaustive same-information direct search
+finds exactly the same plans. Lean checks the particular
+displacement bounds and the one-update timing obstruction.
+The changed resource and law are real within the fixture: fresh
+observation cannot replace exclusion of a pending write, and
+permission alone cannot replace aperture margin. This is a
+known development transfer, not the contract's independent
+selection or a demonstration of architectural advantage. Setup and
+provisioning are not measured, and the coupled motion and timely
+authority assumptions are still unverified for an operating door.
+\end{document}
