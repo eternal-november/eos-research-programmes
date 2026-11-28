@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{The same clock epoch does not imply a fixed offset}
+Take the physically bound return contacts from PR 881. A gate
+stamp $g$ has master-clock value $T(g)=c+u(g-c)+v$ with
+$|u-1|\le 1/5000$. The inverse clock map is fixed over the
+declared single affine epoch, and all scalar values below are exact
+rationals. An echo $(a,g,b)$ retains causality without assuming
+symmetric delay: $a\le T(g)\le b$. Given the prior and all
+echoes, the possible $(u,v)$ form a bounded closed polygon.
+Physical time of a proposed stamp is a linear functional, so its
+extrema occur at vertices. For every feasible clock the local stamp
+inverting the first certified integer instant after clearance, $h+1$,
+is $c+(h+1-c-v)/u$. Since all feasible $u$ are positive, a convex
+combination of clock maps produces a positive weighted average of
+these inverse values (weights proportional to $u$).
+Thus the maximum inverse value also occurs at a vertex.
+Rounding that maximum up gives an exact local-integer release rule
+for this conservative clearance cut. An inconsistent echo set
+returns no certificate, not an empty-support permission.
+
+Both paths are tested with an initial echo 250 seconds before the
+attempt stamp and a second 50 seconds later. Two actual clocks,
+$u=1\pm1/5000$ with $v=0$, produce identical old echo records.
+Nonnegative asymmetric delays suffice. The reported attempt is
+10 ms after the outer return window. Its actual time in the two
+histories is 40 ms before and 60 ms after that window. The early
+effect intersects the certified inner contact interval. A
+unit-rate comparison would authorize both, even using the same old
+echo evidence, and is unsafe. The full support gives the exact
+104 ms bracket for the unrefreshed comparison, and a clock-only
+wait of 42,010 local microseconds is the first integer tick meeting
+the clearance certificate. A fresh echo with the same bounded
+round trip ten seconds before the attempt narrows the right
+history enough to admit it immediately, and does not admit the
+left. The additional echo is not a stronger gate report or a
+fictional exact timestamp reference.
+
+This is an exact finite fixture for rate uncertainty within an
+uninterrupted clock epoch. It assumes the same calibrated rate law
+during both observations and use. Retiming, sampled or rounded device
+stamps, restart jumps and epoch migration require their own source
+witnesses. The release calculation is a scoped rule for this end-side
+window; arbitrary future holds may block the returned time. It does
+not establish measured clock quality, communication channel behavior,
+or independent mission acceptance.
+\end{document}
