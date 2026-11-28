@@ -1,0 +1,200 @@
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+#include "utils.hpp"
+using namespace rmf_building_sim_gz_plugins;
+namespace rmf_door_msgs::msg {
+struct Time {
+  int sec=0, nanosec=0;
+  bool operator==(Time const&) const=default;
+};
+struct DoorMode {
+  enum {MODE_OPEN=1,MODE_CLOSED,MODE_MOVING};
+  int value=0;
+  bool operator==(DoorMode const&) const=default;
+};
+struct DoorState {
+  using SharedPtr=std::shared_ptr<DoorState>;
+  std::string door_name;
+  Time door_time;
+  DoorMode current_mode;
+  bool operator==(DoorState const&) const=default;
+};
+struct Session {std::string requester_id;Time request_time;};
+struct DoorSessions {
+  std::string door_name;
+  std::vector<Session> sessions;
+};
+struct SupervisorHeartbeat {
+  using SharedPtr=std::shared_ptr<SupervisorHeartbeat>;
+  std::vector<DoorSessions> all_sessions;
+  Time time;
+};
+}
+using namespace rmf_door_msgs::msg;
+using Entity=int;
+const Entity kNullEntity=0;
+#define gzwarn std::cerr
+namespace components {
+struct JointVelocityCmd {};
+struct JointPosition {
+ std::vector<double> data;
+ const std::vector<double>& Data() const {return data;}
+};
+}
+struct EntityComponentManager {
+ std::map<std::pair<Entity,std::string>,Entity> names;
+ std::map<Entity,components::JointPosition> positions;
+ std::map<Entity,double> written;
+ template<class T> void SetComponentData(Entity j, std::vector<double> xs){
+  static_assert(std::is_same_v<T,components::JointVelocityCmd>);
+  assert(xs.size()==1);written[j]=xs[0];
+ }
+ Entity ParentEntity(Entity) const {return 20;}
+ template<class T> const T* Component(Entity j) const {
+    return &positions.at(j);
+ }
+};
+struct Model {
+ Entity id;
+ Model(Entity x):id(x){}
+ Entity JointByName(const EntityComponentManager& cm,const std::string& name) const {
+    const auto x=cm.names.find({id,name});
+    return x==cm.names.end()?kNullEntity:x->second;
+ }
+};
+enum class DoorModeCmp {OPEN,CLOSE,MOVING};
+struct DoorData {
+ struct Joint {std::string name;double open_position,closed_position;};
+
+ std::vector<Joint> joints;
+ MotionParams params;
+};
+struct Publisher {
+  DoorState record;
+  void publish(DoorState s){record=std::move(s);}
+};
+struct Gz {
+  Publisher sink,*_door_state_pub=&sink;
+JOINT_SRC
+WITHIN_SRC
+MODE_SRC
+TARGET_SRC
+COMMAND_SRC
+PUBLISH_SRC
+  std::map<Entity,double> _last_cmd_vel;
+};
+struct LegacyTask {
+ struct StatusMsg {
+  enum {STATE_ACTIVE,STATE_COMPLETED};
+  int state=STATE_ACTIVE;
+  std::string status;
+ };
+};
+struct DoorOpen {struct ActivePhase {
+ std::string _door_name="gate",_request_id="crew";
+ LegacyTask::StatusMsg _status;
+ void _update_status(const DoorState::SharedPtr&,const SupervisorHeartbeat::SharedPtr&);
+};};
+SESSION_SRC
+UPDATE_SRC
+
+bool phase(const DoorState& report,const SupervisorHeartbeat& hb){
+ DoorOpen::ActivePhase p;
+ p._update_status(std::make_shared<DoorState>(report),std::make_shared<SupervisorHeartbeat>(hb));
+ return p._status.state==LegacyTask::StatusMsg::STATE_COMPLETED;
+}
+bool exact_known_open(const Gz&gz,Entity e,const EntityComponentManager& cm,const DoorData& door){
+  if(door.joints.empty()) return false;
+  for(const auto&j:door.joints){
+    const auto id=gz.get_joint_entity(cm,e,j.name);
+    if(id==kNullEntity || !gz.is_joint_at_position(
+        cm.Component<components::JointPosition>(id)->Data()[0],door.params.dx_min,j.open_position))
+      return false;
+  }
+  return true;
+}
+int main(){
+ constexpr double dt=1./8;
+ constexpr double a_dt=1./64;
+ const DoorData gate{
+  {{"left",1.,0.},{"right",1.,0.}},
+  {.v_max=1./4,.a_max=1./8,.a_nom=1./8,.dx_min=1./64}
+ };
+ EntityComponentManager exactPosition;
+ exactPosition.names={{{10,"left"},1},{{10,"right"},2}};
+ exactPosition.positions={{1,{{1.}}},{2,{{1.}}}};
+ const SupervisorHeartbeat hb={{{"gate",{{"crew",{8,0}}}}},{9,0}};
+ const auto sample=[&](Gz& g,EntityComponentManager& cm){
+   assert(exact_known_open(g,10,cm,gate));
+   g.publish_state(9,"gate",g.get_current_mode(10,cm,gate));
+   assert(phase(g.sink.record,hb));
+   return g.sink.record;
+ };
+ auto steady=exactPosition;
+ Gz no_backlog;
+ no_backlog.command_door(10,steady,gate,dt,DoorModeCmp::OPEN);
+ auto report=sample(no_backlog,steady);
+ assert(steady.written.at(1)==0&&steady.written.at(2)==0);
+
+ auto closing=exactPosition;
+ Gz close_now;
+ close_now.command_door(10,closing,gate,dt,DoorModeCmp::CLOSE);
+ assert(sample(close_now,closing)==report);
+ assert(closing.written.at(1)==-a_dt&&closing.written.at(2)==-a_dt);
+
+ unsigned flowing=0,checks=0;
+ for(int k=0;k<=20;++k){
+   auto current=exactPosition;
+   Gz cached;
+   for(int i=0;i<k;++i)cached.command_door(10,current,gate,dt,DoorModeCmp::CLOSE);
+   const int charged_ticks=std::min(k,16);
+   for(int j=1;j<=20;++j){
+     cached.command_door(10,current,gate,dt,DoorModeCmp::OPEN);
+     assert(sample(cached,current)==report);
+     const double expected=-a_dt*std::max(charged_ticks-j,0);
+     assert(current.written.at(1)==expected&&current.written.at(2)==expected);
+     if(j==1&&expected<0)++flowing;
+     ++checks;
+   }
+ }
+ assert(flowing==19&&checks==420);
+ // Separate explicit kinematic continuation: apply the issued velocities
+ // instantly, with no inertia, each for exactly dt. This is not Gazebo.
+ // Setup still freezes sampling while the prior CLOSE writes accumulate.
+ unsigned simulated=0;
+ double dip4=0,dip5=0;
+ for(int k=0;k<=16;++k){
+   auto current=exactPosition;
+   Gz cache;
+   for(int i=0;i<k;++i)
+     cache.command_door(10,current,gate,dt,DoorModeCmp::CLOSE);
+   for(int j=1;j<=k;++j){
+     cache.command_door(10,current,gate,dt,DoorModeCmp::OPEN);
+     const auto v=-a_dt*(k-j);
+     for(auto i:{1,2}){
+       assert(current.written.at(i)==v);
+       current.positions.at(i).data[0]+=dt*v;
+     }
+     ++simulated;
+   }
+   const double dip=k*std::max(k-1,0)/1024.;
+   assert(current.positions.at(1).data[0]==1-dip);
+   assert(current.positions.at(2).data[0]==1-dip);
+   auto mode=cache.get_current_mode(10,current,gate);
+   assert((mode==DoorModeCmp::OPEN)==(dip<gate.params.dx_min));
+   if(k==4)dip4=dip;
+   if(k==5)dip5=dip;
+ }
+ assert(simulated==136&&dip4<gate.params.dx_min&&dip5>gate.params.dx_min);
+ std::cout<<"separate stipulated velocity-following model: residual close dips "<<dip4<<" (4 stored ticks), "<<dip5<<" (5); only latter loses OPEN\n";
+
+ std::cout<<"full fresh OPEN with matching session and zero vs negative writes: source witness\n";
+ std::cout<<"hold OPEN target, identical fresh report, residual closing command after 2 prior CLOSE ticks: -0.015625\n";
+ std::cout<<"420 frozen-position native cases; first OPEN tick writes closing velocity in 19 of 21 prior histories\n";
+}
