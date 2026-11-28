@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{Door retirement needs either proven quiescence or passage identity}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Question and source audit.}
+The stock elapsed-time rule in the prior
+\href{https://github.com/eternal-november/eos-research-programmes/pull/509}{retired-session replay}
+can distinguish a delayed older stamp while a newer request is
+logged. It does not identify the passage that generated a message.
+The pinned planner passes a persistent requester ID, not a
+per-passage identifier. The close source stamps the publication
+with its current clock on each retry. The receiver sees only the
+resulting named request, not the identity of the original phase.
+
+A casually assumed two-thread race is not a source argument here.
+The pinned default adapter creates a single event-loop worker and
+passes it both to the transport and the fleet. Fleet robot context
+and the plan's legacy shim use that same worker. The transport
+starts a spin thread, but it schedules \texttt{spin\_some} onto
+the worker rather than running the timer body on the spin thread.
+The sequenced phase signals completion using the same worker;
+the close observable terminates on completion or failure and
+its \texttt{finally} resets the timer. Destruction of the legacy
+shim's subscription guard explicitly unsubscribes while its
+legacy instance is still held. A queued timer body attempts a
+weak lock, so a genuinely released old phase cannot publish.
+Replacing or stopping an execution is not itself a proof that
+every external strong reference is gone. Operator kill, restored
+or externally shared phases, alternative executors and delivery
+after retirement were not exhaustively verified. In particular,
+the replay does not assert that two old and new phases actually
+overlap in the default task runtime.
+
+\paragraph{Native-source controls under the explicit lifetime model.}
+The replay executes the original close timer lambda, request
+publication, local hold-clear helper, and supervisor methods.
+One serial fixture retires the old phase and destroys its final
+owner before a queued callback; that callback emits nothing.
+In a separate retained-phase counterfactual, both the old retry
+after the new hold and a legitimate current release produce the
+same request (including the fresh timestamp). A second holder
+prevents immediate CLOSE, masking the first removal. Once that
+holder releases normally, the supervisor's final CLOSE reveals
+the loss of the original live hold.
+
+In the modeled generation-aware comparator, binding the producer
+to the current passage prevents the old release, while the
+legitimate same-timestamp release still succeeds. The data
+needed for that binding are supplied by the fixture, not detected
+by an unmodified node. The same test also runs the original
+local name-only release helper; that helper clears a held marker
+even if invoked for the earlier occurrence of the same name.
+A scoped repair must qualify that call too. The idle heartbeat
+cleanup is another producer that uses a stable requester ID
+and a fresh stamp, so this is not a claim of comprehensive
+repair of every source path. Source retirement also does
+not settle ingress order: the supervisor accepts equality,
+so a delayed old close with a stamp equal to the new open is
+order-dependent in the fixture. Proving actual transport
+ordering, strict time separation, or identity is separate.
+
+\paragraph{Connection to the clearance consumer.}
+The unchanged \href{https://github.com/eternal-november/eos-research-programmes/pull/809}{gate receipt checker}
+can consume a retain-through-use fact from a suitable source.
+The replay exercises only the logical hold factor of that
+fact. It neither samples the motion of a door nor establishes
+the physical aperture premise highlighted by
+\href{https://github.com/eternal-november/eos-research-programmes/pull/810}{the retained-actuation study}.
+This source boundary is valuable as a proof obligation
+for adapters, not an observed stock incident, deployed guard,
+or result closing I1/I2.
+\end{document}

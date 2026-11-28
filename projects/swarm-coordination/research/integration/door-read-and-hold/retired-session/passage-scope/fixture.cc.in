@@ -1,0 +1,167 @@
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <functional>
+#include "gate_receipt.hpp"
+#include <optional>
+#include <string>
+#include <vector>
+
+namespace builtin_interfaces::msg {struct Time {int sec=0;};}
+using T=builtin_interfaces::msg::Time;
+namespace rclcpp {
+struct Time {
+ int sec=0;
+ Time()=default;
+ Time(T t):sec(t.sec){}
+ operator T()const{return {sec};}
+ bool operator<(Time b)const{return sec<b.sec;}
+};
+}
+namespace rmf_door_msgs::msg {
+struct DoorMode {
+ enum {MODE_OPEN=1,MODE_CLOSED,MODE_MOVING};
+ int value=0;
+};
+struct DoorRequest {
+ std::string door_name,requester_id;
+ T request_time;
+ DoorMode requested_mode;
+};
+struct Session {T request_time;std::string requester_id;};
+struct DoorSessions {
+ std::string door_name;
+ std::vector<Session> sessions;
+};
+struct SupervisorHeartbeat {
+ std::vector<DoorSessions> all_sessions;
+};
+}
+using namespace rmf_door_msgs::msg;
+const std::string DoorSupervisorRequesterID="supervisor";
+template<class Message> struct Publisher {
+ std::vector<Message> log;
+ void publish(Message m){log.emplace_back(std::move(m));}
+};
+struct SimClock {T now()const{return {100};}};
+struct Node {
+ SimClock now;
+ SimClock* get_clock(){return &now;}
+ Publisher<DoorRequest> commands,*_door_request_pub=&commands;
+ Publisher<SupervisorHeartbeat> heartbeats,*_door_heartbeat_pub=&heartbeats;
+ std::map<std::string,std::map<std::string,rclcpp::Time>> _log;
+ void _process_open_request(const std::string&,const std::string&,const T&);
+ void _process_close_request(const std::string&,const std::string&,const T&);
+ void _send_open_request(const std::string&);
+ void _send_close_request(const std::string&);
+ void _publish_heartbeat();
+};
+METHODS_SRC
+
+void open(Node& n,std::string who,int t){n._process_open_request("gate",who,{t});}
+void close(Node& n,std::string who,int t){n._process_close_request("gate",who,{t});}
+std::optional<int> session(const Node& n,std::string who) {
+ for(const auto& d:n.heartbeats.log.back().all_sessions)
+  if(d.door_name=="gate")
+   for(const auto& s:d.sessions)
+    if(s.requester_id==who) return s.request_time.sec;
+ return {};
+}
+struct Client {
+ int t=0;
+ T now(){return {t};}
+ Publisher<DoorRequest> outgoing;
+ Publisher<DoorRequest>* door_request(){return &outgoing;}
+};
+struct RobotContext{
+ Client client;
+ std::optional<std::string> _holding_door;
+ Client* node(){return &client;}
+ void _release_door(const std::string&);
+};
+RELEASE_SRC
+struct DoorClose {
+ struct ActivePhase{
+  std::string _door_name="gate",_request_id="crew";
+  RobotContext* _context;
+  void _publish_close_door();
+ };
+};
+PUBLICATION_SRC
+
+auto queued(std::weak_ptr<DoorClose::ActivePhase> weak){
+ return TIMER_SRC;
+}
+
+bool equals(const DoorRequest& a,const DoorRequest& b){
+ return a.door_name==b.door_name&&a.requester_id==b.requester_id&&
+        a.request_time.sec==b.request_time.sec&&a.requested_mode.value==b.requested_mode.value;
+}
+
+struct Outcome{
+ unsigned sent;
+ bool logical_hold;
+ bool closed_after_second;
+ std::optional<DoorRequest> close;
+};
+
+Outcome scenario(bool retire,bool current,bool bind_epoch){
+ RobotContext robot;
+ auto phase=std::make_shared<DoorClose::ActivePhase>();
+ phase->_context=&robot;
+ auto cb=queued(phase);
+ if(retire)phase.reset();
+ robot._holding_door="gate";
+ Node sup;
+ open(sup,"crew",20);
+ open(sup,"other",21);
+ robot.client.t=22;
+ cb(); // original timer callback body
+ const auto n=robot.client.outgoing.log.size();
+ if(n){
+   const auto& req=robot.client.outgoing.log.back();
+   if(!bind_epoch||current)
+      sup._process_close_request(req.door_name,req.requester_id,req.request_time);
+ }
+ assert(sup.commands.log.size()==2 && session(sup,"other")==21);
+ close(sup,"other",23); // normal release by unrelated owner
+ const bool held=session(sup,"crew").has_value();
+ const bool check=may_use(7,7,true,held);
+ return {unsigned(n),check,sup.commands.log.back().requested_mode.value==DoorMode::MODE_CLOSED,
+         n?std::optional(robot.client.outgoing.log.back()):std::nullopt};
+}
+
+int main(){
+ const auto inactive=scenario(true,false,false);
+ const auto old=scenario(false,false,false);
+ const auto now=scenario(false,true,false);
+ const auto epochOld=scenario(false,false,true);
+ const auto epochNow=scenario(false,true,true);
+ assert(!inactive.sent&&inactive.logical_hold&&!inactive.closed_after_second);
+ assert(old.sent==1&&now.sent==1&&equals(*old.close,*now.close));
+ assert(old.closed_after_second&&!old.logical_hold&&now.closed_after_second&&!now.logical_hold);
+ assert(epochOld.logical_hold&&!epochOld.closed_after_second);
+ assert(!epochNow.logical_hold&&epochNow.closed_after_second);
+
+ RobotContext plain,guarded;
+ plain._holding_door=guarded._holding_door="gate";
+ const int old_epoch=6,new_epoch=7;
+ plain._release_door("gate"); // exact helper called by close construction
+ if(old_epoch==new_epoch)guarded._release_door("gate");
+ assert(!plain._holding_door&&guarded._holding_door=="gate");
+ guarded._release_door("gate"); // current-epoch release remains valid
+ assert(!guarded._holding_door);
+
+ Node older,eq,ordered;
+ open(older,"crew",20);close(older,"crew",19);
+ open(eq,"crew",20);close(eq,"crew",20);
+ open(ordered,"crew",10);close(ordered,"crew",20);open(ordered,"crew",20);
+ assert(session(older,"crew")==20&&!session(eq,"crew")&&session(ordered,"crew")==20);
+ std::cout<<"retired and unowned timer closure publishes nothing on the serial loop\n"
+          <<"retained old timer and current close emit identical native request fields\n"
+          <<"other holder masks first removal; generation guard preserves it and permits genuine release\n"
+          <<"scope must also cover the producer's name-only local release helper\n"
+          <<"strictly older delivered close is rejected; equal timestamp is order-dependent\n";
+}
