@@ -1,0 +1,191 @@
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+#include "utils.hpp"
+using namespace rmf_building_sim_gz_plugins;
+namespace rmf_door_msgs::msg {
+struct Time {
+  int sec=0, nanosec=0;
+  bool operator==(Time const&) const=default;
+};
+struct DoorMode {
+  enum {MODE_OPEN=1,MODE_CLOSED,MODE_MOVING};
+  int value=0;
+  bool operator==(DoorMode const&) const=default;
+};
+struct DoorState {
+  using SharedPtr=std::shared_ptr<DoorState>;
+  std::string door_name;
+  Time door_time;
+  DoorMode current_mode;
+  bool operator==(DoorState const&) const=default;
+};
+struct Session {std::string requester_id;Time request_time;};
+struct DoorSessions {
+  std::string door_name;
+  std::vector<Session> sessions;
+};
+struct SupervisorHeartbeat {
+  using SharedPtr=std::shared_ptr<SupervisorHeartbeat>;
+  std::vector<DoorSessions> all_sessions;
+  Time time;
+};
+}
+using namespace rmf_door_msgs::msg;
+using Entity=int;
+const Entity kNullEntity=0;
+#define gzwarn std::cerr
+namespace components {
+struct JointVelocityCmd {};
+struct JointPosition {
+ std::vector<double> data;
+ const std::vector<double>& Data() const {return data;}
+};
+}
+struct EntityComponentManager {
+ std::map<std::pair<Entity,std::string>,Entity> names;
+ std::map<Entity,components::JointPosition> positions;
+ std::map<Entity,double> written;
+ template<class T> void SetComponentData(Entity j, std::vector<double> xs){
+  static_assert(std::is_same_v<T,components::JointVelocityCmd>);
+  assert(xs.size()==1);written[j]=xs[0];
+ }
+ Entity ParentEntity(Entity) const {return 20;}
+ template<class T> const T* Component(Entity j) const {
+    return &positions.at(j);
+ }
+};
+struct Model {
+ Entity id;
+ Model(Entity x):id(x){}
+ Entity JointByName(const EntityComponentManager& cm,const std::string& name) const {
+    const auto x=cm.names.find({id,name});
+    return x==cm.names.end()?kNullEntity:x->second;
+ }
+};
+enum class DoorModeCmp {OPEN,CLOSE,MOVING};
+struct DoorData {
+ struct Joint {std::string name;double open_position,closed_position;};
+
+ std::vector<Joint> joints;
+ MotionParams params;
+};
+struct Publisher {
+  DoorState record;
+  void publish(DoorState s){record=std::move(s);}
+};
+struct Gz {
+  Publisher sink,*_door_state_pub=&sink;
+JOINT_SRC
+WITHIN_SRC
+MODE_SRC
+TARGET_SRC
+COMMAND_SRC
+PUBLISH_SRC
+  std::map<Entity,double> _last_cmd_vel;
+};
+struct LegacyTask {
+ struct StatusMsg {
+  enum {STATE_ACTIVE,STATE_COMPLETED};
+  int state=STATE_ACTIVE;
+  std::string status;
+ };
+};
+struct DoorOpen {struct ActivePhase {
+ std::string _door_name="gate",_request_id="crew";
+ LegacyTask::StatusMsg _status;
+ void _update_status(const DoorState::SharedPtr&,const SupervisorHeartbeat::SharedPtr&);
+};};
+SESSION_SRC
+UPDATE_SRC
+
+bool phase(const DoorState& report,const SupervisorHeartbeat& hb){
+ DoorOpen::ActivePhase p;
+ p._update_status(std::make_shared<DoorState>(report),std::make_shared<SupervisorHeartbeat>(hb));
+ return p._status.state==LegacyTask::StatusMsg::STATE_COMPLETED;
+}
+bool exact_known_open(const Gz&gz,Entity e,const EntityComponentManager& cm,const DoorData& door){
+  if(door.joints.empty()) return false;
+  for(const auto&j:door.joints){
+    const auto id=gz.get_joint_entity(cm,e,j.name);
+    if(id==kNullEntity || !gz.is_joint_at_position(
+        cm.Component<components::JointPosition>(id)->Data()[0],door.params.dx_min,j.open_position))
+      return false;
+  }
+  return true;
+}
+
+constexpr double dt=1./8;
+const MotionParams params{.v_max=1./4,.a_max=1./8,.a_nom=1./8,.dx_min=1./64};
+DoorData leaf(std::string name){return {{{name,1.,0.}},params};}
+
+struct Attempt {int aperture, service, write_count, finalA, finalB;};
+int main(){
+ const SupervisorHeartbeat hb={{{"gate",{{"crew",{8,0}}}}},{9,0}};
+ auto a=leaf("hinge"),b=leaf("hinge"),ind=leaf("other");
+ for(int warm=0;warm<=20;++warm)
+ for(bool initial_alias:{false,true})
+ for(bool rewrite:{false,true}){
+     EntityComponentManager e;
+     // In the alias layout the child named 'hinge' is absent at B. The
+     // compiled native parent fallback finds A's existing joint by name.
+     e.names={{{10,"hinge"},1},{{20,"hinge"},1},{{13,"other"},3}};
+     if(!initial_alias)e.names.emplace(std::make_pair(11,"hinge"),2);
+     e.positions={{1,{{1.}}},{2,{{1.}}},{3,{{1.}}}};
+     Gz g;
+     for(int k=0;k<warm;++k)g.command_door(10,e,a,dt,DoorModeCmp::CLOSE);
+     auto observe=[&](){
+       for(int ent:{10,11}){
+         assert(exact_known_open(g,ent,e,a));
+         g.publish_state(9,"gate",g.get_current_mode(ent,e,a));
+         assert(phase(g.sink.record,hb));
+       }
+       return g.sink.record;
+     };
+     auto before=observe();
+     const Entity cached=g.get_joint_entity(e,11,"hinge");
+     if(rewrite){
+         if(initial_alias)e.names.emplace(std::make_pair(11,"hinge"),2);
+         else e.names.erase(std::make_pair(11,"hinge"));
+     }
+     const Entity bound=g.get_joint_entity(e,11,"hinge");
+     assert(observe()==before);
+     const bool alias=initial_alias!=rewrite;
+     assert(bound==(alias?1:2));
+     const int k=std::min(warm,16);
+     auto evaluate=[&](int order){
+       auto cm=e;
+       auto gg=g;
+       cm.written.clear();
+       auto op=[&](){gg.command_door(10,cm,a,dt,DoorModeCmp::OPEN);};
+       auto close=[&](){gg.command_door(11,cm,b,dt,DoorModeCmp::CLOSE);};
+       if(order==0)op();
+       if(order==1){op();close();}
+       if(order==2){close();op();}
+       gg.command_door(13,cm,ind,dt,DoorModeCmp::CLOSE);
+       assert(cm.written.at(3)==-1./64);
+       // Apply a single modeled step from the original sampled position.
+       const auto dip=[&](int ent){
+         const auto found=cm.written.find(ent);
+         if(found==cm.written.end())return 0;
+         double d=-found->second*dt*512;
+         assert(std::floor(d)==d&&d>=0);
+         return int(d);
+       };
+       int expected=order==0||!alias?std::max(k-1,0):
+                    order==1?std::min(std::max(k-1,0)+1,16):
+                               std::max(std::min(k+1,16)-1,0);
+       assert(dip(1)==expected);
+       if(order)assert(dip(bound)==(alias?expected:1));
+       return Attempt{dip(1),int(order&&dip(bound)>(alias?std::max(k-1,0):0)),int(cm.written.size()),dip(1),dip(bound)};
+     };
+     const auto keep=evaluate(0), ab=evaluate(1),ba=evaluate(2);
+     std::cout<<warm<<' '<<initial_alias<<' '<<rewrite<<' '<<cached<<' '<<bound<<' '
+              <<keep.aperture<<' '<<ab.aperture<<' '<<ab.service<<' '<<ba.aperture<<' '<<ba.service<<'\n';
+ }
+}
