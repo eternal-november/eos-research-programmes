@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{All reports in one queue can fit, yet arrival order can lose the branch bit}
+\maketitle
+
+\paragraph{Predicate.}
+At one fixed dispatch cut, take an already qualified batch of
+messages for a receiver with an actual live debit \(a\).
+Each message \(j\) has payload \(b_j>0\) and a cap \(c_j\)
+from its transmitting member. Assume that every named link
+and callback can succeed, all transmission-side debits and
+aggregate new sends at each sender fit that sender's own cap,
+and no debit expires or arrives in the middle of this batch.
+These are strong inputs, not conclusions from a roster entry.
+The chosen SubT source passes each transmitter's configuration
+and the same actual destination ledger into the channel function.
+Hence an all-success execution in order \(\pi\) exists
+exactly when some permutation satisfies
+\[
+ a+\sum_{i\le j} b_{\pi(i)}\le c_{\pi(j)}
+ \quad\hbox{for every }j.
+\]
+The source records transmit debit even for certain failed
+attempts; this derivation does not use failed attempts as free
+tests, and does not assert that retry resets that debit.
+
+\paragraph{Exact reduction and limits.}
+Sort nondecreasing by the transmitting cap. Suppose two
+adjacent packets in a successful order have caps \(c_i>c_j\)
+in that order. Their cumulative finish is within \(c_j\).
+After exchanging them, the new first finish is also within
+\(c_j\) and the unchanged cumulative finish is within \(c_i\).
+All other finishes are unchanged. Repeated exchanges reach
+the sorted order without losing success. Thus this is
+ordinary earliest-due-date ordering, with the cap playing
+the role of a processing-completion deadline. A serial
+authorized dispatcher can use this before spending the
+batch; changing a local receiver setting alone cannot be
+substituted for the configuration source consumed by this check.
+With several endpoints and fixed batch admission, legal sender
+totals and independent per-endpoint orders suffice if there
+are no other coupling constraints. Late arrivals, separate
+deadlines, variable expiry, retries, shared route switches
+or a causal requirement to choose the order before learning the
+batch do not satisfy those premises.
+
+\paragraph{Source replay and comparison.}
+Replay all permutations of three due packets against the
+pinned selected broker, inherited deterministic routes and
+their actual receiving callback. An earlier independent
+report to the base stays completed in every arm. For each
+case the destination's earlier debit is itself produced by
+an accepted message. There are 18,432 selected native
+ordered batches over 3,072 combinations; 906 can deliver
+all due work in at least one order. In 474 such combinations
+the stated arrival-order arm misses a report. Neither
+dropping another eligible message nor spending extra bytes
+is needed to repair those cases; the reordering actor is
+an explicitly authorized model input. The other
+dependencies on pose, transport, delivery before motion, and
+physical movement are outside the batch test. The exact
+early-deadline scheduler agrees; the result is a source-grounded
+comparison, not a novel scheduling theorem or an independent
+mission acceptance result.
+\end{document}
