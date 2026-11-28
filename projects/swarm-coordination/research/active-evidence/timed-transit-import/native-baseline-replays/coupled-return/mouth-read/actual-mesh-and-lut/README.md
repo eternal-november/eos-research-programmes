@@ -1,0 +1,2 @@
+# Fuel mesh clearance and actual Cave01 radio samples
+Run `sh replay.sh` with Python 3, NumPy, Git, a C++17 compiler, and the files pinned by PINS.txt and SOURCE_INPUTS.tsv. The full verified research archive includes exact copies of source and model data. Fuel assets are by OpenRobotics, CC BY 4.0; see Mesh_And_LUT.tex for versions, attribution, and limits. The published project includes the verifier, not the binary world and mesh inputs.
