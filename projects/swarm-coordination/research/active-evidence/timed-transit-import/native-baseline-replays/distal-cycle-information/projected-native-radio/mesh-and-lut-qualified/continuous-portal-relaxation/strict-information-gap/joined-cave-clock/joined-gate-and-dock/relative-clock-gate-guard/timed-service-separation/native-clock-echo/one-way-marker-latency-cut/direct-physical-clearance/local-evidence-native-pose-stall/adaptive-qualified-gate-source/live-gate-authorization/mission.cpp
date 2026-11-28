@@ -209,6 +209,7 @@ int main(int argc,char** argv){
        const auto remove_and_dispatch=[&]{
            now=secs(repair);
            assert(r.w.b.Unregister("AuxX"));
+           r.w.b.pose_update_f=pose_update; // End the temporary probe scope.
            r.placement["R"]=pose(repair);
            // During the local-mode gate effect the pending diagnostic
            // uses only the outside station, observer, and three fixed
