@@ -1,0 +1,47 @@
+\documentclass{article}
+\begin{document}
+\title{A station-ready report does not protect a one-use pose read}
+\maketitle
+
+\paragraph{Selected source.}
+ARIAC 2024.3.0 stores the AGV station status and the tray image in
+different callbacks. The assembly-pose service for a valid assembly
+or combined order checks its per-order one-use flag, then the
+currently stored AGV locations. If no applicable AGV is at the
+station, it returns without using the flag. Once there is an AGV
+at the station, it uses the flag before inspecting the tray image.
+The extraction and classification use the stored image.
+The service schema contains neither an image epoch nor a capture
+time. The apparent locations and typed image data in the replay
+are injected through the exact selected source callbacks in an
+explicit serial order. The transform is stubbed. No claim is made
+about ROS delivery order, Gazebo timing, or physical pose accuracy.
+
+\paragraph{Witness.}
+A valid order can call the service before docking without using
+its future read. Move only the arrival message earlier than that
+same probe. It now returns a successful admission and consumes
+the single read even if the retained image has no parts. If the
+retained image has parts from an old configuration, it can return
+their old pose instead. When a fresh tray image then reaches the
+task manager, the original order's second call is denied. A
+different order's own valid first call sees the new image. This
+is suppression of another use of the interface, not suppression
+of the physical camera. The result is reproduced with 3,200
+selected event orders and input cases; no ROS services or
+physical station were run.
+
+\paragraph{Consequence.}
+If a later duty requires a fresh pose through this specific
+interface, an early probe after docking cannot be treated as a
+free test. On this source branch a probe that may see an AGV
+already at the station can spend the only admissible read.
+Neither an empty result nor a subsequently recovered camera
+restores it. The act changes the set of future observations.
+An independent fresh pose stream, a coordinated invocation after
+a qualified image, or changing the service to preserve a usable
+per-request result are distinct alternatives, with new requirements
+on rights, image epoch and delivery. No such repair is inferred
+from dock status alone. This is development evidence, not a
+test of HeRo or an independent mission.
+\end{document}
