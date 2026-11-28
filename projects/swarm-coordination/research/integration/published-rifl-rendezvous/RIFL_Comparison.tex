@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage{hyperref,amsmath}
+\begin{document}
+\section*{A published replay-recovery baseline for independent progress}
+\paragraph{Decision being evaluated.}
+An old keyed request has not returned a result to the caller. A later
+failure can change which server holds the completion record or performs
+recovery. New requests that do not use that service should continue,
+without changing which old operation an eventual retry denotes.
+This check examines the retry and acknowledgement layer. Radio,
+actuator effects, lease service, and server migration are not run in the
+fixture. No claim about the complete recovery contract follows.
+
+\paragraph{Published baseline.}
+Lee, Park, Kejriwal, Matsushita and Ousterhout,
+\href{https://doi.org/10.1145/2815400.2815416}{SOSP 2015, RIFL},
+Sections 3--4, separate request identity, atomic durable completion,
+retry rendezvous, and reclamation. They explicitly require an exact
+completion result alongside the mutation, and a retry to find the same
+object-associated record after migration. Their client-wide cumulative
+acknowledgement does not assert that every request above the prefix
+is still unfinished. It does forbid reclaiming a prefix across a hole
+under that acknowledgement interface. RIFL supplies an established
+comparison for this project's earlier digital-store exact-retry results,
+not for atomically committing physical motion with a journal entry.
+
+\paragraph{Pinned tracker boundary.}
+The pinned implementation uses a 512-position sequence window for
+\texttt{newRpcId}; this is the executable constant, not the illustrative
+128 mentioned in a source comment. For ordinary single-ID sequential
+allocations, if the oldest unreturned ID is $b$, the last permitted
+new ID before completing it is $b+511$. Higher successful completions
+cannot raise the cumulative acknowledgement beyond $b-1$. With nothing
+already assigned above $b$, at most 511 new allocations follow it
+before a new call must prod the old request. If some above-$b$ IDs were
+already assigned, they consume the same positions. The test's
+\texttt{tryFinish} stops the test at the first prod; this observes the
+blocking dependency without imposing a measured timeout or inferred
+liveness failure in the actual transport. Returning the old result
+unblocks allocation.
+
+Two native tracker instances, when authority to use distinct live
+client identities already exists, avoid that cross-request dependency.
+The independent sequence advances even while the old request is
+unreturned. The source test can issue and complete 2,048 independent
+requests from the other tracker without prodding the old one. The
+construction works for arbitrary finite numbers in the ideal
+immediate-response model within numeric ID limits. It does not imply
+an unbounded lease or every arbitrary workload. A lease-context
+change costs an additional live identity, independent acknowledgement
+state and any required renewal/establishment traffic.
+
+\paragraph{Server-side check.}
+The extracted \texttt{checkDuplicate} and \texttt{processAck} bodies
+operate on serial fixture state. In one client context, replying to
+later requests while the old result is missing costs retained results.
+In the second context the same positive acknowledgement legitimately
+reclaims only results belonging to that context. The old identity
+still returns the stored result, or still reports a duplicate in
+progress if no result was recorded. The latter is not permission to
+execute again. Treating the greatest received result as an
+acknowledgement prefix makes the old retry stale, even if the earlier
+operation was not recorded as finished. Assigning the old request a
+fresh client lease instead is recognized as a new key, not a retry.
+These are local negative controls, not a proposal to change the
+published interface. Reclamation of a result also cannot answer a
+new exact audit that is outside the original retry contract.
+
+\paragraph{Consequence for an integrated trial.}
+A comparison against only a single stranded acknowledgement lane is
+too weak if separate identities are authorized and affordable in the
+candidate mission. When all old evidence travels with its designated
+object and the new lane already exists, ordinary RIFL-style rendezvous
+and lane separation explain this positive independent progress. If the
+available roles forbid a second identity, that separation is an
+additional resource, not a fair same-interface speedup. If a second
+fault removes the rendezvous but the effect survives, neither a new
+lane nor the old client's missing acknowledgement shows whether an
+effect occurred. A supported alternate path to the same stable scope
+or an actual atomic outcome record must still be constructed.
+This pins the baseline and its missing source obligation without
+claiming an architectural gain.
+
+\paragraph{Replay scope.}
+The client runs the pinned bodies and class with logging and test
+callbacks stubbed. The server runs the two named bodies, with lease
+validation, log freeing, record storage and locking supplied by a
+serial harness. No durability, server migration, or failure timing
+can be inferred from the stubs. There are 49 separated client controls,
+seven shifted shared-window controls, one explicit 511-result limit,
+and ten server controls.
+\end{document}
