@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{Fixed joint limits and the reserve needed for a later stop}
+
+\paragraph{Decision and scope.}
+A velocity command can satisfy the next position and command-change
+bounds while leaving no lawful way to stop in later updates. This
+companion to PR 855 holds the configured position, speed, and slew
+bounds fixed, runs the same source limiter at every update, and
+changes the sampled position through an explicit scalar plant
+model. No ROS parameter service changes the bounds. The model
+is sampled forward motion with exact following of each applied
+velocity output, not a verified physical robot or ROS deployment.
+
+\paragraph{Exact viability calculation.}
+Normalize the sample period to one. Let $x$ be current position,
+$W$ the fixed upper bound, $p\ge0$ the last applied command, and
+$r>0$ the maximum commanded speed change per sample. The controller
+may emit a nonnegative command $u$, subject to the fixed speed cap
+and $|u-p|\le r$, and the model updates $x'=x+u$, $p'=u$.
+For current $p$ the minimum remaining motion through a stop is
+\[
+  B_r(p)=\sum_{j\ge1}\max(0,p-jr).
+\]
+Any law-abiding sequence has $j$th subsequent command at least
+$\max(0,p-jr)$ by induction and nonnegativity. The fastest monotone
+brake attains the pointwise lower bound through zero without
+exceeding the old speed cap. Hence $W-x\ge B_r(p)$ is exact,
+including equality, provided the command and following assumptions
+hold. For a chosen first command the exact test is
+$u+B_r(u)\le W-x$, in addition to the present speed/slew constraints.
+The minimal brake gives a feasible next action throughout this set.
+For $q=\lfloor p/r\rfloor$, $B_r(p)=qp-rq(q+1)/2$; the formula
+also includes an exact final zero term when $p/r$ is integral.
+When $u$ is an actual speed for a nonunit fixed interval, multiply
+the summed travel by that interval and take $r$ in speed units.
+
+\paragraph{Native comparison.}
+From rest under $W=7,r=1$, first request the outputs 1, 2, 3.
+All three are emitted and the sampled positions are 1, 3, 6.
+At the third update neither configured bound is violated, but the
+remaining room is 1 and $B_1(3)=3$. At the fourth update even a
+one-step intersection is empty. The normalized clamp still passes
+the interior request 1.5 unchanged. The separate exact guard
+substitutes 2 for 3 at the third update and can continue with
+controlled motion while preserving sufficient rest distance. This
+is a state transition in the explicit ideal plant, not evidence of
+real motion dynamics. A cold initialization using a fresh measured
+speed may change the software slew center; it cannot retroactively
+alter the applied-command history or meet an impossible braking law.
+
+\paragraph{What carries over.}
+The \href{https://doi.org/10.1109/100.580977}{Dynamic Window
+Approach of Fox, Burgard and Thrun} already excludes velocities from
+which it cannot safely stop. A matched direct finite
+braking-admissibility filter ties; the PR is a source-linked
+counterexample to treating one-step clamp normalization as a stop
+certificate, not a new planning advantage. The useful handoff
+interface binds the last actual applied command, the sampled position
+or conservative room bound, and a verified following law at the
+same cut. Command feedback is insufficient if invocation does not
+establish application, or the real plant cannot follow the demanded
+deceleration.
+
+\paragraph{Verification.}
+The pinned source and explicit plant run 2,960 configurations/policy
+pairs. Direct exact finite stopping search checks 2,624 states.
+Of 1,480 unguarded traces, 870 leave the viable set and 864
+show a first direct violation by the 12-sample horizon. All matched
+guarded traces preserve modeled stoppability. Three Lean lemmas
+check the pointwise braking bound and reserve steps; the real-valued
+sharpness argument above is separate. This is a scoped R6 input,
+not physical clearance or integration acceptance.
+\end{document}
