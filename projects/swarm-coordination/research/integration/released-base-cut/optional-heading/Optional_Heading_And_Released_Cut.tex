@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{An authorized heading and an accepted continuation are different cuts}
+\paragraph{Scope.}
+After PR 847 the remaining evidence question is which explicit
+heading is owed, not simply which wheel can brake. This fixture
+uses the pinned ROS-Industrial VDA 5050 graph validator, exact
+Node and NodePosition equality, selected order subscription,
+and navigation dispatch and completion callbacks. Transport,
+fleet timing and physical task execution are inert stand-ins.
+The tested source revision is
+\href{https://github.com/ros-industrial/vda5050_core/tree/a81ff9d600e8e30a35af25c152a3445c29c12f5f}{a81ff9d}.
+An application receipt in this fixture is not network
+authentication or a field deadline.
+
+\paragraph{An optional heading can be changed while the node is open.}
+An initial order releases A and offers B as horizon. A's callback
+finishes in the fixture; B has no callback while unreleased.
+An update anchored at A can release B with a replacement optional
+heading if it wins arrival order. After the former B release is
+accepted, that update at A is rejected. Anchoring the update at
+B is not a workaround: changing only B's optional heading fails
+the exact last-base comparison. This also holds before B has any
+driver callback, not just while it is moving. Thus the physical
+cut and the legal update cut are different. Exact numeric order
+equality even rejects changing \(+\pi\) to \(-\pi\) at the frozen
+anchor, though the physical orientation is the same on a circle.
+Do not convert physical equivalence into permission to rewrite
+the wire order.
+
+\paragraph{A continued order need not update the outstanding obligation.}
+An accurate stitch at B can append C and be accepted while B's
+older navigation callback is still pending. There are paired states
+with the same current accepted order version, the same B heading
+and same C in the accepted graph, but B's actual issued callback
+has version 1 when it was dispatched before the append, and
+version 2 when the append arrived before B dispatch.
+C's new explicit heading is not handed out until the old B
+callback completes. The test keeps B's value unchanged and
+executes the actual selected completion closure before C's
+dispatch. A higher update number and acknowledgment alone do
+not show which version authorized the current driver operation,
+let alone what target reached an actuator.
+Whole MQTT operation and live navigation services are not
+run here.
+
+\paragraph{An absent field is a permission boundary, not zero.}
+The native callback preserves an absent \(\theta\) as an empty
+optional. This is different from an explicit zero and different
+again from no qualified callback at all. The repository's
+\href{https://github.com/ros-industrial/vda5050_core/blob/a81ff9d600e8e30a35af25c152a3445c29c12f5f/docs/client-adapter.md}{client-adapter example}
+illustrates one downstream choice of \texttt{theta.value\_or(0.0)};
+the selected core callback itself does not impose it.
+Dropping the difference can change the attainable mission.
+In a separate known-wheel stopping model from PR 844 with
+no imposed body-axis slew and an arc-only budget, start at speeds
+four, with brake bounds one and two. Fastest decreases give wheel
+distances eight and four. If no heading is owed the exact minimum
+arc is six. If an explicit original heading is owed the two
+distances must agree, so the exact minimum arc is eight,
+attainable by using the weak wheel's profile on both.
+An arc-six restriction is therefore feasible for a proved absent
+heading yet can be incorrectly rejected by a zero default.
+If the lawful heading is merely unread and could be zero, the
+same free-heading plan is not justified. Arc length alone is not
+an obstacle clearance guarantee; the two native and motion tests
+are not one realized motion trace.
+
+\paragraph{Comparison and residual.}
+The native serial matrix covers 150 cases of heading values
+(including absence and both winding representatives), timing
+relative to release and dispatch, and old-anchor versus future
+stitch. The independent direct admission calculation agrees
+in all cases; 35 updates are accepted, including five future
+appends while B remains outstanding. The simple wheel enumeration
+agrees with the separate braking bound. A controller with the
+same authorized graph, exact callback and lawful effect data
+ties. No new scheduling capability, authenticated delivery by
+step two, complete R6, I1 acceptance or independently selected
+test follows.
+\end{document}
