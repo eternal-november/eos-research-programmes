@@ -1,0 +1,129 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{A dock changes while an older report is still owed}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Operating envelope and scope.}
+This is a development family for I1 and L1--L3 in the Cave Circuit 01
+simulation data. It tests a joint digital service floor after a
+contact loss and an optional second loss of a prepared recipient
+before settlement. The proof does not assert physical egress,
+unrestricted traffic, an empirical packet rate, natural interoperability,
+or independent selection of an acceptance mission.
+
+The older report has fixed, noncompressed size \(a>0\); a second owed
+inspection report has size \(b>0\). After the first fault the carrier Q
+already has a qualified archive copy and is the only admissible
+sender of both reports in the repair window. Both reports must
+be credited by \(7/8\) s, both are first eligible in this window,
+and Q's budget for the one-second trailing window is \(c\ge b\) bytes.
+The active endpoints and their other budgets are fixed.
+Separate sender accounting is sufficient for the grants in the
+checked cases; any additional traffic on these budgets is excluded.
+The positive family requires \(a+b\le c\), delivery of the unique
+final grant, and a matching transfer receipt at S if R left its
+dock. It permits one stale preparation notice to arrive after the
+final grant. Once the final grant is sent, the corresponding
+dock and assignment must remain valid through consumption.
+These premises restrict the environment and are not sampled
+empirical failure assumptions.
+
+\paragraph{Common source chronology.}
+A compiled selected
+\href{https://github.com/osrf/subt/tree/083c6a8acb0c25aa1a35e34517e628cd3b52ae77}{SubT broker and receive callback}
+delivers P's archival copy to Q during staging and validates a
+positive P-to-R reference contact at the old site. At the start of
+the experiment R is available instead at the prepared alternate site.
+P's attempt at time zero actually consumes a transmit allowance
+and does not reach R; Q is already positioned beyond that
+direct cut. The time and movement of the earlier relocations
+are not evaluated.
+
+At \(1/8\), R is still in the prepared dock and sends a historical
+preparation receipt. Q delivers the independent inspection packet
+at \(1/4\), while this repair is unresolved.
+On the second-fault branch, R's position leaves the receiving
+dock. The selected segment is 1/64 m along the y axis, with a
+piecewise constant acceleration of magnitude 1 in this fixture.
+It returns to rest. The dock rule is a declared local positional
+threshold; this is not a stock fault detector. In this branch
+R reads its own modeled position and sends a named transfer to
+S at \(3/8\). S takes over only after its own native callback has
+actually received the transfer. R can still receive radio after
+leaving the dock, so reachability alone does not qualify it.
+At \(5/8\) the currently eligible terminal sends one new
+scoped grant to Q. At \(3/4\) an older receipt may be forwarded
+late. At \(7/8\) Q reads its scoped callback history, chooses a
+terminal from the final grant only, and sends exactly once.
+A digital settlement is credit at the eligible receiver,
+not packet presence, source preparation, or a confidence flag.
+
+The small shift and resting RF sites were checked against 249,901
+triangles of 14 placed meshes and the selected staging fences,
+with an expanded per-body box. An integer separation certificate
+gives a conservative lower bound of 0.20198 m in that
+selection. The native replay uses the actual graph shortest-path
+data and native Cave 01 visibility lookup with a chosen 72 m
+range, chosen power and fixed random draw. It is not a
+whole-world motion, collision, transport or hardware test.
+
+\paragraph{Admission and exact family bound.}
+In a positive history the latest valid grant is unique. When
+stationary, R's tested local rule continues to qualify the same
+recipient; in the moved history, the actual transfer and the
+scoped final callback qualify S. Persistence through
+consumption is a separate premise. The policy emits no report
+from historical preparation alone; the receiver checks
+its own authority before crediting a report. Thus it never
+credits a second or wrong older settlement in this family.
+Both reports fit in the declared window exactly when
+\(a+b\le c\). Every result for the positive family follows by
+executing the independent report first and the one lawful older
+delivery second, not by combining individually successful runs.
+If no current grant arrives, Q keeps the independent delivery
+and declines the affected step. At the narrow capacity
+\(c=a+b\) there is no room for a second older attempt at a
+different recipient. Even where both recipients' physical
+routes can receive and the custody law permits attempting them,
+neither fixed single recipient works across both branches
+without the late observation. This is a scope and information
+obstruction in the declared operating class, not a theorem
+about all routing platforms or message encodings.
+
+A recovery that spends one fresh outgoing byte from Q to query
+after the change needs \(a+b+1\le c\), even when granted the same
+correct incoming reply for free. Receiving an unsolicited grant
+spends one byte at the serving issuer instead; the switched
+case also spends one R-to-S transfer byte. The late historical
+duplicate spends another old-source byte and no Q transmit byte.
+A direct scheduler with the same unsolicited, typed, time-scoped
+grant ties. The charged-query and last-arrived-receipt
+comparators isolate dependencies; they are not a substitute
+for a full state-of-the-art comparison. In particular,
+\href{https://arxiv.org/html/2103.11470}{NeBula} already uses data
+mules, return-to-contact and managed network traffic. This
+study does not claim that its implementation has to poll,
+or that it lacks a suitable application protocol.
+
+\paragraph{Boundary and checked correspondence.}
+The negative control permits R's departure after its final grant.
+Q's tape and transmit allowance in the stable and late-fault
+cases are then identical at consumption, but R rejects the
+attempt and the old report remains unresolved. Freshness at the
+time of issue is insufficient without a hold through consumption
+or another qualified recovery step. The earlier inspection still pays.
+
+The executable projection uses the unchanged admission checker
+on actual grant callbacks, Q's shared debit, scope and capacity.
+The finite source replay sweeps payload sizes, caps, phase of
+recipient, omitted enqueue controls, late stale receipts, and
+three policies; results are checked against an independently
+stated table. Lean checks the Boolean grant refinement,
+impossible fixed destination on the two branches and capacity
+boundary for general payload sizes given the stated source
+abstraction. It does not verify C++ or field dynamics.
+\texttt{REPLAY\_NATIVE.txt} gives the exact checks. No I1 or I2 closure
+or independent holdout is claimed.
+\end{document}
