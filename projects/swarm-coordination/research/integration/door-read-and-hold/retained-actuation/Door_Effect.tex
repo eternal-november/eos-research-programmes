@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{Fully observed OPEN does not certify an Open-RMF door will hold}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Source boundary.}
+The earlier \href{https://github.com/eternal-november/eos-research-programmes/pull/507}{door replay}
+separates OPEN from a complete read of the expected leaves and tests
+whether the fleet phase accepts an older OPEN with a new session.
+Here every expected leaf is found and is sampled at its target in the
+current update; the session matches. The pinned simulator's
+\texttt{PreUpdate} calls \texttt{command\_door} before computing and
+publishing its position-based mode. Thus the same complete, fresh
+OPEN report can accompany a zero or closing write in the same update.
+The source extraction executes the selected command, target-velocity,
+mode and publication functions with inert entities. This does not run
+\texttt{PreUpdate}, ROS transport, or Gazebo dynamics.
+
+\paragraph{A currently OPEN target is not sufficient.}
+After multiple closing writes, use an OPEN target in both histories,
+holding both observed positions fixed at their exact open target
+while the commands accumulate. The original limiter retains its last
+command, not the measured leaf velocity. With timestep $1/8$ and
+nominal acceleration $1/8$, let $a=1/64$ and let $k$ be the number of
+prior closing ticks. At this read cut the negative closing magnitude is
+$q=a\min(k,16)$, since the velocity cap is $1/4$ and the deceleration
+condition for the selected closing distance does not bind. On each
+OPEN update at the exact target, the limiter writes
+\[
+  u_{j}=-\max(q-ja,0).
+\]
+The initialized stable history and the residual-closing history have the
+same position sample, OPEN target, report and fleet-phase decision.
+The receiver restricted to these observations cannot justify a
+persistent-open obligation in both. Merely checking that all leaves
+were read and are currently open cannot repair it.
+
+\paragraph{Separate modeled physical continuation.}
+If each sampled position follows the issued velocity immediately
+for one $1/8$-second step, the remaining closing displacement until
+the first zero write is $m(m-1)/1024$, where $m=\min(k,16)$.
+Before the zero write a displaced leaf remains below its open target,
+and the nonpositive acceleration cap wins even outside the deadband,
+so the formula does not assume the leaf stays inside it. In the
+chosen tolerance $1/64$, four residual ticks in the initial limiter
+state give a dip $12/1024$ and remain OPEN; five give $20/1024$
+and do not. The branch is a conditional kinematic example, not a
+measured Gazebo transition or a verified physical door-clearance
+threshold. A continuing OPEN target also requires the authority to
+exclude later close writes and a physical model capable of carrying
+the held aperture forward through actual passage. A zero command is
+not a measurement that the leaf has stopped.
+
+\paragraph{Consequence for the shared receipt.}
+The producer of the clearance report must account for remaining
+effects as well as fresh observation and the current session.
+A consumer with only the completed phase result does not see
+whether the writer actually installed a safe continuation.
+Giving a direct scheduler the same causal writer and plant evidence
+would remove this distinction; the result is a source boundary,
+not an advantage against an equally informed scheduler or an
+independent mission test. Four pinned upstream files are specified
+in the replay source note. The 420 frozen-position cases and 136
+modeled moving update steps do not imply rates of occurrence.
+\end{document}
