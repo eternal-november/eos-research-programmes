@@ -1,0 +1,85 @@
+\documentclass{article}
+\usepackage{hyperref,amsmath}
+\begin{document}
+\section*{When a reconstructed reply is sufficient to resume a retry}
+\paragraph{Scope.} This is a source-level comparison for a digital old
+duty indexed by a stable request and lease, not a finding about a
+running server. The intentionally premature execution order is
+outside RIFL's documented rendezvous premise. The fixture checks
+why a simulator adapter must not present that order as a supported
+recovery path. Physical clearance, durable replication, authentication,
+bounded network timing and the mechanism that establishes cut closure
+are outside this test.
+
+\paragraph{Source boundary.}
+On the pinned RAMCloud revision from PR 853, the extracted
+\texttt{shouldRecover}, \texttt{recoverRecord},
+\texttt{checkDuplicate} and \texttt{processAck} methods are exercised
+against isolated serial state. Restoring a qualified old completion
+before lookup returns the exact saved result. If a fixture performs
+ordinary new-request classification on that key \emph{before}
+restoring it, it installs an in-progress entry; the subsequent import
+does not turn that entry into a saved completion. The same import
+after an independent lane's request succeeds normally and preserves
+both exact results. This test does not execute an old mutation in
+the premature branch. It distinguishes readiness of the named
+rendezvous from readiness of the process, and applies the established
+requirement that completion records precede retry handling
+(\href{https://doi.org/10.1145/2815400.2815416}{Lee et al., RIFL,
+Sections 3--4}). A whole-station pause is not the strongest
+baseline when disjoint readiness scopes are available.
+
+\paragraph{Matched possibility boundary for incomplete reconstruction.}
+Assume a single fenced cut, a stable key, at most one lawful immutable
+result, and a finite exhaustive family $\mathcal C$ of \emph{nonempty
+sets of complete copy holders} for histories where that result exists.
+Atomic effect and record, plus preservation of at least one complete
+copy in every admitted committed history, are explicit premises. If a
+committed effect can leave no readable record anywhere, the empty
+transcript cannot distinguish it even after checking every holder.
+All these histories can otherwise yield the same available evidence
+as one admitted empty history. On a subset $S$ of holders, completed
+negative reads govern the same cut and correctly report the absence of
+the keyed record there. Then the all-negative transcript rules out
+prior completion exactly if $S$ meets every member of $\mathcal C$.
+Sufficiency follows by intersection. For necessity choose an
+admitted holder set disjoint from $S$; its transcript and that of
+the empty history agree, but safe initiation of an otherwise
+authorized non-idempotent effect differs. A positive read of an
+authentic immutable result can answer the exact old query without
+waiting for unresolved negative reads. It grants no authority to
+perform a new effect, nor does a proven empty result itself grant
+that authority.
+
+The worst-case number of unit-cost reads for the binary existence
+decision, with all holders readable and no further information
+before a response, is the minimum hitting-set size. A fixed
+minimum hitting set attains it; the run of an arbitrary adaptive
+algorithm against the empty history forces its read set to hit
+every member. Thus if any pair of three holders is possible, two
+qualified negatives suffice. If a changed recovery mode can leave
+the exact old result on any singleton, the old two-read negative
+no longer suffices and three are necessary. If a holder cannot be
+read and no accessible hitting set survives, an all-negative
+transcript cannot license a new effect. It can still leave other
+object scopes operational. Two negative reads at different
+unfenced cuts also fail: check A while the only copy is at B,
+then check B after the copy moves to A. A same-cut premise is
+essential even if each local reply was truthful.
+
+\paragraph{Comparison and checks.}
+The intersection rule is ordinary read/write quorum reasoning
+(\href{https://doi.org/10.1145/800215.806583}{Gifford 1979}).
+\href{https://lamport.org/pubs/reconfiguration-tutorial.pdf}{Lamport,
+Malkhi and Zhou} provide established state-machine reconfiguration
+comparators where replication and configuration transitions are
+implemented. The relevant R2 obligation here is to re-establish
+which copy sets can serve a named exact old response after a
+changed recovery dependency, rather than to transplant the
+old negative certificate by convention. The simplified scope is
+checked on 51 matched source controls and all 524,272 negative
+projections of nonempty families on four possible holders.
+The copy laws used for the mathematical examples are stipulated;
+the RAMCloud fixture does not establish them or improve on an
+equally informed quorum and rendezvous baseline.
+\end{document}
