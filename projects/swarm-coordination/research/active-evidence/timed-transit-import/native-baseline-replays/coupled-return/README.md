@@ -1,0 +1,2 @@
+# Coupled route, receipt, and egress
+Run `sh replay.sh` with Python 3, Git, and C++17. Populate `source/` with the exact files in PINS.tsv. The full research archive includes them, the checked contact table, and expected outputs. The DOT graph supplies visibility weights and the exploration topology; using its arcs as motion edges, choosing blackout/drop timings, and idealized control/response delivery are experimental assumptions. This is a source-backed finite control study, not a physically validated trial, and it does not use an independently selected holdout.
