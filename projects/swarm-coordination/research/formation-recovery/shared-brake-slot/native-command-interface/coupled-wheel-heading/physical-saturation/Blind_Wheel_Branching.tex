@@ -1,0 +1,70 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{A wheel may branch physically without a diagnostic bit}
+\paragraph{What changed.}
+PRs 844--845 require each issued target to be physically realizable
+in both possible worlds before diagnosis, with the same realized
+wheel profile. Replace that contract by one allowing specified
+wheels to saturate an excessive downward speed request locally.
+From actual speed \(v\), brake bound \(b\), and absolute request
+\(0\le u\le v\), realized next speed on such a wheel is exactly
+\(\max(u,v-b)\). On other wheels a request with \(u<v-b\) is
+inadmissible. Even the requested command cannot accelerate in
+either world. The responses remain linearly interpolated over
+each unit step. This is a new stipulated plant, not a reinterpretation
+of the earlier proof and not a claim about the response of Gazebo,
+a generic torque ceiling, or hardware.
+
+\paragraph{Paired fault and mission.}
+Start with wheel speeds \((4,4)\), radius one and spacing two.
+In the straight world the brake bounds are \((1,2)\) and the
+terminal heading must be zero; in the turned world they are
+\((2,1)\) and the terminal heading must be one radian.
+Stop both wheels by step five. Let \(X_L,X_R\) be twice their
+distances, so arc length is \((X_L+X_R)/4\) and the scaled terminal
+difference is either zero or four. A blind law sends the same
+time-indexed absolute requests in both worlds and reads no feedback.
+A wheel with weak bound one travels at least eight distance units
+before reaching rest; thus its scaled distance is at least 16.
+
+\paragraph{Exact boundary by permitted saturation port.}
+If neither wheel may saturate, the two realized paths are identical
+under any common admissible request sequence, so the two headings
+cannot be attained. If only the right wheel may saturate, left
+distance \(X_L\) is common and at least 16 because it is weak in
+the straight world. The turned world consequently needs
+\(X_L+X_R=2X_L+4\ge36\), hence arc nine.
+If the left wheel may saturate, arc eight is attainable, with
+or without right saturation; no solution can beat eight because
+the straight state itself needs that much. These lower bounds
+hold also for real-valued requests in the declared interpolation
+model.
+
+For example, the common sequence
+\[
+ (3,3),(2,1),(0,1),(0,1),(0,0)
+\]
+is valid when both wheels may saturate. It produces scaled
+distances \((16,16)\) and \((14,18)\) in the two worlds, with
+the same arc eight and two different correct terminal headings.
+The left-only and right-only positive witnesses likewise use
+nonincreasing desired speeds at both wheels. The effective branch comes from physical response,
+not measurement or an unobserved conditional command. Adding
+an exact electronic cap common to both worlds instead would
+not supply this branch. A weak-wheel label alone does not say
+which contract describes the plant.
+
+\paragraph{Verification and missing obligations.}
+A paired-state search and independent factorization through
+complete individual-wheel request words agree in 64 scoped instances and 1,760 feasible heading-pair queries. The Gazebo snippets check 30 written target pairs
+for six positive profiles; the modeled local response is applied
+separately after the native writes. Lean checks the discrete
+distance bookkeeping. The exact left/right obstruction is a
+physical-model statement, not an advantage over an equally
+informed actuator allocator. Tracking, repeatability of the
+specific saturation response, tolerance to parameter errors,
+swept clearance in obstacles, I1 and independent mission
+validation remain open. The original diagnosis cutoff still
+applies on its original no-clipping interface.
+\end{document}
