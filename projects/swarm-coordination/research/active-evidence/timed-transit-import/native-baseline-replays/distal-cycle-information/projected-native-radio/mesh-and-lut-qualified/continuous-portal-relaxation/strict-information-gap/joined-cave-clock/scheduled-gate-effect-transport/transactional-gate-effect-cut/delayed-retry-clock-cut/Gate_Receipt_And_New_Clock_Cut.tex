@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{An exact actuation receipt does not certify a new clock cut}
+Use the unchanged SQLite-owned gate effect worker and schema from
+PR 883. A request, an installed fixed-duration effect, and a recorded
+disposition have distinct native records. Repeat both process exit
+cuts about the same durable commit, now moving the modeled clock
+between the first attempt and retry. The physical contact windows
+and effect guard are unchanged. The retry uses the same request key;
+success requires exactly its committed disposition, if any.
+
+When the first actuation slot is clear but the retry is within the
+return hold, an exit before commit leaves no effect; the later attempt
+is blocked. An exit after commit returns the earlier successful
+closure, which has already expired. The receiver must not reinstall
+it at the retry cut. Conversely, if the first attempt is held but the
+retry cut is clear, an exit before commit leaves the new attempt
+permitted. An exit after commit returns the old refusal permanently
+for that key; only an independently admitted new key can perform
+the newly feasible closure. All four outcomes occur at each of
+the two physically certified gates.
+
+The same successful result string is compatible with the closure
+currently being active or having expired. The same refusal string is
+compatible with current admission or with its absence. A comparison
+preserving only the returned result therefore transports the exact
+result query, but cannot transport a current-state query or the
+authority to admit work now. In the simulator the state query reads
+the actual installed interval against the current clock; motion outside
+the declared gate and all arbitrary external re-closing powers remain
+out of scope. Atomic ownership of the simulated effects and receipts
+by the database is a premise, not a hardware recovery claim.
+\end{document}
