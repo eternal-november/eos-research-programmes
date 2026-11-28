@@ -1,0 +1,61 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{Timed joint support for a radio broker and durable receipt}
+\paragraph{Scope.} Transfer the unchanged event constructor of PR 839
+to a different dependency: a named receipt is produced only by the
+same delivery that consumes a rolling allowance at the dock.
+The collector sees received probes and the exact response, not the dock
+journal or debit trace. This is an exhaustive serial civil fixture
+over its declared alphabet, not full SubT or a physical mission.
+
+\paragraph{Assembly.} \(S\) sends the original four-byte record to the
+dock. The pinned broker callback commits a named SQLite row only if the
+packet arrives. \(W\) closes and reopens that file without touching radio
+state. \(F\) removes the dock-to-collector path, leaving the inbound
+paths usable. At \(P\) the dock reads its actual journal and may send
+a one-byte probe (always, only when settled, or never). \(R\) sends a
+four-byte request; only actual request arrival with the named row
+available initiates a same-cut exact four-byte reply. Five strictly
+ordered events occupy uniform slots. The model assembles separate
+radio and journal transitions on actual \(S\) delivery, not an
+independent settlement bit. Independent native flat permutation
+replay and generated support agree in both directions on 10,800
+schedules and 54,000 timed cuts, including live debits, request arrival
+and exact reply identity. The path-loss abstraction and app behavior
+are fixture assumptions, not native field guarantees.
+
+\paragraph{Exact condition.}
+For event times \(s,p,r,f\) and common byte cap \(c\), under the admitted
+traffic the exact reply arrives iff
+\[
+s<r<f,\qquad c\ge4,\qquad
+(c\ge8\lor r-s>1),\qquad
+(c\ge5\lor \text{no issued probe is live at }r).
+\]
+The original must arrive before the request; an earlier request cannot
+return a row that does not exist yet. Under this ordering no inbound
+traffic prevents the original when \(c\ge4\). The request charges the
+same dock receive ledger as the original, costing eight bytes when
+both are live. An issued earlier probe crosses the still-open path
+and its live byte counts at both the reply sender and receiver.
+There is no other guard under the stated alphabet, so the same
+conditions suffice. An independent closed-form check agrees with every
+final result. The window includes equality, and the reply is at the
+request cut.
+
+\paragraph{Failure and positive controls.} At cap four with
+quarter-second slots, \(S\) and \(R\) each can arrive but never both in
+one episode. The independent product would invent a possible result.
+At six-sixteenth spacing, \texttt{SWPRF} permits the exact reply if
+the probe is absent. A successful positive probe costs the reply at
+that same cut. Erasing \(W\) from \texttt{SWPRF} and \texttt{SPRFW}
+yields the same word, but the latter reaches the gate earlier, while the
+debit is live. This does not show that restart helps; it shows that
+deleting a time slot changes the trace. A reopen alone with actual times
+retained does not change the scored traffic. Skipping the probe is not
+an improvement if the mission separately needs its information.
+Ordinary scoped rate accounting yields the exact tie. The finite
+transfer is not I1 acceptance, a general export guarantee, or an
+independently selected mission.
+\end{document}
