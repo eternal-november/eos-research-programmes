@@ -1,0 +1,2 @@
+# Receipt-authorized route activation
+Run `sh replay.sh` (Python 3, Git and a C++17 compiler). Put the pinned upstream files in `source/` following `source/PINS.tsv` for the repository version; the archived clean replay contains exact copies. The replay verifies all input blobs, runs the original selected radio test and then checks routed callbacks around staged relay activation. Physical latency and the observer's receipt delay are explicit model parameters, not measurement.

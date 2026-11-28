@@ -1,0 +1,69 @@
+\documentclass{article}
+\begin{document}
+\title{Radio reconfiguration can wait for the evidence it would remove}
+\maketitle
+
+\paragraph{Selected source and cut.}
+Use the pinned SubT visibility-route and broker fixture on five
+sampled cave tiles. The selected range is 72 m, not the stock
+parameter. No delay, map blockage, link fade, robot mobility or
+range guarantee is measured. There are two owed two-byte reports.
+The first delivery window is its specified tick \(p\) and the
+second is tick \(b>p\). Near-site registration changes the route
+both reports use. It selects a cheaper route for the old report
+whose longest hop exceeds the scoped range; the new report becomes
+deliverable. The stock broker and receiving callback therefore
+deliver both exactly when an effective near-site registration at
+\(k\) meets \(p<k\le b\), with activation preceding any dispatch
+at the same tick. A separate far-site option does not break the
+old route. The claim about the near-site cut is for this selected
+source/geometry/links and sufficient bandwidth only.
+
+\paragraph{Causal placement and observation.}
+Let the authorized caller command at tick \(s\) with integer
+activation delay \(\lambda\in[L,U]\), \(1\le L\le U\). The
+old receiver gets an authentic application callback if the
+first dispatch actually succeeds. A caller with routed access
+learns this at \(r\ge p\); the location/forwarding delay is
+explicitly modeled, not extracted from native broker timing.
+A receipt-first command is robust exactly when \(r+U\le b\).
+It cannot violate \(p<k\) in this envelope. Conversely the
+latest delay and earliest permitted command give failure if
+that inequality is false. This is a receipt-first bound, not
+a general impossibility for all possible foreknowledge or
+independent alternatives. For a caller without a qualifying
+message or other separating evidence, one fixed cut must lie
+in the intersection of the safe service windows of the possible
+histories.
+
+For example let the two potential report-window pairs be \((1,2)\)
+and \((3,4)\), with equal initial local views and unit activation
+latency. The source histories require activation at 2 and 4
+respectively. An authorized caller co-located with the old
+receiver can command on receiving \(P\) in both cases. A remote
+caller that lacks a distinguishing observation until one tick
+later has identical information at the last command cut in the
+early case. Acting by that cut breaks the late case; not acting
+loses the early report \(Q\). A fixed valid far site avoids
+this particular obstruction if separately available, which
+the replay checks too. The experiment does not claim the
+stock runtime provides the staged activation authority on
+those deadlines.
+
+\paragraph{Relation to submission-generated source loss.}
+The prior ARIAC run observed a valid pose before submitting
+an order that both starts a new duty and suppresses its only
+producer. The cave fixture instead waits for actual settlement
+of an old radio report before installing a route that prevents
+that settlement and opens a new one. The shared guard is to
+retain authorized evidence of the last effect needed from the
+old context, revalidate its prospective use where applicable,
+then put the context change before the new opportunity expires.
+Here the old callback clears its named delivery rather than
+being a fresh geometry read; there is no general pose-to-receipt
+substitution. The source-bound interpretation and the
+deadline/delegation conditions are essential in each. The
+same-information direct route planner ties. This is a selected
+development case, not a frozen independently selected transfer
+or a new mission acceptance result.
+\end{document}
