@@ -1,0 +1,88 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{Submitting finished work can change which unfinished work remains feasible}
+\maketitle
+
+\paragraph{Source and candidate seam.}
+In \texttt{usnistgov/ARIAC} tag 2024.3.0, the selected valid
+\texttt{SubmitOrderServiceCallback} sets the named result, calls the
+scorer and records submission membership. Separate selected native
+branches of the world update test that same membership for
+dependent-order announcement, robot malfunction and sensor blackout.
+The order in the source update is to process announcements, process
+challenge starts, process expiry, then publish health when due.
+The selected replay preserves the relevant start order and simulates
+neither expiry nor asynchronous delivery. The scorer and publication
+bodies are stubs: measured outputs are calls and local state changes,
+not scores or robot motion. Each history uses a valid preannounced
+order and one unchanged trial.
+
+\paragraph{Composition failure.}
+Acknowledging the submission and choosing the time at which a
+robot must tolerate a new fault are different operations, even in
+the same simulator. Two serialized histories can have the very same
+old health flags before the world update. One already has a
+committed old order with a lost result. The other has not yet
+committed it. The next update can create the new duty and revoke the
+availability of the floor robot and logical camera in the first
+history, without any changed pre-update health flag. Valid submission
+after that update changes the challenge cut by a full modeled update
+period. If retried after a lost response inside the same trial, the
+original submit service rejects the repetition, without running the
+scorer or announcing the descendant a second time. That rejection
+does not transport the original result. This is a same-trial control,
+not a result about server restart, message loss probabilities, or
+unknown order membership.
+
+\paragraph{Exact staged-cut check in the scoped family.}
+Suppose source update ticks are consecutive integers.
+A selected valid submission occurs just after tick \(c\).
+A descendant must be announced by tick \(D\). The old floor duty
+needs the floor's availability through its effect at \(f\); the
+old camera duty likewise needs uninterrupted source availability
+through tick \(s\). These are authored effect requirements, not
+observed robot tasks. Let \(F\subseteq\{f,s\}\) contain the ends
+of just those duties on resources disabled by the submission's
+configured challenge. Other continuing work is independent in
+this fixture. Disablements last beyond the test horizon.
+The law for an admissible submit is
+\[
+  \max(\{0\}\cup F)\le c,\qquad c+1\le D.
+\]
+The first inequality protects the old effects against the first
+possible loss tick \(c+1\); the second meets the descendant
+deadline. Choosing the earliest such cut is exact. The replay
+compares all eight opportunity choices, both challenge kinds
+alone and together, and deliberate outside-envelope deadline
+conditions. It executes native start flags and announcement for
+each choice. A direct scheduler given identical ongoing duties,
+authority, and transition rules agrees; it can encode these
+as ordinary conditioned temporal effects. The gain over an eager
+submission does not establish superiority to that baseline.
+
+\paragraph{Where it stops.}
+Unlike a fixed future opportunity, here the act can create the
+opportunity, a new duty, and the future disturbance together.
+Treating a pending submission as if the caller could still choose
+its cut is not justified. A transport-level retry cannot remove
+a committed simulator effect. For unconfirmed old submissions
+a stronger gate would need authoritative commit identity or an
+independent effect-side way to protect ongoing work. The fixture
+does not show control over an already committed submission, an
+adapter for real co-executing hardware, or a guarantee for a
+second conditional fault whose onset is hidden. It is development
+evidence for a specific prior-work collision. No independent case
+has been chosen or used.
+
+\paragraph{Relation to the nearest named prior architecture.}
+The HeRo ICRA 2025 abstract and author poster describe state-machine
+coordination with periodically synchronized state, monitoring
+around execution, and planning-generated recovery in ARIAC.
+The poster gives this workflow-level context, not the full solution
+or the source code. This replay establishes a distinction any
+comparison using the pinned ARIAC branches must represent. It does
+not establish that HeRo omitted it, used this exact release,
+would fail these tests, or is reconstructible from the poster.
+See DOI \texttt{10.1109/ICRA55743.2025.11128674}.
+\end{document}
