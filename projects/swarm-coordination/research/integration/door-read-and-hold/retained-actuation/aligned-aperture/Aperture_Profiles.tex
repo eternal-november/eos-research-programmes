@@ -1,0 +1,74 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{An aperture promise with independently scheduled leaf controls}
+\paragraph{Source and modeled interface.}
+The replay executes the selected pinned Open-RMF joint target,
+command, mode, publication and fleet-phase functions with inert
+Gazebo/ROS types. At the initial read the sampled positions are
+fully open and the active session matches. The histories vary the
+retained closing command before that read. Independent one-joint
+models exercise the actual per-joint recurrence; giving distinct
+leaf writers independent targets for one shared opening is a
+declared design here, not a stock per-leaf interface to one door.
+
+The geometry is an ideal opposed two-slider aperture. Each leaf's
+open displacement is normalized to 1; usable aperture is the sum
+of the two displacements, and the stipulated active traversal must
+have a minimum gap at all times over 24 updates. Define the
+nonnegative deficit relative to full aperture in units of $1/1024$.
+The model applies the issued velocity immediately for each fixed
+$1/8$-second interval, with an open stop. The closed stop never
+binds in the sweep. Within an update, each deficit is a maximum of
+zero and an affine function; their sum is convex and its interval
+maximum is at an endpoint. There is no claim about inertial
+hardware, collision avoidance outside this aperture condition, or
+a Gazebo run. A separate entity's closing command executes in every
+profile fixture and does not enter the aperture measure.
+
+\paragraph{Exact pointwise sufficient state.}
+Retain the no-pulse and proposed-pulse profiles for each leaf with
+their clock alignment. A scope admits a switch of the target for
+the indicated pulse, without requiring the optional maintenance
+request actually to run. The envelope includes every combination
+of the permitted occurrences. If $D_i(t,e_i)$ is the deficit of
+leaf $i$ at cut $t$, then safety for every permitted occurrence
+is equivalent to
+\[
+  \forall t,\quad \sum_{i=1}^{2}\max_{e_i\text{ permitted}}D_i(t,e_i)\le S(t).
+\]
+This follows by maximizing at each common cut over the product of
+the two occurrence sets; the maximizing choices need not agree
+between cuts. If the occurrence sets are coupled, the product can
+be a safe overapproximation but not an exact criterion. Checking
+the same capacity index at each cut reuses the admitted-row
+checker. Direct enumeration of both actual leaf profiles ties.
+Summing separate peaks is a sound, strictly coarser reference.
+Holding both actuators is no remedy for an already excessive
+retained stopping displacement, and excludes every optional pulse
+even when the exact shared rule permits it.
+
+\paragraph{Replacement and necessity.}
+At 44 deficit units, the staggered pulses can both be allowed even
+though their separately retained peaks sum to 76. At 162 units
+in another matched fixture, either pulse by itself is compatible
+with the other leaf's residual action, yet both cannot be allowed:
+the aligned maximum is 316. There is no valid compatibility claim
+from two separately admissible policies.
+For one replacement, keep the left pulse at tick 9 and move the
+right pulse from tick 5 to tick 11. The two standalone peaks remain
+32 and 20. The joint maximum increases from 36 to 52, invalidating
+the accepted 36-unit aperture promise. Pointwise domination at
+the same clock would have preserved it. Lean checks the product
+law, its pointwise replacement implication and the separate-peak
+sufficiency, not the source-to-plant interpretation.
+
+As in the digital revocation case, a fresh correct read does not
+confer validity through an effect. Here the protected support is a
+time-indexed geometric capacity, not a serialized permission row:
+disjoint writers may still interfere, and a timed benign change
+need not be fenced. Profile availability and the ability to enforce
+admitted target schedules through the traversal are premises of
+this held-in interpretation, not capacities supplied by the OPEN
+report or demonstrated by an independent mission.
+\end{document}
