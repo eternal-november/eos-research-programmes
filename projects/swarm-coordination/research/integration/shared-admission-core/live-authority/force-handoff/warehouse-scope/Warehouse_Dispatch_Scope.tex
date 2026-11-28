@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{An incumbent's absence does not release a shared bay}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Audit.}
+This is a held-in cross-source transfer of one unchanged admission
+kernel. Settlement here means a named simulated command dispatch, not
+physical actuation. The plant fragments are the selected
+\href{https://github.com/semitable/robotic-warehouse/blob/96fbc64e3eae5fee915e0d390f864fa06ddccd47/rware/warehouse.py}{RWARE grid transition}
+and phase-ordered Gazebo command selection from the parent replay.
+The bridge is authored: a primary takeover requires an empty service
+bay at consumption, and a backup requires a different vehicle at its
+named standby cell. A simulator read at that cut is stipulated
+available to the inline controller and is not a field sensor.
+Neither stock integration of these simulators nor field behavior nor
+the independent acceptance mission is established.
+
+\paragraph{Source sequence.}
+At the first cut P and Q stand outside the bay; Q is staged.
+Three route histories run the same isolated native \texttt{step},
+with either no entrance, P entering, or Q entering. A disjoint
+vehicle advances in all three. The selected RWARE graph harness
+handles at most one moving arc in any weak component; competing
+simultaneous entrances are expressly excluded.
+At the consuming cut the actual occupancy, not the issued movement
+request, determines the two permissions. One movement changes both
+when Q enters: the bay is no longer clear and Q is no longer staged.
+The late data comes from one state, not two independently sampled
+Boolean values.
+
+\paragraph{Witness.}
+With a timely record that the old dispatch paid and the incumbent
+writer still live, the early bay and reserve report is the same
+in all three route histories. With no entrance, the scoped primary
+guard serves the new duty without using Q. If P enters, only Q
+remains available. If Q enters, the correct policy refuses the new
+request and leaves old work alone. Testing only P's position in the
+last case gives a true statement about P but wrongly admits the
+primary path. The Gazebo slice can still emit the primary velocity
+command; that emission is not evidence of authorization.
+
+\paragraph{Checks and residual.}
+The unchanged checker used the native dispatch trace for each arm
+and the RWARE state for scope and reserve. The old dispatch record is
+a separate condition; loss is not evidence that the command did not
+happen. The sweep covers three bay columns, two approaches, three
+route histories, two prior-settlement values, two current writer
+states and two receipt-availability choices (144 cases).
+Scoped admission served 60 new requests. Of 84 refusals, 48 had a
+feasible old duty, and all 48 retained it. The old-snapshot
+comparison issued 42 inadmissible requests; the fresh incumbent-only
+comparison issued 12. These are scoped counts, not empirical risks.
+The matched direct rule given the same inputs and rights agrees
+on every decision. There is no claim of planner improvement,
+mechanical success or I1 completion.
+
+\paragraph{Replay.}
+Use the archived offline bundle with Python 3, NumPy and a C++17
+compiler: \texttt{python3 joined.py}. From a checkout use
+\texttt{WAREHOUSE\_PINS} to point to the inputs in
+\texttt{SOURCE.tsv}; the parent replay also uses its four pinned Gazebo
+sources (it can fetch the exact versions if not bundled). Both the
+wrapper and RWARE source are checked by Git blob hash.
+\end{document}
