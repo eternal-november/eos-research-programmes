@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{One radio reception can serve two duties, but a late report need not say the gate is clear}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Interface and comparison.}
+The parent \href{https://github.com/eternal-november/eos-research-programmes/pull/808}{gate-budget replay}
+requires one four-byte inspection report and one one-byte release notice at the
+same modeled cut. They consume the same transmit budget. Here the report
+keeps exactly four payload bytes. The two recipients are initially distinct
+clients at the parent hub positions. We test two alternate ways to share the
+same four-byte report. Neither comparison assumes a free separate notice.
+
+\emph{Native fan-out.} Give one endpoint two native subscribers. The
+pinned SubT dispatch body calls its radio model for each client in order.
+With four or five payload bytes of sender capacity, just the first
+subscriber receives the report. Swapping the subscriber list swaps the
+winner. With eight, both receive it, the sender spends eight, and each
+receiver spends four. This accounts bytes, not the number of application
+calls or outgoing logical datagrams. The harness distinguishes the native
+transport recipient from the logical endpoint and runs the original receive
+callback against a distinct application for each role. It does not run
+distributed ROS transport.
+
+\emph{Local fan-out.} One physical radio client receives and credits the
+report, then enqueues its receipt for a co-located gate service. The report
+can now serve both duties for four radio bytes. The service needs
+authority both to accept the report and to consume it for the active gate
+occupation. It cannot infer that authority merely from physical
+co-location. The handoff queue is processed after the native receive
+callback returns, not recursively under its mutex. No local lane latency
+or deployment cost is inferred from the replay. It gives a same-slot
+outcome only under the fixture's service model.
+
+\paragraph{Treatment of ambiguous reports.}
+A report sent or delivered at a late time could have been produced before
+last contact, or the carrier could have reached the gate late. A
+legitimate initial rest hold shifts the enlarged path. At the same send
+slot, that shift puts the carrier strictly inside the gate footprint;
+without it the carrier is already past last contact. The unqualified
+report has the same sender, logical endpoint, payload, callback time and
+inspection effect in the two histories. A report-only observer cannot
+both open immediately in the clear history and refuse in the occupied
+one. The equivalence is for that declared callback, not for all sensor
+feeds or radio diagnostics.
+
+The positive source explicitly distinguishes issuance \emph{after last
+contact} from queued ordinary inspection. It advertises a session-bound
+endpoint for a qualified report. The local gate service consumes only the
+currently authorized epoch and only on a hold that prevents re-entry
+through use. In the replay that hold is the certified remaining path.
+The cached old endpoint has the same four-byte payload and can still
+deliver an inspection report but does not authorize opening. The
+sender-side source test derives its clear cut from the modeled path;
+actual source trust, endpoint binding, and local interlock wiring are
+assumptions, not demonstrated hardware facilities. SubT debits payload
+only: endpoint metadata and session setup are not asserted to be free on
+a real link.
+
+\paragraph{Transfer to a discrete physical-effect source.}
+The unchanged C++ receipt predicate was applied to pinned RWARE moves.
+At tick 1 the old carrier still occupies the gate cell; at tick 2 it
+has left. Both turns at the downstream cell remain permitted even under
+a scoped hold. Without that hold, a subsequent native forward action
+in the same epoch can reoccupy the cell before consumption at tick 5.
+The qualified old receipt still exists. A competing move then fails in
+RWARE, which independently refuses occupied targets. Under the hold,
+withdrawing only the pending re-entry leaves room for the successor
+and preserves those unrelated turns. The replay uses a modeled gate
+ledger and actual native movement, not a stock RWARE reservation API.
+It requires either authority over all re-entry into that cell during
+the window or fresh evidence at the use boundary. A fresh exact
+pose read at that boundary is a stronger interface and admits one
+additional safe case in the sweep, rather than tying the receipt-only
+policy unconditionally.
+
+\paragraph{Result.}
+The same qualified report can therefore beat the two-message diagnostic
+from the parent even without a timed appointment at the desk; merely
+adding native subscribers cannot. A direct scheduler with the same
+recognized occupancy epoch, source qualification and local service ties.
+The transfer concerns which observations can safely be reused and what
+they cost, not a new scheduling advantage over that comparison.
+The 288-case replay varies both paths, both prior reply schedules, two
+motion timings, four authority/issuance profiles, three caps and three
+delivery designs. It reuses published geometry and pinned native broker
+code but not real robot motion or an independent I1/I2 mission.
+\paragraph{Reproduction.}
+In the offline archive, run \texttt{python3 gate\_share.py} and
+\texttt{python3 warehouse\_clear.py}. For a repository checkout,
+provide the parent mesh and original source inputs to the first script
+using \texttt{--geom}, \texttt{--source} and \texttt{--paths},
+following the parent replay. Provide the two warehouse inputs pinned
+by the sibling \texttt{conditional-support/WAREHOUSE\_SOURCE.tsv}
+with \texttt{--warehouse} to the second.
+
+\end{document}
