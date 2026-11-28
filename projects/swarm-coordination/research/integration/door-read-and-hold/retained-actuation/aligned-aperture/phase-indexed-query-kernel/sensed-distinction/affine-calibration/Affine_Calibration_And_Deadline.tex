@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{A deadline for one decision under a drifting calibration}
+\paragraph{Change and retained scope.}
+Keep the four compiled native-backed ideal aperture trajectories,
+permitted right pulse, and budget from PR 867. The only measurement
+is numerical in this arm. Replace the arbitrary constant offset by
+an arbitrary affine offset $b_0+b_1 t$ shared by the selected reads
+within one run, with each read's error bounded by $7/4$. This change
+of model does not establish an actual sensor calibration law, and
+modes and receipt times remain separate interfaces.
+The proposal is decided at cut 10 before the right pulse begins
+at update 11. A result arriving after that cut is not allowed to
+license it, even if its later evaluation would be exact.
+
+\paragraph{Exact compatibility and obstruction.}
+Two histories with differences $d_t$ share a transcript at a set of
+cuts if some slope $\lambda$ makes all $d_t+\lambda t$ fit within a
+band of width $4e$. Equivalently, the slope intervals
+\[
+ \left[\frac{-4e-(d_u-d_t)}{u-t},
+       \frac{4e-(d_u-d_t)}{u-t}\right]\quad(t<u)
+\]
+have nonempty intersection. Choose a slope in the intersection,
+then translate its extremal values into the band for a common
+offset difference. This is exact rational interval arithmetic
+on the actual modeled trajectories; full identification is not
+needed to make the smaller decision. Two numerical reads at
+distinct phases can always be absorbed in an arbitrary affine
+offset. This also applies to an adaptive second time chosen
+from the first value.
+
+For the one-action decision, after updates $(1,7,10)$ the
+contrast $3y_1-9y_7+6y_{10}$ cancels both calibration terms.
+The true contrasts are $-6,-90,-78,-78$, with only the
+first unsafe. Its separation 72 exceeds the combined error
+width $36e=63$. At equality $e=2$ the schedule admits a
+collision. No policy using only numeric observations through
+cut 9 can decide the action in the declared family: the first
+and fourth histories share a transcript on every one of
+cuts 0 through 9. The scheduler admits the right pulse on a
+qualified safe contrast at cut 10. A one-tick delay forces
+withholding while the already safe old obligation remains
+admitted. No later contrast is treated as earlier knowledge.
+
+\paragraph{Broader profile and stronger early reference.}
+The second and fourth histories share a numeric transcript at
+all cuts 1 through 10, so no selection of post-cut reads can
+decide the full profile. A paid truly qualified tick-zero sample
+from the same sensor run changes the interface: $(0,2,6,10)$
+suffices for the profile and no fixed triple in that enlarged
+menu does. In the simpler constant-bias model $(0,2)$ already
+suffices, since the true update-2 deficits are 6 or 14 and
+the tick-zero deficit is zero. With bounded linear drift
+$|b_1|\le\rho$ those two cuts separate only for $\rho<1/4$.
+None of these comparisons credits a pre-actuation sample
+unless that source and shared calibration are available.
+
+Direct compatible-history and contrast evaluation ties the
+admitted-row check. Fresh categorical status remains the
+stronger action-only reference if that different channel is
+available on time. This is a held-in native writer replay
+with a stated numerical observation model, not field evidence
+or independent mission acceptance.
+\end{document}
