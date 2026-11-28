@@ -1,0 +1,121 @@
+#include <algorithm>
+#include <array>
+#include <cassert>
+#include <iostream>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <vector>
+#define RCLCPP_INFO_STREAM(...) ((void)0)
+#define RCLCPP_WARN(...) ((void)0)
+namespace ariac_msgs {
+namespace msg {struct CompetitionState {enum {STARTED,ENDED};};}
+namespace srv {struct SubmitOrder {
+ struct Request {std::string order_id;};
+ struct Response {bool success{};std::string message;};
+};}
+}
+struct Order {
+ std::string id,trigger;
+ bool announced=false,submitted=false;
+ int submission=-1,announcement=-1;
+ Order(std::string i,std::string t):id(i),trigger(t){}
+ auto GetId()const{return id;}
+ auto GetOrderId()const{return trigger;}
+ bool IsAnnounced()const{return announced;}
+ void SetIsAnnounced(){announced=true;}
+ void SetAnnouncedTime(int t){announcement=t;}
+ void SetIsSubmitted(){submitted=true;}
+ void SetSubmittedTime(int t){submission=t;}
+ bool GetKittingTask()const{return true;}
+ bool GetAssemblyTask()const{return false;}
+ bool GetCombinedTask()const{return false;}
+};
+struct Challenge {
+ std::string trigger;
+ std::vector<std::string> scopes;
+ int duration,started=-1;
+ bool active=false;
+ Challenge(std::string x,std::vector<std::string> s,int d):trigger(x),scopes(s),duration(d){}
+ auto GetTriggerOrderId()const{return trigger;}
+ auto GetDuration()const{return duration;}
+ auto GetRobotsToDisable()const{return scopes;}
+ auto GetSensorsToDisable()const{return scopes;}
+ auto HasStarted()const{return active;}
+ void SetStarted(){active=true;}
+ void SetStartTime(int t){started=t;}
+};
+struct Message{std::string id;};
+struct Publisher{
+ std::vector<std::string> trace;
+ void publish(const Message& m){trace.push_back(m.id);}
+};
+struct Impl {
+ std::mutex lock_;
+ int current_state_=ariac_msgs::msg::CompetitionState::STARTED;
+ int elapsed_time_=0,total_orders_=1;
+ std::vector<std::string> trial_orders_{"A","B"},submitted_orders_;
+ std::vector<std::shared_ptr<Order>> all_orders_,on_order_submission_orders_;
+ std::vector<std::shared_ptr<Challenge>> on_submission_robot_malfunctions_,
+   in_progress_robot_malfunctions_,on_submission_sensor_blackouts_,in_progress_sensor_blackouts_;
+ std::shared_ptr<Publisher> order_pub_=std::make_shared<Publisher>();
+ bool ceiling_robot_health_=true,floor_robot_health_=true;
+ bool break_beam_sensor_health_=true,proximity_sensor_health_=true,
+      laser_profiler_sensor_health_=true,lidar_sensor_health_=true,
+      camera_sensor_health_=true,logical_camera_sensor_health_=true;
+ std::vector<std::string> scoring_invocations;
+ void ScoreKittingTask(const std::shared_ptr<Order>& o,const std::string& k){
+   assert(o->id==k);
+   scoring_invocations.push_back(k);
+ }
+ void ScoreAssemblyTask(const std::shared_ptr<Order>&,const std::string&){assert(false);}
+ void ScoreCombinedTask(const std::shared_ptr<Order>&,const std::string&){assert(false);}
+};
+struct TaskManagerPlugin{
+ Impl state,*impl_=&state;
+ void SetSensorsHealth(const std::vector<std::string>&);
+ void SetRobotsHealth(const std::vector<std::string>&);
+ void ProcessOnSubmissionOrders();
+ void ProcessOnSubmissionRobotMalfunctions();
+ void ProcessOnSubmissionSensorBlackouts();
+ bool SubmitOrderServiceCallback(
+  const std::shared_ptr<ariac_msgs::srv::SubmitOrder::Request>,
+  std::shared_ptr<ariac_msgs::srv::SubmitOrder::Response>);
+ Message BuildOrderMsg(const std::shared_ptr<Order>& o) {return {o->id};}
+ // The order here is the source order of these selected branches of OnUpdate.
+ void update(int time){
+   std::lock_guard<std::mutex> lk(state.lock_);
+   state.elapsed_time_=time;
+   ProcessOnSubmissionOrders();
+   ProcessOnSubmissionSensorBlackouts();
+   ProcessOnSubmissionRobotMalfunctions();
+ }
+ bool submit_a(){
+   using S=ariac_msgs::srv::SubmitOrder;
+   auto req=std::make_shared<S::Request>();req->order_id="A";
+   auto resp=std::make_shared<S::Response>();
+   assert(SubmitOrderServiceCallback(req,resp));
+   return resp->success;
+ }
+};
+#include "selected.inc"
+
+int main(){
+ int id,slot,wantRobot,wantCamera;
+ while(std::cin>>id>>slot>>wantRobot>>wantCamera){
+   TaskManagerPlugin p;
+   auto a=std::make_shared<Order>("A","");a->announced=true;
+   auto b=std::make_shared<Order>("B","A");
+   p.state.all_orders_={a,b};p.state.on_order_submission_orders_={b};
+   if(wantRobot)p.state.on_submission_robot_malfunctions_={
+     std::make_shared<Challenge>("A",std::vector<std::string>{"floor_robot"},100)};
+   if(wantCamera)p.state.on_submission_sensor_blackouts_={
+     std::make_shared<Challenge>("A",std::vector<std::string>{"logical_camera"},100)};
+   for(int t=0;t<=9;++t){
+     p.update(t);
+     std::cout<<id<<' '<<t<<' '<<int(b->announced)<<' '<<int(p.state.floor_robot_health_)
+              <<' '<<int(p.state.logical_camera_sensor_health_)<<'\n';
+     if(t==slot)assert(p.submit_a());
+   }
+ }
+}

@@ -1,0 +1,2 @@
+# Stage an authorized observation before the act that suppresses its producer
+Run `python3 staged.py | cmp expected.txt -` beside the pinned submission-cut, qualified-pose and joined-capture directories. The archive includes them. The decision reads a current public event as it is emitted, not a known future camera opportunity. The authority to retain and subsequently apply a prospectively scoped observation is an explicit experimental policy, not a claim about stock competition permissions.
