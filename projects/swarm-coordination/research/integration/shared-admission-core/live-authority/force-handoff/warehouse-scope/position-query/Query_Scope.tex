@@ -1,0 +1,80 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{Which position must a replacement read?}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Question.}
+In the parent warehouse/dispatch fixture, fix a qualified receipt
+for the old effort dispatch and a healthy incumbent writer. The
+consumer must use P if the bay is empty, use Q if the bay is not
+empty and Q is staged, or otherwise refuse the new dispatch.
+Preference for P saves the named reserve; use of Q, or refusal,
+cannot be substituted when optimal service and reserve use are the
+specified output. Read access is to one named position at a time, with
+equal unit query costs. For the first result both reads see the same
+immutable cut. The distribution below prices observations and does
+not change which supported states must be handled correctly. There is
+no assumed radio packet model or field-sensor cost.
+
+\paragraph{Reachability and exact count.}
+The original source family has three possibilities: P out with Q
+at standby; P in with Q at standby; P out with Q in the bay.
+The new bypass instead permits Q to turn and move away from both
+cells, with P either outside or in the bay. All five cases use the
+same selected pinned RWARE transition, and no concurrent moves in
+the same graph component. Across six fixture geometries the 30
+executed traces agree with the consumed decision at the
+unchanged admission kernel.
+\[
+\begin{array}{c|c|c}
+\text{P}&\text{Q}&\text{arm}\\\hline
+\text{out}&\text{staged}&\text{P}\\
+\text{in}&\text{staged}&\text{Q}\\
+\text{out}&\text{bay}&\text{refuse}\\
+\text{out}&\text{away}&\text{P}\\
+\text{in}&\text{away}&\text{refuse}
+\end{array}
+\]
+With full-support law \(\mu\) on the original three states, the
+optimal expected number of queries is
+\(2-\max\{\mu(P\text{ in}),\mu(Q\text{ in bay})\}\).
+With full support on all five it is
+\(2-\mu(Q\text{ in bay})\).
+Indeed, the first query can only be P or Q, and a branch with
+distinct admissible decisions must read the other coordinate.
+Originally, either first query has a branch that makes the
+other unnecessary. With the bypass, P has no such branch and
+reading Q first is optimal; Q in the bay alone suffices to refuse.
+A decision tree oracle confirms the exact values for all 1,024
+positive weight vectors with each mass proportional to 1 through 4.
+The uniform examples are \(5/3\) and \(9/5\); the direct optimal
+query policy ties.
+
+\paragraph{What no amount of repeated reading restores.}
+Before bypass is admitted, the Q staging bit distinguishes its
+two positions. Afterward, P outside and Q not staged still allow
+two outcomes even when both reports are current: Q in the bay
+requires refusal; Q away allows P. Repeated reads of those two
+same-cut reports cannot repair this loss. A three-way Q
+classification retains the distinction in this family. The
+simulated motion trace is a witness that the added branch is
+possible, not an assertion about unrestricted RWARE traffic.
+There is also a distinct timing counterexample: observing Q
+staged before the update and only P outside after it gives the
+same record whether Q stood still or entered the bay. The older
+observation cannot substitute for a read at consumption unless
+an independently justified hold or transition bound preserves it.
+
+\paragraph{Scope.}
+This is a checked change of the set of continuations, a finite
+observation-cost result, and a defense against stale joins. It
+does not take an independent acceptance case, assume a global
+atomic sensor in an actual mission, improve the matched exact
+planner, or turn a simulated command invocation into mechanical
+settlement. The parent replay's pinned sources, dependency path,
+and authorship boundary apply. Run \texttt{python3 query.py} in the
+offline bundle, or with the same pinned-source layout as the
+parent study.
+\end{document}
