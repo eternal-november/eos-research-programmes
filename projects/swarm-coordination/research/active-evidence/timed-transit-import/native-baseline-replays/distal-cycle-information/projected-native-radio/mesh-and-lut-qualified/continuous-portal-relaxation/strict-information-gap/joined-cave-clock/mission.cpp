@@ -11,6 +11,7 @@ struct Scene{
    std::vector<std::vector<int>> D;
    std::array<std::array<std::string,2>,2> beam;
    std::array<std::vector<S>,2> path;
+ std::array<S,2> routeRequiringGate;
    explicit Scene(const char* name){
      std::ifstream f(name);
      S n;assert(f>>n);
@@ -19,6 +20,8 @@ struct Scene{
      for(auto& r:D){r.resize(n);for(auto& v:r)assert(f>>v);}
      for(auto& r:beam)for(auto& v:r)assert(f>>v);
      for(auto& r:path){S n;assert(f>>n);r.resize(n);for(auto& p:r)assert(f>>p);}
+     for(auto& route:routeRequiringGate)assert((f>>route)&&route<2);
+     assert(routeRequiringGate[0]!=routeRequiringGate[1]);
    }
 };
 
@@ -113,7 +116,10 @@ int main(int argc,char** argv){
    }
  }
  assert(cue==world);
- auto& p=s.path.at(cue);
+ // Cue is a *closed physical gate*, not a certified route label.
+ const auto selected=s.routeRequiringGate.at(1-cue);
+ assert(selected!=s.routeRequiringGate.at(world));
+ auto& p=s.path.at(selected);
  long long t=1000000;
  for(size_t i=1;i<p.size();++i){
    t+=bound_leg(s.xyz[p[i-1]],s.xyz[p[i]]);
@@ -133,7 +139,7 @@ int main(int argc,char** argv){
  assert(at_goal.route("R","D1",report,secs(t)).empty());
  assert(at_goal.route("R","D2",report,secs(t+1125000)).empty());
  // Use a named, previously chosen rest stop, not a look-ahead RF oracle.
- auto idx=cue==0?4:5;
+ auto idx=selected==0?4:5;
  for(int i=int(p.size())-1;i>idx;--i){
     t+=bound_leg(s.xyz[p[i]],s.xyz[p[i-1]]);
     r.where["R"]=p[i-1];
