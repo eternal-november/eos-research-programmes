@@ -1,0 +1,109 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{Actuation slew and independent evidence of the owed heading}
+\paragraph{Material change.}
+Keep the explicitly modeled forward-only wheel dynamics of PR 846,
+with sample period one, radius one, spacing two, initial speeds four,
+and both wheels at rest after step five. A locally authorized wheel
+may saturate excessive braking to its actual bound; the other must
+follow an admissible target. Optional limits on emitted linear and angular
+target differences are separate from physical wheel saturation.
+The two fault states have weak left or weak right respectively,
+with brake bounds \((1,2)\) and \((2,1)\).
+Initially study the earlier correlated obligations (straight in the
+first state, turn by one radian in the second). Then permit an
+authorized dispatcher to choose either heading in either state.
+Neither that choice nor private fault identity is baked into
+the actuator command or observation. No motion capability or
+physical feedback at the robot is inferred from a commanded target.
+
+\paragraph{Actual configured command path.}
+An independent one-unit maximum step in body forward and angular
+commands is equivalent to a two-unit \(\ell_1\) step bound on
+the desired wheel pair, measured against the previous emitted
+targets. Under the actual pinned Gazebo selected source with this
+configuration, a previously viable unconstrained blind request for
+\((2,1)\) after \((3,3)\) instead writes \((2.5,1.5)\).
+The model does not substitute either target for measured wheel speed.
+Exact integer paired-state search and independent coordinate-word
+enumeration agree. Under the unit scalar configuration the correlated
+zero/one-radian task is infeasible on the integer grid with neither
+or left-only saturation, needs arc 11 with only right saturation,
+and needs arc 10 with both. The unconfigured both-port optimum is
+8 from PR 846. Native source writes verify the two positive
+bounded profiles. The 10 and 11 lower bounds are scoped to the
+integer request grid; the native command type permits nonintegers.
+
+\paragraph{Ordering obstruction even for real requests.}
+Under any common admissible request word, the stronger left wheel
+cannot end a step faster than the weaker left wheel, and the weak
+right cannot end slower than the strong right. This follows inductively
+from monotonicity of \(v\mapsto \max(u,v-b)\) and its reversed
+dependence on \(b\); no-clipping when declared simply restricts
+which common \(u\)'s are legal. Distances preserve both inequalities.
+In the weak-right state the heading change is therefore always at
+least the weak-left state's heading change. Reversing the correlated
+obligations (turn in weak left, straight in weak right) is not
+realizable by a blind common word, even without the scalar limit
+or distance budget. In the earlier correlation the branch could help.
+A fault label without the direction of the owed effect is insufficient.
+
+\paragraph{Independent authority evidence is not physical feedback.}
+Hold the wheel fault fixed and vary only the authorized heading.
+Every legal physical observation can be identical, even for an
+adaptive controller, because the plant transition is independent
+of the unobserved authority choice. Induction on the common
+observations gives the same issued commands (or same law of commands
+with common randomness) and the same heading, so no physical-only
+observer guarantees both. Even perfect wheel identification does
+not identify who owes the turn. This lower bound assumes no
+physical signal of the lawfully chosen goal; supplying one is an
+interface change.
+
+Conversely, one trustworthy heading bit, without any wheel-state
+feedback, is enough by step two at arc nine. A common first two
+steps are \((3,3),(2,2)\). Thereafter the straight branch chooses
+\((1,1),(0,0),(0,0)\), and the turn branch chooses
+\((1,2),(0,1),(0,0)\). Both branches track exactly across both
+faults, including the scalar command bounds. Arc nine is necessary
+even with advance goal and fault knowledge for the turned weak-left
+case: its left distance is at least eight and the required
+right-left excess is two.
+
+\paragraph{Why step three is too late for the heading-only interface.}
+For a fixed revealed heading, a blind-to-wheel branch must realize
+the same final heading in both hardware states. The directional
+inequalities above force all realized wheel speeds to match
+throughout that entire branch, since the nonnegative accumulated
+differences must sum to zero. Common realized braking is at most
+one. If the first usable heading bit is at step three, sharing the
+prefix leaves two intervals. Let \(p,q\) be contributions to
+doubled distances excluding step-four speeds, and \((x_i,y_i)\)
+be those speeds for the goal branches. The two heading
+constraints give
+\[
+q+2y_0=p+2x_0,\qquad q+2y_1=p+2x_1+4.
+\]
+Since \(x_0,y_1\le1\) to stop next tick and all speeds are
+nonnegative, equality forces \(x_1=y_0=0\) and \(q-p=2\).
+Reaching those zeros from the common step-three state requires
+both its wheel speeds to be at most one. From four under three
+unit-brake steps both must equal one with the identical fastest
+prefix, so \(p=q\), contradiction. This bound also holds for
+real sampled velocities, even without the command slew setting.
+It does not cover controllers that both see the goal and use
+informative physical feedback to choose different later words
+by hardware state.
+
+\paragraph{Checks and residuals.}
+Twelve finite settings and 479 feasible heading-pair queries
+match independently. Eight witness profiles produce 40 actual
+desired wheel writes under the configured native scalar limiter;
+the local saturated response is separate and stipulated. A
+joint controller with the same plant and observation law ties.
+No authenticated delivery of the heading bit is provided here,
+and native target writes do not prove tracking or clearance.
+This is a scoped R6 and authority-interface result, not hardware,
+independent mission, or I1 acceptance.
+\end{document}
