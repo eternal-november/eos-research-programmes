@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{A well-ordered clamp interval need not certify a limit handoff}
+\paragraph{Scope.} A serial source replay checks the velocity-only
+\texttt{JointControlInterfacesData} path of the pinned ROS 2 control
+range limiter. The evaluator changes a constraint tuple at a named
+interpretation cut. This is not a claim that a runtime configuration
+service can install that tuple there, that this path is the trajectory
+limiter, or that a robot follows emitted commands. Slew below means
+change of emitted command, not physical acceleration. A joint
+receiving a command, actual motion, and physical clearance are
+separate predicates.
+
+\paragraph{Consumed hypotheses and native result.}
+Assume an in-bounds sampled position, positive time step and finite
+inputs. Let $G=[a,b]$ be the interval after the geometric next-position
+and speed bounds. The prior emitted command $p$ imposes the
+interval $[p-r,p+r]$, $r$ being the allowed command change for this
+step. The helper computes lower and upper endpoints of their
+intersection. On a separated pair it then swaps the endpoints.
+The caller clamps to the returned interval and reports whether the
+requested value was changed in this velocity-only path. If
+$b<p-r$, the source returns $[b,p-r]$. A value in its interior
+violates both original interval constraints. Neither endpoint satisfies
+both. Symmetric separation occurs if the prior slew interval is
+entirely below $G$. The clamp's changed/unchanged return is not
+evidence that the joint law was satisfiable.
+
+At $G=[-8,1]$, $p=4$, $r=1$ and request 2, a warm limiter emits
+2 unchanged, which violates both the geometric upper bound 1 and
+the warm slew lower bound 3. The source replay obtains the warm
+memory by an actual prior invocation, not by assigning it an
+arbitrary hidden value. In the matched cold call with sampled
+velocity 0, the initializer seeds that measurement, and emits 1
+instead. This establishes what command the newly initialized
+limiter produces, not that the prior emitted command was 0 or
+that old command slew was preserved. In the cold call when
+velocity is missing, the initializer can seed the requested
+value itself; requesting 4 in this example emits 3. Clearing
+software memory is therefore not a physical or contractual
+transition to measured rest.
+
+\paragraph{What a replacement check can certify.}
+For a known retained prior command, use the oriented intersection
+before normalization. If empty, neither a reordering of the endpoints
+nor an alternative requested value can meet both one-step obligations.
+If a supervisor must choose one \emph{emitted} command before an unknown
+retained center $p$ is resolved, and the center ranges over
+$[p_-,p_+]$, the exact common command interval is
+\[
+  G \cap [p_+-r,p_-+r].
+\]
+Extremes suffice for this test. This is not the policy class in which
+the effect-side implementation may legitimately branch on the actual
+retained center and emit different commands. The exact interval check
+and the equivalent directly factored implementation tie.
+
+There is also an exact preparation boundary in a model with known
+$p$, unchanged old command interval containing $p$ and $G$, fixed
+positive $r$, and permission to change the command within it before
+the cut. Let $d$ be the distance from $p$ to $G$. With $k$ old-law
+preparation steps plus the first new-law step, feasibility is
+$d\le(k+1)r$. The lower bound is the sum of the allowed changes;
+successively approaching the nearest point of $G$ attains it, and
+all intermediate commands lie in the old interval. Thus
+$\max(0,\lceil d/r\rceil-1)$ preparation steps are necessary and
+sufficient. This comparison assumes a constant geometric interval
+in the command model; it supplies no proof that a moving joint
+can maintain that geometry or that an emergency refusal alone
+makes the plant safe.
+
+\paragraph{Checks and limit of advancement.}
+The independent finite direct rule matches 63,882 native calls over
+warm and two cold initializations. Of 6,318 empty intersections,
+789 accept the request unchanged and 251 outputs violate both
+bands. Independent bounded path search checks 234 preparation
+instances. Lean checks disjointness, the interior violation,
+and the exact retained-center intersection. This supplies a
+conditional R6/L2 refusal and staging boundary, not a verified
+actuator, physical corridor guarantee or integrated advance.
+\end{document}
