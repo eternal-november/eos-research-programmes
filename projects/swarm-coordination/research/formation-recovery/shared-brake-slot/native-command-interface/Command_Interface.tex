@@ -1,0 +1,104 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{A missed velocity update is not a coast slot}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Claim and boundary.}
+In a serial extraction from Gazebo Sim DiffDrive, omitting a velocity
+callback retains the old target. Passing an explicit zero target or disabling
+the controller can still make the next commanded speed increase. The omitted
+callback in the shared-brake-slot model is therefore not an instance of the
+same observed event at this interface. This replay does not run transport,
+Gazebo's physics system, a vehicle, or the independent enclosed mission. It
+does not establish the effects of a native physics step or the age of an
+odometry reading. It supports R6/L1 at the command-interface boundary only.
+
+\paragraph{Where the distinction arises.}
+\href{https://github.com/gazebosim/gz-sim/blob/9b1151a9c1f5fe6d1af4c6e0d33d1f0992e8a811/src/systems/diff_drive/DiffDrive.cc}{The selected DiffDrive source}
+records a twist only when enabled. Disable zeros the stored target; it
+neither clears both limiter history values nor overwrites the joint component
+already emitted. On an unpaused iteration, PostUpdate reads the target and
+computes a command; the next unpaused PreUpdate writes the previously
+computed wheel velocities. A disabled interval rejects subsequent target
+callbacks, but still runs the limiter when unpaused. Pause skips those
+updates; it does not prevent a target callback or forget the limiter history.
+The fixture uses a source-compatible ignition-math6 family pin (the
+gazebo3 CMake configuration requires ignition-math6 at least 6.6), not a claim
+about the dependency installed in any specific image.
+
+\paragraph{An exact small export.}
+Set the awake time step to one, use straight moves only, and choose
+velocity bounds $[0,8]$, acceleration bounds $[-2,2]$, and jerk
+bounds $[-1,1]$. These are selected fixture parameters, not tuned or
+measured limits. Let $p$ be the most recent limited scalar command, $q$
+the one before it, and $u$ the target seen at PostUpdate. Write $[x]_a^b$
+for $\max(a,\min(x,b))$. The
+\href{https://github.com/gazebosim/gz-math/blob/4ca6553b3ee6cae6696e8abe3aa70ca163274de4/src/SpeedLimiter.cc}{limiter's}
+order is jerk, acceleration, then velocity. If $|p-q|\le2$, the jerk and
+acceleration intervals overlap and the next command is $[u]_L^H$, where
+\[
+L=[p+\max(-2,p-q-1)]_0^8,\qquad
+H=[p+\min(2,p-q+1)]_0^8.
+\]
+Indeed, two successive clippings to overlapping intervals equal clipping
+to their intersection. Applying velocity clipping next maps the two
+endpoints into $[0,8]$, including a collapse to one endpoint when the
+previous interval does not intersect $[0,8]$. The same algebra applies to
+real operands; the formal check is for integer operands and the checked
+native cases use corresponding exact integral limiter inputs at a fixed
+positive step.
+
+For the same $p$, the endpoint pair is a sufficient export for every
+next target. It is also necessary up to equality of answers if the
+consumer must handle every admissible next target: $u=0$ reads $L$
+and $u=8$ reads $H$. After an awake sample, $p$ becomes the new
+previous command; the old $q$ is discarded. With the same enabled bit,
+retained target and event phase, equal endpoint pairs therefore also
+give equal future command traces under the same serial request and
+pause continuation. The pair is a statement about the history
+coordinate at this phase, not a minimal complete controller state,
+and not a physical measurement. In particular, fixed-step equality
+fails under an actual change of step duration. Two reachable histories
+have $p=0$ and $q=1$ or $q=2$ after braking. At unit step both induce
+$[L,H]=[0,0]$. With step two, the jerk and acceleration intervals widen
+by their respective step factors. The same target $8$ now produces $3$
+or $2$. A replacement that is allowed to change the step therefore
+cannot consume the unit-step quotient as if its kernel were universal.
+
+\paragraph{Separating reachable histories and matched comparison.}
+From a fresh controller, rising, flat, and falling command histories
+reach the same emitted equivalent body speed $5$. The previous speeds are
+$3$, $5$, and $7$. With no subsequent target callback the next emitted
+commands are $7$, $5$, and $3$. With a disable before PostUpdate, all
+three retained targets are zero and the enabled bits are equal, yet the
+next emitted commands are $6$, $4$, and $3$. Even with unbounded slew,
+moving the identical disable to just after PostUpdate makes the next
+PreUpdate write $5$ instead of $0$; the zero takes one further awake
+iteration. These numbers are reconstructed scalar commands from the
+wheel outputs, not wheel or body measurements.
+
+The exact clipped-interval computation agrees with unchanged selected
+implementation bodies on 2,808 single-step rows, including paused cases
+and enable-side rejection. The reachable witnesses require no manually
+seeded limiter history. In a separate sweep at fixed $p$, among 68
+distinct prior-history pairs, only two pairs agree at both endpoints;
+66 have an endpoint command separating them. These sweeps include
+possible algebraically valid initial rows, not claims that every row was
+reached in transport or a whole simulator. A direct simulator that keeps
+the same limiter state naturally gives the same outputs.
+
+\paragraph{Replacement obligation.}
+Separate callback delivery, target acceptance and retention, sampling,
+joint-command publication, and achieved motion. Export phase and
+command-state evidence (or a sound set of possible limited commands),
+not just an acknowledgement that a disable was processed. In particular,
+a valid receipt for disable does not imply nonincreasing commanded speed
+at the next write. Reusing the older one-slot omission proof would require
+establishing its timestep and mechanical effect at the plant boundary
+under an explicit replacement mechanism, or replacing that premise with
+a verified transition envelope and rechecking the formation invariant.
+More rapid reporting alone cannot turn different mechanical transitions
+into the same one. No guarantee about actual braking is made here.
+\end{document}
