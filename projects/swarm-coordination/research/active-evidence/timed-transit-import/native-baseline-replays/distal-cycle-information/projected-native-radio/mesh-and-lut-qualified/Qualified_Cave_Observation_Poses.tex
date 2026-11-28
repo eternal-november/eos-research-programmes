@@ -1,0 +1,56 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{Check both collision clearance and the native lookup at one pose}
+\paragraph{Native and geometric boundaries.}
+The prior radio sweep used SDF reference origins as a projected
+lookup. This replacement retains the same roles and three relay sites
+(104, 105, 107), but chooses integer positions that are individually
+checked against the collision triangles from 20 placed distal tiles.
+The seven versioned SDF/Collada assets are accredited in
+\texttt{ASSETS.tsv}; all are OpenRobotics, CC BY 4.0. The cave world,
+visibility graph, and original voxel table are exact pinned OSRF
+blobs. The collision calculation imports actual mesh scale,
+per-node pure translations and placed yaw. The verifier snaps
+cardinal rotations and bounds the resulting vertex uncertainty
+by 0.5 millimeters. A strict integer separator for a padded
+0.3-meter half-width pose box then covers the original rotation.
+Vertical triangle intersections at snapped yaw help choose
+candidates; they are not a global inside or reachability test.
+
+The selected source and one proposed relay at tiles 118 and 107
+required horizontal shifts because their reference origins did not
+provide local floor/roof brackets. For all six resulting coordinates
+the original packed voxel table supplies the expected file entry.
+The decoder uses the exact semantics of the pinned
+\texttt{LoadLUT} binary loop: 1,533,365 announced rows and
+last assignment on a repeated coordinate. Eighteen trailing row
+lengths are not consumed. Reading from file extent rather than the
+header is not justified. The selected native visibility and broker
+use the source lookup assignments and exact full-graph distances
+projected onto the six used sites. This does not run the whole
+Gazebo plugin or use a fabricated replacement membership.
+
+Two additional tested pose boxes share horizontal coordinates
+$(325,-250)$, at heights 13 and 34. Both have clearance against
+the imported collision scene; their vertical straight connector
+does not. It contains a mesh vertex strictly inside the swept
+cube, with room for the rounding tolerance. Thus even the
+mesh-clear pose set of this partial scene is not convex; common
+horizontal map coordinates do not establish a free shortcut across
+levels. This proof neither connects those two poses by a verified
+route nor asserts all obstacles in the complete cave were imported.
+
+\paragraph{Native callback check.}
+At the test 72-meter range, both sources send one byte and each
+has an application callback when all three static relays register
+before either dispatch. Registering in between preserves only the
+second receive, irrespective of which source goes first. Late and
+moving-only registrations give no callback. Both attempts still
+incur one byte in every tested arm. This carries over the selected
+placement after replacing author-supplied origin membership with
+lookup-qualified collision-clear candidates. It does not prove
+these relays are reachable, that the endpoints actually observe a
+blocked portal, or that the registration can be completed in time
+for a moving mission. No physical RF or independent I2 claim.
+\end{document}
