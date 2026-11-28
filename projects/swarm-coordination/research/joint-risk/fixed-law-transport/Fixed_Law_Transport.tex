@@ -1,0 +1,147 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,hyperref}
+\begin{document}
+\section*{R4: risk from one fixed joint law, and when local flow summaries survive}
+\paragraph{Stakeholder law and information cut.}
+An episode already carries a failure event \(A\) with known
+ex ante mass \(r\), which cannot be erased by a repair.
+A controller observes one of finitely many current classes \(i\)
+with marginal \(p_i\). It can admit one optional job with probability
+\(a_i\in[0,1]\), using only that observed class and a coin independent of
+the hidden state given the class. Column \(j\) has marginal \(q_j\)
+and records the hidden episode type, including its old exposure status.
+A marked pair \((i,j)\in H\) means that admission incurs a
+\emph{new uncovered} failure: a failure not already counted as \(A\).
+Assume these type and mark mechanisms are invariant under the admitted
+policy except for its adoption of the optional action.
+This one-cut finite family is not a learned field risk model,
+an arbitrary multi-stage controller, or a cap conditional on every
+observed class.
+
+The source law is a single unknown coupling \(\pi\) of the two marginals
+on allowed pairs \(E\), not a fresh choice of a conditional law after
+seeing \(i\). If the compatibility polytope is nonempty, the exact
+robust mission constraint is
+\[
+ r+R_E(a)\le c,\qquad
+ R_E(a)=\max_{\pi:\,\pi_I=p,\ \pi_J=q,\ {\rm supp}(\pi)\subseteq E}
+             \sum_{(i,j)\in H}a_i\pi_{ij}.
+\]
+The bound follows by disjoint union of the old event and uncovered
+new failure. An authorized revision of a \emph{total} cap below \(r\)
+is unattainable, even if all optional work is withheld.
+A prospective-only cap constrains another expression and must not
+be presented as preservation of the earlier whole mission cap.
+The objective below is admitted optional workload, not a measured
+physical completion rate.
+
+\paragraph{Exact reduction on complete compatibility.}
+Write \(F(S)\) for the maximum partial harmful flow supported by
+observed rows \(S\): row caps \(p_i\), column caps \(q_j\), and
+edges \(H\). Its mincut formula is
+\[
+ F(S)=\min_{T\subseteq S}\left[p(S\setminus T)+q(N_H(T))\right].
+\]
+Partial harmful flow row sums form the polytope \(z\ge0\),
+\(z(S)\le F(S)\). Indeed, the row caps and capacitated Hall
+conditions give this description: they imply every mincut bound,
+and the singleton cap and \(F(S)\le q(N_H(S))\) give the reverse.
+The coverage function \(q(N_H(T))\) is submodular; applying union
+and intersection to two minimizing \(T\)'s and using modularity of
+\(p\) proves submodularity of \(F\). With complete compatibility
+every harmful subflow extends to a full coupling by filling its
+residual marginals across all pairs. Extra harmful mass from the
+fill cannot hurt this maximization since \(a_i\ge0\). Thus the
+polytope describes the downward closure of harmful row sums, not
+necessarily the equality set of actual harms.
+
+Order the nonnegative \(a_i\) from high to low, let \(S_k\) be
+the corresponding prefix, and set \(a_{(n+1)}=0\). The
+\href{https://deltadbu.github.io/UCAS_algorithm_course/Lectures/Edmonds1971.pdf}{polymatroid greedy rule}
+gives the exact value
+\[
+ R_E(a)=\sum_{k=1}^n(a_{(k)}-a_{(k+1)})F(S_k).
+\]
+For completeness, the greedy row vector assigns each row the rank
+increment on its prefix. Diminishing returns bounds its sum on
+any subset by that subset's rank. Summation by parts then
+attains the same prefix upper bounds. This uses only \(n\) flow
+ranks for a fixed proposed policy. It is an exact reduction,
+not a claim of superiority over weighted transportation.
+
+This also gives an exact upper frontier for expected admitted
+work \(v(a)=\sum_i p_i a_i\) under a residual cap \(\epsilon=c-r\).
+Take the upper service frontier of the convex hull of
+\((F(S),p(S))\) over deterministic admission sets \(S\), allowing a
+cost at most \(\epsilon\). Every vector \(a\) yields a convex
+combination of nested threshold sets with exactly the same cost
+and workload (add empty-set mass if needed). Conversely a mixture
+of arbitrary deterministic sets gives an admissible vector with
+the mixture workload and cost \emph{at most} the mixture cost
+by convexity of \(R_E\). A linear optimization over that menu
+has an optimum using at most two deterministic masks, since
+there is one simplex equality and at most one active risk
+inequality. This proves the value and an implementation, not
+that enumerating all masks is a scalable optimizer.
+
+\paragraph{Where compatibility breaks the shortcut.}
+With restricted \(E\), a harmful partial flow \(\lambda\)
+extends exactly when every remaining legal Hall cut satisfies
+\[
+ \lambda(I\setminus S,N_E(S))\le q(N_E(S))-p(S)
+ \quad(S\subseteq I).
+\]
+To derive this, replace both marginals in capacitated Hall
+by their values minus already selected mass. All edges out
+of \(S\) go to \(N_E(S)\), and their contributions cancel.
+Taking the maximum allowed crossing partial flow separately
+for each cut tests whether \emph{every} harmful partial
+allocation extends. This is sufficient for the full
+greedy reduction, not necessary for it at a particular
+policy or a particular set of row sums.
+
+Even using exact subset risks instead of partial flows does not
+generally repair the prefix formula. In a six-edge cycle on
+three uniform rows and columns, use the identity matching and
+rotation \(0\mapsto1,\ 1\mapsto2,\ 2\mapsto0\).
+Mark only \((0,0),(1,2),(2,0)\) harmful. The two extreme
+couplings have harmful row masses proportional to
+\((1,0,0)\) and \((0,1,1)\). At \(a=(1,1/2,1/2)\) the
+true value is \(1/3\), but separate exact prefix maxima give
+\(1/2\). For any restricted support and proposed \(a\), the
+prefix upper bound is exact precisely when all its
+positive-weight prefixes have a common maximizing coupling:
+equality of the nonnegative weighted slacks forces exactly
+this condition. Separate witnesses must not be substituted.
+
+An exact direct comparator uses full transportation or its
+dual \(u_i+v_j\ge a_i{\bf1}_{(i,j)\in H}\) on \(E\), with
+objective \(p\cdot u+q\cdot v\). A feasible dual certificate
+survives deleting edges at fixed margins and marks if a source
+law remains feasible; it may become conservative. Adding edges
+or changing their costs requires rechecking the affected
+inequalities, not guessing that an old tag transports.
+In the cycle example \(u=(1/2,1/2,0)\),
+\(v=(1/2,-1/2,0)\) certifies \(1/3\). Adding just
+\((2,1)\), a safe edge of cost zero, violates that inequality
+and yields a real coupling of risk \(1/2\) by freeing other matches.
+
+\paragraph{Admission comparison and evidence.}
+For two equally probable rows and one common harmful column
+of mass \(1/4\), the exact risk increment is
+\((1/4)\max(a_1,a_2)\). With old mass \(1/4\) and total
+cap \(3/8\), it admits half the optional load. Summing
+independently maximized row risks yields only a quarter.
+This is a specific excess conservatism of a row allocation,
+not an advantage over the matched full transportation comparator
+and not a claim about all
+\href{https://groups.csail.mit.edu/mers/papers/Ono-Williams_AAMAS10.pdf}{distributed chance-constrained planning}.
+Exact integer-mass enumeration checks 708 flow fixtures and
+44,544 proposed policies, plus exact rational robust-LP
+service comparisons and explicit legal-pairing extension tests.
+All model graphs and marginals here are stipulated. A source-backed
+instance must prove which pairs actually co-occur and how the
+risk calibration, old exposures and control-independent markings
+transport. This is partial R4, not a verified architecture
+or independent mission.
+\end{document}
