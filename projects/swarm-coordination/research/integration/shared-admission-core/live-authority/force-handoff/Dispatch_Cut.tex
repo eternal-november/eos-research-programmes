@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{Releasing an effort path at a consuming cut}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Scope.}
+This is a held-in R2/I1 transfer of the shared admission core from
+warehouse and radio predicates to a new command-dispatch source. The
+output being certified is exactly one credited settlement of each
+named \emph{dispatch} duty, by tick 1, and preservation of the
+independent joint dispatch. Neither a joint changing velocity nor a
+vehicle following a route is inferred from a physics setter. The
+fixtures have no engine dynamics, transport, independent mission,
+or stock authority to hot-switch an already configured writer.
+
+\paragraph{What was executed.}
+At Gazebo Sim commit
+\texttt{9b1151a9c1f5fe6d1af4c6e0d33d1f0992e8a811}, the
+\href{https://github.com/gazebosim/gz-sim/blob/9b1151a9c1f5fe6d1af4c6e0d33d1f0992e8a811/src/SimulationRunner.cc}{runner}
+executes the PreUpdate systems before the Update systems.
+The replay compiles the selected runner method (its barriers are inactive
+in this fixture), the typed
+\href{https://github.com/gazebosim/gz-sim/blob/9b1151a9c1f5fe6d1af4c6e0d33d1f0992e8a811/src/EntityComponentManager.cc}{component-removal methods}
+with the containing class renamed, the native force writer, and the
+physics selection and cleanup slices used in the prior
+\href{https://github.com/eternal-november/eos-research-programmes/pull/794}{study}.
+It uses serial, independent component stores, lookup/view stubs and
+a setter call recorder. The removal calls, their placement in the
+schedule, and the state and identity binding are authored fixture
+choices. The old P force writer can be called in PreUpdate after
+an early removal. An inline candidate instead places the same
+typed removal in a fixture Update stage just before consumption.
+Nothing proves another plugin would respect that placement.
+
+\paragraph{Interface and distinctions.}
+Let \(p\) mean that the actual earlier dispatch paid the named old
+effort duty, \(w\) mean its authorized writer runs at tick 1,
+\(q\) mean a stipulated spare joint has been prepared and is
+authorized for the new velocity duty, and \(g\) mean the scoped
+removal gate is available in the schedule. Subsequent effort writes
+in a \(p\) history are permitted maintenance, not duplicate credits
+of the same old duty. Only a recorded old setter call earns that
+credit, and the new duty binds to either P or Q, never both.
+The independent command binds to a third joint. The primary chooser
+sees a timely, scoped positive dispatch record if the separate
+modeled notice arrives; it is not given \(p\) otherwise.
+Erasure is not a negative observation. Available modes are:
+\[
+\begin{array}{c|c}
+\text{mode}&\text{both duties plus independent dispatch by tick 1}\\\hline
+\text{P, no removal}&\text{never}\\
+\text{P, early removal}&p\land\neg w\land g\\
+\text{P, removal at consuming cut}&p\land g\\
+\text{Q, preserve old force path}&q\land(p\lor w)
+\end{array}
+\]
+In particular, for \(p=w=g=1\) the early and inline actions
+both actually remove the component and return true. A PreUpdate
+writer recreates it after the early action, so only the inline
+action gets P's velocity dispatch. When \(p=0,w=1\), removing
+the force component immediately before consumption makes P's
+new dispatch appear but sacrifices the owed old dispatch. Using
+Q preserves both and preserves the independent dispatch. With \(w=1\) and \(p\) hidden,
+Q is the only common feasible choice, and only if prepared.
+A timely positive record makes the inline arm usable in the paid
+branch without consuming Q. A lost writer and unpaid old duty
+can make the old deadline impossible regardless of the new request.
+
+\paragraph{Late writer counterexample.}
+A separate fixture schedules a modeled old producer in a subsequent
+Update slot, reusing the same force-writer body as its primitive.
+The inline removal still returns true, but the primary again
+dispatches no velocity. This is a counterexample to accepting
+a removal receipt without a condition through the actual consumer.
+It is not an assertion that the stock ApplyJointForce plugin
+invokes that body in Update. A qualified replacement must either
+exclude the competing writes through consumption, or use a stage
+that arbitrates both writers where selection actually occurs.
+There is no inference from a successful local write to this
+whole interval guarantee.
+
+\paragraph{Checks and comparison.}
+The 48 source rows cover the earlier dispatch, writer activation,
+two release phases or no release, and whether each velocity was
+installed. The separate late-writer control changes the schedule.
+The unchanged core projects the selected backend calls into
+its existing named-effect rows; it sees the notice only at the declared
+availability time. It agrees with an independent Boolean rule on
+all 16 capability/history rows and all 65,535 nonempty uncertainty
+envelopes over those rows. Lean checks the table and the exact
+common action. The equally informed direct rule ties.
+A timing-insensitive receipt and a primary-only drain policy are
+negative controls, not state-of-the-art comparisons. A swap that
+preserves both feasible duties and unrelated service is demonstrated
+in this fixture, but no stronger planner, mechanics, held-out case,
+or full I1 closure is claimed.
+\end{document}
