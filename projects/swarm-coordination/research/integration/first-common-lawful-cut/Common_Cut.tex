@@ -1,0 +1,97 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\title{Earliest robust commitment for a source-conditioned interruption}
+\maketitle
+
+\paragraph{Kernel.}
+One authorized actor must choose one irreversible release time.
+Before releasing, its legitimate observation stream is the
+projection of a history under the policy that has not yet released.
+No other probing or resource action is selectable by this actor.
+Release can change the future history; the model must already
+supply the complete quantified acceptance predicate
+\(A(h,t)\) for releasing at \(t\) in source history \(h\),
+under the specified residual response law and all admitted
+post-release outcomes. This formulation neither supplies those
+controllers nor assumes the physical effects are readable. The
+set of candidate histories is fixed independently of success and
+includes every admitted pre-release response. Time ticks are
+available to the actor; arbitrary time uncertainty may instead be
+included in the history if its actual observation is represented.
+Policies are deterministic and must eventually release in each
+candidate history.
+
+\paragraph{Exact criterion and earliest rule.}
+Let \([h]_t\) be the histories agreeing with \(h\) on the
+actor's entire observed prefix through \(t\), including negative
+observations where justified. A robust causal release policy
+exists exactly when
+\[
+ \forall h\;\exists t:\; \forall h'\in[h]_t,\ A(h',t).
+\]
+Necessity fixes \(t\) to the policy's action in \(h\).
+Every history in the actor's same prefix class must take the same
+action and satisfy the release predicate. For sufficiency, let
+the actor release at the first cut where all compatible
+histories permit release. The time of the earliest such cut is
+the same for histories with equal observed prefix at that cut,
+since their earlier prefixes are also equal.
+Thus this is a stopping rule and each chosen action is accepted.
+It releases no later on any history than any other winning rule.
+The Lean statement uses classical selection to express the least
+tick and proves its causality and optimality; for a finite listed
+support with decidable acceptance, the implementation scans the
+attained prefix classes using only the current local transcript.
+No computability of arbitrary physical acceptance sets is inferred.
+
+A criterion that only checks each world's feasible cuts can
+accept a family which no single actor can realize. Conversely a
+test that intersects all histories once, at time zero, can
+reject a family that a future observation separates in time.
+If each acceptance set is a closed time interval or empty, each
+nonempty attained class reduces to the largest of its lower
+endpoints and the smallest of its upper endpoints; empty
+case-specific intervals must remain explicit. The relevant class
+cannot in general be computed from the latest value alone.
+
+\paragraph{Two source interpretations.}
+The staged ARIAC replay (\#778) includes old floor work, a
+public camera, and a release that both introduces a new duty
+and shuts off the public feed. The capture evidence is retained
+before release under an explicit permission; the pose must be
+valid after release in the actual parking/authority context.
+A shift that breaks this validity can make \(A\) false even
+when the observation of the old context was truthful. The
+physical capture seam and the conditional source model are
+separate from the proof in this note.
+
+The staged SubT replay (\#779) keeps the old receipt alive
+until a near relay's route starts. In the scoped known-history
+case, native dispatch and registered route determine exactly
+\(p<k\le b\) for effective registration \(k\).
+Positive bounded activation latency lifts this to
+\(p<s+L,\ s+U\le b\) for command \(s\).
+The independent authority to command is a premise.
+If the old receiving callback reaches the caller at \(r\) and
+the caller may wait until then, feasibility of this restricted
+receipt-first policy reduces to \(r+U\le b\).
+In the two named histories a local receipt separates the
+critical cuts, while a one-tick-later remote report does
+not. An available far relay changes the actual predicate, not
+the observed prefix of the near-relay policy.
+
+\paragraph{Preserved distinctions.}
+The common rule describes the timing of an irreversible act.
+It does not identify the assembly pose with a transmitted
+receipt, derive release authority from having data, or claim
+new source observability. A substitution may preserve
+physical acceptability at all cuts and still remove an early
+prefix distinction the policy requires. The proof gives no
+conclusion if an alternate probe changes the pre-commit
+history or if several local actors may each commit. This is a
+verified finite-observation/stopping specialization.
+Direct causal policy enumeration agrees; no comparative
+performance, independent transfer, or architecture completion
+is asserted.
+\end{document}
