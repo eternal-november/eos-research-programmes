@@ -1,0 +1,89 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{Transporting a risk warrant through a changed observation map}
+\paragraph{Scope.}
+This follow-up to PR 851 pairs the two pinned radio configurations on the
+same upstream event coordinates. It separates three experiments:
+a shared distribution on actual attempted sends, fresh separately asserted
+outcome marginals, and two calibrated experiments with a certified bound on
+how much their upstream distributions differ. No operational bound on that
+difference and no held-out evidence are supplied. The bounded comparison
+assumes only the two sets of exact marginals and a bound between the two
+otherwise unknown laws; it does not take the full old distribution as known.
+
+\paragraph{Source and preserved query.}
+Let $U$ indicate a two-byte attempted send, and $V$ a one-byte attempted
+settlement of the old keyed report. The cap-2 and cap-3 outcome maps on
+$(U,V)$ are $(U(1-V),V)$ and $(U,V)$. Paired native rows show the same
+incremental old-loss event $\{00\}$ for the admitted branch under each
+map, and no old-duty loss in the withheld branch. Unrelated service
+survives in all pairs. With row-0 admission probability $a$ and independent
+randomization, the same upstream law thus preserves old risk exactly,
+regardless of whether it puts mass on the new safe output $(1,1)$.
+The optional completion event is different: for the same law and $a$,
+cap 3 loses exactly $a\Pr(U=V=1)$ optional completions, because the newly
+delivered two-byte job leaves no room for the optional packet.
+Equating old-risk queries does not give service equivalence.
+
+If old outcome marginals are $p=\Pr(X=1)$ and $q=\Pr(Y=1)$, the old
+attempted-send distribution must be
+\[
+   (1-p-q,\ q-s,\ p,\ s),\qquad 0\le s\le q.
+\]
+In particular old risk is $a(1-p-q)$. For a shared law the new marginals
+are $P=p+s,\ Q=q$. Measuring both $P=p$ and $Q=q$ after the upgrade is
+consistent with a shared law only if $s=0$; the new pair may be reachable
+without positive probability. Unknown dependence on the old experiment's
+unresolved split $s$ does not affect either experiment's old risk at zero
+drift, but still affects optional service if $P$ is not measured.
+
+\paragraph{General exact recalibration.}
+Write the new outcome marginals as $P,Q$ and the new attempted-send law as
+$(1-P-Q+t,\ Q-t,\ P-t,\ t)$ with
+$\max(0,P+Q-1)\le t\le\min(P,Q)$. Set $d=P-p$ and $e=Q-q$.
+Fix $t$. Over all old laws consistent with $p,q$, the least total
+variation distance to the new law is
+\[
+  D(t)=\max\bigl(|t-d-e|,\ |d-t|,\ |e|\bigr).
+\]
+Indeed the first and third signed cell changes are $t-d-e$ and $d-t$.
+The changes in the two remaining cells sum to $e$, so their absolute
+values sum to at least $|e|$. Choose $s=\min(q,t)$ to attain this lower
+bound: if $t\le q$, the fourth cell does not change; if $t>q$, both
+changes in the $V=1$ block are nonnegative. The three signed quantities
+sum to zero, so half their absolute sum equals their largest absolute
+value. This is also the coarse projection onto the three atoms
+$\{00\},\{10\},\{01,11\}$. The projection loses no distance information
+for this \emph{existential} comparison with freely chosen old split.
+A separately known old split can yield a stronger, different test.
+
+Assume $p,q,P,Q\in[0,1]$ and $\delta\ge0$.
+The four marginal observations and an upstream drift warrant $\delta$
+are jointly consistent exactly when $p+q\le1$, $|e|\le\delta$, and
+\[
+ \max(0,P+Q-1,d-\delta,d+e-\delta)
+ \le
+ \min(P,Q,d+\delta,d+e+\delta).
+\]
+These are the endpoints of the compatible $t$ interval.
+Let $t_{\max}$ be its right endpoint. The sharp new worst-case risk
+is $a(1-P-Q+t_{\max})$; optional completions have expectation
+$a(1-P)$. An empty interval is a failed joint calibration, not a zero
+risk verdict. At fixed half marginals, risk is exactly
+$a\min(\delta,1/2)$ in the worst case. At zero drift and consistent
+marginals, the old risk answer carries over unchanged; no new
+transport solve is needed. Re-solving with the same upstream model
+gives the same answer. The simplification does not carry to new
+loss preimages, departure feedback changing the traffic law outside
+the declared bound, or uncertainty in how the attempted workload was
+measured.
+
+\paragraph{Checks.}
+The paired comparison reads fresh native source results and checks both
+admission arms on all four attempt patterns under both caps.
+The independent rational sweep enumerates all $969^2$ pairs of
+sixteenth-unit laws, varying both sets of marginals and each drift
+budget from zero to one. Lean checks the lower bound and attainment in
+the unobserved split and the exact absolute-value interval.
+\end{document}
