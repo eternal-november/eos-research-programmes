@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{A four-byte exact reply after live dock selection}
+\paragraph{Scope.} Extend the pinned two-dock warehouse/broker fixture of
+PR 835. The collector receives a one-byte authenticated-by-fixture dock hint,
+then issues the same four-byte request to the chosen dock. The dock observes
+the same qualified occupancy bit, retains the same authorized four-byte
+historical result, and performs the same new lane operation. The acceptance
+output at the collector is the exact pair of the acted-on lane and the
+historical result of the named old job, not a success bit or a fresh reading
+in place of the old result. The collector is not given the donor journal,
+a table of candidate rows, or a separate channel.
+\paragraph{Law and kernel.} Let the four result octets be $(t,a,x,y)$, with
+$t<128$, and let $m\in\{0,1\}$ be the lane. Encode
+$(m,(t,a,x,y))$ as $(t+128m,a,x,y)$. The high bit recovers $m$ and
+reduction modulo 128 recovers $t$. The wire representation therefore loses
+no distinction on the declared domain; in particular it does not infer the
+old key-to-row association from an equal motion log. Reject outside the
+domain before applying the new operation in this replay. This is a bound on
+the historical result field of this protocol, not a bound on elapsed time,
+motion ages, or all future station results. Protocol agreement and source,
+job, and dock qualification are separate obligations. A sender displaying the
+correct bit is not, by this codec, evidence of authority.
+\paragraph{Cut and obstruction.} In the pinned live window an in-band
+hint leaves four bytes for the reply at cap five. The five-byte raw reply
+can be lost after the move is already committed; the four-byte reply arrives
+and decodes without moving the hint or delaying either duty. Below cap five
+at the common setting, the dock's four-byte request and one-byte occupancy
+cue cannot coexist in its receive window. At cap five a qualified in-band
+hint and both staged copies are still needed; neither a missing hint nor a
+stale lane sample is repaired by encoding. For a fixed receiver view with
+both lanes possible independently of an arbitrary four-octet result, there are
+$2\cdot256^4$ distinct exact queries to answer, exceeding the $256^4$
+fixed four-byte words. This counting claim is about fixed four-byte words
+without side timing, length, identity or other signaling; it is not an
+impossibility for all multi-message or variable-length protocols.
+\paragraph{Timing comparator.} Keep the operation at time 2 and buffer the
+uncompressed reply. At time 2.125 the old hint is still charged, at the
+one-second endpoint; at time 2.1875 it is no longer charged. The delayed
+five-byte reply then gets the same successful plans as the immediate
+compact reply. It changes the completion time, not the action or report
+order, and requires that the tested authorization and link remain usable
+until transmission. An immediate reply deadline excludes this alternative;
+a deadline allowing the later cut does not. The immediate result has
+no advantage over the same ordinary qualified bit packing.
+\paragraph{Evidence and residual.} Run the same native RWARE/SQLite and
+SubT callback fixture under both encodings, exercising its 45 configurations
+and comparing results of 3,288 replays per mode (raw immediate, raw at expiry, raw just after expiry, and compact immediate). The one newly winning
+configuration is cap five with the in-band hint and qualified lane sample;
+the unchanged shared selection core and equally informed direct analyses
+agree. The codec exhausts both lanes and all values of the changed octet;
+the round trip and necessary range follow by direct arithmetic and the fixed-width obstruction by counting. The
+source-backed replay is serial, with authored staging, authority and
+forecast envelope. It is not a deployed interlock, new physical fault
+envelope, named-competitor advantage or I1 acceptance.
+\end{document}

@@ -1,0 +1,5 @@
+# In-band four-byte exact reply after dock selection
+
+Run `set -e -o pipefail; python3 -B native_bridge.py --compact | cmp - EXPECTED.json; python3 -B native_bridge.py | cmp - RAW.json; python3 -B native_bridge.py --delay equal | cmp - RAW.json; python3 -B native_bridge.py --delay past | cmp - EXPECTED.json` in the full archive. For repository rehydration use INPUTS.tsv, the unchanged native_policy.js file in the adjacent native-two-dock fixture, and development.js from development-bridge. Within source, copy broker.cc to src0, model.cc to src3 and table.cc to src4. Dependencies: Python with NumPy and SQLite, Node, Git, C++17. Both modes use the same native callback wrapper; compact mode checks the encoded result before the move and decodes the received bytes independently before evaluating the query result.
+
+The high bit is free only for a declared seven-bit historical tick field. There is no collector codebook setup, authority delegation, or independent mission claim. Expected outputs enumerate caps, hint modes and sample qualifications as in the adjacent fixture.
