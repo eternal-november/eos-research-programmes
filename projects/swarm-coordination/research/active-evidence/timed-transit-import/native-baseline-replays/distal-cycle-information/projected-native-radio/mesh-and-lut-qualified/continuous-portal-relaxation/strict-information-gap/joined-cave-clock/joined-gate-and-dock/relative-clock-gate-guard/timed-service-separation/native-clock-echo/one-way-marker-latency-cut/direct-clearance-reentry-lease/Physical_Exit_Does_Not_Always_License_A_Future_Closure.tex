@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{A physical exit observation is not an unlimited no-reentry lease}
+A verified gate-direction position attestation can safely replace a
+clock comparison when no later permitted motion can reenter before
+the closure releases. The following supplies a scoped alternative to
+assuming no reentry at all. Let $y$ denote signed clearance from the
+padded gate's outgoing face; $y=0$ is treated as unsafe for a newly
+installed closure. At the receipt source certify $y_0\ge0$ and
+outward normal speed $\dot y_0\ge v>0$. While the known bound on the
+inertial acceleration norm is $A$, every admissible continuation
+satisfies $y(t)\ge y_0+vt-At^2/2$. Thus a closure starting strictly
+after the source event and ending strictly before $2v/A$ cannot meet
+the body at that gate face, even if the robot changes its command.
+The scheme must independently bound the full delay to actuation and
+the actual effect duration, and preserve the geometry and motion
+limits. The observed velocity is a source precondition, not an
+inference from radio arrival.
+
+On the certified return chords of PR 881, take $A=5$ m/s$^2$ and
+unit longitudinal speed. Exact rational bounding of the two outward
+normal components yields guaranteed horizons of at least
+392,935 and 373,203 integer microseconds. With a quarter-second closure,
+the conservative integer delay limits are 142,935 and 123,203
+microseconds. A 10 ms delay is safe under this bounded-motion
+certificate. A position-only observation near the same face does not
+certify it: an allowed state with no outward momentum can reverse
+and reenter during the 10 ms-delayed closure. This comparison permits
+different prior motions, without assuming a common known complete
+trajectory from which velocity could already be inferred.
+
+Even observing outward unit speed does not justify arbitrary effect
+latency: an explicit collinear change with $v(t)=1-5t$ up to 0.4 s,
+then $v=-1$, returns to the same longitudinal coordinate in 0.4 s.
+For a source clearance margin at most one micrometre this reenters
+by 0.401 s, within a closure delayed by 175 ms and held another
+quarter second. The exact slab/leg calculations identify the actual
+outgoing face and verify tangential room around it. The returned
+$2v/A$ bound is sufficient in the acceleration-norm model; the
+gap to this collinear witness is not claimed closed for all physical
+motions. Neither an actual sensor, a network latency bound, nor a
+restart-qualified actuator or independent mission is established.
+\end{document}
