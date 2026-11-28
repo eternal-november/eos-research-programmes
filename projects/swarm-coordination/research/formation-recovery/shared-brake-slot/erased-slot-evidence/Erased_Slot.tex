@@ -1,0 +1,180 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\title{Late evidence of one erased brake slot can require quadratically more formation clearance}
+\maketitle
+
+\paragraph{Physical model and evidence.}
+Two robots translate in one dimension with initial equal speed
+\(v\in\mathbb{N},v\ge1\), and must both stop, without
+reversing, by cut \(n+1\), where \(n=2v\).
+One unit of braking is available per unit slot, granted
+exclusively to one robot. Action zero is allowed.
+The initial gap lies strictly between a clearance and a
+separation threshold; the change in gap \(q\) must stay in
+\([-G,G]\) throughout. A separation threshold is a modeled
+geometric restriction, not a radio guarantee.
+At most one commanded slot can be omitted completely.
+At slot \(e+d+1\), before its action, a source-qualified
+execution receipt names the omitted slot \(e\); \(d=0\)
+means notice before the very next action. Before receipt
+there is no usable observation of the effect. The no-loss
+case is admitted. The receipt has declared perfect naming
+and delay in this model, not native hardware provenance.
+A full grant to a stopped robot either clips to no effect
+or is forbidden, as specified separately. The former is
+a physical actuator behavior, not new information for the
+controller. Scale length results by \(a\Delta^2\) for
+single-robot brake acceleration \(a\) and slot duration
+\(\Delta\), with initial dimensional speed \(va\Delta\).
+
+With relative speed \(w\) and \(r=2q\), an effective
+grant updates \(w'=w+s\), \(r'=r+2w+s\),
+where \(s\in\{-1,1\}\); an omission, idle, or clipped
+grant has \(s=0\). These are actual effects in the model,
+not transmitted commands. Within a slot the relative
+speed is affine with integer endpoints separated by at
+most one, so the extrema of position change are attained
+at endpoints. This gives exact continuous gap checks
+using integer arithmetic.
+
+\paragraph{Exact deadline and delay boundary.}
+The no-loss path must use each sign exactly \(v\) times
+in its first \(n\) slots: a fault can erase the last slot.
+At the cut before slot \(n\), a loss in any of the last
+\(\min(d,n)\) planned useful slots is still hidden. If one
+of them was omitted, the final grant must name precisely
+the robot assigned to that slot. All these hidden slots
+of the no-loss schedule must therefore have the same sign.
+If \(d>v\) this is impossible even with clipping and no
+finite gap bound. If clipping is forbidden, for every
+\(d\ge1\) the hidden loss of the previous grant requires
+a final action the no-loss world forbids, also independent
+of the gap bound. This is not a lack of physical capacity:
+all worlds are individually solvable with timely evidence.
+
+For \(1\le d\le v\), a nominal balanced prefix of
+\(v-d\) pairs followed by \(d\) positive and \(d\)
+negative grants supplies an unconditional upper
+construction. Continue the nominal schedule until a receipt
+arrives; insert the named lost grant then resume the nominal
+sequence, shifted one slot. If the loss remains hidden
+at the final cut, grant to the common sign of the last
+\(d\) slots. It repairs a lost grant or clips to no effect.
+Thus all velocities stop on time. This uses only the scheduled
+grants and the delivered name of the lost slot, never a hidden
+actual velocity.
+
+\paragraph{Quadratic cost of delayed evidence.}
+Choose sign so that the last \(d\) nominal grants reduce
+relative speed from \(d\) to zero. On their first slot an
+unobserved omission preserves speed \(d\) and increases
+\(q\) by \(d\). The later \(d\) useful grants add \(d^2/2\)
+before stop, independently of the rest of the policy.
+The required band therefore has
+\(G\ge d^2/4+d/2\).
+The invariant \(r+w^2\) under the useful tail grants
+gives this area exactly. There is also \(G\ge2\)
+for any winning policy under one omission: after the
+first signed grant choose the second slot to be omitted,
+forcing \(q=1.5,w=1\) up to sign at the next cut; even
+the fastest reduction of \(w\) then forces \(q\ge2\).
+
+In the constructed balanced-prefix policy the nominal
+gap is bounded by \(d^2+1\) and nominal relative
+speed by \(d\). During the unobserved interval, omitting a
+grant shifts the nominal gap by at most \(d+\tfrac12\).
+Insert the lost grant at the receipt and let \(w_t\)
+be the nominal speed difference where the insertion occurs.
+On rejoining the nominal schedule one slot late, the
+constant displacement offset is
+\(w_t-\sigma(d+1)\), with \(\sigma\) the omitted sign.
+Its magnitude is at most \(2d+1\). The final blind
+compensation of a still hidden late loss is obeyed with
+a no-larger offset. Thus \(G\le d^2+2d+2\), independent
+of \(v\). This proves a \(\Theta(d^2)\) slack cost for
+\(1\le d\le v\) at the one-spare-slot deadline, not just
+a sufficiency inequality.
+
+\paragraph{Further exact slices.}
+For \(d=0\) repeat the named lost grant immediately
+and then continue alternating ordered balanced pairs.
+Nominal gap oscillates between 0 and 1; one erased slot
+can shift that by at most 1. Stop even without clipping
+by idling if the original motion already completed.
+For \(d=1\) with clipping, use the same nominal pattern
+\(+, -,-,+\) repeated, possibly ending with one pair.
+At first notice of a nonfinal omission, the relative
+state just after the next planned action, up to its
+corresponding residue of \(e\) mod \(4\), is
+\[
+(q,w)=(-.5,-1),\ (2,0),\ (1.5,1),\ (-1,0).
+\]
+For even residues immediately compensate the omitted sign.
+For odd residues compensate it and then perform the
+opposite grant. These corrections leave equal remaining
+counts and zero relative velocity, at gaps \(-1,1,2,0\),
+respectively. Use subsequent balanced pairs toward zero.
+If the last nominal grant is omitted but still unknown,
+its sign is the final default; if no omission occurred
+that action clips. This achieves \(G=2\) for all \(v\),
+matching the lower bound.
+
+At \(d=v\) the nominal order is necessarily two
+opposite homogeneous blocks of size \(v\).
+An omission at the start of the second block yields
+gap \(v^2+v\) up to sign. The blocks plus final correction
+attain exactly that symmetric bound. For \(v\ge3,d=v-1\),
+take the last \(v-1\) signs to be negative. The only
+negative sign in the prefix is at index \(j\in[0,v]\).
+Nominal terminal gap is \(v^2-2v+2j\); a loss at
+the first slot of the tail adds \(v-1\). Hence
+\(G\ge v^2-v-1\). The choice \(j=0\) attains it.
+If the first negative grant is omitted, its receipt
+arrives after \(v-1\) effective positive grants;
+then use \(v\) negatives followed by a positive, whose
+peak gap is \((v-1)^2\).
+A loss in the positive block can decrease the nominal
+gap but never below \(-2\); by the end its gap is
+\(v^2-4v+j'\) for the lost index \(j'\in[1,v]\).
+A loss in the final negative block adds at most \(v-1\).
+These cases cover the no-loss history as well.
+Intermediate delay values are not assigned an exact
+closed form by these slices.
+
+\paragraph{What changing the deadline buys.}
+With no feedback at all and clipping allowed, two spare slots
+rather than one are necessary and sufficient for deadline
+feasibility. Each sign needs at least \(v+1\) scheduled
+opportunities, since either sign can lose one. Balanced
+nominal pairs plus one extra of each sign provide that budget.
+For exactly \(2v+2\) slots with no feedback, the final
+gap shift upon erasing the first grant of a sign is the
+signed span between its first and last scheduled slots:
+one speed unit remains until its extra grant, including the
+two half-slot ramps. The two signs shift in opposite
+directions, each by at least \(v\), requiring \(G\ge v\).
+The balanced construction has \(G\le2v+2\).
+Thus a looser deadline repairs feasibility, not the
+geometry cost of retaining no execution evidence.
+
+\paragraph{Comparison and residuals.}
+Full causal finite enumeration agrees on the checked
+small instances. Separately, the analytical policies are
+replayed with explicit indistinguishable observation
+prefixes and actual effects. Where two half grants can
+physically actuate together, equal braking over each
+good slot stops both at the same deadline with no gap
+change and no receipt, given clipping. That is a stronger
+actuator, not an implementable comparison for the
+declared exclusive one. Breeden and Panagou's
+\href{https://arxiv.org/html/2210.01354v2}{barrier-composition model}
+assumes a convex control set in Section II-B; the
+exclusive unit-slot actuation here is outside that
+premise. The result extends the no-omission shared-brake
+slice in \#611 but neither provides a receipt sensor
+nor claims a robot control or independent mission
+result. It supplies a quantified R6 separation among
+gap feasibility, timed stopping, available observations,
+and actual authority over the shared resource.
+\end{document}
