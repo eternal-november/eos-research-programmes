@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{Exact recurrent reservation summaries under two withdrawal laws}
+\paragraph{Interface and kernel.}
+There are \(n\) known, distinct names waiting in FIFO order for a single
+mutually exclusive span. Before each grant a qualified context may
+withdraw specified waiting names; the preceding holder must actually
+clear before the next grant is consumed. A query asks for at most
+\(m\ge1\) successive grant identities (including exhaustion).
+The initial summary is fixed before the context picks any withdrawals.
+An adaptive context can depend on earlier grants, with the same
+actions on identical visible histories. No new entries, hidden
+priority changes, proof timestamps, or physical motion are outputs
+of the queue-summary query. Reservations and clearance do not
+substitute for each other.
+
+\paragraph{Two exact quotients.}
+For a cumulative deletion budget \(k\ge0\), the ordered prefix of
+length \(d=\min(n,k+m)\) is necessary and sufficient, in the sense
+that there are exactly \(n!/(n-d)!\) equivalence classes of initial
+orders. For a fresh budget of \(k\) deletions before each successive
+grant, \(d=\min(n,m(k+1))\) instead, with the same class formula.
+This is a changed budget law, not an implementation choice. For
+example, \(n=6,k=2\) under the cumulative law gives 120 states for one
+grant, fitting one octet, and 360 for two, requiring at least nine
+fixed-width bits for the initial summary alone. This counts neither
+shared codebook distribution nor radio/authorization overhead.
+
+\paragraph{Proof.}
+For sufficiency, before grant \(i\), the number of names consumed by
+previous grants is at most \(i-1\), and the total number withdrawn
+is at most \(k\) or \(ik\), respectively. If the prefix is not the
+whole known set, it follows that some name in the prefix survives
+to each promised grant. The first surviving name is the full-queue
+answer. Exhaustion is exact when the whole initial queue is retained.
+This inductive simulation serves adaptive queries without predicting
+their later actions. Withdrawals of omitted names can be charged
+without learning their order; the common name universe was supplied.
+
+For necessity, take two different prefixes whose first disagreement
+is after \(j\) common names. Set \(u=\max(0,j-m+1)\).
+In the cumulative case \(u\le k\); withdraw \(u\) common leading
+names before the first release. The disagreeing answers appear by
+grant \(m\). In the fresh-budget case \(u\le mk\); remove up to \(k\)
+of the remaining common leading names per phase, advancing one grant
+when that phase's withdrawals are done. The total \(u\) fits within
+\(m\) phases. While a deletion remains to be made, the names used
+for both the deletions and intervening grants are still common:
+if \(u>0\), their initial common count is \(j=u+m-1\).
+The same fixed actions therefore force distinct answers by grant \(m\).
+The distinguishing tests are legal sequences of named withdrawals,
+not access to the unobserved queue during execution. The argument
+uses no random guesses or future outcomes. With \(m=1\) this is the
+original first-grant result.
+
+\paragraph{Native checks and material boundary.}
+In the pinned Open-RMF civil fixture, \texttt{reached} at a qualified
+exit triggers ordinary native allocation of the next holder. The
+eligibility of each such exit is stipulated, not derived from a
+reservation alone. The replay tests all orders and all upfront
+withdrawal subsets for \(n=2,\ldots,6\), then separate adaptive
+deletion policies during the held interval, under both budget laws.
+The fresh-budget control starts with two queues sharing their first
+three names. With one allowed withdrawal per grant, withdraw name
+2 and grant 3, then withdraw name 4. The second grant is 5 or 6.
+A single cumulative withdrawal does not distinguish them within two
+grants. There are 50,360 upfront and 5,232 adaptive native replays. Separate finite
+calculations check 106,444 abstract transitions and 68,132 paired lower
+witnesses. No claim extends the native geometry beyond the
+tested family, and no physical delivery, contact, or timing
+guarantee is inferred. Full FIFO rechecking gives the same outputs;
+reduced representation size is not a demonstrated wire/service
+advantage. Holdout and I1 remain open.
+\end{document}
