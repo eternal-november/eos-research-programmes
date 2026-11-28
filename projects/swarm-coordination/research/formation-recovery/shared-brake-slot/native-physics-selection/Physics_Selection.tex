@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage{hyperref}
+\title{A present but zero effort command can block a velocity handoff}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Audit.}
+This is an R6/L1--L3 command-routing result from selected compiled
+Gazebo Sim source at commit
+\texttt{9b1151a9c1f5fe6d1af4c6e0d33d1f0992e8a811}. It applies to
+the pinned \texttt{Physics} joint loop when the entity is present and
+mapped to a one-degree-of-freedom joint. Its output is the backend
+method and arguments the selected code invokes. The harness substitutes
+a serial component store and a call recorder for the engine. It excludes
+transport, physical integration, simultaneous writes outside the chosen
+cuts, deletion and reuse, engine memory, and the independent mission.
+It does not establish dynamic removal of a stock plugin, cancellation
+of a latched backend command, or a stopped joint.
+
+\paragraph{Source rule.}
+The
+\href{https://github.com/gazebosim/gz-sim/blob/9b1151a9c1f5fe6d1af4c6e0d33d1f0992e8a811/src/systems/physics/Physics.cc}{physics joint loop}
+does any requested velocity and position resets first. It next tests
+whether the force-command component is present, not whether its vector
+contains a nonzero value. If present, the force path runs even with a
+zero or empty vector. Only in its absence can a velocity command reach
+\texttt{SetVelocityCommand}; the velocity-reset component must also
+be absent, the backend must provide the feature, and the command
+needs an entry for the requested degree of freedom. These criteria
+are exact for the checked joint and dispatch slice, not the whole
+system scheduler. The cleanup callbacks in \texttt{UpdateSim} zero the
+command vectors without removing the components.
+
+\paragraph{Two witnesses.}
+The native
+\href{https://github.com/gazebosim/gz-sim/blob/9b1151a9c1f5fe6d1af4c6e0d33d1f0992e8a811/src/systems/apply_joint_force/ApplyJointForce.cc}{ApplyJointForce writer}
+creates a force component during a normal unpaused update even when
+its retained input is initially zero. At the checked cut the same
+velocity component carries value $5$ in both cases. Without the
+competing component, dispatch calls \texttt{SetVelocityCommand(0,5)}.
+With it, dispatch instead calls \texttt{SetForce(0,0)}. No adversarial
+or malformed input is needed for this witness. A second case starts with
+an actual nonzero writer callback and then stops invoking that writer in
+the fixture to isolate the residual state. Ten replacement velocity
+writes still take the zero-force path after cleanup. Explicit fixture
+removal of the force component restores the velocity path. It is not
+a proof that the native system exposes that removal as an atomic live
+handoff.
+
+\paragraph{Persistence and reusable export.}
+Fix a phase between cleanup and native selection, and suppose no
+intervening event removes or replaces the relevant component. If the
+force component was present, each application of the cleanup preserves
+presence and each authorized velocity writer changes only the velocity
+component. Inductively, no finite number of those two actions admits
+a velocity dispatch while that presence persists. Thus a policy that
+waits until the old effort \emph{value} is zero cannot substitute for
+establishing that the old path no longer wins selection. The needed
+interface here is a qualified fact about component occupancy and
+the backend branch, through consumption, plus a separately discharged
+plant effect obligation. Snapshot absence alone is insufficient if the
+old writer can recreate the component before consumption. A direct
+source-aware controller reaches the same verdict. The contribution is
+the failed substitution and the exact condition for this native branch,
+not a claim of planner advantage.
+
+\paragraph{Check.}
+The fixture compiled unchanged selected writer bodies, reset and command
+selection, and force/velocity cleanup code. A separate dispatch table
+matched all 72 combinations over absent, empty and populated components,
+zero versus nonzero effort, and presence versus absence of the engine
+feature. Deliberately empty payload cases exercise diagnostic and
+zero-iteration branches; the two main witnesses use ordinary payloads.
+\end{document}
