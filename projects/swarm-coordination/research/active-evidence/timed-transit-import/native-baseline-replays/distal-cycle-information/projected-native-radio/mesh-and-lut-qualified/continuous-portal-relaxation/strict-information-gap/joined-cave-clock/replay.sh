@@ -22,6 +22,7 @@ python3 -B "$P/certify_routes.py" "$U/geom" "$P/site_poses.json" "$P/paths.json"
 cmp lower.jsonl "$P/EXPECTED.jsonl"
 python3 -B "$P/gate_ray.py" "$U/geom" "$P/site_poses.json" > rays.json
 python3 -B "$H/projection.py" "$P/paths.json" rays.json "$P/site_poses.json" "$U/geom/cave_circuit_01.dat" world.dot sites.tsv
+PYTHONPATH="$P" python3 -B "$H/bind.py" "$U/geom" "$P/site_poses.json" "$P/paths.json" rays.json sites.tsv
 python3 -B extract_radio.py
 python3 -B extract_visible.py
 python3 -B "$H/extract_extra.py"

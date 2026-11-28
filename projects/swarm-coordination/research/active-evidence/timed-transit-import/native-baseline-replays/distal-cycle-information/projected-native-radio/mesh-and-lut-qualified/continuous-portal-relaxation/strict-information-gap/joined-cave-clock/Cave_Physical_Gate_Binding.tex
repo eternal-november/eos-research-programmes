@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{Correction: compose the native ray and motion certificates by physical gate}
+
+PR 877 used the index of the closed gate inferred by a qualified
+native callback as the index of the positive motion plan. The two
+indices have opposite meanings. The main path and timing certificates
+in PRs 874 and 876 are unchanged, but their joins to the receiver
+crash experiment in PR 877 did not certify collision-free motion.
+The point-sampled radio and database outputs of PR 877 are not a
+substitute for that missing guarantee.
+
+The repair does not hard-code the opposite label. For each fixed
+analytic beam, find the unique closed slab which intersects the exact
+six-metre segment. For each of the two motion paths, test the entire
+polyline against this concrete slab, both for the center and for
+the padded body. The table determines which certified path requires
+each physical gate to remain open. On these inputs the first beam
+corresponds to the slab crossed by chord 4 of path A, and the second
+to the slab crossed by chord 5 of path B (zero-based indices).
+The corresponding opposite path has no padded-body intersection.
+Both possible orderings of the motion records reconstruct the same
+physical choice. The authorization rule now receives the gate index
+from the source and selects the certified path for the other, open
+gate by this validated relation, rather than reusing an index from
+another object. The runtime still uses the explicitly declared
+exactly-one-closed premise; two simultaneously closed gates are
+not admitted by this correction.
+
+The exact physical join, mesh and motion certificates, analytic
+source of the two wire values, native broker, and both real receiver
+exit cuts are exercised in an isolated replay. Their previous
+aggregate timing and source/radio/settlement counts are reproduced
+with the corrected motion assignment. The longer arm egresses
+by 453.847823 s, versus the late-evidence lower bound 456.4981695 s
+in the declared operating region. The independently selected case
+and the limitation about preauthorizing the dock and sharing the
+journal remain unchanged.
+
+This is a small example of a concrete comparison obligation:
+two internally valid objects with isomorphic finite index sets do
+not necessarily agree on their common boundary. The failed
+comparison identified two different native effects. This check
+establishes the physical relation for the declared contexts only,
+not a general Contextual Composition application or a result over
+unseen fault mechanisms.
+\end{document}
