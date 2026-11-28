@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{A strict arclength separation for early information in the distal cave}
+\paragraph{Held-in operational model.}
+Retain Cave Circuit 01 placements, the seven pinned collision
+meshes, the 20-tile collision scene and the same authorized
+continuous center domain: the union of closed one-meter cubes
+from the original lookup at these tiles. In the two alternative
+worlds exactly one of the two authored portal slabs is closed.
+The robot is an axis-aligned cube of half-width 0.3 m.
+Start from the checked pose in tile 103, visit the specified
+inspection pose in 132, and return to the original pose. The
+criterion here is arclength, not acceleration, braking, sensing
+latency, packet reliability, or an independent mission. The
+point visit is the modeled service; no physical sensing at that
+pose or report delivery is credited by visiting it.
+
+At early reveal the closure bit is available before departing.
+Under late-only information no status distinguishes the worlds
+before entering one of the named gate endpoint tiles; allow
+instant correct revelation at that first entry. No assumption
+is made that later motion must follow a waypoint library.
+That local observation rule and center domain are declared:
+earlier physical perception, motion outside the domain, or a
+different fault process need another test.
+
+\paragraph{Executable upper bound.}
+Both early branches have a saved round-trip polyline with
+exact verification. A translating fixed cube sweeps the
+Minkowski sum of the segment with the cube, not its entire
+axis-aligned bounding box. Candidate separating axes were
+found numerically, but each separation is then checked with
+integer projections against every triangle surviving an
+exact integer bounding-box broad phase; the 0.5 mm yaw pad
+is included. The slab is checked with exact fractional segment
+intersection against the inflated box. All center chords
+remain in the union of allowed cubes. The exact rounded-up
+arclengths are 393.522984 and 444.274308 meters. Reproducing
+these upper bounds does not require reproducing the path search.
+Both saved paths also pass with a 0.302-meter padded half-width;
+this check does not imply centimeter-level tolerance.
+
+\paragraph{A lower bound against every late-only motion.}
+Use every source cube-face, edge and corner contact. Enclose
+each inter-tile contact in its checked portal box. For any
+continuous path, an ordered subsequence of such contacts
+induces a simple tile route in a relaxed model in which motion
+within a tile is unconstrained. For example, take the last
+visit to the current tile along the relevant curve prefix;
+the next tile that the curve occupies along a sequence of
+times decreasing to that cut shares the contact, and has a
+strictly later last visit. The finite last-visit sequence
+terminates at the goal. Test this separately on the shared
+prefix, the remainder after the first revelation, and the
+return from the inspection pose. This does not erase a
+required observation: the shared prefix is stopped at its
+first observation and no later tile is used to identify it.
+
+No unrevealed route can pass a portal closed in one world
+or reach the inspection. There are two possible simple
+first-reveal prefixes, starting on the two branches; all
+simple post-reveal routes are checked in both worlds. Waiting
+or oscillating before that cut does not reduce arclength.
+For each fixed portal-box sequence $(B_j)$, use a saved
+vector $u_j$ of norm at most one for each inter-box segment.
+For arbitrary actual crossing points $x_j\in B_j$,
+\[
+ \sum_j \|x_{j+1}-x_j\|\ \ge\
+ \sum_j u_j\mathbin{\cdot}(x_{j+1}-x_j)\ \ge\
+ \min_{x_j\in B_j}\sum_j u_j\mathbin{\cdot}(x_{j+1}-x_j).
+\]
+Compute the last minimum at the proper box endpoints with
+exact integers. A numerical optimizer only proposed the
+vectors, and no claim of solving the convex problem exactly
+is needed. The certificate rechecks all 12 sequences, including
+the tied prefix and outbound remainder per world. Combining
+the per-world bounds after each possible first reveal gives
+a worst-case lower bound of 456.0981695 meters for every
+late-only policy, with the opposing world chosen against
+its shared first action.
+
+Thus the certified arclength gap is at least 11.8238615 m
+between a feasible early-information policy and every
+late-only policy in this model. This is a geometric and
+informational discriminator, not an advantage against an
+equally informed planner. A deadline inside the gap can be used
+for a later integrated \emph{development} test. Neither timely
+production of the bit nor compound-fault settlement has been
+established here. It does not spend the independent cave mission
+or establish I2 acceptance.
+\end{document}
