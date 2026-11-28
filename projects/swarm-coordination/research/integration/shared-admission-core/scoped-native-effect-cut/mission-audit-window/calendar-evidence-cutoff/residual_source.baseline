@@ -1,0 +1,75 @@
+"""Durable elapsed-cut and scoped audit facts for a live calibration amendment."""
+import json
+import os
+import subprocess
+import sys
+import calendar_source as cs
+
+def initialize(path,cuts,w,case):
+    cs.initialize(path,cuts,w)
+    with cs.open_calendar(path) as d:
+        d.execute("begin immediate")
+        d.execute("CREATE TABLE Progress(t INTEGER PRIMARY KEY, actual_receipt TEXT)")
+        for actor in (0,1,2):
+            if actor!=0 or case!="blocked":
+                d.execute("update Calendar set lo=?,hi=? where actor=?",(cuts[1]+31250,cuts[1]+32250,actor))
+        d.commit()
+
+def record_cut(path,t,receipt):
+    with cs.open_calendar(path) as d:
+        d.execute("begin immediate")
+        assert len(receipt)==1
+        assert receipt=="-" or "a"<=receipt<="z"
+        d.execute("insert into Progress values (?,?)",(t,None if receipt=="-" else receipt))
+        d.commit()
+
+def edit(path,key,policy,phase):
+    with cs.open_calendar(path) as d:
+        d.execute("begin immediate")
+        req=json.dumps([policy,"B:late-calibration"],separators=(",",":"))
+        r=d.execute("select request,decision from Edit where key=?",(key,)).fetchone()
+        if r:
+            assert r[0]==req
+            d.rollback()
+            return r[1]
+        w,cuts,rows=cs.read_plan(d)
+        progress=d.execute("select * from Progress").fetchall()
+        assert len(progress)==1 and progress[0][0]==cuts[0]
+        last,receipt=progress[0]
+        edit_time=last+2000
+        assert last<edit_time<cuts[1]
+        prop=dict(rows);prop[1]=(cuts[1],cuts[1]+1000)
+        residual=sum(1<<j for j,t in enumerate(cuts) if t>edit_time)&w
+        assert residual==2
+        if policy=="causal":
+            unavailable=cs.project(prop,cuts)
+            room=bool(residual&~(unavailable[0]|unavailable[1]))
+            # Active earlier duty is precisely the old still-unsettled audit
+            # as witnessed at this owned source, not assumed from a sent packet.
+            ok=receipt is not None or room
+            output=subprocess.check_output([os.environ["SCOPED_CUT_BIN"],"effect",
+                         "1","1",str(int(ok)),"1"],text=True)
+            admit=int(output)==6
+        elif policy=="direct":
+            admit=receipt is not None or any(q>edit_time and (w&(1<<j)) and
+                        all(not(prop[i][0]<=q<prop[i][1]) for i in (0,1))
+                        for j,q in enumerate(cuts))
+        elif policy=="forget-past":
+            # Active-calendar snapshots omit completed appointments; this
+            # is NOT permission to use removed historical cuts again.
+            scope={i:iv for i,iv in prop.items() if iv[1]>edit_time}
+            admit=receipt is not None or any((w&(1<<j)) and not any(
+                 scope[i][0]<=q<scope[i][1] for i in (0,1) if i in scope)
+                 for j,q in enumerate(cuts))
+        else:raise ValueError(policy)
+        decision="installed" if admit else "refused"
+        if admit:
+            d.execute("update Calendar set lo=?,hi=? where actor=1",prop[1])
+            d.execute("insert into Applied values (?)",(key,))
+        d.execute("insert into Edit values (?,?,?)",(key,req,decision))
+        if phase=="before":os._exit(71)
+        d.commit()
+        if phase=="after":os._exit(72)
+        return decision
+
+if __name__=="__main__":print(edit(*sys.argv[1:]))
