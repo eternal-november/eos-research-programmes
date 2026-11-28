@@ -1,0 +1,58 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{A finite-acceleration time lift for the certified cave example}
+\paragraph{Exact scope.}
+Keep the same two positive geometric paths and the all-late
+arclength lower certificate from PR 874, and the same staged
+observation interface supported in the model by PR 875.
+The vehicle translates with norm of velocity at most $V$ and
+norm of acceleration at most $a$ almost everywhere. It starts
+and finishes at rest, and stops at the inspection pose. The
+body orientation remains fixed. Waiting for a qualified early
+cue costs $\tau$ before starting; give the competing late-only
+schedulers no such wait. Physical tracking, actual acceleration
+calibration and a bound for deployment latency are not asserted.
+
+\paragraph{Positive timings and universal lower bound.}
+For a straight segment of length $\ell\ge V^2/a$, the usual
+accelerate-at-$a$, cruise-at-$V$, and brake-to-rest profile takes
+$\ell/V+V/a$. Apply it along every certified straight chord.
+Velocity is zero at every change of direction, so the
+piecewise motion obeys the finite acceleration law. Each
+tested positive segment satisfies the length premise.
+For any late-only trajectory, consider its outbound and return
+parts, starting and ending at rest. Even without tracking
+turns, the speed profile is bounded above by
+$\min(at,V,a(T-t))$ on a part of duration $T$. Each part covers
+at least the distance between the two specified poses, enough
+for the trapezoidal lower bound. Integrating gives
+$T\ge\ell/V+V/a$ on each part. Combining with the geometric
+lower bound gives
+\[
+ T_{\rm late}\ \ge\ 456.0981695/V+2V/a .
+\]
+This holds over arbitrary trajectories in the same permitted
+domain and the same observation envelope, not only the saved
+chords. An equal explicit fixed inspection dwell would add to
+both arms.
+
+At $V=1$ m/s, $a=5$ m/s$^2$ and $\tau=1$ s, the early
+worst-case bound is $452.474308$ s and the late-only lower bound
+is $456.4981695$ s. The certified interval of distinguishing
+deadlines is therefore nonempty, with width $4.0238615$ s.
+It follows from charging the early wait and stopping at all its
+turns, not by treating arclength and time as interchangeable.
+The limiting early path has 36 straight segments including
+return. In that path regime a sufficient acceleration threshold
+for $\tau=1$ at $V=1$ is strictly greater than about $3.141$ m/s$^2$;
+there is no extrapolation to the faster, lower-acceleration
+vehicles for which this stop-at-turn proof may lose separation.
+
+The stipulated one-second source window and serial execution
+can be compared against modeled receipt timings, but are not
+a field throughput result. This is a time-lift for a declared
+ideal plant, no guarantee of actual vehicle health or motion
+tracking. The later compound recovery, independent mission,
+and I2 acceptance remain open.
+\end{document}
