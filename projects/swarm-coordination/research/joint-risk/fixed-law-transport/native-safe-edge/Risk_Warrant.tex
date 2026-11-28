@@ -1,0 +1,86 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{A safe support edge that invalidates an old risk warrant}
+\paragraph{Scope.} This is an R4 experiment on a serial harness running pinned
+SubT broker dispatch and actual SQLite commits. Timing, packet format, reliable
+path, common receiver and available sender roles are fixture assumptions.
+The lower and upper receive caps also apply to individual transmitters, which
+each send at most once and never bind in the focal case. No frequency is
+estimated. The ambiguity set is all fixed laws on the generated support with
+specified outcome marginals; it is not a claim about how the same upstream
+law behaves when the cap changes. A deployed single-writer journal, a new
+risk mechanism relative to an equally informed scheduler, and mission
+acceptance are outside scope.
+
+\paragraph{Source construction.} Time is in sixteenths of a second.
+A one-byte fast report $Y$ may be sent at 0. A two-byte job $X$ may already
+send at 1. Each may also be absent, independently in the enumeration of
+\emph{possibilities}, without assigning probabilities to the four inputs.
+The callback for $Y$ commits a named old job. The evaluator reads the durable
+row, reopens the database, and pairs two executions from these same inputs:
+one admits the optional two-byte packet $O$ at 17, one does not.
+The policy may read whether $X$ arrived, not whether $Y$ committed, when
+choosing $O$. A separate sender always dispatches the two-byte full old
+report at 18; it is not available in the earlier slot. If it arrives,
+the dock settles the named job unless the fast report already did.
+A test message for an unrelated receiver still arrives at 17.
+The serializer and possibility of one opportunity for $O$ are part of the
+experiment, not features established for every broker client.
+
+The pinned receiver counts the age-16 debit inclusive. Thus at cap 2,
+if $Y$ arrived, $X$ cannot arrive; all three remaining output pairs
+$(X\text{ arrived},Y\text{ settled})$ have concrete witnesses.
+At cap 3 the history where both attempt gives the new pair $(1,1)$.
+At 17, $Y$'s debit is gone but $X$'s is still live, so $O$ arrives precisely
+when $X$ did not, if admitted. At 18 both earlier debits are gone.
+Only $(0,0)$ incurs new old-duty loss on admitting $O$: the first report
+did not settle the job, and the fresh optional packet blocks its full
+retry. This loss mark is unchanged on every old edge, and the new edge is
+safe. The old duty succeeds everywhere if $O$ is withheld. Moving its
+dispatch one tick earlier can block it even when $X$ did not arrive;
+moving it one tick later can also make the $(1,0)$ pair harmful.
+
+\paragraph{Fixed-law consequence.}
+Let $p,q$ be the two marginal probabilities of one and set
+$t=\Pr[X=1,Y=1]$. The four masses in lexicographic order are
+\[
+ (1-p-q+t,\ q-t,\ p-t,\ t).
+\]
+For independent admission with probability $a_0$ on visible row 0,
+the worst old-duty loss is $a_0$ times the maximum first mass. With cap 2,
+$t=0$ and the asserted marginals must satisfy $p+q\le1$.
+With cap 3, $t\le\min(p,q)$ and the upper endpoint is feasible.
+At unchanged marginals feasible in both configurations, worst loss
+therefore increases by exactly $a_0\min(p,q)$. For $p=q=1/2$ the old
+off-diagonal law is forced and has zero loss; the enlarged graph admits
+a diagonal law with mass $1/2$ on the \emph{old} harmful edge. Its
+witness uses one newly admitted, harmless pair to balance the old one.
+No independence assumption was added. Multiplying the half marginals
+would already assign positive mass to an impossible old pair.
+
+For an always-admit proposal, the old transport certificate
+$u=(1,0),v=(0,-1)$ proves zero risk. Its constraint on the new safe pair
+would read $-1\ge0$; any certificate with the new diagonal inequalities
+has objective at least $1/2$. This invalidates the old warrant with the
+source-supported edge itself, without assigning a new local damage mark.
+The worst-risk budget $\varepsilon$ gives $a_0\le\min(1,2\varepsilon)$
+after enlargement at the half marginals. Since optional completion is
+$a_0/2$, the zero-tolerance guarantee drops from $1/2$ completions to zero
+over these fixed slots; nominally admitting on row 1 cannot restore
+completions. This is a service comparison against reusing a stale warrant,
+not superiority over a new exact transport calculation. The latter ties,
+and changing decision times, evidence, or packet formats is a different
+interface. In particular a capacity increase does not force a field
+risk increase: if the same post-broker law stayed supported on the old
+edges and risk marks stayed fixed, the old certificate would still apply.
+
+\paragraph{Verification.} The independent integer ledger matches 3,456
+native replay rows and checks completeness of input enumeration.
+The exact marginal calculation is separately checked by coupling
+enumeration on 289 rational marginal pairs per focal configuration.
+Lean checks the bound, feasibility at the maximizing endpoint, support
+gap, and diagonal dual obstruction in integer probability units.
+The replay exercises the broker's sampled accounting and the fixture's
+journal, not an end-to-end radio, live robot, or independent mission.
+\end{document}
