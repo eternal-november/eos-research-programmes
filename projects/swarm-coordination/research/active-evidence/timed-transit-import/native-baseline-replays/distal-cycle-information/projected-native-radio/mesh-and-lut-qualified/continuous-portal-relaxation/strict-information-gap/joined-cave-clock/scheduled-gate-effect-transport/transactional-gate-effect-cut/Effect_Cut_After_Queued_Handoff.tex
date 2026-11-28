@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{A lawful queue insertion need not license its later physical effect}
+Keep the physically bound gates and padded outbound/return occupancy
+intervals verified in PR 881. The concrete simulator of this supplement
+makes an installed closure an actual effect record in an SQLite-owned
+gate, separate from the pending request. Both test requests are
+authorized against their intended intervals at the moment of insertion.
+Each request producer commits the insertion and exits before replying.
+A replacement sees both pending commands. Its first maintains an
+independent 250 ms closure job in the long gap. The other command has
+three tested release times: its intended slot, a delayed slot intersecting
+the certified inner return occupation, or one microsecond after the
+outer return clearance. Request identity and duration survive the
+handoff, but equality of intended and real start time does not.
+These are authored clock events using a simulated effect store, not
+wall-time latency, physical timer jitter, or cave-in behavior.
+
+\paragraph{Persistent protection at the actuation cut.}
+The first policy trusts prior admission; the second rereads the durable
+hold but compares to the pending command's intended interval.
+A third remembers the protection only in the originating process.
+Each permits the four contact failures (two physical paths times two
+crash cuts) despite the truthful check at insertion. Rereading a correct
+reservation against the wrong clock does not fix the comparison.
+The fourth policy rereads the durable hold and compares it against the
+actual installing interval in the same transaction as the effect and
+decision receipt. It blocks all four contact failures, accepts all eight
+nonconflicting requests, including the first microsecond after the
+certified clearance, and permits the separate maintenance on every run.
+When the effect worker itself exits just before commit, the next process
+retries; when it exits just after, the next process returns the recorded
+answer. Receipt/effect/event tables establish no extra actuation on
+retry. The repeated attempt shares the same simulated time in this model.
+
+\paragraph{Compared interface and limit.}
+Match source closure effect and moving-body occupancy on the absolute
+clock, physical gate, and allowed request identity. The reflected
+comparison is into an interval calendar with those actual operands,
+not a Cartesian pairing of raw request and traversal reports. The first
+three exports lose either the protected occurrence or the effective
+time. The fourth agrees with an independent direct sweep in all
+tested cases. As a condition for transporting the grant, the effect-side
+substrate must own both the protection and this gate effect, serializing
+its decision and durable receipt. Merely moving a cached report or a
+nominal interval to a new owner is insufficient. This is evidence for
+a concrete controllable simulated effect boundary, not a claim about
+a stock actuator, cut-over from actual radio to gate hardware, new
+hardware safety or full Interactad structure.
+\end{document}
