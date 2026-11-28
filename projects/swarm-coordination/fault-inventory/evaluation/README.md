@@ -77,3 +77,11 @@ with scoped evidence leads. It does not establish a complete generative
 model, validate the inventory, cover combinations, or satisfy any of the
 110 architecture-level dispositions. Both inventory pins and the crosswalk
 remain unchanged.
+
+## Command handoff and bay-scope evidence through #797
+
+These four scoped leads separate a target update, retained command history,
+component removal at a named phase, dispatch, and the actual warehouse
+occupancy needed by a downstream permission. The replay transcript now
+agrees with the executable ledger: all 110 entries have at least one
+scoped lead. All 110 architecture-level dispositions remain open.
