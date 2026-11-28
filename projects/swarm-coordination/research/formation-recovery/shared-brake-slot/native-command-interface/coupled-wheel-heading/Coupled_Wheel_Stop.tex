@@ -1,0 +1,91 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\begin{document}
+\section*{R6: jointly bounded braking and terminal heading after a second fault}
+\paragraph{Material requirements.}
+A civil differential-drive rover is already stopping. A further
+fault weakens one wheel and changes the owed terminal heading.
+The controller must bring both wheels to rest by step five and
+stay within a cumulative travel budget. The positive alternative
+allows steering toward the replacement heading while braking.
+This is a path-length limit on the rover center, not proof of
+clearance in an obstacle mesh, link maintenance, or safe handling
+of a payload. Wheel radius is one, spacing is two, initial forward
+wheel speeds are four, and commands are applied at one-second
+boundaries. No reverse, reacceleration, slip, or automatic
+plant-dependent clipping is admitted. Both wheel speeds are
+linearly interpolated between boundaries, so their integrated
+distance and bearing change are exact in this plant. Before a
+truthful diagnosis the same issued and realized wheel profile must
+be lawful in both worlds. An actuator that instead clips requests
+would change what is controllable and observable.
+
+\paragraph{Source command cut.}
+The \href{https://github.com/gazebosim/gz-sim/blob/9b1151a9c1f5fe6d1af4c6e0d33d1f0992e8a811/src/systems/diff_drive/DiffDrive.cc}{pinned Gazebo DiffDrive}
+limits body forward and angular command scalars separately.
+The paired target then equals \((v-\omega,v+\omega)\) at the chosen
+normalization. With independent per-axis step bounds of one, a
+command from \((v,\omega)=(4,0)\) to \((3,1)\) passes those two
+limits, but the actual paired target is \((2,4)\). That requires
+braking the left wheel by two, beyond a weak-wheel bound of one.
+A coupled admissible target \((3,4)\) is available at
+\((v,\omega)=(3.5,0.5)\). The fixture uses the actual source target
+and joint writes through the staged updates; it separately verifies
+the old write before the new target is consumed. The numerical
+physical bounds and plant following are assumptions, not properties
+of the native joint setter. The observation deadline below is at a
+usable input cut, with subsequent scheduled write, not at message
+receipt if computation or a physics cycle is still owed.
+
+\paragraph{Exact split between physics and information.}
+The two physical states have brake bounds
+\((1,2)\) (owed straight) and \((2,1)\) (owed a one-radian turn).
+Let \(X_L,X_R\) be twice each wheel's path length. Arc length is
+\((X_L+X_R)/4\); the doubled difference \(X_R-X_L\) is zero or four
+respectively. With state known, the exact minimum arc lengths are
+eight and seven. The weak wheel must travel at least eight
+distance units, and the heading then forces the other wheel's
+minimum distance in each state. Samples attaining the bounds are
+replayed. A common profile before a notice at steps \(0,1,2,3,4,5\)
+has minimum worst-case arc length
+\[
+  8,\quad 8,\quad 8,\quad 9,\quad\text{infeasible},\quad
+  \text{infeasible}.
+\]
+In particular the arc-eight case needs the notice by step two;
+increasing its distance budget to nine permits step three.
+Below eight, the straight state fails even with oracle information.
+At step four both end speeds must go to zero in the one remaining
+linear interval, producing the same heading change in both worlds.
+A later notice cannot repair this.
+
+\paragraph{Sharp real-valued lower bound at step three.}
+Both prefixes are common and each wheel can have braked by at most
+one per step. If \(p,q\) denote the contributions to \(X_L,X_R\)
+excluding only the step-four speeds, then \(p\ge16\). With
+\((x_i,y_i)\) the chosen left/right speeds at step four in world
+\(i\), the final heading equations are
+\[
+ q+2y_0=p+2x_0,\qquad q+2y_1=p+2x_1+4 .
+\]
+The weak-wheel final tick implies \(x_0\le1,\ y_1\le1\); both
+other speeds are nonnegative. Subtracting the equations forces
+\((x_0,y_0)=(1,0)\), \((x_1,y_1)=(0,1)\) and \(q-p=2\).
+Consequently both worlds require \(p+q+2\ge36\) in the scaled
+sum. The two checked profiles attain 36 with a shared prefix.
+This bound holds even at real-valued sample velocities in the
+declared interpolation model; the finite grid is not the source
+of the gap.
+
+\paragraph{Comparison and residual.}
+An exact state-based backward check and independently enumerated
+individual wheel profiles agree across 5,280 integer cases.
+Eight boundary profiles produce 40 checked native paired joint
+target writes; Lean checks the scaled arithmetic. An ordinary
+joint actuator allocator using the same bounds, information and
+time sees the same frontier. No general advantage over that
+allocator follows. Independent scalar authority, actual actuator
+feasibility and late diagnosis remain different contents of a
+replacement certificate. Physical tracking, sensor production,
+an independent mission, and full R6/I1 are not established.
+\end{document}
