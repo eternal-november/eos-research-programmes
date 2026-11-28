@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")"
+base="$PWD"
+while IFS="$(printf '\t')" read -r name repo ref path hash; do
+  test "$(git hash-object "source/$name")" = "$hash"
+done < SOURCE_INPUTS.tsv
+(cd source; python3 -B extract_radio.py; python3 -B extract_visible.py; python3 -B "$base/project.py")
+python3 -B mesh.py "$base/source/world.sdf" | cmp expected-mesh.txt -
+python3 -B read.py "$base/source" | cmp expected-lut.txt -
