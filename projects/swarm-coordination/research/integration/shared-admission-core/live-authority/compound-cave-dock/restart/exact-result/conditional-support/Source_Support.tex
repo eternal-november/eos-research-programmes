@@ -1,0 +1,80 @@
+\documentclass{article}
+\usepackage{amsmath,hyperref}
+\title{A one-byte handoff can survive a change of result group}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\paragraph{Which assumption changed.}
+The earlier exact-return replay used a pre-window bit selecting
+one of two 128-result pages. Its simple decoder safely refused if
+a later committed value lay outside that page. That is not itself
+a proof that the required result cannot fit. The receiver may
+instead have a larger agreed codebook for the \emph{conditional
+future support} behind each early bit, including credible later
+commits. This study selects one such codebook in advance. It does
+not permit one party to renegotiate it alone after seeing the
+outcome.
+
+\paragraph{Exact widening.}
+Number the possible handoff states \(0,\ldots,256\), with \(0\)
+pending. For a known excluded state \(o\), encode \(n\ne o\) as
+\(n\) for \(n<o\) and \(n-1\) otherwise. The receiver reinserts
+the omitted position when decoding. This exhausts all 256 octets,
+and the previous 257-state obstruction shows that no such fixed
+codebook can additionally represent the omitted state without
+another distinction. The checked example excludes 255 after an
+early low/pending page, and 1 after an early high page. Both agree
+with the initial contexts. In the enlarged pending-page family
+all later results except 255 are supported, including 256.
+An execution with credible but unmodeled late value 255 is rejected,
+not silently decoded as 256. Excluding 255 is an authored
+admitted-support condition for this test, not a field statistic.
+
+\paragraph{Native distinction and cost.}
+The same one-byte early packet really reaches S; the same cut still
+has only one late receive byte available beside Q's three-byte
+retry. R may then receive a genuine old request on the historical
+link before its modeled departure, with a locally coded result.
+The journal stores it and the later sent octet must use the
+previously agreed codebook. The broker's actual response to Q is
+one byte at the tight return cap. Q's tape before retry is
+identical across the test cases. Only the earlier context shared by
+R and S and the current journal record govern the migration.
+The independent report always pays.
+
+The original strict 128-result page returned the correct outcome
+in 385 of 513 tested cases. Widening returns it in 512 and safely
+refuses the excluded state; the unguarded codec seems to serve that
+last case too but supplies the wrong archived value with exactly
+one effect still recorded. The two branches 255 and 256 make the
+collision explicit. These are 1,539 equally resourced source replays,
+not random scenarios or estimates. An equally informed implementation
+of the same fixed codebook ties. No hardware, independent acceptance,
+full interoperability or claim that all future result changes fit
+is implied.
+
+\paragraph{Source-derived support discriminator.}
+A separate held-in warehouse replay shows how a single exclusion can
+arise from physical reachability rather than a number chosen to suit
+the codec. One stationary vehicle occupies cell (14,15) in a
+\(16\times16\) inspection grid. Native graph enumeration reaches
+all 255 other cells; with pending, this is 256 states. A native
+one-cell move of the blocker to (15,15), before inspection starts,
+again leaves 255 reachable cells but changes the forbidden one.
+The row-major report code 255 becomes possible and 256 disappears.
+Both newly gained and lost outcomes have explicit native action
+paths in their respective layouts. A decoder with a fresh, qualified
+source mode could choose the corresponding one-byte map. A
+decoder whose earlier context is compatible with both layouts must
+preserve their union, all 257 states, even though neither local
+cardinality changed. This is 6,120 selected native transition checks
+for the static one-blocker family, not a warehouse-to-radio run or
+a claim about contested multi-vehicle moves.
+
+Lean checks the general omit-one codec and that its outputs fit
+one byte. The replay verifies the parent adapter by Git hash and
+runs the same native selected broker and pinned input stack.
+Run \texttt{python3 widen.py} with those inputs or in the complete
+offline bundle.
+\end{document}
